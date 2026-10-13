@@ -4,11 +4,11 @@
 
 在已发布的路线读取后端上做增量，显式增加 `vrptw-mature-solver-v1` 格式。直接读取原文件名和结构，不重命名或覆盖原档，不调用 OR-Tools、模型、源 checker 或任意实验代码。只在导入时用后端自有标准库算术重新计算连续路线见证。
 
-旧 `vrptw-frozen-v1` 导入及原 GET/POST API 兼容。旧五包仍有 690 指标和 28 附件；旧路线240条 fingerprint保持不变。没有前端、布局或部署改动。此版本明确支持两种档案格式，尚未接入第三种 Solomon 公共基准格式，不宣称任意实验文件都可直接导入。
+兼容 `vrptw-frozen-v1` 与原 GET/POST API。五个基础包保留690指标、28附件，原240条路线的fingerprint不变。本页说明两类48实例档案；Solomon公共基准格式见[公共路线接口](PUBLIC_ROUTE_API.md)。
 
 ## 显式导入与身份
 
-从两个既有私有归档解压后，进入 `research_console`：
+从URP实验目录中的两份48实例归档解压后，在`src/backend`执行：
 
 ```sh
 python3 -m backend --db backend_data/shared.sqlite3 import-routes \
@@ -102,10 +102,8 @@ python3 -m unittest discover -s tests -p 'integration*.py' -v
 
 小型fixture仅有两输入/四个新run，明确为合成契约测试。真实集成缺少任何指定档案即失败，不生成替代研究数据。最终覆盖包括新旧并存、幂等/版本、双向ID隔离、同输入比较、输入/spec失配拒绝、重复选择拒绝、实际HTTP、来源文件不变和原五包回归。新DB、raw和测试日志不进入清洁源码包。
 
-## Ubuntu 22.04 / Python 3.10 迁移边界
+## 环境检查记录
 
-用户目标仍是 Ubuntu 22.04 / Python 3.10。本轮41项单测、3项真实集成及独审实际运行在云端 Linux、CPython 3.12.14；不能写成3.10或Ubuntu 22.04实机通过。
+该版本的41项单测、3项真实集成及独立审阅运行于Linux、CPython3.12.14。18个Python源码/测试文件另通过`ast.parse(feature_version=(3,10))`，新增标准库API未发现3.11+依赖；`Path.is_relative_to`从3.9起可用。Python3.10与Ubuntu22.04的实机执行未验证。
 
-已做轻量静态检查：18个Python源码/测试文件通过 `ast.parse(feature_version=(3,10))`；新增标准库API逐项检查，未发现3.11+依赖；既有 `Path.is_relative_to` 在3.9起可用。这里不需要安装OR-Tools，后端只读取其档案并用自有算术回放。
-
-静态语法和API检查不代替目标环境执行。当前没有Python 3.10解释器，没有为此安装新环境；目标环境启动、完整测试和HTTP验收仍待在实际Ubuntu 22.04/Python 3.10上运行。证据为交付包的 `python310_static_compatibility.json`。
+后端读取OR-Tools档案并用自有算术回放，无需安装OR-Tools。静态兼容证据记录为`python310_static_compatibility.json`。

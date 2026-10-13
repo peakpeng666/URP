@@ -8,7 +8,7 @@
 | [packages](packages/) | selector、budget、fleet、turns、bpp-history记录包 | 科研后端 |
 | [benchmarks](benchmarks/) | CVRPLIB、Solomon、Fields2Benchmark农业田形 | 研究输入 |
 
-完整实验包见[实验目录](../experiments/目录.md)。本次从已核验记录重建的后端数据库位于`data/backend/research.sqlite3`，来源见`backend/SOURCE.json`；研究CLI输入位于`data/research/`。
+实验包见[实验目录](../experiments/目录.md)。后端派生数据库位于`data/backend/research.sqlite3`，来源见`backend/SOURCE.json`；研究CLI输入位于`data/research/`。
 
 `bpp/exports`是可重建展示，`bpp/records`是原始记录；记录包内的来源附件用于核验。新实验保存输入ID、划分、生成参数和来源哈希。
 

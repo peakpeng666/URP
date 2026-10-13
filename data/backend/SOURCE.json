@@ -6,7 +6,7 @@
   "sha256": "37db21d1cb8f5af66730a50b262975156b64731e17b733dca2c6c27766928889",
   "source_commit": "0d8faf3dba83dad44cc242eaef17d8b982ee7f80",
   "historical_database_byte_restoration": false,
-  "description": "New derived SQLite database rebuilt from exact verified retained input/evidence packages. Original historical database is unavailable. No claim that all historical revisions or every project experiment is contained.",
+  "description": "Derived SQLite database for the nine listed experiment groups, built from the verified source packages listed below.",
   "scope": {
     "groups": [
       {

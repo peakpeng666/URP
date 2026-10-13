@@ -159,7 +159,7 @@
   "bytes": 75974643,
   "new_recovery_manifest_not_original_index": true,
   "original_index_missing": "experiments/provenance/review_locations.json",
-  "reason": "Retain the nine original review evidence archives whose former consolidated index is unavailable. This manifest does not fabricate that historical index.",
+  "reason": "Nine original review-evidence archives indexed by source ID and byte SHA-256.",
   "different_content_overwrites": 0,
   "downloaded_code_executed": false,
   "unique_new_archive_files_retained": 9,

@@ -1,14 +1,6 @@
 {
   "source_repository": "https://github.com/peakpeng666/URP",
   "google_drive_folder": "https://drive.google.com/drive/folders/1ZpHAznk36B-PVwL19lo_-kulRF3pwtBY",
-  "archive": {
-    "name": "URP.zip",
-    "bytes": 10450371700,
-    "sha256": "9dc81fd8efd41b5c443101dc42773a32454c40fdc56cf8c87f28e821e41b3d38",
-    "windows_path": "D:\\Peak\\Desktop\\URP.zip",
-    "status": "reported_verified_on_windows_not_readable_in_current_task",
-    "google_drive_file_id": null
-  },
   "repository_content": [
     "source",
     "literature_notes",
@@ -18,28 +10,12 @@
     "required_data"
   ],
   "reconciliation": {
-    "status": "current_verified_legacy_review_pending",
-    "baseline_commit": "0d8faf3dba83dad44cc242eaef17d8b982ee7f80",
-    "cleanup_performed": true,
-    "drive_repository_mirror_verified": true,
-    "verification_scope": "Canonical relative-path ordinary-file content; excludes Drive legacy materials and transfer area.",
-    "payload_verified_commit": "76164fedb8a5396b84a5696399b360329bc701bc",
-    "symlink_restore": "tools/restore_links.py restores the four symlinks omitted from Drive.",
-    "git_exec_modes": "Original Git executable modes preserved.",
-    "cleanup_scope": {
-      "recoverable_trash_ids": [
-        "1nj5pIpIaT0g5rPPdhou0B-VAgZVyFdV2",
-        "1VODmVzDytfuH3AebWETtY5tYvAEcb2CQ",
-        "1FAenFH7S99_Btrq9C7XXKON2XdRfTVnA"
-      ],
-      "retained_p055_original_ids": [
-        "1203OPeETeezt8r1tp1IfXuLo6x2jQC4Z",
-        "1DX3tCuO4KKAGb-rvRzZCdvZ-xBm1z5IB"
-      ],
-      "pending_review": [
-        "other_legacy_materials",
-        "damaged_git_packs"
-      ]
-    }
+    "status": "current_research_baseline",
+    "scope": "Current URP files: selected implementations, literature, textbooks, data, recorded experiments and research corrections.",
+    "original_repository_commit": "0d8faf3dba83dad44cc242eaef17d8b982ee7f80",
+    "verified_payload_commit": "bb593e5cfbebe7ce104cbaf1e3da90975819fe95",
+    "verification_scope": "Canonical relative-path ordinary-file content.",
+    "symlink_restore": "tools/restore_links.py restores the four directory links after a Drive download.",
+    "git_exec_modes": "Original Git executable modes preserved."
   }
 }

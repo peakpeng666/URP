@@ -22,4 +22,4 @@ bash scripts/console.sh test
 
 当前页面读取静态记录；下一步连接[后端API](../backend/api.md)，复用路线组件增加路线结果视图。
 
-[设计与交互](docs/FRONTEND.md) · [静态数据接口](docs/DATA_API.md) · [安装与迁移](docs/MIGRATION.md) · [验收](docs/ACCEPTANCE.md)。
+[设计与交互](docs/FRONTEND.md) · [静态数据接口](docs/DATA_API.md) · [安装与重建](docs/MIGRATION.md) · [验收](docs/ACCEPTANCE.md)。

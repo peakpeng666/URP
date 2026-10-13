@@ -4,7 +4,7 @@
 
 **[下一阶段](下一阶段.md) · [当前实验进度](experiments/状态.md) · [老师要求与成果](materials/学习/老师要求与进度.md) · [按需取用](按需取用.md)**
 
-本目录包含源码、论文精读、论文原文、教材、算例和实验原始记录。项目交接使用[私有云盘](https://drive.google.com/drive/folders/1ZpHAznk36B-PVwL19lo_-kulRF3pwtBY)，交付维护在[私有GitHub仓库](https://github.com/peakpeng666/URP)。存储和核验状态见[storage.json](storage.json)。
+项目包含源码、论文精读、论文原文、教材、算例和实验原始记录。[私有云盘](https://drive.google.com/drive/folders/1ZpHAznk36B-PVwL19lo_-kulRF3pwtBY)与[私有GitHub仓库](https://github.com/peakpeng666/URP)保存同一项目；范围和来源记录见[storage.json](storage.json)。
 
 | 内容 | 入口 |
 |---|---|
@@ -23,4 +23,4 @@ bash src/start.sh backend
 bash src/start.sh frontend
 ```
 
-前端为BPP静态结果面板，后端提供实验记录API；两者待接通。当前检查见[src/checks.json](src/checks.json)。
+前端为BPP静态结果面板，后端提供实验记录API；两者待接通。已有检查记录见[src/checks.json](src/checks.json)。

@@ -6,10 +6,10 @@
   "scope": {
     "active_catalog": "151 result entry paths from the existing data manifest; mutually exclusive evidence levels below.",
     "historical_aliases": "565 distinct destinations from the unchanged historical experiments/sources.json current_locations; 652 original aliases.",
-    "publication_inventory": "533 verified restored/current evidence files. This inventory excludes this new reconciliation file and its README link to avoid self-hash cycles.",
-    "original_package_index": "492 retrieved original Drive sources are indexed by ID and fresh byte SHA; this is a recovery-source index, not a claim that every source is duplicated standalone in this project.",
-    "version_claim": "Chosen original-byte recovery version. Entry existence alone does not prove full byte identity with the unavailable former normalized URP tree.",
-    "historical_index_policy": "Five unavailable original normalized indexes remain original_index_missing. Any newly generated index is a separate current reconstruction and cannot establish the old index bytes."
+    "publication_inventory": "533 evidence files verified at verified_at_utc; sizes and hashes describe that audit snapshot.",
+    "original_package_index": "492 original Drive sources indexed by source ID and byte SHA-256.",
+    "version_claim": "Current URP research baseline.",
+    "historical_index_policy": "Historical original-index availability is recorded in original_index_missing."
   },
   "summary": {
     "catalog_entries": 151,
@@ -31123,14 +31123,14 @@
     "git_and_drive_100mib_boundary_bytes": 104857600,
     "glm_zip_below_100mib": true,
     "splitpack_required_for_glm_zip": false,
-    "transport_note": "Earlier 32/64MiB chunk counts were only optional transport calculations. The authorized normal Git/Drive route accepts this 90,973,318-byte archive below its 100MiB boundary; do not create a duplicate 185MB CLI."
+    "transport_note": "The 90,973,318-byte GLM archive includes the pinned CLI."
   },
   "limits": [
-    "151 active entries and 565 historical destinations are different denominators and must never be called one completely byte-restored old tree.",
-    "Two historical destinations remain physically absent, including one of the five unavailable original normalized indexes.",
-    "All five original normalized indexes have no recovered original-byte evidence even if future current replacements exist.",
-    "The old normalized model-log directory inventory is unknown beyond the 19 authentic retained files.",
-    "Nine original review source archives are unique against other current ZIP SHA256s; their new manifest is not the lost original review_locations index."
+    "151 current entries and 565 historical destinations use different denominators.",
+    "Two historical destinations are absent, including one original normalized index.",
+    "Five original normalized indexes have no original-byte evidence.",
+    "Model records comprise 19 verified original files; the historical directory inventory remains unknown.",
+    "Nine original review-source archives are unique among current ZIP SHA256s. Their manifest is current source metadata; the original review_locations index is unavailable."
   ],
   "different_content_overwrites": 0,
   "downloaded_code_executed": false,

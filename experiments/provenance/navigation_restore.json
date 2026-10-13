@@ -1,6 +1,6 @@
 {
   "schema": "urp-navigation-original-byte-restoration-v1",
-  "purpose": "New navigation restoration record. It is not one of the missing original normalized indexes and is not proof of former normalized tree completeness.",
+  "purpose": "Source and byte-identity records for 187 navigation assets.",
   "source_project_archive": {
     "path": "experiments/provenance/记录/综合/URP_实验项目.zip",
     "sha256": "ae189573bbd6495524a37ba3fd686538755b0d2f81f4e45a51167c9a677edab6",

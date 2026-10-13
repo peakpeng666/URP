@@ -67,7 +67,7 @@ python3 -m backend --db backend_data/research.sqlite3 serve --port 4180
 
 provenance保留原line SHA及locator、native run ID、输入原字节/解析/编码SHA、原研究协议SHA、参数SHA、checker SHA。两个新归档的共同问题spec与排序输入集合SHA明确标注为派生合同哈希；原协议和原manifest仍是独立来源附件。跨新两包的读取比较可返回336条/56输入/6算法预算组；旧合成48输入与新56输入混合比较会409拒绝。最短已返回合法见证只是所选记录中的描述性参照，不是BKS或最优解。
 
-## 可复验测试与迁移
+## 可复验测试与环境
 
 ```sh
 python3 -m unittest discover -s tests -p 'test_*.py' -v
@@ -76,4 +76,4 @@ PUBLIC_VRPTW_SOURCE_ROOT=/path/to/public PORTFOLIO_VRPTW_SOURCE_ROOT=/path/to/po
 
 新增单测fixture是无solver生成的100节点合成数据，测试通过局部mock替换协议/参数SHA，只在测试过程中生效，不是生产导入开关。真实集成缺数据即失败。另附独立核验脚本与报告，逐项比对329方案、2,842原vehicle、32,900客户站，以及旧336完整字段/API fingerprint。
 
-Ubuntu22.04/Python3.10仍为迁移目标。本轮实际测试是dot云端Linux/CPython3.12.14，仅做Python3.10语法与标准库使用静态兼容检查；没有Ubuntu22.04或Python3.10实机通过声明。未改前端、无浏览器/视觉QA、无部署/上传/push。
+该版本测试运行于Linux/CPython3.12.14。Python3.10语法与标准库使用通过静态兼容检查；Ubuntu22.04/Python3.10实机运行未验证。

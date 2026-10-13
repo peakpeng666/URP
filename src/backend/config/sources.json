@@ -1,34 +1,11 @@
 {
   "schema_version": 1,
-  "upstream_upload": {
-    "name": "bpp-research-console-delivery.zip",
-    "drive_file_id": "1btVHe_R2tTYsmbCHe1HQg85A8o0nek8b",
-    "sha256": "2c0a05db644cb9749dbeed8db1c2961f075f62cbad28ae24069711c060bcb239"
-  },
   "runtime": {
     "python": ">=3.10",
     "third_party_dependencies": [],
     "tested_python": "3.12.14",
     "tested_platform": "Linux"
   },
-  "archives": [
-    {
-      "name": "research-backend-core-20261007.zip",
-      "purpose": "Backend source and five normalized real research packages; sufficient for integration checks",
-      "url": "https://drive.google.com/file/d/1NbcekvX809gAW5fRb_8Y1ymDaaFnwilv/view",
-      "bytes": 302949,
-      "sha256": "9fcff5d1dc990fe4242181daba4fcd323ed565d149b2d0772e90d8df1518b96d",
-      "package_root": "bpp-research-console/packages"
-    },
-    {
-      "name": "research-panel-backend-20261007.zip",
-      "purpose": "Complete source handoff with original BPP input; not required for backend unit tests",
-      "url": "https://drive.google.com/file/d/1GMJyq8rjLsB6hlKCjruw9EHKvKeZUBgy/view",
-      "bytes": 26065013,
-      "sha256": "8f606f8886119c40e5018bd1fd017f44c8d3ee0c12235409f08c8b41caeb27d3",
-      "package_root": "bpp-research-console/packages"
-    }
-  ],
   "expected_experiment_ids": [
     "selector",
     "budget",
@@ -36,17 +13,16 @@
     "turns",
     "bpp-history"
   ],
-  "external_downloads": "Manual, using the existing authorized Drive account; no automatic login or download",
   "route_extension": {
     "base_backend_commit": "fe9435f97b00b7e5819c18347c29ebfeb412656a",
-    "source_archive_url": "https://drive.google.com/file/d/1K2-CnygJC-RpODyU9u7GpQLyClXvEg4T/view",
     "source_archive_sha256": "3069b7cc3ab97443188eabf76b34d574fcb4652c1a249e5f9eb6ccfea291547f",
     "run_count": 240,
     "instance_count": 48,
     "documentation": "docs/ROUTE_API.md",
-    "raw_data_in_repository": false,
     "solver_api": false,
-    "frontend_modified": false
+    "frontend_modified": false,
+    "source_archive_path": "experiments/results/路线求解/VRPTW48例_完整源码输入路线时间表.zip",
+    "source_archive_drive_file_id": "1hgNKzRk26LhvrhLTuSH_LsdhpbXwMAH2"
   },
   "mature_route_extension": {
     "base_backend_commit": "3497978a5224e137d260e24d08e0727b3d909132",
@@ -57,8 +33,7 @@
     "logical_unique_inputs": 48,
     "documentation": "docs/MATURE_ROUTE_API.md",
     "solver_executed": false,
-    "source_python_executed": false,
-    "raw_data_in_repository": false
+    "source_python_executed": false
   },
   "public_route_extension": {
     "base_backend_commit": "7dde7ac48a378b9edf94bfe90a0dd43d00b43044",
@@ -74,8 +49,38 @@
     "official_byte_identity": "unverified",
     "objective": "fixed K upper bound, distance only",
     "documentation": "docs/PUBLIC_ROUTE_API.md",
-    "raw_instances_in_source": false,
     "solver_executed": false,
     "frontend_modified": false
-  }
+  },
+  "current_data": {
+    "package_root": "data/packages",
+    "database": "data/backend/research.sqlite3",
+    "database_source": "data/backend/SOURCE.json",
+    "bpp_original_inputs": "data/bpp/inputs",
+    "bpp_records": "data/bpp/records",
+    "documentation": "src/backend/api.md",
+    "vrptw48_inputs": "data/research/vrptw48-baseline",
+    "mature_vrptw_archive": "experiments/results/路线求解/成熟求解器VRPTW_48例配对实验源码原始结果.zip",
+    "public_vrptw_archive": "experiments/results/路线求解/Solomon100用户存档候选_56例固定K距离对照.zip",
+    "solomon_benchmark": "data/benchmarks/Solomon/instances/In"
+  },
+  "source_archives": [
+    {
+      "name": "bpp-research-console-delivery.zip",
+      "sha256": "2c0a05db644cb9749dbeed8db1c2961f075f62cbad28ae24069711c060bcb239",
+      "role": "Original source snapshot recorded for provenance; current implementation is in src/frontend and src/backend."
+    },
+    {
+      "name": "research-backend-core-20261007.zip",
+      "bytes": 302949,
+      "sha256": "9fcff5d1dc990fe4242181daba4fcd323ed565d149b2d0772e90d8df1518b96d",
+      "role": "Original source snapshot recorded for provenance; current packages are in data/packages."
+    },
+    {
+      "name": "research-panel-backend-20261007.zip",
+      "bytes": 26065013,
+      "sha256": "8f606f8886119c40e5018bd1fd017f44c8d3ee0c12235409f08c8b41caeb27d3",
+      "role": "Original source snapshot recorded for provenance; current packages are in data/packages."
+    }
+  ]
 }

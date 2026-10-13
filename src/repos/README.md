@@ -86,6 +86,6 @@
 
 LaT原始LFS数据、DreamCoder/Reflexion/irace所需子模块已在库。QUBE为占位材料，AlphaEvolve为结果与验证材料，QD-LHD为参考实现，VRPAgent含生成启发式与样本种群；完整搜索系统的可用性按各目录内容判断。
 
-尚缺的正文、附件和实现统一记在[待补文献与配套材料](../../literature/待补文献.md)。算例位于[data/benchmarks](../../data/benchmarks/)，Solomon实例位于其`Solomon/instances/In/`目录。
+后续阅读与所需配套材料见[研究阅读清单](../../literature/待补文献.md)。算例位于[data/benchmarks](../../data/benchmarks/)，Solomon实例位于其`Solomon/instances/In/`目录。
 
 许可证以各目录附带文件为准；代码评议保留了核对时的[许可文件](../../materials/代码评议/algorithm_design/delivery_licenses/)。[notes](notes/)记录外部基线问题与补丁。

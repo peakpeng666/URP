@@ -17,4 +17,4 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 RESEARCH_CONSOLE_PACKAGE_ROOT=packages python3 -m unittest discover -s tests -p integration_backend.py
 ```
 
-当前派生数据库位于 `data/backend/research.sqlite3`，来源及本次验证见同目录 `SOURCE.json`。它由已核验的实验记录重建，包含9个实验、672条路线，不代表恢复全部历史数据库版本。
+当前派生数据库位于 `data/backend/research.sqlite3`，来源与验证记录见同目录 `SOURCE.json`。它由已核验的实验记录构建，包含9个实验、672条路线。

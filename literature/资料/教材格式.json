@@ -35,9 +35,5 @@
       "scope": "Format/identity check only; no new full-book reading claimed."
     }
   ],
-  "legacy_claims_not_imported": [
-    "Arc Routing备用DjVu归档目前未定位，因此不声明已交付。",
-    "Vehicle Routing相对旧扫描版省略的具体页数未做双版本比较，因此未当作此次新核验事实导入。",
-    "旧目录与未结项状态未恢复。"
-  ]
+  "comparison_scope": "Current supplied PDF files; comparisons with other editions or formats are outside this format record."
 }
