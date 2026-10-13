@@ -1,0 +1,34 @@
+{
+  "study_id": "VRPTW_20261007_FROZEN_V1",
+  "scope": "Small synthetic exact-oracle experiment; no field, scale, multimodal, or statistical generalization claim",
+  "input": {
+    "geometries": 16, "tasks_each": 7, "vehicles": 2, "capacity_each": 6,
+    "demand_node_1_to_7": [2,1,2,1,2,1,1], "service_time_each": 2,
+    "depot": [0,0], "depart_time": 0, "return_deadline": 120,
+    "distance": "Euclidean in arbitrary distance units; speed=1; no rounding during optimization",
+    "time_window_semantics": "Inclusive bounds on START OF SERVICE; wait allowed; travel/service nonnegative; all routes return to depot",
+    "seed_base": 2026100701,
+    "geometry_strata": "G01-G08 uniform square [-10,10]^2; G09-G16 alternating two Gaussian clusters at (-6,-6)/(6,6), sigma1.8 clipped to [-10,10]; coordinates rounded to3 decimals",
+    "reference_routes": [[1,2,3,4],[5,6,7]],
+    "window_generation": "Compute earliest start times on fixed label-order capacity-feasible reference routes without windows; add seeded uniform[-8,8] jitter; windows [max(0,center-halfwidth),max(0,center+halfwidth)]",
+    "nested_halfwidths": {"tight":2,"medium":10,"wide":30},
+    "bias": "All windows are centered near a fixed label-order witness. Medium/wide contain that witness. Tight may be infeasible. This favors reference-compatible chronology; no screening, rejection, tuning, or resampling. 16 related triples, not48 independent draws."
+  },
+  "algorithms": {
+    "distance_first": "Repeatedly choose globally minimum additional distance among all capacity/time-window/depot-return feasible insertions. Ties node,vehicle,position. Stop when no insertion feasible.",
+    "time_window_first": "Same candidates, key earliest node deadline, then largest minimum slack on candidate modified route, then added distance,node,vehicle,position.",
+    "shared_improvement": "After construction, at most5 rounds best improving feasible single-node relocations (including cross-route) and within-route segment reversals; retry greedy insertion once; another at most5 improvement rounds. Preserve served nodes. Improvement objective total distance; deterministic lexicographic route ties.",
+    "diagnostic": "Exact capacity-only minimum-distance full-service solution, tie lexicographic ordered routes, replayed unchanged under time windows; not a third heuristic."
+  },
+  "exact_oracle": "Enumerate all ordered subsets with load<=6, retain feasible minimum-distance route for each mask. Combine disjoint masks for2 vehicles. Full optimum null if infeasible; additionally exact max-coverage/min-distance and exact optimum on each heuristic's precise served mask. Empty routes allowed. Exhaustive, no heuristic pruning.",
+  "analysis": {
+    "primary": ["Full-service feasibility over all48", "Full-service success over oracle-feasible cases with denominator", "Served tasks out of336 and exact maximum coverage", "paired full-service outcomes by16 geometry triples"],
+    "secondary": ["Late starts, overload, late depot returns, missing and duplicate nodes", "Full optimum gap only feasible-full cases, denominator reported", "Same-served-mask feasible optimum gap, excluding empty masks", "Coverage shortfall vs exact max coverage", "Pure-distance exact route time-window violations", "CPU by generation/tests/oracles/heuristics/checking/analysis, with complete workload CPU"],
+    "no_imputation": "Infeasible full objective is JSON null, never0. All instances and failures retained. Feasible subset gaps cannot substitute for full-service rate.",
+    "uncertainty": "Descriptive paired counts only. No p-values or population claims; nested widths are not independent.",
+    "prespecified_conclusions": "Report whichever heuristic wins/ties/loses. Reject universal superiority. Distinguish constraint-gated distance-first failure from capacity-only distance optimum violating windows."
+  },
+  "checker": "Independent implementation re-derives Euclidean distances, route loads, arrival/wait/start/departure, inclusive windows, depot returns, missing/duplicate/unknown nodes from original nodes and routes; never uses solver distance matrix or feasibility function. Adversarial unit tests plus brute full-permutation split cross-check on G01 andG09 each width.",
+  "budget": "Standard library only. One child workload process hard RLIMIT_CPU110s and supervisor hard RLIMIT_CPU9s, aggregate OS hard bound119s<=120s. No network,API,paid service,installation,orCodex. Entire child CPU measured with wait4, including generation,freeze,tests,solve,analysis,exports; parent packaging separately measured. All unfinished/failed cases retained if interrupted.",
+  "freeze": "All inputs, protocol, experiment implementation, checker, supervisor and planned analysis SHA256 hashed before any route optimization. No solver pilot or tuning run. On implementation failure, retain logs/freeze and state any amended rerun explicitly."
+}

@@ -1,0 +1,61 @@
+{
+  "id": "single_customer_cycle",
+  "depot": 0,
+  "capacity": 1,
+  "customers": [
+    {
+      "id": 0,
+      "node": 1,
+      "demand": 1
+    }
+  ],
+  "arcs": [
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      2,
+      1
+    ],
+    [
+      2,
+      0,
+      1
+    ]
+  ],
+  "forbidden_turns": [
+    [
+      0,
+      1,
+      0
+    ]
+  ],
+  "turn_penalties": [],
+  "units": "synthetic_integer_cost",
+  "service_heading_reset": false,
+  "depot_reset": "between_routes_only",
+  "fleet_limit": null,
+  "coordinates": {
+    "0": [
+      0,
+      0
+    ],
+    "1": [
+      1,
+      0
+    ],
+    "2": [
+      0.5,
+      1
+    ]
+  },
+  "split": "fixtures"
+}

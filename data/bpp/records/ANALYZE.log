@@ -1,0 +1,471 @@
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+Fontconfig error: No writable cache directories
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 20840 (\N{CJK UNIFIED IDEOGRAPH-5168}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 31243 (\N{CJK UNIFIED IDEOGRAPH-7A0B}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 21069 (\N{CJK UNIFIED IDEOGRAPH-524D}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 32512 (\N{CJK UNIFIED IDEOGRAPH-7F00}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 36873 (\N{CJK UNIFIED IDEOGRAPH-9009}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 25321 (\N{CJK UNIFIED IDEOGRAPH-62E9}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 22120 (\N{CJK UNIFIED IDEOGRAPH-5668}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 35757 (\N{CJK UNIFIED IDEOGRAPH-8BAD}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 32451 (\N{CJK UNIFIED IDEOGRAPH-7EC3}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 21516 (\N{CJK UNIFIED IDEOGRAPH-540C}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 20998 (\N{CJK UNIFIED IDEOGRAPH-5206}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 25903 (\N{CJK UNIFIED IDEOGRAPH-652F}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 30830 (\N{CJK UNIFIED IDEOGRAPH-786E}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 35748 (\N{CJK UNIFIED IDEOGRAPH-8BA4}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 38598 (\N{CJK UNIFIED IDEOGRAPH-96C6}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 24179 (\N{CJK UNIFIED IDEOGRAPH-5E73}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 22343 (\N{CJK UNIFIED IDEOGRAPH-5747}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 26368 (\N{CJK UNIFIED IDEOGRAPH-6700}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 32456 (\N{CJK UNIFIED IDEOGRAPH-7EC8}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 31665 (\N{CJK UNIFIED IDEOGRAPH-7BB1}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 25968 (\N{CJK UNIFIED IDEOGRAPH-6570}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 65288 (\N{FULLWIDTH LEFT PARENTHESIS}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 36234 (\N{CJK UNIFIED IDEOGRAPH-8D8A}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 23569 (\N{CJK UNIFIED IDEOGRAPH-5C11}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 22909 (\N{CJK UNIFIED IDEOGRAPH-597D}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 65289 (\N{FULLWIDTH RIGHT PARENTHESIS}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 20165 (\N{CJK UNIFIED IDEOGRAPH-4EC5}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 30475 (\N{CJK UNIFIED IDEOGRAPH-770B}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 39033 (\N{CJK UNIFIED IDEOGRAPH-9879}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 65306 (\N{FULLWIDTH COLON}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 23454 (\N{CJK UNIFIED IDEOGRAPH-5B9E}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 38469 (\N{CJK UNIFIED IDEOGRAPH-9645}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 25191 (\N{CJK UNIFIED IDEOGRAPH-6267}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 34892 (\N{CJK UNIFIED IDEOGRAPH-884C}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 30340 (\N{CJK UNIFIED IDEOGRAPH-7684}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 25910 (\N{CJK UNIFIED IDEOGRAPH-6536}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:57: UserWarning: Glyph 30410 (\N{CJK UNIFIED IDEOGRAPH-76CA}) missing from font(s) DejaVu Sans.
+  ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'confirmation_means.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 38543 (\N{CJK UNIFIED IDEOGRAPH-968F}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 26426 (\N{CJK UNIFIED IDEOGRAPH-673A}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 39034 (\N{CJK UNIFIED IDEOGRAPH-987A}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 24207 (\N{CJK UNIFIED IDEOGRAPH-5E8F}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 21319 (\N{CJK UNIFIED IDEOGRAPH-5347}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 38477 (\N{CJK UNIFIED IDEOGRAPH-964D}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 22343 (\N{CJK UNIFIED IDEOGRAPH-5747}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 21248 (\N{CJK UNIFIED IDEOGRAPH-5300}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 23567 (\N{CJK UNIFIED IDEOGRAPH-5C0F}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 23610 (\N{CJK UNIFIED IDEOGRAPH-5C3A}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 23544 (\N{CJK UNIFIED IDEOGRAPH-5BF8}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 22823 (\N{CJK UNIFIED IDEOGRAPH-5927}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 27491 (\N{CJK UNIFIED IDEOGRAPH-6B63}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 24577 (\N{CJK UNIFIED IDEOGRAPH-6001}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 21452 (\N{CJK UNIFIED IDEOGRAPH-53CC}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 23792 (\N{CJK UNIFIED IDEOGRAPH-5CF0}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 36873 (\N{CJK UNIFIED IDEOGRAPH-9009}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 25321 (\N{CJK UNIFIED IDEOGRAPH-62E9}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 22120 (\N{CJK UNIFIED IDEOGRAPH-5668}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 35757 (\N{CJK UNIFIED IDEOGRAPH-8BAD}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 32451 (\N{CJK UNIFIED IDEOGRAPH-7EC3}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 65306 (\N{FULLWIDTH COLON}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 20840 (\N{CJK UNIFIED IDEOGRAPH-5168}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 37096 (\N{CJK UNIFIED IDEOGRAPH-90E8}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 20010 (\N{CJK UNIFIED IDEOGRAPH-4E2A}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 20998 (\N{CJK UNIFIED IDEOGRAPH-5206}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 24067 (\N{CJK UNIFIED IDEOGRAPH-5E03}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 21333 (\N{CJK UNIFIED IDEOGRAPH-5355}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 20803 (\N{CJK UNIFIED IDEOGRAPH-5143}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 31665 (\N{CJK UNIFIED IDEOGRAPH-7BB1}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 25968 (\N{CJK UNIFIED IDEOGRAPH-6570}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 24046 (\N{CJK UNIFIED IDEOGRAPH-5DEE}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 65292 (\N{FULLWIDTH COMMA}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 36127 (\N{CJK UNIFIED IDEOGRAPH-8D1F}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 34920 (\N{CJK UNIFIED IDEOGRAPH-8868}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 31034 (\N{CJK UNIFIED IDEOGRAPH-793A}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 26356 (\N{CJK UNIFIED IDEOGRAPH-66F4}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:61: UserWarning: Glyph 22909 (\N{CJK UNIFIED IDEOGRAPH-597D}) missing from font(s) DejaVu Sans.
+  fig.colorbar(im,ax=ax,label='箱数差，负数表示选择器更好');fig.tight_layout();fig.savefig(H/'figures'/'family_order_deltas.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 21069 (\N{CJK UNIFIED IDEOGRAPH-524D}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 32512 (\N{CJK UNIFIED IDEOGRAPH-7F00}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 22343 (\N{CJK UNIFIED IDEOGRAPH-5747}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 21248 (\N{CJK UNIFIED IDEOGRAPH-5300}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 23567 (\N{CJK UNIFIED IDEOGRAPH-5C0F}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 23610 (\N{CJK UNIFIED IDEOGRAPH-5C3A}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 23544 (\N{CJK UNIFIED IDEOGRAPH-5BF8}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 21452 (\N{CJK UNIFIED IDEOGRAPH-53CC}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 23792 (\N{CJK UNIFIED IDEOGRAPH-5CF0}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 30456 (\N{CJK UNIFIED IDEOGRAPH-76F8}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 23545 (\N{CJK UNIFIED IDEOGRAPH-5BF9}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 21516 (\N{CJK UNIFIED IDEOGRAPH-540C}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 20998 (\N{CJK UNIFIED IDEOGRAPH-5206}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 25903 (\N{CJK UNIFIED IDEOGRAPH-652F}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 30340 (\N{CJK UNIFIED IDEOGRAPH-7684}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 31665 (\N{CJK UNIFIED IDEOGRAPH-7BB1}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 25968 (\N{CJK UNIFIED IDEOGRAPH-6570}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 21518 (\N{CJK UNIFIED IDEOGRAPH-540E}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 24724 (\N{CJK UNIFIED IDEOGRAPH-6094}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 65292 (\N{FULLWIDTH COMMA}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 26410 (\N{CJK UNIFIED IDEOGRAPH-672A}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 26469 (\N{CJK UNIFIED IDEOGRAPH-6765}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 19981 (\N{CJK UNIFIED IDEOGRAPH-4E0D}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 65306 (\N{FULLWIDTH COLON}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 36873 (\N{CJK UNIFIED IDEOGRAPH-9009}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 25321 (\N{CJK UNIFIED IDEOGRAPH-62E9}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 24517 (\N{CJK UNIFIED IDEOGRAPH-5FC5}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 39035 (\N{CJK UNIFIED IDEOGRAPH-987B}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 20445 (\N{CJK UNIFIED IDEOGRAPH-4FDD}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 25345 (\N{CJK UNIFIED IDEOGRAPH-6301}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 21464 (\N{CJK UNIFIED IDEOGRAPH-53D8}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 38543 (\N{CJK UNIFIED IDEOGRAPH-968F}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 26426 (\N{CJK UNIFIED IDEOGRAPH-673A}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 21319 (\N{CJK UNIFIED IDEOGRAPH-5347}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 24207 (\N{CJK UNIFIED IDEOGRAPH-5E8F}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+/workspace/scratch/27470b7a9f17/independent_bpp_prefix_selection_20261006/src/analyze.py:64: UserWarning: Glyph 38477 (\N{CJK UNIFIED IDEOGRAPH-964D}) missing from font(s) DejaVu Sans.
+  ax.set_xticks(range(4),['Weibull前缀','均匀前缀','小尺寸Beta前缀','双峰前缀']);ax.set_ylabel('相对同BF前缀分支oracle的箱数后悔');ax.set_title('前缀相同，未来不同：选择必须保持不变');ax.legend();ax.spines[['right','top']].set_visible(False);fig.tight_layout();fig.savefig(H/'figures'/'same_prefix_risk.png',dpi=180);plt.close(fig)
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+findfont: Font family 'Noto Sans CJK SC' not found.
+{"SBS_oracle_headroom":24.333333333333332,"W_T_L_vs_SBS":[49,56,3],"best_gain_vs_SBS":116,"choices":{"BF":53,"BF_then_EoH":55},"cluster_bootstrap_95_percentile_CI":[-23.916666666666668,-19.37962962962963],"headroom_recovered_fraction":0.8816590563165906,"mean_bins":{"BF":2794.3518518518517,"BF_then_EoH":2757.527777777778,"SBS":2757.527777777778,"SELECTOR":2736.074074074074,"branch_oracle":2733.1944444444443,"full_run_oracle":2727.185185185185,"published_EoH":2748.314814814815},"n":108,"oracle_preferences":{"BF":57,"BF_then_EoH":39,"tie":12},"selector_minus_SBS_mean":-21.453703703703702,"selector_oracle_regret":2.8796296296296298,"worst_harm_vs_SBS":6}

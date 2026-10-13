@@ -1,0 +1,657 @@
+{
+  "schema_version": 1,
+  "id": "selector",
+  "title": "BPP 选择器训练样本量",
+  "domain": "BPP",
+  "kind": "offline_training_size_ablation",
+  "status": "completed",
+  "started_at": null,
+  "finished_at": "2026-10-07T02:48:02Z",
+  "counts": [
+    {
+      "unit": "fit",
+      "value": 560,
+      "scope": "offline_training",
+      "note": "RUN_COMPLETE.json:new_offline_fits; includes fold fits, not policy executions"
+    },
+    {
+      "unit": "decision",
+      "value": 17280,
+      "scope": "offline_prediction",
+      "note": "RUN_COMPLETE.json:new_offline_test_predictions; training-subset seeds reuse the fixed test set"
+    },
+    {
+      "unit": "run",
+      "value": 0,
+      "scope": "new_policy",
+      "note": "RUN_COMPLETE.json:new_policy_runs; historical policies were not rerun"
+    },
+    {
+      "unit": "stream",
+      "value": 108,
+      "scope": "fixed_test",
+      "note": "COST.json:unique_test_streams; 36 multisets × 3 correlated orders, not 108 independent samples"
+    },
+    {
+      "unit": "run",
+      "value": 504,
+      "scope": "historical_label_subset_verified",
+      "note": "COST.json:historical_raw_label_runs_verified; only source labels checked in this ablation, not the entire 768-run historical project"
+    }
+  ],
+  "failure_reason": null,
+  "failures": [],
+  "notes": [
+    "固定 108 条测试流 / 36 个多重集；20 种子只改变训练子集。满量级种子相同，不是独立重复。",
+    "选择器−SBS 负数更好，单位为箱；跨种子描述性均值。历史测试结果已被看过，本次不是新盲测，也未重跑 768 条历史策略。",
+    "数值失败 0；留一家族满量级恶化属于保留的研究结果，不是程序失败。",
+    "family_holdout 和 within_family 使用不同 cohort，不能混为一条学习曲线。",
+    "同一测试口径的训练档位可比较；20 个种子仅改变训练子集，满量级子集相同。",
+    "只导入已经完成的离线分析，没有运行新策略；源快照没有起始时间，保留 null。"
+  ],
+  "parameters": {
+    "model": "fixed 5NN cost regression",
+    "k": 5,
+    "prefix_items": 500,
+    "feature_count": 31,
+    "test_multisets": 36,
+    "orders_per_multiset": 3,
+    "historical_test_already_observed": true,
+    "training_grid": [
+      {
+        "track": "family_holdout",
+        "train_groups": 5,
+        "train_streams": 15,
+        "groups_per_training_family": 1,
+        "seeds": 20,
+        "test_streams_fixed": 108
+      },
+      {
+        "track": "family_holdout",
+        "train_groups": 10,
+        "train_streams": 30,
+        "groups_per_training_family": 2,
+        "seeds": 20,
+        "test_streams_fixed": 108
+      },
+      {
+        "track": "family_holdout",
+        "train_groups": 20,
+        "train_streams": 60,
+        "groups_per_training_family": 4,
+        "seeds": 20,
+        "test_streams_fixed": 108
+      },
+      {
+        "track": "family_holdout",
+        "train_groups": 40,
+        "train_streams": 120,
+        "groups_per_training_family": 8,
+        "seeds": 20,
+        "test_streams_fixed": 108
+      },
+      {
+        "track": "within_family",
+        "train_groups": 6,
+        "train_streams": 18,
+        "groups_per_training_family": 1,
+        "seeds": 20,
+        "test_streams_fixed": 108
+      },
+      {
+        "track": "within_family",
+        "train_groups": 12,
+        "train_streams": 36,
+        "groups_per_training_family": 2,
+        "seeds": 20,
+        "test_streams_fixed": 108
+      },
+      {
+        "track": "within_family",
+        "train_groups": 24,
+        "train_streams": 72,
+        "groups_per_training_family": 4,
+        "seeds": 20,
+        "test_streams_fixed": 108
+      },
+      {
+        "track": "within_family",
+        "train_groups": 48,
+        "train_streams": 144,
+        "groups_per_training_family": 8,
+        "seeds": 20,
+        "test_streams_fixed": 108
+      }
+    ]
+  },
+  "provenance": {
+    "captured_at": "2026-10-07T02:59:21.014332+00:00",
+    "source_label": "public/research-batches/selector"
+  },
+  "metrics": [
+    {
+      "id": "family_holdout-5-mean_bins",
+      "label": "平均箱数 · family_holdout",
+      "algorithm": "SELECTOR (5 groups / 15 streams)",
+      "value": 2744.014814814815,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "absolute observed bin count"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/0/mean_bins/mean"
+      }
+    },
+    {
+      "id": "family_holdout-5-delta_vs_subset_sbs",
+      "label": "选择器减去 SBS · family_holdout",
+      "algorithm": "SELECTOR (5 groups / 15 streams)",
+      "value": -13.512962962962963,
+      "comparison": {
+        "metric": "delta_vs_subset_sbs",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "training-subset SBS; observed BF_then_EoH on all grid points"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/0/delta_vs_subset_sbs/mean"
+      }
+    },
+    {
+      "id": "family_holdout-5-regret",
+      "label": "两后缀分支 oracle regret · family_holdout",
+      "algorithm": "SELECTOR (5 groups / 15 streams)",
+      "value": 10.820370370370371,
+      "comparison": {
+        "metric": "regret",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "hindsight minimum of BF and BF_then_EoH after shared BF prefix; not global optimum"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/0/regret/mean"
+      }
+    },
+    {
+      "id": "family_holdout-10-mean_bins",
+      "label": "平均箱数 · family_holdout",
+      "algorithm": "SELECTOR (10 groups / 30 streams)",
+      "value": 2744.5546296296293,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "absolute observed bin count"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/1/mean_bins/mean"
+      }
+    },
+    {
+      "id": "family_holdout-10-delta_vs_subset_sbs",
+      "label": "选择器减去 SBS · family_holdout",
+      "algorithm": "SELECTOR (10 groups / 30 streams)",
+      "value": -12.973148148148146,
+      "comparison": {
+        "metric": "delta_vs_subset_sbs",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "training-subset SBS; observed BF_then_EoH on all grid points"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/1/delta_vs_subset_sbs/mean"
+      }
+    },
+    {
+      "id": "family_holdout-10-regret",
+      "label": "两后缀分支 oracle regret · family_holdout",
+      "algorithm": "SELECTOR (10 groups / 30 streams)",
+      "value": 11.360185185185184,
+      "comparison": {
+        "metric": "regret",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "hindsight minimum of BF and BF_then_EoH after shared BF prefix; not global optimum"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/1/regret/mean"
+      }
+    },
+    {
+      "id": "family_holdout-20-mean_bins",
+      "label": "平均箱数 · family_holdout",
+      "algorithm": "SELECTOR (20 groups / 60 streams)",
+      "value": 2742.996296296296,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "absolute observed bin count"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/2/mean_bins/mean"
+      }
+    },
+    {
+      "id": "family_holdout-20-delta_vs_subset_sbs",
+      "label": "选择器减去 SBS · family_holdout",
+      "algorithm": "SELECTOR (20 groups / 60 streams)",
+      "value": -14.531481481481482,
+      "comparison": {
+        "metric": "delta_vs_subset_sbs",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "training-subset SBS; observed BF_then_EoH on all grid points"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/2/delta_vs_subset_sbs/mean"
+      }
+    },
+    {
+      "id": "family_holdout-20-regret",
+      "label": "两后缀分支 oracle regret · family_holdout",
+      "algorithm": "SELECTOR (20 groups / 60 streams)",
+      "value": 9.801851851851852,
+      "comparison": {
+        "metric": "regret",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "hindsight minimum of BF and BF_then_EoH after shared BF prefix; not global optimum"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/2/regret/mean"
+      }
+    },
+    {
+      "id": "family_holdout-40-mean_bins",
+      "label": "平均箱数 · family_holdout",
+      "algorithm": "SELECTOR (40 groups / 120 streams)",
+      "value": 2788.0462962962965,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "absolute observed bin count"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/3/mean_bins/mean"
+      }
+    },
+    {
+      "id": "family_holdout-40-delta_vs_subset_sbs",
+      "label": "选择器减去 SBS · family_holdout",
+      "algorithm": "SELECTOR (40 groups / 120 streams)",
+      "value": 30.518518518518512,
+      "comparison": {
+        "metric": "delta_vs_subset_sbs",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "training-subset SBS; observed BF_then_EoH on all grid points"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/3/delta_vs_subset_sbs/mean"
+      }
+    },
+    {
+      "id": "family_holdout-40-regret",
+      "label": "两后缀分支 oracle regret · family_holdout",
+      "algorithm": "SELECTOR (40 groups / 120 streams)",
+      "value": 54.85185185185186,
+      "comparison": {
+        "metric": "regret",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:family_holdout:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=family_holdout; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "hindsight minimum of BF and BF_then_EoH after shared BF prefix; not global optimum"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/3/regret/mean"
+      }
+    },
+    {
+      "id": "within_family-6-mean_bins",
+      "label": "平均箱数 · within_family",
+      "algorithm": "SELECTOR (6 groups / 18 streams)",
+      "value": 2740.281481481482,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "absolute observed bin count"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/4/mean_bins/mean"
+      }
+    },
+    {
+      "id": "within_family-6-delta_vs_subset_sbs",
+      "label": "选择器减去 SBS · within_family",
+      "algorithm": "SELECTOR (6 groups / 18 streams)",
+      "value": -17.246296296296293,
+      "comparison": {
+        "metric": "delta_vs_subset_sbs",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "training-subset SBS; observed BF_then_EoH on all grid points"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/4/delta_vs_subset_sbs/mean"
+      }
+    },
+    {
+      "id": "within_family-6-regret",
+      "label": "两后缀分支 oracle regret · within_family",
+      "algorithm": "SELECTOR (6 groups / 18 streams)",
+      "value": 7.087037037037037,
+      "comparison": {
+        "metric": "regret",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "hindsight minimum of BF and BF_then_EoH after shared BF prefix; not global optimum"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/4/regret/mean"
+      }
+    },
+    {
+      "id": "within_family-12-mean_bins",
+      "label": "平均箱数 · within_family",
+      "algorithm": "SELECTOR (12 groups / 36 streams)",
+      "value": 2739.8171296296296,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "absolute observed bin count"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/5/mean_bins/mean"
+      }
+    },
+    {
+      "id": "within_family-12-delta_vs_subset_sbs",
+      "label": "选择器减去 SBS · within_family",
+      "algorithm": "SELECTOR (12 groups / 36 streams)",
+      "value": -17.710648148148145,
+      "comparison": {
+        "metric": "delta_vs_subset_sbs",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "training-subset SBS; observed BF_then_EoH on all grid points"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/5/delta_vs_subset_sbs/mean"
+      }
+    },
+    {
+      "id": "within_family-12-regret",
+      "label": "两后缀分支 oracle regret · within_family",
+      "algorithm": "SELECTOR (12 groups / 36 streams)",
+      "value": 6.622685185185186,
+      "comparison": {
+        "metric": "regret",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "hindsight minimum of BF and BF_then_EoH after shared BF prefix; not global optimum"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/5/regret/mean"
+      }
+    },
+    {
+      "id": "within_family-24-mean_bins",
+      "label": "平均箱数 · within_family",
+      "algorithm": "SELECTOR (24 groups / 72 streams)",
+      "value": 2739.3050925925927,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "absolute observed bin count"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/6/mean_bins/mean"
+      }
+    },
+    {
+      "id": "within_family-24-delta_vs_subset_sbs",
+      "label": "选择器减去 SBS · within_family",
+      "algorithm": "SELECTOR (24 groups / 72 streams)",
+      "value": -18.222685185185185,
+      "comparison": {
+        "metric": "delta_vs_subset_sbs",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "training-subset SBS; observed BF_then_EoH on all grid points"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/6/delta_vs_subset_sbs/mean"
+      }
+    },
+    {
+      "id": "within_family-24-regret",
+      "label": "两后缀分支 oracle regret · within_family",
+      "algorithm": "SELECTOR (24 groups / 72 streams)",
+      "value": 6.110648148148149,
+      "comparison": {
+        "metric": "regret",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "hindsight minimum of BF and BF_then_EoH after shared BF prefix; not global optimum"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/6/regret/mean"
+      }
+    },
+    {
+      "id": "within_family-48-mean_bins",
+      "label": "平均箱数 · within_family",
+      "algorithm": "SELECTOR (48 groups / 144 streams)",
+      "value": 2736.074074074074,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "absolute observed bin count"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/7/mean_bins/mean"
+      }
+    },
+    {
+      "id": "within_family-48-delta_vs_subset_sbs",
+      "label": "选择器减去 SBS · within_family",
+      "algorithm": "SELECTOR (48 groups / 144 streams)",
+      "value": -21.453703703703702,
+      "comparison": {
+        "metric": "delta_vs_subset_sbs",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "training-subset SBS; observed BF_then_EoH on all grid points"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/7/delta_vs_subset_sbs/mean"
+      }
+    },
+    {
+      "id": "within_family-48-regret",
+      "label": "两后缀分支 oracle regret · within_family",
+      "algorithm": "SELECTOR (48 groups / 144 streams)",
+      "value": 2.8796296296296306,
+      "comparison": {
+        "metric": "regret",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "selector:within_family:fixed-108-streams:36-multisets",
+        "protocol": "retrospective fixed-5NN training-size ablation; track=within_family; frozen before refit",
+        "budget": "fixed k=5 and prefix=500; training-group count is the learning-curve axis",
+        "aggregation": "mean of per-stream outcomes across 20 training-subset seeds; correlated fixed test set",
+        "reference": "hindsight minimum of BF and BF_then_EoH after shared BF prefix; not global optimum"
+      },
+      "source": {
+        "artifact_id": "SUMMARY-json",
+        "locator": "/7/regret/mean"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "REPORT_ZH-txt",
+      "path": "files/REPORT_ZH.txt",
+      "media_type": "text/plain",
+      "role": "report"
+    },
+    {
+      "id": "SUMMARY-json",
+      "path": "files/SUMMARY.json",
+      "media_type": "application/json",
+      "role": "summary"
+    },
+    {
+      "id": "RUN_COMPLETE-json",
+      "path": "files/RUN_COMPLETE.json",
+      "media_type": "application/json",
+      "role": "provenance"
+    },
+    {
+      "id": "AUDIT-json",
+      "path": "files/AUDIT.json",
+      "media_type": "application/json",
+      "role": "audit"
+    },
+    {
+      "id": "COST-json",
+      "path": "files/COST.json",
+      "media_type": "application/json",
+      "role": "provenance"
+    },
+    {
+      "id": "POSTHOC_DIAGNOSIS-json",
+      "path": "files/POSTHOC_DIAGNOSIS.json",
+      "media_type": "application/json",
+      "role": "provenance"
+    },
+    {
+      "id": "independent-audit-json",
+      "path": "files/independent-audit.json",
+      "media_type": "application/json",
+      "role": "audit"
+    }
+  ]
+}

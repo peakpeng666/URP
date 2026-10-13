@@ -1,0 +1,194 @@
+[
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/runs/dev_20261004_01/raw.jsonl",
+    "copy": "data/raw.jsonl",
+    "sha256": "c605348d44c912d1ff66690074246ffc21498bfac2555712c7682cf085afe722",
+    "bytes": 1437668
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/protocol.json",
+    "copy": "source_reference/original_protocol.json",
+    "sha256": "058dcba01f5420165f85dae518fe351c4b8a25769e82e4723d65616cedd182cd",
+    "bytes": 1965
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/README.md",
+    "copy": "source_reference/original_README.md",
+    "sha256": "29d57bc3773f27edcacf5974aa540598ab0cfc36d82207f6dbb1ae45e334d509",
+    "bytes": 8066
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/runs/dev_20261004_01/summary.json",
+    "copy": "source_reference/original_summary.json",
+    "sha256": "535fd74f553316154c5fbed9755a2e839523d6cd72af2aa2453fcac6a8d2002b",
+    "bytes": 66480
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/manifest.json",
+    "copy": "data/instance_manifest.json",
+    "sha256": "670ebff013d5aa940835e685c9e2109aa5a7a93ce8a7a35fbbe43ee637d612db",
+    "bytes": 7859
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n50-s2026100515.json",
+    "copy": "data/instances/dev-clustered-n50-s2026100515.json",
+    "sha256": "268e0f76a0a2cdbc785a59dc7a94f1a6e23eddf91efc4e24b8c914ebf3279f64",
+    "bytes": 3026
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n100-s2026100505.json",
+    "copy": "data/instances/dev-uniform-n100-s2026100505.json",
+    "sha256": "cd726717c04cf0e7315626958bc7f06364c31672a380cd7be97fd2fe5f7c7e41",
+    "bytes": 5635
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n200-s2026100510.json",
+    "copy": "data/instances/dev-uniform-n200-s2026100510.json",
+    "sha256": "11f410d062f67d15dd5c5587731bac261ac4daa156c5a49f80dc7e0ff8e4bb80",
+    "bytes": 10896
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n100-s2026100516.json",
+    "copy": "data/instances/dev-clustered-n100-s2026100516.json",
+    "sha256": "7744f12e3800292aa5807a7f11fa063c075824a78bcbe5fe6103a215bd23d864",
+    "bytes": 5675
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n100-s2026100519.json",
+    "copy": "data/instances/dev-clustered-n100-s2026100519.json",
+    "sha256": "879909ada2e8d88edcf6fce87819ea32976a8298570495c227bea226e6d22dce",
+    "bytes": 5656
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n200-s2026100521.json",
+    "copy": "data/instances/dev-clustered-n200-s2026100521.json",
+    "sha256": "23831c2001366e5ba015dd6e2beb269373617ab178898a5b0824b118cd7fb518",
+    "bytes": 10952
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n100-s2026100517.json",
+    "copy": "data/instances/dev-clustered-n100-s2026100517.json",
+    "sha256": "bbf4a0e070db2cbb7b2289b147e240b47b7e91460fa3284789c7439e9b9f2a2a",
+    "bytes": 5668
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n200-s2026100508.json",
+    "copy": "data/instances/dev-uniform-n200-s2026100508.json",
+    "sha256": "6716c268803b268e8544b71648fc16a3c8bc37f351a6648b25b953faac6da905",
+    "bytes": 10913
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n50-s2026100502.json",
+    "copy": "data/instances/dev-uniform-n50-s2026100502.json",
+    "sha256": "18318b538600c6063703462f7318542c95f1b93123831556170028fa70251ddd",
+    "bytes": 3011
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n100-s2026100506.json",
+    "copy": "data/instances/dev-uniform-n100-s2026100506.json",
+    "sha256": "3ee878b165cfd219c69aaf3b1106445c54c3317ab72faf2a5a028ba5977c197a",
+    "bytes": 5642
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n100-s2026100507.json",
+    "copy": "data/instances/dev-uniform-n100-s2026100507.json",
+    "sha256": "0de80d14ad8c7845e0d991137ff6ddb6ef3431597b27453cb209dbe0ce725431",
+    "bytes": 5650
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n100-s2026100518.json",
+    "copy": "data/instances/dev-clustered-n100-s2026100518.json",
+    "sha256": "52ce57dc58026e0e2a5bb912ccb39b3da452d7be7fb4a620940b87594e838322",
+    "bytes": 5668
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n200-s2026100522.json",
+    "copy": "data/instances/dev-clustered-n200-s2026100522.json",
+    "sha256": "8b7d7ff05a738c639ab85d837ce285aef336e9772bdc868dd0500665d2451b14",
+    "bytes": 10948
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n50-s2026100501.json",
+    "copy": "data/instances/dev-uniform-n50-s2026100501.json",
+    "sha256": "97e852d4621e0c752af0cc4a006cde71f728341cc990b56820f12cc1d73397fc",
+    "bytes": 3004
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n50-s2026100500.json",
+    "copy": "data/instances/dev-uniform-n50-s2026100500.json",
+    "sha256": "4562a42540f65ea4da735b5363bd2ea8e594306fc8ae7b927958ee1c0025000b",
+    "bytes": 3016
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n50-s2026100503.json",
+    "copy": "data/instances/dev-uniform-n50-s2026100503.json",
+    "sha256": "db1c7ef1b09688511ccf6c8782fb02a3507b6db8810b3457fe285594e11fe5f8",
+    "bytes": 2999
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n50-s2026100514.json",
+    "copy": "data/instances/dev-clustered-n50-s2026100514.json",
+    "sha256": "cef1932fcba0609010417f94207624b0c971aefa5a713976a22b58d4288d324c",
+    "bytes": 3024
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n200-s2026100523.json",
+    "copy": "data/instances/dev-clustered-n200-s2026100523.json",
+    "sha256": "2bc9da59221fc957264edfa4e8454d9ff1aae2ad389f5ccd549e54ef4bd348ed",
+    "bytes": 10968
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n200-s2026100509.json",
+    "copy": "data/instances/dev-uniform-n200-s2026100509.json",
+    "sha256": "73727c1ddd30d9a534d69489994d47dbac7a96e1b332e8c660551682c8840b0e",
+    "bytes": 10916
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n200-s2026100511.json",
+    "copy": "data/instances/dev-uniform-n200-s2026100511.json",
+    "sha256": "a53ce81ab3d6a7b6864f8cdcc85bd8b9358f490c08b102d630b0bb0106a165e3",
+    "bytes": 10901
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n50-s2026100512.json",
+    "copy": "data/instances/dev-clustered-n50-s2026100512.json",
+    "sha256": "5481f7bf8b4825674dd1f06f30cfd1bd31138e96d5f04644352c61cbb6fdf4c2",
+    "bytes": 3021
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n50-s2026100513.json",
+    "copy": "data/instances/dev-clustered-n50-s2026100513.json",
+    "sha256": "b005d8a9e2aadd9d27ad00ffa5cfb5a1fbbc1f240a2cf12efe53bfa292ef761b",
+    "bytes": 3025
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-clustered-n200-s2026100520.json",
+    "copy": "data/instances/dev-clustered-n200-s2026100520.json",
+    "sha256": "da16590b9aed972223888f7871d0f937ed268b80402d85777328b19ea9bef275",
+    "bytes": 10959
+  },
+  {
+    "source": "URP/experiments/vehicle_routing/scale_budget_v1/data/dev/dev-uniform-n100-s2026100504.json",
+    "copy": "data/instances/dev-uniform-n100-s2026100504.json",
+    "sha256": "1f74546aebe38798d75769d2f6e2df4362b545ad1f967bf3bcde305b22511a1c",
+    "bytes": 5649
+  },
+  {
+    "source": "paper_to_experiment_20261006/all_modules/M04/逐篇笔记/P069.md",
+    "copy": "source_reference/P069_review.md",
+    "sha256": "1cd3e27efc14d9541f231ce036bb3e13dc58397e1b38dd4374943e002a8e95fb",
+    "bytes": 8531
+  },
+  {
+    "source": "paper_to_experiment_20261006/all_modules/M05/逐篇笔记/P116.md",
+    "copy": "source_reference/P116_review.md",
+    "sha256": "85507452b56900cc2629099a1b042cc211426e2f5362d6e5734b743c06a1f307",
+    "bytes": 4453
+  },
+  {
+    "source": "paper_to_experiment_20261006/all_modules/M02/逐篇笔记/P093.md",
+    "copy": "source_reference/P093_review.md",
+    "sha256": "2ae170abcd251e6c8b55825feebce4d305dc89c20c23634f303724c69f3a648d",
+    "bytes": 3546
+  }
+]

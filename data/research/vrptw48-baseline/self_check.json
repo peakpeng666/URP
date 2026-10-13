@@ -1,0 +1,65 @@
+{
+  "unit_tests": [
+    "exact_boundary_wait_and_return",
+    "overload",
+    "late_start_not_arrival",
+    "duplicate_and_missing",
+    "unknown_node",
+    "late_depot",
+    "empty_is_not_full",
+    "vehicle_count"
+  ],
+  "unit_tests_passed": 8,
+  "nested_windows_checks_passed": true,
+  "medium_wide_reference_witness_checks": 32,
+  "independent_full_oracle_crosschecks": [
+    {
+      "instance": "G01_tight",
+      "full_permutation_split_candidates": 40320,
+      "oracle": null,
+      "independent_bruteforce": null,
+      "pass": true
+    },
+    {
+      "instance": "G01_medium",
+      "full_permutation_split_candidates": 40320,
+      "oracle": 67.47886143826832,
+      "independent_bruteforce": 67.47886143826832,
+      "pass": true
+    },
+    {
+      "instance": "G01_wide",
+      "full_permutation_split_candidates": 40320,
+      "oracle": 63.55270356288207,
+      "independent_bruteforce": 63.55270356288207,
+      "pass": true
+    },
+    {
+      "instance": "G09_tight",
+      "full_permutation_split_candidates": 40320,
+      "oracle": null,
+      "independent_bruteforce": null,
+      "pass": true
+    },
+    {
+      "instance": "G09_medium",
+      "full_permutation_split_candidates": 40320,
+      "oracle": 55.38436491742989,
+      "independent_bruteforce": 55.38436491742989,
+      "pass": true
+    },
+    {
+      "instance": "G09_wide",
+      "full_permutation_split_candidates": 40320,
+      "oracle": 53.303929440195844,
+      "independent_bruteforce": 53.303929440195844,
+      "pass": true
+    }
+  ],
+  "heuristic_route_feasibility_checks": 96,
+  "all48_cases_retained": true,
+  "source_unchanged": true,
+  "time_window_semantics": "service_start",
+  "no_solution_imputed_to_zero": true,
+  "cpu_process_at_checkpoint": 4.183750699
+}

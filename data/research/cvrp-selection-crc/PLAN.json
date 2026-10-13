@@ -1,0 +1,82 @@
+{
+  "experiment": "CVRP selection-worthiness and CRC mechanism transfer v1",
+  "created_utc": "2026-10-06T04:13:42.096743+00:00",
+  "status": "post-hoc exploratory offline replay; not new untouched test data; no deployment guarantee",
+  "pre_design_disclosures": [
+    "Existing development summary and entire-table SBS/VBS headroom were inspected before freezing.",
+    "No selector or calibration performance was evaluated before this freeze."
+  ],
+  "input": "24 development instances; 432 prior real runs; 3 algorithms x 2 budget profiles x 3 solver seeds; no new solver or API calls",
+  "algorithms": [
+    "multistart_vnd",
+    "parallel_savings",
+    "pyvrp_ils_s1e6"
+  ],
+  "profiles": [
+    "cpu025",
+    "cpu100"
+  ],
+  "solver_seeds": [
+    11,
+    29,
+    47
+  ],
+  "freeze_rule": "Freeze this plan and all source/input hashes before first selector evaluation. No alpha changes after results.",
+  "primary_question": "Is measured algorithm complementarity large enough to justify an actual pre-execution selector and its overhead?",
+  "split": {
+    "folds": 4,
+    "test": "replicate == fold",
+    "calibration": "replicate == (fold+1) mod 4",
+    "training": "other two replicates",
+    "counts_per_fold": {
+      "training": 12,
+      "calibration": 6,
+      "test": 6
+    },
+    "group": "all seeds and both profiles of a base instance share its role",
+    "strata": "family x n customers only for split and reporting; not selector input"
+  },
+  "features": [
+    "log(n_customers)",
+    "mean demand / capacity",
+    "population std demand / capacity",
+    "population std depot radius / mean depot radius",
+    "mean nearest-customer distance / mean depot radius",
+    "min(bbox_width,bbox_height) / max(bbox_width,bbox_height)"
+  ],
+  "selector": {
+    "type": "fixed kNN mean performance regression",
+    "k": 3,
+    "distance": "Euclidean on train-only population-standardized features",
+    "weight": "equal neighbors",
+    "target": "per-algorithm mean route length over 3 seeds / star-route input-only upper bound",
+    "tie_break": "algorithm id lexicographic; neighbors distance then instance id",
+    "tuning": "none"
+  },
+  "SBS": "training-only minimum mean normalized length; no calibration/test labels used",
+  "oracle": "per-instance minimum of 3-seed per-algorithm means, descriptive estimated-mean oracle; not mathematical optimum or true expected performance",
+  "CRC": {
+    "primary_alpha": 0.1,
+    "sensitivity_alpha": 0.2,
+    "sensitivity": "predeclared illustration only; never replaces primary",
+    "B": 1,
+    "harm_tolerance_fraction": 0.01,
+    "loss": "1[chosen != train-SBS and score > lambda and chosen 3-seed mean length > 1.01 * train-SBS 3-seed mean length]",
+    "score": "(predicted_SBS - predicted_chosen) / predicted_SBS; numerical ranking margin, NOT probability",
+    "calibration_rule": "smallest nonnegative lambda satisfying (sum(calibration_losses)+1)/(n+1) <= alpha; if none return +infinity safe fallback",
+    "acceptance": "strict score > lambda makes loss right-continuous and monotone nonincreasing",
+    "finite_candidates": "0 plus nonnegative calibration scores; else infinity",
+    "fallback": "choose training SBS directly, without running alternative first",
+    "assumptions": "finite bounded monotone losses and independent trained selector; expectation theorem requires exchangeable calibration/new points; this stratified historical development panel does not establish those assumptions",
+    "not_controlled": "conditional accepted risk, individual-route safety, absolute path optimality, time/CPU utility, future distribution shift"
+  },
+  "failure_policy": "stop if missing/duplicate input runs, invalid route, declared budget violation, cost/hash mismatch; never silently discard failures",
+  "accounting": "prior solver/child CPU and wall remain attributed to original machine; new feature/training/calibration/inference/verification CPU/wall measured separately; no unsupported exact end-to-end wall claim",
+  "analysis": "all 24 out-of-fold instances equal-weight, seeds nested; no p-values, no generalization or superiority claim; alpha sensitivity fully retained",
+  "paper_scope": {
+    "P069": "kNN cost-sensitive performance selection, train-SBS, split discipline; no SMAC/AutoFolio full-system reproduction",
+    "P116": "formula and monotone binary-harm gate mechanism reimplementation; no original-paper datasets/results reproduction",
+    "P093": "seed-mean versus lucky-seed oracle accounting application"
+  },
+  "safety": "Do not alter original URP files, original sixty-request experiment, or execute supplied research/candidate code. Only own standard-library analysis runs."
+}

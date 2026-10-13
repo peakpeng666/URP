@@ -1,0 +1,8 @@
+{
+  "timestamp_utc": "2026-10-06T07:20:17Z",
+  "before_any_policy_execution": true,
+  "changed": "Independent scalar checker expression parentheses only; exact source grouping retained",
+  "reason": "Prior audited control documentation notes near floating-point ties. Prevent algebraic reassociation of hybrid_exp+(comb+offset). No selector, data, metric, baseline or run budget change.",
+  "old_check_sha256": "c3c26975d113a2a1df470b1adf4dc0f8145c00f58a0f4f9c41be7e7b0de95009",
+  "new_check_sha256": "4d869b118f0aad47664252ff3053e652d5f0777bd8934f91513af3a84afa030a"
+}

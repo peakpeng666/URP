@@ -1,0 +1,17 @@
+{
+  "schema": "budget-accounting-clarification-v1",
+  "created_utc": "2026-10-06T07:36:15Z",
+  "historical_total_900_cpu_compliance": "unknown",
+  "reason": "100-second setup reservation is a planning allocation, not measured actual CPU or a proven historical upper bound. Initial validator CPU lost on interruption is conservatively charged at imposed hard240, not guessed from elapsed time.",
+  "forward_budget_start_seconds": 396.211965,
+  "forward_measured_spend_seconds": 12.228019,
+  "forward_remaining_seconds": 383.98394600000006,
+  "forward_stage_limits_seconds": {
+    "cached_check": 240,
+    "analysis": 40,
+    "independent_terminal_review": 60,
+    "report_render_packaging": 20
+  },
+  "no_policy_reruns": true,
+  "supersedes_interpretation_only": "evidence/PRE_VALIDATOR_RESTART_BUDGET.json worst_planned_accounted_seconds is a plan, not evidence that historical total<=900"
+}

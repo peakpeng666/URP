@@ -1,0 +1,4012 @@
+[
+  {
+    "profile": "cpu025",
+    "fold": 0,
+    "train_ids": [
+      "dev-clustered-n100-s2026100518",
+      "dev-clustered-n100-s2026100519",
+      "dev-clustered-n200-s2026100522",
+      "dev-clustered-n200-s2026100523",
+      "dev-clustered-n50-s2026100514",
+      "dev-clustered-n50-s2026100515",
+      "dev-uniform-n100-s2026100506",
+      "dev-uniform-n100-s2026100507",
+      "dev-uniform-n200-s2026100510",
+      "dev-uniform-n200-s2026100511",
+      "dev-uniform-n50-s2026100502",
+      "dev-uniform-n50-s2026100503"
+    ],
+    "calibration_ids": [
+      "dev-clustered-n100-s2026100517",
+      "dev-clustered-n200-s2026100521",
+      "dev-clustered-n50-s2026100513",
+      "dev-uniform-n100-s2026100505",
+      "dev-uniform-n200-s2026100509",
+      "dev-uniform-n50-s2026100501"
+    ],
+    "test_ids": [
+      "dev-clustered-n100-s2026100516",
+      "dev-clustered-n200-s2026100520",
+      "dev-clustered-n50-s2026100512",
+      "dev-uniform-n100-s2026100504",
+      "dev-uniform-n200-s2026100508",
+      "dev-uniform-n50-s2026100500"
+    ],
+    "model": {
+      "train_ids": [
+        "dev-clustered-n100-s2026100518",
+        "dev-clustered-n100-s2026100519",
+        "dev-clustered-n200-s2026100522",
+        "dev-clustered-n200-s2026100523",
+        "dev-clustered-n50-s2026100514",
+        "dev-clustered-n50-s2026100515",
+        "dev-uniform-n100-s2026100506",
+        "dev-uniform-n100-s2026100507",
+        "dev-uniform-n200-s2026100510",
+        "dev-uniform-n200-s2026100511",
+        "dev-uniform-n50-s2026100502",
+        "dev-uniform-n50-s2026100503"
+      ],
+      "mu": [
+        4.605170185988092,
+        0.1879722222222222,
+        0.09304556671930923,
+        0.3104946693711132,
+        0.11226340095883554,
+        0.9721863355674657
+      ],
+      "sd": [
+        0.5659523030068884,
+        0.011536342200109387,
+        0.004508152593746219,
+        0.054231071603873825,
+        0.04390380163852732,
+        0.021587467564387498
+      ],
+      "scaled": {
+        "dev-clustered-n100-s2026100518": [
+          0.0,
+          -1.066677404510319,
+          0.8122830495188409,
+          -0.9280391671530023,
+          -0.6978059651372308,
+          -0.14057762260667037
+        ],
+        "dev-clustered-n100-s2026100519": [
+          0.0,
+          -1.066677404510319,
+          -1.362288613655642,
+          -0.7330557820320093,
+          -0.6201092097896378,
+          -0.5122411959897758
+        ],
+        "dev-clustered-n200-s2026100522": [
+          1.224744871391588,
+          -0.02648634638738732,
+          -0.06450811449310763,
+          -1.120422629483549,
+          -1.2872398183350677,
+          -1.6136427770889525
+        ],
+        "dev-clustered-n200-s2026100523": [
+          1.224744871391588,
+          -0.5032405813603976,
+          0.992064987565685,
+          -1.0395085691729642,
+          -1.2173490037329924,
+          0.3110913099229784
+        ],
+        "dev-clustered-n50-s2026100514": [
+          -1.2247448713915903,
+          2.1983667501533257,
+          -1.7593158887937634,
+          -1.019891492703372,
+          0.05139496256607686,
+          -1.5115742273753996
+        ],
+        "dev-clustered-n50-s2026100515": [
+          -1.2247448713915903,
+          1.2159640841483332,
+          0.13816730399752328,
+          -0.5263099835815813,
+          -0.32474443628010674,
+          -1.4118251526980814
+        ],
+        "dev-uniform-n100-s2026100506": [
+          0.0,
+          -0.25763991485915066,
+          -0.2722866824465037,
+          1.0871429805534816,
+          0.7375180698979934,
+          0.10878768063388204
+        ],
+        "dev-uniform-n100-s2026100507": [
+          0.0,
+          -0.1709573266822397,
+          2.010426099846416,
+          1.030784479813348,
+          0.6105336489046254,
+          0.9299849218691398
+        ],
+        "dev-uniform-n200-s2026100510": [
+          1.224744871391588,
+          -1.2400425808641407,
+          0.07162114639979701,
+          1.5822075251577887,
+          -0.35035921258233704,
+          1.1523456844044588
+        ],
+        "dev-uniform-n200-s2026100511": [
+          1.224744871391588,
+          -0.18540442471172328,
+          0.6809795740601153,
+          0.7136712648772477,
+          -0.4210356537343495,
+          1.0706504028008603
+        ],
+        "dev-uniform-n50-s2026100502": [
+          -1.2247448713915903,
+          1.2159640841483332,
+          -0.7216290042033002,
+          1.2630492736061203,
+          2.24561621351424,
+          0.6074115609791253
+        ],
+        "dev-uniform-n50-s2026100503": [
+          -1.2247448713915903,
+          -0.11316893456430069,
+          -0.5255138577960728,
+          -0.3096278998815125,
+          1.273580404708785,
+          1.0095894151484603
+        ]
+      },
+      "train_means": {
+        "multistart_vnd": 0.25720929590223063,
+        "parallel_savings": 0.2600196215457707,
+        "pyvrp_ils_s1e6": 0.25235870342361066
+      },
+      "sbs": "pyvrp_ils_s1e6",
+      "targets": {
+        "dev-clustered-n100-s2026100518": {
+          "multistart_vnd": 0.22947935207971387,
+          "parallel_savings": 0.23091000599813785,
+          "pyvrp_ils_s1e6": 0.2223092141723006
+        },
+        "dev-clustered-n100-s2026100519": {
+          "multistart_vnd": 0.2282387019190897,
+          "parallel_savings": 0.23027527949180004,
+          "pyvrp_ils_s1e6": 0.2262814634202944
+        },
+        "dev-clustered-n200-s2026100522": {
+          "multistart_vnd": 0.2270962590512673,
+          "parallel_savings": 0.22780375505725728,
+          "pyvrp_ils_s1e6": 0.22250559608604656
+        },
+        "dev-clustered-n200-s2026100523": {
+          "multistart_vnd": 0.22369608875045177,
+          "parallel_savings": 0.22442718964757133,
+          "pyvrp_ils_s1e6": 0.2178132415329269
+        },
+        "dev-clustered-n50-s2026100514": {
+          "multistart_vnd": 0.2982917022792166,
+          "parallel_savings": 0.30187616947094964,
+          "pyvrp_ils_s1e6": 0.2935076227403644
+        },
+        "dev-clustered-n50-s2026100515": {
+          "multistart_vnd": 0.27280902068222374,
+          "parallel_savings": 0.2817429076836432,
+          "pyvrp_ils_s1e6": 0.2661913034621443
+        },
+        "dev-uniform-n100-s2026100506": {
+          "multistart_vnd": 0.26066005990352753,
+          "parallel_savings": 0.26099955178404854,
+          "pyvrp_ils_s1e6": 0.25161344545222625
+        },
+        "dev-uniform-n100-s2026100507": {
+          "multistart_vnd": 0.26708304884178136,
+          "parallel_savings": 0.26879115204763765,
+          "pyvrp_ils_s1e6": 0.26088522827452276
+        },
+        "dev-uniform-n200-s2026100510": {
+          "multistart_vnd": 0.228246716763477,
+          "parallel_savings": 0.2288733158795924,
+          "pyvrp_ils_s1e6": 0.22999630574916227
+        },
+        "dev-uniform-n200-s2026100511": {
+          "multistart_vnd": 0.23506067675539813,
+          "parallel_savings": 0.23796080925578214,
+          "pyvrp_ils_s1e6": 0.23587652189338787
+        },
+        "dev-uniform-n50-s2026100502": {
+          "multistart_vnd": 0.32880327675413046,
+          "parallel_savings": 0.3294782851726561,
+          "pyvrp_ils_s1e6": 0.3190979599600082
+        },
+        "dev-uniform-n50-s2026100503": {
+          "multistart_vnd": 0.28704664704648986,
+          "parallel_savings": 0.2970970370601724,
+          "pyvrp_ils_s1e6": 0.2822265383399437
+        }
+      },
+      "k": 3
+    },
+    "calibration_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100517",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26606566067090254,
+          "parallel_savings": 0.27047427740395,
+          "pyvrp_ils_s1e6": 0.26073484076285175
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n50-s2026100514"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100521",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.22675723329381098,
+          "parallel_savings": 0.22771365023432216,
+          "pyvrp_ils_s1e6": 0.22087601726375802
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n200-s2026100523",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100513",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24312821060440162,
+          "parallel_savings": 0.24681888957967943,
+          "pyvrp_ils_s1e6": 0.2370020379068305
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100505",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24173336291287983,
+          "parallel_savings": 0.2432901223459895,
+          "pyvrp_ils_s1e6": 0.23659972717263825
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100506",
+          "dev-clustered-n100-s2026100518",
+          "dev-uniform-n200-s2026100511"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100509",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2413224844741342,
+          "parallel_savings": 0.2426112256398077,
+          "pyvrp_ils_s1e6": 0.23916209103159214
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100510",
+          "dev-uniform-n200-s2026100511",
+          "dev-uniform-n100-s2026100506"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100501",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.29216999456804926,
+          "parallel_savings": 0.295858291338959,
+          "pyvrp_ils_s1e6": 0.28431264791739275
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100503",
+          "dev-uniform-n50-s2026100502",
+          "dev-uniform-n100-s2026100506"
+        ],
+        "harm": false
+      }
+    ],
+    "gates": {
+      "0.1": {
+        "threshold": null,
+        "safe_endpoint": true,
+        "n_calibration": 6,
+        "alpha": 0.1,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": null,
+        "finite_sample_floor": 0.14285714285714285,
+        "reason": "no finite threshold satisfies correction; structurally zero-risk fallback"
+      },
+      "0.2": {
+        "threshold": 0.0,
+        "safe_endpoint": false,
+        "n_calibration": 6,
+        "alpha": 0.2,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": 0.14285714285714285,
+        "finite_sample_floor": 0.14285714285714285
+      }
+    },
+    "test_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100516",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26606566067090254,
+          "parallel_savings": 0.27047427740395,
+          "pyvrp_ils_s1e6": 0.26073484076285175
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n50-s2026100514"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.7260000000028928e-05,
+          "wall_seconds": 2.730201231315732e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100520",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24271466055086025,
+          "parallel_savings": 0.24660731407756684,
+          "pyvrp_ils_s1e6": 0.2383261209894951
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n100-s2026100519"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.6538999999992097e-05,
+          "wall_seconds": 2.6570007321424782e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100512",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24312821060440162,
+          "parallel_savings": 0.24681888957967943,
+          "pyvrp_ils_s1e6": 0.2370020379068305
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.4546999999985886e-05,
+          "wall_seconds": 2.4576991563662887e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100504",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2413224844741342,
+          "parallel_savings": 0.2426112256398077,
+          "pyvrp_ils_s1e6": 0.23916209103159214
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100506",
+          "dev-uniform-n200-s2026100510",
+          "dev-uniform-n200-s2026100511"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.4446000000011292e-05,
+          "wall_seconds": 2.446700818836689e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100508",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24346348078688548,
+          "parallel_savings": 0.24520842572767074,
+          "pyvrp_ils_s1e6": 0.24225268530569097
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100511",
+          "dev-uniform-n200-s2026100510",
+          "dev-uniform-n100-s2026100507"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5678000000028955e-05,
+          "wall_seconds": 2.5698987883515656e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100500",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.28551546183314647,
+          "parallel_savings": 0.28642299633478074,
+          "pyvrp_ils_s1e6": 0.2771988778955857
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100506",
+          "dev-uniform-n100-s2026100507",
+          "dev-uniform-n50-s2026100502"
+        ],
+        "inference_time": {
+          "cpu_seconds": 6.638900000000003e-05,
+          "wall_seconds": 6.643999950028956e-05
+        }
+      }
+    ],
+    "training_time": {
+      "cpu_seconds": 0.0003296779999999999,
+      "wall_seconds": 0.000328984999214299
+    },
+    "calibration_time": {
+      "cpu_seconds": 0.00018434299999997572,
+      "wall_seconds": 0.0001841670018620789
+    }
+  },
+  {
+    "profile": "cpu025",
+    "fold": 1,
+    "train_ids": [
+      "dev-clustered-n100-s2026100516",
+      "dev-clustered-n100-s2026100519",
+      "dev-clustered-n200-s2026100520",
+      "dev-clustered-n200-s2026100523",
+      "dev-clustered-n50-s2026100512",
+      "dev-clustered-n50-s2026100515",
+      "dev-uniform-n100-s2026100504",
+      "dev-uniform-n100-s2026100507",
+      "dev-uniform-n200-s2026100508",
+      "dev-uniform-n200-s2026100511",
+      "dev-uniform-n50-s2026100500",
+      "dev-uniform-n50-s2026100503"
+    ],
+    "calibration_ids": [
+      "dev-clustered-n100-s2026100518",
+      "dev-clustered-n200-s2026100522",
+      "dev-clustered-n50-s2026100514",
+      "dev-uniform-n100-s2026100506",
+      "dev-uniform-n200-s2026100510",
+      "dev-uniform-n50-s2026100502"
+    ],
+    "test_ids": [
+      "dev-clustered-n100-s2026100517",
+      "dev-clustered-n200-s2026100521",
+      "dev-clustered-n50-s2026100513",
+      "dev-uniform-n100-s2026100505",
+      "dev-uniform-n200-s2026100509",
+      "dev-uniform-n50-s2026100501"
+    ],
+    "model": {
+      "train_ids": [
+        "dev-clustered-n100-s2026100516",
+        "dev-clustered-n100-s2026100519",
+        "dev-clustered-n200-s2026100520",
+        "dev-clustered-n200-s2026100523",
+        "dev-clustered-n50-s2026100512",
+        "dev-clustered-n50-s2026100515",
+        "dev-uniform-n100-s2026100504",
+        "dev-uniform-n100-s2026100507",
+        "dev-uniform-n200-s2026100508",
+        "dev-uniform-n200-s2026100511",
+        "dev-uniform-n50-s2026100500",
+        "dev-uniform-n50-s2026100503"
+      ],
+      "mu": [
+        4.605170185988092,
+        0.18566666666666667,
+        0.09521809869360798,
+        0.3156583573530761,
+        0.11392710762071129,
+        0.9569368333558852
+      ],
+      "sd": [
+        0.5659523030068884,
+        0.009469737373651182,
+        0.004353029561066234,
+        0.05934881347055863,
+        0.04903555256210791,
+        0.04437939622090028
+      ],
+      "scaled": {
+        "dev-clustered-n100-s2026100516": [
+          0.0,
+          1.9007918899719052,
+          -0.05628335040789598,
+          -1.082373865226306,
+          -0.6613463989269206,
+          -0.7353976422625061
+        ],
+        "dev-clustered-n100-s2026100519": [
+          0.0,
+          -1.0559954944288363,
+          -1.9099197018420768,
+          -0.7568489740617513,
+          -0.5891410801604328,
+          0.09444725176396573
+        ],
+        "dev-clustered-n200-s2026100520": [
+          1.224744871391588,
+          0.9327960200788044,
+          -0.8503050898133103,
+          -1.151159242573484,
+          -1.2010357575800674,
+          -1.1442555001171386
+        ],
+        "dev-clustered-n200-s2026100523": [
+          1.224744871391588,
+          -0.36959842305009266,
+          0.5283328174773485,
+          -1.0368758536368958,
+          -1.123877533078193,
+          0.4949408429256911
+        ],
+        "dev-clustered-n50-s2026100512": [
+          -1.2247448713915903,
+          -0.5279977472144182,
+          1.0008092506024182,
+          -0.5060379600255046,
+          0.05235580800366182,
+          -2.4522791440111975
+        ],
+        "dev-clustered-n50-s2026100515": [
+          -1.2247448713915903,
+          1.7247926409004286,
+          -0.3559940640586448,
+          -0.5679311921565204,
+          -0.3246873165213603,
+          -0.34313732893247634
+        ],
+        "dev-uniform-n100-s2026100504": [
+          0.0,
+          -0.38719834795724095,
+          -0.891310122162869,
+          1.2387543718015195,
+          0.6287130397077447,
+          0.9686365143665815
+        ],
+        "dev-uniform-n100-s2026100507": [
+          0.0,
+          0.03519984981429356,
+          1.5829838887129313,
+          0.854892557812058,
+          0.5127104771876655,
+          0.7959892327503907
+        ],
+        "dev-uniform-n200-s2026100508": [
+          1.224744871391588,
+          -1.0735954193359845,
+          0.5884539001545763,
+          0.8582856179862325,
+          -0.46580213389662534,
+          0.8379186824161278
+        ],
+        "dev-uniform-n200-s2026100511": [
+          1.224744871391588,
+          0.01759992490714825,
+          0.20616167342744712,
+          0.5651245159578521,
+          -0.4109013039193569,
+          0.8644131358591132
+        ],
+        "dev-uniform-n50-s2026100500": [
+          -1.2247448713915903,
+          -1.302394443128897,
+          1.2003967325630882,
+          1.9541039706857841,
+          2.4766452478079404,
+          -0.2159872873373949
+        ],
+        "dev-uniform-n50-s2026100503": [
+          -1.2247448713915903,
+          0.10559954944288069,
+          -1.0433259346530288,
+          -0.36993394656298684,
+          1.1063669513759422,
+          0.8347112425788509
+        ]
+      },
+      "train_means": {
+        "multistart_vnd": 0.25306724799081304,
+        "parallel_savings": 0.2567216749833113,
+        "pyvrp_ils_s1e6": 0.2488837902500679
+      },
+      "sbs": "pyvrp_ils_s1e6",
+      "targets": {
+        "dev-clustered-n100-s2026100516": {
+          "multistart_vnd": 0.25194910447787533,
+          "parallel_savings": 0.25290937086185644,
+          "pyvrp_ils_s1e6": 0.24752956925170178
+        },
+        "dev-clustered-n100-s2026100519": {
+          "multistart_vnd": 0.2282387019190897,
+          "parallel_savings": 0.23027527949180004,
+          "pyvrp_ils_s1e6": 0.2262814634202944
+        },
+        "dev-clustered-n200-s2026100520": {
+          "multistart_vnd": 0.23247573799743693,
+          "parallel_savings": 0.23282025958114524,
+          "pyvrp_ils_s1e6": 0.22660030951462307
+        },
+        "dev-clustered-n200-s2026100523": {
+          "multistart_vnd": 0.22369608875045177,
+          "parallel_savings": 0.22442718964757133,
+          "pyvrp_ils_s1e6": 0.2178132415329269
+        },
+        "dev-clustered-n50-s2026100512": {
+          "multistart_vnd": 0.25229772311496257,
+          "parallel_savings": 0.25430601471986963,
+          "pyvrp_ils_s1e6": 0.2493115648798119
+        },
+        "dev-clustered-n50-s2026100515": {
+          "multistart_vnd": 0.27280902068222374,
+          "parallel_savings": 0.2817429076836432,
+          "pyvrp_ils_s1e6": 0.2661913034621443
+        },
+        "dev-uniform-n100-s2026100504": {
+          "multistart_vnd": 0.26078091669121106,
+          "parallel_savings": 0.26254802145572004,
+          "pyvrp_ils_s1e6": 0.2580234033071046
+        },
+        "dev-uniform-n100-s2026100507": {
+          "multistart_vnd": 0.26708304884178136,
+          "parallel_savings": 0.26879115204763765,
+          "pyvrp_ils_s1e6": 0.26088522827452276
+        },
+        "dev-uniform-n200-s2026100508": {
+          "multistart_vnd": 0.23036760809220433,
+          "parallel_savings": 0.23107869997364058,
+          "pyvrp_ils_s1e6": 0.23096583871713802
+        },
+        "dev-uniform-n200-s2026100511": {
+          "multistart_vnd": 0.23506067675539813,
+          "parallel_savings": 0.23796080925578214,
+          "pyvrp_ils_s1e6": 0.23587652189338787
+        },
+        "dev-uniform-n50-s2026100500": {
+          "multistart_vnd": 0.29500170152063154,
+          "parallel_savings": 0.3067033580208968,
+          "pyvrp_ils_s1e6": 0.28490050040721543
+        },
+        "dev-uniform-n50-s2026100503": {
+          "multistart_vnd": 0.28704664704648986,
+          "parallel_savings": 0.2970970370601724,
+          "pyvrp_ils_s1e6": 0.2822265383399437
+        }
+      },
+      "k": 3
+    },
+    "calibration_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100518",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.22743413292058193,
+          "parallel_savings": 0.22859372303767064,
+          "pyvrp_ils_s1e6": 0.2250201812234531
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100523",
+          "dev-uniform-n200-s2026100508",
+          "dev-clustered-n100-s2026100519"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100522",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.236040310408588,
+          "parallel_savings": 0.236718940030191,
+          "pyvrp_ils_s1e6": 0.23064770676641724
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100520",
+          "dev-clustered-n200-s2026100523",
+          "dev-clustered-n100-s2026100516"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100514",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.27060159073552964,
+          "parallel_savings": 0.2772497718685573,
+          "pyvrp_ils_s1e6": 0.2653158036845966
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n100-s2026100516",
+          "dev-uniform-n50-s2026100503"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100506",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26096274683103304,
+          "parallel_savings": 0.2658686225905582,
+          "pyvrp_ils_s1e6": 0.2587088211801454
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100504",
+          "dev-uniform-n50-s2026100503",
+          "dev-uniform-n200-s2026100511"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100510",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24206973384627117,
+          "parallel_savings": 0.24386251022838093,
+          "pyvrp_ils_s1e6": 0.24162192130587684
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n200-s2026100511",
+          "dev-uniform-n100-s2026100504"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100502",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2735455281399749,
+          "parallel_savings": 0.2804626553998452,
+          "pyvrp_ils_s1e6": 0.2688137483697309
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100503",
+          "dev-uniform-n100-s2026100504",
+          "dev-clustered-n50-s2026100515"
+        ],
+        "harm": false
+      }
+    ],
+    "gates": {
+      "0.1": {
+        "threshold": null,
+        "safe_endpoint": true,
+        "n_calibration": 6,
+        "alpha": 0.1,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": null,
+        "finite_sample_floor": 0.14285714285714285,
+        "reason": "no finite threshold satisfies correction; structurally zero-risk fallback"
+      },
+      "0.2": {
+        "threshold": 0.0,
+        "safe_endpoint": false,
+        "n_calibration": 6,
+        "alpha": 0.2,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": 0.14285714285714285,
+        "finite_sample_floor": 0.14285714285714285
+      }
+    },
+    "test_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100517",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2455741885300916,
+          "parallel_savings": 0.24667854838762376,
+          "pyvrp_ils_s1e6": 0.24114714788204558
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100512",
+          "dev-clustered-n200-s2026100520",
+          "dev-clustered-n100-s2026100516"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.47959999999936e-05,
+          "wall_seconds": 2.481701085343957e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100521",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23041083450109562,
+          "parallel_savings": 0.23173608616149957,
+          "pyvrp_ils_s1e6": 0.22676335764697927
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100523",
+          "dev-clustered-n200-s2026100520",
+          "dev-uniform-n200-s2026100511"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5368000000025592e-05,
+          "wall_seconds": 2.5399000151082873e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100513",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2590186160916872,
+          "parallel_savings": 0.2629860977551231,
+          "pyvrp_ils_s1e6": 0.2543441458645527
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100512",
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n100-s2026100516"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.6338999999986346e-05,
+          "wall_seconds": 2.6359994080848992e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100505",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24206973384627117,
+          "parallel_savings": 0.24386251022838093,
+          "pyvrp_ils_s1e6": 0.24162192130587684
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100504",
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n200-s2026100511"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.496699999998686e-05,
+          "wall_seconds": 2.499700349289924e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100509",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24206973384627117,
+          "parallel_savings": 0.24386251022838093,
+          "pyvrp_ils_s1e6": 0.24162192130587684
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n200-s2026100511",
+          "dev-uniform-n100-s2026100504"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.4907000000018442e-05,
+          "wall_seconds": 2.490699989721179e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100501",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2586887552189302,
+          "parallel_savings": 0.26330677933589747,
+          "pyvrp_ils_s1e6": 0.2555104683557809
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100503",
+          "dev-uniform-n100-s2026100504",
+          "dev-clustered-n100-s2026100519"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.6899000000024653e-05,
+          "wall_seconds": 2.6920009986497462e-05
+        }
+      }
+    ],
+    "training_time": {
+      "cpu_seconds": 0.0002887079999999709,
+      "wall_seconds": 0.0002887539885705337
+    },
+    "calibration_time": {
+      "cpu_seconds": 0.00016159999999998398,
+      "wall_seconds": 0.00016170299204532057
+    }
+  },
+  {
+    "profile": "cpu025",
+    "fold": 2,
+    "train_ids": [
+      "dev-clustered-n100-s2026100516",
+      "dev-clustered-n100-s2026100517",
+      "dev-clustered-n200-s2026100520",
+      "dev-clustered-n200-s2026100521",
+      "dev-clustered-n50-s2026100512",
+      "dev-clustered-n50-s2026100513",
+      "dev-uniform-n100-s2026100504",
+      "dev-uniform-n100-s2026100505",
+      "dev-uniform-n200-s2026100508",
+      "dev-uniform-n200-s2026100509",
+      "dev-uniform-n50-s2026100500",
+      "dev-uniform-n50-s2026100501"
+    ],
+    "calibration_ids": [
+      "dev-clustered-n100-s2026100519",
+      "dev-clustered-n200-s2026100523",
+      "dev-clustered-n50-s2026100515",
+      "dev-uniform-n100-s2026100507",
+      "dev-uniform-n200-s2026100511",
+      "dev-uniform-n50-s2026100503"
+    ],
+    "test_ids": [
+      "dev-clustered-n100-s2026100518",
+      "dev-clustered-n200-s2026100522",
+      "dev-clustered-n50-s2026100514",
+      "dev-uniform-n100-s2026100506",
+      "dev-uniform-n200-s2026100510",
+      "dev-uniform-n50-s2026100502"
+    ],
+    "model": {
+      "train_ids": [
+        "dev-clustered-n100-s2026100516",
+        "dev-clustered-n100-s2026100517",
+        "dev-clustered-n200-s2026100520",
+        "dev-clustered-n200-s2026100521",
+        "dev-clustered-n50-s2026100512",
+        "dev-clustered-n50-s2026100513",
+        "dev-uniform-n100-s2026100504",
+        "dev-uniform-n100-s2026100505",
+        "dev-uniform-n200-s2026100508",
+        "dev-uniform-n200-s2026100509",
+        "dev-uniform-n50-s2026100500",
+        "dev-uniform-n50-s2026100501"
+      ],
+      "mu": [
+        4.605170185988092,
+        0.18295833333333333,
+        0.09482827021484,
+        0.3178084657320883,
+        0.11700636193873036,
+        0.9381525015319777
+      ],
+      "sd": [
+        0.5659523030068884,
+        0.008842009627865117,
+        0.0038029717310564615,
+        0.06340270806194954,
+        0.05026185041425338,
+        0.05011185771705469
+      ],
+      "scaled": {
+        "dev-clustered-n100-s2026100516": [
+          0.0,
+          2.3420392201420093,
+          0.0380821633418573,
+          -1.0470800860251845,
+          -0.706474993095185,
+          -0.2764250249948688
+        ],
+        "dev-clustered-n100-s2026100517": [
+          0.0,
+          0.4193993774499748,
+          0.0413121075053931,
+          -0.34580917248344983,
+          -0.5909624629304483,
+          -1.6042862001992941
+        ],
+        "dev-clustered-n200-s2026100520": [
+          1.224744871391588,
+          1.3053216579061089,
+          -0.8707860450475892,
+          -1.1114674072369362,
+          -1.2329969117140422,
+          -0.6385122773615671
+        ],
+        "dev-clustered-n200-s2026100521": [
+          1.224744871391588,
+          0.28745350589268376,
+          0.03481334217084093,
+          -0.7774439847309912,
+          -1.0389892692269307,
+          -0.05884788024799553
+        ],
+        "dev-clustered-n50-s2026100512": [
+          -1.2247448713915903,
+          -0.25917939055897427,
+          1.2480715259774782,
+          -0.5075944208273032,
+          -0.010185823611832274,
+          -1.796906761286759
+        ],
+        "dev-clustered-n50-s2026100513": [
+          -1.2247448713915903,
+          0.1932064547803272,
+          0.9007087221370808,
+          -1.4912040304361451,
+          -0.09878877873492342,
+          -0.75851252872527
+        ],
+        "dev-uniform-n100-s2026100504": [
+          0.0,
+          -0.10838410877920818,
+          -0.9177220021341069,
+          1.125637941192393,
+          0.5521093385607478,
+          1.2326790165671868
+        ],
+        "dev-uniform-n100-s2026100505": [
+          0.0,
+          -0.9000593381229858,
+          -0.2876729974912667,
+          0.2397061262516349,
+          0.25288506293164115,
+          0.6407734809706397
+        ],
+        "dev-uniform-n200-s2026100508": [
+          1.224744871391588,
+          -0.8435111074555731,
+          0.7760735314868289,
+          0.7694959120617677,
+          -0.515701652935933,
+          1.1169144306677519
+        ],
+        "dev-uniform-n200-s2026100509": [
+          1.224744871391588,
+          -1.3147463630173466,
+          -0.1743192003622367,
+          1.1288063292856054,
+          -0.4386292902342507,
+          0.9393635642340896
+        ],
+        "dev-uniform-n50-s2026100500": [
+          -1.2247448713915903,
+          -1.0885534403476926,
+          1.4765271313396078,
+          1.7952489279808288,
+          2.354955357453292,
+          0.1835682578846623
+        ],
+        "dev-uniform-n50-s2026100501": [
+          -1.2247448713915903,
+          -0.032986467889323544,
+          -2.265088278923891,
+          0.2217038649677795,
+          1.4727794235378648,
+          1.0201919224914286
+        ]
+      },
+      "train_means": {
+        "multistart_vnd": 0.25139897719249266,
+        "parallel_savings": 0.25603241034430824,
+        "pyvrp_ils_s1e6": 0.24763040899584354
+      },
+      "sbs": "pyvrp_ils_s1e6",
+      "targets": {
+        "dev-clustered-n100-s2026100516": {
+          "multistart_vnd": 0.25194910447787533,
+          "parallel_savings": 0.25290937086185644,
+          "pyvrp_ils_s1e6": 0.24752956925170178
+        },
+        "dev-clustered-n100-s2026100517": {
+          "multistart_vnd": 0.24688929941950014,
+          "parallel_savings": 0.25154000861308223,
+          "pyvrp_ils_s1e6": 0.24277327514866098
+        },
+        "dev-clustered-n200-s2026100520": {
+          "multistart_vnd": 0.23247573799743693,
+          "parallel_savings": 0.23282025958114524,
+          "pyvrp_ils_s1e6": 0.22660030951462307
+        },
+        "dev-clustered-n200-s2026100521": {
+          "multistart_vnd": 0.22264002719519535,
+          "parallel_savings": 0.22391072025129774,
+          "pyvrp_ils_s1e6": 0.2207654965578444
+        },
+        "dev-clustered-n50-s2026100512": {
+          "multistart_vnd": 0.25229772311496257,
+          "parallel_savings": 0.25430601471986963,
+          "pyvrp_ils_s1e6": 0.2493115648798119
+        },
+        "dev-clustered-n50-s2026100513": {
+          "multistart_vnd": 0.26245468146957296,
+          "parallel_savings": 0.26969754876730967,
+          "pyvrp_ils_s1e6": 0.25550018644724426
+        },
+        "dev-uniform-n100-s2026100504": {
+          "multistart_vnd": 0.26078091669121106,
+          "parallel_savings": 0.26254802145572004,
+          "pyvrp_ils_s1e6": 0.2580234033071046
+        },
+        "dev-uniform-n100-s2026100505": {
+          "multistart_vnd": 0.25110151910350276,
+          "parallel_savings": 0.25330702242248954,
+          "pyvrp_ils_s1e6": 0.24714004583493399
+        },
+        "dev-uniform-n200-s2026100508": {
+          "multistart_vnd": 0.23036760809220433,
+          "parallel_savings": 0.23107869997364058,
+          "pyvrp_ils_s1e6": 0.23096583871713802
+        },
+        "dev-uniform-n200-s2026100509": {
+          "multistart_vnd": 0.2213390916413502,
+          "parallel_savings": 0.22328183660728287,
+          "pyvrp_ils_s1e6": 0.22382235260669578
+        },
+        "dev-uniform-n50-s2026100500": {
+          "multistart_vnd": 0.29500170152063154,
+          "parallel_savings": 0.3067033580208968,
+          "pyvrp_ils_s1e6": 0.28490050040721543
+        },
+        "dev-uniform-n50-s2026100501": {
+          "multistart_vnd": 0.2894903155864689,
+          "parallel_savings": 0.3102860628571083,
+          "pyvrp_ils_s1e6": 0.28423236527714846
+        }
+      },
+      "k": 3
+    },
+    "calibration_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100519",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2448408209966364,
+          "parallel_savings": 0.2465885880431691,
+          "pyvrp_ils_s1e6": 0.24197631523329433
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n100-s2026100504",
+          "dev-clustered-n200-s2026100521"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100523",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2284944577616122,
+          "parallel_savings": 0.2292698932686945,
+          "pyvrp_ils_s1e6": 0.22611054826320182
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100521",
+          "dev-uniform-n200-s2026100508",
+          "dev-clustered-n200-s2026100520"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100515",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2537643617889828,
+          "parallel_savings": 0.25804897608074945,
+          "pyvrp_ils_s1e6": 0.24860101028253567
+        },
+        "neighbor_ids": [
+          "dev-clustered-n100-s2026100516",
+          "dev-clustered-n50-s2026100513",
+          "dev-clustered-n100-s2026100517"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100507",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24741668129563937,
+          "parallel_savings": 0.24897791461728339,
+          "pyvrp_ils_s1e6": 0.2453764292863922
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n100-s2026100504"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100511",
+        "chosen": "multistart_vnd",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0017866247710273291,
+        "predicted_costs": {
+          "multistart_vnd": 0.2247822423095833,
+          "parallel_savings": 0.22609041894407372,
+          "pyvrp_ils_s1e6": 0.22518456262722605
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n200-s2026100509",
+          "dev-clustered-n200-s2026100521"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100503",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26712425046039423,
+          "parallel_savings": 0.27538036891177264,
+          "pyvrp_ils_s1e6": 0.263131938139729
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100501",
+          "dev-uniform-n100-s2026100504",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "harm": false
+      }
+    ],
+    "gates": {
+      "0.1": {
+        "threshold": null,
+        "safe_endpoint": true,
+        "n_calibration": 6,
+        "alpha": 0.1,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          },
+          {
+            "threshold": 0.0017866247710273291,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": null,
+        "finite_sample_floor": 0.14285714285714285,
+        "reason": "no finite threshold satisfies correction; structurally zero-risk fallback"
+      },
+      "0.2": {
+        "threshold": 0.0,
+        "safe_endpoint": false,
+        "n_calibration": 6,
+        "alpha": 0.2,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": 0.14285714285714285,
+        "finite_sample_floor": 0.14285714285714285
+      }
+    },
+    "test_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100518",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23470305146363415,
+          "parallel_savings": 0.23609881421580928,
+          "pyvrp_ils_s1e6": 0.2329571270366388
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100505",
+          "dev-clustered-n200-s2026100521",
+          "dev-uniform-n200-s2026100508"
+        ],
+        "inference_time": {
+          "cpu_seconds": 0.0001357309999999723,
+          "wall_seconds": 0.00013607500295620412
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100522",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23400168820404413,
+          "parallel_savings": 0.23609032948184175,
+          "pyvrp_ils_s1e6": 0.23004636040704282
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100521",
+          "dev-clustered-n200-s2026100520",
+          "dev-clustered-n100-s2026100517"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.6089000000006912e-05,
+          "wall_seconds": 2.611899981275201e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100514",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.25797171935392704,
+          "parallel_savings": 0.26533856443337,
+          "pyvrp_ils_s1e6": 0.2527874146811578
+        },
+        "neighbor_ids": [
+          "dev-clustered-n100-s2026100516",
+          "dev-clustered-n200-s2026100520",
+          "dev-uniform-n50-s2026100501"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5036999999950016e-05,
+          "wall_seconds": 2.5087996618822217e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100506",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26712425046039423,
+          "parallel_savings": 0.27538036891177264,
+          "pyvrp_ils_s1e6": 0.263131938139729
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100504",
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n50-s2026100501"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.4186000000037122e-05,
+          "wall_seconds": 2.4177003069780767e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100510",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2342694062790191,
+          "parallel_savings": 0.235889186334471,
+          "pyvrp_ils_s1e6": 0.2339760790529226
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100509",
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5137000000008403e-05,
+          "wall_seconds": 2.516699896659702e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100502",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26712425046039423,
+          "parallel_savings": 0.27538036891177264,
+          "pyvrp_ils_s1e6": 0.263131938139729
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100501",
+          "dev-uniform-n100-s2026100504",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.3023999999982614e-05,
+          "wall_seconds": 2.3065003915689886e-05
+        }
+      }
+    ],
+    "training_time": {
+      "cpu_seconds": 0.0003160480000000132,
+      "wall_seconds": 0.00031619600486010313
+    },
+    "calibration_time": {
+      "cpu_seconds": 0.00015920599999996732,
+      "wall_seconds": 0.0001592290063854307
+    }
+  },
+  {
+    "profile": "cpu025",
+    "fold": 3,
+    "train_ids": [
+      "dev-clustered-n100-s2026100517",
+      "dev-clustered-n100-s2026100518",
+      "dev-clustered-n200-s2026100521",
+      "dev-clustered-n200-s2026100522",
+      "dev-clustered-n50-s2026100513",
+      "dev-clustered-n50-s2026100514",
+      "dev-uniform-n100-s2026100505",
+      "dev-uniform-n100-s2026100506",
+      "dev-uniform-n200-s2026100509",
+      "dev-uniform-n200-s2026100510",
+      "dev-uniform-n50-s2026100501",
+      "dev-uniform-n50-s2026100502"
+    ],
+    "calibration_ids": [
+      "dev-clustered-n100-s2026100516",
+      "dev-clustered-n200-s2026100520",
+      "dev-clustered-n50-s2026100512",
+      "dev-uniform-n100-s2026100504",
+      "dev-uniform-n200-s2026100508",
+      "dev-uniform-n50-s2026100500"
+    ],
+    "test_ids": [
+      "dev-clustered-n100-s2026100519",
+      "dev-clustered-n200-s2026100523",
+      "dev-clustered-n50-s2026100515",
+      "dev-uniform-n100-s2026100507",
+      "dev-uniform-n200-s2026100511",
+      "dev-uniform-n50-s2026100503"
+    ],
+    "model": {
+      "train_ids": [
+        "dev-clustered-n100-s2026100517",
+        "dev-clustered-n100-s2026100518",
+        "dev-clustered-n200-s2026100521",
+        "dev-clustered-n200-s2026100522",
+        "dev-clustered-n50-s2026100513",
+        "dev-clustered-n50-s2026100514",
+        "dev-uniform-n100-s2026100505",
+        "dev-uniform-n100-s2026100506",
+        "dev-uniform-n200-s2026100509",
+        "dev-uniform-n200-s2026100510",
+        "dev-uniform-n50-s2026100501",
+        "dev-uniform-n50-s2026100502"
+      ],
+      "mu": [
+        4.605170185988092,
+        0.1852638888888889,
+        0.09265573824054125,
+        0.3126447777501254,
+        0.11534265527685461,
+        0.9534020037435582
+      ],
+      "sd": [
+        0.5659523030068884,
+        0.011579327511444007,
+        0.003760762923525961,
+        0.05882886905358097,
+        0.04538235276132877,
+        0.03975663026653086
+      ],
+      "scaled": {
+        "dev-clustered-n100-s2026100517": [
+          0.0,
+          0.12114501264355537,
+          0.6194596146220058,
+          -0.28492048709764045,
+          -0.6178428077062136,
+          -2.405718577560613
+        ],
+        "dev-clustered-n100-s2026100518": [
+          0.0,
+          -0.8288237993732506,
+          1.0773676771716505,
+          -0.8920563619247693,
+          -0.7429228971644437,
+          0.3961507011540187
+        ],
+        "dev-clustered-n200-s2026100521": [
+          1.224744871391588,
+          0.02039074470238272,
+          0.6128879105936913,
+          -0.7501141314864139,
+          -1.1140413287057258,
+          -0.45774701456120953
+        ],
+        "dev-clustered-n200-s2026100522": [
+          1.224744871391588,
+          0.2075058137359949,
+          0.026328714973972142,
+          -1.0694040058433798,
+          -1.3131530724470741,
+          -0.40370949900450315
+        ],
+        "dev-clustered-n50-s2026100513": [
+          -1.2247448713915903,
+          -0.051576589541316484,
+          1.4885016408462284,
+          -1.5193677399980834,
+          -0.0727507490603067,
+          -1.3396501104496656
+        ],
+        "dev-clustered-n50-s2026100514": [
+          -1.2247448713915903,
+          2.4240997084418794,
+          -2.0052941814917626,
+          -0.9767299265205385,
+          -0.018130837786789207,
+          -0.3482872589526261
+        ],
+        "dev-uniform-n100-s2026100505": [
+          0.0,
+          -0.8863976667682095,
+          0.2867821553718143,
+          0.34611757548510474,
+          0.3167349639746637,
+          0.4241015192345504
+        ],
+        "dev-uniform-n100-s2026100506": [
+          0.0,
+          -0.02278965584383824,
+          -0.22274242008331638,
+          0.9656282936748822,
+          0.645638468364725,
+          0.5315536605924824
+        ],
+        "dev-uniform-n200-s2026100509": [
+          1.224744871391588,
+          -1.2030539374404798,
+          0.4014081753724165,
+          1.3043437239334152,
+          -0.4491308156362649,
+          0.8004639943213296
+        ],
+        "dev-uniform-n200-s2026100510": [
+          1.224744871391588,
+          -1.0015454015581249,
+          0.18951142365791332,
+          1.4220008399926174,
+          -0.40679591440653384,
+          1.0981956120588598
+        ],
+        "dev-uniform-n50-s2026100501": [
+          -1.2247448713915903,
+          -0.22429819172619073,
+          -1.712826585930279,
+          0.3267156706890828,
+          1.6677920190471438,
+          0.9023453449624772
+        ],
+        "dev-uniform-n50-s2026100502": [
+          -1.2247448713915903,
+          1.4453439627275906,
+          -0.761384125104334,
+          1.1277865490957208,
+          2.10460297152682,
+          0.8023016282049104
+        ]
+      },
+      "train_means": {
+        "multistart_vnd": 0.25554102510391025,
+        "parallel_savings": 0.2593303569067677,
+        "pyvrp_ils_s1e6": 0.25110532216938636
+      },
+      "sbs": "pyvrp_ils_s1e6",
+      "targets": {
+        "dev-clustered-n100-s2026100517": {
+          "multistart_vnd": 0.24688929941950014,
+          "parallel_savings": 0.25154000861308223,
+          "pyvrp_ils_s1e6": 0.24277327514866098
+        },
+        "dev-clustered-n100-s2026100518": {
+          "multistart_vnd": 0.22947935207971387,
+          "parallel_savings": 0.23091000599813785,
+          "pyvrp_ils_s1e6": 0.2223092141723006
+        },
+        "dev-clustered-n200-s2026100521": {
+          "multistart_vnd": 0.22264002719519535,
+          "parallel_savings": 0.22391072025129774,
+          "pyvrp_ils_s1e6": 0.2207654965578444
+        },
+        "dev-clustered-n200-s2026100522": {
+          "multistart_vnd": 0.2270962590512673,
+          "parallel_savings": 0.22780375505725728,
+          "pyvrp_ils_s1e6": 0.22250559608604656
+        },
+        "dev-clustered-n50-s2026100513": {
+          "multistart_vnd": 0.26245468146957296,
+          "parallel_savings": 0.26969754876730967,
+          "pyvrp_ils_s1e6": 0.25550018644724426
+        },
+        "dev-clustered-n50-s2026100514": {
+          "multistart_vnd": 0.2982917022792166,
+          "parallel_savings": 0.30187616947094964,
+          "pyvrp_ils_s1e6": 0.2935076227403644
+        },
+        "dev-uniform-n100-s2026100505": {
+          "multistart_vnd": 0.25110151910350276,
+          "parallel_savings": 0.25330702242248954,
+          "pyvrp_ils_s1e6": 0.24714004583493399
+        },
+        "dev-uniform-n100-s2026100506": {
+          "multistart_vnd": 0.26066005990352753,
+          "parallel_savings": 0.26099955178404854,
+          "pyvrp_ils_s1e6": 0.25161344545222625
+        },
+        "dev-uniform-n200-s2026100509": {
+          "multistart_vnd": 0.2213390916413502,
+          "parallel_savings": 0.22328183660728287,
+          "pyvrp_ils_s1e6": 0.22382235260669578
+        },
+        "dev-uniform-n200-s2026100510": {
+          "multistart_vnd": 0.228246716763477,
+          "parallel_savings": 0.2288733158795924,
+          "pyvrp_ils_s1e6": 0.22999630574916227
+        },
+        "dev-uniform-n50-s2026100501": {
+          "multistart_vnd": 0.2894903155864689,
+          "parallel_savings": 0.3102860628571083,
+          "pyvrp_ils_s1e6": 0.28423236527714846
+        },
+        "dev-uniform-n50-s2026100502": {
+          "multistart_vnd": 0.32880327675413046,
+          "parallel_savings": 0.3294782851726561,
+          "pyvrp_ils_s1e6": 0.3190979599600082
+        }
+      },
+      "k": 3
+    },
+    "calibration_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100516",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23220852855532093,
+          "parallel_savings": 0.2344181613072124,
+          "pyvrp_ils_s1e6": 0.22868145593085065
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n200-s2026100521",
+          "dev-clustered-n100-s2026100517"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100520",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23220852855532093,
+          "parallel_savings": 0.2344181613072124,
+          "pyvrp_ils_s1e6": 0.22868145593085065
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n200-s2026100521",
+          "dev-clustered-n100-s2026100517"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100512",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.246274444322929,
+          "parallel_savings": 0.25071585445950995,
+          "pyvrp_ils_s1e6": 0.24019422525606862
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100513",
+          "dev-clustered-n100-s2026100517",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100504",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24666943192350244,
+          "parallel_savings": 0.24772663002871015,
+          "pyvrp_ils_s1e6": 0.2429165990121075
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100506",
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n200-s2026100510"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100508",
+        "chosen": "multistart_vnd",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0003871507420331336,
+        "predicted_costs": {
+          "multistart_vnd": 0.23356244250277666,
+          "parallel_savings": 0.2351540583031216,
+          "pyvrp_ils_s1e6": 0.23365290139693068
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100509",
+          "dev-uniform-n200-s2026100510",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100500",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.28018828525372025,
+          "parallel_savings": 0.28126161979306474,
+          "pyvrp_ils_s1e6": 0.2726171504157228
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n100-s2026100506",
+          "dev-uniform-n50-s2026100502"
+        ],
+        "harm": false
+      }
+    ],
+    "gates": {
+      "0.1": {
+        "threshold": null,
+        "safe_endpoint": true,
+        "n_calibration": 6,
+        "alpha": 0.1,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          },
+          {
+            "threshold": 0.0003871507420331336,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": null,
+        "finite_sample_floor": 0.14285714285714285,
+        "reason": "no finite threshold satisfies correction; structurally zero-risk fallback"
+      },
+      "0.2": {
+        "threshold": 0.0,
+        "safe_endpoint": false,
+        "n_calibration": 6,
+        "alpha": 0.2,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": 0.14285714285714285,
+        "finite_sample_floor": 0.14285714285714285
+      }
+    },
+    "test_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100519",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23589237674482796,
+          "parallel_savings": 0.23734026115929488,
+          "pyvrp_ils_s1e6": 0.23065161869776038
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100505",
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.739099999998773e-05,
+          "wall_seconds": 2.7431000489741564e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100523",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.22640521277539216,
+          "parallel_savings": 0.22754149376889762,
+          "pyvrp_ils_s1e6": 0.22186010227206385
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100521",
+          "dev-clustered-n100-s2026100518",
+          "dev-clustered-n200-s2026100522"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5957999999992598e-05,
+          "wall_seconds": 2.5998990167863667e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100515",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2738021478841057,
+          "parallel_savings": 0.27752442334076927,
+          "pyvrp_ils_s1e6": 0.26687375154661164
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100513",
+          "dev-clustered-n50-s2026100514",
+          "dev-uniform-n100-s2026100506"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.43959999999821e-05,
+          "wall_seconds": 2.4396009393967688e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100507",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24708031036224806,
+          "parallel_savings": 0.24840552673489197,
+          "pyvrp_ils_s1e6": 0.2403542351531536
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n100-s2026100506",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5757999999986847e-05,
+          "wall_seconds": 2.5828994694165885e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100511",
+        "chosen": "multistart_vnd",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0003871507420331336,
+        "predicted_costs": {
+          "multistart_vnd": 0.23356244250277666,
+          "parallel_savings": 0.2351540583031216,
+          "pyvrp_ils_s1e6": 0.23365290139693068
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100510",
+          "dev-uniform-n200-s2026100509",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.4866999999983985e-05,
+          "wall_seconds": 2.4877008399926126e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100503",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26708396486449976,
+          "parallel_savings": 0.2748642123545488,
+          "pyvrp_ils_s1e6": 0.26099528552143625
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100501",
+          "dev-uniform-n100-s2026100506",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.85519999999595e-05,
+          "wall_seconds": 2.8593000024557114e-05
+        }
+      }
+    ],
+    "training_time": {
+      "cpu_seconds": 0.0003708099999999992,
+      "wall_seconds": 0.0003711680037667975
+    },
+    "calibration_time": {
+      "cpu_seconds": 0.00016643700000001926,
+      "wall_seconds": 0.00016648101154714823
+    }
+  },
+  {
+    "profile": "cpu100",
+    "fold": 0,
+    "train_ids": [
+      "dev-clustered-n100-s2026100518",
+      "dev-clustered-n100-s2026100519",
+      "dev-clustered-n200-s2026100522",
+      "dev-clustered-n200-s2026100523",
+      "dev-clustered-n50-s2026100514",
+      "dev-clustered-n50-s2026100515",
+      "dev-uniform-n100-s2026100506",
+      "dev-uniform-n100-s2026100507",
+      "dev-uniform-n200-s2026100510",
+      "dev-uniform-n200-s2026100511",
+      "dev-uniform-n50-s2026100502",
+      "dev-uniform-n50-s2026100503"
+    ],
+    "calibration_ids": [
+      "dev-clustered-n100-s2026100517",
+      "dev-clustered-n200-s2026100521",
+      "dev-clustered-n50-s2026100513",
+      "dev-uniform-n100-s2026100505",
+      "dev-uniform-n200-s2026100509",
+      "dev-uniform-n50-s2026100501"
+    ],
+    "test_ids": [
+      "dev-clustered-n100-s2026100516",
+      "dev-clustered-n200-s2026100520",
+      "dev-clustered-n50-s2026100512",
+      "dev-uniform-n100-s2026100504",
+      "dev-uniform-n200-s2026100508",
+      "dev-uniform-n50-s2026100500"
+    ],
+    "model": {
+      "train_ids": [
+        "dev-clustered-n100-s2026100518",
+        "dev-clustered-n100-s2026100519",
+        "dev-clustered-n200-s2026100522",
+        "dev-clustered-n200-s2026100523",
+        "dev-clustered-n50-s2026100514",
+        "dev-clustered-n50-s2026100515",
+        "dev-uniform-n100-s2026100506",
+        "dev-uniform-n100-s2026100507",
+        "dev-uniform-n200-s2026100510",
+        "dev-uniform-n200-s2026100511",
+        "dev-uniform-n50-s2026100502",
+        "dev-uniform-n50-s2026100503"
+      ],
+      "mu": [
+        4.605170185988092,
+        0.1879722222222222,
+        0.09304556671930923,
+        0.3104946693711132,
+        0.11226340095883554,
+        0.9721863355674657
+      ],
+      "sd": [
+        0.5659523030068884,
+        0.011536342200109387,
+        0.004508152593746219,
+        0.054231071603873825,
+        0.04390380163852732,
+        0.021587467564387498
+      ],
+      "scaled": {
+        "dev-clustered-n100-s2026100518": [
+          0.0,
+          -1.066677404510319,
+          0.8122830495188409,
+          -0.9280391671530023,
+          -0.6978059651372308,
+          -0.14057762260667037
+        ],
+        "dev-clustered-n100-s2026100519": [
+          0.0,
+          -1.066677404510319,
+          -1.362288613655642,
+          -0.7330557820320093,
+          -0.6201092097896378,
+          -0.5122411959897758
+        ],
+        "dev-clustered-n200-s2026100522": [
+          1.224744871391588,
+          -0.02648634638738732,
+          -0.06450811449310763,
+          -1.120422629483549,
+          -1.2872398183350677,
+          -1.6136427770889525
+        ],
+        "dev-clustered-n200-s2026100523": [
+          1.224744871391588,
+          -0.5032405813603976,
+          0.992064987565685,
+          -1.0395085691729642,
+          -1.2173490037329924,
+          0.3110913099229784
+        ],
+        "dev-clustered-n50-s2026100514": [
+          -1.2247448713915903,
+          2.1983667501533257,
+          -1.7593158887937634,
+          -1.019891492703372,
+          0.05139496256607686,
+          -1.5115742273753996
+        ],
+        "dev-clustered-n50-s2026100515": [
+          -1.2247448713915903,
+          1.2159640841483332,
+          0.13816730399752328,
+          -0.5263099835815813,
+          -0.32474443628010674,
+          -1.4118251526980814
+        ],
+        "dev-uniform-n100-s2026100506": [
+          0.0,
+          -0.25763991485915066,
+          -0.2722866824465037,
+          1.0871429805534816,
+          0.7375180698979934,
+          0.10878768063388204
+        ],
+        "dev-uniform-n100-s2026100507": [
+          0.0,
+          -0.1709573266822397,
+          2.010426099846416,
+          1.030784479813348,
+          0.6105336489046254,
+          0.9299849218691398
+        ],
+        "dev-uniform-n200-s2026100510": [
+          1.224744871391588,
+          -1.2400425808641407,
+          0.07162114639979701,
+          1.5822075251577887,
+          -0.35035921258233704,
+          1.1523456844044588
+        ],
+        "dev-uniform-n200-s2026100511": [
+          1.224744871391588,
+          -0.18540442471172328,
+          0.6809795740601153,
+          0.7136712648772477,
+          -0.4210356537343495,
+          1.0706504028008603
+        ],
+        "dev-uniform-n50-s2026100502": [
+          -1.2247448713915903,
+          1.2159640841483332,
+          -0.7216290042033002,
+          1.2630492736061203,
+          2.24561621351424,
+          0.6074115609791253
+        ],
+        "dev-uniform-n50-s2026100503": [
+          -1.2247448713915903,
+          -0.11316893456430069,
+          -0.5255138577960728,
+          -0.3096278998815125,
+          1.273580404708785,
+          1.0095894151484603
+        ]
+      },
+      "train_means": {
+        "multistart_vnd": 0.25720929590223063,
+        "parallel_savings": 0.2600196215457707,
+        "pyvrp_ils_s1e6": 0.2510579553736587
+      },
+      "sbs": "pyvrp_ils_s1e6",
+      "targets": {
+        "dev-clustered-n100-s2026100518": {
+          "multistart_vnd": 0.22947935207971387,
+          "parallel_savings": 0.23091000599813785,
+          "pyvrp_ils_s1e6": 0.2202605742563768
+        },
+        "dev-clustered-n100-s2026100519": {
+          "multistart_vnd": 0.2282387019190897,
+          "parallel_savings": 0.23027527949180004,
+          "pyvrp_ils_s1e6": 0.22410021223344334
+        },
+        "dev-clustered-n200-s2026100522": {
+          "multistart_vnd": 0.2270962590512673,
+          "parallel_savings": 0.22780375505725728,
+          "pyvrp_ils_s1e6": 0.22073448149135239
+        },
+        "dev-clustered-n200-s2026100523": {
+          "multistart_vnd": 0.22369608875045177,
+          "parallel_savings": 0.22442718964757133,
+          "pyvrp_ils_s1e6": 0.21620972406205033
+        },
+        "dev-clustered-n50-s2026100514": {
+          "multistart_vnd": 0.2982917022792166,
+          "parallel_savings": 0.30187616947094964,
+          "pyvrp_ils_s1e6": 0.2933596607047848
+        },
+        "dev-clustered-n50-s2026100515": {
+          "multistart_vnd": 0.27280902068222374,
+          "parallel_savings": 0.2817429076836432,
+          "pyvrp_ils_s1e6": 0.26604038670324215
+        },
+        "dev-uniform-n100-s2026100506": {
+          "multistart_vnd": 0.26066005990352753,
+          "parallel_savings": 0.26099955178404854,
+          "pyvrp_ils_s1e6": 0.24963093065028352
+        },
+        "dev-uniform-n100-s2026100507": {
+          "multistart_vnd": 0.26708304884178136,
+          "parallel_savings": 0.26879115204763765,
+          "pyvrp_ils_s1e6": 0.25876607556649084
+        },
+        "dev-uniform-n200-s2026100510": {
+          "multistart_vnd": 0.228246716763477,
+          "parallel_savings": 0.2288733158795924,
+          "pyvrp_ils_s1e6": 0.22790638713621955
+        },
+        "dev-uniform-n200-s2026100511": {
+          "multistart_vnd": 0.23506067675539813,
+          "parallel_savings": 0.23796080925578214,
+          "pyvrp_ils_s1e6": 0.23438996211355967
+        },
+        "dev-uniform-n50-s2026100502": {
+          "multistart_vnd": 0.32880327675413046,
+          "parallel_savings": 0.3294782851726561,
+          "pyvrp_ils_s1e6": 0.3190705312261573
+        },
+        "dev-uniform-n50-s2026100503": {
+          "multistart_vnd": 0.28704664704648986,
+          "parallel_savings": 0.2970970370601724,
+          "pyvrp_ils_s1e6": 0.2822265383399437
+        }
+      },
+      "k": 3
+    },
+    "calibration_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100517",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26606566067090254,
+          "parallel_savings": 0.27047427740395,
+          "pyvrp_ils_s1e6": 0.2600448429664598
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n50-s2026100514"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100521",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.22675723329381098,
+          "parallel_savings": 0.22771365023432216,
+          "pyvrp_ils_s1e6": 0.21906825993659318
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n200-s2026100523",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100513",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24312821060440162,
+          "parallel_savings": 0.24681888957967943,
+          "pyvrp_ils_s1e6": 0.23567848081699044
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100505",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24173336291287983,
+          "parallel_savings": 0.2432901223459895,
+          "pyvrp_ils_s1e6": 0.23476048900674
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100506",
+          "dev-clustered-n100-s2026100518",
+          "dev-uniform-n200-s2026100511"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100509",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2413224844741342,
+          "parallel_savings": 0.2426112256398077,
+          "pyvrp_ils_s1e6": 0.23730909330002092
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100510",
+          "dev-uniform-n200-s2026100511",
+          "dev-uniform-n100-s2026100506"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100501",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.29216999456804926,
+          "parallel_savings": 0.295858291338959,
+          "pyvrp_ils_s1e6": 0.28364266673879485
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100503",
+          "dev-uniform-n50-s2026100502",
+          "dev-uniform-n100-s2026100506"
+        ],
+        "harm": false
+      }
+    ],
+    "gates": {
+      "0.1": {
+        "threshold": null,
+        "safe_endpoint": true,
+        "n_calibration": 6,
+        "alpha": 0.1,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": null,
+        "finite_sample_floor": 0.14285714285714285,
+        "reason": "no finite threshold satisfies correction; structurally zero-risk fallback"
+      },
+      "0.2": {
+        "threshold": 0.0,
+        "safe_endpoint": false,
+        "n_calibration": 6,
+        "alpha": 0.2,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": 0.14285714285714285,
+        "finite_sample_floor": 0.14285714285714285
+      }
+    },
+    "test_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100516",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26606566067090254,
+          "parallel_savings": 0.27047427740395,
+          "pyvrp_ils_s1e6": 0.2600448429664598
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n50-s2026100514"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5527999999996887e-05,
+          "wall_seconds": 2.5578992790542543e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100520",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24271466055086025,
+          "parallel_savings": 0.24660731407756684,
+          "pyvrp_ils_s1e6": 0.2369583601426793
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n100-s2026100519"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.6289000000012663e-05,
+          "wall_seconds": 2.628899528644979e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100512",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24312821060440162,
+          "parallel_savings": 0.24681888957967943,
+          "pyvrp_ils_s1e6": 0.23567848081699044
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.482600000003332e-05,
+          "wall_seconds": 2.4837005184963346e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100504",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2413224844741342,
+          "parallel_savings": 0.2426112256398077,
+          "pyvrp_ils_s1e6": 0.23730909330002092
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100506",
+          "dev-uniform-n200-s2026100510",
+          "dev-uniform-n200-s2026100511"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5728000000002638e-05,
+          "wall_seconds": 2.5729008484631777e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100508",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24346348078688548,
+          "parallel_savings": 0.24520842572767074,
+          "pyvrp_ils_s1e6": 0.24035414160542334
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100511",
+          "dev-uniform-n200-s2026100510",
+          "dev-uniform-n100-s2026100507"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.583800000000025e-05,
+          "wall_seconds": 2.5838002329692245e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100500",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.28551546183314647,
+          "parallel_savings": 0.28642299633478074,
+          "pyvrp_ils_s1e6": 0.2758225124809772
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100506",
+          "dev-uniform-n100-s2026100507",
+          "dev-uniform-n50-s2026100502"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.6799999999993496e-05,
+          "wall_seconds": 2.68400035565719e-05
+        }
+      }
+    ],
+    "training_time": {
+      "cpu_seconds": 0.0002950970000000219,
+      "wall_seconds": 0.0002951640053652227
+    },
+    "calibration_time": {
+      "cpu_seconds": 0.00018585500000001254,
+      "wall_seconds": 0.00018599999020807445
+    }
+  },
+  {
+    "profile": "cpu100",
+    "fold": 1,
+    "train_ids": [
+      "dev-clustered-n100-s2026100516",
+      "dev-clustered-n100-s2026100519",
+      "dev-clustered-n200-s2026100520",
+      "dev-clustered-n200-s2026100523",
+      "dev-clustered-n50-s2026100512",
+      "dev-clustered-n50-s2026100515",
+      "dev-uniform-n100-s2026100504",
+      "dev-uniform-n100-s2026100507",
+      "dev-uniform-n200-s2026100508",
+      "dev-uniform-n200-s2026100511",
+      "dev-uniform-n50-s2026100500",
+      "dev-uniform-n50-s2026100503"
+    ],
+    "calibration_ids": [
+      "dev-clustered-n100-s2026100518",
+      "dev-clustered-n200-s2026100522",
+      "dev-clustered-n50-s2026100514",
+      "dev-uniform-n100-s2026100506",
+      "dev-uniform-n200-s2026100510",
+      "dev-uniform-n50-s2026100502"
+    ],
+    "test_ids": [
+      "dev-clustered-n100-s2026100517",
+      "dev-clustered-n200-s2026100521",
+      "dev-clustered-n50-s2026100513",
+      "dev-uniform-n100-s2026100505",
+      "dev-uniform-n200-s2026100509",
+      "dev-uniform-n50-s2026100501"
+    ],
+    "model": {
+      "train_ids": [
+        "dev-clustered-n100-s2026100516",
+        "dev-clustered-n100-s2026100519",
+        "dev-clustered-n200-s2026100520",
+        "dev-clustered-n200-s2026100523",
+        "dev-clustered-n50-s2026100512",
+        "dev-clustered-n50-s2026100515",
+        "dev-uniform-n100-s2026100504",
+        "dev-uniform-n100-s2026100507",
+        "dev-uniform-n200-s2026100508",
+        "dev-uniform-n200-s2026100511",
+        "dev-uniform-n50-s2026100500",
+        "dev-uniform-n50-s2026100503"
+      ],
+      "mu": [
+        4.605170185988092,
+        0.18566666666666667,
+        0.09521809869360798,
+        0.3156583573530761,
+        0.11392710762071129,
+        0.9569368333558852
+      ],
+      "sd": [
+        0.5659523030068884,
+        0.009469737373651182,
+        0.004353029561066234,
+        0.05934881347055863,
+        0.04903555256210791,
+        0.04437939622090028
+      ],
+      "scaled": {
+        "dev-clustered-n100-s2026100516": [
+          0.0,
+          1.9007918899719052,
+          -0.05628335040789598,
+          -1.082373865226306,
+          -0.6613463989269206,
+          -0.7353976422625061
+        ],
+        "dev-clustered-n100-s2026100519": [
+          0.0,
+          -1.0559954944288363,
+          -1.9099197018420768,
+          -0.7568489740617513,
+          -0.5891410801604328,
+          0.09444725176396573
+        ],
+        "dev-clustered-n200-s2026100520": [
+          1.224744871391588,
+          0.9327960200788044,
+          -0.8503050898133103,
+          -1.151159242573484,
+          -1.2010357575800674,
+          -1.1442555001171386
+        ],
+        "dev-clustered-n200-s2026100523": [
+          1.224744871391588,
+          -0.36959842305009266,
+          0.5283328174773485,
+          -1.0368758536368958,
+          -1.123877533078193,
+          0.4949408429256911
+        ],
+        "dev-clustered-n50-s2026100512": [
+          -1.2247448713915903,
+          -0.5279977472144182,
+          1.0008092506024182,
+          -0.5060379600255046,
+          0.05235580800366182,
+          -2.4522791440111975
+        ],
+        "dev-clustered-n50-s2026100515": [
+          -1.2247448713915903,
+          1.7247926409004286,
+          -0.3559940640586448,
+          -0.5679311921565204,
+          -0.3246873165213603,
+          -0.34313732893247634
+        ],
+        "dev-uniform-n100-s2026100504": [
+          0.0,
+          -0.38719834795724095,
+          -0.891310122162869,
+          1.2387543718015195,
+          0.6287130397077447,
+          0.9686365143665815
+        ],
+        "dev-uniform-n100-s2026100507": [
+          0.0,
+          0.03519984981429356,
+          1.5829838887129313,
+          0.854892557812058,
+          0.5127104771876655,
+          0.7959892327503907
+        ],
+        "dev-uniform-n200-s2026100508": [
+          1.224744871391588,
+          -1.0735954193359845,
+          0.5884539001545763,
+          0.8582856179862325,
+          -0.46580213389662534,
+          0.8379186824161278
+        ],
+        "dev-uniform-n200-s2026100511": [
+          1.224744871391588,
+          0.01759992490714825,
+          0.20616167342744712,
+          0.5651245159578521,
+          -0.4109013039193569,
+          0.8644131358591132
+        ],
+        "dev-uniform-n50-s2026100500": [
+          -1.2247448713915903,
+          -1.302394443128897,
+          1.2003967325630882,
+          1.9541039706857841,
+          2.4766452478079404,
+          -0.2159872873373949
+        ],
+        "dev-uniform-n50-s2026100503": [
+          -1.2247448713915903,
+          0.10559954944288069,
+          -1.0433259346530288,
+          -0.36993394656298684,
+          1.1063669513759422,
+          0.8347112425788509
+        ]
+      },
+      "train_means": {
+        "multistart_vnd": 0.25306724799081304,
+        "parallel_savings": 0.2567216749833113,
+        "pyvrp_ils_s1e6": 0.247540745290728
+      },
+      "sbs": "pyvrp_ils_s1e6",
+      "targets": {
+        "dev-clustered-n100-s2026100516": {
+          "multistart_vnd": 0.25194910447787533,
+          "parallel_savings": 0.25290937086185644,
+          "pyvrp_ils_s1e6": 0.24564464063266336
+        },
+        "dev-clustered-n100-s2026100519": {
+          "multistart_vnd": 0.2282387019190897,
+          "parallel_savings": 0.23027527949180004,
+          "pyvrp_ils_s1e6": 0.22410021223344334
+        },
+        "dev-clustered-n200-s2026100520": {
+          "multistart_vnd": 0.23247573799743693,
+          "parallel_savings": 0.23282025958114524,
+          "pyvrp_ils_s1e6": 0.22534633832770928
+        },
+        "dev-clustered-n200-s2026100523": {
+          "multistart_vnd": 0.22369608875045177,
+          "parallel_savings": 0.22442718964757133,
+          "pyvrp_ils_s1e6": 0.21620972406205033
+        },
+        "dev-clustered-n50-s2026100512": {
+          "multistart_vnd": 0.25229772311496257,
+          "parallel_savings": 0.25430601471986963,
+          "pyvrp_ils_s1e6": 0.2489098613037833
+        },
+        "dev-clustered-n50-s2026100515": {
+          "multistart_vnd": 0.27280902068222374,
+          "parallel_savings": 0.2817429076836432,
+          "pyvrp_ils_s1e6": 0.26604038670324215
+        },
+        "dev-uniform-n100-s2026100504": {
+          "multistart_vnd": 0.26078091669121106,
+          "parallel_savings": 0.26254802145572004,
+          "pyvrp_ils_s1e6": 0.25538922385532875
+        },
+        "dev-uniform-n100-s2026100507": {
+          "multistart_vnd": 0.26708304884178136,
+          "parallel_savings": 0.26879115204763765,
+          "pyvrp_ils_s1e6": 0.25876607556649084
+        },
+        "dev-uniform-n200-s2026100508": {
+          "multistart_vnd": 0.23036760809220433,
+          "parallel_savings": 0.23107869997364058,
+          "pyvrp_ils_s1e6": 0.22856547994330598
+        },
+        "dev-uniform-n200-s2026100511": {
+          "multistart_vnd": 0.23506067675539813,
+          "parallel_savings": 0.23796080925578214,
+          "pyvrp_ils_s1e6": 0.23438996211355967
+        },
+        "dev-uniform-n50-s2026100500": {
+          "multistart_vnd": 0.29500170152063154,
+          "parallel_savings": 0.3067033580208968,
+          "pyvrp_ils_s1e6": 0.28490050040721543
+        },
+        "dev-uniform-n50-s2026100503": {
+          "multistart_vnd": 0.28704664704648986,
+          "parallel_savings": 0.2970970370601724,
+          "pyvrp_ils_s1e6": 0.2822265383399437
+        }
+      },
+      "k": 3
+    },
+    "calibration_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100518",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.22743413292058193,
+          "parallel_savings": 0.22859372303767064,
+          "pyvrp_ils_s1e6": 0.22295847207959987
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100523",
+          "dev-uniform-n200-s2026100508",
+          "dev-clustered-n100-s2026100519"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100522",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.236040310408588,
+          "parallel_savings": 0.236718940030191,
+          "pyvrp_ils_s1e6": 0.22906690100747432
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100520",
+          "dev-clustered-n200-s2026100523",
+          "dev-clustered-n100-s2026100516"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100514",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.27060159073552964,
+          "parallel_savings": 0.2772497718685573,
+          "pyvrp_ils_s1e6": 0.2646371885586164
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n100-s2026100516",
+          "dev-uniform-n50-s2026100503"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100506",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26096274683103304,
+          "parallel_savings": 0.2658686225905582,
+          "pyvrp_ils_s1e6": 0.2573352414362774
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100504",
+          "dev-uniform-n50-s2026100503",
+          "dev-uniform-n200-s2026100511"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100510",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24206973384627117,
+          "parallel_savings": 0.24386251022838093,
+          "pyvrp_ils_s1e6": 0.23944822197073146
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n200-s2026100511",
+          "dev-uniform-n100-s2026100504"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100502",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2735455281399749,
+          "parallel_savings": 0.2804626553998452,
+          "pyvrp_ils_s1e6": 0.26788538296617154
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100503",
+          "dev-uniform-n100-s2026100504",
+          "dev-clustered-n50-s2026100515"
+        ],
+        "harm": false
+      }
+    ],
+    "gates": {
+      "0.1": {
+        "threshold": null,
+        "safe_endpoint": true,
+        "n_calibration": 6,
+        "alpha": 0.1,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": null,
+        "finite_sample_floor": 0.14285714285714285,
+        "reason": "no finite threshold satisfies correction; structurally zero-risk fallback"
+      },
+      "0.2": {
+        "threshold": 0.0,
+        "safe_endpoint": false,
+        "n_calibration": 6,
+        "alpha": 0.2,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": 0.14285714285714285,
+        "finite_sample_floor": 0.14285714285714285
+      }
+    },
+    "test_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100517",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2455741885300916,
+          "parallel_savings": 0.24667854838762376,
+          "pyvrp_ils_s1e6": 0.23996694675471864
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100512",
+          "dev-clustered-n200-s2026100520",
+          "dev-clustered-n100-s2026100516"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.4646000000017043e-05,
+          "wall_seconds": 2.4656997993588448e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100521",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23041083450109562,
+          "parallel_savings": 0.23173608616149957,
+          "pyvrp_ils_s1e6": 0.22531534150110644
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100523",
+          "dev-clustered-n200-s2026100520",
+          "dev-uniform-n200-s2026100511"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.522799999998826e-05,
+          "wall_seconds": 2.5237997760996222e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100513",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2590186160916872,
+          "parallel_savings": 0.2629860977551231,
+          "pyvrp_ils_s1e6": 0.25353162954656294
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100512",
+          "dev-clustered-n50-s2026100515",
+          "dev-clustered-n100-s2026100516"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.6540000000019326e-05,
+          "wall_seconds": 2.6560010155662894e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100505",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24206973384627117,
+          "parallel_savings": 0.24386251022838093,
+          "pyvrp_ils_s1e6": 0.23944822197073146
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100504",
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n200-s2026100511"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.513799999998012e-05,
+          "wall_seconds": 2.5168003048747778e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100509",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24206973384627117,
+          "parallel_savings": 0.24386251022838093,
+          "pyvrp_ils_s1e6": 0.23944822197073146
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n200-s2026100511",
+          "dev-uniform-n100-s2026100504"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5247999999977733e-05,
+          "wall_seconds": 2.5268003810197115e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100501",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2586887552189302,
+          "parallel_savings": 0.26330677933589747,
+          "pyvrp_ils_s1e6": 0.25390532480957195
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100503",
+          "dev-uniform-n100-s2026100504",
+          "dev-clustered-n100-s2026100519"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5417999999999275e-05,
+          "wall_seconds": 2.5437999283894897e-05
+        }
+      }
+    ],
+    "training_time": {
+      "cpu_seconds": 0.0002861440000000437,
+      "wall_seconds": 0.00028626000857912004
+    },
+    "calibration_time": {
+      "cpu_seconds": 0.00016203999999997443,
+      "wall_seconds": 0.00016207399312406778
+    }
+  },
+  {
+    "profile": "cpu100",
+    "fold": 2,
+    "train_ids": [
+      "dev-clustered-n100-s2026100516",
+      "dev-clustered-n100-s2026100517",
+      "dev-clustered-n200-s2026100520",
+      "dev-clustered-n200-s2026100521",
+      "dev-clustered-n50-s2026100512",
+      "dev-clustered-n50-s2026100513",
+      "dev-uniform-n100-s2026100504",
+      "dev-uniform-n100-s2026100505",
+      "dev-uniform-n200-s2026100508",
+      "dev-uniform-n200-s2026100509",
+      "dev-uniform-n50-s2026100500",
+      "dev-uniform-n50-s2026100501"
+    ],
+    "calibration_ids": [
+      "dev-clustered-n100-s2026100519",
+      "dev-clustered-n200-s2026100523",
+      "dev-clustered-n50-s2026100515",
+      "dev-uniform-n100-s2026100507",
+      "dev-uniform-n200-s2026100511",
+      "dev-uniform-n50-s2026100503"
+    ],
+    "test_ids": [
+      "dev-clustered-n100-s2026100518",
+      "dev-clustered-n200-s2026100522",
+      "dev-clustered-n50-s2026100514",
+      "dev-uniform-n100-s2026100506",
+      "dev-uniform-n200-s2026100510",
+      "dev-uniform-n50-s2026100502"
+    ],
+    "model": {
+      "train_ids": [
+        "dev-clustered-n100-s2026100516",
+        "dev-clustered-n100-s2026100517",
+        "dev-clustered-n200-s2026100520",
+        "dev-clustered-n200-s2026100521",
+        "dev-clustered-n50-s2026100512",
+        "dev-clustered-n50-s2026100513",
+        "dev-uniform-n100-s2026100504",
+        "dev-uniform-n100-s2026100505",
+        "dev-uniform-n200-s2026100508",
+        "dev-uniform-n200-s2026100509",
+        "dev-uniform-n50-s2026100500",
+        "dev-uniform-n50-s2026100501"
+      ],
+      "mu": [
+        4.605170185988092,
+        0.18295833333333333,
+        0.09482827021484,
+        0.3178084657320883,
+        0.11700636193873036,
+        0.9381525015319777
+      ],
+      "sd": [
+        0.5659523030068884,
+        0.008842009627865117,
+        0.0038029717310564615,
+        0.06340270806194954,
+        0.05026185041425338,
+        0.05011185771705469
+      ],
+      "scaled": {
+        "dev-clustered-n100-s2026100516": [
+          0.0,
+          2.3420392201420093,
+          0.0380821633418573,
+          -1.0470800860251845,
+          -0.706474993095185,
+          -0.2764250249948688
+        ],
+        "dev-clustered-n100-s2026100517": [
+          0.0,
+          0.4193993774499748,
+          0.0413121075053931,
+          -0.34580917248344983,
+          -0.5909624629304483,
+          -1.6042862001992941
+        ],
+        "dev-clustered-n200-s2026100520": [
+          1.224744871391588,
+          1.3053216579061089,
+          -0.8707860450475892,
+          -1.1114674072369362,
+          -1.2329969117140422,
+          -0.6385122773615671
+        ],
+        "dev-clustered-n200-s2026100521": [
+          1.224744871391588,
+          0.28745350589268376,
+          0.03481334217084093,
+          -0.7774439847309912,
+          -1.0389892692269307,
+          -0.05884788024799553
+        ],
+        "dev-clustered-n50-s2026100512": [
+          -1.2247448713915903,
+          -0.25917939055897427,
+          1.2480715259774782,
+          -0.5075944208273032,
+          -0.010185823611832274,
+          -1.796906761286759
+        ],
+        "dev-clustered-n50-s2026100513": [
+          -1.2247448713915903,
+          0.1932064547803272,
+          0.9007087221370808,
+          -1.4912040304361451,
+          -0.09878877873492342,
+          -0.75851252872527
+        ],
+        "dev-uniform-n100-s2026100504": [
+          0.0,
+          -0.10838410877920818,
+          -0.9177220021341069,
+          1.125637941192393,
+          0.5521093385607478,
+          1.2326790165671868
+        ],
+        "dev-uniform-n100-s2026100505": [
+          0.0,
+          -0.9000593381229858,
+          -0.2876729974912667,
+          0.2397061262516349,
+          0.25288506293164115,
+          0.6407734809706397
+        ],
+        "dev-uniform-n200-s2026100508": [
+          1.224744871391588,
+          -0.8435111074555731,
+          0.7760735314868289,
+          0.7694959120617677,
+          -0.515701652935933,
+          1.1169144306677519
+        ],
+        "dev-uniform-n200-s2026100509": [
+          1.224744871391588,
+          -1.3147463630173466,
+          -0.1743192003622367,
+          1.1288063292856054,
+          -0.4386292902342507,
+          0.9393635642340896
+        ],
+        "dev-uniform-n50-s2026100500": [
+          -1.2247448713915903,
+          -1.0885534403476926,
+          1.4765271313396078,
+          1.7952489279808288,
+          2.354955357453292,
+          0.1835682578846623
+        ],
+        "dev-uniform-n50-s2026100501": [
+          -1.2247448713915903,
+          -0.032986467889323544,
+          -2.265088278923891,
+          0.2217038649677795,
+          1.4727794235378648,
+          1.0201919224914286
+        ]
+      },
+      "train_means": {
+        "multistart_vnd": 0.25139897719249266,
+        "parallel_savings": 0.25603241034430824,
+        "pyvrp_ils_s1e6": 0.2460161090198872
+      },
+      "sbs": "pyvrp_ils_s1e6",
+      "targets": {
+        "dev-clustered-n100-s2026100516": {
+          "multistart_vnd": 0.25194910447787533,
+          "parallel_savings": 0.25290937086185644,
+          "pyvrp_ils_s1e6": 0.24564464063266336
+        },
+        "dev-clustered-n100-s2026100517": {
+          "multistart_vnd": 0.24688929941950014,
+          "parallel_savings": 0.25154000861308223,
+          "pyvrp_ils_s1e6": 0.2404154916937948
+        },
+        "dev-clustered-n200-s2026100520": {
+          "multistart_vnd": 0.23247573799743693,
+          "parallel_savings": 0.23282025958114524,
+          "pyvrp_ils_s1e6": 0.22534633832770928
+        },
+        "dev-clustered-n200-s2026100521": {
+          "multistart_vnd": 0.22264002719519535,
+          "parallel_savings": 0.22391072025129774,
+          "pyvrp_ils_s1e6": 0.21896630791058394
+        },
+        "dev-clustered-n50-s2026100512": {
+          "multistart_vnd": 0.25229772311496257,
+          "parallel_savings": 0.25430601471986963,
+          "pyvrp_ils_s1e6": 0.2489098613037833
+        },
+        "dev-clustered-n50-s2026100513": {
+          "multistart_vnd": 0.26245468146957296,
+          "parallel_savings": 0.26969754876730967,
+          "pyvrp_ils_s1e6": 0.2546110089478525
+        },
+        "dev-uniform-n100-s2026100504": {
+          "multistart_vnd": 0.26078091669121106,
+          "parallel_savings": 0.26254802145572004,
+          "pyvrp_ils_s1e6": 0.25538922385532875
+        },
+        "dev-uniform-n100-s2026100505": {
+          "multistart_vnd": 0.25110151910350276,
+          "parallel_savings": 0.25330702242248954,
+          "pyvrp_ils_s1e6": 0.24475268616971319
+        },
+        "dev-uniform-n200-s2026100508": {
+          "multistart_vnd": 0.23036760809220433,
+          "parallel_savings": 0.23107869997364058,
+          "pyvrp_ils_s1e6": 0.22856547994330598
+        },
+        "dev-uniform-n200-s2026100509": {
+          "multistart_vnd": 0.2213390916413502,
+          "parallel_savings": 0.22328183660728287,
+          "pyvrp_ils_s1e6": 0.22045940376954756
+        },
+        "dev-uniform-n50-s2026100500": {
+          "multistart_vnd": 0.29500170152063154,
+          "parallel_savings": 0.3067033580208968,
+          "pyvrp_ils_s1e6": 0.28490050040721543
+        },
+        "dev-uniform-n50-s2026100501": {
+          "multistart_vnd": 0.2894903155864689,
+          "parallel_savings": 0.3102860628571083,
+          "pyvrp_ils_s1e6": 0.28423236527714846
+        }
+      },
+      "k": 3
+    },
+    "calibration_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100519",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2448408209966364,
+          "parallel_savings": 0.2465885880431691,
+          "pyvrp_ils_s1e6": 0.2397027393118753
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n100-s2026100504",
+          "dev-clustered-n200-s2026100521"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100523",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2284944577616122,
+          "parallel_savings": 0.2292698932686945,
+          "pyvrp_ils_s1e6": 0.22429270872719972
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100521",
+          "dev-uniform-n200-s2026100508",
+          "dev-clustered-n200-s2026100520"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100515",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2537643617889828,
+          "parallel_savings": 0.25804897608074945,
+          "pyvrp_ils_s1e6": 0.2468903804247702
+        },
+        "neighbor_ids": [
+          "dev-clustered-n100-s2026100516",
+          "dev-clustered-n50-s2026100513",
+          "dev-clustered-n100-s2026100517"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100507",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24741668129563937,
+          "parallel_savings": 0.24897791461728339,
+          "pyvrp_ils_s1e6": 0.24290246332278265
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n100-s2026100504"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100511",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2247822423095833,
+          "parallel_savings": 0.22609041894407372,
+          "pyvrp_ils_s1e6": 0.22266373054114583
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n200-s2026100509",
+          "dev-clustered-n200-s2026100521"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100503",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26712425046039423,
+          "parallel_savings": 0.27538036891177264,
+          "pyvrp_ils_s1e6": 0.2614580917673968
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100501",
+          "dev-uniform-n100-s2026100504",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "harm": false
+      }
+    ],
+    "gates": {
+      "0.1": {
+        "threshold": null,
+        "safe_endpoint": true,
+        "n_calibration": 6,
+        "alpha": 0.1,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": null,
+        "finite_sample_floor": 0.14285714285714285,
+        "reason": "no finite threshold satisfies correction; structurally zero-risk fallback"
+      },
+      "0.2": {
+        "threshold": 0.0,
+        "safe_endpoint": false,
+        "n_calibration": 6,
+        "alpha": 0.2,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": 0.14285714285714285,
+        "finite_sample_floor": 0.14285714285714285
+      }
+    },
+    "test_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100518",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23470305146363415,
+          "parallel_savings": 0.23609881421580928,
+          "pyvrp_ils_s1e6": 0.23076149134120102
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100505",
+          "dev-clustered-n200-s2026100521",
+          "dev-uniform-n200-s2026100508"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.4956999999992124e-05,
+          "wall_seconds": 2.5007000658661127e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100522",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23400168820404413,
+          "parallel_savings": 0.23609032948184175,
+          "pyvrp_ils_s1e6": 0.22824271264402934
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100521",
+          "dev-clustered-n200-s2026100520",
+          "dev-clustered-n100-s2026100517"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.4326000000018944e-05,
+          "wall_seconds": 2.434699854347855e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100514",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.25797171935392704,
+          "parallel_savings": 0.26533856443337,
+          "pyvrp_ils_s1e6": 0.2517411147458404
+        },
+        "neighbor_ids": [
+          "dev-clustered-n100-s2026100516",
+          "dev-clustered-n200-s2026100520",
+          "dev-uniform-n50-s2026100501"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.6629999999971954e-05,
+          "wall_seconds": 2.6641006115823984e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100506",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26712425046039423,
+          "parallel_savings": 0.27538036891177264,
+          "pyvrp_ils_s1e6": 0.2614580917673968
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100504",
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n50-s2026100501"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.2984000000003668e-05,
+          "wall_seconds": 2.3075001081451774e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100510",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2342694062790191,
+          "parallel_savings": 0.235889186334471,
+          "pyvrp_ils_s1e6": 0.23125918996085557
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100509",
+          "dev-uniform-n200-s2026100508",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.433599999995817e-05,
+          "wall_seconds": 2.4366003344766796e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100502",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26712425046039423,
+          "parallel_savings": 0.27538036891177264,
+          "pyvrp_ils_s1e6": 0.2614580917673968
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100501",
+          "dev-uniform-n100-s2026100504",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.268399999999504e-05,
+          "wall_seconds": 2.2684005671180785e-05
+        }
+      }
+    ],
+    "training_time": {
+      "cpu_seconds": 0.00031024000000001717,
+      "wall_seconds": 0.00031072799174580723
+    },
+    "calibration_time": {
+      "cpu_seconds": 0.00014981200000002692,
+      "wall_seconds": 0.00014984500012360513
+    }
+  },
+  {
+    "profile": "cpu100",
+    "fold": 3,
+    "train_ids": [
+      "dev-clustered-n100-s2026100517",
+      "dev-clustered-n100-s2026100518",
+      "dev-clustered-n200-s2026100521",
+      "dev-clustered-n200-s2026100522",
+      "dev-clustered-n50-s2026100513",
+      "dev-clustered-n50-s2026100514",
+      "dev-uniform-n100-s2026100505",
+      "dev-uniform-n100-s2026100506",
+      "dev-uniform-n200-s2026100509",
+      "dev-uniform-n200-s2026100510",
+      "dev-uniform-n50-s2026100501",
+      "dev-uniform-n50-s2026100502"
+    ],
+    "calibration_ids": [
+      "dev-clustered-n100-s2026100516",
+      "dev-clustered-n200-s2026100520",
+      "dev-clustered-n50-s2026100512",
+      "dev-uniform-n100-s2026100504",
+      "dev-uniform-n200-s2026100508",
+      "dev-uniform-n50-s2026100500"
+    ],
+    "test_ids": [
+      "dev-clustered-n100-s2026100519",
+      "dev-clustered-n200-s2026100523",
+      "dev-clustered-n50-s2026100515",
+      "dev-uniform-n100-s2026100507",
+      "dev-uniform-n200-s2026100511",
+      "dev-uniform-n50-s2026100503"
+    ],
+    "model": {
+      "train_ids": [
+        "dev-clustered-n100-s2026100517",
+        "dev-clustered-n100-s2026100518",
+        "dev-clustered-n200-s2026100521",
+        "dev-clustered-n200-s2026100522",
+        "dev-clustered-n50-s2026100513",
+        "dev-clustered-n50-s2026100514",
+        "dev-uniform-n100-s2026100505",
+        "dev-uniform-n100-s2026100506",
+        "dev-uniform-n200-s2026100509",
+        "dev-uniform-n200-s2026100510",
+        "dev-uniform-n50-s2026100501",
+        "dev-uniform-n50-s2026100502"
+      ],
+      "mu": [
+        4.605170185988092,
+        0.1852638888888889,
+        0.09265573824054125,
+        0.3126447777501254,
+        0.11534265527685461,
+        0.9534020037435582
+      ],
+      "sd": [
+        0.5659523030068884,
+        0.011579327511444007,
+        0.003760762923525961,
+        0.05882886905358097,
+        0.04538235276132877,
+        0.03975663026653086
+      ],
+      "scaled": {
+        "dev-clustered-n100-s2026100517": [
+          0.0,
+          0.12114501264355537,
+          0.6194596146220058,
+          -0.28492048709764045,
+          -0.6178428077062136,
+          -2.405718577560613
+        ],
+        "dev-clustered-n100-s2026100518": [
+          0.0,
+          -0.8288237993732506,
+          1.0773676771716505,
+          -0.8920563619247693,
+          -0.7429228971644437,
+          0.3961507011540187
+        ],
+        "dev-clustered-n200-s2026100521": [
+          1.224744871391588,
+          0.02039074470238272,
+          0.6128879105936913,
+          -0.7501141314864139,
+          -1.1140413287057258,
+          -0.45774701456120953
+        ],
+        "dev-clustered-n200-s2026100522": [
+          1.224744871391588,
+          0.2075058137359949,
+          0.026328714973972142,
+          -1.0694040058433798,
+          -1.3131530724470741,
+          -0.40370949900450315
+        ],
+        "dev-clustered-n50-s2026100513": [
+          -1.2247448713915903,
+          -0.051576589541316484,
+          1.4885016408462284,
+          -1.5193677399980834,
+          -0.0727507490603067,
+          -1.3396501104496656
+        ],
+        "dev-clustered-n50-s2026100514": [
+          -1.2247448713915903,
+          2.4240997084418794,
+          -2.0052941814917626,
+          -0.9767299265205385,
+          -0.018130837786789207,
+          -0.3482872589526261
+        ],
+        "dev-uniform-n100-s2026100505": [
+          0.0,
+          -0.8863976667682095,
+          0.2867821553718143,
+          0.34611757548510474,
+          0.3167349639746637,
+          0.4241015192345504
+        ],
+        "dev-uniform-n100-s2026100506": [
+          0.0,
+          -0.02278965584383824,
+          -0.22274242008331638,
+          0.9656282936748822,
+          0.645638468364725,
+          0.5315536605924824
+        ],
+        "dev-uniform-n200-s2026100509": [
+          1.224744871391588,
+          -1.2030539374404798,
+          0.4014081753724165,
+          1.3043437239334152,
+          -0.4491308156362649,
+          0.8004639943213296
+        ],
+        "dev-uniform-n200-s2026100510": [
+          1.224744871391588,
+          -1.0015454015581249,
+          0.18951142365791332,
+          1.4220008399926174,
+          -0.40679591440653384,
+          1.0981956120588598
+        ],
+        "dev-uniform-n50-s2026100501": [
+          -1.2247448713915903,
+          -0.22429819172619073,
+          -1.712826585930279,
+          0.3267156706890828,
+          1.6677920190471438,
+          0.9023453449624772
+        ],
+        "dev-uniform-n50-s2026100502": [
+          -1.2247448713915903,
+          1.4453439627275906,
+          -0.761384125104334,
+          1.1277865490957208,
+          2.10460297152682,
+          0.8023016282049104
+        ]
+      },
+      "train_means": {
+        "multistart_vnd": 0.25554102510391025,
+        "parallel_savings": 0.2593303569067677,
+        "pyvrp_ils_s1e6": 0.2495333191028179
+      },
+      "sbs": "pyvrp_ils_s1e6",
+      "targets": {
+        "dev-clustered-n100-s2026100517": {
+          "multistart_vnd": 0.24688929941950014,
+          "parallel_savings": 0.25154000861308223,
+          "pyvrp_ils_s1e6": 0.2404154916937948
+        },
+        "dev-clustered-n100-s2026100518": {
+          "multistart_vnd": 0.22947935207971387,
+          "parallel_savings": 0.23091000599813785,
+          "pyvrp_ils_s1e6": 0.2202605742563768
+        },
+        "dev-clustered-n200-s2026100521": {
+          "multistart_vnd": 0.22264002719519535,
+          "parallel_savings": 0.22391072025129774,
+          "pyvrp_ils_s1e6": 0.21896630791058394
+        },
+        "dev-clustered-n200-s2026100522": {
+          "multistart_vnd": 0.2270962590512673,
+          "parallel_savings": 0.22780375505725728,
+          "pyvrp_ils_s1e6": 0.22073448149135239
+        },
+        "dev-clustered-n50-s2026100513": {
+          "multistart_vnd": 0.26245468146957296,
+          "parallel_savings": 0.26969754876730967,
+          "pyvrp_ils_s1e6": 0.2546110089478525
+        },
+        "dev-clustered-n50-s2026100514": {
+          "multistart_vnd": 0.2982917022792166,
+          "parallel_savings": 0.30187616947094964,
+          "pyvrp_ils_s1e6": 0.2933596607047848
+        },
+        "dev-uniform-n100-s2026100505": {
+          "multistart_vnd": 0.25110151910350276,
+          "parallel_savings": 0.25330702242248954,
+          "pyvrp_ils_s1e6": 0.24475268616971319
+        },
+        "dev-uniform-n100-s2026100506": {
+          "multistart_vnd": 0.26066005990352753,
+          "parallel_savings": 0.26099955178404854,
+          "pyvrp_ils_s1e6": 0.24963093065028352
+        },
+        "dev-uniform-n200-s2026100509": {
+          "multistart_vnd": 0.2213390916413502,
+          "parallel_savings": 0.22328183660728287,
+          "pyvrp_ils_s1e6": 0.22045940376954756
+        },
+        "dev-uniform-n200-s2026100510": {
+          "multistart_vnd": 0.228246716763477,
+          "parallel_savings": 0.2288733158795924,
+          "pyvrp_ils_s1e6": 0.22790638713621955
+        },
+        "dev-uniform-n50-s2026100501": {
+          "multistart_vnd": 0.2894903155864689,
+          "parallel_savings": 0.3102860628571083,
+          "pyvrp_ils_s1e6": 0.28423236527714846
+        },
+        "dev-uniform-n50-s2026100502": {
+          "multistart_vnd": 0.32880327675413046,
+          "parallel_savings": 0.3294782851726561,
+          "pyvrp_ils_s1e6": 0.3190705312261573
+        }
+      },
+      "k": 3
+    },
+    "calibration_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100516",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23220852855532093,
+          "parallel_savings": 0.2344181613072124,
+          "pyvrp_ils_s1e6": 0.22670542703191038
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n200-s2026100521",
+          "dev-clustered-n100-s2026100517"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100520",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23220852855532093,
+          "parallel_savings": 0.2344181613072124,
+          "pyvrp_ils_s1e6": 0.22670542703191038
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n200-s2026100521",
+          "dev-clustered-n100-s2026100517"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100512",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.246274444322929,
+          "parallel_savings": 0.25071585445950995,
+          "pyvrp_ils_s1e6": 0.23842902496600804
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100513",
+          "dev-clustered-n100-s2026100517",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100504",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24666943192350244,
+          "parallel_savings": 0.24772663002871015,
+          "pyvrp_ils_s1e6": 0.2407633346520721
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100506",
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n200-s2026100510"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100508",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23356244250277666,
+          "parallel_savings": 0.2351540583031216,
+          "pyvrp_ils_s1e6": 0.23103949235849344
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100509",
+          "dev-uniform-n200-s2026100510",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "harm": false
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100500",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.28018828525372025,
+          "parallel_savings": 0.28126161979306474,
+          "pyvrp_ils_s1e6": 0.27115138268205136
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n100-s2026100506",
+          "dev-uniform-n50-s2026100502"
+        ],
+        "harm": false
+      }
+    ],
+    "gates": {
+      "0.1": {
+        "threshold": null,
+        "safe_endpoint": true,
+        "n_calibration": 6,
+        "alpha": 0.1,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": null,
+        "finite_sample_floor": 0.14285714285714285,
+        "reason": "no finite threshold satisfies correction; structurally zero-risk fallback"
+      },
+      "0.2": {
+        "threshold": 0.0,
+        "safe_endpoint": false,
+        "n_calibration": 6,
+        "alpha": 0.2,
+        "trials": [
+          {
+            "threshold": 0.0,
+            "sum_harm": 0,
+            "corrected_risk": 0.14285714285714285
+          }
+        ],
+        "corrected_risk": 0.14285714285714285,
+        "finite_sample_floor": 0.14285714285714285
+      }
+    },
+    "test_predictions": [
+      {
+        "instance_id": "dev-clustered-n100-s2026100519",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23589237674482796,
+          "parallel_savings": 0.23734026115929488,
+          "pyvrp_ils_s1e6": 0.22858258063914746
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100505",
+          "dev-clustered-n200-s2026100522",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5567999999975832e-05,
+          "wall_seconds": 2.5607994757592678e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n200-s2026100523",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.22640521277539216,
+          "parallel_savings": 0.22754149376889762,
+          "pyvrp_ils_s1e6": 0.2199871212194377
+        },
+        "neighbor_ids": [
+          "dev-clustered-n200-s2026100521",
+          "dev-clustered-n100-s2026100518",
+          "dev-clustered-n200-s2026100522"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5377999999964818e-05,
+          "wall_seconds": 2.5397996068932116e-05
+        }
+      },
+      {
+        "instance_id": "dev-clustered-n50-s2026100515",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.2738021478841057,
+          "parallel_savings": 0.27752442334076927,
+          "pyvrp_ils_s1e6": 0.2658672001009736
+        },
+        "neighbor_ids": [
+          "dev-clustered-n50-s2026100513",
+          "dev-clustered-n50-s2026100514",
+          "dev-uniform-n100-s2026100506"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.5307000000029944e-05,
+          "wall_seconds": 2.5347995688207448e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n100-s2026100507",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.24708031036224806,
+          "parallel_savings": 0.24840552673489197,
+          "pyvrp_ils_s1e6": 0.23821473035879118
+        },
+        "neighbor_ids": [
+          "dev-uniform-n100-s2026100505",
+          "dev-uniform-n100-s2026100506",
+          "dev-clustered-n100-s2026100518"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.603899999997772e-05,
+          "wall_seconds": 2.606899943202734e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n200-s2026100511",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.23356244250277666,
+          "parallel_savings": 0.2351540583031216,
+          "pyvrp_ils_s1e6": 0.23103949235849344
+        },
+        "neighbor_ids": [
+          "dev-uniform-n200-s2026100510",
+          "dev-uniform-n200-s2026100509",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.3945999999996914e-05,
+          "wall_seconds": 2.3966000298969448e-05
+        }
+      },
+      {
+        "instance_id": "dev-uniform-n50-s2026100503",
+        "chosen": "pyvrp_ils_s1e6",
+        "sbs": "pyvrp_ils_s1e6",
+        "score": 0.0,
+        "predicted_costs": {
+          "multistart_vnd": 0.26708396486449976,
+          "parallel_savings": 0.2748642123545488,
+          "pyvrp_ils_s1e6": 0.2595386606990484
+        },
+        "neighbor_ids": [
+          "dev-uniform-n50-s2026100501",
+          "dev-uniform-n100-s2026100506",
+          "dev-uniform-n100-s2026100505"
+        ],
+        "inference_time": {
+          "cpu_seconds": 2.522799999998826e-05,
+          "wall_seconds": 2.524799492675811e-05
+        }
+      }
+    ],
+    "training_time": {
+      "cpu_seconds": 0.00029929299999997827,
+      "wall_seconds": 0.00029934999474789947
+    },
+    "calibration_time": {
+      "cpu_seconds": 0.00017612100000002906,
+      "wall_seconds": 0.00017615500837564468
+    }
+  }
+]

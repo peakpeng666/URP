@@ -1,0 +1,100 @@
+{
+  "status": "accepted_with_scope_limits",
+  "all_freeze_hashes_match": true,
+  "formal_trajectories_reimplemented": 288,
+  "formal_checkpoint_outputs_checked": 1152,
+  "baseline_outputs_checked": 288,
+  "independent_trace_rows_recomputed": 143221,
+  "independent_smoke_replays": 4,
+  "smoke_standalone_equivalences_checked": 16,
+  "primary_independent_geometry_blocks": 8,
+  "independent_replay_cpu_seconds": 23.181140629,
+  "audit_cpu_seconds": 24.043347505,
+  "overall_rankings": {
+    "all/2500": [
+      "random_regret2",
+      "random_cheapest",
+      "worst_regret2",
+      "worst_cheapest"
+    ],
+    "all/10000": [
+      "random_regret2",
+      "random_cheapest",
+      "worst_regret2",
+      "worst_cheapest"
+    ],
+    "all/40000": [
+      "random_regret2",
+      "random_cheapest",
+      "worst_regret2",
+      "worst_cheapest"
+    ],
+    "all/160000": [
+      "random_regret2",
+      "random_cheapest",
+      "worst_regret2",
+      "worst_cheapest"
+    ]
+  },
+  "all_demand_last_budget_gains": [
+    {
+      "algorithm": "random_cheapest",
+      "demand_mode": "all",
+      "from_budget": 40000,
+      "to_budget": 160000,
+      "mean_paired_gain_pct": 0.2960827975888794,
+      "median_paired_gain_pct": 0.07069357228608561,
+      "min_gain_pct": 0.0,
+      "max_gain_pct": 1.577488239207283,
+      "fraction_gain_le_0_5_pct": 0.7083333333333334,
+      "block_count": 24,
+      "practical_plateau_rule_met": false
+    },
+    {
+      "algorithm": "random_regret2",
+      "demand_mode": "all",
+      "from_budget": 40000,
+      "to_budget": 160000,
+      "mean_paired_gain_pct": 0.38795650094270945,
+      "median_paired_gain_pct": 0.13625680533713339,
+      "min_gain_pct": 0.0,
+      "max_gain_pct": 3.0011748321723,
+      "fraction_gain_le_0_5_pct": 0.7916666666666666,
+      "block_count": 24,
+      "practical_plateau_rule_met": true
+    },
+    {
+      "algorithm": "worst_cheapest",
+      "demand_mode": "all",
+      "from_budget": 40000,
+      "to_budget": 160000,
+      "mean_paired_gain_pct": 0.0,
+      "median_paired_gain_pct": 0.0,
+      "min_gain_pct": 0.0,
+      "max_gain_pct": 0.0,
+      "fraction_gain_le_0_5_pct": 1,
+      "block_count": 24,
+      "practical_plateau_rule_met": true
+    },
+    {
+      "algorithm": "worst_regret2",
+      "demand_mode": "all",
+      "from_budget": 40000,
+      "to_budget": 160000,
+      "mean_paired_gain_pct": 0.016427530086480083,
+      "median_paired_gain_pct": 0.0,
+      "min_gain_pct": 0.0,
+      "max_gain_pct": 0.39156098370996884,
+      "fraction_gain_le_0_5_pct": 1,
+      "block_count": 24,
+      "practical_plateau_rule_met": true
+    }
+  ],
+  "limits": [
+    "Equal candidate-delta evaluations do not imply equal FLOPs, wall time, or objective/checking work.",
+    "Checkpoints are prefixes of288 trajectories, not1152 independent runs.",
+    "Only8 reused development geometries; no fresh held-out or SOTA evidence.",
+    "Preregistered practical plateau is local finite-budget behavior, not asymptotic convergence or optimality.",
+    "Independent audit cost is separate from author process-tree timing."
+  ]
+}

@@ -1,0 +1,1561 @@
+{
+  "schema_version": 1,
+  "id": "fleet",
+  "title": "异构车具容量 × 任务空间",
+  "domain": "heterogeneous_fleet",
+  "kind": "paired_synthetic_capacity_geometry",
+  "status": "completed",
+  "started_at": "2026-10-07T02:46:59.104014+00:00",
+  "finished_at": "2026-10-07T02:46:59.870023+00:00",
+  "counts": [
+    {
+      "unit": "instance",
+      "value": 144,
+      "scope": "formal",
+      "note": "results/summary.json:recorded_instances; six related variants per independent base geometry"
+    },
+    {
+      "unit": "geometry",
+      "value": 24,
+      "scope": "formal_independent_blocks",
+      "note": "results/summary.json:base_blocks; 24 independent base draws"
+    },
+    {
+      "unit": "output",
+      "value": 432,
+      "scope": "formal_control",
+      "note": "validation/full_validation.json:formal_heuristic_outputs; not independent solver calls"
+    },
+    {
+      "unit": "reference",
+      "value": 144,
+      "scope": "formal_joint_exact",
+      "note": "validation/full_validation.json:formal_joint_references; exact_all shares computation with two-stage outputs"
+    },
+    {
+      "unit": "instance",
+      "value": 109,
+      "scope": "globally_feasible_subset",
+      "note": "validation/full_validation.json:global_feasible; common completion-rate denominator"
+    }
+  ],
+  "failure_reason": null,
+  "failures": [],
+  "notes": [
+    "24 个配对底图生成 144 个小问题；联合精确参照仅适用于本次有限合成合同。",
+    "gap 只在各策略完成子集计算，分母不同，不作无条件冠军排名。exact_all 一次共享计算产生三个输出，576 行不是 576 次独立求解。",
+    "执行异常 0；35 个全局不可行问题仍保留。UNKNOWN_INCOMPLETE 不是不可行证明。",
+    "完整率使用同一全局可行母集；完成子集 gap 的 cohort 含策略名称，分母不同时禁止直接排名。",
+    "UNKNOWN_INCOMPLETE 表示没有得到完整解，不是不可行证明，也不是执行异常。",
+    "精确性仅适用于固定的八任务、有限农具和车辆合成合同；576 个输出不等于 576 次独立求解。"
+  ],
+  "parameters": {
+    "tasks_per_instance": 8,
+    "vehicles": 3,
+    "implements": 4,
+    "capacity_pairs": [
+      [
+        5,
+        5
+      ],
+      [
+        3,
+        7
+      ],
+      [
+        1,
+        9
+      ]
+    ],
+    "space_variants": [
+      "four_quadrants",
+      "two_clusters"
+    ],
+    "global_infeasible": 35,
+    "failed_execution_records": 0,
+    "shared_computation": "exact_all produces joint_exact, two_stage_lex and two_stage_best_tie",
+    "cells": [
+      {
+        "capacity_h": 0,
+        "geometry": "four_quadrants",
+        "algorithm": "joint_exact",
+        "all_instances": 24,
+        "exact_feasible": 21,
+        "complete": 21,
+        "statuses": {
+          "INFEASIBLE_PROVEN": 3,
+          "FEASIBLE": 21
+        },
+        "gap_n": 21
+      },
+      {
+        "capacity_h": 0,
+        "geometry": "four_quadrants",
+        "algorithm": "two_stage_lex",
+        "all_instances": 24,
+        "exact_feasible": 21,
+        "complete": 21,
+        "statuses": {
+          "PHASE_ONE_INFEASIBLE": 2,
+          "FEASIBLE": 21,
+          "STAGE_FIXED_INFEASIBLE": 1
+        },
+        "gap_n": 21
+      },
+      {
+        "capacity_h": 0,
+        "geometry": "four_quadrants",
+        "algorithm": "two_stage_best_tie",
+        "all_instances": 24,
+        "exact_feasible": 21,
+        "complete": 21,
+        "statuses": {
+          "PHASE_ONE_INFEASIBLE": 2,
+          "FEASIBLE": 21,
+          "STAGE_FIXED_INFEASIBLE": 1
+        },
+        "gap_n": 21
+      },
+      {
+        "capacity_h": 0,
+        "geometry": "four_quadrants",
+        "algorithm": "greedy",
+        "all_instances": 24,
+        "exact_feasible": 21,
+        "complete": 18,
+        "statuses": {
+          "UNKNOWN_INCOMPLETE": 6,
+          "FEASIBLE": 18
+        },
+        "gap_n": 18
+      },
+      {
+        "capacity_h": 0,
+        "geometry": "two_clusters",
+        "algorithm": "joint_exact",
+        "all_instances": 24,
+        "exact_feasible": 21,
+        "complete": 21,
+        "statuses": {
+          "INFEASIBLE_PROVEN": 3,
+          "FEASIBLE": 21
+        },
+        "gap_n": 21
+      },
+      {
+        "capacity_h": 0,
+        "geometry": "two_clusters",
+        "algorithm": "two_stage_lex",
+        "all_instances": 24,
+        "exact_feasible": 21,
+        "complete": 21,
+        "statuses": {
+          "PHASE_ONE_INFEASIBLE": 2,
+          "FEASIBLE": 21,
+          "STAGE_FIXED_INFEASIBLE": 1
+        },
+        "gap_n": 21
+      },
+      {
+        "capacity_h": 0,
+        "geometry": "two_clusters",
+        "algorithm": "two_stage_best_tie",
+        "all_instances": 24,
+        "exact_feasible": 21,
+        "complete": 21,
+        "statuses": {
+          "PHASE_ONE_INFEASIBLE": 2,
+          "FEASIBLE": 21,
+          "STAGE_FIXED_INFEASIBLE": 1
+        },
+        "gap_n": 21
+      },
+      {
+        "capacity_h": 0,
+        "geometry": "two_clusters",
+        "algorithm": "greedy",
+        "all_instances": 24,
+        "exact_feasible": 21,
+        "complete": 21,
+        "statuses": {
+          "UNKNOWN_INCOMPLETE": 3,
+          "FEASIBLE": 21
+        },
+        "gap_n": 21
+      },
+      {
+        "capacity_h": 2,
+        "geometry": "four_quadrants",
+        "algorithm": "joint_exact",
+        "all_instances": 24,
+        "exact_feasible": 22,
+        "complete": 22,
+        "statuses": {
+          "FEASIBLE": 22,
+          "INFEASIBLE_PROVEN": 2
+        },
+        "gap_n": 22
+      },
+      {
+        "capacity_h": 2,
+        "geometry": "four_quadrants",
+        "algorithm": "two_stage_lex",
+        "all_instances": 24,
+        "exact_feasible": 22,
+        "complete": 15,
+        "statuses": {
+          "FEASIBLE": 15,
+          "STAGE_FIXED_INFEASIBLE": 8,
+          "PHASE_ONE_INFEASIBLE": 1
+        },
+        "gap_n": 15
+      },
+      {
+        "capacity_h": 2,
+        "geometry": "four_quadrants",
+        "algorithm": "two_stage_best_tie",
+        "all_instances": 24,
+        "exact_feasible": 22,
+        "complete": 16,
+        "statuses": {
+          "FEASIBLE": 16,
+          "STAGE_FIXED_INFEASIBLE": 7,
+          "PHASE_ONE_INFEASIBLE": 1
+        },
+        "gap_n": 16
+      },
+      {
+        "capacity_h": 2,
+        "geometry": "four_quadrants",
+        "algorithm": "greedy",
+        "all_instances": 24,
+        "exact_feasible": 22,
+        "complete": 20,
+        "statuses": {
+          "FEASIBLE": 20,
+          "UNKNOWN_INCOMPLETE": 4
+        },
+        "gap_n": 20
+      },
+      {
+        "capacity_h": 2,
+        "geometry": "two_clusters",
+        "algorithm": "joint_exact",
+        "all_instances": 24,
+        "exact_feasible": 23,
+        "complete": 23,
+        "statuses": {
+          "FEASIBLE": 23,
+          "INFEASIBLE_PROVEN": 1
+        },
+        "gap_n": 23
+      },
+      {
+        "capacity_h": 2,
+        "geometry": "two_clusters",
+        "algorithm": "two_stage_lex",
+        "all_instances": 24,
+        "exact_feasible": 23,
+        "complete": 22,
+        "statuses": {
+          "FEASIBLE": 22,
+          "PHASE_ONE_INFEASIBLE": 1,
+          "STAGE_FIXED_INFEASIBLE": 1
+        },
+        "gap_n": 22
+      },
+      {
+        "capacity_h": 2,
+        "geometry": "two_clusters",
+        "algorithm": "two_stage_best_tie",
+        "all_instances": 24,
+        "exact_feasible": 23,
+        "complete": 23,
+        "statuses": {
+          "FEASIBLE": 23,
+          "PHASE_ONE_INFEASIBLE": 1
+        },
+        "gap_n": 23
+      },
+      {
+        "capacity_h": 2,
+        "geometry": "two_clusters",
+        "algorithm": "greedy",
+        "all_instances": 24,
+        "exact_feasible": 23,
+        "complete": 20,
+        "statuses": {
+          "FEASIBLE": 20,
+          "UNKNOWN_INCOMPLETE": 4
+        },
+        "gap_n": 20
+      },
+      {
+        "capacity_h": 4,
+        "geometry": "four_quadrants",
+        "algorithm": "joint_exact",
+        "all_instances": 24,
+        "exact_feasible": 12,
+        "complete": 12,
+        "statuses": {
+          "FEASIBLE": 12,
+          "INFEASIBLE_PROVEN": 12
+        },
+        "gap_n": 12
+      },
+      {
+        "capacity_h": 4,
+        "geometry": "four_quadrants",
+        "algorithm": "two_stage_lex",
+        "all_instances": 24,
+        "exact_feasible": 12,
+        "complete": 5,
+        "statuses": {
+          "FEASIBLE": 5,
+          "STAGE_FIXED_INFEASIBLE": 14,
+          "PHASE_ONE_INFEASIBLE": 5
+        },
+        "gap_n": 5
+      },
+      {
+        "capacity_h": 4,
+        "geometry": "four_quadrants",
+        "algorithm": "two_stage_best_tie",
+        "all_instances": 24,
+        "exact_feasible": 12,
+        "complete": 5,
+        "statuses": {
+          "FEASIBLE": 5,
+          "STAGE_FIXED_INFEASIBLE": 14,
+          "PHASE_ONE_INFEASIBLE": 5
+        },
+        "gap_n": 5
+      },
+      {
+        "capacity_h": 4,
+        "geometry": "four_quadrants",
+        "algorithm": "greedy",
+        "all_instances": 24,
+        "exact_feasible": 12,
+        "complete": 8,
+        "statuses": {
+          "FEASIBLE": 8,
+          "UNKNOWN_INCOMPLETE": 16
+        },
+        "gap_n": 8
+      },
+      {
+        "capacity_h": 4,
+        "geometry": "two_clusters",
+        "algorithm": "joint_exact",
+        "all_instances": 24,
+        "exact_feasible": 10,
+        "complete": 10,
+        "statuses": {
+          "FEASIBLE": 10,
+          "INFEASIBLE_PROVEN": 14
+        },
+        "gap_n": 10
+      },
+      {
+        "capacity_h": 4,
+        "geometry": "two_clusters",
+        "algorithm": "two_stage_lex",
+        "all_instances": 24,
+        "exact_feasible": 10,
+        "complete": 8,
+        "statuses": {
+          "FEASIBLE": 8,
+          "STAGE_FIXED_INFEASIBLE": 11,
+          "PHASE_ONE_INFEASIBLE": 5
+        },
+        "gap_n": 8
+      },
+      {
+        "capacity_h": 4,
+        "geometry": "two_clusters",
+        "algorithm": "two_stage_best_tie",
+        "all_instances": 24,
+        "exact_feasible": 10,
+        "complete": 8,
+        "statuses": {
+          "FEASIBLE": 8,
+          "STAGE_FIXED_INFEASIBLE": 11,
+          "PHASE_ONE_INFEASIBLE": 5
+        },
+        "gap_n": 8
+      },
+      {
+        "capacity_h": 4,
+        "geometry": "two_clusters",
+        "algorithm": "greedy",
+        "all_instances": 24,
+        "exact_feasible": 10,
+        "complete": 8,
+        "statuses": {
+          "FEASIBLE": 8,
+          "UNKNOWN_INCOMPLETE": 16
+        },
+        "gap_n": 8
+      }
+    ]
+  },
+  "provenance": {
+    "captured_at": "2026-10-07T02:59:21.014332+00:00",
+    "source_label": "public/research-batches/fleet"
+  },
+  "metrics": [
+    {
+      "id": "all-joint_exact-complete_rate_pct",
+      "label": "完整率 · 全局可行母集",
+      "algorithm": "joint_exact",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:all-globally-feasible:109",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete instances / same globally feasible instances",
+        "reference": "joint exact feasibility; all 144 formal instances retained"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * sum(/cells[algorithm=joint_exact]/complete) / sum(/cells[algorithm=joint_exact]/exact_feasible)"
+      }
+    },
+    {
+      "id": "all-joint_exact-complete_subset_gap_pct",
+      "label": "完成子集 gap · 不同策略不可直接比较",
+      "algorithm": "joint_exact",
+      "value": 0.0,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:completed-subset:strategy=joint_exact:n=109",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "gap_n-weighted mean of cell mean per-instance relative gaps",
+        "reference": "joint exact objective on this strategy's completed subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: sum(/cells[algorithm=joint_exact]/gap_mean_pct * gap_n) / sum(gap_n)"
+      }
+    },
+    {
+      "id": "all-two_stage_lex-complete_rate_pct",
+      "label": "完整率 · 全局可行母集",
+      "algorithm": "two_stage_lex",
+      "value": 84.40366972477064,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:all-globally-feasible:109",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete instances / same globally feasible instances",
+        "reference": "joint exact feasibility; all 144 formal instances retained"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * sum(/cells[algorithm=two_stage_lex]/complete) / sum(/cells[algorithm=two_stage_lex]/exact_feasible)"
+      }
+    },
+    {
+      "id": "all-two_stage_lex-complete_subset_gap_pct",
+      "label": "完成子集 gap · 不同策略不可直接比较",
+      "algorithm": "two_stage_lex",
+      "value": 6.288992278060353,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:completed-subset:strategy=two_stage_lex:n=92",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "gap_n-weighted mean of cell mean per-instance relative gaps",
+        "reference": "joint exact objective on this strategy's completed subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: sum(/cells[algorithm=two_stage_lex]/gap_mean_pct * gap_n) / sum(gap_n)"
+      }
+    },
+    {
+      "id": "all-two_stage_best_tie-complete_rate_pct",
+      "label": "完整率 · 全局可行母集",
+      "algorithm": "two_stage_best_tie",
+      "value": 86.23853211009174,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:all-globally-feasible:109",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete instances / same globally feasible instances",
+        "reference": "joint exact feasibility; all 144 formal instances retained"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * sum(/cells[algorithm=two_stage_best_tie]/complete) / sum(/cells[algorithm=two_stage_best_tie]/exact_feasible)"
+      }
+    },
+    {
+      "id": "all-two_stage_best_tie-complete_subset_gap_pct",
+      "label": "完成子集 gap · 不同策略不可直接比较",
+      "algorithm": "two_stage_best_tie",
+      "value": 1.8249008288849278,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:completed-subset:strategy=two_stage_best_tie:n=94",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "gap_n-weighted mean of cell mean per-instance relative gaps",
+        "reference": "joint exact objective on this strategy's completed subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: sum(/cells[algorithm=two_stage_best_tie]/gap_mean_pct * gap_n) / sum(gap_n)"
+      }
+    },
+    {
+      "id": "all-greedy-complete_rate_pct",
+      "label": "完整率 · 全局可行母集",
+      "algorithm": "greedy",
+      "value": 87.1559633027523,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:all-globally-feasible:109",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete instances / same globally feasible instances",
+        "reference": "joint exact feasibility; all 144 formal instances retained"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * sum(/cells[algorithm=greedy]/complete) / sum(/cells[algorithm=greedy]/exact_feasible)"
+      }
+    },
+    {
+      "id": "all-greedy-complete_subset_gap_pct",
+      "label": "完成子集 gap · 不同策略不可直接比较",
+      "algorithm": "greedy",
+      "value": 4.351938108745213,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:completed-subset:strategy=greedy:n=95",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "gap_n-weighted mean of cell mean per-instance relative gaps",
+        "reference": "joint exact objective on this strategy's completed subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: sum(/cells[algorithm=greedy]/gap_mean_pct * gap_n) / sum(gap_n)"
+      }
+    },
+    {
+      "id": "cell-0-complete_rate_pct",
+      "label": "完整率 · h=0:geometry=four_quadrants",
+      "algorithm": "joint_exact",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=0:geometry=four_quadrants:globally-feasible=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/0/complete / /cells/0/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-0-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=0:geometry=four_quadrants",
+      "algorithm": "joint_exact",
+      "value": 0.0,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=0:geometry=four_quadrants:completed-subset:strategy=joint_exact:n=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/0/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-1-complete_rate_pct",
+      "label": "完整率 · h=0:geometry=four_quadrants",
+      "algorithm": "two_stage_lex",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=0:geometry=four_quadrants:globally-feasible=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/1/complete / /cells/1/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-1-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=0:geometry=four_quadrants",
+      "algorithm": "two_stage_lex",
+      "value": 6.275464468130356,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=0:geometry=four_quadrants:completed-subset:strategy=two_stage_lex:n=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/1/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-2-complete_rate_pct",
+      "label": "完整率 · h=0:geometry=four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=0:geometry=four_quadrants:globally-feasible=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/2/complete / /cells/2/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-2-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=0:geometry=four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "value": 0.7786432922829285,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=0:geometry=four_quadrants:completed-subset:strategy=two_stage_best_tie:n=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/2/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-3-complete_rate_pct",
+      "label": "完整率 · h=0:geometry=four_quadrants",
+      "algorithm": "greedy",
+      "value": 85.71428571428571,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=0:geometry=four_quadrants:globally-feasible=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/3/complete / /cells/3/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-3-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=0:geometry=four_quadrants",
+      "algorithm": "greedy",
+      "value": 3.7497747465430296,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=0:geometry=four_quadrants:completed-subset:strategy=greedy:n=18",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/3/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-4-complete_rate_pct",
+      "label": "完整率 · h=0:geometry=two_clusters",
+      "algorithm": "joint_exact",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=0:geometry=two_clusters:globally-feasible=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/4/complete / /cells/4/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-4-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=0:geometry=two_clusters",
+      "algorithm": "joint_exact",
+      "value": 0.0,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=0:geometry=two_clusters:completed-subset:strategy=joint_exact:n=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/4/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-5-complete_rate_pct",
+      "label": "完整率 · h=0:geometry=two_clusters",
+      "algorithm": "two_stage_lex",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=0:geometry=two_clusters:globally-feasible=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/5/complete / /cells/5/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-5-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=0:geometry=two_clusters",
+      "algorithm": "two_stage_lex",
+      "value": 10.046582793280173,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=0:geometry=two_clusters:completed-subset:strategy=two_stage_lex:n=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/5/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-6-complete_rate_pct",
+      "label": "完整率 · h=0:geometry=two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=0:geometry=two_clusters:globally-feasible=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/6/complete / /cells/6/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-6-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=0:geometry=two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "value": 0.0,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=0:geometry=two_clusters:completed-subset:strategy=two_stage_best_tie:n=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/6/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-7-complete_rate_pct",
+      "label": "完整率 · h=0:geometry=two_clusters",
+      "algorithm": "greedy",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=0:geometry=two_clusters:globally-feasible=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/7/complete / /cells/7/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-7-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=0:geometry=two_clusters",
+      "algorithm": "greedy",
+      "value": 1.5874270855295523,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=0:geometry=two_clusters:completed-subset:strategy=greedy:n=21",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/7/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-8-complete_rate_pct",
+      "label": "完整率 · h=2:geometry=four_quadrants",
+      "algorithm": "joint_exact",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=2:geometry=four_quadrants:globally-feasible=22",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/8/complete / /cells/8/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-8-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=2:geometry=four_quadrants",
+      "algorithm": "joint_exact",
+      "value": 0.0,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=2:geometry=four_quadrants:completed-subset:strategy=joint_exact:n=22",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/8/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-9-complete_rate_pct",
+      "label": "完整率 · h=2:geometry=four_quadrants",
+      "algorithm": "two_stage_lex",
+      "value": 68.18181818181819,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=2:geometry=four_quadrants:globally-feasible=22",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/9/complete / /cells/9/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-9-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=2:geometry=four_quadrants",
+      "algorithm": "two_stage_lex",
+      "value": 6.030925800611511,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=2:geometry=four_quadrants:completed-subset:strategy=two_stage_lex:n=15",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/9/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-10-complete_rate_pct",
+      "label": "完整率 · h=2:geometry=four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "value": 72.72727272727273,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=2:geometry=four_quadrants:globally-feasible=22",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/10/complete / /cells/10/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-10-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=2:geometry=four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "value": 5.430778652359006,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=2:geometry=four_quadrants:completed-subset:strategy=two_stage_best_tie:n=16",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/10/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-11-complete_rate_pct",
+      "label": "完整率 · h=2:geometry=four_quadrants",
+      "algorithm": "greedy",
+      "value": 90.9090909090909,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=2:geometry=four_quadrants:globally-feasible=22",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/11/complete / /cells/11/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-11-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=2:geometry=four_quadrants",
+      "algorithm": "greedy",
+      "value": 4.8651339895132395,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=2:geometry=four_quadrants:completed-subset:strategy=greedy:n=20",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/11/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-12-complete_rate_pct",
+      "label": "完整率 · h=2:geometry=two_clusters",
+      "algorithm": "joint_exact",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=2:geometry=two_clusters:globally-feasible=23",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/12/complete / /cells/12/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-12-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=2:geometry=two_clusters",
+      "algorithm": "joint_exact",
+      "value": 0.0,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=2:geometry=two_clusters:completed-subset:strategy=joint_exact:n=23",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/12/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-13-complete_rate_pct",
+      "label": "完整率 · h=2:geometry=two_clusters",
+      "algorithm": "two_stage_lex",
+      "value": 95.65217391304348,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=2:geometry=two_clusters:globally-feasible=23",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/13/complete / /cells/13/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-13-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=2:geometry=two_clusters",
+      "algorithm": "two_stage_lex",
+      "value": 4.525190474880016,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=2:geometry=two_clusters:completed-subset:strategy=two_stage_lex:n=22",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/13/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-14-complete_rate_pct",
+      "label": "完整率 · h=2:geometry=two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=2:geometry=two_clusters:globally-feasible=23",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/14/complete / /cells/14/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-14-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=2:geometry=two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "value": 0.9778474219173597,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=2:geometry=two_clusters:completed-subset:strategy=two_stage_best_tie:n=23",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/14/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-15-complete_rate_pct",
+      "label": "完整率 · h=2:geometry=two_clusters",
+      "algorithm": "greedy",
+      "value": 86.95652173913044,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=2:geometry=two_clusters:globally-feasible=23",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/15/complete / /cells/15/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-15-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=2:geometry=two_clusters",
+      "algorithm": "greedy",
+      "value": 9.26433587359176,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=2:geometry=two_clusters:completed-subset:strategy=greedy:n=20",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/15/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-16-complete_rate_pct",
+      "label": "完整率 · h=4:geometry=four_quadrants",
+      "algorithm": "joint_exact",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=4:geometry=four_quadrants:globally-feasible=12",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/16/complete / /cells/16/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-16-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=4:geometry=four_quadrants",
+      "algorithm": "joint_exact",
+      "value": 0.0,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=4:geometry=four_quadrants:completed-subset:strategy=joint_exact:n=12",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/16/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-17-complete_rate_pct",
+      "label": "完整率 · h=4:geometry=four_quadrants",
+      "algorithm": "two_stage_lex",
+      "value": 41.666666666666664,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=4:geometry=four_quadrants:globally-feasible=12",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/17/complete / /cells/17/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-17-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=4:geometry=four_quadrants",
+      "algorithm": "two_stage_lex",
+      "value": 6.7486169011377095,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=4:geometry=four_quadrants:completed-subset:strategy=two_stage_lex:n=5",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/17/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-18-complete_rate_pct",
+      "label": "完整率 · h=4:geometry=four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "value": 41.666666666666664,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=4:geometry=four_quadrants:globally-feasible=12",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/18/complete / /cells/18/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-18-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=4:geometry=four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "value": 6.7486169011377095,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=4:geometry=four_quadrants:completed-subset:strategy=two_stage_best_tie:n=5",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/18/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-19-complete_rate_pct",
+      "label": "完整率 · h=4:geometry=four_quadrants",
+      "algorithm": "greedy",
+      "value": 66.66666666666667,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=4:geometry=four_quadrants:globally-feasible=12",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/19/complete / /cells/19/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-19-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=4:geometry=four_quadrants",
+      "algorithm": "greedy",
+      "value": 1.250000000000001,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=4:geometry=four_quadrants:completed-subset:strategy=greedy:n=8",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/19/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-20-complete_rate_pct",
+      "label": "完整率 · h=4:geometry=two_clusters",
+      "algorithm": "joint_exact",
+      "value": 100.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=4:geometry=two_clusters:globally-feasible=10",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/20/complete / /cells/20/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-20-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=4:geometry=two_clusters",
+      "algorithm": "joint_exact",
+      "value": 0.0,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=4:geometry=two_clusters:completed-subset:strategy=joint_exact:n=10",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/20/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-21-complete_rate_pct",
+      "label": "完整率 · h=4:geometry=two_clusters",
+      "algorithm": "two_stage_lex",
+      "value": 80.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=4:geometry=two_clusters:globally-feasible=10",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/21/complete / /cells/21/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-21-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=4:geometry=two_clusters",
+      "algorithm": "two_stage_lex",
+      "value": 1.5078918912137251,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=4:geometry=two_clusters:completed-subset:strategy=two_stage_lex:n=8",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/21/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-22-complete_rate_pct",
+      "label": "完整率 · h=4:geometry=two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "value": 80.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=4:geometry=two_clusters:globally-feasible=10",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/22/complete / /cells/22/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-22-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=4:geometry=two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "value": 1.5078918912137251,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=4:geometry=two_clusters:completed-subset:strategy=two_stage_best_tie:n=8",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/22/gap_mean_pct"
+      }
+    },
+    {
+      "id": "cell-23-complete_rate_pct",
+      "label": "完整率 · h=4:geometry=two_clusters",
+      "algorithm": "greedy",
+      "value": 80.0,
+      "comparison": {
+        "metric": "complete_rate_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "fleet:h=4:geometry=two_clusters:globally-feasible=10",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "100 × complete / exact_feasible in this paired cell",
+        "reference": "joint exact feasibility in the same paired cell"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "derived: 100 * /cells/23/complete / /cells/23/exact_feasible"
+      }
+    },
+    {
+      "id": "cell-23-complete_subset_gap_pct",
+      "label": "完成子集 gap · h=4:geometry=two_clusters",
+      "algorithm": "greedy",
+      "value": 2.5016011043500153,
+      "comparison": {
+        "metric": "complete_subset_gap_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "fleet:h=4:geometry=two_clusters:completed-subset:strategy=greedy:n=8",
+        "protocol": "frozen finite fleet/tool assignment model; 8 tasks; exact reference verified by independent implementation",
+        "budget": "frozen algorithm rules; no equal-time or equal-evaluation guarantee",
+        "aggregation": "mean per-instance relative gap among complete outputs in this cell",
+        "reference": "joint exact objective on this strategy's completed cell subset only"
+      },
+      "source": {
+        "artifact_id": "results-summary-json",
+        "locator": "/cells/23/gap_mean_pct"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "REPORT-zh-md",
+      "path": "files/REPORT.zh.md",
+      "media_type": "text/markdown",
+      "role": "report"
+    },
+    {
+      "id": "results-summary-json",
+      "path": "files/results/summary.json",
+      "media_type": "application/json",
+      "role": "summary"
+    },
+    {
+      "id": "results-supervisor_receipt-json",
+      "path": "files/results/supervisor_receipt.json",
+      "media_type": "application/json",
+      "role": "provenance"
+    },
+    {
+      "id": "validation-full_validation-json",
+      "path": "files/validation/full_validation.json",
+      "media_type": "application/json",
+      "role": "audit"
+    },
+    {
+      "id": "independent-audit-json",
+      "path": "files/independent-audit.json",
+      "media_type": "application/json",
+      "role": "audit"
+    }
+  ]
+}

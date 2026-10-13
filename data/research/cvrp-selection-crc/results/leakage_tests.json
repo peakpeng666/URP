@@ -1,0 +1,50 @@
+[
+  {
+    "profile": "cpu025",
+    "fold": 0,
+    "all_test_algorithm_costs_corrupted": true,
+    "training_scaling_SBS_neighbors_and_CRC_unchanged": true
+  },
+  {
+    "profile": "cpu025",
+    "fold": 1,
+    "all_test_algorithm_costs_corrupted": true,
+    "training_scaling_SBS_neighbors_and_CRC_unchanged": true
+  },
+  {
+    "profile": "cpu025",
+    "fold": 2,
+    "all_test_algorithm_costs_corrupted": true,
+    "training_scaling_SBS_neighbors_and_CRC_unchanged": true
+  },
+  {
+    "profile": "cpu025",
+    "fold": 3,
+    "all_test_algorithm_costs_corrupted": true,
+    "training_scaling_SBS_neighbors_and_CRC_unchanged": true
+  },
+  {
+    "profile": "cpu100",
+    "fold": 0,
+    "all_test_algorithm_costs_corrupted": true,
+    "training_scaling_SBS_neighbors_and_CRC_unchanged": true
+  },
+  {
+    "profile": "cpu100",
+    "fold": 1,
+    "all_test_algorithm_costs_corrupted": true,
+    "training_scaling_SBS_neighbors_and_CRC_unchanged": true
+  },
+  {
+    "profile": "cpu100",
+    "fold": 2,
+    "all_test_algorithm_costs_corrupted": true,
+    "training_scaling_SBS_neighbors_and_CRC_unchanged": true
+  },
+  {
+    "profile": "cpu100",
+    "fold": 3,
+    "all_test_algorithm_costs_corrupted": true,
+    "training_scaling_SBS_neighbors_and_CRC_unchanged": true
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "schema": "selection-replay-freeze-v1",
+  "frozen_utc": "2026-10-06T04:14:22.028511+00:00",
+  "file_sha256": {
+    "PLAN.json": "fcdc86b4d2d8b52fc60ca175ce53d4beb2862b86b77f31842ca60fe649266aff",
+    "INPUT_MANIFEST.json": "d0fb67deaa95a9b439924f02b56d187ac5bca83ec83e8590dc26c5d581dfe324",
+    "replay.py": "96fb870a575b27b998da4f2b43071dd9a193850c4f05f4e79a98c4cb7acb1ffd",
+    "prepare_inputs.py": "c0d1c068bee3e08d6669e180b376834976d45d89298e98af47a5bd26bf9c77c5",
+    "evidence/SOURCES.json": "0cc2865834eea23b1e95eacd5f4e48e9927808f93ee0d4886b59166314608100"
+  },
+  "before_first_replay_run": true,
+  "historical_outcomes_previously_inspected": true
+}

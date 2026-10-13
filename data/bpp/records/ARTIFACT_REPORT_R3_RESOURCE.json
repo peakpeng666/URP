@@ -1,0 +1,18 @@
+{
+  "stage": "report_r3",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "independent_bpp_prefix_selection_20261006/src/make_report.py"
+  ],
+  "exit_code": 0,
+  "killed_by_pool_guard": false,
+  "shared_pool_limit_seconds": 20,
+  "previous_spend_seconds": 6.826158909999999,
+  "this_stage_allowance_seconds": 13.17384109,
+  "child_cpu_seconds": 0.186171,
+  "wrapper_cpu_seconds": 0.0027012830000000022,
+  "accounted_cpu_seconds": 0.188872283,
+  "wall_seconds": 0.20360006600094493,
+  "single_thread_environment": true,
+  "guard": "Descendant /proc CPU watchdog with0.35s margin plus inherited per-process RLIMIT_CPU; final RUSAGE_CHILDREN includes reaped descendants."
+}

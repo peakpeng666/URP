@@ -1,0 +1,17 @@
+{
+  "started_utc": "2026-10-07T02:46:59.104014+00:00",
+  "finished_utc": "2026-10-07T02:46:59.870023+00:00",
+  "exit_code": 0,
+  "numeric_child_tree_user_cpu_s": 0.726618,
+  "numeric_child_tree_system_cpu_s": 0.015614,
+  "numeric_child_tree_total_cpu_s": 0.742232,
+  "supervisor_cpu_s": 0.0012356,
+  "supervised_wall_s": 0.766047057999458,
+  "max_rss_kib": 18528,
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "src/run_panel.py"
+  ],
+  "budget_limit_cpu_s": 180,
+  "external_tool_or_platform_cpu": "unknown"
+}

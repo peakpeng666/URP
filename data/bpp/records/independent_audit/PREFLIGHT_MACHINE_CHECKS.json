@@ -1,0 +1,81 @@
+{
+  "timestamp_utc": "2026-10-06T07:26:52.917133+00:00",
+  "passed": true,
+  "kind": "pre-execution read-only integrity and input-lineage audit; no policy or research module executed",
+  "freeze_sha256": "883780fb58189db4159a0e2c99b4c2db43b4b98a36ade8387b795973b5dc153a",
+  "freeze_entries_verified": 284,
+  "streams": {
+    "train": 144,
+    "confirmation": 108,
+    "risk": 12
+  },
+  "multiset_groups": {
+    "train": 48,
+    "confirmation": 36,
+    "risk": 4
+  },
+  "total_items_verified": 1320000,
+  "policy_runs_executed_by_auditor": 0,
+  "expected_policy_runs": 768,
+  "input_reconstruction": "all values, rounding, clipping counts, seeds, original positions and permutations match independent generator implementation",
+  "split_seed_and_multiset_disjointness": "pairwise pass",
+  "risk_groups_identical_prefix_and_distinct_suffix_orders": 4,
+  "source_byte_equality": {
+    "BF": "f1b3010016ca5c3c95a5f583ddc071cd1a30cfaf40e270b865c95f4817387d4b",
+    "published_EoH": "de06105a3b630fc5ab6f2d823e45d5326315071208cbac8379ffe8d3a29bed7a"
+  },
+  "python_source_syntax_and_hashes": {
+    "analyze.py": {
+      "sha256": "4a91c1531f5ec34fbfce64ab8d1a1946343f7233f86d753156ede675df895a44",
+      "passed": true
+    },
+    "check.py": {
+      "sha256": "4d869b118f0aad47664252ff3053e652d5f0777bd8934f91513af3a84afa030a",
+      "passed": true
+    },
+    "make_report.py": {
+      "sha256": "7f8d81e6c9e1f45e3cdebea3244ba17ff393394fe3ee40cd93b8eefa1bc1e40c",
+      "passed": true
+    },
+    "prepare.py": {
+      "sha256": "8b2e80d80b2aa467bf0285e27a534debe6b6958177c76aecbba915bf12ed2873",
+      "passed": true
+    },
+    "run.py": {
+      "sha256": "995b4bdfbb803bcd7339559c47fa685810a5fe9630c739c56a46b7581b8198de",
+      "passed": true
+    },
+    "selector.py": {
+      "sha256": "b51619d73f102d91b2bc0999afa1c0b580336312f6c6c11f3adc7e9ee5904f8e",
+      "passed": true
+    }
+  },
+  "v0_to_v1_changed_existing_files": [
+    "src/check.py"
+  ],
+  "v1_to_v2_changed_existing_files": [
+    "PROTOCOL.json",
+    "src/prepare.py",
+    "src/run.py"
+  ],
+  "v0_checker_diff": "--- v0 checker\n+++ revised checker\n@@ -9,7 +9,7 @@\n \n def scalar_score(item,r):\n     d=r-item;e=math.exp(d)\n-    return r/((e+.7)*e)+(1-d/r)*math.sqrt(d)+(.8 if d>item*3 else .3)\n+    return r/((e+.7)*e)+((1-d/r)*math.sqrt(d)+(.8 if d>item*3 else .3))\n \n def rankings():\n     out={}\n",
+  "preexecution_output_directory_counts": {
+    "raw": 0,
+    "analysis": 0,
+    "figures": 0
+  },
+  "preexecution_markers": {
+    "RUN_STARTED.json": false,
+    "RUN_COMPLETE.json": false,
+    "RUN_FAILURE.json": false,
+    "MODEL.json": false,
+    "MODEL_FREEZE.json": false,
+    "CHECK.json": false,
+    "ANALYSIS_COMPLETE.json": false
+  },
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "numpy": "2.3.5"
+  },
+  "audit_script_sha256": "8b1dc8e3f32bb16910b80066842f107d65f005eabaa9e5112d4b48016853cfd8"
+}

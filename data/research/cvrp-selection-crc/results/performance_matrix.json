@@ -1,0 +1,2118 @@
+{
+  "cpu025": {
+    "dev-uniform-n50-s2026100502": {
+      "parallel_savings": {
+        "cost": 1243.21474768378,
+        "normalized_cost": 0.3294782851726561,
+        "solver_cpu_seconds": 0.0013255103333333351,
+        "child_cpu_seconds": 0.041794,
+        "wall_seconds": 0.04341726166603621,
+        "checker_cpu_seconds": 7.932433333333415e-05,
+        "supervisor_cpu_seconds": 0.002182511333333322,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1204.046845060531,
+        "normalized_cost": 0.3190979599600082,
+        "solver_cpu_seconds": 0.23228969166666666,
+        "child_cpu_seconds": 0.34929866666666665,
+        "wall_seconds": 0.35057758299808484,
+        "checker_cpu_seconds": 7.472399999991497e-05,
+        "supervisor_cpu_seconds": 0.006563772666666763,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1240.6677500257035,
+        "normalized_cost": 0.32880327675413046,
+        "solver_cpu_seconds": 0.10747632566666666,
+        "child_cpu_seconds": 0.14907833333333334,
+        "wall_seconds": 0.15118978033569874,
+        "checker_cpu_seconds": 7.23106666665659e-05,
+        "supervisor_cpu_seconds": 0.0037256793333333427,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      }
+    },
+    "dev-clustered-n100-s2026100517": {
+      "multistart_vnd": {
+        "cost": 1526.136641790059,
+        "normalized_cost": 0.24688929941950014,
+        "solver_cpu_seconds": 0.230105315,
+        "child_cpu_seconds": 0.27236299999999997,
+        "wall_seconds": 0.27395309366693255,
+        "checker_cpu_seconds": 0.0001027723333333989,
+        "supervisor_cpu_seconds": 0.006076204666666631,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1554.8848205378777,
+        "normalized_cost": 0.25154000861308223,
+        "solver_cpu_seconds": 0.005245128666666664,
+        "child_cpu_seconds": 0.04628933333333333,
+        "wall_seconds": 0.047784793001483195,
+        "checker_cpu_seconds": 0.00010930499999990222,
+        "supervisor_cpu_seconds": 0.0016414696666667932,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1500.6935971826397,
+        "normalized_cost": 0.24277327514866098,
+        "solver_cpu_seconds": 0.23365526833333336,
+        "child_cpu_seconds": 0.35810733333333333,
+        "wall_seconds": 0.359987773001194,
+        "checker_cpu_seconds": 0.00011095100000005353,
+        "supervisor_cpu_seconds": 0.007469244999999884,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      }
+    },
+    "dev-clustered-n50-s2026100512": {
+      "multistart_vnd": {
+        "cost": 805.1236625655615,
+        "normalized_cost": 0.25229772311496257,
+        "solver_cpu_seconds": 0.18457563133333335,
+        "child_cpu_seconds": 0.22558499999999998,
+        "wall_seconds": 0.22692444166265582,
+        "checker_cpu_seconds": 6.832466666661004e-05,
+        "supervisor_cpu_seconds": 0.004238003333333296,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "parallel_savings": {
+        "cost": 811.5324524368266,
+        "normalized_cost": 0.25430601471986963,
+        "solver_cpu_seconds": 0.0013250726666666653,
+        "child_cpu_seconds": 0.040514666666666664,
+        "wall_seconds": 0.04178625366815444,
+        "checker_cpu_seconds": 6.575099999999352e-05,
+        "supervisor_cpu_seconds": 0.0014544110000000627,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 795.5943389331428,
+        "normalized_cost": 0.2493115648798119,
+        "solver_cpu_seconds": 0.23207565666666666,
+        "child_cpu_seconds": 0.34587599999999996,
+        "wall_seconds": 0.34721955233302043,
+        "checker_cpu_seconds": 7.104499999996405e-05,
+        "supervisor_cpu_seconds": 0.0062049703333333745,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      }
+    },
+    "dev-uniform-n200-s2026100511": {
+      "pyvrp_ils_s1e6": {
+        "cost": 3652.385998990816,
+        "normalized_cost": 0.23587652189338787,
+        "solver_cpu_seconds": 0.239457141,
+        "child_cpu_seconds": 0.364724,
+        "wall_seconds": 0.36635726700236165,
+        "checker_cpu_seconds": 0.0002026870000000162,
+        "supervisor_cpu_seconds": 0.006638373333333382,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 3684.659757816729,
+        "normalized_cost": 0.23796080925578214,
+        "solver_cpu_seconds": 0.022963489333333333,
+        "child_cpu_seconds": 0.06841566666666667,
+        "wall_seconds": 0.06976069833520644,
+        "checker_cpu_seconds": 0.00021865700000005725,
+        "supervisor_cpu_seconds": 0.0018301313333333364,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 3639.75319715272,
+        "normalized_cost": 0.23506067675539813,
+        "solver_cpu_seconds": 0.230451544,
+        "child_cpu_seconds": 0.2740303333333333,
+        "wall_seconds": 0.2753954360014177,
+        "checker_cpu_seconds": 0.0001589220000000243,
+        "supervisor_cpu_seconds": 0.005876612999999993,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      }
+    },
+    "dev-clustered-n200-s2026100522": {
+      "parallel_savings": {
+        "cost": 3024.797569289449,
+        "normalized_cost": 0.22780375505725728,
+        "solver_cpu_seconds": 0.02496536066666667,
+        "child_cpu_seconds": 0.07199666666666667,
+        "wall_seconds": 0.07424385432871834,
+        "checker_cpu_seconds": 0.0001755836666667565,
+        "supervisor_cpu_seconds": 0.0024336066666664955,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 2954.4481653746657,
+        "normalized_cost": 0.22250559608604656,
+        "solver_cpu_seconds": 0.24072554466666668,
+        "child_cpu_seconds": 0.3687296666666666,
+        "wall_seconds": 0.36989017433370464,
+        "checker_cpu_seconds": 0.00019264866666648026,
+        "supervisor_cpu_seconds": 0.006015023999999887,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 3015.4033773514684,
+        "normalized_cost": 0.2270962590512673,
+        "solver_cpu_seconds": 0.23032737666666667,
+        "child_cpu_seconds": 0.2766686666666667,
+        "wall_seconds": 0.2783188293299948,
+        "checker_cpu_seconds": 0.00016176966666673712,
+        "supervisor_cpu_seconds": 0.005368448666666674,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n50-s2026100500": {
+      "parallel_savings": {
+        "cost": 1074.7199502647002,
+        "normalized_cost": 0.3067033580208968,
+        "solver_cpu_seconds": 0.001440370333333332,
+        "child_cpu_seconds": 0.039948000000000004,
+        "wall_seconds": 0.041269833668290325,
+        "checker_cpu_seconds": 6.380766666665612e-05,
+        "supervisor_cpu_seconds": 0.001485241666666674,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 998.3205061849014,
+        "normalized_cost": 0.28490050040721543,
+        "solver_cpu_seconds": 0.23185885533333334,
+        "child_cpu_seconds": 0.348426,
+        "wall_seconds": 0.35054021866380936,
+        "checker_cpu_seconds": 6.465566666663536e-05,
+        "supervisor_cpu_seconds": 0.006918911333333351,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1033.7161485028594,
+        "normalized_cost": 0.29500170152063154,
+        "solver_cpu_seconds": 0.189536349,
+        "child_cpu_seconds": 0.2307223333333333,
+        "wall_seconds": 0.23224217233170444,
+        "checker_cpu_seconds": 7.63200000000371e-05,
+        "supervisor_cpu_seconds": 0.004241868333333325,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-clustered-n200-s2026100523": {
+      "multistart_vnd": {
+        "cost": 2948.6956878472984,
+        "normalized_cost": 0.22369608875045177,
+        "solver_cpu_seconds": 0.23035456233333332,
+        "child_cpu_seconds": 0.274618,
+        "wall_seconds": 0.2761391066669603,
+        "checker_cpu_seconds": 0.0001677523333333264,
+        "supervisor_cpu_seconds": 0.005375470666666697,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 2958.332843663298,
+        "normalized_cost": 0.22442718964757133,
+        "solver_cpu_seconds": 0.022524215333333333,
+        "child_cpu_seconds": 0.06903266666666666,
+        "wall_seconds": 0.07074575233370221,
+        "checker_cpu_seconds": 0.00016039733333339523,
+        "supervisor_cpu_seconds": 0.002050511999999949,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 2871.149735571255,
+        "normalized_cost": 0.2178132415329269,
+        "solver_cpu_seconds": 0.239517732,
+        "child_cpu_seconds": 0.36518966666666663,
+        "wall_seconds": 0.3668285816675052,
+        "checker_cpu_seconds": 0.00018341466666660367,
+        "supervisor_cpu_seconds": 0.006837077000000062,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n100-s2026100504": {
+      "multistart_vnd": {
+        "cost": 2008.9436378464247,
+        "normalized_cost": 0.26078091669121106,
+        "solver_cpu_seconds": 0.23009989866666666,
+        "child_cpu_seconds": 0.27130133333333334,
+        "wall_seconds": 0.27305314233187045,
+        "checker_cpu_seconds": 9.707733333330637e-05,
+        "supervisor_cpu_seconds": 0.004846181999999939,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1987.7009447860407,
+        "normalized_cost": 0.2580234033071046,
+        "solver_cpu_seconds": 0.23375551166666667,
+        "child_cpu_seconds": 0.352045,
+        "wall_seconds": 0.35339029400104965,
+        "checker_cpu_seconds": 9.988733333336312e-05,
+        "supervisor_cpu_seconds": 0.006955824333333305,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 2022.5566503287453,
+        "normalized_cost": 0.26254802145572004,
+        "solver_cpu_seconds": 0.005518490333333334,
+        "child_cpu_seconds": 0.04633033333333333,
+        "wall_seconds": 0.0477755103323337,
+        "checker_cpu_seconds": 0.0001012800000000184,
+        "supervisor_cpu_seconds": 0.0014624603333333042,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      }
+    },
+    "dev-uniform-n100-s2026100505": {
+      "multistart_vnd": {
+        "cost": 2013.1619854273774,
+        "normalized_cost": 0.25110151910350276,
+        "solver_cpu_seconds": 0.23009874533333333,
+        "child_cpu_seconds": 0.2715513333333333,
+        "wall_seconds": 0.27298735233489424,
+        "checker_cpu_seconds": 9.783833333335916e-05,
+        "supervisor_cpu_seconds": 0.0052207053333332976,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "parallel_savings": {
+        "cost": 2030.8442179219087,
+        "normalized_cost": 0.25330702242248954,
+        "solver_cpu_seconds": 0.005106927666666666,
+        "child_cpu_seconds": 0.04525966666666666,
+        "wall_seconds": 0.046578586664206036,
+        "checker_cpu_seconds": 0.00010271899999999186,
+        "supervisor_cpu_seconds": 0.0013721746666667256,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1981.4015746618732,
+        "normalized_cost": 0.24714004583493399,
+        "solver_cpu_seconds": 0.234052753,
+        "child_cpu_seconds": 0.35656499999999997,
+        "wall_seconds": 0.3577938386661117,
+        "checker_cpu_seconds": 0.00010855466666663076,
+        "supervisor_cpu_seconds": 0.006133092999999941,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      }
+    },
+    "dev-clustered-n100-s2026100516": {
+      "multistart_vnd": {
+        "cost": 1630.7886013384295,
+        "normalized_cost": 0.25194910447787533,
+        "solver_cpu_seconds": 0.23010492733333332,
+        "child_cpu_seconds": 0.27556366666666665,
+        "wall_seconds": 0.2768056749991956,
+        "checker_cpu_seconds": 0.00011359466666664246,
+        "supervisor_cpu_seconds": 0.0047154576666667,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1637.0041085397359,
+        "normalized_cost": 0.25290937086185644,
+        "solver_cpu_seconds": 0.0055158729999999975,
+        "child_cpu_seconds": 0.047494999999999996,
+        "wall_seconds": 0.048950310665532015,
+        "checker_cpu_seconds": 9.952400000012851e-05,
+        "supervisor_cpu_seconds": 0.0017936689999999977,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1602.1823172042052,
+        "normalized_cost": 0.24752956925170178,
+        "solver_cpu_seconds": 0.2346540986666667,
+        "child_cpu_seconds": 0.35350666666666664,
+        "wall_seconds": 0.3550724596643704,
+        "checker_cpu_seconds": 0.0001211126666665896,
+        "supervisor_cpu_seconds": 0.00657302366666664,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      }
+    },
+    "dev-uniform-n200-s2026100508": {
+      "multistart_vnd": {
+        "cost": 3534.362645444062,
+        "normalized_cost": 0.23036760809220433,
+        "solver_cpu_seconds": 0.230358844,
+        "child_cpu_seconds": 0.27650933333333333,
+        "wall_seconds": 0.27781369033376296,
+        "checker_cpu_seconds": 0.00016429299999994504,
+        "supervisor_cpu_seconds": 0.004768414333333267,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 3545.2724109446913,
+        "normalized_cost": 0.23107869997364058,
+        "solver_cpu_seconds": 0.022182292000000003,
+        "child_cpu_seconds": 0.06581433333333334,
+        "wall_seconds": 0.06699936466854221,
+        "checker_cpu_seconds": 0.00017518599999991982,
+        "supervisor_cpu_seconds": 0.0017841066666666923,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 3543.5408627795478,
+        "normalized_cost": 0.23096583871713802,
+        "solver_cpu_seconds": 0.239208907,
+        "child_cpu_seconds": 0.36200866666666665,
+        "wall_seconds": 0.3635833786659835,
+        "checker_cpu_seconds": 0.0001575633333332771,
+        "supervisor_cpu_seconds": 0.006721096999999972,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n100-s2026100506": {
+      "pyvrp_ils_s1e6": {
+        "cost": 1889.1920972256098,
+        "normalized_cost": 0.25161344545222625,
+        "solver_cpu_seconds": 0.233843899,
+        "child_cpu_seconds": 0.34714966666666663,
+        "wall_seconds": 0.34874257433693856,
+        "checker_cpu_seconds": 0.00012123633333338546,
+        "supervisor_cpu_seconds": 0.005276019333333326,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1957.1168955102485,
+        "normalized_cost": 0.26066005990352753,
+        "solver_cpu_seconds": 0.23009499233333336,
+        "child_cpu_seconds": 0.2723023333333333,
+        "wall_seconds": 0.27387402966754354,
+        "checker_cpu_seconds": 9.895999999998129e-05,
+        "supervisor_cpu_seconds": 0.004582438333333346,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1959.665906262038,
+        "normalized_cost": 0.26099955178404854,
+        "solver_cpu_seconds": 0.005245780333333334,
+        "child_cpu_seconds": 0.04558233333333333,
+        "wall_seconds": 0.04696456933500789,
+        "checker_cpu_seconds": 0.00010912833333339329,
+        "supervisor_cpu_seconds": 0.0013586656666666475,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      }
+    },
+    "dev-clustered-n200-s2026100520": {
+      "parallel_savings": {
+        "cost": 2967.389760966625,
+        "normalized_cost": 0.23282025958114524,
+        "solver_cpu_seconds": 0.02236344733333333,
+        "child_cpu_seconds": 0.06665333333333333,
+        "wall_seconds": 0.06796643766817094,
+        "checker_cpu_seconds": 0.00016372966666670466,
+        "supervisor_cpu_seconds": 0.0019872886666667533,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 2888.113944616593,
+        "normalized_cost": 0.22660030951462307,
+        "solver_cpu_seconds": 0.24172924866666665,
+        "child_cpu_seconds": 0.3672026666666666,
+        "wall_seconds": 0.3695587956657012,
+        "checker_cpu_seconds": 0.00019067200000011386,
+        "supervisor_cpu_seconds": 0.007335335999999804,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 2962.998691985913,
+        "normalized_cost": 0.23247573799743693,
+        "solver_cpu_seconds": 0.23032991166666666,
+        "child_cpu_seconds": 0.27921466666666667,
+        "wall_seconds": 0.28095625366646954,
+        "checker_cpu_seconds": 0.00016862633333321794,
+        "supervisor_cpu_seconds": 0.005165839999999903,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      }
+    },
+    "dev-clustered-n50-s2026100514": {
+      "multistart_vnd": {
+        "cost": 999.3458247541992,
+        "normalized_cost": 0.2982917022792166,
+        "solver_cpu_seconds": 0.16464413633333333,
+        "child_cpu_seconds": 0.20649666666666666,
+        "wall_seconds": 0.2082204203325091,
+        "checker_cpu_seconds": 7.469366666675488e-05,
+        "supervisor_cpu_seconds": 0.004051711666666735,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1011.3546144545369,
+        "normalized_cost": 0.30187616947094964,
+        "solver_cpu_seconds": 0.0015036873333333343,
+        "child_cpu_seconds": 0.043819333333333335,
+        "wall_seconds": 0.0451886476657819,
+        "checker_cpu_seconds": 7.316499999994915e-05,
+        "supervisor_cpu_seconds": 0.0015348030000000106,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 983.3180577197387,
+        "normalized_cost": 0.2935076227403644,
+        "solver_cpu_seconds": 0.231939749,
+        "child_cpu_seconds": 0.35475999999999996,
+        "wall_seconds": 0.3568509780016029,
+        "checker_cpu_seconds": 7.315166666658583e-05,
+        "supervisor_cpu_seconds": 0.007014810999999972,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      }
+    },
+    "dev-uniform-n50-s2026100501": {
+      "parallel_savings": {
+        "cost": 1268.2204540179291,
+        "normalized_cost": 0.3102860628571083,
+        "solver_cpu_seconds": 0.001461331333333334,
+        "child_cpu_seconds": 0.04588833333333333,
+        "wall_seconds": 0.047629935666918755,
+        "checker_cpu_seconds": 6.577400000011095e-05,
+        "supervisor_cpu_seconds": 0.0015971659999999648,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1161.7321642460524,
+        "normalized_cost": 0.28423236527714846,
+        "solver_cpu_seconds": 0.233400637,
+        "child_cpu_seconds": 0.3589503333333333,
+        "wall_seconds": 0.3617671393343092,
+        "checker_cpu_seconds": 6.572366666664682e-05,
+        "supervisor_cpu_seconds": 0.006742504999999917,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1183.2227850850584,
+        "normalized_cost": 0.2894903155864689,
+        "solver_cpu_seconds": 0.11919992366666667,
+        "child_cpu_seconds": 0.16171866666666665,
+        "wall_seconds": 0.16287477966640532,
+        "checker_cpu_seconds": 7.50110000000322e-05,
+        "supervisor_cpu_seconds": 0.003170294333333342,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n100-s2026100507": {
+      "multistart_vnd": {
+        "cost": 2069.4688976656316,
+        "normalized_cost": 0.26708304884178136,
+        "solver_cpu_seconds": 0.230099948,
+        "child_cpu_seconds": 0.27777599999999997,
+        "wall_seconds": 0.279400867667088,
+        "checker_cpu_seconds": 0.0001037270000000164,
+        "supervisor_cpu_seconds": 0.005329394333333237,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 2082.70398118685,
+        "normalized_cost": 0.26879115204763765,
+        "solver_cpu_seconds": 0.006143217333333333,
+        "child_cpu_seconds": 0.05047733333333333,
+        "wall_seconds": 0.05189486966749731,
+        "checker_cpu_seconds": 0.0001797456666664902,
+        "supervisor_cpu_seconds": 0.001556289333333331,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 2021.4456444008686,
+        "normalized_cost": 0.26088522827452276,
+        "solver_cpu_seconds": 0.23394533566666667,
+        "child_cpu_seconds": 0.35279499999999997,
+        "wall_seconds": 0.3542989306661184,
+        "checker_cpu_seconds": 0.00011287733333327961,
+        "supervisor_cpu_seconds": 0.006344870333333382,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      }
+    },
+    "dev-clustered-n50-s2026100515": {
+      "multistart_vnd": {
+        "cost": 855.1475536721457,
+        "normalized_cost": 0.27280902068222374,
+        "solver_cpu_seconds": 0.189531267,
+        "child_cpu_seconds": 0.2307253333333333,
+        "wall_seconds": 0.23222825299793234,
+        "checker_cpu_seconds": 9.29476666666762e-05,
+        "supervisor_cpu_seconds": 0.003840284666666527,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 834.4036476330677,
+        "normalized_cost": 0.2661913034621443,
+        "solver_cpu_seconds": 0.231771291,
+        "child_cpu_seconds": 0.34977966666666666,
+        "wall_seconds": 0.35578628266375745,
+        "checker_cpu_seconds": 7.703366666652241e-05,
+        "supervisor_cpu_seconds": 0.005747783000000044,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 883.1517288821227,
+        "normalized_cost": 0.2817429076836432,
+        "solver_cpu_seconds": 0.0013603883333333303,
+        "child_cpu_seconds": 0.04174233333333333,
+        "wall_seconds": 0.04284088533556011,
+        "checker_cpu_seconds": 6.471933333340729e-05,
+        "supervisor_cpu_seconds": 0.0014055636666666278,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-clustered-n50-s2026100513": {
+      "pyvrp_ils_s1e6": {
+        "cost": 856.8272737649005,
+        "normalized_cost": 0.25550018644724426,
+        "solver_cpu_seconds": 0.23194949666666667,
+        "child_cpu_seconds": 0.3525933333333333,
+        "wall_seconds": 0.35403231266779284,
+        "checker_cpu_seconds": 6.784366666664117e-05,
+        "supervisor_cpu_seconds": 0.006112319999999875,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 904.4385394179919,
+        "normalized_cost": 0.26969754876730967,
+        "solver_cpu_seconds": 0.0013565260000000013,
+        "child_cpu_seconds": 0.04025133333333333,
+        "wall_seconds": 0.04169830733493048,
+        "checker_cpu_seconds": 6.569366666668112e-05,
+        "supervisor_cpu_seconds": 0.0015007599999999528,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 880.1493742034605,
+        "normalized_cost": 0.26245468146957296,
+        "solver_cpu_seconds": 0.2300482533333333,
+        "child_cpu_seconds": 0.27061066666666667,
+        "wall_seconds": 0.27209100666853675,
+        "checker_cpu_seconds": 6.581366666669197e-05,
+        "supervisor_cpu_seconds": 0.005150863333333404,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n50-s2026100503": {
+      "pyvrp_ils_s1e6": {
+        "cost": 1156.6662205674659,
+        "normalized_cost": 0.2822265383399437,
+        "solver_cpu_seconds": 0.231849167,
+        "child_cpu_seconds": 0.3516513333333333,
+        "wall_seconds": 0.3534751303329055,
+        "checker_cpu_seconds": 6.512366666666658e-05,
+        "supervisor_cpu_seconds": 0.006587436000000002,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1217.6108916598862,
+        "normalized_cost": 0.2970970370601724,
+        "solver_cpu_seconds": 0.0012907253333333327,
+        "child_cpu_seconds": 0.0402,
+        "wall_seconds": 0.04152945533617943,
+        "checker_cpu_seconds": 7.112199999996054e-05,
+        "supervisor_cpu_seconds": 0.0013991856666664877,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1176.4207658101589,
+        "normalized_cost": 0.28704664704648986,
+        "solver_cpu_seconds": 0.08996777633333333,
+        "child_cpu_seconds": 0.13265333333333332,
+        "wall_seconds": 0.1336562053305291,
+        "checker_cpu_seconds": 6.343733333324941e-05,
+        "supervisor_cpu_seconds": 0.0026393626666665337,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      }
+    },
+    "dev-uniform-n200-s2026100510": {
+      "parallel_savings": {
+        "cost": 3460.532079307295,
+        "normalized_cost": 0.2288733158795924,
+        "solver_cpu_seconds": 0.02434774266666666,
+        "child_cpu_seconds": 0.07255966666666666,
+        "wall_seconds": 0.07424618166987784,
+        "checker_cpu_seconds": 0.00016073133333331194,
+        "supervisor_cpu_seconds": 0.002306405999999835,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 3477.511526882687,
+        "normalized_cost": 0.22999630574916227,
+        "solver_cpu_seconds": 0.23937772866666665,
+        "child_cpu_seconds": 0.361826,
+        "wall_seconds": 0.36318115333415335,
+        "checker_cpu_seconds": 0.0002410029999999619,
+        "supervisor_cpu_seconds": 0.006819419666666733,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 3451.0579895303827,
+        "normalized_cost": 0.228246716763477,
+        "solver_cpu_seconds": 0.230344217,
+        "child_cpu_seconds": 0.2766443333333333,
+        "wall_seconds": 0.2781729646643119,
+        "checker_cpu_seconds": 0.00015876833333342924,
+        "supervisor_cpu_seconds": 0.005094897333333274,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n200-s2026100509": {
+      "parallel_savings": {
+        "cost": 3366.7519524905656,
+        "normalized_cost": 0.22328183660728287,
+        "solver_cpu_seconds": 0.023341545666666665,
+        "child_cpu_seconds": 0.06877733333333333,
+        "wall_seconds": 0.0705808000008498,
+        "checker_cpu_seconds": 0.0001590823333334305,
+        "supervisor_cpu_seconds": 0.002083521333333375,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 3374.9021151908864,
+        "normalized_cost": 0.22382235260669578,
+        "solver_cpu_seconds": 0.239841786,
+        "child_cpu_seconds": 0.36876666666666663,
+        "wall_seconds": 0.37006112166515476,
+        "checker_cpu_seconds": 0.00019980233333316555,
+        "supervisor_cpu_seconds": 0.0064460116666664735,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 3337.4583005454274,
+        "normalized_cost": 0.2213390916413502,
+        "solver_cpu_seconds": 0.23036582533333333,
+        "child_cpu_seconds": 0.27764633333333333,
+        "wall_seconds": 0.27935790899937274,
+        "checker_cpu_seconds": 0.00018330466666675407,
+        "supervisor_cpu_seconds": 0.005735336666666591,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      }
+    },
+    "dev-clustered-n100-s2026100519": {
+      "parallel_savings": {
+        "cost": 1551.5132762834571,
+        "normalized_cost": 0.23027527949180004,
+        "solver_cpu_seconds": 0.005723957999999999,
+        "child_cpu_seconds": 0.04559666666666667,
+        "wall_seconds": 0.04704342933594793,
+        "checker_cpu_seconds": 9.435299999986195e-05,
+        "supervisor_cpu_seconds": 0.0014260986666666902,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1524.6043580893272,
+        "normalized_cost": 0.2262814634202944,
+        "solver_cpu_seconds": 0.23437120566666667,
+        "child_cpu_seconds": 0.35730799999999996,
+        "wall_seconds": 0.3584177883337058,
+        "checker_cpu_seconds": 0.00010089600000003547,
+        "supervisor_cpu_seconds": 0.007217628666666605,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1537.7915378961904,
+        "normalized_cost": 0.2282387019190897,
+        "solver_cpu_seconds": 0.230104955,
+        "child_cpu_seconds": 0.2718933333333333,
+        "wall_seconds": 0.2732505573318728,
+        "checker_cpu_seconds": 0.0001018176666668739,
+        "supervisor_cpu_seconds": 0.005303170666666783,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      }
+    },
+    "dev-clustered-n200-s2026100521": {
+      "multistart_vnd": {
+        "cost": 2843.971494891694,
+        "normalized_cost": 0.22264002719519535,
+        "solver_cpu_seconds": 0.23041420566666668,
+        "child_cpu_seconds": 0.274433,
+        "wall_seconds": 0.27716804200220696,
+        "checker_cpu_seconds": 0.0001985610000000045,
+        "supervisor_cpu_seconds": 0.005476684000000009,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 2820.026511745185,
+        "normalized_cost": 0.2207654965578444,
+        "solver_cpu_seconds": 0.24021746366666666,
+        "child_cpu_seconds": 0.3611796666666667,
+        "wall_seconds": 0.36289166433319525,
+        "checker_cpu_seconds": 0.0002441619999999922,
+        "supervisor_cpu_seconds": 0.0065359920000001015,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 2860.2031441411063,
+        "normalized_cost": 0.22391072025129774,
+        "solver_cpu_seconds": 0.022978674666666667,
+        "child_cpu_seconds": 0.06968466666666666,
+        "wall_seconds": 0.07099084966951826,
+        "checker_cpu_seconds": 0.00016613566666645596,
+        "supervisor_cpu_seconds": 0.0018483453333334825,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-clustered-n100-s2026100518": {
+      "pyvrp_ils_s1e6": {
+        "cost": 1456.5101619123554,
+        "normalized_cost": 0.2223092141723006,
+        "solver_cpu_seconds": 0.23418104433333334,
+        "child_cpu_seconds": 0.35004566666666664,
+        "wall_seconds": 0.35183004999756423,
+        "checker_cpu_seconds": 9.842900000004799e-05,
+        "supervisor_cpu_seconds": 0.006564701333333349,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1512.8602360263124,
+        "normalized_cost": 0.23091000599813785,
+        "solver_cpu_seconds": 0.005384605000000001,
+        "child_cpu_seconds": 0.044566666666666664,
+        "wall_seconds": 0.04585032133278825,
+        "checker_cpu_seconds": 0.00010197433333332857,
+        "supervisor_cpu_seconds": 0.0015695193333333062,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1503.486976451254,
+        "normalized_cost": 0.22947935207971387,
+        "solver_cpu_seconds": 0.23009688566666667,
+        "child_cpu_seconds": 0.27005566666666664,
+        "wall_seconds": 0.2716118843357738,
+        "checker_cpu_seconds": 0.00011762433333325124,
+        "supervisor_cpu_seconds": 0.004392882000000024,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      }
+    }
+  },
+  "cpu100": {
+    "dev-clustered-n100-s2026100519": {
+      "parallel_savings": {
+        "cost": 1551.5132762834571,
+        "normalized_cost": 0.23027527949180004,
+        "solver_cpu_seconds": 0.00527665866666667,
+        "child_cpu_seconds": 0.044904,
+        "wall_seconds": 0.04653731200232869,
+        "checker_cpu_seconds": 9.659633333342077e-05,
+        "supervisor_cpu_seconds": 0.0015599263333332947,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1509.9078601292456,
+        "normalized_cost": 0.22410021223344334,
+        "solver_cpu_seconds": 0.9840606986666667,
+        "child_cpu_seconds": 1.1044123333333333,
+        "wall_seconds": 1.1074399036660907,
+        "checker_cpu_seconds": 9.914300000008851e-05,
+        "supervisor_cpu_seconds": 0.01986512833333337,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1537.7915378961904,
+        "normalized_cost": 0.2282387019190897,
+        "solver_cpu_seconds": 0.9801014773333333,
+        "child_cpu_seconds": 1.0254173333333334,
+        "wall_seconds": 1.0271795503310084,
+        "checker_cpu_seconds": 0.00010005799999999547,
+        "supervisor_cpu_seconds": 0.017671410666666665,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n200-s2026100511": {
+      "pyvrp_ils_s1e6": {
+        "cost": 3629.3676414072606,
+        "normalized_cost": 0.23438996211355967,
+        "solver_cpu_seconds": 0.9899747579999999,
+        "child_cpu_seconds": 1.1063846666666666,
+        "wall_seconds": 1.1081061603326816,
+        "checker_cpu_seconds": 0.00020104433333334448,
+        "supervisor_cpu_seconds": 0.018604681333333428,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 3639.75319715272,
+        "normalized_cost": 0.23506067675539813,
+        "solver_cpu_seconds": 0.9803508473333333,
+        "child_cpu_seconds": 1.0258903333333333,
+        "wall_seconds": 1.0276456003363517,
+        "checker_cpu_seconds": 0.00017686533333333143,
+        "supervisor_cpu_seconds": 0.017002817666666597,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 3684.659757816729,
+        "normalized_cost": 0.23796080925578214,
+        "solver_cpu_seconds": 0.022841945333333332,
+        "child_cpu_seconds": 0.06665399999999999,
+        "wall_seconds": 0.06817800533463014,
+        "checker_cpu_seconds": 0.0001896776666665175,
+        "supervisor_cpu_seconds": 0.0019108213333332569,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n50-s2026100503": {
+      "pyvrp_ils_s1e6": {
+        "cost": 1156.6662205674659,
+        "normalized_cost": 0.2822265383399437,
+        "solver_cpu_seconds": 0.9817201913333332,
+        "child_cpu_seconds": 1.1069229999999999,
+        "wall_seconds": 1.1084200633340515,
+        "checker_cpu_seconds": 6.533633333333233e-05,
+        "supervisor_cpu_seconds": 0.01847790233333335,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1217.6108916598862,
+        "normalized_cost": 0.2970970370601724,
+        "solver_cpu_seconds": 0.0013697649999999996,
+        "child_cpu_seconds": 0.03953933333333333,
+        "wall_seconds": 0.041066326331929304,
+        "checker_cpu_seconds": 6.15410000000723e-05,
+        "supervisor_cpu_seconds": 0.0013020629999999644,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1176.4207658101589,
+        "normalized_cost": 0.28704664704648986,
+        "solver_cpu_seconds": 0.092797444,
+        "child_cpu_seconds": 0.139369,
+        "wall_seconds": 0.14102960566863962,
+        "checker_cpu_seconds": 6.417800000002583e-05,
+        "supervisor_cpu_seconds": 0.0026173049999999773,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n200-s2026100510": {
+      "pyvrp_ils_s1e6": {
+        "cost": 3445.912253828792,
+        "normalized_cost": 0.22790638713621955,
+        "solver_cpu_seconds": 0.9902465743333333,
+        "child_cpu_seconds": 1.114711,
+        "wall_seconds": 1.1161998146684102,
+        "checker_cpu_seconds": 0.0001698320000000549,
+        "supervisor_cpu_seconds": 0.0167255903333333,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 3460.532079307295,
+        "normalized_cost": 0.2288733158795924,
+        "solver_cpu_seconds": 0.025237121666666664,
+        "child_cpu_seconds": 0.07971233333333333,
+        "wall_seconds": 0.08125489466813936,
+        "checker_cpu_seconds": 0.00018280100000010271,
+        "supervisor_cpu_seconds": 0.002244314666666636,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 3451.0579895303827,
+        "normalized_cost": 0.228246716763477,
+        "solver_cpu_seconds": 0.9804265910000001,
+        "child_cpu_seconds": 1.02722,
+        "wall_seconds": 1.029261659665887,
+        "checker_cpu_seconds": 0.00015855466666675477,
+        "supervisor_cpu_seconds": 0.016945122666666774,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      }
+    },
+    "dev-clustered-n200-s2026100522": {
+      "parallel_savings": {
+        "cost": 3024.797569289449,
+        "normalized_cost": 0.22780375505725728,
+        "solver_cpu_seconds": 0.022815443333333334,
+        "child_cpu_seconds": 0.068759,
+        "wall_seconds": 0.07035687633712466,
+        "checker_cpu_seconds": 0.00017064300000002586,
+        "supervisor_cpu_seconds": 0.0018039770000000677,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 3015.4033773514684,
+        "normalized_cost": 0.2270962590512673,
+        "solver_cpu_seconds": 0.980354115,
+        "child_cpu_seconds": 1.0249323333333333,
+        "wall_seconds": 1.0267968063344597,
+        "checker_cpu_seconds": 0.00016328866666661299,
+        "supervisor_cpu_seconds": 0.015559752333333435,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 2930.931155658924,
+        "normalized_cost": 0.22073448149135239,
+        "solver_cpu_seconds": 0.9896956426666665,
+        "child_cpu_seconds": 1.1096730000000001,
+        "wall_seconds": 1.111115183669123,
+        "checker_cpu_seconds": 0.00016704066666659947,
+        "supervisor_cpu_seconds": 0.01726318833333329,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      }
+    },
+    "dev-clustered-n50-s2026100515": {
+      "parallel_savings": {
+        "cost": 883.1517288821227,
+        "normalized_cost": 0.2817429076836432,
+        "solver_cpu_seconds": 0.0013964986666666647,
+        "child_cpu_seconds": 0.039874999999999994,
+        "wall_seconds": 0.04112853299981604,
+        "checker_cpu_seconds": 6.561400000008415e-05,
+        "supervisor_cpu_seconds": 0.0016713409999998818,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 833.93058374075,
+        "normalized_cost": 0.26604038670324215,
+        "solver_cpu_seconds": 0.9818902530000001,
+        "child_cpu_seconds": 1.0974793333333335,
+        "wall_seconds": 1.0993197046676262,
+        "checker_cpu_seconds": 6.472600000019997e-05,
+        "supervisor_cpu_seconds": 0.017252662000000047,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 855.1475536721457,
+        "normalized_cost": 0.27280902068222374,
+        "solver_cpu_seconds": 0.18039291600000001,
+        "child_cpu_seconds": 0.22061,
+        "wall_seconds": 0.2221291016661174,
+        "checker_cpu_seconds": 7.170599999998621e-05,
+        "supervisor_cpu_seconds": 0.0043155420000001166,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      }
+    },
+    "dev-clustered-n200-s2026100523": {
+      "multistart_vnd": {
+        "cost": 2948.6956878472984,
+        "normalized_cost": 0.22369608875045177,
+        "solver_cpu_seconds": 0.980401068,
+        "child_cpu_seconds": 1.0245039999999999,
+        "wall_seconds": 1.0261461856692524,
+        "checker_cpu_seconds": 0.00018567499999994075,
+        "supervisor_cpu_seconds": 0.01608058533333338,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 2958.332843663298,
+        "normalized_cost": 0.22442718964757133,
+        "solver_cpu_seconds": 0.022895562333333334,
+        "child_cpu_seconds": 0.068201,
+        "wall_seconds": 0.06950979233321657,
+        "checker_cpu_seconds": 0.0001603809999998762,
+        "supervisor_cpu_seconds": 0.0017973486666667353,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 2850.0126424813698,
+        "normalized_cost": 0.21620972406205033,
+        "solver_cpu_seconds": 0.989475657,
+        "child_cpu_seconds": 1.1124483333333333,
+        "wall_seconds": 1.1144339626674384,
+        "checker_cpu_seconds": 0.00018125533333357424,
+        "supervisor_cpu_seconds": 0.017794015666666756,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      }
+    },
+    "dev-uniform-n200-s2026100508": {
+      "parallel_savings": {
+        "cost": 3545.2724109446913,
+        "normalized_cost": 0.23107869997364058,
+        "solver_cpu_seconds": 0.022319044333333333,
+        "child_cpu_seconds": 0.06606033333333333,
+        "wall_seconds": 0.067454109332175,
+        "checker_cpu_seconds": 0.0001670873333334081,
+        "supervisor_cpu_seconds": 0.0018985470000000282,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 3534.362645444062,
+        "normalized_cost": 0.23036760809220433,
+        "solver_cpu_seconds": 0.9803582643333334,
+        "child_cpu_seconds": 1.0256539999999998,
+        "wall_seconds": 1.0272476503329624,
+        "checker_cpu_seconds": 0.00017829733333333633,
+        "supervisor_cpu_seconds": 0.016624647666666714,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 3506.71390409315,
+        "normalized_cost": 0.22856547994330598,
+        "solver_cpu_seconds": 0.9894283476666667,
+        "child_cpu_seconds": 1.1115966666666666,
+        "wall_seconds": 1.1130706719995942,
+        "checker_cpu_seconds": 0.00015880166666667103,
+        "supervisor_cpu_seconds": 0.01655995933333332,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      }
+    },
+    "dev-uniform-n50-s2026100500": {
+      "multistart_vnd": {
+        "cost": 1033.7161485028594,
+        "normalized_cost": 0.29500170152063154,
+        "solver_cpu_seconds": 0.19267896166666668,
+        "child_cpu_seconds": 0.2329983333333333,
+        "wall_seconds": 0.2341900129977148,
+        "checker_cpu_seconds": 7.166633333325716e-05,
+        "supervisor_cpu_seconds": 0.004291412666666587,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 998.3205061849014,
+        "normalized_cost": 0.28490050040721543,
+        "solver_cpu_seconds": 0.981929732,
+        "child_cpu_seconds": 1.0989766666666667,
+        "wall_seconds": 1.1003775769980468,
+        "checker_cpu_seconds": 7.10449999999548e-05,
+        "supervisor_cpu_seconds": 0.017849687000000003,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1074.7199502647002,
+        "normalized_cost": 0.3067033580208968,
+        "solver_cpu_seconds": 0.001354580000000001,
+        "child_cpu_seconds": 0.041564666666666666,
+        "wall_seconds": 0.042691093333511766,
+        "checker_cpu_seconds": 0.00030914433333332586,
+        "supervisor_cpu_seconds": 0.001406822999999983,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      }
+    },
+    "dev-uniform-n50-s2026100502": {
+      "pyvrp_ils_s1e6": {
+        "cost": 1203.94334869076,
+        "normalized_cost": 0.3190705312261573,
+        "solver_cpu_seconds": 0.9817498649999999,
+        "child_cpu_seconds": 1.1023226666666666,
+        "wall_seconds": 1.1039093183353543,
+        "checker_cpu_seconds": 6.788399999994403e-05,
+        "supervisor_cpu_seconds": 0.01600803400000002,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1240.6677500257035,
+        "normalized_cost": 0.32880327675413046,
+        "solver_cpu_seconds": 0.10958044566666666,
+        "child_cpu_seconds": 0.152656,
+        "wall_seconds": 0.15428279900030853,
+        "checker_cpu_seconds": 6.401833333335993e-05,
+        "supervisor_cpu_seconds": 0.0029464509999999797,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1243.21474768378,
+        "normalized_cost": 0.3294782851726561,
+        "solver_cpu_seconds": 0.0013356413333333362,
+        "child_cpu_seconds": 0.039752,
+        "wall_seconds": 0.04114182100117129,
+        "checker_cpu_seconds": 6.195133333327292e-05,
+        "supervisor_cpu_seconds": 0.0013115913333332507,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      }
+    },
+    "dev-clustered-n50-s2026100514": {
+      "pyvrp_ils_s1e6": {
+        "cost": 982.8223508618248,
+        "normalized_cost": 0.2933596607047848,
+        "solver_cpu_seconds": 0.982067179,
+        "child_cpu_seconds": 1.0955973333333333,
+        "wall_seconds": 1.0968510813302903,
+        "checker_cpu_seconds": 8.985999999992315e-05,
+        "supervisor_cpu_seconds": 0.017739198666666695,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 999.3458247541992,
+        "normalized_cost": 0.2982917022792166,
+        "solver_cpu_seconds": 0.14839239533333334,
+        "child_cpu_seconds": 0.18813599999999997,
+        "wall_seconds": 0.18962681099947076,
+        "checker_cpu_seconds": 6.848833333332009e-05,
+        "supervisor_cpu_seconds": 0.003563821000000004,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1011.3546144545369,
+        "normalized_cost": 0.30187616947094964,
+        "solver_cpu_seconds": 0.0014163246666666675,
+        "child_cpu_seconds": 0.04344166666666666,
+        "wall_seconds": 0.04465917733371801,
+        "checker_cpu_seconds": 6.61480000000066e-05,
+        "supervisor_cpu_seconds": 0.0014758463333333454,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      }
+    },
+    "dev-uniform-n100-s2026100507": {
+      "multistart_vnd": {
+        "cost": 2069.4688976656316,
+        "normalized_cost": 0.26708304884178136,
+        "solver_cpu_seconds": 0.9314589973333333,
+        "child_cpu_seconds": 0.9730976666666666,
+        "wall_seconds": 0.9755899726660573,
+        "checker_cpu_seconds": 0.00010122700000007405,
+        "supervisor_cpu_seconds": 0.017424765999999942,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 2005.0255809123994,
+        "normalized_cost": 0.25876607556649084,
+        "solver_cpu_seconds": 0.983804231,
+        "child_cpu_seconds": 1.1051706666666667,
+        "wall_seconds": 1.1071426303339347,
+        "checker_cpu_seconds": 0.00010956866666659663,
+        "supervisor_cpu_seconds": 0.01986328599999998,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      },
+      "parallel_savings": {
+        "cost": 2082.70398118685,
+        "normalized_cost": 0.26879115204763765,
+        "solver_cpu_seconds": 0.0052921856666666685,
+        "child_cpu_seconds": 0.047967666666666665,
+        "wall_seconds": 0.04931460566391858,
+        "checker_cpu_seconds": 0.00010014199999996976,
+        "supervisor_cpu_seconds": 0.0017038856666666453,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      }
+    },
+    "dev-clustered-n200-s2026100521": {
+      "parallel_savings": {
+        "cost": 2860.2031441411063,
+        "normalized_cost": 0.22391072025129774,
+        "solver_cpu_seconds": 0.022116363999999996,
+        "child_cpu_seconds": 0.06497333333333333,
+        "wall_seconds": 0.06620745599987761,
+        "checker_cpu_seconds": 0.00017233200000014529,
+        "supervisor_cpu_seconds": 0.0018141833333333486,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 2843.971494891694,
+        "normalized_cost": 0.22264002719519535,
+        "solver_cpu_seconds": 0.9803537653333333,
+        "child_cpu_seconds": 1.025467,
+        "wall_seconds": 1.0277075316674502,
+        "checker_cpu_seconds": 0.00018583533333334698,
+        "supervisor_cpu_seconds": 0.015406632000000031,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 2797.0439362792945,
+        "normalized_cost": 0.21896630791058394,
+        "solver_cpu_seconds": 0.9896013483333332,
+        "child_cpu_seconds": 1.1065606666666667,
+        "wall_seconds": 1.108899303668295,
+        "checker_cpu_seconds": 0.00016978166666659078,
+        "supervisor_cpu_seconds": 0.01714761866666666,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-clustered-n100-s2026100518": {
+      "multistart_vnd": {
+        "cost": 1503.486976451254,
+        "normalized_cost": 0.22947935207971387,
+        "solver_cpu_seconds": 0.9563940616666666,
+        "child_cpu_seconds": 1.000088,
+        "wall_seconds": 1.001492235334202,
+        "checker_cpu_seconds": 9.802533333332548e-05,
+        "supervisor_cpu_seconds": 0.016092822666666784,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1443.0880243426113,
+        "normalized_cost": 0.2202605742563768,
+        "solver_cpu_seconds": 0.983934116,
+        "child_cpu_seconds": 1.10106,
+        "wall_seconds": 1.1024142123302834,
+        "checker_cpu_seconds": 9.852933333335627e-05,
+        "supervisor_cpu_seconds": 0.01642948500000015,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1512.8602360263124,
+        "normalized_cost": 0.23091000599813785,
+        "solver_cpu_seconds": 0.005199184,
+        "child_cpu_seconds": 0.044278,
+        "wall_seconds": 0.04556979266635608,
+        "checker_cpu_seconds": 0.00011392566666675504,
+        "supervisor_cpu_seconds": 0.0013964270000000518,
+        "seeds": [
+          29,
+          11,
+          47
+        ]
+      }
+    },
+    "dev-uniform-n100-s2026100505": {
+      "multistart_vnd": {
+        "cost": 2013.1619854273774,
+        "normalized_cost": 0.25110151910350276,
+        "solver_cpu_seconds": 0.8864075153333333,
+        "child_cpu_seconds": 0.928477,
+        "wall_seconds": 0.9299281223356957,
+        "checker_cpu_seconds": 9.767766666668454e-05,
+        "supervisor_cpu_seconds": 0.015444529000000004,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1962.2613410992715,
+        "normalized_cost": 0.24475268616971319,
+        "solver_cpu_seconds": 0.9841083273333334,
+        "child_cpu_seconds": 1.1018726666666667,
+        "wall_seconds": 1.1037158539984375,
+        "checker_cpu_seconds": 0.00010729566666671057,
+        "supervisor_cpu_seconds": 0.018712859666666692,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "parallel_savings": {
+        "cost": 2030.8442179219087,
+        "normalized_cost": 0.25330702242248954,
+        "solver_cpu_seconds": 0.005445448999999998,
+        "child_cpu_seconds": 0.045107666666666664,
+        "wall_seconds": 0.0465589456653106,
+        "checker_cpu_seconds": 9.498399999992764e-05,
+        "supervisor_cpu_seconds": 0.0013524386666667147,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      }
+    },
+    "dev-uniform-n100-s2026100506": {
+      "parallel_savings": {
+        "cost": 1959.665906262038,
+        "normalized_cost": 0.26099955178404854,
+        "solver_cpu_seconds": 0.005320043333333332,
+        "child_cpu_seconds": 0.04536833333333333,
+        "wall_seconds": 0.04659064333585169,
+        "checker_cpu_seconds": 9.879966666663058e-05,
+        "supervisor_cpu_seconds": 0.0016212723333333494,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1957.1168955102485,
+        "normalized_cost": 0.26066005990352753,
+        "solver_cpu_seconds": 0.969179302,
+        "child_cpu_seconds": 1.0126856666666666,
+        "wall_seconds": 1.014277510997393,
+        "checker_cpu_seconds": 0.00010900800000005854,
+        "supervisor_cpu_seconds": 0.017395213999999992,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1874.3067587663259,
+        "normalized_cost": 0.24963093065028352,
+        "solver_cpu_seconds": 0.9841647983333334,
+        "child_cpu_seconds": 1.1008373333333334,
+        "wall_seconds": 1.1022712319997179,
+        "checker_cpu_seconds": 0.00010285200000000512,
+        "supervisor_cpu_seconds": 0.018973833333333207,
+        "seeds": [
+          47,
+          29,
+          11
+        ]
+      }
+    },
+    "dev-uniform-n200-s2026100509": {
+      "pyvrp_ils_s1e6": {
+        "cost": 3324.193939659759,
+        "normalized_cost": 0.22045940376954756,
+        "solver_cpu_seconds": 0.9900816450000001,
+        "child_cpu_seconds": 1.1100836666666667,
+        "wall_seconds": 1.1125084133333683,
+        "checker_cpu_seconds": 0.0001636720000001516,
+        "supervisor_cpu_seconds": 0.01867105800000009,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 3337.4583005454274,
+        "normalized_cost": 0.2213390916413502,
+        "solver_cpu_seconds": 0.9803369060000001,
+        "child_cpu_seconds": 1.0247013333333332,
+        "wall_seconds": 1.027166241001396,
+        "checker_cpu_seconds": 0.00020034999999999728,
+        "supervisor_cpu_seconds": 0.016849864333333315,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 3366.7519524905656,
+        "normalized_cost": 0.22328183660728287,
+        "solver_cpu_seconds": 0.022408821,
+        "child_cpu_seconds": 0.06588899999999999,
+        "wall_seconds": 0.06728922432860902,
+        "checker_cpu_seconds": 0.00016844933333322784,
+        "supervisor_cpu_seconds": 0.0018340103333333395,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n50-s2026100501": {
+      "pyvrp_ils_s1e6": {
+        "cost": 1161.7321642460524,
+        "normalized_cost": 0.28423236527714846,
+        "solver_cpu_seconds": 0.9819731866666667,
+        "child_cpu_seconds": 1.1025546666666666,
+        "wall_seconds": 1.1040073950013418,
+        "checker_cpu_seconds": 6.333033333335199e-05,
+        "supervisor_cpu_seconds": 0.02026559233333332,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1183.2227850850584,
+        "normalized_cost": 0.2894903155864689,
+        "solver_cpu_seconds": 0.13039026,
+        "child_cpu_seconds": 0.174136,
+        "wall_seconds": 0.17534187766674827,
+        "checker_cpu_seconds": 6.486633333335767e-05,
+        "supervisor_cpu_seconds": 0.003751553000000074,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1268.2204540179291,
+        "normalized_cost": 0.3102860628571083,
+        "solver_cpu_seconds": 0.0013070723333333302,
+        "child_cpu_seconds": 0.039183333333333334,
+        "wall_seconds": 0.04039819433576971,
+        "checker_cpu_seconds": 6.169166666662267e-05,
+        "supervisor_cpu_seconds": 0.0012211893333332984,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-clustered-n50-s2026100512": {
+      "pyvrp_ils_s1e6": {
+        "cost": 794.3124365425673,
+        "normalized_cost": 0.2489098613037833,
+        "solver_cpu_seconds": 0.9817193166666667,
+        "child_cpu_seconds": 1.0957056666666667,
+        "wall_seconds": 1.0976858010011104,
+        "checker_cpu_seconds": 8.29526666665803e-05,
+        "supervisor_cpu_seconds": 0.01701139966666661,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 811.5324524368266,
+        "normalized_cost": 0.25430601471986963,
+        "solver_cpu_seconds": 0.0014465563333333324,
+        "child_cpu_seconds": 0.040048,
+        "wall_seconds": 0.04132118600197524,
+        "checker_cpu_seconds": 6.572066666662064e-05,
+        "supervisor_cpu_seconds": 0.001319391000000003,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 805.1236625655615,
+        "normalized_cost": 0.25229772311496257,
+        "solver_cpu_seconds": 0.18477415766666666,
+        "child_cpu_seconds": 0.22620333333333334,
+        "wall_seconds": 0.22787851766770473,
+        "checker_cpu_seconds": 7.400633333332074e-05,
+        "supervisor_cpu_seconds": 0.004596635000000034,
+        "seeds": [
+          11,
+          47,
+          29
+        ]
+      }
+    },
+    "dev-clustered-n100-s2026100517": {
+      "pyvrp_ils_s1e6": {
+        "cost": 1486.1190500785808,
+        "normalized_cost": 0.2404154916937948,
+        "solver_cpu_seconds": 0.9843691226666667,
+        "child_cpu_seconds": 1.0966136666666666,
+        "wall_seconds": 1.09804953999992,
+        "checker_cpu_seconds": 9.916399999994792e-05,
+        "supervisor_cpu_seconds": 0.015071207000000012,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 1554.8848205378777,
+        "normalized_cost": 0.25154000861308223,
+        "solver_cpu_seconds": 0.005507120333333333,
+        "child_cpu_seconds": 0.04582033333333333,
+        "wall_seconds": 0.04704941399783517,
+        "checker_cpu_seconds": 0.00010826033333340608,
+        "supervisor_cpu_seconds": 0.0014220480000001572,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1526.136641790059,
+        "normalized_cost": 0.24688929941950014,
+        "solver_cpu_seconds": 0.980103736,
+        "child_cpu_seconds": 1.0226426666666666,
+        "wall_seconds": 1.0244724636625808,
+        "checker_cpu_seconds": 0.00010585666666666309,
+        "supervisor_cpu_seconds": 0.014697641999999936,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-clustered-n200-s2026100520": {
+      "pyvrp_ils_s1e6": {
+        "cost": 2872.1315671925263,
+        "normalized_cost": 0.22534633832770928,
+        "solver_cpu_seconds": 0.989742008,
+        "child_cpu_seconds": 1.1115856666666666,
+        "wall_seconds": 1.1136483803323547,
+        "checker_cpu_seconds": 0.0001729529999998647,
+        "supervisor_cpu_seconds": 0.01832138933333331,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 2962.998691985913,
+        "normalized_cost": 0.23247573799743693,
+        "solver_cpu_seconds": 0.9803595613333334,
+        "child_cpu_seconds": 1.027054,
+        "wall_seconds": 1.0288093483322882,
+        "checker_cpu_seconds": 0.00016141900000003298,
+        "supervisor_cpu_seconds": 0.016229838666666385,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      },
+      "parallel_savings": {
+        "cost": 2967.389760966625,
+        "normalized_cost": 0.23282025958114524,
+        "solver_cpu_seconds": 0.024261860333333333,
+        "child_cpu_seconds": 0.078939,
+        "wall_seconds": 0.08101890833252885,
+        "checker_cpu_seconds": 0.00016776500000011593,
+        "supervisor_cpu_seconds": 0.002796276666666634,
+        "seeds": [
+          47,
+          11,
+          29
+        ]
+      }
+    },
+    "dev-uniform-n100-s2026100504": {
+      "parallel_savings": {
+        "cost": 2022.5566503287453,
+        "normalized_cost": 0.26254802145572004,
+        "solver_cpu_seconds": 0.005273423999999999,
+        "child_cpu_seconds": 0.045635666666666665,
+        "wall_seconds": 0.04716387966861172,
+        "checker_cpu_seconds": 0.00013587066666675973,
+        "supervisor_cpu_seconds": 0.001491347666666698,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 2008.9436378464247,
+        "normalized_cost": 0.26078091669121106,
+        "solver_cpu_seconds": 0.932163556,
+        "child_cpu_seconds": 0.9745986666666667,
+        "wall_seconds": 0.9766673806661856,
+        "checker_cpu_seconds": 0.00012890400000002225,
+        "supervisor_cpu_seconds": 0.013620540000000014,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1967.408363113521,
+        "normalized_cost": 0.25538922385532875,
+        "solver_cpu_seconds": 0.9838548966666667,
+        "child_cpu_seconds": 1.101467,
+        "wall_seconds": 1.1034218166702583,
+        "checker_cpu_seconds": 0.00010363699999997127,
+        "supervisor_cpu_seconds": 0.01924545799999981,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      }
+    },
+    "dev-clustered-n100-s2026100516": {
+      "parallel_savings": {
+        "cost": 1637.0041085397359,
+        "normalized_cost": 0.25290937086185644,
+        "solver_cpu_seconds": 0.005220058333333333,
+        "child_cpu_seconds": 0.04528333333333333,
+        "wall_seconds": 0.046417545333194234,
+        "checker_cpu_seconds": 0.00010538933333337219,
+        "supervisor_cpu_seconds": 0.001451734999999917,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 1630.7886013384295,
+        "normalized_cost": 0.25194910447787533,
+        "solver_cpu_seconds": 0.980131966,
+        "child_cpu_seconds": 1.0233093333333334,
+        "wall_seconds": 1.0251298350000677,
+        "checker_cpu_seconds": 0.00010269900000007641,
+        "supervisor_cpu_seconds": 0.016185721333333253,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      },
+      "pyvrp_ils_s1e6": {
+        "cost": 1589.9817574418093,
+        "normalized_cost": 0.24564464063266336,
+        "solver_cpu_seconds": 0.9840330953333333,
+        "child_cpu_seconds": 1.1086349999999998,
+        "wall_seconds": 1.110450621667648,
+        "checker_cpu_seconds": 0.0001126570000000715,
+        "supervisor_cpu_seconds": 0.019371980999999778,
+        "seeds": [
+          11,
+          29,
+          47
+        ]
+      }
+    },
+    "dev-clustered-n50-s2026100513": {
+      "pyvrp_ils_s1e6": {
+        "cost": 853.8453912727941,
+        "normalized_cost": 0.2546110089478525,
+        "solver_cpu_seconds": 0.981858562,
+        "child_cpu_seconds": 1.0980539999999999,
+        "wall_seconds": 1.0995503263305484,
+        "checker_cpu_seconds": 7.376300000005998e-05,
+        "supervisor_cpu_seconds": 0.017563268333333177,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "parallel_savings": {
+        "cost": 904.4385394179919,
+        "normalized_cost": 0.26969754876730967,
+        "solver_cpu_seconds": 0.0013715183333333353,
+        "child_cpu_seconds": 0.04263566666666666,
+        "wall_seconds": 0.044023137665741764,
+        "checker_cpu_seconds": 6.915900000000381e-05,
+        "supervisor_cpu_seconds": 0.0017193073333334752,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      },
+      "multistart_vnd": {
+        "cost": 880.1493742034605,
+        "normalized_cost": 0.26245468146957296,
+        "solver_cpu_seconds": 0.25807198,
+        "child_cpu_seconds": 0.2987663333333333,
+        "wall_seconds": 0.30041350433263386,
+        "checker_cpu_seconds": 7.399966666662057e-05,
+        "supervisor_cpu_seconds": 0.005443647000000033,
+        "seeds": [
+          29,
+          47,
+          11
+        ]
+      }
+    }
+  }
+}

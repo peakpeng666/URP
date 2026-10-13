@@ -1,0 +1,13 @@
+instance_id,group_id,split,family,replicate,order,BF,BF_then_EoH,published_EoH,SELECTOR,SBS,branch_oracle,oracle_preferred,SBS_regret,selected_branch,selector_minus_SBS,selector_regret,full_run_oracle,selector_minus_full_EoH
+risk_prefix_weibull_3_45__random,risk_prefix_weibull_3_45,risk,weibull_3_45,0,random,2514,2513,2510,2513,2513,2513,BF_then_EoH,0,BF_then_EoH,0,0,2510,3
+risk_prefix_weibull_3_45__ascending,risk_prefix_weibull_3_45,risk,weibull_3_45,0,ascending,3110,2957,2957,2957,2957,2957,BF_then_EoH,0,BF_then_EoH,0,0,2957,0
+risk_prefix_weibull_3_45__descending,risk_prefix_weibull_3_45,risk,weibull_3_45,0,descending,2482,2482,2482,2482,2482,2482,tie,0,BF_then_EoH,0,0,2482,0
+risk_prefix_uniform_1_100__random,risk_prefix_uniform_1_100,risk,uniform_1_100,1,random,2576,2573,2575,2576,2573,2573,BF_then_EoH,0,BF,3,3,2575,1
+risk_prefix_uniform_1_100__ascending,risk_prefix_uniform_1_100,risk,uniform_1_100,1,ascending,3161,3009,3009,3161,3009,3009,BF_then_EoH,0,BF,152,152,3009,152
+risk_prefix_uniform_1_100__descending,risk_prefix_uniform_1_100,risk,uniform_1_100,1,descending,2535,2535,2544,2535,2535,2535,tie,0,BF,0,0,2535,-9
+risk_prefix_small_beta_2_5__random,risk_prefix_small_beta_2_5,risk,small_beta_2_5,2,random,2453,2462,2461,2462,2462,2453,BF,9,BF_then_EoH,0,9,2453,1
+risk_prefix_small_beta_2_5__ascending,risk_prefix_small_beta_2_5,risk,small_beta_2_5,2,ascending,3044,2892,2892,2892,2892,2892,BF_then_EoH,0,BF_then_EoH,0,0,2892,0
+risk_prefix_small_beta_2_5__descending,risk_prefix_small_beta_2_5,risk,small_beta_2_5,2,descending,2411,2411,2414,2411,2411,2411,tie,0,BF_then_EoH,0,0,2411,-3
+risk_prefix_bimodal_20_30_70_80__random,risk_prefix_bimodal_20_30_70_80,risk,bimodal_20_30_70_80,3,random,2583,2585,2586,2583,2585,2583,BF,2,BF,-2,0,2583,-3
+risk_prefix_bimodal_20_30_70_80__ascending,risk_prefix_bimodal_20_30_70_80,risk,bimodal_20_30_70_80,3,ascending,3170,3019,3019,3170,3019,3019,BF_then_EoH,0,BF,151,151,3019,151
+risk_prefix_bimodal_20_30_70_80__descending,risk_prefix_bimodal_20_30_70_80,risk,bimodal_20_30_70_80,3,descending,2549,2549,2549,2549,2549,2549,tie,0,BF,0,0,2549,0

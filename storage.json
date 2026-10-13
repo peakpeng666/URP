@@ -6,7 +6,21 @@
     "bytes": 10450371700,
     "sha256": "9dc81fd8efd41b5c443101dc42773a32454c40fdc56cf8c87f28e821e41b3d38",
     "windows_path": "D:\\Peak\\Desktop\\URP.zip",
-    "status": "verified_on_windows",
+    "status": "reported_verified_on_windows_not_readable_in_current_task",
     "google_drive_file_id": null
+  },
+  "repository_content": [
+    "source",
+    "literature_notes",
+    "paper_pdfs",
+    "textbooks",
+    "experiment_records",
+    "required_data"
+  ],
+  "reconciliation": {
+    "status": "in_progress",
+    "baseline_commit": "0d8faf3dba83dad44cc242eaef17d8b982ee7f80",
+    "cleanup_performed": false,
+    "drive_repository_mirror_verified": false
   }
 }

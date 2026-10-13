@@ -1,0 +1,10 @@
+def score(item, bins):
+    diff = bins - item
+    exp = np.exp(diff)
+    sqrt = np.sqrt(diff)
+    ulti = 1 - diff / bins
+    comb = ulti * sqrt
+    adjust = np.where(diff > (item * 3), comb + 0.8, comb + 0.3)
+    denominator = (exp + 0.7) * exp
+    hybrid_exp = bins / denominator
+    return hybrid_exp + adjust

@@ -1,0 +1,14 @@
+{
+  "exit_code": 0,
+  "cpu_user_seconds": 6.396188,
+  "cpu_system_seconds": 0.048358,
+  "cpu_total_seconds": 6.444546000000001,
+  "wall_seconds": 6.4472003979899455,
+  "child_hard_cpu_limit_seconds": 60,
+  "single_thread_environment": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1"
+  },
+  "counts_complete_child_process_and_its_children": true
+}

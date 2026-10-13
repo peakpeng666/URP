@@ -1,0 +1,6194 @@
+[
+  {
+    "id": "G01_tight",
+    "geometry": "G01",
+    "stratum": "uniform",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100701,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 5.647,
+        "y": 3.376,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          3.449301075327206,
+          7.449301075327206
+        ],
+        "reference_start": 6.57920853902656,
+        "center_jitter": -1.1299074636993538
+      },
+      {
+        "id": 2,
+        "x": 4.006,
+        "y": 4.956,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          16.216847535404895,
+          20.216847535404895
+        ],
+        "reference_start": 10.857207880554121,
+        "center_jitter": 7.359639654850776
+      },
+      {
+        "id": 3,
+        "x": -7.068,
+        "y": -7.615,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          21.636413056535012,
+          25.636413056535012
+        ],
+        "reference_start": 29.61022304201088,
+        "center_jitter": -5.9738099854758655
+      },
+      {
+        "id": 4,
+        "x": 1.246,
+        "y": -7.385,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          30.35920589297106,
+          34.35920589297106
+        ],
+        "reference_start": 39.92740381436397,
+        "center_jitter": -7.568197921392912
+      },
+      {
+        "id": 5,
+        "x": -0.461,
+        "y": 5.38,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          5.151176302060954,
+          9.151176302060954
+        ],
+        "reference_start": 5.399714899881289,
+        "center_jitter": 1.7514614021796646
+      },
+      {
+        "id": 6,
+        "x": 1.602,
+        "y": 9.857,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          7.049143334970799,
+          11.049143334970799
+        ],
+        "reference_start": 12.329166999252983,
+        "center_jitter": -3.2800236642821847
+      },
+      {
+        "id": 7,
+        "x": 8.952,
+        "y": 2.767,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          15.225606135454143,
+          19.225606135454143
+        ],
+        "reference_start": 24.541443924601218,
+        "center_jitter": -7.315837789147073
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G01_medium",
+    "geometry": "G01",
+    "stratum": "uniform",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100701,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 5.647,
+        "y": 3.376,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          15.449301075327206
+        ],
+        "reference_start": 6.57920853902656,
+        "center_jitter": -1.1299074636993538
+      },
+      {
+        "id": 2,
+        "x": 4.006,
+        "y": 4.956,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          8.216847535404895,
+          28.216847535404895
+        ],
+        "reference_start": 10.857207880554121,
+        "center_jitter": 7.359639654850776
+      },
+      {
+        "id": 3,
+        "x": -7.068,
+        "y": -7.615,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          13.636413056535012,
+          33.63641305653501
+        ],
+        "reference_start": 29.61022304201088,
+        "center_jitter": -5.9738099854758655
+      },
+      {
+        "id": 4,
+        "x": 1.246,
+        "y": -7.385,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          22.35920589297106,
+          42.35920589297106
+        ],
+        "reference_start": 39.92740381436397,
+        "center_jitter": -7.568197921392912
+      },
+      {
+        "id": 5,
+        "x": -0.461,
+        "y": 5.38,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          17.151176302060954
+        ],
+        "reference_start": 5.399714899881289,
+        "center_jitter": 1.7514614021796646
+      },
+      {
+        "id": 6,
+        "x": 1.602,
+        "y": 9.857,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          19.0491433349708
+        ],
+        "reference_start": 12.329166999252983,
+        "center_jitter": -3.2800236642821847
+      },
+      {
+        "id": 7,
+        "x": 8.952,
+        "y": 2.767,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          7.225606135454143,
+          27.225606135454143
+        ],
+        "reference_start": 24.541443924601218,
+        "center_jitter": -7.315837789147073
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G01_wide",
+    "geometry": "G01",
+    "stratum": "uniform",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100701,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 5.647,
+        "y": 3.376,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          35.449301075327206
+        ],
+        "reference_start": 6.57920853902656,
+        "center_jitter": -1.1299074636993538
+      },
+      {
+        "id": 2,
+        "x": 4.006,
+        "y": 4.956,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          48.216847535404895
+        ],
+        "reference_start": 10.857207880554121,
+        "center_jitter": 7.359639654850776
+      },
+      {
+        "id": 3,
+        "x": -7.068,
+        "y": -7.615,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          53.63641305653501
+        ],
+        "reference_start": 29.61022304201088,
+        "center_jitter": -5.9738099854758655
+      },
+      {
+        "id": 4,
+        "x": 1.246,
+        "y": -7.385,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          2.3592058929710618,
+          62.35920589297106
+        ],
+        "reference_start": 39.92740381436397,
+        "center_jitter": -7.568197921392912
+      },
+      {
+        "id": 5,
+        "x": -0.461,
+        "y": 5.38,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          37.151176302060954
+        ],
+        "reference_start": 5.399714899881289,
+        "center_jitter": 1.7514614021796646
+      },
+      {
+        "id": 6,
+        "x": 1.602,
+        "y": 9.857,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          39.0491433349708
+        ],
+        "reference_start": 12.329166999252983,
+        "center_jitter": -3.2800236642821847
+      },
+      {
+        "id": 7,
+        "x": 8.952,
+        "y": 2.767,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          47.22560613545414
+        ],
+        "reference_start": 24.541443924601218,
+        "center_jitter": -7.315837789147073
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G02_tight",
+    "geometry": "G02",
+    "stratum": "uniform",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100702,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 0.426,
+        "y": -2.94,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          1.8758450147448222,
+          5.875845014744822
+        ],
+        "reference_start": 2.970702947115379,
+        "center_jitter": 0.905142067629443
+      },
+      {
+        "id": 2,
+        "x": -6.578,
+        "y": -3.835,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          2.53768543795165,
+          6.53768543795165
+        ],
+        "reference_start": 12.03165479513134,
+        "center_jitter": -7.49396935717969
+      },
+      {
+        "id": 3,
+        "x": -2.069,
+        "y": 8.936,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          29.98066172487708,
+          33.98066172487708
+        ],
+        "reference_start": 27.575270338995544,
+        "center_jitter": 4.405391385881538
+      },
+      {
+        "id": 4,
+        "x": 4.377,
+        "y": 3.367,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          37.602960771600614,
+          41.602960771600614
+        ],
+        "reference_start": 38.09376063951241,
+        "center_jitter": 1.5092001320882016
+      },
+      {
+        "id": 5,
+        "x": -5.672,
+        "y": -5.916,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          1.4309837161578969,
+          5.430983716157897
+        ],
+        "reference_start": 8.195769640491367,
+        "center_jitter": -4.76478592433347
+      },
+      {
+        "id": 6,
+        "x": 5.35,
+        "y": -8.387,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          24.446215764544757,
+          28.446215764544757
+        ],
+        "reference_start": 21.491358381234363,
+        "center_jitter": 4.954857383310394
+      },
+      {
+        "id": 7,
+        "x": 7.849,
+        "y": -7.742,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          27.576170821894806,
+          31.576170821894806
+        ],
+        "reference_start": 26.072254737154143,
+        "center_jitter": 3.5039160847406627
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G02_medium",
+    "geometry": "G02",
+    "stratum": "uniform",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100702,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 0.426,
+        "y": -2.94,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          13.875845014744822
+        ],
+        "reference_start": 2.970702947115379,
+        "center_jitter": 0.905142067629443
+      },
+      {
+        "id": 2,
+        "x": -6.578,
+        "y": -3.835,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          14.53768543795165
+        ],
+        "reference_start": 12.03165479513134,
+        "center_jitter": -7.49396935717969
+      },
+      {
+        "id": 3,
+        "x": -2.069,
+        "y": 8.936,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          21.98066172487708,
+          41.98066172487708
+        ],
+        "reference_start": 27.575270338995544,
+        "center_jitter": 4.405391385881538
+      },
+      {
+        "id": 4,
+        "x": 4.377,
+        "y": 3.367,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          29.602960771600614,
+          49.602960771600614
+        ],
+        "reference_start": 38.09376063951241,
+        "center_jitter": 1.5092001320882016
+      },
+      {
+        "id": 5,
+        "x": -5.672,
+        "y": -5.916,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          13.430983716157897
+        ],
+        "reference_start": 8.195769640491367,
+        "center_jitter": -4.76478592433347
+      },
+      {
+        "id": 6,
+        "x": 5.35,
+        "y": -8.387,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          16.446215764544757,
+          36.44621576454476
+        ],
+        "reference_start": 21.491358381234363,
+        "center_jitter": 4.954857383310394
+      },
+      {
+        "id": 7,
+        "x": 7.849,
+        "y": -7.742,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          19.576170821894806,
+          39.576170821894806
+        ],
+        "reference_start": 26.072254737154143,
+        "center_jitter": 3.5039160847406627
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G02_wide",
+    "geometry": "G02",
+    "stratum": "uniform",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100702,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 0.426,
+        "y": -2.94,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          33.875845014744826
+        ],
+        "reference_start": 2.970702947115379,
+        "center_jitter": 0.905142067629443
+      },
+      {
+        "id": 2,
+        "x": -6.578,
+        "y": -3.835,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          34.53768543795165
+        ],
+        "reference_start": 12.03165479513134,
+        "center_jitter": -7.49396935717969
+      },
+      {
+        "id": 3,
+        "x": -2.069,
+        "y": 8.936,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          1.9806617248770806,
+          61.98066172487708
+        ],
+        "reference_start": 27.575270338995544,
+        "center_jitter": 4.405391385881538
+      },
+      {
+        "id": 4,
+        "x": 4.377,
+        "y": 3.367,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          9.602960771600614,
+          69.6029607716006
+        ],
+        "reference_start": 38.09376063951241,
+        "center_jitter": 1.5092001320882016
+      },
+      {
+        "id": 5,
+        "x": -5.672,
+        "y": -5.916,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          33.4309837161579
+        ],
+        "reference_start": 8.195769640491367,
+        "center_jitter": -4.76478592433347
+      },
+      {
+        "id": 6,
+        "x": 5.35,
+        "y": -8.387,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          56.44621576454476
+        ],
+        "reference_start": 21.491358381234363,
+        "center_jitter": 4.954857383310394
+      },
+      {
+        "id": 7,
+        "x": 7.849,
+        "y": -7.742,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          59.576170821894806
+        ],
+        "reference_start": 26.072254737154143,
+        "center_jitter": 3.5039160847406627
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G03_tight",
+    "geometry": "G03",
+    "stratum": "uniform",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100703,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 6.652,
+        "y": 7.78,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          3.856056727590696,
+          7.856056727590696
+        ],
+        "reference_start": 10.23608831536735,
+        "center_jitter": -4.380031587776655
+      },
+      {
+        "id": 2,
+        "x": 0.084,
+        "y": -9.65,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          31.07051492178016,
+          35.07051492178016
+        ],
+        "reference_start": 30.862508368614296,
+        "center_jitter": 2.208006553165866
+      },
+      {
+        "id": 3,
+        "x": 1.515,
+        "y": 9.673,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          51.39243129968854,
+          55.39243129968854
+        ],
+        "reference_start": 52.2384235728053,
+        "center_jitter": 1.1540077268832327
+      },
+      {
+        "id": 4,
+        "x": 9.849,
+        "y": 9.282,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          59.575623277822984,
+          63.575623277822984
+        ],
+        "reference_start": 62.58159065731224,
+        "center_jitter": -1.0059673794892525
+      },
+      {
+        "id": 5,
+        "x": -7.57,
+        "y": -5.409,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          14.974877465451552,
+          18.974877465451552
+        ],
+        "reference_start": 9.303879889594448,
+        "center_jitter": 7.670997575857104
+      },
+      {
+        "id": 6,
+        "x": -8.544,
+        "y": 8.921,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          21.765543810643713,
+          25.765543810643713
+        ],
+        "reference_start": 25.666942794142347,
+        "center_jitter": -1.9013989834986322
+      },
+      {
+        "id": 7,
+        "x": 0.193,
+        "y": 4.481,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          28.14389766210759,
+          32.14389766210759
+        ],
+        "reference_start": 37.4673901818895,
+        "center_jitter": -7.323492519781908
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G03_medium",
+    "geometry": "G03",
+    "stratum": "uniform",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100703,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 6.652,
+        "y": 7.78,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          15.856056727590696
+        ],
+        "reference_start": 10.23608831536735,
+        "center_jitter": -4.380031587776655
+      },
+      {
+        "id": 2,
+        "x": 0.084,
+        "y": -9.65,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          23.07051492178016,
+          43.07051492178016
+        ],
+        "reference_start": 30.862508368614296,
+        "center_jitter": 2.208006553165866
+      },
+      {
+        "id": 3,
+        "x": 1.515,
+        "y": 9.673,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          43.39243129968854,
+          63.39243129968854
+        ],
+        "reference_start": 52.2384235728053,
+        "center_jitter": 1.1540077268832327
+      },
+      {
+        "id": 4,
+        "x": 9.849,
+        "y": 9.282,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          51.575623277822984,
+          71.57562327782298
+        ],
+        "reference_start": 62.58159065731224,
+        "center_jitter": -1.0059673794892525
+      },
+      {
+        "id": 5,
+        "x": -7.57,
+        "y": -5.409,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          6.974877465451552,
+          26.974877465451552
+        ],
+        "reference_start": 9.303879889594448,
+        "center_jitter": 7.670997575857104
+      },
+      {
+        "id": 6,
+        "x": -8.544,
+        "y": 8.921,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          13.765543810643713,
+          33.76554381064371
+        ],
+        "reference_start": 25.666942794142347,
+        "center_jitter": -1.9013989834986322
+      },
+      {
+        "id": 7,
+        "x": 0.193,
+        "y": 4.481,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          20.14389766210759,
+          40.14389766210759
+        ],
+        "reference_start": 37.4673901818895,
+        "center_jitter": -7.323492519781908
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G03_wide",
+    "geometry": "G03",
+    "stratum": "uniform",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100703,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 6.652,
+        "y": 7.78,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          35.8560567275907
+        ],
+        "reference_start": 10.23608831536735,
+        "center_jitter": -4.380031587776655
+      },
+      {
+        "id": 2,
+        "x": 0.084,
+        "y": -9.65,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          3.070514921780159,
+          63.07051492178016
+        ],
+        "reference_start": 30.862508368614296,
+        "center_jitter": 2.208006553165866
+      },
+      {
+        "id": 3,
+        "x": 1.515,
+        "y": 9.673,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          23.39243129968854,
+          83.39243129968854
+        ],
+        "reference_start": 52.2384235728053,
+        "center_jitter": 1.1540077268832327
+      },
+      {
+        "id": 4,
+        "x": 9.849,
+        "y": 9.282,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          31.575623277822984,
+          91.57562327782298
+        ],
+        "reference_start": 62.58159065731224,
+        "center_jitter": -1.0059673794892525
+      },
+      {
+        "id": 5,
+        "x": -7.57,
+        "y": -5.409,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          46.974877465451556
+        ],
+        "reference_start": 9.303879889594448,
+        "center_jitter": 7.670997575857104
+      },
+      {
+        "id": 6,
+        "x": -8.544,
+        "y": 8.921,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          53.76554381064371
+        ],
+        "reference_start": 25.666942794142347,
+        "center_jitter": -1.9013989834986322
+      },
+      {
+        "id": 7,
+        "x": 0.193,
+        "y": 4.481,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.14389766210759092,
+          60.14389766210759
+        ],
+        "reference_start": 37.4673901818895,
+        "center_jitter": -7.323492519781908
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G04_tight",
+    "geometry": "G04",
+    "stratum": "uniform",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100704,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -0.762,
+        "y": 0.257,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.9698984596586011,
+          4.9698984596586016
+        ],
+        "reference_start": 0.8041722452310823,
+        "center_jitter": 2.1657262144275187
+      },
+      {
+        "id": 2,
+        "x": -6.141,
+        "y": -6.709,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          5.578601688436642,
+          9.578601688436642
+        ],
+        "reference_start": 11.605240191793023,
+        "center_jitter": -4.026638503356381
+      },
+      {
+        "id": 3,
+        "x": 6.627,
+        "y": 4.98,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          32.12934244185618,
+          36.12934244185618
+        ],
+        "reference_start": 30.915772968111607,
+        "center_jitter": 3.213569473744572
+      },
+      {
+        "id": 4,
+        "x": -7.97,
+        "y": 1.593,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          41.442092737800415,
+          45.442092737800415
+        ],
+        "reference_start": 47.90057119831812,
+        "center_jitter": -4.458478460517705
+      },
+      {
+        "id": 5,
+        "x": 2.066,
+        "y": -4.268,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          3.7507803919958924
+        ],
+        "reference_start": 4.741748622607487,
+        "center_jitter": -2.9909682306115943
+      },
+      {
+        "id": 6,
+        "x": 8.364,
+        "y": -1.747,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          7.9780862332809726,
+          11.978086233280973
+        ],
+        "reference_start": 13.525570922756572,
+        "center_jitter": -3.547484689475599
+      },
+      {
+        "id": 7,
+        "x": 3.776,
+        "y": -6.373,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          27.853914920317205,
+          31.853914920317205
+        ],
+        "reference_start": 22.040908212567437,
+        "center_jitter": 7.813006707749768
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G04_medium",
+    "geometry": "G04",
+    "stratum": "uniform",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100704,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -0.762,
+        "y": 0.257,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          12.969898459658602
+        ],
+        "reference_start": 0.8041722452310823,
+        "center_jitter": 2.1657262144275187
+      },
+      {
+        "id": 2,
+        "x": -6.141,
+        "y": -6.709,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          17.578601688436642
+        ],
+        "reference_start": 11.605240191793023,
+        "center_jitter": -4.026638503356381
+      },
+      {
+        "id": 3,
+        "x": 6.627,
+        "y": 4.98,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          24.12934244185618,
+          44.12934244185618
+        ],
+        "reference_start": 30.915772968111607,
+        "center_jitter": 3.213569473744572
+      },
+      {
+        "id": 4,
+        "x": -7.97,
+        "y": 1.593,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          33.442092737800415,
+          53.442092737800415
+        ],
+        "reference_start": 47.90057119831812,
+        "center_jitter": -4.458478460517705
+      },
+      {
+        "id": 5,
+        "x": 2.066,
+        "y": -4.268,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          11.750780391995892
+        ],
+        "reference_start": 4.741748622607487,
+        "center_jitter": -2.9909682306115943
+      },
+      {
+        "id": 6,
+        "x": 8.364,
+        "y": -1.747,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          19.978086233280973
+        ],
+        "reference_start": 13.525570922756572,
+        "center_jitter": -3.547484689475599
+      },
+      {
+        "id": 7,
+        "x": 3.776,
+        "y": -6.373,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          19.853914920317205,
+          39.85391492031721
+        ],
+        "reference_start": 22.040908212567437,
+        "center_jitter": 7.813006707749768
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G04_wide",
+    "geometry": "G04",
+    "stratum": "uniform",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100704,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -0.762,
+        "y": 0.257,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          32.9698984596586
+        ],
+        "reference_start": 0.8041722452310823,
+        "center_jitter": 2.1657262144275187
+      },
+      {
+        "id": 2,
+        "x": -6.141,
+        "y": -6.709,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          37.57860168843664
+        ],
+        "reference_start": 11.605240191793023,
+        "center_jitter": -4.026638503356381
+      },
+      {
+        "id": 3,
+        "x": 6.627,
+        "y": 4.98,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          4.129342441856181,
+          64.12934244185618
+        ],
+        "reference_start": 30.915772968111607,
+        "center_jitter": 3.213569473744572
+      },
+      {
+        "id": 4,
+        "x": -7.97,
+        "y": 1.593,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          13.442092737800415,
+          73.44209273780041
+        ],
+        "reference_start": 47.90057119831812,
+        "center_jitter": -4.458478460517705
+      },
+      {
+        "id": 5,
+        "x": 2.066,
+        "y": -4.268,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          31.750780391995892
+        ],
+        "reference_start": 4.741748622607487,
+        "center_jitter": -2.9909682306115943
+      },
+      {
+        "id": 6,
+        "x": 8.364,
+        "y": -1.747,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          39.978086233280976
+        ],
+        "reference_start": 13.525570922756572,
+        "center_jitter": -3.547484689475599
+      },
+      {
+        "id": 7,
+        "x": 3.776,
+        "y": -6.373,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          59.85391492031721
+        ],
+        "reference_start": 22.040908212567437,
+        "center_jitter": 7.813006707749768
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G05_tight",
+    "geometry": "G05",
+    "stratum": "uniform",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100705,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -1.751,
+        "y": -5.026,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          6.711140125715879,
+          10.711140125715879
+        ],
+        "reference_start": 5.322281183853405,
+        "center_jitter": 3.3888589418624733
+      },
+      {
+        "id": 2,
+        "x": -4.127,
+        "y": -7.801,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          6.137363128673945,
+          10.137363128673945
+        ],
+        "reference_start": 10.975499080448131,
+        "center_jitter": -2.838135951774186
+      },
+      {
+        "id": 3,
+        "x": -5.416,
+        "y": -1.306,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          18.2207481445101,
+          22.2207481445101
+        ],
+        "reference_start": 19.597171527798572,
+        "center_jitter": 0.623576616711528
+      },
+      {
+        "id": 4,
+        "x": 8.906,
+        "y": 2.523,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          33.973093297410855,
+          37.973093297410855
+        ],
+        "reference_start": 36.42218164583896,
+        "center_jitter": -0.44908834842810563
+      },
+      {
+        "id": 5,
+        "x": 4.321,
+        "y": 7.925,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          10.337017250543836,
+          14.337017250543836
+        ],
+        "reference_start": 9.02644259938543,
+        "center_jitter": 3.310574651158406
+      },
+      {
+        "id": 6,
+        "x": 5.347,
+        "y": -6.305,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          16.691594225066297,
+          20.691594225066297
+        ],
+        "reference_start": 25.293382565615047,
+        "center_jitter": -6.601788340548753
+      },
+      {
+        "id": 7,
+        "x": -9.441,
+        "y": -5.014,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          47.775213708563335,
+          51.775213708563335
+        ],
+        "reference_start": 42.137628083660076,
+        "center_jitter": 7.637585624903258
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G05_medium",
+    "geometry": "G05",
+    "stratum": "uniform",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100705,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -1.751,
+        "y": -5.026,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          18.71114012571588
+        ],
+        "reference_start": 5.322281183853405,
+        "center_jitter": 3.3888589418624733
+      },
+      {
+        "id": 2,
+        "x": -4.127,
+        "y": -7.801,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          18.137363128673947
+        ],
+        "reference_start": 10.975499080448131,
+        "center_jitter": -2.838135951774186
+      },
+      {
+        "id": 3,
+        "x": -5.416,
+        "y": -1.306,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          10.2207481445101,
+          30.2207481445101
+        ],
+        "reference_start": 19.597171527798572,
+        "center_jitter": 0.623576616711528
+      },
+      {
+        "id": 4,
+        "x": 8.906,
+        "y": 2.523,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          25.973093297410855,
+          45.973093297410855
+        ],
+        "reference_start": 36.42218164583896,
+        "center_jitter": -0.44908834842810563
+      },
+      {
+        "id": 5,
+        "x": 4.321,
+        "y": 7.925,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          2.337017250543836,
+          22.337017250543838
+        ],
+        "reference_start": 9.02644259938543,
+        "center_jitter": 3.310574651158406
+      },
+      {
+        "id": 6,
+        "x": 5.347,
+        "y": -6.305,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          8.691594225066297,
+          28.691594225066297
+        ],
+        "reference_start": 25.293382565615047,
+        "center_jitter": -6.601788340548753
+      },
+      {
+        "id": 7,
+        "x": -9.441,
+        "y": -5.014,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          39.775213708563335,
+          59.775213708563335
+        ],
+        "reference_start": 42.137628083660076,
+        "center_jitter": 7.637585624903258
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G05_wide",
+    "geometry": "G05",
+    "stratum": "uniform",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100705,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -1.751,
+        "y": -5.026,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          38.71114012571588
+        ],
+        "reference_start": 5.322281183853405,
+        "center_jitter": 3.3888589418624733
+      },
+      {
+        "id": 2,
+        "x": -4.127,
+        "y": -7.801,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          38.13736312867395
+        ],
+        "reference_start": 10.975499080448131,
+        "center_jitter": -2.838135951774186
+      },
+      {
+        "id": 3,
+        "x": -5.416,
+        "y": -1.306,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          50.2207481445101
+        ],
+        "reference_start": 19.597171527798572,
+        "center_jitter": 0.623576616711528
+      },
+      {
+        "id": 4,
+        "x": 8.906,
+        "y": 2.523,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          5.9730932974108555,
+          65.97309329741086
+        ],
+        "reference_start": 36.42218164583896,
+        "center_jitter": -0.44908834842810563
+      },
+      {
+        "id": 5,
+        "x": 4.321,
+        "y": 7.925,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          42.33701725054384
+        ],
+        "reference_start": 9.02644259938543,
+        "center_jitter": 3.310574651158406
+      },
+      {
+        "id": 6,
+        "x": 5.347,
+        "y": -6.305,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          48.6915942250663
+        ],
+        "reference_start": 25.293382565615047,
+        "center_jitter": -6.601788340548753
+      },
+      {
+        "id": 7,
+        "x": -9.441,
+        "y": -5.014,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          19.775213708563335,
+          79.77521370856334
+        ],
+        "reference_start": 42.137628083660076,
+        "center_jitter": 7.637585624903258
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G06_tight",
+    "geometry": "G06",
+    "stratum": "uniform",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100706,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 5.581,
+        "y": 4.588,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.7289323472194429,
+          4.728932347219443
+        ],
+        "reference_start": 7.224770238561224,
+        "center_jitter": -4.495837891341781
+      },
+      {
+        "id": 2,
+        "x": -2.505,
+        "y": 0.481,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          10.62690388116946,
+          14.62690388116946
+        ],
+        "reference_start": 18.29399539840812,
+        "center_jitter": -5.667091517238662
+      },
+      {
+        "id": 3,
+        "x": -5.972,
+        "y": -4.759,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          17.779674913188924,
+          21.779674913188924
+        ],
+        "reference_start": 26.577122724827667,
+        "center_jitter": -6.797447811638744
+      },
+      {
+        "id": 4,
+        "x": 3.685,
+        "y": -6.584,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          40.94389541564388,
+          44.94389541564388
+        ],
+        "reference_start": 38.40505607828504,
+        "center_jitter": 4.538839337358834
+      },
+      {
+        "id": 5,
+        "x": 6.088,
+        "y": 1.209,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          11.637134434798469,
+          15.637134434798469
+        ],
+        "reference_start": 6.2068852897407405,
+        "center_jitter": 7.430249145057729
+      },
+      {
+        "id": 6,
+        "x": 6.752,
+        "y": 3.632,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          15.095557642936523,
+          19.095557642936523
+        ],
+        "reference_start": 10.71921986140909,
+        "center_jitter": 6.3763377815274325
+      },
+      {
+        "id": 7,
+        "x": -2.408,
+        "y": 3.569,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          17.711732859923078,
+          21.711732859923078
+        ],
+        "reference_start": 21.87943650731873,
+        "center_jitter": -2.1677036473956512
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G06_medium",
+    "geometry": "G06",
+    "stratum": "uniform",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100706,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 5.581,
+        "y": 4.588,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          12.728932347219443
+        ],
+        "reference_start": 7.224770238561224,
+        "center_jitter": -4.495837891341781
+      },
+      {
+        "id": 2,
+        "x": -2.505,
+        "y": 0.481,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          2.6269038811694596,
+          22.62690388116946
+        ],
+        "reference_start": 18.29399539840812,
+        "center_jitter": -5.667091517238662
+      },
+      {
+        "id": 3,
+        "x": -5.972,
+        "y": -4.759,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          9.779674913188924,
+          29.779674913188924
+        ],
+        "reference_start": 26.577122724827667,
+        "center_jitter": -6.797447811638744
+      },
+      {
+        "id": 4,
+        "x": 3.685,
+        "y": -6.584,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          32.94389541564388,
+          52.94389541564388
+        ],
+        "reference_start": 38.40505607828504,
+        "center_jitter": 4.538839337358834
+      },
+      {
+        "id": 5,
+        "x": 6.088,
+        "y": 1.209,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          3.637134434798469,
+          23.63713443479847
+        ],
+        "reference_start": 6.2068852897407405,
+        "center_jitter": 7.430249145057729
+      },
+      {
+        "id": 6,
+        "x": 6.752,
+        "y": 3.632,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          7.095557642936523,
+          27.095557642936523
+        ],
+        "reference_start": 10.71921986140909,
+        "center_jitter": 6.3763377815274325
+      },
+      {
+        "id": 7,
+        "x": -2.408,
+        "y": 3.569,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          9.711732859923078,
+          29.711732859923078
+        ],
+        "reference_start": 21.87943650731873,
+        "center_jitter": -2.1677036473956512
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G06_wide",
+    "geometry": "G06",
+    "stratum": "uniform",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100706,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 5.581,
+        "y": 4.588,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          32.72893234721944
+        ],
+        "reference_start": 7.224770238561224,
+        "center_jitter": -4.495837891341781
+      },
+      {
+        "id": 2,
+        "x": -2.505,
+        "y": 0.481,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          42.62690388116946
+        ],
+        "reference_start": 18.29399539840812,
+        "center_jitter": -5.667091517238662
+      },
+      {
+        "id": 3,
+        "x": -5.972,
+        "y": -4.759,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          49.77967491318893
+        ],
+        "reference_start": 26.577122724827667,
+        "center_jitter": -6.797447811638744
+      },
+      {
+        "id": 4,
+        "x": 3.685,
+        "y": -6.584,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          12.94389541564388,
+          72.94389541564388
+        ],
+        "reference_start": 38.40505607828504,
+        "center_jitter": 4.538839337358834
+      },
+      {
+        "id": 5,
+        "x": 6.088,
+        "y": 1.209,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          43.63713443479847
+        ],
+        "reference_start": 6.2068852897407405,
+        "center_jitter": 7.430249145057729
+      },
+      {
+        "id": 6,
+        "x": 6.752,
+        "y": 3.632,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          47.09555764293653
+        ],
+        "reference_start": 10.71921986140909,
+        "center_jitter": 6.3763377815274325
+      },
+      {
+        "id": 7,
+        "x": -2.408,
+        "y": 3.569,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          49.711732859923075
+        ],
+        "reference_start": 21.87943650731873,
+        "center_jitter": -2.1677036473956512
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G07_tight",
+    "geometry": "G07",
+    "stratum": "uniform",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100707,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 6.273,
+        "y": -7.572,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          12.70507924436223,
+          16.70507924436223
+        ],
+        "reference_start": 9.83288935155888,
+        "center_jitter": 4.87218989280335
+      },
+      {
+        "id": 2,
+        "x": 2.374,
+        "y": -4.667,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          13.66973675895958,
+          17.66973675895958
+        ],
+        "reference_start": 16.695113739634774,
+        "center_jitter": -1.025376980675194
+      },
+      {
+        "id": 3,
+        "x": -0.306,
+        "y": -1.292,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          23.82869131918438,
+          27.82869131918438
+        ],
+        "reference_start": 23.00475699633248,
+        "center_jitter": 2.823934322851901
+      },
+      {
+        "id": 4,
+        "x": 6.589,
+        "y": 5.039,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          31.102404339121954,
+          35.102404339121954
+        ],
+        "reference_start": 34.36545066720966,
+        "center_jitter": -1.2630463280877056
+      },
+      {
+        "id": 5,
+        "x": 3.327,
+        "y": -4.881,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          2.8431212249647446,
+          6.843121224964745
+        ],
+        "reference_start": 5.907037328475249,
+        "center_jitter": -1.063916103510504
+      },
+      {
+        "id": 6,
+        "x": 0.401,
+        "y": 1.605,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          5.4232896154772074,
+          9.423289615477207
+        ],
+        "reference_start": 15.022490370973667,
+        "center_jitter": -7.59920075549646
+      },
+      {
+        "id": 7,
+        "x": 5.115,
+        "y": -8.719,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          19.98681827229273,
+          23.98681827229273
+        ],
+        "reference_start": 28.371797486388246,
+        "center_jitter": -6.384979214095514
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G07_medium",
+    "geometry": "G07",
+    "stratum": "uniform",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100707,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 6.273,
+        "y": -7.572,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          4.70507924436223,
+          24.70507924436223
+        ],
+        "reference_start": 9.83288935155888,
+        "center_jitter": 4.87218989280335
+      },
+      {
+        "id": 2,
+        "x": 2.374,
+        "y": -4.667,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          5.66973675895958,
+          25.66973675895958
+        ],
+        "reference_start": 16.695113739634774,
+        "center_jitter": -1.025376980675194
+      },
+      {
+        "id": 3,
+        "x": -0.306,
+        "y": -1.292,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          15.82869131918438,
+          35.82869131918438
+        ],
+        "reference_start": 23.00475699633248,
+        "center_jitter": 2.823934322851901
+      },
+      {
+        "id": 4,
+        "x": 6.589,
+        "y": 5.039,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          23.102404339121954,
+          43.102404339121954
+        ],
+        "reference_start": 34.36545066720966,
+        "center_jitter": -1.2630463280877056
+      },
+      {
+        "id": 5,
+        "x": 3.327,
+        "y": -4.881,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          14.843121224964744
+        ],
+        "reference_start": 5.907037328475249,
+        "center_jitter": -1.063916103510504
+      },
+      {
+        "id": 6,
+        "x": 0.401,
+        "y": 1.605,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          17.42328961547721
+        ],
+        "reference_start": 15.022490370973667,
+        "center_jitter": -7.59920075549646
+      },
+      {
+        "id": 7,
+        "x": 5.115,
+        "y": -8.719,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          11.98681827229273,
+          31.98681827229273
+        ],
+        "reference_start": 28.371797486388246,
+        "center_jitter": -6.384979214095514
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G07_wide",
+    "geometry": "G07",
+    "stratum": "uniform",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100707,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": 6.273,
+        "y": -7.572,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          44.70507924436223
+        ],
+        "reference_start": 9.83288935155888,
+        "center_jitter": 4.87218989280335
+      },
+      {
+        "id": 2,
+        "x": 2.374,
+        "y": -4.667,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          45.66973675895958
+        ],
+        "reference_start": 16.695113739634774,
+        "center_jitter": -1.025376980675194
+      },
+      {
+        "id": 3,
+        "x": -0.306,
+        "y": -1.292,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          55.82869131918438
+        ],
+        "reference_start": 23.00475699633248,
+        "center_jitter": 2.823934322851901
+      },
+      {
+        "id": 4,
+        "x": 6.589,
+        "y": 5.039,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          3.1024043391219536,
+          63.102404339121954
+        ],
+        "reference_start": 34.36545066720966,
+        "center_jitter": -1.2630463280877056
+      },
+      {
+        "id": 5,
+        "x": 3.327,
+        "y": -4.881,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          34.84312122496475
+        ],
+        "reference_start": 5.907037328475249,
+        "center_jitter": -1.063916103510504
+      },
+      {
+        "id": 6,
+        "x": 0.401,
+        "y": 1.605,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          37.42328961547721
+        ],
+        "reference_start": 15.022490370973667,
+        "center_jitter": -7.59920075549646
+      },
+      {
+        "id": 7,
+        "x": 5.115,
+        "y": -8.719,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          51.98681827229273
+        ],
+        "reference_start": 28.371797486388246,
+        "center_jitter": -6.384979214095514
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G08_tight",
+    "geometry": "G08",
+    "stratum": "uniform",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100708,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -0.765,
+        "y": 0.532,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          2.704255537894081
+        ],
+        "reference_start": 0.9317987980245521,
+        "center_jitter": -0.22754326013047077
+      },
+      {
+        "id": 2,
+        "x": -2.136,
+        "y": -4.892,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          13.46890856193049,
+          17.46890856193049
+        ],
+        "reference_start": 8.52638698662253,
+        "center_jitter": 6.9425215753079605
+      },
+      {
+        "id": 3,
+        "x": -5.573,
+        "y": -8.098,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          14.576544032885653,
+          18.576544032885653
+        ],
+        "reference_start": 15.226536452331041,
+        "center_jitter": 1.3500075805546121
+      },
+      {
+        "id": 4,
+        "x": 4.685,
+        "y": 6.182,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          37.536242833933514,
+          41.536242833933514
+        ],
+        "reference_start": 34.80905515699904,
+        "center_jitter": 4.727187676934481
+      },
+      {
+        "id": 5,
+        "x": -7.199,
+        "y": -4.74,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          14.06024523999729,
+          18.06024523999729
+        ],
+        "reference_start": 8.619350381554286,
+        "center_jitter": 7.440894858443004
+      },
+      {
+        "id": 6,
+        "x": -7.041,
+        "y": 8.567,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          27.72399702543194,
+          31.72399702543194
+        ],
+        "reference_start": 23.92728835105204,
+        "center_jitter": 5.796708674379902
+      },
+      {
+        "id": 7,
+        "x": 7.708,
+        "y": 3.844,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          43.48864096509765,
+          47.48864096509765
+        ],
+        "reference_start": 41.41404818001562,
+        "center_jitter": 4.0745927850820305
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G08_medium",
+    "geometry": "G08",
+    "stratum": "uniform",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100708,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -0.765,
+        "y": 0.532,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          10.704255537894081
+        ],
+        "reference_start": 0.9317987980245521,
+        "center_jitter": -0.22754326013047077
+      },
+      {
+        "id": 2,
+        "x": -2.136,
+        "y": -4.892,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          5.4689085619304905,
+          25.46890856193049
+        ],
+        "reference_start": 8.52638698662253,
+        "center_jitter": 6.9425215753079605
+      },
+      {
+        "id": 3,
+        "x": -5.573,
+        "y": -8.098,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          6.5765440328856535,
+          26.576544032885653
+        ],
+        "reference_start": 15.226536452331041,
+        "center_jitter": 1.3500075805546121
+      },
+      {
+        "id": 4,
+        "x": 4.685,
+        "y": 6.182,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          29.536242833933514,
+          49.536242833933514
+        ],
+        "reference_start": 34.80905515699904,
+        "center_jitter": 4.727187676934481
+      },
+      {
+        "id": 5,
+        "x": -7.199,
+        "y": -4.74,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          6.06024523999729,
+          26.06024523999729
+        ],
+        "reference_start": 8.619350381554286,
+        "center_jitter": 7.440894858443004
+      },
+      {
+        "id": 6,
+        "x": -7.041,
+        "y": 8.567,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          19.72399702543194,
+          39.72399702543194
+        ],
+        "reference_start": 23.92728835105204,
+        "center_jitter": 5.796708674379902
+      },
+      {
+        "id": 7,
+        "x": 7.708,
+        "y": 3.844,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          35.48864096509765,
+          55.48864096509765
+        ],
+        "reference_start": 41.41404818001562,
+        "center_jitter": 4.0745927850820305
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G08_wide",
+    "geometry": "G08",
+    "stratum": "uniform",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100708,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -0.765,
+        "y": 0.532,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          30.70425553789408
+        ],
+        "reference_start": 0.9317987980245521,
+        "center_jitter": -0.22754326013047077
+      },
+      {
+        "id": 2,
+        "x": -2.136,
+        "y": -4.892,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          45.46890856193049
+        ],
+        "reference_start": 8.52638698662253,
+        "center_jitter": 6.9425215753079605
+      },
+      {
+        "id": 3,
+        "x": -5.573,
+        "y": -8.098,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          46.57654403288565
+        ],
+        "reference_start": 15.226536452331041,
+        "center_jitter": 1.3500075805546121
+      },
+      {
+        "id": 4,
+        "x": 4.685,
+        "y": 6.182,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          9.536242833933514,
+          69.53624283393351
+        ],
+        "reference_start": 34.80905515699904,
+        "center_jitter": 4.727187676934481
+      },
+      {
+        "id": 5,
+        "x": -7.199,
+        "y": -4.74,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          46.060245239997286
+        ],
+        "reference_start": 8.619350381554286,
+        "center_jitter": 7.440894858443004
+      },
+      {
+        "id": 6,
+        "x": -7.041,
+        "y": 8.567,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          59.72399702543194
+        ],
+        "reference_start": 23.92728835105204,
+        "center_jitter": 5.796708674379902
+      },
+      {
+        "id": 7,
+        "x": 7.708,
+        "y": 3.844,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          15.488640965097652,
+          75.48864096509766
+        ],
+        "reference_start": 41.41404818001562,
+        "center_jitter": 4.0745927850820305
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G09_tight",
+    "geometry": "G09",
+    "stratum": "two_cluster",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100709,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -3.114,
+        "y": -2.946,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          1.2086116577178965,
+          5.2086116577178965
+        ],
+        "reference_start": 4.286713426390899,
+        "center_jitter": -1.0781017686730028
+      },
+      {
+        "id": 2,
+        "x": 6.574,
+        "y": 7.286,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          12.415255198368358,
+          16.415255198368357
+        ],
+        "reference_start": 20.377531997361146,
+        "center_jitter": -5.962276798992788
+      },
+      {
+        "id": 3,
+        "x": -5.235,
+        "y": -7.156,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          40.12745132354962,
+          44.12745132354962
+        ],
+        "reference_start": 41.032929205675956,
+        "center_jitter": 1.0945221178736677
+      },
+      {
+        "id": 4,
+        "x": 3.453,
+        "y": 7.845,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          56.53950953841161,
+          60.53950953841161
+        ],
+        "reference_start": 60.368192255309786,
+        "center_jitter": -1.8286827168981805
+      },
+      {
+        "id": 5,
+        "x": -6.95,
+        "y": -8.805,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          14.86559090856979,
+          18.86559090856979
+        ],
+        "reference_start": 11.217420603686037,
+        "center_jitter": 5.648170304883752
+      },
+      {
+        "id": 6,
+        "x": 7.105,
+        "y": 5.926,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          31.196959868301896,
+          35.196959868301896
+        ],
+        "reference_start": 33.577808271901006,
+        "center_jitter": -0.38084840359911176
+      },
+      {
+        "id": 7,
+        "x": -5.493,
+        "y": -6.295,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          48.421775712842134,
+          52.421775712842134
+        ],
+        "reference_start": 53.129516023570076,
+        "center_jitter": -2.7077403107279405
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G09_medium",
+    "geometry": "G09",
+    "stratum": "two_cluster",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100709,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -3.114,
+        "y": -2.946,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          13.208611657717896
+        ],
+        "reference_start": 4.286713426390899,
+        "center_jitter": -1.0781017686730028
+      },
+      {
+        "id": 2,
+        "x": 6.574,
+        "y": 7.286,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          4.415255198368358,
+          24.415255198368357
+        ],
+        "reference_start": 20.377531997361146,
+        "center_jitter": -5.962276798992788
+      },
+      {
+        "id": 3,
+        "x": -5.235,
+        "y": -7.156,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          32.12745132354962,
+          52.12745132354962
+        ],
+        "reference_start": 41.032929205675956,
+        "center_jitter": 1.0945221178736677
+      },
+      {
+        "id": 4,
+        "x": 3.453,
+        "y": 7.845,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          48.53950953841161,
+          68.53950953841161
+        ],
+        "reference_start": 60.368192255309786,
+        "center_jitter": -1.8286827168981805
+      },
+      {
+        "id": 5,
+        "x": -6.95,
+        "y": -8.805,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          6.865590908569789,
+          26.86559090856979
+        ],
+        "reference_start": 11.217420603686037,
+        "center_jitter": 5.648170304883752
+      },
+      {
+        "id": 6,
+        "x": 7.105,
+        "y": 5.926,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          23.196959868301896,
+          43.196959868301896
+        ],
+        "reference_start": 33.577808271901006,
+        "center_jitter": -0.38084840359911176
+      },
+      {
+        "id": 7,
+        "x": -5.493,
+        "y": -6.295,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          40.421775712842134,
+          60.421775712842134
+        ],
+        "reference_start": 53.129516023570076,
+        "center_jitter": -2.7077403107279405
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G09_wide",
+    "geometry": "G09",
+    "stratum": "two_cluster",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100709,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -3.114,
+        "y": -2.946,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          33.208611657717896
+        ],
+        "reference_start": 4.286713426390899,
+        "center_jitter": -1.0781017686730028
+      },
+      {
+        "id": 2,
+        "x": 6.574,
+        "y": 7.286,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          44.41525519836836
+        ],
+        "reference_start": 20.377531997361146,
+        "center_jitter": -5.962276798992788
+      },
+      {
+        "id": 3,
+        "x": -5.235,
+        "y": -7.156,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          12.127451323549622,
+          72.12745132354962
+        ],
+        "reference_start": 41.032929205675956,
+        "center_jitter": 1.0945221178736677
+      },
+      {
+        "id": 4,
+        "x": 3.453,
+        "y": 7.845,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          28.539509538411608,
+          88.53950953841161
+        ],
+        "reference_start": 60.368192255309786,
+        "center_jitter": -1.8286827168981805
+      },
+      {
+        "id": 5,
+        "x": -6.95,
+        "y": -8.805,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          46.865590908569786
+        ],
+        "reference_start": 11.217420603686037,
+        "center_jitter": 5.648170304883752
+      },
+      {
+        "id": 6,
+        "x": 7.105,
+        "y": 5.926,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          3.196959868301896,
+          63.196959868301896
+        ],
+        "reference_start": 33.577808271901006,
+        "center_jitter": -0.38084840359911176
+      },
+      {
+        "id": 7,
+        "x": -5.493,
+        "y": -6.295,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          20.421775712842134,
+          80.42177571284213
+        ],
+        "reference_start": 53.129516023570076,
+        "center_jitter": -2.7077403107279405
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G10_tight",
+    "geometry": "G10",
+    "stratum": "two_cluster",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100710,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -8.103,
+        "y": -3.959,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          3.1642140540257504,
+          7.16421405402575
+        ],
+        "reference_start": 9.018441661395832,
+        "center_jitter": -3.854227607370081
+      },
+      {
+        "id": 2,
+        "x": 5.46,
+        "y": 7.692,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          26.675030114076407,
+          30.675030114076407
+        ],
+        "reference_start": 28.89861979249956,
+        "center_jitter": -0.2235896784231528
+      },
+      {
+        "id": 3,
+        "x": -5.187,
+        "y": -5.015,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          43.082964882969264,
+          47.082964882969264
+        ],
+        "reference_start": 47.47651043033404,
+        "center_jitter": -2.39354554736477
+      },
+      {
+        "id": 4,
+        "x": 8.467,
+        "y": 8.56,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          61.83034497804329,
+          65.83034497804329
+        ],
+        "reference_start": 68.73040201099897,
+        "center_jitter": -4.900057032955681
+      },
+      {
+        "id": 5,
+        "x": -3.442,
+        "y": -5.088,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.9744210208281965,
+          4.9744210208281965
+        ],
+        "reference_start": 6.142890850405858,
+        "center_jitter": -3.1684698295776617
+      },
+      {
+        "id": 6,
+        "x": 2.852,
+        "y": 4.491,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          21.92977770332727,
+          25.92977770332727
+        ],
+        "reference_start": 19.604639277238476,
+        "center_jitter": 4.325138426088795
+      },
+      {
+        "id": 7,
+        "x": -7.073,
+        "y": 0.922,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          32.25037311244975,
+          36.25037311244975
+        ],
+        "reference_start": 32.15183729377348,
+        "center_jitter": 2.0985358186762717
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G10_medium",
+    "geometry": "G10",
+    "stratum": "two_cluster",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100710,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -8.103,
+        "y": -3.959,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          15.16421405402575
+        ],
+        "reference_start": 9.018441661395832,
+        "center_jitter": -3.854227607370081
+      },
+      {
+        "id": 2,
+        "x": 5.46,
+        "y": 7.692,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          18.675030114076407,
+          38.67503011407641
+        ],
+        "reference_start": 28.89861979249956,
+        "center_jitter": -0.2235896784231528
+      },
+      {
+        "id": 3,
+        "x": -5.187,
+        "y": -5.015,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          35.082964882969264,
+          55.082964882969264
+        ],
+        "reference_start": 47.47651043033404,
+        "center_jitter": -2.39354554736477
+      },
+      {
+        "id": 4,
+        "x": 8.467,
+        "y": 8.56,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          53.83034497804329,
+          73.83034497804329
+        ],
+        "reference_start": 68.73040201099897,
+        "center_jitter": -4.900057032955681
+      },
+      {
+        "id": 5,
+        "x": -3.442,
+        "y": -5.088,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          12.974421020828196
+        ],
+        "reference_start": 6.142890850405858,
+        "center_jitter": -3.1684698295776617
+      },
+      {
+        "id": 6,
+        "x": 2.852,
+        "y": 4.491,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          13.929777703327272,
+          33.929777703327275
+        ],
+        "reference_start": 19.604639277238476,
+        "center_jitter": 4.325138426088795
+      },
+      {
+        "id": 7,
+        "x": -7.073,
+        "y": 0.922,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          24.25037311244975,
+          44.25037311244975
+        ],
+        "reference_start": 32.15183729377348,
+        "center_jitter": 2.0985358186762717
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G10_wide",
+    "geometry": "G10",
+    "stratum": "two_cluster",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100710,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -8.103,
+        "y": -3.959,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          35.16421405402575
+        ],
+        "reference_start": 9.018441661395832,
+        "center_jitter": -3.854227607370081
+      },
+      {
+        "id": 2,
+        "x": 5.46,
+        "y": 7.692,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          58.67503011407641
+        ],
+        "reference_start": 28.89861979249956,
+        "center_jitter": -0.2235896784231528
+      },
+      {
+        "id": 3,
+        "x": -5.187,
+        "y": -5.015,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          15.082964882969264,
+          75.08296488296926
+        ],
+        "reference_start": 47.47651043033404,
+        "center_jitter": -2.39354554736477
+      },
+      {
+        "id": 4,
+        "x": 8.467,
+        "y": 8.56,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          33.83034497804329,
+          93.83034497804329
+        ],
+        "reference_start": 68.73040201099897,
+        "center_jitter": -4.900057032955681
+      },
+      {
+        "id": 5,
+        "x": -3.442,
+        "y": -5.088,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          32.974421020828196
+        ],
+        "reference_start": 6.142890850405858,
+        "center_jitter": -3.1684698295776617
+      },
+      {
+        "id": 6,
+        "x": 2.852,
+        "y": 4.491,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          53.929777703327275
+        ],
+        "reference_start": 19.604639277238476,
+        "center_jitter": 4.325138426088795
+      },
+      {
+        "id": 7,
+        "x": -7.073,
+        "y": 0.922,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          4.250373112449751,
+          64.25037311244975
+        ],
+        "reference_start": 32.15183729377348,
+        "center_jitter": 2.0985358186762717
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G11_tight",
+    "geometry": "G11",
+    "stratum": "two_cluster",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100711,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -3.527,
+        "y": -5.967,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          1.423341004984457,
+          5.423341004984457
+        ],
+        "reference_start": 6.931436936162659,
+        "center_jitter": -3.508095931178202
+      },
+      {
+        "id": 2,
+        "x": 3.257,
+        "y": 5.867,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          18.657706912298142,
+          22.657706912298142
+        ],
+        "reference_start": 22.572045866851933,
+        "center_jitter": -1.9143389545537914
+      },
+      {
+        "id": 3,
+        "x": -3.651,
+        "y": -7.645,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          36.35594979544262,
+          40.35594979544262
+        ],
+        "reference_start": 39.7475065847346,
+        "center_jitter": -1.3915567892919842
+      },
+      {
+        "id": 4,
+        "x": 5.191,
+        "y": 6.721,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          62.83638126490372,
+          66.83638126490372
+        ],
+        "reference_start": 58.61649944145252,
+        "center_jitter": 6.219881823451205
+      },
+      {
+        "id": 5,
+        "x": -6.537,
+        "y": -6.439,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          10.052141663128813,
+          14.052141663128813
+        ],
+        "reference_start": 9.175679266408563,
+        "center_jitter": 2.8764623967202496
+      },
+      {
+        "id": 6,
+        "x": 3.645,
+        "y": 5.798,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          24.62687406218329,
+          28.62687406218329
+        ],
+        "reference_start": 27.094765075587432,
+        "center_jitter": -0.46789101340414163
+      },
+      {
+        "id": 7,
+        "x": -5.02,
+        "y": -7.633,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          39.509850388215426,
+          43.509850388215426
+        ],
+        "reference_start": 45.07831868547031,
+        "center_jitter": -3.568468297254878
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G11_medium",
+    "geometry": "G11",
+    "stratum": "two_cluster",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100711,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -3.527,
+        "y": -5.967,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          13.423341004984458
+        ],
+        "reference_start": 6.931436936162659,
+        "center_jitter": -3.508095931178202
+      },
+      {
+        "id": 2,
+        "x": 3.257,
+        "y": 5.867,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          10.657706912298142,
+          30.657706912298142
+        ],
+        "reference_start": 22.572045866851933,
+        "center_jitter": -1.9143389545537914
+      },
+      {
+        "id": 3,
+        "x": -3.651,
+        "y": -7.645,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          28.35594979544262,
+          48.35594979544262
+        ],
+        "reference_start": 39.7475065847346,
+        "center_jitter": -1.3915567892919842
+      },
+      {
+        "id": 4,
+        "x": 5.191,
+        "y": 6.721,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          54.83638126490372,
+          74.83638126490372
+        ],
+        "reference_start": 58.61649944145252,
+        "center_jitter": 6.219881823451205
+      },
+      {
+        "id": 5,
+        "x": -6.537,
+        "y": -6.439,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          2.052141663128813,
+          22.052141663128815
+        ],
+        "reference_start": 9.175679266408563,
+        "center_jitter": 2.8764623967202496
+      },
+      {
+        "id": 6,
+        "x": 3.645,
+        "y": 5.798,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          16.62687406218329,
+          36.62687406218329
+        ],
+        "reference_start": 27.094765075587432,
+        "center_jitter": -0.46789101340414163
+      },
+      {
+        "id": 7,
+        "x": -5.02,
+        "y": -7.633,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          31.509850388215426,
+          51.509850388215426
+        ],
+        "reference_start": 45.07831868547031,
+        "center_jitter": -3.568468297254878
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G11_wide",
+    "geometry": "G11",
+    "stratum": "two_cluster",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100711,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -3.527,
+        "y": -5.967,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          33.42334100498446
+        ],
+        "reference_start": 6.931436936162659,
+        "center_jitter": -3.508095931178202
+      },
+      {
+        "id": 2,
+        "x": 3.257,
+        "y": 5.867,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          50.65770691229814
+        ],
+        "reference_start": 22.572045866851933,
+        "center_jitter": -1.9143389545537914
+      },
+      {
+        "id": 3,
+        "x": -3.651,
+        "y": -7.645,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          8.35594979544262,
+          68.35594979544263
+        ],
+        "reference_start": 39.7475065847346,
+        "center_jitter": -1.3915567892919842
+      },
+      {
+        "id": 4,
+        "x": 5.191,
+        "y": 6.721,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          34.83638126490372,
+          94.83638126490372
+        ],
+        "reference_start": 58.61649944145252,
+        "center_jitter": 6.219881823451205
+      },
+      {
+        "id": 5,
+        "x": -6.537,
+        "y": -6.439,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          42.052141663128815
+        ],
+        "reference_start": 9.175679266408563,
+        "center_jitter": 2.8764623967202496
+      },
+      {
+        "id": 6,
+        "x": 3.645,
+        "y": 5.798,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          56.62687406218329
+        ],
+        "reference_start": 27.094765075587432,
+        "center_jitter": -0.46789101340414163
+      },
+      {
+        "id": 7,
+        "x": -5.02,
+        "y": -7.633,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          11.509850388215426,
+          71.50985038821543
+        ],
+        "reference_start": 45.07831868547031,
+        "center_jitter": -3.568468297254878
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G12_tight",
+    "geometry": "G12",
+    "stratum": "two_cluster",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100712,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -6.116,
+        "y": -5.345,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          12.307415610008999,
+          16.307415610009
+        ],
+        "reference_start": 8.122467666910099,
+        "center_jitter": 6.1849479430989
+      },
+      {
+        "id": 2,
+        "x": 9.041,
+        "y": 7.947,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          27.383129500802838,
+          31.383129500802838
+        ],
+        "reference_start": 30.282128204726703,
+        "center_jitter": -0.8989987039238638
+      },
+      {
+        "id": 3,
+        "x": -6.769,
+        "y": -5.456,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          54.146063679423364,
+          58.146063679423364
+        ],
+        "reference_start": 53.00883824274287,
+        "center_jitter": 3.1372254366804917
+      },
+      {
+        "id": 4,
+        "x": 6.543,
+        "y": 5.823,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          67.32166011080513,
+          71.32166011080513
+        ],
+        "reference_start": 72.45662277259078,
+        "center_jitter": -3.134962661785652
+      },
+      {
+        "id": 5,
+        "x": -4.841,
+        "y": -6.654,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          11.906351241528897,
+          15.906351241528897
+        ],
+        "reference_start": 8.228669211968604,
+        "center_jitter": 5.677682029560293
+      },
+      {
+        "id": 6,
+        "x": 5.053,
+        "y": 5.255,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          17.621105011584213,
+          21.621105011584213
+        ],
+        "reference_start": 25.711418224983056,
+        "center_jitter": -6.090313213398845
+      },
+      {
+        "id": 7,
+        "x": -7.735,
+        "y": -3.863,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          45.16079161332525,
+          49.16079161332525
+        ],
+        "reference_start": 43.41717729610089,
+        "center_jitter": 3.7436143172243614
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G12_medium",
+    "geometry": "G12",
+    "stratum": "two_cluster",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100712,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -6.116,
+        "y": -5.345,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          4.307415610008999,
+          24.307415610009
+        ],
+        "reference_start": 8.122467666910099,
+        "center_jitter": 6.1849479430989
+      },
+      {
+        "id": 2,
+        "x": 9.041,
+        "y": 7.947,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          19.383129500802838,
+          39.38312950080284
+        ],
+        "reference_start": 30.282128204726703,
+        "center_jitter": -0.8989987039238638
+      },
+      {
+        "id": 3,
+        "x": -6.769,
+        "y": -5.456,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          46.146063679423364,
+          66.14606367942336
+        ],
+        "reference_start": 53.00883824274287,
+        "center_jitter": 3.1372254366804917
+      },
+      {
+        "id": 4,
+        "x": 6.543,
+        "y": 5.823,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          59.32166011080513,
+          79.32166011080513
+        ],
+        "reference_start": 72.45662277259078,
+        "center_jitter": -3.134962661785652
+      },
+      {
+        "id": 5,
+        "x": -4.841,
+        "y": -6.654,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          3.9063512415288972,
+          23.906351241528895
+        ],
+        "reference_start": 8.228669211968604,
+        "center_jitter": 5.677682029560293
+      },
+      {
+        "id": 6,
+        "x": 5.053,
+        "y": 5.255,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          9.621105011584213,
+          29.621105011584213
+        ],
+        "reference_start": 25.711418224983056,
+        "center_jitter": -6.090313213398845
+      },
+      {
+        "id": 7,
+        "x": -7.735,
+        "y": -3.863,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          37.16079161332525,
+          57.16079161332525
+        ],
+        "reference_start": 43.41717729610089,
+        "center_jitter": 3.7436143172243614
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G12_wide",
+    "geometry": "G12",
+    "stratum": "two_cluster",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100712,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -6.116,
+        "y": -5.345,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          44.307415610009
+        ],
+        "reference_start": 8.122467666910099,
+        "center_jitter": 6.1849479430989
+      },
+      {
+        "id": 2,
+        "x": 9.041,
+        "y": 7.947,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          59.38312950080284
+        ],
+        "reference_start": 30.282128204726703,
+        "center_jitter": -0.8989987039238638
+      },
+      {
+        "id": 3,
+        "x": -6.769,
+        "y": -5.456,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          26.146063679423364,
+          86.14606367942336
+        ],
+        "reference_start": 53.00883824274287,
+        "center_jitter": 3.1372254366804917
+      },
+      {
+        "id": 4,
+        "x": 6.543,
+        "y": 5.823,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          39.32166011080513,
+          99.32166011080513
+        ],
+        "reference_start": 72.45662277259078,
+        "center_jitter": -3.134962661785652
+      },
+      {
+        "id": 5,
+        "x": -4.841,
+        "y": -6.654,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          43.906351241528895
+        ],
+        "reference_start": 8.228669211968604,
+        "center_jitter": 5.677682029560293
+      },
+      {
+        "id": 6,
+        "x": 5.053,
+        "y": 5.255,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          49.62110501158421
+        ],
+        "reference_start": 25.711418224983056,
+        "center_jitter": -6.090313213398845
+      },
+      {
+        "id": 7,
+        "x": -7.735,
+        "y": -3.863,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          17.16079161332525,
+          77.16079161332524
+        ],
+        "reference_start": 43.41717729610089,
+        "center_jitter": 3.7436143172243614
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G13_tight",
+    "geometry": "G13",
+    "stratum": "two_cluster",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100713,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -5.396,
+        "y": -6.309,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          1.8017740041921524,
+          5.801774004192152
+        ],
+        "reference_start": 8.301824919859488,
+        "center_jitter": -4.500050915667336
+      },
+      {
+        "id": 2,
+        "x": 5.495,
+        "y": 4.349,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          16.046472173599753,
+          20.046472173599753
+        ],
+        "reference_start": 25.54015963858778,
+        "center_jitter": -7.493687464988026
+      },
+      {
+        "id": 3,
+        "x": -4.389,
+        "y": -4.181,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          38.77146500294532,
+          42.77146500294532
+        ],
+        "reference_start": 40.5959765797064,
+        "center_jitter": 0.17548842323891556
+      },
+      {
+        "id": 4,
+        "x": 6.293,
+        "y": 5.749,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          50.636608258910115,
+          54.636608258910115
+        ],
+        "reference_start": 57.18055830151111,
+        "center_jitter": -4.543950042600995
+      },
+      {
+        "id": 5,
+        "x": -4.893,
+        "y": -5.549,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          5.8933207578914955,
+          9.893320757891495
+        ],
+        "reference_start": 7.3981653131029725,
+        "center_jitter": 0.4951554447885229
+      },
+      {
+        "id": 6,
+        "x": 6.487,
+        "y": 5.507,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          20.650050459740356,
+          24.650050459740356
+        ],
+        "reference_start": 25.26446721367199,
+        "center_jitter": -2.6144167539316303
+      },
+      {
+        "id": 7,
+        "x": -7.888,
+        "y": -7.819,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          47.25086842354571,
+          51.25086842354571
+        ],
+        "reference_start": 46.86607176534071,
+        "center_jitter": 2.384796658204994
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G13_medium",
+    "geometry": "G13",
+    "stratum": "two_cluster",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100713,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -5.396,
+        "y": -6.309,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          13.801774004192152
+        ],
+        "reference_start": 8.301824919859488,
+        "center_jitter": -4.500050915667336
+      },
+      {
+        "id": 2,
+        "x": 5.495,
+        "y": 4.349,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          8.046472173599753,
+          28.046472173599753
+        ],
+        "reference_start": 25.54015963858778,
+        "center_jitter": -7.493687464988026
+      },
+      {
+        "id": 3,
+        "x": -4.389,
+        "y": -4.181,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          30.77146500294532,
+          50.77146500294532
+        ],
+        "reference_start": 40.5959765797064,
+        "center_jitter": 0.17548842323891556
+      },
+      {
+        "id": 4,
+        "x": 6.293,
+        "y": 5.749,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          42.636608258910115,
+          62.636608258910115
+        ],
+        "reference_start": 57.18055830151111,
+        "center_jitter": -4.543950042600995
+      },
+      {
+        "id": 5,
+        "x": -4.893,
+        "y": -5.549,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          17.893320757891495
+        ],
+        "reference_start": 7.3981653131029725,
+        "center_jitter": 0.4951554447885229
+      },
+      {
+        "id": 6,
+        "x": 6.487,
+        "y": 5.507,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          12.650050459740356,
+          32.650050459740356
+        ],
+        "reference_start": 25.26446721367199,
+        "center_jitter": -2.6144167539316303
+      },
+      {
+        "id": 7,
+        "x": -7.888,
+        "y": -7.819,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          39.25086842354571,
+          59.25086842354571
+        ],
+        "reference_start": 46.86607176534071,
+        "center_jitter": 2.384796658204994
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G13_wide",
+    "geometry": "G13",
+    "stratum": "two_cluster",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100713,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -5.396,
+        "y": -6.309,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          33.801774004192154
+        ],
+        "reference_start": 8.301824919859488,
+        "center_jitter": -4.500050915667336
+      },
+      {
+        "id": 2,
+        "x": 5.495,
+        "y": 4.349,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          48.04647217359975
+        ],
+        "reference_start": 25.54015963858778,
+        "center_jitter": -7.493687464988026
+      },
+      {
+        "id": 3,
+        "x": -4.389,
+        "y": -4.181,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          10.77146500294532,
+          70.77146500294532
+        ],
+        "reference_start": 40.5959765797064,
+        "center_jitter": 0.17548842323891556
+      },
+      {
+        "id": 4,
+        "x": 6.293,
+        "y": 5.749,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          22.636608258910115,
+          82.63660825891012
+        ],
+        "reference_start": 57.18055830151111,
+        "center_jitter": -4.543950042600995
+      },
+      {
+        "id": 5,
+        "x": -4.893,
+        "y": -5.549,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          37.893320757891495
+        ],
+        "reference_start": 7.3981653131029725,
+        "center_jitter": 0.4951554447885229
+      },
+      {
+        "id": 6,
+        "x": 6.487,
+        "y": 5.507,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          52.650050459740356
+        ],
+        "reference_start": 25.26446721367199,
+        "center_jitter": -2.6144167539316303
+      },
+      {
+        "id": 7,
+        "x": -7.888,
+        "y": -7.819,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          19.25086842354571,
+          79.25086842354571
+        ],
+        "reference_start": 46.86607176534071,
+        "center_jitter": 2.384796658204994
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G14_tight",
+    "geometry": "G14",
+    "stratum": "two_cluster",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100714,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -2.064,
+        "y": -3.519,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          7.4433753835594665,
+          11.443375383559466
+        ],
+        "reference_start": 4.079639322293088,
+        "center_jitter": 5.363736061266378
+      },
+      {
+        "id": 2,
+        "x": 5.566,
+        "y": 5.341,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          12.59873889740284,
+          16.59873889740284
+        ],
+        "reference_start": 17.77222244151871,
+        "center_jitter": -3.1734835441158715
+      },
+      {
+        "id": 3,
+        "x": -6.291,
+        "y": -4.945,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          35.609161297016904,
+          39.609161297016904
+        ],
+        "reference_start": 35.469045209200075,
+        "center_jitter": 2.1401160878168266
+      },
+      {
+        "id": 4,
+        "x": 6.99,
+        "y": 8.852,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          57.05465135519751,
+          61.05465135519751
+        ],
+        "reference_start": 56.61955877933704,
+        "center_jitter": 2.4350925758604696
+      },
+      {
+        "id": 5,
+        "x": -8.41,
+        "y": -3.717,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          3.6374051085452344,
+          7.637405108545234
+        ],
+        "reference_start": 9.194791406008077,
+        "center_jitter": -3.557386297462843
+      },
+      {
+        "id": 6,
+        "x": 5.561,
+        "y": 5.272,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          20.42054316423146,
+          24.42054316423146
+        ],
+        "reference_start": 27.80776711778229,
+        "center_jitter": -5.387223953550828
+      },
+      {
+        "id": 7,
+        "x": -4.295,
+        "y": -6.714,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          48.68508965393493,
+          52.68508965393493
+        ],
+        "reference_start": 45.325657824962825,
+        "center_jitter": 5.359431828972106
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G14_medium",
+    "geometry": "G14",
+    "stratum": "two_cluster",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100714,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -2.064,
+        "y": -3.519,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          19.443375383559466
+        ],
+        "reference_start": 4.079639322293088,
+        "center_jitter": 5.363736061266378
+      },
+      {
+        "id": 2,
+        "x": 5.566,
+        "y": 5.341,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          4.598738897402839,
+          24.59873889740284
+        ],
+        "reference_start": 17.77222244151871,
+        "center_jitter": -3.1734835441158715
+      },
+      {
+        "id": 3,
+        "x": -6.291,
+        "y": -4.945,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          27.609161297016904,
+          47.609161297016904
+        ],
+        "reference_start": 35.469045209200075,
+        "center_jitter": 2.1401160878168266
+      },
+      {
+        "id": 4,
+        "x": 6.99,
+        "y": 8.852,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          49.05465135519751,
+          69.0546513551975
+        ],
+        "reference_start": 56.61955877933704,
+        "center_jitter": 2.4350925758604696
+      },
+      {
+        "id": 5,
+        "x": -8.41,
+        "y": -3.717,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          15.637405108545234
+        ],
+        "reference_start": 9.194791406008077,
+        "center_jitter": -3.557386297462843
+      },
+      {
+        "id": 6,
+        "x": 5.561,
+        "y": 5.272,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          12.42054316423146,
+          32.42054316423146
+        ],
+        "reference_start": 27.80776711778229,
+        "center_jitter": -5.387223953550828
+      },
+      {
+        "id": 7,
+        "x": -4.295,
+        "y": -6.714,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          40.68508965393493,
+          60.68508965393493
+        ],
+        "reference_start": 45.325657824962825,
+        "center_jitter": 5.359431828972106
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G14_wide",
+    "geometry": "G14",
+    "stratum": "two_cluster",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100714,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -2.064,
+        "y": -3.519,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          39.44337538355947
+        ],
+        "reference_start": 4.079639322293088,
+        "center_jitter": 5.363736061266378
+      },
+      {
+        "id": 2,
+        "x": 5.566,
+        "y": 5.341,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          44.59873889740284
+        ],
+        "reference_start": 17.77222244151871,
+        "center_jitter": -3.1734835441158715
+      },
+      {
+        "id": 3,
+        "x": -6.291,
+        "y": -4.945,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          7.609161297016904,
+          67.6091612970169
+        ],
+        "reference_start": 35.469045209200075,
+        "center_jitter": 2.1401160878168266
+      },
+      {
+        "id": 4,
+        "x": 6.99,
+        "y": 8.852,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          29.054651355197507,
+          89.0546513551975
+        ],
+        "reference_start": 56.61955877933704,
+        "center_jitter": 2.4350925758604696
+      },
+      {
+        "id": 5,
+        "x": -8.41,
+        "y": -3.717,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          35.63740510854524
+        ],
+        "reference_start": 9.194791406008077,
+        "center_jitter": -3.557386297462843
+      },
+      {
+        "id": 6,
+        "x": 5.561,
+        "y": 5.272,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          52.42054316423146
+        ],
+        "reference_start": 27.80776711778229,
+        "center_jitter": -5.387223953550828
+      },
+      {
+        "id": 7,
+        "x": -4.295,
+        "y": -6.714,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          20.68508965393493,
+          80.68508965393494
+        ],
+        "reference_start": 45.325657824962825,
+        "center_jitter": 5.359431828972106
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G15_tight",
+    "geometry": "G15",
+    "stratum": "two_cluster",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100715,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -4.632,
+        "y": -3.942,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          9.05378301442659,
+          13.05378301442659
+        ],
+        "reference_start": 6.082334091448775,
+        "center_jitter": 4.971448922977816
+      },
+      {
+        "id": 2,
+        "x": 3.326,
+        "y": 6.504,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          18.90229051780706,
+          22.90229051780706
+        ],
+        "reference_start": 21.21430576366921,
+        "center_jitter": -0.3120152458621508
+      },
+      {
+        "id": 3,
+        "x": -8.58,
+        "y": -4.24,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          31.06956695497025,
+          35.06956695497025
+        ],
+        "reference_start": 39.25133703507353,
+        "center_jitter": -6.181770080103286
+      },
+      {
+        "id": 4,
+        "x": 6.324,
+        "y": 6.833,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          53.6488318517716,
+          57.6488318517716
+        ],
+        "reference_start": 59.81852704864317,
+        "center_jitter": -4.1696951968715705
+      },
+      {
+        "id": 5,
+        "x": -4.536,
+        "y": -6.472,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          7.690187886132604,
+          11.690187886132604
+        ],
+        "reference_start": 7.903295515163279,
+        "center_jitter": 1.7868923709693245
+      },
+      {
+        "id": 6,
+        "x": 5.185,
+        "y": 8.814,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          20.40974135649323,
+          24.40974135649323
+        ],
+        "reference_start": 28.018472494701737,
+        "center_jitter": -5.608731138208505
+      },
+      {
+        "id": 7,
+        "x": -7.331,
+        "y": -4.719,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          49.519925493313345,
+          53.519925493313345
+        ],
+        "reference_start": 48.45192971248918,
+        "center_jitter": 3.0679957808241625
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G15_medium",
+    "geometry": "G15",
+    "stratum": "two_cluster",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100715,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -4.632,
+        "y": -3.942,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          1.0537830144265907,
+          21.053783014426593
+        ],
+        "reference_start": 6.082334091448775,
+        "center_jitter": 4.971448922977816
+      },
+      {
+        "id": 2,
+        "x": 3.326,
+        "y": 6.504,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          10.90229051780706,
+          30.90229051780706
+        ],
+        "reference_start": 21.21430576366921,
+        "center_jitter": -0.3120152458621508
+      },
+      {
+        "id": 3,
+        "x": -8.58,
+        "y": -4.24,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          23.06956695497025,
+          43.06956695497025
+        ],
+        "reference_start": 39.25133703507353,
+        "center_jitter": -6.181770080103286
+      },
+      {
+        "id": 4,
+        "x": 6.324,
+        "y": 6.833,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          45.6488318517716,
+          65.6488318517716
+        ],
+        "reference_start": 59.81852704864317,
+        "center_jitter": -4.1696951968715705
+      },
+      {
+        "id": 5,
+        "x": -4.536,
+        "y": -6.472,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          19.690187886132605
+        ],
+        "reference_start": 7.903295515163279,
+        "center_jitter": 1.7868923709693245
+      },
+      {
+        "id": 6,
+        "x": 5.185,
+        "y": 8.814,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          12.409741356493232,
+          32.40974135649323
+        ],
+        "reference_start": 28.018472494701737,
+        "center_jitter": -5.608731138208505
+      },
+      {
+        "id": 7,
+        "x": -7.331,
+        "y": -4.719,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          41.519925493313345,
+          61.519925493313345
+        ],
+        "reference_start": 48.45192971248918,
+        "center_jitter": 3.0679957808241625
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G15_wide",
+    "geometry": "G15",
+    "stratum": "two_cluster",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100715,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -4.632,
+        "y": -3.942,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          41.05378301442659
+        ],
+        "reference_start": 6.082334091448775,
+        "center_jitter": 4.971448922977816
+      },
+      {
+        "id": 2,
+        "x": 3.326,
+        "y": 6.504,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          50.90229051780706
+        ],
+        "reference_start": 21.21430576366921,
+        "center_jitter": -0.3120152458621508
+      },
+      {
+        "id": 3,
+        "x": -8.58,
+        "y": -4.24,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          3.0695669549702487,
+          63.06956695497025
+        ],
+        "reference_start": 39.25133703507353,
+        "center_jitter": -6.181770080103286
+      },
+      {
+        "id": 4,
+        "x": 6.324,
+        "y": 6.833,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          25.648831851771597,
+          85.6488318517716
+        ],
+        "reference_start": 59.81852704864317,
+        "center_jitter": -4.1696951968715705
+      },
+      {
+        "id": 5,
+        "x": -4.536,
+        "y": -6.472,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          39.690187886132605
+        ],
+        "reference_start": 7.903295515163279,
+        "center_jitter": 1.7868923709693245
+      },
+      {
+        "id": 6,
+        "x": 5.185,
+        "y": 8.814,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          52.40974135649323
+        ],
+        "reference_start": 28.018472494701737,
+        "center_jitter": -5.608731138208505
+      },
+      {
+        "id": 7,
+        "x": -7.331,
+        "y": -4.719,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          21.519925493313345,
+          81.51992549331334
+        ],
+        "reference_start": 48.45192971248918,
+        "center_jitter": 3.0679957808241625
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G16_tight",
+    "geometry": "G16",
+    "stratum": "two_cluster",
+    "level": "tight",
+    "halfwidth": 2,
+    "seed": 2026100716,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -8.892,
+        "y": -8.805,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          5.92044466391345,
+          9.92044466391345
+        ],
+        "reference_start": 12.513819920392013,
+        "center_jitter": -4.593375256478563
+      },
+      {
+        "id": 2,
+        "x": 3.589,
+        "y": 6.064,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          27.852936233133114,
+          31.852936233133114
+        ],
+        "reference_start": 33.92676719791791,
+        "center_jitter": -4.073830964784799
+      },
+      {
+        "id": 3,
+        "x": -4.492,
+        "y": -9.187,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          55.29044249205767,
+          59.29044249205767
+        ],
+        "reference_start": 53.18641846901838,
+        "center_jitter": 4.104024023039296
+      },
+      {
+        "id": 4,
+        "x": 7.384,
+        "y": 3.865,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          70.47974138998318,
+          74.47974138998318
+        ],
+        "reference_start": 72.83278013367888,
+        "center_jitter": -0.353038743695711
+      },
+      {
+        "id": 5,
+        "x": -5.865,
+        "y": -5.299,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          1.9460570631241998
+        ],
+        "reference_start": 7.904278967749051,
+        "center_jitter": -7.9582219046248515
+      },
+      {
+        "id": 6,
+        "x": 6.629,
+        "y": 8.613,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          20.42446757904632,
+          24.42446757904632
+        ],
+        "reference_start": 28.60304309803317,
+        "center_jitter": -6.17857551898685
+      },
+      {
+        "id": 7,
+        "x": -4.783,
+        "y": -6.966,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          43.23069027169806,
+          47.23069027169806
+        ],
+        "reference_start": 49.91467133078454,
+        "center_jitter": -4.683981059086486
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G16_medium",
+    "geometry": "G16",
+    "stratum": "two_cluster",
+    "level": "medium",
+    "halfwidth": 10,
+    "seed": 2026100716,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -8.892,
+        "y": -8.805,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          17.92044466391345
+        ],
+        "reference_start": 12.513819920392013,
+        "center_jitter": -4.593375256478563
+      },
+      {
+        "id": 2,
+        "x": 3.589,
+        "y": 6.064,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          19.852936233133114,
+          39.852936233133114
+        ],
+        "reference_start": 33.92676719791791,
+        "center_jitter": -4.073830964784799
+      },
+      {
+        "id": 3,
+        "x": -4.492,
+        "y": -9.187,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          47.29044249205767,
+          67.29044249205768
+        ],
+        "reference_start": 53.18641846901838,
+        "center_jitter": 4.104024023039296
+      },
+      {
+        "id": 4,
+        "x": 7.384,
+        "y": 3.865,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          62.479741389983175,
+          82.47974138998318
+        ],
+        "reference_start": 72.83278013367888,
+        "center_jitter": -0.353038743695711
+      },
+      {
+        "id": 5,
+        "x": -5.865,
+        "y": -5.299,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          9.9460570631242
+        ],
+        "reference_start": 7.904278967749051,
+        "center_jitter": -7.9582219046248515
+      },
+      {
+        "id": 6,
+        "x": 6.629,
+        "y": 8.613,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          12.424467579046318,
+          32.42446757904632
+        ],
+        "reference_start": 28.60304309803317,
+        "center_jitter": -6.17857551898685
+      },
+      {
+        "id": 7,
+        "x": -4.783,
+        "y": -6.966,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          35.23069027169806,
+          55.23069027169806
+        ],
+        "reference_start": 49.91467133078454,
+        "center_jitter": -4.683981059086486
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  },
+  {
+    "id": "G16_wide",
+    "geometry": "G16",
+    "stratum": "two_cluster",
+    "level": "wide",
+    "halfwidth": 30,
+    "seed": 2026100716,
+    "vehicles": 2,
+    "capacity": 6,
+    "depart_time": 0.0,
+    "return_deadline": 120.0,
+    "nodes": [
+      {
+        "id": 0,
+        "x": 0.0,
+        "y": 0.0,
+        "demand": 0,
+        "service": 0.0,
+        "window": [
+          0.0,
+          120.0
+        ]
+      },
+      {
+        "id": 1,
+        "x": -8.892,
+        "y": -8.805,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          37.92044466391345
+        ],
+        "reference_start": 12.513819920392013,
+        "center_jitter": -4.593375256478563
+      },
+      {
+        "id": 2,
+        "x": 3.589,
+        "y": 6.064,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          59.852936233133114
+        ],
+        "reference_start": 33.92676719791791,
+        "center_jitter": -4.073830964784799
+      },
+      {
+        "id": 3,
+        "x": -4.492,
+        "y": -9.187,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          27.29044249205767,
+          87.29044249205768
+        ],
+        "reference_start": 53.18641846901838,
+        "center_jitter": 4.104024023039296
+      },
+      {
+        "id": 4,
+        "x": 7.384,
+        "y": 3.865,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          42.479741389983175,
+          102.47974138998318
+        ],
+        "reference_start": 72.83278013367888,
+        "center_jitter": -0.353038743695711
+      },
+      {
+        "id": 5,
+        "x": -5.865,
+        "y": -5.299,
+        "demand": 2,
+        "service": 2.0,
+        "window": [
+          0.0,
+          29.9460570631242
+        ],
+        "reference_start": 7.904278967749051,
+        "center_jitter": -7.9582219046248515
+      },
+      {
+        "id": 6,
+        "x": 6.629,
+        "y": 8.613,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          0.0,
+          52.42446757904632
+        ],
+        "reference_start": 28.60304309803317,
+        "center_jitter": -6.17857551898685
+      },
+      {
+        "id": 7,
+        "x": -4.783,
+        "y": -6.966,
+        "demand": 1,
+        "service": 2.0,
+        "window": [
+          15.230690271698059,
+          75.23069027169805
+        ],
+        "reference_start": 49.91467133078454,
+        "center_jitter": -4.683981059086486
+      }
+    ],
+    "reference_routes": [
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        5,
+        6,
+        7
+      ]
+    ]
+  }
+]

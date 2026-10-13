@@ -1,0 +1,34 @@
+{
+  "status": "accepted_with_scope_limits",
+  "instances": 144,
+  "independent_blocks": 24,
+  "preserved_original_files": [
+    "CONTRACT.json",
+    "src/solver.py",
+    "src/oracle.py",
+    "src/checker.py",
+    "src/generate_data.py",
+    "tests/test_contract.py"
+  ],
+  "all_freeze_hashes_match": true,
+  "independent_exact_references": 144,
+  "complete_routes_checked": 499,
+  "partial_or_per_start_routes_checked": 1777,
+  "summary_cells_checked": 24,
+  "pairwise_checked": 3,
+  "paired_transitions_checked": 28,
+  "complete_by_algorithm": {
+    "joint_exact": 109,
+    "two_stage_lex": 92,
+    "two_stage_best_tie": 94,
+    "greedy": 95
+  },
+  "exact_infeasible": 35,
+  "audit_cpu_seconds": 0.711302023,
+  "limits": [
+    "Synthetic common-depot integer Manhattan subset; not original P102 full model or field validation.",
+    "Two-stage procedures are exact small-instance baselines, not scalable heuristics.",
+    "No inferential independent n=144: effective paired blocks=24.",
+    "Preparation/report/platform costs remain unknown; formal child tree 0.742232 CPU s separately reported."
+  ]
+}

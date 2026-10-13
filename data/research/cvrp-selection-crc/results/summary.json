@@ -1,0 +1,275 @@
+{
+  "scope": "post-hoc exploratory offline replay; not new untouched test data; no deployment guarantee",
+  "primary": "CRC alpha .10; alpha .20 is predeclared sensitivity only",
+  "n_instances": 24,
+  "historical_real_solver_runs": 432,
+  "new_solver_runs": 0,
+  "new_api_calls": 0,
+  "strategies": [
+    {
+      "profile": "cpu025",
+      "strategy": "train_sbs",
+      "n_instances": 24,
+      "mean_improvement_over_sbs_pct": 0.0,
+      "mean_regret_vs_mean_oracle_pct": 0.10396766432212064,
+      "mean_normalized_cost": 0.24999455620972713,
+      "mean_route_length": 1980.6966087801816,
+      "alternative_coverage": 0.0,
+      "alternative_count": 0,
+      "harmful_instance_count": 0,
+      "all_instance_harm_frequency": 0,
+      "conditional_accepted_harm_frequency": null,
+      "selected_algorithms": {
+        "pyvrp_ils_s1e6": 24
+      },
+      "mean_historical_solver_cpu_seconds": 0.23540288384722222,
+      "mean_historical_child_cpu_seconds": 0.35660352777777776,
+      "mean_historical_call_wall_seconds": 0.35842229343042065,
+      "mean_new_feature_and_inference_cpu_seconds": 0
+    },
+    {
+      "profile": "cpu025",
+      "strategy": "knn",
+      "n_instances": 24,
+      "mean_improvement_over_sbs_pct": 0.014411585834559558,
+      "mean_regret_vs_mean_oracle_pct": 0.08950605896751174,
+      "mean_normalized_cost": 0.24996056266231087,
+      "mean_route_length": 1980.1702420369274,
+      "alternative_coverage": 0.041666666666666664,
+      "alternative_count": 1,
+      "harmful_instance_count": 0,
+      "all_instance_harm_frequency": 0,
+      "conditional_accepted_harm_frequency": 0,
+      "selected_algorithms": {
+        "pyvrp_ils_s1e6": 23,
+        "multistart_vnd": 1
+      },
+      "mean_historical_solver_cpu_seconds": 0.2350276506388889,
+      "mean_historical_child_cpu_seconds": 0.352824625,
+      "mean_historical_call_wall_seconds": 0.3546322171387146,
+      "mean_new_feature_and_inference_cpu_seconds": 0.002939736374999997
+    },
+    {
+      "profile": "cpu025",
+      "strategy": "crc_alpha_0.10",
+      "n_instances": 24,
+      "mean_improvement_over_sbs_pct": 0.0,
+      "mean_regret_vs_mean_oracle_pct": 0.10396766432212064,
+      "mean_normalized_cost": 0.24999455620972713,
+      "mean_route_length": 1980.6966087801816,
+      "alternative_coverage": 0.0,
+      "alternative_count": 0,
+      "harmful_instance_count": 0,
+      "all_instance_harm_frequency": 0,
+      "conditional_accepted_harm_frequency": null,
+      "selected_algorithms": {
+        "pyvrp_ils_s1e6": 24
+      },
+      "mean_historical_solver_cpu_seconds": 0.23540288384722222,
+      "mean_historical_child_cpu_seconds": 0.35660352777777776,
+      "mean_historical_call_wall_seconds": 0.35842229343042065,
+      "mean_new_feature_and_inference_cpu_seconds": 0.002939736374999997
+    },
+    {
+      "profile": "cpu025",
+      "strategy": "crc_alpha_0.20_sensitivity",
+      "n_instances": 24,
+      "mean_improvement_over_sbs_pct": 0.014411585834559558,
+      "mean_regret_vs_mean_oracle_pct": 0.08950605896751174,
+      "mean_normalized_cost": 0.24996056266231087,
+      "mean_route_length": 1980.1702420369274,
+      "alternative_coverage": 0.041666666666666664,
+      "alternative_count": 1,
+      "harmful_instance_count": 0,
+      "all_instance_harm_frequency": 0,
+      "conditional_accepted_harm_frequency": 0,
+      "selected_algorithms": {
+        "pyvrp_ils_s1e6": 23,
+        "multistart_vnd": 1
+      },
+      "mean_historical_solver_cpu_seconds": 0.2350276506388889,
+      "mean_historical_child_cpu_seconds": 0.352824625,
+      "mean_historical_call_wall_seconds": 0.3546322171387146,
+      "mean_new_feature_and_inference_cpu_seconds": 0.002939736374999997
+    },
+    {
+      "profile": "cpu025",
+      "strategy": "estimated_mean_oracle",
+      "n_instances": 24,
+      "mean_improvement_over_sbs_pct": 0.10312801167237534,
+      "mean_regret_vs_mean_oracle_pct": 0.0,
+      "mean_normalized_cost": 0.24975926763831235,
+      "mean_route_length": 1977.125426648042,
+      "alternative_coverage": 0.16666666666666666,
+      "alternative_count": 4,
+      "harmful_instance_count": 0,
+      "all_instance_harm_frequency": 0,
+      "conditional_accepted_harm_frequency": 0,
+      "selected_algorithms": {
+        "pyvrp_ils_s1e6": 20,
+        "multistart_vnd": 4
+      },
+      "mean_historical_solver_cpu_seconds": 0.23388767,
+      "mean_historical_child_cpu_seconds": 0.3419162361111111,
+      "mean_historical_call_wall_seconds": 0.3437371717358878,
+      "mean_new_feature_and_inference_cpu_seconds": 0
+    },
+    {
+      "profile": "cpu100",
+      "strategy": "train_sbs",
+      "n_instances": 24,
+      "mean_improvement_over_sbs_pct": 0.0,
+      "mean_regret_vs_mean_oracle_pct": 0.0,
+      "mean_normalized_cost": 0.24853703219677295,
+      "mean_route_length": 1965.8324491079982,
+      "alternative_coverage": 0.0,
+      "alternative_count": 0,
+      "harmful_instance_count": 0,
+      "all_instance_harm_frequency": 0,
+      "conditional_accepted_harm_frequency": null,
+      "selected_algorithms": {
+        "pyvrp_ils_s1e6": 24
+      },
+      "mean_historical_solver_cpu_seconds": 0.9852284813611111,
+      "mean_historical_child_cpu_seconds": 1.1041969027777778,
+      "mean_historical_call_wall_seconds": 1.105958707013997,
+      "mean_new_feature_and_inference_cpu_seconds": 0
+    },
+    {
+      "profile": "cpu100",
+      "strategy": "knn",
+      "n_instances": 24,
+      "mean_improvement_over_sbs_pct": 0.0,
+      "mean_regret_vs_mean_oracle_pct": 0.0,
+      "mean_normalized_cost": 0.24853703219677295,
+      "mean_route_length": 1965.8324491079982,
+      "alternative_coverage": 0.0,
+      "alternative_count": 0,
+      "harmful_instance_count": 0,
+      "all_instance_harm_frequency": 0,
+      "conditional_accepted_harm_frequency": null,
+      "selected_algorithms": {
+        "pyvrp_ils_s1e6": 24
+      },
+      "mean_historical_solver_cpu_seconds": 0.9852284813611111,
+      "mean_historical_child_cpu_seconds": 1.1041969027777778,
+      "mean_historical_call_wall_seconds": 1.105958707013997,
+      "mean_new_feature_and_inference_cpu_seconds": 0.0029330842499999954
+    },
+    {
+      "profile": "cpu100",
+      "strategy": "crc_alpha_0.10",
+      "n_instances": 24,
+      "mean_improvement_over_sbs_pct": 0.0,
+      "mean_regret_vs_mean_oracle_pct": 0.0,
+      "mean_normalized_cost": 0.24853703219677295,
+      "mean_route_length": 1965.8324491079982,
+      "alternative_coverage": 0.0,
+      "alternative_count": 0,
+      "harmful_instance_count": 0,
+      "all_instance_harm_frequency": 0,
+      "conditional_accepted_harm_frequency": null,
+      "selected_algorithms": {
+        "pyvrp_ils_s1e6": 24
+      },
+      "mean_historical_solver_cpu_seconds": 0.9852284813611111,
+      "mean_historical_child_cpu_seconds": 1.1041969027777778,
+      "mean_historical_call_wall_seconds": 1.105958707013997,
+      "mean_new_feature_and_inference_cpu_seconds": 0.0029330842499999954
+    },
+    {
+      "profile": "cpu100",
+      "strategy": "crc_alpha_0.20_sensitivity",
+      "n_instances": 24,
+      "mean_improvement_over_sbs_pct": 0.0,
+      "mean_regret_vs_mean_oracle_pct": 0.0,
+      "mean_normalized_cost": 0.24853703219677295,
+      "mean_route_length": 1965.8324491079982,
+      "alternative_coverage": 0.0,
+      "alternative_count": 0,
+      "harmful_instance_count": 0,
+      "all_instance_harm_frequency": 0,
+      "conditional_accepted_harm_frequency": null,
+      "selected_algorithms": {
+        "pyvrp_ils_s1e6": 24
+      },
+      "mean_historical_solver_cpu_seconds": 0.9852284813611111,
+      "mean_historical_child_cpu_seconds": 1.1041969027777778,
+      "mean_historical_call_wall_seconds": 1.105958707013997,
+      "mean_new_feature_and_inference_cpu_seconds": 0.0029330842499999954
+    },
+    {
+      "profile": "cpu100",
+      "strategy": "estimated_mean_oracle",
+      "n_instances": 24,
+      "mean_improvement_over_sbs_pct": 0.0,
+      "mean_regret_vs_mean_oracle_pct": 0.0,
+      "mean_normalized_cost": 0.24853703219677295,
+      "mean_route_length": 1965.8324491079982,
+      "alternative_coverage": 0.0,
+      "alternative_count": 0,
+      "harmful_instance_count": 0,
+      "all_instance_harm_frequency": 0,
+      "conditional_accepted_harm_frequency": null,
+      "selected_algorithms": {
+        "pyvrp_ils_s1e6": 24
+      },
+      "mean_historical_solver_cpu_seconds": 0.9852284813611111,
+      "mean_historical_child_cpu_seconds": 1.1041969027777778,
+      "mean_historical_call_wall_seconds": 1.105958707013997,
+      "mean_new_feature_and_inference_cpu_seconds": 0
+    }
+  ],
+  "oracle_audit": [
+    {
+      "profile": "cpu025",
+      "posthoc_full_panel_sbs": "pyvrp_ils_s1e6",
+      "best_mean_algo_counts": {
+        "pyvrp_ils_s1e6": 20,
+        "multistart_vnd": 4
+      },
+      "global_SBS_excess_over_estimated_mean_oracle_pct": 0.10396766432212064,
+      "mean_headroom_denominator_SBS_pct": 0.10312801167237512,
+      "seed_hindsight_oracle_length": 1973.1005243594232,
+      "estimated_mean_oracle_length": 1977.125426648042,
+      "scope": "both are descriptive post-hoc oracles; seed oracle selects algorithm AND lucky seed and is not deployable single-run routing"
+    },
+    {
+      "profile": "cpu100",
+      "posthoc_full_panel_sbs": "pyvrp_ils_s1e6",
+      "best_mean_algo_counts": {
+        "pyvrp_ils_s1e6": 24
+      },
+      "global_SBS_excess_over_estimated_mean_oracle_pct": 0.0,
+      "mean_headroom_denominator_SBS_pct": 0.0,
+      "seed_hindsight_oracle_length": 1962.1628136056313,
+      "estimated_mean_oracle_length": 1965.8324491079982,
+      "scope": "both are descriptive post-hoc oracles; seed oracle selects algorithm AND lucky seed and is not deployable single-run routing"
+    }
+  ],
+  "primary_crc_all_safe_fallback": true,
+  "leakage_tests": {
+    "count": 8,
+    "passed": true
+  },
+  "cost_ledger": {
+    "historical_source_solver_cpu_seconds": 154.466662422,
+    "historical_source_child_cpu_seconds": 184.098806,
+    "historical_source_supervisor_cpu_seconds": 3.222894685999996,
+    "historical_source_total_call_wall_seconds": 184.79963403503643,
+    "new_feature_extraction_cpu_seconds_once_per_instance": 0.069789412,
+    "new_feature_extraction_wall_seconds_once_per_instance": 0.06979855896497611,
+    "new_training_cpu_seconds_8_models": 0.0024960180000000443,
+    "new_training_wall_seconds_8_models": 0.0024966049968497828,
+    "new_calibration_prediction_and_gating_cpu_seconds": 0.0013454139999999892,
+    "new_test_prediction_cpu_seconds": 0.0013688709999998272,
+    "new_preflight_cpu_seconds": 0.12226736599999999,
+    "new_analysis_cpu_seconds_before_write": 0.23913260299999997,
+    "new_analysis_wall_seconds_before_write": 0.23955823999131098,
+    "caveat": "new and historical timings measured on potentially different workloads/machines; no exact combined end-to-end runtime claim; offline original data collection charged in full; no cost assigned to VBS as deployable algorithm"
+  },
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41"
+  }
+}

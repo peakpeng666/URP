@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "docx_sha256": "7ad582ae0f030e67710e4bbc2970ee46bb95e426c073a63205c435130ebcfff6",
+  "pages": 6,
+  "all_pages_visually_inspected": true,
+  "checks": [
+    "Chinese glyphs readable",
+    "all plots labels and values visible",
+    "no cut text or overlap",
+    "all18 result rows visible",
+    "risk and historic CPU caveats retained",
+    "no near-empty spill page"
+  ],
+  "page_sha256": {
+    "page-3.png": "fce44602ddc9b42db26025b7c03941196c80173a60c45e96ec598d6f53f5ae1b",
+    "page-6.png": "44e1cddf844b6f148741f525160f1129b22d2b1dc1d601fc8d0ea44e5eb64fae",
+    "page-1.png": "eba20d1f55eb4a0882d03a671d0e7545638984958352e1f37e30b9c112ea9bb4",
+    "page-5.png": "55ad10fa0f3fb8073fd979d6c4a0fd7609bb37c73331398385e30e3199ec6930",
+    "page-2.png": "5fdc55c32b780f6e1ed605d751191c455252dfc20aaffa35f59f3b13e1fb2fbd",
+    "page-4.png": "795d4da5e18eaafbc370fa90e4f2ca9f9fd6157fa21cb0eef33659842abcd6d6"
+  }
+}

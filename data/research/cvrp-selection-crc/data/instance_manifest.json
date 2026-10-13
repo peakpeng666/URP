@@ -1,0 +1,225 @@
+{
+  "schema_version": "scale-budget-dev-manifest-v1",
+  "split": "dev",
+  "seed_namespace": "2026100500..2026100523",
+  "instances": [
+    {
+      "instance_id": "dev-uniform-n50-s2026100500",
+      "file": "dev-uniform-n50-s2026100500.json",
+      "sha256": "045b9bf752f4654776490b9e2bab92ef445a230752946dc6b180b221701d7459",
+      "family": "uniform",
+      "n_customers": 50,
+      "generation_seed": 2026100500,
+      "replicate": 0
+    },
+    {
+      "instance_id": "dev-uniform-n50-s2026100501",
+      "file": "dev-uniform-n50-s2026100501.json",
+      "sha256": "936810398b4064cca80c9eb7aa4694ec8cea2d2e57ffbf192ed16688ccd4cd49",
+      "family": "uniform",
+      "n_customers": 50,
+      "generation_seed": 2026100501,
+      "replicate": 1
+    },
+    {
+      "instance_id": "dev-uniform-n50-s2026100502",
+      "file": "dev-uniform-n50-s2026100502.json",
+      "sha256": "9c455923ba839fc27e305837f4d8e28b09a50e3f17421175f9948469c592d78f",
+      "family": "uniform",
+      "n_customers": 50,
+      "generation_seed": 2026100502,
+      "replicate": 2
+    },
+    {
+      "instance_id": "dev-uniform-n50-s2026100503",
+      "file": "dev-uniform-n50-s2026100503.json",
+      "sha256": "322f8606253ebb8ab68d334ac66a4b989a29920954d9d961b76e99888ff4d4a6",
+      "family": "uniform",
+      "n_customers": 50,
+      "generation_seed": 2026100503,
+      "replicate": 3
+    },
+    {
+      "instance_id": "dev-uniform-n100-s2026100504",
+      "file": "dev-uniform-n100-s2026100504.json",
+      "sha256": "9239bdddb5ac9ad559d372d0cd07fa0814e4d4f374cb8b73bf4222bc86627166",
+      "family": "uniform",
+      "n_customers": 100,
+      "generation_seed": 2026100504,
+      "replicate": 0
+    },
+    {
+      "instance_id": "dev-uniform-n100-s2026100505",
+      "file": "dev-uniform-n100-s2026100505.json",
+      "sha256": "77d38c145dab1598fea681ffec0b6df459ae9b0bb16d361f3f923d7226eb1fcd",
+      "family": "uniform",
+      "n_customers": 100,
+      "generation_seed": 2026100505,
+      "replicate": 1
+    },
+    {
+      "instance_id": "dev-uniform-n100-s2026100506",
+      "file": "dev-uniform-n100-s2026100506.json",
+      "sha256": "43127a7fa9ed2e8628184fe86f4125fc770dc16cbfdcd8283f6619a676a681a3",
+      "family": "uniform",
+      "n_customers": 100,
+      "generation_seed": 2026100506,
+      "replicate": 2
+    },
+    {
+      "instance_id": "dev-uniform-n100-s2026100507",
+      "file": "dev-uniform-n100-s2026100507.json",
+      "sha256": "69a9b226799bf4171cd2f6fb0f348087a643d7257d54a5c49d83f95276ebf0fd",
+      "family": "uniform",
+      "n_customers": 100,
+      "generation_seed": 2026100507,
+      "replicate": 3
+    },
+    {
+      "instance_id": "dev-uniform-n200-s2026100508",
+      "file": "dev-uniform-n200-s2026100508.json",
+      "sha256": "1f618be4da11424c29980c97e1b45c3eec56dd4d01e86b9c0d56df4074865586",
+      "family": "uniform",
+      "n_customers": 200,
+      "generation_seed": 2026100508,
+      "replicate": 0
+    },
+    {
+      "instance_id": "dev-uniform-n200-s2026100509",
+      "file": "dev-uniform-n200-s2026100509.json",
+      "sha256": "99c0f6946769d0fac67feb129e562325247d61e3f7a6421c8c778d4f08f20f6e",
+      "family": "uniform",
+      "n_customers": 200,
+      "generation_seed": 2026100509,
+      "replicate": 1
+    },
+    {
+      "instance_id": "dev-uniform-n200-s2026100510",
+      "file": "dev-uniform-n200-s2026100510.json",
+      "sha256": "35d5bc3202d946d3de883c74660049fc5abc2e9a60cb3bd122f0531a18118d44",
+      "family": "uniform",
+      "n_customers": 200,
+      "generation_seed": 2026100510,
+      "replicate": 2
+    },
+    {
+      "instance_id": "dev-uniform-n200-s2026100511",
+      "file": "dev-uniform-n200-s2026100511.json",
+      "sha256": "4cd252c1381b441909b3283570f9a1123b1b3ba3a87c3ab960561b8a2e26fa32",
+      "family": "uniform",
+      "n_customers": 200,
+      "generation_seed": 2026100511,
+      "replicate": 3
+    },
+    {
+      "instance_id": "dev-clustered-n50-s2026100512",
+      "file": "dev-clustered-n50-s2026100512.json",
+      "sha256": "1bc769aa3ed7a379a864376a03c063451d92c2766dc71f3023821b791e184a3d",
+      "family": "clustered",
+      "n_customers": 50,
+      "generation_seed": 2026100512,
+      "replicate": 0
+    },
+    {
+      "instance_id": "dev-clustered-n50-s2026100513",
+      "file": "dev-clustered-n50-s2026100513.json",
+      "sha256": "8504b448cf37f944f65b6db9848771d873a974ebc87e4ed90084209b598c78fc",
+      "family": "clustered",
+      "n_customers": 50,
+      "generation_seed": 2026100513,
+      "replicate": 1
+    },
+    {
+      "instance_id": "dev-clustered-n50-s2026100514",
+      "file": "dev-clustered-n50-s2026100514.json",
+      "sha256": "520935e626f8d19d19cc33ed9577417622a8da94b7b40b54e83288f9b06181b7",
+      "family": "clustered",
+      "n_customers": 50,
+      "generation_seed": 2026100514,
+      "replicate": 2
+    },
+    {
+      "instance_id": "dev-clustered-n50-s2026100515",
+      "file": "dev-clustered-n50-s2026100515.json",
+      "sha256": "e734c9cc7a1e8b7c53f911807cb04742af53138964ab1d71f6110145d850de0a",
+      "family": "clustered",
+      "n_customers": 50,
+      "generation_seed": 2026100515,
+      "replicate": 3
+    },
+    {
+      "instance_id": "dev-clustered-n100-s2026100516",
+      "file": "dev-clustered-n100-s2026100516.json",
+      "sha256": "b11ba0c1ac9118137f934b4352e0b5be7a6ebe7871ebd17ac2f2d111080de030",
+      "family": "clustered",
+      "n_customers": 100,
+      "generation_seed": 2026100516,
+      "replicate": 0
+    },
+    {
+      "instance_id": "dev-clustered-n100-s2026100517",
+      "file": "dev-clustered-n100-s2026100517.json",
+      "sha256": "9e4c85e767ac7728095046e2fe51c92b38bc83c55afb37b54be70a1da428ee82",
+      "family": "clustered",
+      "n_customers": 100,
+      "generation_seed": 2026100517,
+      "replicate": 1
+    },
+    {
+      "instance_id": "dev-clustered-n100-s2026100518",
+      "file": "dev-clustered-n100-s2026100518.json",
+      "sha256": "d80f675c20a702b2f64c5e1f59f12ff17ba88023b17c6ecccb41d27f24f041c6",
+      "family": "clustered",
+      "n_customers": 100,
+      "generation_seed": 2026100518,
+      "replicate": 2
+    },
+    {
+      "instance_id": "dev-clustered-n100-s2026100519",
+      "file": "dev-clustered-n100-s2026100519.json",
+      "sha256": "3a2851f24b2dd402109b210100b17c87e20cc03c3dcb0a09c2e2c07f6efee02e",
+      "family": "clustered",
+      "n_customers": 100,
+      "generation_seed": 2026100519,
+      "replicate": 3
+    },
+    {
+      "instance_id": "dev-clustered-n200-s2026100520",
+      "file": "dev-clustered-n200-s2026100520.json",
+      "sha256": "e412a5ce6dbb8eddf2309ae08a7d10c34b6eb33df883e54a6abc69e63a524504",
+      "family": "clustered",
+      "n_customers": 200,
+      "generation_seed": 2026100520,
+      "replicate": 0
+    },
+    {
+      "instance_id": "dev-clustered-n200-s2026100521",
+      "file": "dev-clustered-n200-s2026100521.json",
+      "sha256": "d763f2cce3edd30b83f34f85fb19f97203ef8838dbd1a97ceb007a0b29057807",
+      "family": "clustered",
+      "n_customers": 200,
+      "generation_seed": 2026100521,
+      "replicate": 1
+    },
+    {
+      "instance_id": "dev-clustered-n200-s2026100522",
+      "file": "dev-clustered-n200-s2026100522.json",
+      "sha256": "ef71d812f028cc45fb85f2ae41361ff63b74c7cf6edace71cdb35d5efba22983",
+      "family": "clustered",
+      "n_customers": 200,
+      "generation_seed": 2026100522,
+      "replicate": 2
+    },
+    {
+      "instance_id": "dev-clustered-n200-s2026100523",
+      "file": "dev-clustered-n200-s2026100523.json",
+      "sha256": "6f9d19aa6a07c3a4ce9471231b9959c1e94fc5a59a759b4078c4e4629b98d67d",
+      "family": "clustered",
+      "n_customers": 200,
+      "generation_seed": 2026100523,
+      "replicate": 3
+    }
+  ],
+  "generator": "unchanged urp_cvrp.generate.generate_instance; new wrapper avoids old hardcoded manifest namespace",
+  "final_holdout_status": "not_read_not_generated_not_evaluated"
+}

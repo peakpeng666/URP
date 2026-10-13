@@ -1,0 +1,763 @@
+{
+  "recorded_instances": 144,
+  "successful_execution_records": 144,
+  "failed_execution_records": 0,
+  "base_blocks": 24,
+  "cells": [
+    {
+      "capacity_h": 0,
+      "geometry": "four_quadrants",
+      "algorithm": "joint_exact",
+      "all_instances": 24,
+      "exact_feasible": 21,
+      "complete": 21,
+      "statuses": {
+        "INFEASIBLE_PROVEN": 3,
+        "FEASIBLE": 21
+      },
+      "gap_n": 21,
+      "gap_mean_pct": 0.0,
+      "gap_max_pct": 0.0
+    },
+    {
+      "capacity_h": 0,
+      "geometry": "four_quadrants",
+      "algorithm": "two_stage_lex",
+      "all_instances": 24,
+      "exact_feasible": 21,
+      "complete": 21,
+      "statuses": {
+        "PHASE_ONE_INFEASIBLE": 2,
+        "FEASIBLE": 21,
+        "STAGE_FIXED_INFEASIBLE": 1
+      },
+      "gap_n": 21,
+      "gap_mean_pct": 6.275464468130356,
+      "gap_max_pct": 21.599999999999998
+    },
+    {
+      "capacity_h": 0,
+      "geometry": "four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "all_instances": 24,
+      "exact_feasible": 21,
+      "complete": 21,
+      "statuses": {
+        "PHASE_ONE_INFEASIBLE": 2,
+        "FEASIBLE": 21,
+        "STAGE_FIXED_INFEASIBLE": 1
+      },
+      "gap_n": 21,
+      "gap_mean_pct": 0.7786432922829285,
+      "gap_max_pct": 8.247422680412363
+    },
+    {
+      "capacity_h": 0,
+      "geometry": "four_quadrants",
+      "algorithm": "greedy",
+      "all_instances": 24,
+      "exact_feasible": 21,
+      "complete": 18,
+      "statuses": {
+        "UNKNOWN_INCOMPLETE": 6,
+        "FEASIBLE": 18
+      },
+      "gap_n": 18,
+      "gap_mean_pct": 3.7497747465430296,
+      "gap_max_pct": 25.294117647058822
+    },
+    {
+      "capacity_h": 0,
+      "geometry": "two_clusters",
+      "algorithm": "joint_exact",
+      "all_instances": 24,
+      "exact_feasible": 21,
+      "complete": 21,
+      "statuses": {
+        "INFEASIBLE_PROVEN": 3,
+        "FEASIBLE": 21
+      },
+      "gap_n": 21,
+      "gap_mean_pct": 0.0,
+      "gap_max_pct": 0.0
+    },
+    {
+      "capacity_h": 0,
+      "geometry": "two_clusters",
+      "algorithm": "two_stage_lex",
+      "all_instances": 24,
+      "exact_feasible": 21,
+      "complete": 21,
+      "statuses": {
+        "PHASE_ONE_INFEASIBLE": 2,
+        "FEASIBLE": 21,
+        "STAGE_FIXED_INFEASIBLE": 1
+      },
+      "gap_n": 21,
+      "gap_mean_pct": 10.046582793280173,
+      "gap_max_pct": 24.742268041237114
+    },
+    {
+      "capacity_h": 0,
+      "geometry": "two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "all_instances": 24,
+      "exact_feasible": 21,
+      "complete": 21,
+      "statuses": {
+        "PHASE_ONE_INFEASIBLE": 2,
+        "FEASIBLE": 21,
+        "STAGE_FIXED_INFEASIBLE": 1
+      },
+      "gap_n": 21,
+      "gap_mean_pct": 0.0,
+      "gap_max_pct": 0.0
+    },
+    {
+      "capacity_h": 0,
+      "geometry": "two_clusters",
+      "algorithm": "greedy",
+      "all_instances": 24,
+      "exact_feasible": 21,
+      "complete": 21,
+      "statuses": {
+        "UNKNOWN_INCOMPLETE": 3,
+        "FEASIBLE": 21
+      },
+      "gap_n": 21,
+      "gap_mean_pct": 1.5874270855295523,
+      "gap_max_pct": 16.176470588235304
+    },
+    {
+      "capacity_h": 2,
+      "geometry": "four_quadrants",
+      "algorithm": "joint_exact",
+      "all_instances": 24,
+      "exact_feasible": 22,
+      "complete": 22,
+      "statuses": {
+        "FEASIBLE": 22,
+        "INFEASIBLE_PROVEN": 2
+      },
+      "gap_n": 22,
+      "gap_mean_pct": 0.0,
+      "gap_max_pct": 0.0
+    },
+    {
+      "capacity_h": 2,
+      "geometry": "four_quadrants",
+      "algorithm": "two_stage_lex",
+      "all_instances": 24,
+      "exact_feasible": 22,
+      "complete": 15,
+      "statuses": {
+        "FEASIBLE": 15,
+        "STAGE_FIXED_INFEASIBLE": 8,
+        "PHASE_ONE_INFEASIBLE": 1
+      },
+      "gap_n": 15,
+      "gap_mean_pct": 6.030925800611511,
+      "gap_max_pct": 16.10169491525424
+    },
+    {
+      "capacity_h": 2,
+      "geometry": "four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "all_instances": 24,
+      "exact_feasible": 22,
+      "complete": 16,
+      "statuses": {
+        "FEASIBLE": 16,
+        "STAGE_FIXED_INFEASIBLE": 7,
+        "PHASE_ONE_INFEASIBLE": 1
+      },
+      "gap_n": 16,
+      "gap_mean_pct": 5.430778652359006,
+      "gap_max_pct": 16.10169491525424
+    },
+    {
+      "capacity_h": 2,
+      "geometry": "four_quadrants",
+      "algorithm": "greedy",
+      "all_instances": 24,
+      "exact_feasible": 22,
+      "complete": 20,
+      "statuses": {
+        "FEASIBLE": 20,
+        "UNKNOWN_INCOMPLETE": 4
+      },
+      "gap_n": 20,
+      "gap_mean_pct": 4.8651339895132395,
+      "gap_max_pct": 13.089005235602102
+    },
+    {
+      "capacity_h": 2,
+      "geometry": "two_clusters",
+      "algorithm": "joint_exact",
+      "all_instances": 24,
+      "exact_feasible": 23,
+      "complete": 23,
+      "statuses": {
+        "FEASIBLE": 23,
+        "INFEASIBLE_PROVEN": 1
+      },
+      "gap_n": 23,
+      "gap_mean_pct": 0.0,
+      "gap_max_pct": 0.0
+    },
+    {
+      "capacity_h": 2,
+      "geometry": "two_clusters",
+      "algorithm": "two_stage_lex",
+      "all_instances": 24,
+      "exact_feasible": 23,
+      "complete": 22,
+      "statuses": {
+        "FEASIBLE": 22,
+        "PHASE_ONE_INFEASIBLE": 1,
+        "STAGE_FIXED_INFEASIBLE": 1
+      },
+      "gap_n": 22,
+      "gap_mean_pct": 4.525190474880016,
+      "gap_max_pct": 28.800000000000004
+    },
+    {
+      "capacity_h": 2,
+      "geometry": "two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "all_instances": 24,
+      "exact_feasible": 23,
+      "complete": 23,
+      "statuses": {
+        "FEASIBLE": 23,
+        "PHASE_ONE_INFEASIBLE": 1
+      },
+      "gap_n": 23,
+      "gap_mean_pct": 0.9778474219173597,
+      "gap_max_pct": 13.970588235294112
+    },
+    {
+      "capacity_h": 2,
+      "geometry": "two_clusters",
+      "algorithm": "greedy",
+      "all_instances": 24,
+      "exact_feasible": 23,
+      "complete": 20,
+      "statuses": {
+        "FEASIBLE": 20,
+        "UNKNOWN_INCOMPLETE": 4
+      },
+      "gap_n": 20,
+      "gap_mean_pct": 9.26433587359176,
+      "gap_max_pct": 36.00000000000001
+    },
+    {
+      "capacity_h": 4,
+      "geometry": "four_quadrants",
+      "algorithm": "joint_exact",
+      "all_instances": 24,
+      "exact_feasible": 12,
+      "complete": 12,
+      "statuses": {
+        "FEASIBLE": 12,
+        "INFEASIBLE_PROVEN": 12
+      },
+      "gap_n": 12,
+      "gap_mean_pct": 0.0,
+      "gap_max_pct": 0.0
+    },
+    {
+      "capacity_h": 4,
+      "geometry": "four_quadrants",
+      "algorithm": "two_stage_lex",
+      "all_instances": 24,
+      "exact_feasible": 12,
+      "complete": 5,
+      "statuses": {
+        "FEASIBLE": 5,
+        "STAGE_FIXED_INFEASIBLE": 14,
+        "PHASE_ONE_INFEASIBLE": 5
+      },
+      "gap_n": 5,
+      "gap_mean_pct": 6.7486169011377095,
+      "gap_max_pct": 13.043478260869556
+    },
+    {
+      "capacity_h": 4,
+      "geometry": "four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "all_instances": 24,
+      "exact_feasible": 12,
+      "complete": 5,
+      "statuses": {
+        "FEASIBLE": 5,
+        "STAGE_FIXED_INFEASIBLE": 14,
+        "PHASE_ONE_INFEASIBLE": 5
+      },
+      "gap_n": 5,
+      "gap_mean_pct": 6.7486169011377095,
+      "gap_max_pct": 13.043478260869556
+    },
+    {
+      "capacity_h": 4,
+      "geometry": "four_quadrants",
+      "algorithm": "greedy",
+      "all_instances": 24,
+      "exact_feasible": 12,
+      "complete": 8,
+      "statuses": {
+        "FEASIBLE": 8,
+        "UNKNOWN_INCOMPLETE": 16
+      },
+      "gap_n": 8,
+      "gap_mean_pct": 1.250000000000001,
+      "gap_max_pct": 10.000000000000009
+    },
+    {
+      "capacity_h": 4,
+      "geometry": "two_clusters",
+      "algorithm": "joint_exact",
+      "all_instances": 24,
+      "exact_feasible": 10,
+      "complete": 10,
+      "statuses": {
+        "FEASIBLE": 10,
+        "INFEASIBLE_PROVEN": 14
+      },
+      "gap_n": 10,
+      "gap_mean_pct": 0.0,
+      "gap_max_pct": 0.0
+    },
+    {
+      "capacity_h": 4,
+      "geometry": "two_clusters",
+      "algorithm": "two_stage_lex",
+      "all_instances": 24,
+      "exact_feasible": 10,
+      "complete": 8,
+      "statuses": {
+        "FEASIBLE": 8,
+        "STAGE_FIXED_INFEASIBLE": 11,
+        "PHASE_ONE_INFEASIBLE": 5
+      },
+      "gap_n": 8,
+      "gap_mean_pct": 1.5078918912137251,
+      "gap_max_pct": 3.821656050955413
+    },
+    {
+      "capacity_h": 4,
+      "geometry": "two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "all_instances": 24,
+      "exact_feasible": 10,
+      "complete": 8,
+      "statuses": {
+        "FEASIBLE": 8,
+        "STAGE_FIXED_INFEASIBLE": 11,
+        "PHASE_ONE_INFEASIBLE": 5
+      },
+      "gap_n": 8,
+      "gap_mean_pct": 1.5078918912137251,
+      "gap_max_pct": 3.821656050955413
+    },
+    {
+      "capacity_h": 4,
+      "geometry": "two_clusters",
+      "algorithm": "greedy",
+      "all_instances": 24,
+      "exact_feasible": 10,
+      "complete": 8,
+      "statuses": {
+        "FEASIBLE": 8,
+        "UNKNOWN_INCOMPLETE": 16
+      },
+      "gap_n": 8,
+      "gap_mean_pct": 2.5016011043500153,
+      "gap_max_pct": 10.191082802547768
+    }
+  ],
+  "pairwise": [
+    {
+      "a": "two_stage_lex",
+      "b": "two_stage_best_tie",
+      "a_wins": 0,
+      "ties": 52,
+      "a_losses": 42,
+      "both_failed": 15,
+      "both_complete_n": 92,
+      "a_minus_b_cost_mean_on_both_complete": 12.76086956521739
+    },
+    {
+      "a": "two_stage_lex",
+      "b": "greedy",
+      "a_wins": 36,
+      "ties": 12,
+      "a_losses": 58,
+      "both_failed": 3,
+      "both_complete_n": 81,
+      "a_minus_b_cost_mean_on_both_complete": 6
+    },
+    {
+      "a": "two_stage_best_tie",
+      "b": "greedy",
+      "a_wins": 43,
+      "ties": 36,
+      "a_losses": 27,
+      "both_failed": 3,
+      "both_complete_n": 83,
+      "a_minus_b_cost_mean_on_both_complete": -8.385542168674698
+    }
+  ],
+  "paired_feasibility_transitions": [
+    {
+      "contrast": "clustering",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 0,
+      "to_geometry": "two_clusters",
+      "algorithm": "joint_exact",
+      "FF": 3,
+      "FT": 0,
+      "TF": 0,
+      "TT": 21
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 0,
+      "to_geometry": "two_clusters",
+      "algorithm": "two_stage_lex",
+      "FF": 3,
+      "FT": 0,
+      "TF": 0,
+      "TT": 21
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 0,
+      "to_geometry": "two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "FF": 3,
+      "FT": 0,
+      "TF": 0,
+      "TT": 21
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 0,
+      "to_geometry": "two_clusters",
+      "algorithm": "greedy",
+      "FF": 3,
+      "FT": 3,
+      "TF": 0,
+      "TT": 18
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 2,
+      "from_geometry": "four_quadrants",
+      "to_h": 2,
+      "to_geometry": "two_clusters",
+      "algorithm": "joint_exact",
+      "FF": 1,
+      "FT": 1,
+      "TF": 0,
+      "TT": 22
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 2,
+      "from_geometry": "four_quadrants",
+      "to_h": 2,
+      "to_geometry": "two_clusters",
+      "algorithm": "two_stage_lex",
+      "FF": 1,
+      "FT": 8,
+      "TF": 1,
+      "TT": 14
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 2,
+      "from_geometry": "four_quadrants",
+      "to_h": 2,
+      "to_geometry": "two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "FF": 1,
+      "FT": 7,
+      "TF": 0,
+      "TT": 16
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 2,
+      "from_geometry": "four_quadrants",
+      "to_h": 2,
+      "to_geometry": "two_clusters",
+      "algorithm": "greedy",
+      "FF": 2,
+      "FT": 2,
+      "TF": 2,
+      "TT": 18
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 4,
+      "from_geometry": "four_quadrants",
+      "to_h": 4,
+      "to_geometry": "two_clusters",
+      "algorithm": "joint_exact",
+      "FF": 12,
+      "FT": 0,
+      "TF": 2,
+      "TT": 10
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 4,
+      "from_geometry": "four_quadrants",
+      "to_h": 4,
+      "to_geometry": "two_clusters",
+      "algorithm": "two_stage_lex",
+      "FF": 16,
+      "FT": 3,
+      "TF": 0,
+      "TT": 5
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 4,
+      "from_geometry": "four_quadrants",
+      "to_h": 4,
+      "to_geometry": "two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "FF": 16,
+      "FT": 3,
+      "TF": 0,
+      "TT": 5
+    },
+    {
+      "contrast": "clustering",
+      "from_h": 4,
+      "from_geometry": "four_quadrants",
+      "to_h": 4,
+      "to_geometry": "two_clusters",
+      "algorithm": "greedy",
+      "FF": 14,
+      "FT": 2,
+      "TF": 2,
+      "TT": 6
+    },
+    {
+      "contrast": "h2_vs_h0",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 2,
+      "to_geometry": "four_quadrants",
+      "algorithm": "joint_exact",
+      "FF": 2,
+      "FT": 1,
+      "TF": 0,
+      "TT": 21
+    },
+    {
+      "contrast": "h2_vs_h0",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 2,
+      "to_geometry": "four_quadrants",
+      "algorithm": "two_stage_lex",
+      "FF": 2,
+      "FT": 1,
+      "TF": 7,
+      "TT": 14
+    },
+    {
+      "contrast": "h2_vs_h0",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 2,
+      "to_geometry": "four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "FF": 2,
+      "FT": 1,
+      "TF": 6,
+      "TT": 15
+    },
+    {
+      "contrast": "h2_vs_h0",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 2,
+      "to_geometry": "four_quadrants",
+      "algorithm": "greedy",
+      "FF": 2,
+      "FT": 4,
+      "TF": 2,
+      "TT": 16
+    },
+    {
+      "contrast": "h4_vs_h0",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 4,
+      "to_geometry": "four_quadrants",
+      "algorithm": "joint_exact",
+      "FF": 2,
+      "FT": 1,
+      "TF": 10,
+      "TT": 11
+    },
+    {
+      "contrast": "h4_vs_h0",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 4,
+      "to_geometry": "four_quadrants",
+      "algorithm": "two_stage_lex",
+      "FF": 2,
+      "FT": 1,
+      "TF": 17,
+      "TT": 4
+    },
+    {
+      "contrast": "h4_vs_h0",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 4,
+      "to_geometry": "four_quadrants",
+      "algorithm": "two_stage_best_tie",
+      "FF": 2,
+      "FT": 1,
+      "TF": 17,
+      "TT": 4
+    },
+    {
+      "contrast": "h4_vs_h0",
+      "from_h": 0,
+      "from_geometry": "four_quadrants",
+      "to_h": 4,
+      "to_geometry": "four_quadrants",
+      "algorithm": "greedy",
+      "FF": 5,
+      "FT": 1,
+      "TF": 11,
+      "TT": 7
+    },
+    {
+      "contrast": "h2_vs_h0",
+      "from_h": 0,
+      "from_geometry": "two_clusters",
+      "to_h": 2,
+      "to_geometry": "two_clusters",
+      "algorithm": "joint_exact",
+      "FF": 1,
+      "FT": 2,
+      "TF": 0,
+      "TT": 21
+    },
+    {
+      "contrast": "h2_vs_h0",
+      "from_h": 0,
+      "from_geometry": "two_clusters",
+      "to_h": 2,
+      "to_geometry": "two_clusters",
+      "algorithm": "two_stage_lex",
+      "FF": 1,
+      "FT": 2,
+      "TF": 1,
+      "TT": 20
+    },
+    {
+      "contrast": "h2_vs_h0",
+      "from_h": 0,
+      "from_geometry": "two_clusters",
+      "to_h": 2,
+      "to_geometry": "two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "FF": 1,
+      "FT": 2,
+      "TF": 0,
+      "TT": 21
+    },
+    {
+      "contrast": "h2_vs_h0",
+      "from_h": 0,
+      "from_geometry": "two_clusters",
+      "to_h": 2,
+      "to_geometry": "two_clusters",
+      "algorithm": "greedy",
+      "FF": 1,
+      "FT": 2,
+      "TF": 3,
+      "TT": 18
+    },
+    {
+      "contrast": "h4_vs_h0",
+      "from_h": 0,
+      "from_geometry": "two_clusters",
+      "to_h": 4,
+      "to_geometry": "two_clusters",
+      "algorithm": "joint_exact",
+      "FF": 2,
+      "FT": 1,
+      "TF": 12,
+      "TT": 9
+    },
+    {
+      "contrast": "h4_vs_h0",
+      "from_h": 0,
+      "from_geometry": "two_clusters",
+      "to_h": 4,
+      "to_geometry": "two_clusters",
+      "algorithm": "two_stage_lex",
+      "FF": 2,
+      "FT": 1,
+      "TF": 14,
+      "TT": 7
+    },
+    {
+      "contrast": "h4_vs_h0",
+      "from_h": 0,
+      "from_geometry": "two_clusters",
+      "to_h": 4,
+      "to_geometry": "two_clusters",
+      "algorithm": "two_stage_best_tie",
+      "FF": 2,
+      "FT": 1,
+      "TF": 14,
+      "TT": 7
+    },
+    {
+      "contrast": "h4_vs_h0",
+      "from_h": 0,
+      "from_geometry": "two_clusters",
+      "to_h": 4,
+      "to_geometry": "two_clusters",
+      "algorithm": "greedy",
+      "FF": 2,
+      "FT": 1,
+      "TF": 14,
+      "TT": 7
+    }
+  ],
+  "timing_sums": {
+    "exact_all_shared": {
+      "cpu_s": 0.4745116830000001,
+      "wall_s": 0.4790485170087777
+    },
+    "greedy": {
+      "cpu_s": 0.04398985599999987,
+      "wall_s": 0.04704118100198684
+    },
+    "oracle_validation": {
+      "cpu_s": 0.15653706200000012,
+      "wall_s": 0.1430475100005424
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "status": "accepted_with_scope_limits",
+  "all_frozen_and_historical_manifest_hashes_match": true,
+  "historical_assignment_labels_checked": 504,
+  "prefix_feature_streams_checked": 252,
+  "model_splits_checked": 560,
+  "independent_predictions_checked": 17280,
+  "seed_metric_rows_checked": 160,
+  "family_order_metric_rows_checked": 2880,
+  "distinct_test_streams": 108,
+  "distinct_test_multisets": 36,
+  "family_holdout_full_size_delta_bins": 30.518518518518512,
+  "audit_cpu_seconds": 3.65207059,
+  "limits": [
+    "Offline refits on old observed synthetic streams, no new online policy executions or new blind test data.",
+    "20 seeds are training-subset randomizations; same108 streams/36 multisets reused.",
+    "At full size all20 seeds use identical data; they do not provide20 independent replications.",
+    "Oracle is only hindsight minimum of two fixed branches after identical BF500 prefix, not optimal bin packing.",
+    "Nonmonotonic family-holdout outcome prevents claiming more training data always helps."
+  ]
+}

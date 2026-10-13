@@ -1,0 +1,6 @@
+{
+ "paper":{"title":"Mathematical discoveries from program search with large language models","doi":"https://doi.org/10.1038/s41586-023-06924-6","relevant_sections":"Methods: Evolutionary method and program selection; PDF page 9. Programs database; PDF page 3.","local_original_pdf_sha256":"ed64cc4af49a8010ec0313c166b622e75a1c1d548b71d5a582f934d6ed0df635"},
+ "official_code":{"commit":"cc53f274237d7ab05c19df939edbc1f9616a7c19","url":"https://github.com/google-deepmind/funsearch/blob/cc53f274237d7ab05c19df939edbc1f9616a7c19/implementation/programs_database.py","verified_functions":["_reduce_score","_get_signature","Island.get_prompt","Cluster.sample_program"],"accessed_utc_date":"2026-10-06"},
+ "official_config":{"url":"https://github.com/google-deepmind/funsearch/blob/cc53f274237d7ab05c19df939edbc1f9616a7c19/implementation/config.py","defaults":{"functions_per_prompt":2,"num_islands":10,"cluster_sampling_temperature_init":0.1,"cluster_sampling_temperature_period":30000}},
+ "citation_note":"Implementation is written independently from the described formulas. No original candidate code is imported or evaluated. Original archived evidence is packaged for reproducibility."
+}

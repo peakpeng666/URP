@@ -1,0 +1,72 @@
+{
+  "schema": "urp-bpp-portable-audit-v1",
+  "created_utc": "2026-10-13T05:04:36.780409+00:00",
+  "copied_original_evidence_files": 12,
+  "file_count_including_this_manifest": 15,
+  "scope": "Fresh evidence replay and derived exports audit; no new experimental outcome",
+  "files": {
+    "01_numpy_install.log": {
+      "bytes": 776,
+      "sha256": "24e90a3ddaac40bbebb2ca6ee8542a56746955f999d6aa934251522bc079c23e"
+    },
+    "02_import.log": {
+      "bytes": 519,
+      "sha256": "1c414d90cc2ff5d495d7d3c92350664c0a3b997bfd2c8e44ddaadcf919690d8e"
+    },
+    "03_fresh_validation.log": {
+      "bytes": 721,
+      "sha256": "d0710de12412991aa071377dcdc58d6ffe51df99e65b004000ac2427abba0dfa"
+    },
+    "04_convert.log": {
+      "bytes": 297,
+      "sha256": "87eaba450082a1788f1388d2955f842cae1f9a551a2cd80e4c3fb02ea6ed6c1d"
+    },
+    "05_unit_and_real_export_parity.log": {
+      "bytes": 2855,
+      "sha256": "84c80e6154b4b7286f621dfc30ec350d01c47ba9ae9d8340a518be8a9eb28c53"
+    },
+    "README.md": {
+      "bytes": 2592,
+      "sha256": "1524b036614cb01c2ed1cff786aafb900bd51e253e2f4fed14652e0a4f140a54"
+    },
+    "bpp_rebuild_report.json": {
+      "bytes": 12223,
+      "sha256": "156e07b1d8d971e650f4dc14a2c949825a69ca7fb67040f3d2a1d0c3d0ea16de"
+    },
+    "execution_report.json": {
+      "bytes": 3065,
+      "sha256": "19416fcf3cce92ce3c87533894db9ac5415d55376cf6cd35bd2a9bf006ea33d8"
+    },
+    "exports_inventory.json": {
+      "bytes": 541209,
+      "sha256": "79d2d9c9e838083bd98368efd653922d76447025bad76c47f5f32d432c0cffe8"
+    },
+    "import_report.json": {
+      "bytes": 518,
+      "sha256": "3c247b5ea6771bc4160fc3ac31f56b329f39dc77c58e2c7d6ab0b285455286ac"
+    },
+    "source_inventory_after.json": {
+      "bytes": 335756,
+      "sha256": "cca600b2e29b45fc2b560d4e7d73c176cb4135fcbe8f7b321bff4cb568bbbfa3"
+    },
+    "source_inventory_before.json": {
+      "bytes": 335934,
+      "sha256": "7461849d8645a834308d00492548f44fc5d1d3f133e7c4b524e7dbbe7e83eda6"
+    },
+    "test_execution_context.json": {
+      "bytes": 2405,
+      "sha256": "07de651ba801eb60646982c6f9b2fcade24551700b0df94644c701f01fcc19f2"
+    },
+    "validation_report.json": {
+      "bytes": 6149,
+      "sha256": "5d7123ee0923d5e3c24709ec4e931fcf5835617fd8e269290a16c3f6fb0ed035"
+    }
+  },
+  "manifest_note": "This manifest is the sole file not hashed by itself",
+  "credential_review": {
+    "status": "PASS",
+    "redacted_files": [],
+    "original_copied_reports_and_logs_byte_identical": true
+  },
+  "artifact_environment": "Source environment absolute paths are preserved as execution evidence; see README.md"
+}

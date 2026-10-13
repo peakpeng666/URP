@@ -1,0 +1,50 @@
+{
+  "schema": "selection-replay-plan-v1",
+  "study_id": "independent_parent_selection_20261006",
+  "design_status": "Frozen before replay computation, after inspecting historical outcomes. This is not prospective preregistration of original generation or scoring.",
+  "scope": "Read-only replay of terminal archives; zero model calls; zero candidate execution; no active 60-slot generation protocol, no heldout data, no changes to source archives.",
+  "populations": [
+    "phase0: all 4 admitted and fully evaluated slots; original arms pooled only for this descriptive archive replay, not an arm comparison",
+    "followon: all 5 admitted and fully evaluated slots; keep the known sixth empty generation outside the eligible archive and account for it",
+    "pooled_posthoc: 9 slots; engineering stress panel only, not a new independent generation batch or significance test"
+  ],
+  "panel": "Require identical ordered instance_index 0..4, input_sha256, and L1 across all candidates and BF references.",
+  "identity": "SHA256 of exact UTF-8 source bytes. Canonical AST hash is supplementary descriptive information; do not execute, compile to executable bytecode, import, or eval candidate strings.",
+  "quality": "Exact rational mean(L1_i / used_bins_i), maximize. Fitness deduplication uses Fraction equality, not rounded floats.",
+  "behavior": "Five used-bin counts; finer complete assignment-trajectory signature is the ordered tuple of 5 archived assignment_sha256 hashes. These are finite-panel equivalence classes, not universal program equivalence.",
+  "BF_class": "All 5 assignment hashes equal independent archived BF controls, with matching input hashes. Used-bin equality alone is insufficient.",
+  "worse": "Exact mean fitness below BF; also report panel-wise strict worsening and expected relative excess bins against BF.",
+  "tie_break": "Rank descending exact fitness, then SHA256('selection-replay-v1|' + candidate_id), then candidate_id. Duplicate identity representatives use the same tie key. Report all combinations at top-k boundary tie when relevant.",
+  "topk_methods": [
+    "code_topk: source-identity deduplication, keep min(k,n) highest fitness, uniform iid parent draws",
+    "scalar_topk: source-identity deduplication, retain one representative per exact scalar fitness, keep min(k,n_fitness), uniform iid parent draws"
+  ],
+  "k_values": [
+    3,
+    6
+  ],
+  "full_archive_methods": [
+    "rank_length: source-identity deduplicate; group by five-dimensional bin signature; cluster probability proportional to 1/(quality rank), tied cluster quality gets the same dense rank; within cluster apply length bias",
+    "softmax_length: same full identity-deduplicated archive and signatures; cluster probability softmax(mean fitness / tau); within cluster apply length bias"
+  ],
+  "primary_tau": 0.1,
+  "length_rule": "Character count of exact source string, probability proportional to exp(-(length-min_length)/(max_length+1e-6)) within a cluster. This follows the official code's sign and normalization, with our raw-source representation adaptation.",
+  "ablations": [
+    "uniform cluster, uniform within",
+    "rank cluster, uniform within",
+    "softmax tau 0.1, uniform within",
+    "softmax tau 0.01, 0.03, 0.3, 1.0 with length bias",
+    "raw-slot archive softmax tau 0.1 with length bias: no source dedup, duplicates retain multiplicity"
+  ],
+  "metrics": [
+    "eligible slots, distinct source/AST/scalar-fitness/bin-signature/assignment-signature counts",
+    "one-draw BF and worse probability",
+    "support counts and effective diversity 1/sum(p_class^2) at source/bin-signature/assignment-signature levels",
+    "5 iid draws with replacement: expected distinct slots/source/bin-signatures/assignment-signatures via sum(1-(1-p_class)^5)",
+    "5 draws: probability of at least one worse parent",
+    "expected parent fitness, relative extra bins against BF, and source length"
+  ],
+  "verification": "Verify archived source hashes and per-instance bindings. Independently enumerate all ordered 5-draw outcomes for each method and compare with analytic expectations, probability mass, and BF/worse events at absolute tolerance 1e-10. Exhaustive enumeration validates calculations, not statistical generalization. No Monte Carlo or seed required.",
+  "paper_fidelity": "FunSearch-inspired single-archive component adaptation, not an end-to-end reproduction. Official code retains programs by score-vector signature, samples clusters with replacement using annealed temperature (T0=0.1, N=30000), and favors short programs; its reducer uses the last test's score. Here we use URP mean score, exact input binding, source deduplication, fixed temperatures, no islands/resets/LLM, and a diagnostic 5-draw horizon. k=3/6 applies only to top-k comparators, never to full-archive cluster methods.",
+  "stopping": "Freeze evidence and plan, run the one finite replay, audit and report; no automatic generation or changes to existing protocols."
+}

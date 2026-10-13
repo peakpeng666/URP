@@ -1,0 +1,16 @@
+{
+  "experiment_process_tree_cpu_seconds": 40.923608,
+  "experiment_launcher_cpu_seconds": 0.072085971,
+  "analysis_process_tree_cpu_seconds": 0.43212599999999995,
+  "analysis_launcher_cpu_seconds": 0.027369737,
+  "measured_completed_phases_cpu_seconds": 41.455189708,
+  "preparation_shell_conservative_allowance_seconds": 10.0,
+  "allowance_is_not_measured": true,
+  "finalization_packaging_reserve_seconds": 10.0,
+  "conservative_measured_plus_allowances_cpu_seconds": 61.455189708,
+  "cpu_limit_seconds": 180,
+  "finalization_measurement_file": "../search_budget_20261007_pre_audit.resource.json",
+  "wall_limit_seconds": 1200,
+  "numerical_task_start_utc": "2026-10-07T02:42:47+00:00",
+  "note": "Only one numeric solver process; no solver descendants. Parent independent audit is a separate task."
+}

@@ -1,0 +1,15 @@
+{
+  "frozen_at_utc": "2026-10-07T06:00:43.974901+00:00",
+  "before_any_solver_call": true,
+  "sha256": {
+    "protocol.json": "ac4099777de2415d6e403ed7c4e738749e5a545454b7579b5800ad977faf63e1",
+    "inputs.json": "a899e22baf91e1435b8aca7af88c0107ea90a7439f257e4ba2bc55d2275af6bb",
+    "experiment.py": "7adea879dc3d63b7ac62af4f7e5bf5b560f0a2d6feae9e70b8259325ebe9a1f3",
+    "checker.py": "aedf9aec52d5655da0a52470b241d93ff4637d1c9c41e9f00e030dc9e5a2a418",
+    "supervise.py": "931a6c094f84911f3ecee3ed6bd86695b810bdbf91c2a891b742da5c9aa96ed4",
+    "verify.py": "36dafa1fd3b2e853ccfdb764b896fdb414eb76b41d83381f4cb26dfa02a5a1cb",
+    "workload.py": "95bdd1f8380e458dafbbe037e52b47314e7274968f79eefbc998cacfac41c44e"
+  },
+  "inputs": 48,
+  "pilot_runs": 0
+}

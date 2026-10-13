@@ -1,0 +1,11 @@
+{
+  "split": "formal",
+  "total": 36,
+  "completed": 36,
+  "exact_matches": 36,
+  "mode_feasible": 36,
+  "mode_valid": 36,
+  "reset_invalid": 32,
+  "wall_s": 0.21513128280639648,
+  "paid_api_calls": 0
+}

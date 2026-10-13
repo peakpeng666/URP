@@ -1,0 +1,18 @@
+{
+  "schema": "pre-validator-restart-budget-v1",
+  "budget_cpu_seconds": 900,
+  "measured_run_cpu_seconds": 162.904035,
+  "measured_preflight_cpu_seconds": 0.884,
+  "interrupted_validator_reservation_seconds": 240,
+  "interrupted_validator_actual_cpu_seconds": null,
+  "unmetered_preparation_static_read_checks_reservation_seconds": 100,
+  "reservation_note": "Conservative planning allocation for unmetered setup, input preparation and static checks; not reported as actual measured CPU or zero. Interrupted validator charged at its exact imposed hard limit, not inferred from wall time.",
+  "remaining_before_restart_seconds": 396.21196499999996,
+  "planned_remaining_caps": {
+    "cached_checker": 240,
+    "analysis": 40,
+    "independent_terminal_review": 60,
+    "report_render_packaging": 20
+  },
+  "worst_planned_accounted_seconds": 863.788035
+}

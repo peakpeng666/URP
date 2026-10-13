@@ -1,0 +1,22 @@
+{
+  "stage": "render_r2",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/home/agent/.codex/skills/builtins/documents/render_docx.py",
+    "independent_bpp_prefix_selection_20261006/BPP前缀安全算法选择实验.docx",
+    "--output_dir",
+    "independent_bpp_prefix_selection_20261006/docx_qa_final",
+    "--emit_pdf"
+  ],
+  "exit_code": 0,
+  "killed_by_pool_guard": false,
+  "shared_pool_limit_seconds": 20,
+  "previous_spend_seconds": 7.0150311929999996,
+  "this_stage_allowance_seconds": 12.984968807000001,
+  "child_cpu_seconds": 3.7782910000000003,
+  "wrapper_cpu_seconds": 0.019220593999999997,
+  "accounted_cpu_seconds": 3.7975115940000004,
+  "wall_seconds": 1.8767891180032166,
+  "single_thread_environment": true,
+  "guard": "Descendant /proc CPU watchdog with0.35s margin plus inherited per-process RLIMIT_CPU; final RUSAGE_CHILDREN includes reaped descendants."
+}

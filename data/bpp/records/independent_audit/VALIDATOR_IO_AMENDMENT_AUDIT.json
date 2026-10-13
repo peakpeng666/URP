@@ -1,0 +1,25 @@
+{
+  "created_utc": "2026-10-06T07:33:07.017279+00:00",
+  "recommendation": "ALLOW_VALIDATION_ONLY_RESTART_WITH_TRANSPARENT_POSTRUN_ADDENDUM",
+  "original_freeze_sha256": "883780fb58189db4159a0e2c99b4c2db43b4b98a36ade8387b795973b5dc153a",
+  "original_frozen_files_unchanged": true,
+  "cached_checker_sha256": "3fd49705988810cfc528aae9397e979e644dba9245d820893cf62478498564d7",
+  "change_exactly_one_loader_replacement": true,
+  "original_loader": "    z=np.load(archive);rem=",
+  "replacement_loader": "    with np.load(archive) as loaded:z={k:loaded[k] for k in loaded.files}\n    rem=",
+  "assertions_scores_and_replay_logic_unchanged": true,
+  "semantics": "For immutable valid npz archives, dict contains the identical numpy arrays used by every original key lookup. Arrays are now decompressed once and are only read by the checker. No assertion, score, rank, metric, fitted model or trace changes.",
+  "source_diff": "--- frozen check.py\n+++ additional check_cached.py\n@@ -27,7 +27,8 @@\n \n def replay(data,row,ranks):\n     archive=H/row['trajectory_file'];assert sha(archive.read_bytes())==row['trajectory_sha256']\n-    z=np.load(archive);rem=[100]*5000;counts=[0]*101;counts[100]=5000;heaps=[[] for _ in range(101)];heaps[100]=list(range(5000));present=1<<100;used=0;prefix=None\n+    with np.load(archive) as loaded:z={k:loaded[k] for k in loaded.files}\n+    rem=[100]*5000;counts=[0]*101;counts[100]=5000;heaps=[[] for _ in range(101)];heaps[100]=list(range(5000));present=1<<100;used=0;prefix=None\n     assert row['status']=='complete' and row['steps']==5000 and len(z['assignment'])==5000\n     assert row['items_sha256']==sha(canon(data['items']).encode())\n     for step,(item,target) in enumerate(zip(data['items'],z['assignment'].tolist())):\n",
+  "first_attempt_log_lines": 13,
+  "termination_evidence": "Parent reports original execution session exit130 and then Unknown process id; original CHECK.log remains at26 complete traces. Reviewer has not independently inspected closed executor session.",
+  "first_attempt_cpu_charge_upper_bound_seconds": 240,
+  "requirements": [
+    "Preserve original frozen checker, original first-attempt log and validation amendment",
+    "Start from all768 archived trajectories; no policy execution or result-driven assertion changes",
+    "Record exact replacement checker hash with final result",
+    "Disclose one interrupted validation attempt and one validation restart; do not say all stages were interruption-free",
+    "Conservatively charge first validation attempt and ensure total900 CPU target",
+    "Still stop on any decision or invariant mismatch"
+  ],
+  "policy_runs_executed_by_auditor": 0
+}

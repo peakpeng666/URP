@@ -1,0 +1,376 @@
+{
+  "id": "g4x4_s10000_uturn",
+  "split": "formal",
+  "data_sha256": "72f4b207204318fd5967043172eea73d415143c636e67a1c19c91757da0d6939",
+  "shape": [
+    4,
+    4
+  ],
+  "rule": "uturn",
+  "seed": 10000,
+  "reset": {
+    "status": "optimal",
+    "cost": 76,
+    "routes": [
+      {
+        "nodes": [
+          0,
+          4,
+          5,
+          6,
+          7,
+          11,
+          15,
+          14,
+          13,
+          12,
+          8,
+          4,
+          0
+        ],
+        "services": [
+          {
+            "customer": 0,
+            "position": 4
+          },
+          {
+            "customer": 3,
+            "position": 5
+          },
+          {
+            "customer": 4,
+            "position": 9
+          }
+        ],
+        "mode_chain": [
+          null,
+          null,
+          null
+        ],
+        "cost": 45
+      },
+      {
+        "nodes": [
+          0,
+          4,
+          8,
+          4,
+          5,
+          1,
+          2,
+          1,
+          0
+        ],
+        "services": [
+          {
+            "customer": 1,
+            "position": 2
+          },
+          {
+            "customer": 6,
+            "position": 4
+          },
+          {
+            "customer": 5,
+            "position": 6
+          },
+          {
+            "customer": 2,
+            "position": 7
+          }
+        ],
+        "mode_chain": [
+          null,
+          null,
+          null,
+          null
+        ],
+        "cost": 31
+      }
+    ],
+    "dp_transitions": 360,
+    "method": "reset",
+    "wall_s": 0.0009691480081528425,
+    "cpu_s": 0.0,
+    "preprocess_wall_s": 0.0005164769972907379,
+    "shortest_expansions": 392
+  },
+  "mode": {
+    "status": "optimal",
+    "cost": 82,
+    "routes": [
+      {
+        "nodes": [
+          0,
+          4,
+          5,
+          6,
+          7,
+          11,
+          15,
+          14,
+          13,
+          12,
+          8,
+          4,
+          0
+        ],
+        "services": [
+          {
+            "customer": 0,
+            "position": 4
+          },
+          {
+            "customer": 3,
+            "position": 5
+          },
+          {
+            "customer": 4,
+            "position": 9
+          }
+        ],
+        "mode_chain": [
+          [
+            6,
+            7
+          ],
+          [
+            7,
+            11
+          ],
+          [
+            13,
+            12
+          ]
+        ],
+        "cost": 45
+      },
+      {
+        "nodes": [
+          0,
+          4,
+          8,
+          9,
+          5,
+          6,
+          2,
+          1,
+          0
+        ],
+        "services": [
+          {
+            "customer": 1,
+            "position": 2
+          },
+          {
+            "customer": 6,
+            "position": 4
+          },
+          {
+            "customer": 5,
+            "position": 6
+          },
+          {
+            "customer": 2,
+            "position": 7
+          }
+        ],
+        "mode_chain": [
+          [
+            4,
+            8
+          ],
+          [
+            9,
+            5
+          ],
+          [
+            6,
+            2
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "cost": 37
+      }
+    ],
+    "dp_transitions": 3218,
+    "method": "mode",
+    "wall_s": 0.0026912500034086406,
+    "cpu_s": 0.0014590820000000004,
+    "preprocess_wall_s": 0.001585455989697948,
+    "shortest_expansions": 1057
+  },
+  "oracle": {
+    "method": "raw_state_oracle",
+    "status": "optimal",
+    "cost": 82,
+    "routes": [
+      {
+        "nodes": [
+          0,
+          4,
+          5,
+          6,
+          7,
+          11,
+          15,
+          14,
+          13,
+          12,
+          8,
+          4,
+          0
+        ],
+        "services": [
+          {
+            "customer": 0,
+            "position": 4
+          },
+          {
+            "customer": 3,
+            "position": 5
+          },
+          {
+            "customer": 4,
+            "position": 9
+          }
+        ],
+        "cost": 45
+      },
+      {
+        "nodes": [
+          0,
+          4,
+          8,
+          9,
+          5,
+          6,
+          2,
+          1,
+          0
+        ],
+        "services": [
+          {
+            "customer": 1,
+            "position": 2
+          },
+          {
+            "customer": 6,
+            "position": 4
+          },
+          {
+            "customer": 5,
+            "position": 6
+          },
+          {
+            "customer": 2,
+            "position": 7
+          }
+        ],
+        "cost": 37
+      }
+    ],
+    "expanded_states": 3409,
+    "relaxations": 7944,
+    "reachable_states": 3409,
+    "wall_s": 0.005828460998600349,
+    "cpu_s": 0.007998714000000018
+  },
+  "checks": {
+    "reset": {
+      "valid": false,
+      "errors": [
+        "route1:forbidden_turn:2",
+        "route1:forbidden_turn:6"
+      ],
+      "computed_cost": 76,
+      "routes": [
+        {
+          "route": 0,
+          "load": 9,
+          "cost": 45,
+          "forbidden_turns": []
+        },
+        {
+          "route": 1,
+          "load": 9,
+          "cost": 31,
+          "forbidden_turns": [
+            {
+              "position": 2,
+              "triple": [
+                4,
+                8,
+                4
+              ]
+            },
+            {
+              "position": 6,
+              "triple": [
+                1,
+                2,
+                1
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "mode": {
+      "valid": true,
+      "errors": [],
+      "computed_cost": 82,
+      "routes": [
+        {
+          "route": 0,
+          "load": 9,
+          "cost": 45,
+          "forbidden_turns": []
+        },
+        {
+          "route": 1,
+          "load": 9,
+          "cost": 37,
+          "forbidden_turns": []
+        }
+      ]
+    },
+    "oracle": {
+      "valid": true,
+      "errors": [],
+      "computed_cost": 82,
+      "routes": [
+        {
+          "route": 0,
+          "load": 9,
+          "cost": 45,
+          "forbidden_turns": []
+        },
+        {
+          "route": 1,
+          "load": 9,
+          "cost": 37,
+          "forbidden_turns": []
+        }
+      ]
+    }
+  },
+  "exact_match": true,
+  "relaxation_bound": true,
+  "fixed_sequence_check": {
+    "sequence": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "layered_cost": 88,
+    "brute_cost": 88,
+    "enumerated_modes": 81,
+    "match": true
+  },
+  "terminal": "completed"
+}

@@ -1,0 +1,47 @@
+{
+  "status": "accepted_with_scope_limits",
+  "all_pre_run_hashes_match": true,
+  "main_routes_checked": 750,
+  "independent_full_pareto_fronts": 30,
+  "independent_main_exact_objectives": 150,
+  "independent_small_exact_objectives": 30,
+  "independent_small_routes": 24896,
+  "independent_2opt_neighbor_checks": 4200,
+  "summary_rows_checked": 100,
+  "paired_rows_checked": 15,
+  "posthoc_best_distance_tie": [
+    {
+      "lambda": 0,
+      "mean_gap_pct": 0.0,
+      "strictly_suboptimal": 0
+    },
+    {
+      "lambda": 0.5,
+      "mean_gap_pct": 0.0,
+      "strictly_suboptimal": 0
+    },
+    {
+      "lambda": 2,
+      "mean_gap_pct": 0.15688445921004046,
+      "strictly_suboptimal": 2
+    },
+    {
+      "lambda": 8,
+      "mean_gap_pct": 5.362279227927608,
+      "strictly_suboptimal": 19
+    },
+    {
+      "lambda": 32,
+      "mean_gap_pct": 19.43907336962931,
+      "strictly_suboptimal": 24
+    }
+  ],
+  "audit_cpu_seconds": 0.777788732,
+  "limits": [
+    "New synthetic rectilinear service-order problem, no empirical agricultural or kinematic validation.",
+    "Exact only among x-first/y-first shortest L paths; no arbitrary path, obstacles, curvature or collisions.",
+    "750 observations are repeated within30 geometries, not750 independent problems.",
+    "Lambda0.5 difference vanishes after best distance-optimal tie resolution; cannot claim genuine distance-turn tradeoff there.",
+    "Posthoc tie correction is diagnostic and not preregistered primary evidence."
+  ]
+}

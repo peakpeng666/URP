@@ -1,0 +1,1 @@
+user_seconds=0.843\nsystem_seconds=0.041\nwall_seconds=0.885

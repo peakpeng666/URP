@@ -1,0 +1,97 @@
+{
+  "status": "PASS",
+  "post_hoc": true,
+  "summary": [
+    {
+      "lambda": 0,
+      "n": 30,
+      "mean_gap_pct": 0.0,
+      "median_gap_pct": 0.0,
+      "max_gap_pct": 0.0,
+      "strict_gap_count": 0,
+      "joint_distance_above_shortest_count": 0
+    },
+    {
+      "lambda": 0.5,
+      "n": 30,
+      "mean_gap_pct": 0.0,
+      "median_gap_pct": 0.0,
+      "max_gap_pct": 0.0,
+      "strict_gap_count": 0,
+      "joint_distance_above_shortest_count": 0
+    },
+    {
+      "lambda": 2,
+      "n": 30,
+      "mean_gap_pct": 0.1568844592100406,
+      "median_gap_pct": 0.0,
+      "max_gap_pct": 2.380952380952381,
+      "strict_gap_count": 2,
+      "joint_distance_above_shortest_count": 4
+    },
+    {
+      "lambda": 8,
+      "n": 30,
+      "mean_gap_pct": 5.3622792279276075,
+      "median_gap_pct": 3.2142857142857144,
+      "max_gap_pct": 20.37037037037037,
+      "strict_gap_count": 19,
+      "joint_distance_above_shortest_count": 20
+    },
+    {
+      "lambda": 32,
+      "n": 30,
+      "mean_gap_pct": 19.439073369629305,
+      "median_gap_pct": 18.530099654260727,
+      "max_gap_pct": 51.75438596491228,
+      "strict_gap_count": 24,
+      "joint_distance_above_shortest_count": 24
+    }
+  ],
+  "independent_checks": [
+    {
+      "instance_id": "verify_uniform_00",
+      "distance": 58,
+      "turns": 7,
+      "complete_routes_enumerated": 6144,
+      "status": "PASS"
+    },
+    {
+      "instance_id": "verify_uniform_01",
+      "distance": 46,
+      "turns": 5,
+      "complete_routes_enumerated": 2816,
+      "status": "PASS"
+    },
+    {
+      "instance_id": "verify_two_rows_00",
+      "distance": 50,
+      "turns": 4,
+      "complete_routes_enumerated": 3072,
+      "status": "PASS"
+    },
+    {
+      "instance_id": "verify_two_rows_01",
+      "distance": 50,
+      "turns": 4,
+      "complete_routes_enumerated": 3072,
+      "status": "PASS"
+    },
+    {
+      "instance_id": "verify_four_clusters_00",
+      "distance": 54,
+      "turns": 6,
+      "complete_routes_enumerated": 6144,
+      "status": "PASS"
+    },
+    {
+      "instance_id": "verify_four_clusters_01",
+      "distance": 54,
+      "turns": 6,
+      "complete_routes_enumerated": 3648,
+      "status": "PASS"
+    }
+  ],
+  "cpu_s": 0.536453593,
+  "wall_s": 0.5401155769995967
+}

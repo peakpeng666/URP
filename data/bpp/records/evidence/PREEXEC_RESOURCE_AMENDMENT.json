@@ -1,0 +1,21 @@
+{
+  "timestamp_utc": "2026-10-06T07:25:19Z",
+  "before_any_policy_execution": true,
+  "changes": [
+    "RLIMIT_CPU soft580/hard600 plus SIGXCPU handler to preserve partial failure",
+    "protocol explicitly discloses abrupt OS kill limitation"
+  ],
+  "no_changes": [
+    "input bytes",
+    "features",
+    "k",
+    "normalization",
+    "split",
+    "labels",
+    "main metric",
+    "bootstrap",
+    "768 complete planned runs",
+    "900 total CPU target"
+  ],
+  "review_basis": "Independent preflight noted equal soft/hard600 could kill before partial trajectory save"
+}

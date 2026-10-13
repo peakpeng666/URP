@@ -1,0 +1,4004 @@
+{
+  "schema_version": 1,
+  "id": "budget",
+  "title": "CVRP 搜索预算消融",
+  "domain": "CVRP",
+  "kind": "search_budget_ablation",
+  "status": "completed",
+  "started_at": "2026-10-07T02:42:47+00:00",
+  "finished_at": "2026-10-07T02:47:21.083613+00:00",
+  "counts": [
+    {
+      "unit": "trajectory",
+      "value": 288,
+      "scope": "formal",
+      "note": "raw/COMPLETION.json:rows; each executed once to the maximum budget"
+    },
+    {
+      "unit": "checkpoint",
+      "value": 1152,
+      "scope": "formal",
+      "note": "COMPLETION rows × 4 frozen budget levels; correlated checkpoints, not independent runs"
+    },
+    {
+      "unit": "geometry",
+      "value": 8,
+      "scope": "formal_independent_blocks",
+      "note": "reports/SUMMARY.json:common_support_geometries; independent pairing unit"
+    },
+    {
+      "unit": "run",
+      "value": 16,
+      "scope": "smoke_standalone",
+      "note": "reports/REPORT_ZH.md: 4 algorithms × 4 independently capped reference runs; excluded from formal trajectories"
+    },
+    {
+      "unit": "trajectory",
+      "value": 4,
+      "scope": "smoke_checkpoint",
+      "note": "reports/REPORT_ZH.md: 4 longest trajectories checked against the 16 standalone references"
+    }
+  ],
+  "failure_reason": null,
+  "failures": [
+    {
+      "phase": "analysis_launch",
+      "status": "recovered",
+      "reason": "/usr/bin/time: No such file or directory",
+      "resolution": "Use Python subprocess resource.getrusage wrapper; no experiment rerun",
+      "source": {
+        "artifact_id": "failures-ANALYSIS_LAUNCH_ATTEMPT_1-json",
+        "locator": "/error"
+      }
+    }
+  ],
+  "notes": [
+    "288 条正式轨迹，各取 4 个预冻结相关检查点；16 个独立运行只作检查点等价性 smoke。",
+    "先对种子成本求均值，再对同预算四算法中的最低均值计算相对 regret，非精确最优差距。等评价不等于等 FLOPs/时间；8 个几何才是独立块。预冻结平台规则不代表收敛。",
+    "正式数值失败 0、重试 0；分析首次启动缺少 /usr/bin/time，未执行分析，随后用标准库计时恢复，无实验补跑。",
+    "比较键包含 delta 评价预算与需求组，仅同预算、同需求口径的四算法可以直接比较。",
+    "等评价不等于等 FLOPs 或等时间；不同检查点相关；不将相对面板 regret 解释为精确最优 gap。",
+    "分析启动失败已按原记录保留，恢复后未重跑数值实验；批次完成状态不因已恢复的启动问题改为 failed。"
+  ],
+  "parameters": {
+    "delta_evaluation_budgets": [
+      2500,
+      10000,
+      40000,
+      160000
+    ],
+    "capacity": 30,
+    "seeds": [
+      17011,
+      17027,
+      17041
+    ],
+    "common_support_geometries": [
+      "clustered-n20-r0-s202610061512",
+      "clustered-n20-r1-s202610061513",
+      "clustered-n50-r0-s202610061518",
+      "clustered-n50-r1-s202610061519",
+      "uniform-n20-r0-s202610061500",
+      "uniform-n20-r1-s202610061501",
+      "uniform-n50-r0-s202610061506",
+      "uniform-n50-r1-s202610061507"
+    ],
+    "same_geometries_reused_across_budgets": true,
+    "algorithms": [
+      "random_cheapest",
+      "random_regret2",
+      "worst_cheapest",
+      "worst_regret2"
+    ],
+    "numerical_failures": {
+      "count": 0,
+      "rows": [],
+      "retries": 0
+    },
+    "recovered_analysis_launch_failure": {
+      "action": "Launch analysis wrapped by /usr/bin/time",
+      "exit_code": 127,
+      "error": "/usr/bin/time: No such file or directory",
+      "analysis_executed": false,
+      "raw_formal_runs_affected": false,
+      "resolution": "Use Python subprocess resource.getrusage wrapper; no experiment rerun"
+    },
+    "inference": "descriptive only; no significance claims"
+  },
+  "provenance": {
+    "captured_at": "2026-10-07T02:59:21.014332+00:00",
+    "source_label": "public/research-batches/budget"
+  },
+  "metrics": [
+    {
+      "id": "all-2500-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 0.13540311449726228,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/0/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-2500-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 0.23251454596223942,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/0/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-2500-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · all · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 714.660732330392,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/0/mean_distance"
+      }
+    },
+    {
+      "id": "all-2500-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=2500",
+      "algorithm": "random_regret2",
+      "value": 0.0288438320973509,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/1/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-2500-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=2500",
+      "algorithm": "random_regret2",
+      "value": 0.33842170526151505,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/1/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-2500-random_regret2-mean_distance",
+      "label": "平均路线总距离 · all · B=2500",
+      "algorithm": "random_regret2",
+      "value": 713.828360532652,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/1/mean_distance"
+      }
+    },
+    {
+      "id": "all-2500-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 0.34680281030789645,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/2/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-2500-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 0.026687497609735947,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/2/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-2500-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · all · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 715.3634319706822,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/2/mean_distance"
+      }
+    },
+    {
+      "id": "all-2500-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 0.3252869103425343,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/3/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-2500-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 0.04810444432717194,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/3/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-2500-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · all · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 715.1170043217248,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/3/mean_distance"
+      }
+    },
+    {
+      "id": "all-10000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 0.3489964644104883,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/4/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-10000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 0.6572772949858561,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/4/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-10000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · all · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 712.5572584760112,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/4/mean_distance"
+      }
+    },
+    {
+      "id": "all-10000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=10000",
+      "algorithm": "random_regret2",
+      "value": 0.099877404435883,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/5/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-10000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=10000",
+      "algorithm": "random_regret2",
+      "value": 0.9022230508140343,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/5/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-10000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · all · B=10000",
+      "algorithm": "random_regret2",
+      "value": 710.4224276748845,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/5/mean_distance"
+      }
+    },
+    {
+      "id": "all-10000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 0.994150585379284,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/6/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-10000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 0.03865573740842306,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/6/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-10000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · all · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 715.2274538931339,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/6/mean_distance"
+      }
+    },
+    {
+      "id": "all-10000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 0.8285005941427318,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/7/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-10000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 0.20155796051065117,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/7/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-10000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · all · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 713.4041481472968,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/7/mean_distance"
+      }
+    },
+    {
+      "id": "all-40000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 0.5330183849153051,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/8/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-40000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 1.0174911456664855,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/8/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-40000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · all · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 709.7802969214432,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/8/mean_distance"
+      }
+    },
+    {
+      "id": "all-40000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=40000",
+      "algorithm": "random_regret2",
+      "value": 0.0676211986209152,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/9/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-40000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=40000",
+      "algorithm": "random_regret2",
+      "value": 1.4745194153001218,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/9/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-40000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · all · B=40000",
+      "algorithm": "random_regret2",
+      "value": 705.1333107153646,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/9/mean_distance"
+      }
+    },
+    {
+      "id": "all-40000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 1.5502002025934418,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/10/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-40000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 0.03865573740842306,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/10/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-40000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · all · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 715.2274538931339,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/10/mean_distance"
+      }
+    },
+    {
+      "id": "all-40000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 1.3471769597967438,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/11/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-40000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 0.23663292964603705,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/11/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-40000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · all · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 713.062068255628,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/11/mean_distance"
+      }
+    },
+    {
+      "id": "all-160000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 0.6126703378446008,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/12/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-160000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 1.3116715428956518,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/12/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-160000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · all · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 706.7403869314672,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/12/mean_distance"
+      }
+    },
+    {
+      "id": "all-160000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=160000",
+      "algorithm": "random_regret2",
+      "value": 0.05261333221491064,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/13/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-160000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=160000",
+      "algorithm": "random_regret2",
+      "value": 1.8572325504921536,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/13/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-160000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · all · B=160000",
+      "algorithm": "random_regret2",
+      "value": 700.9449748876743,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/13/mean_distance"
+      }
+    },
+    {
+      "id": "all-160000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 1.934384958306811,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/14/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-160000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 0.03865573740842306,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/14/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-160000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · all · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 715.2274538931339,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/14/mean_distance"
+      }
+    },
+    {
+      "id": "all-160000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · all · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 1.7131789511449067,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/15/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "all-160000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · all · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 0.2527368788159485,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/15/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "all-160000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · all · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 712.879479693747,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=all:blocks=24",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/15/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-2500-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 0.11420114856542374,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/16/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-2500-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 0.2145304051397066,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/16/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-2500-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 686.9919649153575,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/16/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-2500-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=2500",
+      "algorithm": "random_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/17/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-2500-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=2500",
+      "algorithm": "random_regret2",
+      "value": 0.32762266652486993,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/17/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-2500-random_regret2-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=2500",
+      "algorithm": "random_regret2",
+      "value": 686.1478248695396,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/17/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-2500-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 0.333246459973377,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/18/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-2500-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/18/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-2500-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 687.7871736231905,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/18/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-2500-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 0.333246459973377,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/19/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-2500-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/19/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-2500-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 687.7871736231905,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/19/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-10000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 0.4984678819393268,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/20/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-10000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 0.5790597703817092,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/20/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-10000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 685.217794670859,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/20/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-10000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=10000",
+      "algorithm": "random_regret2",
+      "value": 0.14678221050418438,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/21/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-10000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=10000",
+      "algorithm": "random_regret2",
+      "value": 0.9230288321461956,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/21/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-10000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=10000",
+      "algorithm": "random_regret2",
+      "value": 682.6054343485116,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/21/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-10000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 1.0967931503543749,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/22/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-10000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/22/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-10000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 687.7871736231905,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/22/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-10000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 0.8346396791783756,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/23/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-10000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 0.2567684518996814,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/23/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-10000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 684.9100790389128,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/23/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-40000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 0.6737754692149961,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/24/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-40000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 0.8683141684773632,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/24/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-40000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 683.1760382574344,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/24/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-40000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=40000",
+      "algorithm": "random_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/25/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-40000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=40000",
+      "algorithm": "random_regret2",
+      "value": 1.5267316737195609,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/25/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-40000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=40000",
+      "algorithm": "random_regret2",
+      "value": 676.643020865006,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/25/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-40000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 1.5730521490643552,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/26/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-40000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/26/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-40000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 687.7871736231905,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/26/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-40000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 1.3084789065836016,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/27/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-40000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 0.2567684518996814,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/27/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-40000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 684.9100790389128,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/27/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-160000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 0.5922495234665731,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/28/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-160000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 1.241608573681912,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/28/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-160000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 679.307374030288,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/28/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-160000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=160000",
+      "algorithm": "random_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/29/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-160000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=160000",
+      "algorithm": "random_regret2",
+      "value": 1.8177761960255214,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/29/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-160000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=160000",
+      "algorithm": "random_regret2",
+      "value": 673.6809447128428,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/29/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-160000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 1.8778099656001024,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/30/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-160000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/30/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-160000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 687.7871736231905,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/30/mean_distance"
+      }
+    },
+    {
+      "id": "constant5-160000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · constant5 · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 1.610533838164352,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/31/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "constant5-160000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · constant5 · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 0.2567684518996814,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/31/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "constant5-160000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · constant5 · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 684.9100790389128,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=constant5:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/31/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 0.13952943948461194,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/32/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 0.05605635209193703,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/32/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 713.5154368889789,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/32/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=2500",
+      "algorithm": "random_regret2",
+      "value": 0.0628778599200519,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/33/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=2500",
+      "algorithm": "random_regret2",
+      "value": 0.13224933183247695,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/33/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-random_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=2500",
+      "algorithm": "random_regret2",
+      "value": 712.6472987168773,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/33/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 0.11508178177994932,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/34/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 0.08006249282920784,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/34/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 713.0506319458627,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/34/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 0.05053408188386288,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/35/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 0.14431333298151583,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/35/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-2500-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 712.3113489989908,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/35/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 0.37695720665654187,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/36/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 0.4927764511161339,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/36/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 710.9883326885263,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/36/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=10000",
+      "algorithm": "random_regret2",
+      "value": 0.1528500028034646,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/37/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=10000",
+      "algorithm": "random_regret2",
+      "value": 0.7138705808233392,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/37/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=10000",
+      "algorithm": "random_regret2",
+      "value": 708.2831544764042,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/37/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 0.7654669981988022,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/38/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 0.11596721222526918,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/38/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 712.6426977132179,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/38/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 0.5306704956651448,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/39/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 0.34790542963227217,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/39/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-10000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 710.0498750599845,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/39/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 0.6380600170709516,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/40/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 0.9228935609337274,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/40/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 707.3650142521067,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/40/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=40000",
+      "algorithm": "random_regret2",
+      "value": 0.2028635958627456,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/41/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=40000",
+      "algorithm": "random_regret2",
+      "value": 1.3509794093407874,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/41/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=40000",
+      "algorithm": "random_regret2",
+      "value": 702.7307244500033,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/41/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 1.473309326814165,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/42/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 0.11596721222526918,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/42/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 712.6426977132179,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/42/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 1.1288128409048248,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/43/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 0.45313033703842975,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/43/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-40000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 709.0236353849776,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/43/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 0.5662832034538462,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/44/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 1.2699442015059916,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/44/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 703.7952298042725,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/44/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=160000",
+      "algorithm": "random_regret2",
+      "value": 0.15783999664473192,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/45/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=160000",
+      "algorithm": "random_regret2",
+      "value": 1.6710323599335908,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/45/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=160000",
+      "algorithm": "random_regret2",
+      "value": 699.5055341551051,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/45/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 1.7593860277353297,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/46/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 0.11596721222526918,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/46/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 712.6426977132179,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/46/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_random · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 1.3630441336853676,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/47/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_random · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 0.501442184548164,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/47/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_random-160000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_random · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 708.4758696993351,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_random:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/47/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 0.15247875544175116,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/48/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 0.4269568806550746,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/48/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=2500",
+      "algorithm": "random_cheapest",
+      "value": 743.4747951868397,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/48/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=2500",
+      "algorithm": "random_regret2",
+      "value": 0.023653636372000797,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/49/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=2500",
+      "algorithm": "random_regret2",
+      "value": 0.5553931174271983,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/49/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-random_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=2500",
+      "algorithm": "random_regret2",
+      "value": 742.6899580115394,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/49/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 0.5920801891703631,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/50/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/50/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=2500",
+      "algorithm": "worst_cheapest",
+      "value": 745.2524903429933,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/50/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 0.5920801891703631,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/51/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/51/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-2500-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=2500",
+      "algorithm": "worst_regret2",
+      "value": 745.2524903429933,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "2500 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/51/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 0.17156430463559635,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/52/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 0.899995663459725,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/52/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=10000",
+      "algorithm": "random_cheapest",
+      "value": 741.4656480686481,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/52/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=10000",
+      "algorithm": "random_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/53/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=10000",
+      "algorithm": "random_regret2",
+      "value": 1.0697697394725683,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/53/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=10000",
+      "algorithm": "random_regret2",
+      "value": 740.3786941997374,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/53/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 1.1201916075846752,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/54/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/54/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=10000",
+      "algorithm": "worst_cheapest",
+      "value": 745.2524903429933,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/54/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 1.1201916075846752,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/55/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/55/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-10000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=10000",
+      "algorithm": "worst_regret2",
+      "value": 745.2524903429933,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "10000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/55/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 0.2872196684599676,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/56/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 1.2612657075883658,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/56/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=40000",
+      "algorithm": "random_cheapest",
+      "value": 738.7998382547886,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/56/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=40000",
+      "algorithm": "random_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/57/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=40000",
+      "algorithm": "random_regret2",
+      "value": 1.545847162840017,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/57/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=40000",
+      "algorithm": "random_regret2",
+      "value": 736.0261868310845,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/57/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 1.6042391319018052,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/58/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/58/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=40000",
+      "algorithm": "worst_cheapest",
+      "value": 745.2524903429933,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/58/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 1.6042391319018052,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/59/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/59/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-40000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=40000",
+      "algorithm": "worst_regret2",
+      "value": 745.2524903429933,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "40000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/59/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-random_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 0.679478286613383,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/60/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-random_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 1.4234618534990513,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/60/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-random_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=160000",
+      "algorithm": "random_cheapest",
+      "value": 737.1185569598414,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/60/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-random_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=160000",
+      "algorithm": "random_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/61/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-random_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=160000",
+      "algorithm": "random_regret2",
+      "value": 2.0828890955173485,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/61/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-random_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=160000",
+      "algorithm": "random_regret2",
+      "value": 729.6484457950752,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/61/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-worst_cheapest-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 2.1659588815850004,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/62/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-worst_cheapest-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/62/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-worst_cheapest-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=160000",
+      "algorithm": "worst_cheapest",
+      "value": 745.2524903429933,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/62/mean_distance"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-worst_regret2-mean_relative_regret_pct",
+      "label": "相对同预算算法池 regret · high_variance_spatial_x · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 2.1659588815850004,
+      "comparison": {
+        "metric": "mean_relative_regret_pct",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean of per-block relative regret after averaging three seeds",
+        "reference": "lowest seed-mean cost among these four algorithms at this budget; not an exact optimum"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/63/mean_relative_regret_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-worst_regret2-mean_baseline_improvement_pct",
+      "label": "相对初始化改善 · high_variance_spatial_x · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 0.0,
+      "comparison": {
+        "metric": "mean_baseline_improvement_pct",
+        "unit": "%",
+        "direction": "max",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean per-block improvement after averaging three seeds",
+        "reference": "same frozen feasible initialization in each geometry-demand block"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/63/mean_baseline_improvement_pct"
+      }
+    },
+    {
+      "id": "high_variance_spatial_x-160000-worst_regret2-mean_distance",
+      "label": "平均路线总距离 · high_variance_spatial_x · B=160000",
+      "algorithm": "worst_regret2",
+      "value": 745.2524903429933,
+      "comparison": {
+        "metric": "mean_distance",
+        "unit": "synthetic_distance_units",
+        "direction": "min",
+        "cohort": "budget:8-frozen-geometries:demand=high_variance_spatial_x:blocks=8",
+        "protocol": "frozen operator-pair CVRP; strict-improvement acceptance; paired seeds 17011,17027,17041",
+        "budget": "160000 candidate-delta evaluations; accepted complete solution before request B+1",
+        "aggregation": "mean seed-mean distance over geometry-demand blocks",
+        "reference": "absolute unrounded Euclidean depot-to-depot distance; no vehicle penalty"
+      },
+      "source": {
+        "artifact_id": "reports-SUMMARY-json",
+        "locator": "/summary/63/mean_distance"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "reports-REPORT_ZH-md",
+      "path": "files/reports/REPORT_ZH.md",
+      "media_type": "text/markdown",
+      "role": "report"
+    },
+    {
+      "id": "reports-SUMMARY-json",
+      "path": "files/reports/SUMMARY.json",
+      "media_type": "application/json",
+      "role": "summary"
+    },
+    {
+      "id": "raw-COMPLETION-json",
+      "path": "files/raw/COMPLETION.json",
+      "media_type": "application/json",
+      "role": "provenance"
+    },
+    {
+      "id": "failures-FAILURES-json",
+      "path": "files/failures/FAILURES.json",
+      "media_type": "application/json",
+      "role": "failure"
+    },
+    {
+      "id": "failures-ANALYSIS_LAUNCH_ATTEMPT_1-json",
+      "path": "files/failures/ANALYSIS_LAUNCH_ATTEMPT_1.json",
+      "media_type": "application/json",
+      "role": "failure"
+    },
+    {
+      "id": "reports-RESOURCE_ACCOUNTING-json",
+      "path": "files/reports/RESOURCE_ACCOUNTING.json",
+      "media_type": "application/json",
+      "role": "provenance"
+    },
+    {
+      "id": "reports-STOP_AND_FREEZE_CHECK-json",
+      "path": "files/reports/STOP_AND_FREEZE_CHECK.json",
+      "media_type": "application/json",
+      "role": "audit"
+    },
+    {
+      "id": "independent-audit-json",
+      "path": "files/independent-audit.json",
+      "media_type": "application/json",
+      "role": "audit"
+    }
+  ]
+}

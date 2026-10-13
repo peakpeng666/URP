@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "checks": [
+    "all_frozen_hashes_unchanged",
+    "240_records_recomputed_no_dropped_failure",
+    "null_for_infeasible_full_objectives",
+    "all_oracle_subset_witnesses_recomputed",
+    "summary_denominators_and_counts_recomputed",
+    "csv_and_map_backend_consistent"
+  ],
+  "record_count": 240,
+  "oracle_subset_witnesses_checked": 5344,
+  "read_only_solver_replay": true
+}

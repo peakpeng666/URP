@@ -1,0 +1,208 @@
+{
+  "schema": "independent-bpp-prefix-final-audit-v1",
+  "created_utc": "2026-10-06T07:42:03.699402+00:00",
+  "scientific_result_status": "PASS_WITH_DISCLOSED_VALIDATION_IO_AMENDMENT",
+  "scientific_blockers": [],
+  "historical_total_900_cpu_compliance": "NOT_ESTABLISHED",
+  "final_three_figures_visual_and_data_status": "PASS_AFTER_DISCLOSED_FONT_AND_POINT_PLOT_REPAIR",
+  "word_document_status": "PASS_FINAL_SIX_PAGE_LOGIC_TABLE_IMAGE_HASH_AND_VISUAL_REVIEW",
+  "approved_freeze_sha256": "883780fb58189db4159a0e2c99b4c2db43b4b98a36ade8387b795973b5dc153a",
+  "policy_runs_executed_by_auditor": 0,
+  "checked_actual_complete_runs": 768,
+  "independently_replayed_integer_steps": 3840000,
+  "formal_independent_scalar_checked_steps": 3840000,
+  "selector_index_branch_predictions_checked": 120,
+  "training_fit_and_SBS_recomputed": true,
+  "all_per_stream_and_18_cell_results_recomputed": true,
+  "bootstrap_draws_reproduced": 10000,
+  "risk_invariance_groups": 4,
+  "confirmation": {
+    "n": 108,
+    "mean_bins": {
+      "BF": 2794.3518518518517,
+      "BF_then_EoH": 2757.527777777778,
+      "published_EoH": 2748.314814814815,
+      "SELECTOR": 2736.074074074074,
+      "SBS": 2757.527777777778,
+      "branch_oracle": 2733.1944444444443,
+      "full_run_oracle": 2727.185185185185
+    },
+    "selector_minus_SBS_mean": -21.453703703703702,
+    "SBS_oracle_headroom": 24.333333333333332,
+    "selector_oracle_regret": 2.8796296296296298,
+    "headroom_recovered_fraction": 0.8816590563165906,
+    "W_T_L_vs_SBS": [
+      49,
+      56,
+      3
+    ],
+    "worst_harm_vs_SBS": 6,
+    "best_gain_vs_SBS": 116,
+    "choices": {
+      "BF": 53,
+      "BF_then_EoH": 55
+    },
+    "oracle_preferences": {
+      "BF": 57,
+      "BF_then_EoH": 39,
+      "tie": 12
+    },
+    "cluster_bootstrap_95_percentile_CI": [
+      -23.916666666666668,
+      -19.37962962962963
+    ]
+  },
+  "risk": {
+    "summary": {
+      "n": 12,
+      "mean_bins": {
+        "BF": 2715.6666666666665,
+        "BF_then_EoH": 2665.5833333333335,
+        "published_EoH": 2666.5,
+        "SELECTOR": 2690.9166666666665,
+        "SBS": 2665.5833333333335,
+        "branch_oracle": 2664.6666666666665,
+        "full_run_oracle": 2664.5833333333335
+      },
+      "selector_minus_SBS_mean": 25.333333333333332,
+      "SBS_oracle_headroom": 0.9166666666666666,
+      "selector_oracle_regret": 26.25,
+      "headroom_recovered_fraction": -27.636363636363637,
+      "W_T_L_vs_SBS": [
+        1,
+        8,
+        3
+      ],
+      "worst_harm_vs_SBS": 152,
+      "best_gain_vs_SBS": 2,
+      "choices": {
+        "BF": 6,
+        "BF_then_EoH": 6
+      },
+      "oracle_preferences": {
+        "BF": 2,
+        "BF_then_EoH": 6,
+        "tie": 4
+      }
+    },
+    "groups": [
+      {
+        "group": "risk_prefix_bimodal_20_30_70_80",
+        "choice": "BF",
+        "oracle_preferences": [
+          "BF",
+          "BF_then_EoH",
+          "tie"
+        ],
+        "selector_regrets": [
+          0,
+          151,
+          0
+        ],
+        "oracle_preference_reverses": true
+      },
+      {
+        "group": "risk_prefix_small_beta_2_5",
+        "choice": "BF_then_EoH",
+        "oracle_preferences": [
+          "BF",
+          "BF_then_EoH",
+          "tie"
+        ],
+        "selector_regrets": [
+          9,
+          0,
+          0
+        ],
+        "oracle_preference_reverses": true
+      },
+      {
+        "group": "risk_prefix_uniform_1_100",
+        "choice": "BF",
+        "oracle_preferences": [
+          "BF_then_EoH",
+          "BF_then_EoH",
+          "tie"
+        ],
+        "selector_regrets": [
+          3,
+          152,
+          0
+        ],
+        "oracle_preference_reverses": false
+      },
+      {
+        "group": "risk_prefix_weibull_3_45",
+        "choice": "BF_then_EoH",
+        "oracle_preferences": [
+          "BF_then_EoH",
+          "BF_then_EoH",
+          "tie"
+        ],
+        "selector_regrets": [
+          0,
+          0,
+          0
+        ],
+        "oracle_preference_reverses": false
+      }
+    ]
+  },
+  "postrun_validator_source_sha256": "3fd49705988810cfc528aae9397e979e644dba9245d820893cf62478498564d7",
+  "measured_successful_three_process_cpu_seconds": 175.13205399999998,
+  "independent_audit_process_resource": {
+    "exit_code": 0,
+    "cpu_user_seconds": 6.396188,
+    "cpu_system_seconds": 0.048358,
+    "cpu_total_seconds": 6.444546000000001,
+    "wall_seconds": 6.4472003979899455,
+    "child_hard_cpu_limit_seconds": 60,
+    "single_thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1"
+    },
+    "counts_complete_child_process_and_its_children": true
+  },
+  "measured_three_stages_plus_successful_preflight_plus_terminal_audit_cpu_seconds": 182.46059999999997,
+  "interrupted_validator_cpu_upper_bound_charged_seconds": 240,
+  "unmetered_historical_costs_exist": true,
+  "forward_remaining_after_audit_before_artifact_costs_seconds": 377.5394,
+  "figures": {
+    "confirmation_means.png": "018a497ef43ba3590c0993f813e2c546f6fa4d71e2ae3a6715917da338456b22",
+    "family_order_deltas.png": "3945402538fc61a8575743b3a1c02e05f60f8ab527bcf1b8f8a43b1e4bb74a88",
+    "same_prefix_risk.png": "a5b8db2aa27134527b3cc4f81e73360dd81869d6d38c066e567def73d4e4ed4f"
+  },
+  "figure_statistics_hashes_unchanged": {
+    "analysis/SUMMARY.json": "b31167c7eb0b704e1308fd5787698124428d29e9994fe4a43ab717174318f172",
+    "analysis/family_order_summary.csv": "220fee53accaf124dd2d2e1fea41f5ac34145b74ac97e4c2c9bdb85180679626",
+    "analysis/risk_per_stream.csv": "8becaff66619610e0a9ba81c6f495bb90d4851be5b27f2368b152d7ad324df2a",
+    "analysis/cluster_bootstrap.npz": "ec6879f1f94f6c6cd1aa1248528d6c1d41dea3d5768d64f45f30eda5ed3850c3"
+  },
+  "limitations": [
+    "Finite six-family balanced synthetic mixture; fixed trained model uncertainty",
+    "No arbitrary-future, unseen-family, original-study or deployment claim",
+    "Logical prefix interface not adversarial isolation",
+    "Cross-platform float equivalence unproven",
+    "One transparently interrupted validation attempt and restart",
+    "Historical entire-task CPU900 compliance cannot be certified"
+  ],
+  "full_report": "FINAL_AUDIT.md",
+  "machine_evidence": "FINAL_MACHINE_CHECKS.json",
+  "raw_result_evidence_manifest": "RESULT_EVIDENCE_MANIFEST.json",
+  "word_document_sha256": "7ad582ae0f030e67710e4bbc2970ee46bb95e426c073a63205c435130ebcfff6",
+  "delivery_audit": "DELIVERY_AUDIT.json",
+  "supplemental_delivery_check_process_resource": {
+    "exit_code": 0,
+    "cpu_user_seconds": 0.08230799999999999,
+    "cpu_system_seconds": 0.024085,
+    "cpu_total_seconds": 0.10639299999999999,
+    "wall_seconds": 0.10782275500241667,
+    "child_hard_cpu_limit_seconds": 5,
+    "single_thread_environment": true,
+    "scope": "Supplemental read-only Word/table/image-hash check, within remainder of audit60 allocation"
+  },
+  "total_measured_terminal_audit_cpu_seconds": 6.5509390000000005,
+  "measured_three_stages_plus_successful_preflight_plus_all_terminal_checks_cpu_seconds": 182.56699299999997,
+  "forward_remaining_after_all_terminal_checks_before_artifact_costs_seconds": 377.433007
+}

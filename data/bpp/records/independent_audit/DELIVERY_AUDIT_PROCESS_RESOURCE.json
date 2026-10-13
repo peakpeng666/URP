@@ -1,0 +1,10 @@
+{
+  "exit_code": 0,
+  "cpu_user_seconds": 0.08230799999999999,
+  "cpu_system_seconds": 0.024085,
+  "cpu_total_seconds": 0.10639299999999999,
+  "wall_seconds": 0.10782275500241667,
+  "child_hard_cpu_limit_seconds": 5,
+  "single_thread_environment": true,
+  "scope": "Supplemental read-only Word/table/image-hash check, within remainder of audit60 allocation"
+}

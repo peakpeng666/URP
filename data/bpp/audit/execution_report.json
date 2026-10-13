@@ -1,0 +1,78 @@
+{
+  "status": "PASS",
+  "started_utc": "2026-10-13T04:59:57.488444+00:00",
+  "scope": "Fresh read-only checks of recorded evidence and offline exports; no policy execution, fitting, new experiment or API",
+  "historical_report_reused": false,
+  "cwd": "/workspace/shared/urp_sync/current/src/frontend",
+  "steps": [
+    {
+      "name": "02_import",
+      "command": [
+        "/workspace/shared/urp_sync/rebuild_staging/bpp_venv/bin/python",
+        "scripts/import_data.py",
+        "--archive",
+        "/workspace/shared/urp_sync/current/data/bpp/inputs/BPP前缀安全选择_完整源码数据与审计_20261006.zip",
+        "--target",
+        "/workspace/shared/urp_sync/current/data/bpp/records",
+        "--report",
+        "/workspace/shared/urp_sync/rebuild_staging/bpp_artifacts/import_report.json"
+      ],
+      "started_utc": "2026-10-13T04:59:57.489034+00:00",
+      "log": "/workspace/shared/urp_sync/rebuild_staging/bpp_artifacts/02_import.log",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 0.388,
+      "finished_utc": "2026-10-13T04:59:57.877596+00:00"
+    },
+    {
+      "name": "03_fresh_validation",
+      "command": [
+        "/workspace/shared/urp_sync/rebuild_staging/bpp_venv/bin/python",
+        "scripts/validate_data.py",
+        "--research",
+        "/workspace/shared/urp_sync/current/data/bpp/records",
+        "--output",
+        "/workspace/shared/urp_sync/rebuild_staging/bpp_artifacts/validation_report.json"
+      ],
+      "started_utc": "2026-10-13T04:59:57.877966+00:00",
+      "log": "/workspace/shared/urp_sync/rebuild_staging/bpp_artifacts/03_fresh_validation.log",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 11.426,
+      "finished_utc": "2026-10-13T05:00:09.304291+00:00"
+    },
+    {
+      "name": "04_convert",
+      "command": [
+        "/workspace/shared/urp_sync/rebuild_staging/bpp_venv/bin/python",
+        "scripts/convert_data.py",
+        "--research",
+        "/workspace/shared/urp_sync/current/data/bpp/records",
+        "--output",
+        "/workspace/shared/urp_sync/rebuild_staging/bpp_exports",
+        "--artifacts",
+        "/workspace/shared/urp_sync/rebuild_staging/bpp_artifacts"
+      ],
+      "started_utc": "2026-10-13T05:00:09.305218+00:00",
+      "log": "/workspace/shared/urp_sync/rebuild_staging/bpp_artifacts/04_convert.log",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 6.509,
+      "finished_utc": "2026-10-13T05:00:15.814625+00:00"
+    },
+    {
+      "name": "05_unit_and_real_export_parity",
+      "command": [
+        "/workspace/shared/urp_sync/rebuild_staging/bpp_venv/bin/python",
+        "/workspace/shared/urp_sync/rebuild_staging/run_bpp_parity_tests.py"
+      ],
+      "started_utc": "2026-10-13T05:00:15.814987+00:00",
+      "log": "/workspace/shared/urp_sync/rebuild_staging/bpp_artifacts/05_unit_and_real_export_parity.log",
+      "status": "PASS",
+      "exit_code": 0,
+      "seconds": 5.462,
+      "finished_utc": "2026-10-13T05:00:21.277361+00:00"
+    }
+  ],
+  "finished_utc": "2026-10-13T05:00:21.277699+00:00"
+}

@@ -1,0 +1,25 @@
+{
+  "schema": "urp-bpp-test-execution-context-v1",
+  "scope": "Original test assertions loaded unchanged; only real-data locations redirected to this run",
+  "original_test_modules": [
+    "tests/test_import.py",
+    "tests/test_validation.py",
+    "tests/test_conversion.py",
+    "tests/test_export_parity.py"
+  ],
+  "adapter_file": "/workspace/shared/urp_sync/rebuild_staging/run_bpp_parity_tests.py",
+  "adapter_sha256": "bd14c97d3d815092a1438ac965dfad45fa1c91b040b5731c9848a07cdec9893e",
+  "adapter_source": "\"\"\"Run unchanged BPP tests against staged exports and this run's fresh report.\"\"\"\nimport importlib.util\nfrom pathlib import Path\nimport shutil\nimport sys\nimport unittest\n\nSTAGE = Path(__file__).resolve().parent\nFRONT = Path('/workspace/shared/urp_sync/current/src/frontend')\nRESEARCH = Path('/workspace/shared/urp_sync/current/data/bpp/records')\nsys.path.insert(0, str(FRONT))\ncontext = STAGE / 'bpp_test_context'\n(context / 'artifacts').mkdir(parents=True, exist_ok=False)\nshutil.copyfile(STAGE / 'bpp_artifacts/validation_report.json', context / 'artifacts/validation_report.json')\nsuite = unittest.TestSuite()\nfor name in ('test_import', 'test_validation', 'test_conversion', 'test_export_parity'):\n    spec = importlib.util.spec_from_file_location(name, FRONT / 'tests' / (name + '.py'))\n    module = importlib.util.module_from_spec(spec)\n    sys.modules[name] = module\n    spec.loader.exec_module(module)\n    if name == 'test_export_parity':\n        module.RESEARCH = RESEARCH\n        module.OUTPUT = STAGE / 'bpp_exports'\n        module.ROOT = context\n    suite.addTests(unittest.defaultTestLoader.loadTestsFromModule(module))\nresult = unittest.TextTestRunner(verbosity=2).run(suite)\nsys.exit(0 if result.wasSuccessful() else 1)\n",
+  "path_overrides": {
+    "test_export_parity.RESEARCH": "/workspace/shared/urp_sync/current/data/bpp/records",
+    "test_export_parity.OUTPUT": "/workspace/shared/urp_sync/rebuild_staging/bpp_exports",
+    "test_export_parity.ROOT": "/workspace/shared/urp_sync/rebuild_staging/bpp_test_context"
+  },
+  "validation_context": "Only this run's fresh validation_report.json was copied into the isolated test context; no historical validation used",
+  "fixture_environment": {
+    "TMPDIR": "/workspace/shared/urp_sync/rebuild_staging/bpp_tmp",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "tests_run": 21,
+  "status": "PASS"
+}

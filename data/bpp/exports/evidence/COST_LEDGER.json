@@ -1,0 +1,41 @@
+{
+  "schema": "cpu-cost-ledger-v1",
+  "measured_complete_process_cpu_seconds": {
+    "RUN": 162.904035,
+    "CHECK_CACHED": 10.155128999999999,
+    "ANALYZE": 2.07289
+  },
+  "measured_successful_preflight_cpu_seconds": 0.884,
+  "measured_independent_terminal_audit_cpu_seconds": 6.444546000000001,
+  "measured_artifact_stages_before_archive_seconds": 14.622957786,
+  "artifact_stage_records": [
+    "ARTIFACT_PLOT_FIX_R2_RESOURCE.json",
+    "ARTIFACT_PLOT_FIX_R3_RESOURCE.json",
+    "ARTIFACT_PLOT_FIX_RESOURCE.json",
+    "ARTIFACT_RENDER_R2_RESOURCE.json",
+    "ARTIFACT_RENDER_R3_RESOURCE.json",
+    "ARTIFACT_RENDER_RESOURCE.json",
+    "ARTIFACT_REPORT_R2_RESOURCE.json",
+    "ARTIFACT_REPORT_R3_RESOURCE.json",
+    "ARTIFACT_REPORT_R4_RESOURCE.json",
+    "ARTIFACT_REPORT_RESOURCE.json"
+  ],
+  "interrupted_first_checker_actual_cpu_seconds": null,
+  "interrupted_first_checker_conservative_hard_cap_charge_seconds": 240,
+  "unmetered_early_preparation_and_static_checks": true,
+  "early_setup_100_second_reservation": "Planning allocation only; neither measured actual nor proven upper bound. Do not add as historical measured usage.",
+  "historical_total_cpu_seconds": null,
+  "historical_total_900_cpu_compliance": "NOT_ESTABLISHED",
+  "forward_budget_start_seconds": 396.211965,
+  "forward_measured_spend_before_archive_seconds": 33.401915785999996,
+  "forward_remaining_before_archive_seconds": 362.81004921400006,
+  "forward_controls": "Cachedcheck hard240, analysis hard40, independent terminal audit hard60; all report/font rerender/package stages share20CPU pool enforced by descendant CPU watchdog and inherited per-process RLIMIT. Successful actual usage recorded separately.",
+  "packaging_cost_note": "Final archive closing, checksum verification, and delivery readback costs are in the separate final delivery acceptance receipt; they cannot be known inside a self-contained pre-close archive ledger.",
+  "policy_runs": 768,
+  "policy_failures": 0,
+  "policy_retries": 0,
+  "validator_restarts": 1,
+  "model_calls": 0,
+  "api_charges": 0,
+  "measured_independent_document_audit_cpu_seconds": 0.10639299999999999
+}

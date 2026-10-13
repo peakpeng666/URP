@@ -1,0 +1,449 @@
+{
+  "schema_version": 1,
+  "id": "bpp-history",
+  "title": "BPP 前缀选择器 · 历史 768 次运行",
+  "domain": "BPP",
+  "kind": "historical_prefix_selector",
+  "status": "completed",
+  "started_at": null,
+  "finished_at": "2026-10-06T07:30:10Z",
+  "counts": [
+    {
+      "unit": "run",
+      "value": 768,
+      "scope": "historical",
+      "note": "meta.json:counts.runs, cross-checked against catalog run records; no rerun during import"
+    },
+    {
+      "unit": "stream",
+      "value": 264,
+      "scope": "historical",
+      "note": "meta.json:counts.streams; train 144, confirmation 108, risk 12"
+    },
+    {
+      "unit": "multiset",
+      "value": 88,
+      "scope": "historical",
+      "note": "catalog.json:unique group_id; three correlated orders per group"
+    }
+  ],
+  "failure_reason": null,
+  "failures": null,
+  "notes": [
+    "768 次运行全部是 2026-10-06 的历史策略执行，本次只导入已有元数据与目录，没有运行新实验。",
+    "confirmation、risk、train 各自有独立 cohort，不能把训练误差、确认面板或风险反例混为一个平均数。",
+    "确认面板为六个固定合成家族；分支 oracle 和 full-run oracle 均是 hindsight 参照，不是在线可实现策略或装箱全局最优。",
+    "风险面板保留相同前缀但后缀偏好翻转的负结果；质量变差不表示程序失败。",
+    "历史总 900 CPU 秒合规性未确立，不能把未知全流程成本写为零。",
+    "本包保留两个已生成索引文件的原字节；索引中的旧站点链接并未自动导入为本后端附件。",
+    "prepared_utc 是准备时间而非实测运行起点，因此 started_at 保留 null。"
+  ],
+  "parameters": {
+    "historical": true,
+    "capacity": 100,
+    "items_per_stream": 5000,
+    "switch_after": 500,
+    "families": [
+      "weibull_3_45",
+      "uniform_1_100",
+      "small_beta_2_5",
+      "large_beta_5_2",
+      "normal_50_15",
+      "bimodal_20_30_70_80"
+    ],
+    "streams_by_split": {
+      "confirmation": 108,
+      "risk": 12,
+      "train": 144
+    },
+    "runs_by_split": {
+      "train": 288,
+      "confirmation": 432,
+      "risk": 48
+    },
+    "recorded_run_states": {
+      "completed": 768
+    },
+    "historical_total_cpu_compliance": "NOT_ESTABLISHED"
+  },
+  "provenance": {
+    "captured_at": "2026-10-07T02:58:06.064329+00:00",
+    "source_label": "public/data/meta.json + public/data/catalog.json"
+  },
+  "metrics": [
+    {
+      "id": "confirmation-BF-mean_bins",
+      "label": "平均箱数 · confirmation",
+      "algorithm": "BF",
+      "value": 2794.3518518518517,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:confirmation:streams=108",
+        "protocol": "historical prefix-safe BPP; confirmation split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/confirmation/mean_bins/BF"
+      }
+    },
+    {
+      "id": "confirmation-BF_then_EoH-mean_bins",
+      "label": "平均箱数 · confirmation",
+      "algorithm": "BF_then_EoH",
+      "value": 2757.527777777778,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:confirmation:streams=108",
+        "protocol": "historical prefix-safe BPP; confirmation split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/confirmation/mean_bins/BF_then_EoH"
+      }
+    },
+    {
+      "id": "confirmation-SBS-mean_bins",
+      "label": "平均箱数 · confirmation",
+      "algorithm": "SBS",
+      "value": 2757.527777777778,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:confirmation:streams=108",
+        "protocol": "historical prefix-safe BPP; confirmation split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/confirmation/mean_bins/SBS"
+      }
+    },
+    {
+      "id": "confirmation-SELECTOR-mean_bins",
+      "label": "平均箱数 · confirmation",
+      "algorithm": "SELECTOR",
+      "value": 2736.074074074074,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:confirmation:streams=108",
+        "protocol": "historical prefix-safe BPP; confirmation split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/confirmation/mean_bins/SELECTOR"
+      }
+    },
+    {
+      "id": "confirmation-branch_oracle-mean_bins",
+      "label": "平均箱数 · confirmation",
+      "algorithm": "branch_oracle",
+      "value": 2733.1944444444443,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:confirmation:streams=108",
+        "protocol": "historical prefix-safe BPP; confirmation split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/confirmation/mean_bins/branch_oracle"
+      }
+    },
+    {
+      "id": "confirmation-full_run_oracle-mean_bins",
+      "label": "平均箱数 · confirmation",
+      "algorithm": "full_run_oracle",
+      "value": 2727.185185185185,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:confirmation:streams=108",
+        "protocol": "historical prefix-safe BPP; confirmation split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/confirmation/mean_bins/full_run_oracle"
+      }
+    },
+    {
+      "id": "confirmation-published_EoH-mean_bins",
+      "label": "平均箱数 · confirmation",
+      "algorithm": "published_EoH",
+      "value": 2748.314814814815,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:confirmation:streams=108",
+        "protocol": "historical prefix-safe BPP; confirmation split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/confirmation/mean_bins/published_EoH"
+      }
+    },
+    {
+      "id": "confirmation-selector_minus_SBS_mean",
+      "label": "选择器减去 SBS · confirmation",
+      "algorithm": "SELECTOR",
+      "value": -21.453703703703702,
+      "comparison": {
+        "metric": "selector_minus_SBS_mean",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:confirmation:streams=108",
+        "protocol": "historical prefix-safe BPP; confirmation split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean per-stream paired bin-count difference in the same split",
+        "reference": "training-frozen SBS = BF_then_EoH"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/confirmation/selector_minus_SBS_mean"
+      }
+    },
+    {
+      "id": "confirmation-selector_oracle_regret",
+      "label": "两后缀分支 oracle regret · confirmation",
+      "algorithm": "SELECTOR",
+      "value": 2.8796296296296298,
+      "comparison": {
+        "metric": "selector_oracle_regret",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:confirmation:streams=108",
+        "protocol": "historical prefix-safe BPP; confirmation split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean per-stream paired bin-count difference in the same split",
+        "reference": "hindsight minimum of BF and BF_then_EoH after shared BF prefix"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/confirmation/selector_oracle_regret"
+      }
+    },
+    {
+      "id": "risk-BF-mean_bins",
+      "label": "平均箱数 · risk",
+      "algorithm": "BF",
+      "value": 2715.6666666666665,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:risk:streams=12",
+        "protocol": "historical prefix-safe BPP; risk split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/risk/summary/mean_bins/BF"
+      }
+    },
+    {
+      "id": "risk-BF_then_EoH-mean_bins",
+      "label": "平均箱数 · risk",
+      "algorithm": "BF_then_EoH",
+      "value": 2665.5833333333335,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:risk:streams=12",
+        "protocol": "historical prefix-safe BPP; risk split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/risk/summary/mean_bins/BF_then_EoH"
+      }
+    },
+    {
+      "id": "risk-SBS-mean_bins",
+      "label": "平均箱数 · risk",
+      "algorithm": "SBS",
+      "value": 2665.5833333333335,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:risk:streams=12",
+        "protocol": "historical prefix-safe BPP; risk split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/risk/summary/mean_bins/SBS"
+      }
+    },
+    {
+      "id": "risk-SELECTOR-mean_bins",
+      "label": "平均箱数 · risk",
+      "algorithm": "SELECTOR",
+      "value": 2690.9166666666665,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:risk:streams=12",
+        "protocol": "historical prefix-safe BPP; risk split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/risk/summary/mean_bins/SELECTOR"
+      }
+    },
+    {
+      "id": "risk-branch_oracle-mean_bins",
+      "label": "平均箱数 · risk",
+      "algorithm": "branch_oracle",
+      "value": 2664.6666666666665,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:risk:streams=12",
+        "protocol": "historical prefix-safe BPP; risk split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/risk/summary/mean_bins/branch_oracle"
+      }
+    },
+    {
+      "id": "risk-full_run_oracle-mean_bins",
+      "label": "平均箱数 · risk",
+      "algorithm": "full_run_oracle",
+      "value": 2664.5833333333335,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:risk:streams=12",
+        "protocol": "historical prefix-safe BPP; risk split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/risk/summary/mean_bins/full_run_oracle"
+      }
+    },
+    {
+      "id": "risk-published_EoH-mean_bins",
+      "label": "平均箱数 · risk",
+      "algorithm": "published_EoH",
+      "value": 2666.5,
+      "comparison": {
+        "metric": "mean_bins",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:risk:streams=12",
+        "protocol": "historical prefix-safe BPP; risk split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean bin count over the same split's streams; three orders per multiset correlated",
+        "reference": "absolute bin count; hindsight oracles explicitly labeled"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/risk/summary/mean_bins/published_EoH"
+      }
+    },
+    {
+      "id": "risk-selector_minus_SBS_mean",
+      "label": "选择器减去 SBS · risk",
+      "algorithm": "SELECTOR",
+      "value": 25.333333333333332,
+      "comparison": {
+        "metric": "selector_minus_SBS_mean",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:risk:streams=12",
+        "protocol": "historical prefix-safe BPP; risk split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean per-stream paired bin-count difference in the same split",
+        "reference": "training-frozen SBS = BF_then_EoH"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/risk/summary/selector_minus_SBS_mean"
+      }
+    },
+    {
+      "id": "risk-selector_oracle_regret",
+      "label": "两后缀分支 oracle regret · risk",
+      "algorithm": "SELECTOR",
+      "value": 26.25,
+      "comparison": {
+        "metric": "selector_oracle_regret",
+        "unit": "bins",
+        "direction": "min",
+        "cohort": "historical-bpp-20261006:risk:streams=12",
+        "protocol": "historical prefix-safe BPP; risk split; BF shared prefix then fixed branch; freeze namespace=bpp_prefix_selection_20261006_v1",
+        "budget": "5000 online items; capacity=100; branch decision after=500",
+        "aggregation": "mean per-stream paired bin-count difference in the same split",
+        "reference": "hindsight minimum of BF and BF_then_EoH after shared BF prefix"
+      },
+      "source": {
+        "artifact_id": "meta-json",
+        "locator": "/summary/risk/summary/selector_oracle_regret"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "meta-json",
+      "path": "files/meta.json",
+      "media_type": "application/json",
+      "role": "provenance"
+    },
+    {
+      "id": "catalog-json",
+      "path": "files/catalog.json",
+      "media_type": "application/json",
+      "role": "provenance"
+    }
+  ]
+}

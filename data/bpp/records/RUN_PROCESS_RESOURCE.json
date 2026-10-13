@@ -1,0 +1,15 @@
+{
+  "stage": "run",
+  "started_utc": "2026-10-06T07:27:27Z",
+  "command": [
+    "python",
+    "independent_bpp_prefix_selection_20261006/src/run.py"
+  ],
+  "exit_code": 0,
+  "cpu_user_seconds": 162.64933,
+  "cpu_system_seconds": 0.254705,
+  "cpu_total_seconds": 162.904035,
+  "wall_seconds": 162.94226819499454,
+  "max_rss_kb": 29740,
+  "counts_entire_child_process_and_its_children": true
+}

@@ -1,0 +1,2 @@
+def score(item, bins):
+    return -np.asarray(bins - item, dtype=np.float64)

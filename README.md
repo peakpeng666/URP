@@ -4,7 +4,7 @@
 
 **[下一阶段](下一阶段.md) · [当前实验进度](experiments/状态.md) · [老师要求与成果](materials/学习/老师要求与进度.md) · [按需取用](按需取用.md)**
 
-源码、论文笔记和实验报告维护在GitHub；论文原文、教材、算例与原始结果保存在资料包中，按需取回。完整包 `URP.zip` 已校验并放在Windows桌面，供挂载上传[云盘](https://drive.google.com/drive/folders/1ZpHAznk36B-PVwL19lo_-kulRF3pwtBY)。存储位置和校验值见[storage.json](storage.json)。
+本目录包含源码、论文精读、论文原文、教材、算例和实验原始记录。项目交接使用[私有云盘](https://drive.google.com/drive/folders/1ZpHAznk36B-PVwL19lo_-kulRF3pwtBY)，交付维护在[私有GitHub仓库](https://github.com/peakpeng666/URP)。存储和核验状态见[storage.json](storage.json)。
 
 | 内容 | 入口 |
 |---|---|

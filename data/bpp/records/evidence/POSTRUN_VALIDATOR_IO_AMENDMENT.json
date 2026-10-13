@@ -1,0 +1,23 @@
+{
+  "created_utc": "2026-10-06T07:31:46Z",
+  "stage": "validation_only",
+  "original_source_unchanged": true,
+  "original_check_sha256": "4d869b118f0aad47664252ff3053e652d5f0777bd8934f91513af3a84afa030a",
+  "cached_check_sha256": "3fd49705988810cfc528aae9397e979e644dba9245d820893cf62478498564d7",
+  "change": "Load each compressed trajectory array once into dict rather than decompress repeatedly on each per-step access; all checking logic and assertions byte-for-byte unchanged.",
+  "reason": "Stopped first checker after26 completed traces due repeated decompression overhead, no mismatches observed and no scientific policy execution repeated.",
+  "first_checker_cpu_actual_seconds": null,
+  "first_checker_budget_upper_bound_seconds": 240,
+  "unknown_cost_reason": "Ctrl-C interrupted both child and outer accounting wrapper before outer final resource record; full frozen child CPU hard limit charged conservatively.",
+  "original_check_log": "CHECK.log",
+  "validation_retry_only": true,
+  "policy_runs_remain": 768,
+  "all_outcomes_and_model_unchanged": true,
+  "termination_evidence": {
+    "exec_session_id": 3074,
+    "write_stdin_control_C_result_exit_code": 130,
+    "tool_result_original_token_count": 0,
+    "CHECK_log_complete_traces": 26,
+    "CHECK_log_no_changes_since_interrupt": true
+  }
+}

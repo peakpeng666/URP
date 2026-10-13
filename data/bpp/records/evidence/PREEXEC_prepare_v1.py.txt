@@ -1,0 +1,56 @@
+"""Generate fresh inputs and freeze protocol and code before any policy executions."""
+import pathlib,hashlib,json,sys,platform,time
+import numpy as np
+from selector import FEATURE_NAMES
+H=pathlib.Path(__file__).resolve().parents[1]
+NS='bpp_prefix_selection_20261006_v1'
+ALLOW={'BF':'f1b3010016ca5c3c95a5f583ddc071cd1a30cfaf40e270b865c95f4817387d4b','published_EoH':'de06105a3b630fc5ab6f2d823e45d5326315071208cbac8379ffe8d3a29bed7a'}
+FAMILIES=['weibull_3_45','uniform_1_100','small_beta_2_5','large_beta_5_2','normal_50_15','bimodal_20_30_70_80']
+ORDERS=['random','ascending','descending']
+canon=lambda x:json.dumps(x,sort_keys=True,separators=(',',':'),ensure_ascii=False,allow_nan=False)
+sha=lambda x:hashlib.sha256(x).hexdigest()
+def put(p,x):
+    with p.open('x') as f:f.write(canon(x)+'\n')
+def seed(*parts):return int.from_bytes(hashlib.sha256((NS+'|'+'|'.join(map(str,parts))).encode()).digest()[:16],'big')
+def make(family,n,rng):
+    if family=='weibull_3_45':a=45*rng.weibull(3,n)
+    elif family=='uniform_1_100':a=rng.integers(1,101,n)
+    elif family=='small_beta_2_5':a=100*rng.beta(2,5,n)
+    elif family=='large_beta_5_2':a=100*rng.beta(5,2,n)
+    elif family=='normal_50_15':a=rng.normal(50,15,n)
+    else:a=np.where(rng.integers(0,2,n)==0,rng.integers(20,31,n),rng.integers(70,81,n))
+    return np.rint(np.clip(a,1,100)).astype(np.int64).tolist(),{'raw_below_1':int(np.sum(a<1)),'raw_above_100':int(np.sum(a>100))}
+records=[]
+for split,reps in [('train',8),('confirmation',6)]:
+    for family in FAMILIES:
+        for rep in range(reps):
+            v_seed=seed(split,family,rep,'values'); o_seed=seed(split,family,rep,'permutation')
+            items,clips=make(family,5000,np.random.Generator(np.random.PCG64(v_seed)))
+            multiset_sha=sha(canon(sorted(items)).encode()); group=f'{split}_{family}_r{rep}'
+            perm=np.random.Generator(np.random.PCG64(o_seed)).permutation(5000).tolist()
+            for order in ORDERS:
+                idx=perm if order=='random' else sorted(range(5000),key=lambda j:items[j],reverse=order=='descending')
+                meta={'instance_id':f'{group}__{order}','group_id':group,'split':split,'family':family,'replicate':rep,'order':order,'value_seed':v_seed,'permutation_seed':o_seed,'multiset_sha256':multiset_sha,**clips}
+                stream=[items[j] for j in idx]
+                put(H/'inputs'/f"{meta['instance_id']}.json",{**meta,'capacity':100,'n':5000,'items':stream,'source_position':idx})
+                records.append(meta)
+# Risk panel: four random 500-prefixes, each followed by the same 4500-item suffix
+# multiset in random/ascending/descending arrival order. Not used in training or main metric.
+for rep,family in enumerate(['weibull_3_45','uniform_1_100','small_beta_2_5','bimodal_20_30_70_80']):
+    p_seed=seed('risk',family,'prefix'); s_seed=seed('risk',family,'suffix_permutation')
+    prefix,clips=make(family,500,np.random.Generator(np.random.PCG64(p_seed)))
+    suffix=list(range(1,101))*45; perm=np.random.Generator(np.random.PCG64(s_seed)).permutation(4500).tolist()
+    group=f'risk_prefix_{family}'; prefix_sha=sha(canon(prefix).encode())
+    for order in ORDERS:
+        tail=[suffix[j] for j in perm] if order=='random' else sorted(suffix,reverse=order=='descending')
+        stream=prefix+tail
+        meta={'instance_id':f'{group}__{order}','group_id':group,'split':'risk','family':family,'replicate':rep,'order':order,'prefix_seed':p_seed,'suffix_permutation_seed':s_seed,'prefix_sha256':prefix_sha,'multiset_sha256':sha(canon(sorted(stream)).encode()),**clips}
+        put(H/'inputs'/f"{meta['instance_id']}.json",{**meta,'capacity':100,'n':5000,'items':stream})
+        records.append(meta)
+for p,h in ALLOW.items():assert sha((H/'sources'/f'{p}.py.txt').read_bytes())==h
+protocol={'schema':'prefix-safe-bpp-selection-v1','prepared_utc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'namespace':NS,'question':'Can fixed BF/EoH complementarity yield executable selection benefit from arrived prefixes alone?','status':'New post-hoc proposed in-distribution finite-panel prototype; not original study confirmation; not AutoFolio or RAISE replication','capacity':100,'n':5000,'switch_after':500,'prefix_policy':'BF','branches':['BF','BF_then_EoH'],'fixed_full_baseline':'published_EoH','policy_hashes':ALLOW,'families':FAMILIES,'family_sampling':'Same six pre-existing stress families; fresh disjoint SHA256 seed blocks train and confirmation; clipped continuous values then ties-even integer rounding','orders':ORDERS,'grouping':'All three orderings of one multiset stay in same split; confirmation inference clusters all three. Family/order balanced synthetic finite mixture; no deployment-population claim.','rng':'numpy PCG64; SHA256(namespace|labels) first 16 bytes big-endian','features':{'count':31,'names':list(FEATURE_NAMES),'inputs':'Only first 500 arrived integer items and exact 500-item BF residual state in fixed 5000 slots','normalization':'training mean and population std only; zero std becomes 1','histograms':'10 equal integer size buckets 1..10 ...91..100; used residual buckets0..9 ...90..99; frequencies normalize by prefix length or number used bins','quantiles':'numpy linear quantiles .1/.5/.9','order':'adjacent strict increase and decrease fractions; last100 minus first100 mean, /100'},'selector':{'method':'kNN unweighted separate final-bin cost regressions','k':5,'distance':'squared Euclidean on training z-scores','neighbor_tie':'stable training row order: family then replicate then random/ascending/descending','prediction_tie':'training-set SBS','sbs':'minimum training mean final bins across same-BF-prefix branches; BF wins tie','fitting':'all 144 training rows only; no CV/hyperparameter search; test results cannot alter any parameter','labels':'two actual complete 5000-step runs with identical BF first500; final bin counts for same-state continuations; never full-EoH-from-start proxy'},'counts':{'train_groups':48,'train_streams':144,'train_label_runs':288,'confirmation_groups':36,'confirmation_streams':108,'confirmation_runs':432,'risk_groups':4,'risk_streams':12,'risk_runs':48,'total_full_policy_stream_runs':768},'metrics':{'primary':'mean(selector bins - training SBS branch bins) on 108 confirmation streams, negative favorable','secondary':['mean selector regret to min(BF, BF_then_EoH)','mean SBS regret to branch oracle / headroom','fraction SBS-oracle headroom recovered, null if zero','W/T/L and worst selector harm vs SBS','allBF, BF_then_EoH, fullEoH final bins','full-run oracle min(allBF, fullEoH) is separate explanatory counterfactual with different start state','per family x order full results, not selected cases','CPU for labels, fit, features, prediction, policy, verification, analysis; no unit conflation with bins'],'uncertainty':'fixed 10000 bootstrap, resample6 multiset groups within each family with replacement, preserve all3 orders; seed namespace|bootstrap; descriptive95% percentile interval on balanced synthetic mixture','risk_panel':'12 same-prefix/different-suffix-order constructions separate; require identical features, predictions and branch within each3; report all regrets and any changed oracle preferred branch'},'execution':{'host':'5000 empty C100 slots, all feasible bins including unused, ascending index first argmax; fixed score sources byte-identical','online_interface':'one-pass iterator; selector invoked after exactly500 calls before item501 fetched; only prefix/state/model arguments; no metadata, seed, distribution label or future statistics available','training_freeze':'MODEL.json written and hashed before opening confirmation/risk raw outcomes','checks':'independent scalar residual-value score ranking + heap first-index replay for every step; integer feasible/volume/bin/trajectory checks; prefix match; selector outcomes equal chosen actual branch; all risk invariance','failure':'preserve complete or partial raw trajectory; stop on any failure, no numerical retries or dropping cases'},'budget':{'cpu_total_seconds':900,'numerical_hard_cpu_seconds':600,'independent_check_hard_cpu_seconds':240,'analysis_hard_cpu_seconds':40,'single_thread':True,'extra_model_calls':0,'api_charges':0,'mutable_old_packages':False},'information_firewall':['no original132 heldout or P1 result reads','no prompt or parent selection changes','no old benchmark results used as labels','no test-driven selector adjustments'],'environment':{'python':sys.version,'numpy':np.__version__,'platform':platform.platform()},'instances':records}
+put(H/'PROTOCOL.json',protocol)
+files={str(p.relative_to(H)):sha(p.read_bytes()) for d in ['src','sources','inputs','evidence'] for p in sorted((H/d).rglob('*')) if p.is_file() and '__pycache__' not in str(p)}
+files['PROTOCOL.json']=sha((H/'PROTOCOL.json').read_bytes())
+put(H/'FREEZE.json',{'schema':'freeze-v1','created_utc':protocol['prepared_utc'],'before_any_policy_execution':True,'files':files})
+print(canon({'freeze_sha256':sha((H/'FREEZE.json').read_bytes()),'instances':len(records),'files':len(files)}))

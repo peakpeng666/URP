@@ -1,0 +1,57 @@
+{
+  "schema": "independent-bpp-prefix-preexecution-audit-v1",
+  "created_utc": "2026-10-06T07:29:11.483461+00:00",
+  "recommendation": "GO_FOR_ONE_FROZEN_EXECUTION_WITH_POSTRUN_GATES",
+  "scientific_execution_blockers": [],
+  "result_validated": false,
+  "policy_runs_executed_by_auditor": 0,
+  "approved_freeze_sha256": "883780fb58189db4159a0e2c99b4c2db43b4b98a36ade8387b795973b5dc153a",
+  "integrity_and_input_checks_passed": true,
+  "frozen_entries_verified": 284,
+  "input_streams": {
+    "train": 144,
+    "confirmation": 108,
+    "risk": 12
+  },
+  "multiset_groups": {
+    "train": 48,
+    "confirmation": 36,
+    "risk": 4
+  },
+  "input_items_verified": 1320000,
+  "resolved_findings": [
+    "CPU-limit checkpoint opportunity added before execution; hardkill limitation disclosed",
+    "Unfrozen report f-string syntax errors corrected and independently reparsed",
+    "Full-process timing uses bash built-in time because /usr/bin/time is absent"
+  ],
+  "nonblocking_limitations": [
+    "Finite synthetic in-distribution panel only",
+    "Bootstrap conditional on fixed training/model; six groups per family",
+    "Logical online interface rather than adversarial isolation",
+    "Cross-platform scalar/NumPy near-tie equivalence awaits full-step checker",
+    "Abrupt interruption cannot guarantee current partial RAM trajectory persistence",
+    "Single-thread invocation and total900 CPU target require external verification",
+    "Independent postrun audit should explicitly connect branch label to selected_index",
+    "Unfrozen narrative must distinguish observed mean differences from statistical generalization"
+  ],
+  "required_postrun_gates": {
+    "complete_full_runs": 768,
+    "decision_and_integer_steps": 3840000,
+    "selector_decisions": 120,
+    "risk_invariance_groups": 4,
+    "freeze_unchanged": true,
+    "no_failed_case_dropping": true,
+    "no_numerical_retries_or_tuning": true,
+    "independent_final_review": true
+  },
+  "measured_successful_preflight_process_cost": {
+    "user_seconds": 0.843,
+    "system_seconds": 0.041,
+    "cpu_seconds": 0.884,
+    "wall_seconds": 0.885,
+    "method": "bash built-in time",
+    "entire_audit_cost_measured": false
+  },
+  "machine_evidence": "PREFLIGHT_MACHINE_CHECKS.json",
+  "full_report": "PREEXEC_AUDIT.md"
+}
