@@ -1,0 +1,9 @@
+{
+  "archive": "/workspace/shared/cvrp_budgeted_terminal_swap_20261008.zip",
+  "bytes": 673928,
+  "sha256": "ccebabe4cb3b901c2bcd2e016df575cf4d402001aa94ce6a4e5e2f91bd8bab0a",
+  "package_cpu_seconds": 0.17022699000000002,
+  "package_wall_seconds": 0.17026090699073393,
+  "archive_test": "PASS",
+  "files": 51
+}

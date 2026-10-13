@@ -1,0 +1,164 @@
+{
+  "freezes": [
+    {
+      "utc": "2026-10-08T12:01:24.815281+00:00",
+      "files": 9
+    },
+    {
+      "utc": "2026-10-08T12:01:24.864482+00:00",
+      "files": 26
+    },
+    {
+      "utc": "2026-10-08T12:02:35.956912+00:00",
+      "files": 26
+    }
+  ],
+  "solutions_checked": 30,
+  "mapped_segment_uses": 689,
+  "unique_rational_segments": 301,
+  "saved_leg_paths_checked": 7116,
+  "mapped_length_max_abs_error_m": 1.1368683772161603e-13,
+  "rows": [
+    {
+      "id": "n08_s202610081001",
+      "n": 8,
+      "NN_m": 326.63410863941556,
+      "2opt_m": 290.6141109661737,
+      "improvement_pct": 11.027628995416936,
+      "gaps_pct": {
+        "nearest_neighbor": 12.394442084553292,
+        "nn_2opt_budget": 0.0
+      }
+    },
+    {
+      "id": "n12_s202610081001",
+      "n": 12,
+      "NN_m": 503.91837729489083,
+      "2opt_m": 438.1360674164211,
+      "improvement_pct": 13.054159729517904,
+      "gaps_pct": {
+        "nearest_neighbor": 15.014127977724257,
+        "nn_2opt_budget": 0.0
+      }
+    },
+    {
+      "id": "n20_s202610081001",
+      "n": 20,
+      "NN_m": 741.5801829784573,
+      "2opt_m": 588.9050323191175,
+      "improvement_pct": 20.58781425983372,
+      "gaps_pct": {
+        "nearest_neighbor": null,
+        "nn_2opt_budget": null
+      }
+    },
+    {
+      "id": "n40_s202610081001",
+      "n": 40,
+      "NN_m": 904.0436275311067,
+      "2opt_m": 796.948722761302,
+      "improvement_pct": 11.84620979656425,
+      "gaps_pct": {
+        "nearest_neighbor": null,
+        "nn_2opt_budget": null
+      }
+    },
+    {
+      "id": "n08_s202610081002",
+      "n": 8,
+      "NN_m": 379.1808989241514,
+      "2opt_m": 376.48074035631544,
+      "improvement_pct": 0.7121030029458515,
+      "gaps_pct": {
+        "nearest_neighbor": 0.8545424114019262,
+        "nn_2opt_budget": 0.13635418628303864
+      }
+    },
+    {
+      "id": "n12_s202610081002",
+      "n": 12,
+      "NN_m": 686.8292594416329,
+      "2opt_m": 622.0434993602518,
+      "improvement_pct": 9.432585928859462,
+      "gaps_pct": {
+        "nearest_neighbor": 12.226415168370753,
+        "nn_2opt_budget": 1.6405621227356226
+      }
+    },
+    {
+      "id": "n20_s202610081002",
+      "n": 20,
+      "NN_m": 763.5167877441999,
+      "2opt_m": 710.1895578084892,
+      "improvement_pct": 6.984421402607955,
+      "gaps_pct": {
+        "nearest_neighbor": null,
+        "nn_2opt_budget": null
+      }
+    },
+    {
+      "id": "n40_s202610081002",
+      "n": 40,
+      "NN_m": 1106.2273609693923,
+      "2opt_m": 893.0924344146971,
+      "improvement_pct": 19.26682832794192,
+      "gaps_pct": {
+        "nearest_neighbor": null,
+        "nn_2opt_budget": null
+      }
+    },
+    {
+      "id": "n08_s202610081003",
+      "n": 8,
+      "NN_m": 509.38721585810254,
+      "2opt_m": 432.19334263337447,
+      "improvement_pct": 15.154261988041643,
+      "gaps_pct": {
+        "nearest_neighbor": 18.542790375154606,
+        "nn_2opt_budget": 0.5785053537686657
+      }
+    },
+    {
+      "id": "n12_s202610081003",
+      "n": 12,
+      "NN_m": 584.2472287307896,
+      "2opt_m": 550.0798743946679,
+      "improvement_pct": 5.848098656855669,
+      "gaps_pct": {
+        "nearest_neighbor": 9.441777230730807,
+        "nn_2opt_budget": 3.041514126461453
+      }
+    },
+    {
+      "id": "n20_s202610081003",
+      "n": 20,
+      "NN_m": 731.2099422109396,
+      "2opt_m": 685.7152889768757,
+      "improvement_pct": 6.221831871774465,
+      "gaps_pct": {
+        "nearest_neighbor": null,
+        "nn_2opt_budget": null
+      }
+    },
+    {
+      "id": "n40_s202610081003",
+      "n": 40,
+      "NN_m": 1012.0589278510189,
+      "2opt_m": 886.273232920744,
+      "improvement_pct": 12.428692783469154,
+      "gaps_pct": {
+        "nearest_neighbor": null,
+        "nn_2opt_budget": null
+      }
+    }
+  ],
+  "children_cpu_seconds": 9.702542,
+  "generation_supervisor_children_cpu_sum": 9.795446602999998,
+  "scope_limitations": [
+    "No solver/shortest-path/oracle execution during review. Saved n8 brute result and oracle source inspected; n12 optimum not independently solved.",
+    "Exact geometry check interprets original decimal WKT boundary vertices and integer service points; scores recomputed from saved floating coordinates.",
+    "Seeds are only three paired layouts with nested size prefixes; descriptive exploratory evidence.",
+    "Initial failed launcher preserved; r1 is a disclosed technical amendment, not an unqualified first-attempt PASS.",
+    "No prelaunch resource smoke existed; post-hoc checks cannot establish one."
+  ]
+}

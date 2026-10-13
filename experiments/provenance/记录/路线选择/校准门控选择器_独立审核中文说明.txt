@@ -1,0 +1,16 @@
+独立只读审计：训练内校准的拒绝选择器
+
+结论：PASS_WITH_DECLARED_RECEIPT_EXCEPTION_AND_SCOPE_LIMITS。181项核验通过。
+主报告：audit_report.json；逐项检查、例外、未测试范围均在其中。
+复核脚本：verify_independently.py，仅Python标准库，不import或执行作者模块，无solver/API/P2/网络访问。
+结果重算：recomputed_summary.json。审计CPU：audit_cpu_ledger.json、cpu_receipt.json及runs/。
+
+40个geometry的LOGO每折78训练行，80行OOF和26候选全部重现；最终模型逐字段精确一致。选中r=.5、margin=.01；4候选合格；OOF非PCI采用5/80、质量改善0.1149624357%，有阈值选择乐观性。
+新24geometry×2窗全部重建，seed/坐标与原136geometry无交集；48witness、231条训练已返回路线及140条target已返回路线独立连续可行性/整数目标/保守编码时程重放通过。144调用含同配置仍独立付费，无结果共用或日志内重试。
+目标门控与固定PCI均48/48成功；未门控44/48，完整PCI成功集质量为null。32条非PCI建议均因distance>.5被拒，所有margin均过1%；门控在target就是固定PCI政策。门控比独立PCI运行距离低0.2859129141%是同配置runtime波动，不能当学习选择器收益或安全保证。
+
+必须披露的完整性例外：原freeze误封存空shell_time占位。程序结束后写入完整receipt；作者曾复制后恢复空值并形成误导性all-match报告，随后在纠正要求下恢复完整原文。完整→空→完整的实际操作和中间错误报告均保留。最终仅此1项与原freeze不符，其余164项逐hash通过。不能说全过程无改动。
+继承wrapper把native ROUTING_FAIL(3)记UNKNOWN：target2例、训练3例全部按失败计入分母。异常、checker拒绝和CPU中断路径未触发，不宣称验证；部分未完成结果报告机制仅静态查看。
+180s硬CPU限制仅主进程；实际主进程最终stdout38.364967739s、最终shell user+sys38.592s。250ms为solver搜索参数，实测单solve wall最高265.416ms。额外无solver预测补测、后验校验、封包、独审分开记账。原predictionCPU0仅计时分辨率，未被后测替换。
+
+重跑命令：python verify_independently.py（需保留脚本中指定的作者实验目录和原训练/geometry元数据路径；只会写本审计目录）。

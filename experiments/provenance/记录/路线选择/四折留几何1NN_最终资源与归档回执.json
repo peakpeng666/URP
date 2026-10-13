@@ -1,0 +1,14 @@
+{
+  "zip_path": "/workspace/shared/geometry_heldout_selection_20261007_clean.zip",
+  "zip_sha256": "b5c9902f390cfb9d9d80c334e175192985db1c98ca1c363e7471fc6525f138f7",
+  "zip_bytes": 426911,
+  "zip_integrity_passed": true,
+  "complete_manifest": "SHA256SUMS_POSTAUDIT.txt",
+  "total_measured_cpu_s": 0.220924223,
+  "failed_preflight_cpu_unmeasured_reserved_upper_bound_s": 2,
+  "all_attempts_cpu_measured_plus_reserved_upper_bound_s": 2.220926223,
+  "budget_cpu_s": 10,
+  "new_solver_calls": 0,
+  "new_model_calls": 0,
+  "uploads": 0
+}

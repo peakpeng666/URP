@@ -1,0 +1,76 @@
+独立已保存结果复核：PASS_SAVED_RESULTS_READONLY
+复核日期：2026-10-08 UTC
+
+结论
+未发现阻断交付的结果或证据不一致。只读取已有文件，独立重算已保存 assignment
+的整数可行性、守恒、用箱数和精确分数；未运行候选、原 driver、guard、分析脚本、
+模型或运行时测试，未上传文件。此前 REPORT.txt 静态审计保留不变。
+
+复核对象与固定哈希
+目录：/workspace/shared/bpp_old_partial_candidate_eval_20261008
+SOURCE_FREEZE.json：adf1513b43024d5b70be0820faa6f5d2a2af1c3d95d9d57f97440edf652e6558
+CANDIDATES.json：98f04b048889559ce7b786f7457129ef0018b460fd4eee520d61b93bbd997246
+ANALYSIS.json：251b2eecaf4d15e22f69aac54f1b02fd562cbf4eae0eb74019e7c6cce2e290b7
+CLOSEOUT.json：138f24504481f56b197be8ad71b383576de33577497ec216fbed1b3dc8029158
+四个哈希均与要求一致。19 个冻结文件均未变化。根放行副本与执行授权逐字节相同，
+绑定正确的两个冻结哈希和原定全部 13 个 action ID。原完整八候选评估器仍锁定，
+其冻结文件未改，claims/results/logs 仍为空。
+
+终态与执行证据
+- 13 个唯一 claim 各有唯一 terminal 和 payload，身份、claim 哈希、payload 哈希、
+  冻结哈希、累计预算及日志身份逐一核对通过，无多余 claim、payload 或日志文件。
+- 终态为 7 passed、1 candidate_failure/static_rejection、5 not_run_ineligible；
+  无 infrastructure_unknown、HALT 或 failure 文件。13 个 driver 均正常退出并回收。
+- 7 个不同候选 worker execution ID：W1 admission、toy、四次训练；W2 admission。
+  五项 W2 后续任务的 candidate_execution_started=false，且没有 worker/pack 结果。
+- 已启动 worker 的源码/claim/注册绑定、安全门、正常退出和清理证据吻合；成功 pack
+  的 supervisor 回收证据及 bounded admission canonical text 与 W1 入场结果一致。
+- 在这套闭合保存证据和未改的单次 claim 机制内，没有重试、重复执行、替换或
+  旧 claim 复用的证据。输入仅固定 toy 和原 W1/W2/W3/W4 训练流；无 held-out/
+  confirmation 输入或物化证据。此判断的范围是保存工件与冻结代码，不冒称拥有
+  对历史未记录进程、网络或全文件系统活动的事后审计能力。
+
+独立整数重放
+自写校验器不导入原评估包；逐个检查整数 item/bin index、容量上界、全部 placement、
+剩余容量向量、总质量守恒、used_bins、L1 和 assignment SHA256。
+共重放 13 份：W1 四条训练结果、W1 toy、父代四条、BF 四条，全部通过。
+顺序均为原训练流 W1/W2/W3/W4：
+- 旧 W1：410 / 401 / 411 / 411，合计 1633
+- 冻结父代：409 / 400 / 411 / 414，合计 1634
+- BF：419 / 409 / 425 / 418，合计 1671
+- 旧 W1 减父代：+1 / +1 / 0 / -3；两条较差、一条相同、一条较好
+- 旧 W1 toy：4 箱，L1=4，F=1
+
+四流等权精确平均 L1/used_bins：
+旧 W1：65919007/67572510
+父代：18093833783/18558129600
+BF：29024620753/30444058150
+旧 W1 减父代：167326221217/305114208753600，约 0.0005484052083334049。
+这些数值与 ANALYSIS/CLOSEOUT 一致。W2 无数值适应度，其四流均值保持 null。
+这仅是已见四条 W 训练流上的旧阶段回收候选探索性结果，不能据此推断泛化、
+独立确认、显著性、创新性或完整 W-vs-M 效应。原 M1/M2 生成失败继续保留。
+
+W2 静态拒绝的证据边界
+保存的入场结果为 admitted=false、kind=static、failure_class=static_rejection。
+冻结 worker 的 AdmissionError 捕获分支只发出 kind=static，未序列化具体原因或
+源码行；stderr 为空，steps/score_call_cpu_ns/arithmetic_steps_checked 均为 0。
+所以具体“首个拒绝原因”、运行时错误消息和行号无法从保存结果取得。
+人工阅读源码及规则可见 float(item) 和嵌套 def cost(x) 不在有限语言许可范围；
+这些仅为独立文本/规则对照，并非运行时日志，也不宣称确定首个触发点。
+W2_STATIC_REJECTION_NOTE 正确区分了这两类证据。本次未做 AST 诊断重解析、
+源码修补或候选再执行。
+
+资源计数
+13 个 driver 的 inclusive wait4 CPU 合计 11.434324 秒，只计一次；不再叠加
+内部 worker/supervisor 的 CPU。每个 guard 保守上界 1 秒，合计 13 秒，得到
+guarded actions 的保守 CPU 上界 24.434324 秒。wall_at_emit 合计
+11.572132907997002 秒，与 CLOSEOUT 一致。各项都在自己的 claim 预留内。
+累计 action 预留 1080 CPU/818 active-wall，加其他预留 170/200，即1250/1018；
+排程上限 1350/1150 未变。准备、交接、审计、打包完整实际开销未测，因此
+all-in CPU/active-wall 与全树 peak RSS 仍为 null，不能拿 guarded action 数值
+当作全项目实际总开销。
+
+独立证据
+同目录 RESULT_VERIFICATION.json 保存全部重放行与核验结果；
+verify_saved_results.py 是独立只读校验器。复核前后被审计目录与原完整评估器的
+全部现有文件哈希相同，旧静态审计文件未覆盖。本报告不重新打包完整 ZIP。

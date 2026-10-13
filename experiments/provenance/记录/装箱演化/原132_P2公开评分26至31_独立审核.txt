@@ -1,0 +1,13 @@
+独立增量只读审核：通过
+
+26–31 delta：186文件与ZIP逐字节一致，432779字节，SHA256 df587d32f8f7d29d320d3b04a12a0abf9b8ddca15ced3d7b4bc1f077aa5c811e。185条manifest通过，前19及20–25包引用与既有独立审核链一致。旧492状态文件哈希/大小不变，新增149文件，联合641文件完整闭合，无覆盖；没有重审全48科学文件。
+
+新增26、28、29、30、31五槽完整，27为timeout生成失败，仍保留空scores/null fitness。五个精确Fraction fitness独立重算通过；5份admission、25份pack通过原只读ReceiptBridge重验，固定case的输入哈希、L1/used_bins、checker、安全门及来源绑定一致。30对新runtime claim/result、55条新预约精确闭合，无额外/未知claim或HALT。
+
+累计31槽=20完整+4 AST拒绝+7生成失败；IID完整9/15、生成失败5/15、AST拒绝1/10实际admission；EOH完整11/16、生成失败2/16、AST拒绝3/14实际admission。前25槽只读复用，本轮只新增6槽。累计24 admissions、100 packs、124对runtime claim/result、224条预约。全P2分母保持60、两臂各30。
+
+新增去重数值CPU1060.270888秒，累计4106.708996秒；新增预约3005 CPU秒/2275共享wall秒，累计12024 CPU秒/9120共享wall秒。均与报告一致，未重复计入inclusive wait4，未重置原预算池。
+
+最高public设计集单候选仍slot7，不能推断跨臂胜负或heldout泛化。完整assignment数组未保存，核验为原checker回执与assignment SHA。保留账本内未见遗漏/重试，不证明范围外没有未记录活动；历史总余额未知。本次未执行候选、未重跑、未读heldout、未改交付包、未上传。
+
+核验程序CPU约0.115秒、wall约0.115秒。新增精确fitness和计数见同名JSON。

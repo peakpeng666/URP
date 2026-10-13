@@ -1,0 +1,141 @@
+URP 云盘终点冻结交接总说明
+2026年10月9日；UTC 与北京时间（UTC+8）并列
+清点生成时间：2026-10-09T11:17:25.594389+00:00。实际上传时间和私有回读结果另见交付回执。
+
+一、现在可以确认的状态
+
+确定 URP 范围包含两套 URP 根及用户确认的 BPP 面板整树；7 处项目目录的原 1,000 项上限缺口均已补齐。账号其他区域仍保留 4 处非 URP 嵌入式数据库目录上限，以及不可见范围等边界，不宣称整个账号所有文件已穷尽。
+
+本轮最后 992 次算法调用已结束，执行停止时间为 2026-10-09 10:03:51.872412 UTC（北京时间 18:03:51.872412）。最终独立审查和中文报告通过，完整证据包及报告已于 10:17 UTC（北京时间 18:17） 完成私有上传、实际下载和逐字节比对。此后进行云盘清点与交接，不追加实验。
+
+最终报告：
+https://drive.google.com/file/d/1Aeg_Z6AP_n3TDKxpRtE_WxKFSoTtHO7C/view?usp=drivesdk
+完整证据：
+https://drive.google.com/file/d/1jNapiD9s-c9eZ6B5vCYJ_a76_OQAty38/view?usp=drivesdk
+完整包 11,817,712 字节，SHA256 e0039e6224c35f51443905a7a402e565aa616789935672cce2977c06d62dda7b。
+报告 5,038 字节，SHA256 5d2c7c76e322d21b6ac2e776f3d24315a391c5fe510d7ca44bc8afd111c16627。
+下载包的 259 个冻结文件、1,994 个原始清单文件、2,294 个 ZIP 成员以及终稿、摘要、独审、精确参照四项绑定均核对通过。源代码冻结清单 SHA256 d92e6b74d9ecf0b9b52ebd4fbabc9f9fe6b24ed3f7feb403c6db9d7c85a58e4d。
+
+云盘的整理采用统一说明与机器可读清单，保留文件原 ID 和原目录，不大规模搬动源树、工程依赖或原始证据，不按同名删除。两个旧交接索引保留原样。本说明是本轮新冻结交接产物，后续交付链接与哈希另列，不混入扫描基数。
+
+二、两套 URP 根必须一起看
+
+主根位于“我的云端硬盘”：
+https://drive.google.com/drive/folders/1ZpHAznk36B-PVwL19lo_-kulRF3pwtBY
+根 ID：1ZpHAznk36B-PVwL19lo_-kulRF3pwtBY
+其下有“实验项目”“工程文件”、7 个目录快捷方式，以及原有辅助目录。本轮研究交付集中在主根的“实验项目”。
+
+第二根位于云盘“我的笔记本电脑”备份根：
+https://drive.google.com/drive/folders/1VX_UnKGRTWCklr2OANgVUyCg3Q2vAwcT
+根 ID：1VX_UnKGRTWCklr2OANgVUyCg3Q2vAwcT
+其实际父 ID：1iNGwd47XOlrX2yaLmwNiuF2J8pE-tWmy
+包含 Experiments、Archive、Scripts、Code、Papers、Readings、Instances 等原目录。
+
+两根是不同云端对象。目录同名不代表内容相等，也不证明两者同步。对主根工程文件与第二根按相对路径交叉核对，观察到 1,191 组重合路径，其中 4 组元数据大小不同：Code/PyVRP/instances/.gitignore、Experiments/README.md、README.md、Readings/README.md；其余同大小也未证明内容相同。交叉表保留各自 ID，不执行去重或择版。不能只下载本轮“实验项目”就声称覆盖全部 URP。清单用 URP_primary 和 URP_secondary 区分路径；所有 ID 保留原值，目录关系以父链为准。
+
+主根的 7 个快捷方式已全部通过云浏览器实际重定向及目标元数据核实，分别指向“工程文件”下的 Experiments、Docs、Papers、Resources、Archive、Code、Readings。目标均已在主树物理目录中列举，没有新增根外目标、循环或不可读目标。下载时应按目标 ID 去重；不要将快捷方式当作另一份完整目录内容。
+
+三、项目内的阅读与恢复入口
+
+本轮实验项目：
+https://drive.google.com/drive/folders/1zs4eHCumbKPNV0ZnI9JWK6JnQHV1569T
+实验资料：
+https://drive.google.com/drive/folders/129-0z2ejXZg2rAkJe_Yxz876foi5mTy6
+报告与审计：
+https://drive.google.com/drive/folders/1LfnXbRzcZlr59nZEotn0QE6mnbvT7Hhm
+原交接记录：
+https://drive.google.com/drive/folders/12i1rKOc97kLOlOtp1QYVJpfaF4nLQGE6
+
+当前两交付子目录与项目根、最后 992 两个新文件均实查为同一账号唯一 owner、shared=false；没有改变共享权限。其他历史对象的可见性按清单原始元数据记录，不能把当前交付目录的权限结论推广到全盘。
+
+建议先看报告，再按明确阶段与 SHA256 找到完整证据。PREEXEC 是执行前冻结材料；RAW_MAIN、RAW_VERIFICATION、RAW_UNREVIEWED 是保全时尚未审查的原始结果；FINAL 或 FINAL_REVIEWED 是终审后的交付。失败、撤回、修订前版本保留其原阶段标签，不与最终成绩混算。科学结论以对应终稿和审计为准，本交接说明不重新解释所有历史实验。
+
+有些小包通过精确 Drive ID、包 SHA256、成员路径与成员 SHA256 引用旧依赖，不能误当成独立可安装的自包含包。PyVRP 官方 wheel 依赖的已验证完整包：
+Drive ID 1N7qqeo-LUkHJ0JVWoTcHKyoYeUmnSBi9，45,735,218 字节，SHA256 50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067。
+该大包的原归档核验采用认证分卷下载后重组核对，不能把该记录改写成“单文件直接下载完成”。依赖恢复应同时遵循每批包内 RESTORE / DEPENDENCY 清单。
+
+四、扫描覆盖与数量口径
+
+当前账号可见的全局目录查询共 18 页，8,084 个唯一目录。两套 URP 树共 6,282 个目录均已逐目录读取；根外另 1,802 个目录均已读取；未见目录读取错误。全局目录页末令牌、各目录原始工具响应、读过的目录 ID 和具体缺口均保留。
+
+两树最初共 48,172 条子项观察记录。最后 992 交付后，于 10:20:01 UTC（北京时间 18:20:01）重新读取资料与报告目录，补入该批 PREEXEC、RAW、FINAL、报告 4 个新 ID，再加入两根本身，得到补缺前 48,178 项基数。随后已通过独立浏览器补核的缺失项目按唯一 ID 合入，当前两树共 48,297 项，包含 6,282 个目录、42,015 个其他项目；主根 47,094 项，第二根 1,203 项。“项目”是云盘条目，不是独立科学实验数量。
+
+根外原观察表有 30,705 项，其中含两根入口。扣除这两个重复根，加入全局目录图中已核但原子项表未单列的“我的笔记本电脑”无父级备份根 1 项，再补入后续核实的新 ID 后，当前根外共 35,572 项。全盘合并当前已观察 83,869 个唯一 ID，其中确定 URP 范围为两根加 BPP 面板，共 66,589 项。已知大小的条目合计 37,289,517,060 字节；这是元数据大小之和，不是已下载总量，也不是完整存储配额用量。
+
+初始目录扫描从 09:53 UTC（北京时间 17:53）开始，跨越了上传和补核过程，不是原子快照。执行停止时间、目录读取时间、补核时间、最终归档时间分别记录。扫描基数不包含本说明及其新交接包。后续新增对象须单列增量，不能悄悄改动本次基数。
+
+当前观察项没有 Google 原生 Docs、Sheets 或 Slides；7 项 Google 原生快捷方式已单独登记。这只描述已观察集合，不能证明连接不可见区域或尚未补齐部分不存在原生文档。
+
+五、根外资料如何处理
+
+BPP 面板根：
+https://drive.google.com/drive/folders/1tvhsHRpQ1xwTbarS6pxzoEDvTxmtYSzk
+根 ID：1tvhsHRpQ1xwTbarS6pxzoEDvTxmtYSzk
+
+用户于 10:27 UTC（北京时间 18:27）明确确认“bpp是urp的面板”。因此 BPP 整棵树纳入确定 URP 范围，包含工程、依赖、原始资料与历史版本，不再作为范围候选。原始扫描观察到 13,424 条 BPP 记录，其中 6,787 条工程或研究项、6,637 条依赖和历史辅助项，补齐后 BPP 当前总计 18,292 项，新增 ID 已纳入确定范围清单。与 URP 内 P3_BPP 目录存在同名同大小档案及不同大小提示词版本，但尚未做全量内容等同比对。面板资产不等于新增独立科学实验，同名不同 ID 也不能据此删除或合并。
+
+“文献精读成果_2026-10-01”34 项另列为待核实文献候选；16 份背景书籍另列为背景参考，目录项不计入书籍份数。通用 Colab 笔记本用途未读，保留待归类状态。其余根外资料只做元数据登记，不读无关正文；在用户确认或进一步归属核验前，不自动纳入 URP 工程恢复目标，同时在根外完整待核登记中保留可见。
+
+确定下载范围单列在 URP_DEFINITE_DOWNLOAD_SCOPE.jsonl，包含两套 URP 根及已获用户确认的 BPP 面板整树。文献与尚未判定用途的笔记本另列 LITERATURE_AND_UNCLASSIFIED_CANDIDATES.jsonl，背景资料另列 BACKGROUND_REFERENCES_SEPARATE.jsonl。全盘已观察总表用于覆盖核对，不是把全盘所有项目迁移进 URP 的指令。全部尚未确定的根外项目另外完整列入 ALL_OUTSIDE_REMAINING_REVIEW_REGISTER.jsonl；不因名称判断而让条目消失。两树及 BPP 的依赖、失败、历史、旧版和空目录均保留，不按类别删减。
+
+独立 AUTO 项目不属于本次 URP 范围。本次没有发现可明确识别的独立 AUTO 根，但这个观察不代表所有历史材料都没有 AUTO 引用。已在 URP 中的历史说明若引用它，保留原件与关联标注，不因关键词自动删除或并入独立项目。
+
+六、完整性缺口与证据边界
+
+原 all-MIME 目录工具每次最多返回 1,000 项且未暴露分页令牌。两树中 3 处、根外 8 处达到上限。独立云浏览器使用稳定列表、原始集合比对或双向排序区间交叠等方法，并逐一核对新增项精确 ID、名称、父目录元数据。当前 7 处已闭合，新增 4,987 个唯一 ID，尚有 4 处保留边界。补核只证明目录元数据列举，不宣称源文件内容字节相等。
+
+已闭合目录：
+- MyDrive/BPP/BPP科研面板_共用工作区/node_modules/lucide-react/dist/esm/icons；ID 19M_3e3ONM6jX1bAsInD6XVEgX3Rycum8；完整 4260 项，新增 3260 项。
+- MyDrive/BPP/BPP科研面板_共用工作区/dist/data/evidence/raw；ID 1ncpA24evceZo1HS1aS4Dfz4DkIBWa95k；完整 1536 项，新增 536 项。
+- URP_primary/工程文件/Code/DR-ALNS/code/src/orienteering/ai4tsp/data/test/adjs；ID 1pNg4evWiyaeEz3ycljo32EfIMhoJgeUd；完整 1001 项，新增 1 项。
+- URP_primary/工程文件/Code/DR-ALNS/code/src/orienteering/ai4tsp/data/test/instances；ID 1D1GH500ZGMBEHh_tptirLm4kYvZ2Sx4D；完整 1001 项，新增 1 项。
+- URP_primary/工程文件/Code/DGM/initial_polyglot/predictions/initial_0；ID 1R0Xk5M78KLGYVZYFtmDi1G7mSxqhlmJm；完整 1117 项，新增 117 项。
+- MyDrive/BPP/BPP科研面板_共用工作区/public/data/evidence/raw；ID 1MrRMBq6WQOphQMH_YEf4J14R5_qiSuNj；完整 1536 项，新增 536 项。
+- MyDrive/BPP/BPP科研面板_共用工作区/research/raw；ID 1wLyLsGNx2LehRKa85WzUI0gXzbO0uFw0；完整 1536 项，新增 536 项。
+
+BPP icons 的 4,260 项来自双向名称排序区间交叠：降序 1–3,200、升序 1–1,150，交叠 90 个相同 ID；各对向名次之和均为 4,261，推得总数 4,260，亦等于两向 ID 并集及原 1,000 加新增 3,260 个元数据记录。未声称页面直接显示 4,260 总数，也未声称单向滚动已到末尾。不同目录的补核方法详列于审计摘要，没有统一声称每处都有全选截图。
+
+未闭合目录：
+- MyDrive/嵌入式/07_软件工具/STM32CubeMX-6.18.1/MX/db/mcu；ID 1cPAE9a4ug6nAtCGodeJgM9lE0EtTGHN3；原工具返回 1,000 项，完整性尚未证明。
+- MyDrive/嵌入式/07_软件工具/STM32CubeMX-6.18.1/MX/db/mcu/config；ID 1Z3zkcP9kGuh7vbDAHLk5WlPROnrHKmyn；原工具返回 1,000 项，完整性尚未证明。
+- MyDrive/嵌入式/07_软件工具/STM32CubeMX-6.18.1/MX/db/mcu/config/llConfig；ID 1I1WvZ9Glc2VNNeT3nJZXCOWeXi_s77s6；原工具返回 1,000 项，完整性尚未证明。
+- MyDrive/嵌入式/07_软件工具/STM32CubeMX-6.18.1/MX/db/mcu/IP；ID 1ruFuLq8BFhDuLyWuQBtjtISI-zuK5q-3；原工具返回 1,000 项，完整性尚未证明。
+
+目录补核期间发现云端 UI 可能重排尚在加载的行，故不把早期滚动时累计的索引切片当作完整清单。采用稳定后全量重读的 ID 集合；中间无效捕获保留在未发布原始证据中。
+
+无关键词文件搜索只能覆盖部分 MIME，确实会漏掉 ZIP、JSON、NPZ，故未用关键词或文件搜索替代逐目录列举。共享盘查询返回 0；这不等于普通共享文件为 0。“文献库”shared=true 而列表为空已保留。垃圾箱搜索的 MIME 覆盖未证明完整，不能据此声称垃圾箱为空。账号连接不可见对象、已永久删除对象、没有父链且不可搜索 MIME 的游离文件，不在本次可证明范围内。
+
+七、版本、SHA256 与核验层级
+
+每条清单保留源 ID、原名、路径、父链、MIME、可得大小、创建和修改时间、归类依据与证据文件。282 个已知归档身份另已通过 revisions.list 读取当前版本 ID；这 282 项各观察到 1 个版本，无后续分页。其他项的修改时间不冒充版本 ID。
+
+282 项有既有归档 SHA256：281 项附历史实际下载逐字节核验记录，1 项仅有 SHA256 记录，未补造字节相同比对。其余 83,587 项当前仅有元数据，文件内容 SHA256 未知。历史归档记录证明记录时的包身份，不等于本次重新下载了每个旧文件；清单明确区分这几层证据。未对每份历史 ZIP 全量重新解压，也没有把同名同大小当成内容相同。
+
+交接包自身的 SHA256SUMS 只校验交接文件，不替代源文件内容哈希。版本和身份冲突若出现，须保留多个 ID 或版本并标注，不自动择一。
+
+八、独立工程参考
+
+已核私有仓库：https://github.com/peakpeng666/urp-research
+本次核定 main commit：700b0723ba3faa989cc879b1dd0fbb11ca5d0e3f
+核验时 draft PR：https://github.com/peakpeng666/urp-research/pull/2
+PR commit：b25a954ce073a68215ffbab14899df519ddf3e09
+这些工程参考由本轮独立工程核验提供，不替代云盘两套 URP 和 BPP 面板的完整清单。尚无 NL124 适配、前端验收或 CI 记录；不要据仓库状态推断这些环节已完成。AUTO 与本次无关，不作为工程迁移入口。
+
+九、交接包结构与使用
+
+URP_DEFINITE_DOWNLOAD_SCOPE.jsonl：完整两树与 BPP 面板确定范围，包含全部依赖、历史、失败、旧版和空目录。
+ALL_OUTSIDE_REMAINING_REVIEW_REGISTER.jsonl：其余根外项目全部可见待核登记。
+LITERATURE_AND_UNCLASSIFIED_CANDIDATES.jsonl：有归属线索的文献和未定用途笔记本。
+BACKGROUND_REFERENCES_SEPARATE.jsonl：背景资料单列。
+SOURCE_ID_MANIFEST.jsonl：全盘已观察集合，每行一个唯一 ID，含源路径、父链、归类、校验级别、已知 SHA256、当前已核版本 ID、快捷方式目标及原证据位置。
+COVERAGE_SUMMARY.json：数量、时间、去重口径、完成与缺口统计。
+DIRECTORY_READ_EVIDENCE.json：两树 6,282 个目录读取证据。
+ROOT_RELATIONSHIPS.json：两套 URP 根及备份根关系。
+ARCHIVE_SHA_PROOFS.json：282 项已知研究档案的原回执证据。
+SHORTCUT_TARGETS_VERIFIED.json：7 项实际目标和验证方式。
+COVERAGE_GAPS.json 及补证：原始上限位置、补齐结果或剩余阻碍。
+原始工具响应不直接发布。对原始分页与列表响应、浏览器补核及权限证据，交接包发布必要的 ID、路径、时间、哈希、核验结果和原证据文件 SHA256 登记，保留未发布原件的身份说明。签名下载 URL、分页令牌、凭证和无关内部备注不纳入发布包。
+
+用户会让本地其他 AI 负责后续迁移。本交接不访问或修改用户电脑，不实施桌面覆盖。读取方应以源 ID 和父链保持目录结构，按已知 SHA256 校验对应已归档包，并遵守各实验依赖恢复清单。没有 SHA256 的源文件需要在实际下载后形成新的校验记录；遇未闭合目录或权限边界，按缺口说明处理，不能宣称完整迁移。
+
+最终交付状态以单独交付回执为准。终点清单、可读说明及其完整证据包本身会在源扫描基数之外登记身份。

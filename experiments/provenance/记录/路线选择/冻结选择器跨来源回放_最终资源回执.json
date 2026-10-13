@@ -1,0 +1,20 @@
+{
+  "completed_utc": "2026-10-07T08:05:00.703256+00:00",
+  "zip_path": "/workspace/shared/frozen_selector_transfer_20261007_FINAL.zip",
+  "sha256": "fcf00a6a3205df1a87ebce5925fb945e545b15b0980371dc18a406474b6a6b07",
+  "bytes": 89398,
+  "file_count": 44,
+  "zip_crc_and_every_member_verified": true,
+  "clean_package_verified": true,
+  "cpu_through_package_crc_hash_verification_s": 0.090404809,
+  "prior_run_verify_and_failed_audit_complete_shell_cpu_s": 0.424,
+  "minimum_measured_cumulative_cpu_s": 0.514404809,
+  "final_complete_package_process_shell_timing": "/workspace/shared/frozen_selector_transfer_20261007_FINAL_shell_time.txt",
+  "scope_note": "This final in-process reading excludes only writing this receipt and process exit; the external shell receipt captures complete package processCPU. Sum shell receipts for completed-process total.",
+  "no_upload": true,
+  "final_complete_package_process_shell_cpu_s": 0.109,
+  "all_completed_experimental_python_processes_shell_cpu_s": 0.533,
+  "cumulative_cpu_budget_s": 5,
+  "cumulative_cpu_within_budget": true,
+  "complete_cpu_scope": "Run + artifact verification + two failed independent-audit/packaging attempts + successful audit/ZIP/CRC/hash process. Bash builtin time user+sys, millisecond display precision. Shell orchestration, tool calls, authoring/inspection, source/target historical solves excluded. No hidden solving."
+}

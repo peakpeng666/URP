@@ -1,0 +1,19 @@
+{
+  "status": "SEALED",
+  "archive": "/workspace/shared/bpp_zero_generation_independent_audit_20261008/零生成4pack独立审计_20261008.zip",
+  "sha256": "b9b4c43b13f92765121fe7eaf11bfd9768d030e44c555b8eb526051b089ab823",
+  "bytes": 7776,
+  "entries": 5,
+  "audit_wait4": {
+    "scope": "Independent read-only verifier process, inclusive wait4 CPU; not conversation/control-plane or preflight reads. No candidate/solver execution.",
+    "exit_code": 0,
+    "reaped": true,
+    "CPU": 0.052606,
+    "wall": 0.053021861996967345,
+    "CPU_cap": 10,
+    "wall_cap": 20,
+    "max_RSS_kib": 12484
+  },
+  "original_evidence_unchanged": true,
+  "archive_upload": "pending parent archive worker"
+}

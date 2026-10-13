@@ -1,0 +1,18 @@
+{
+  "stage": "package",
+  "utc": "2026-10-08T00:43:49.769050+00:00",
+  "exit_code": 0,
+  "raw_wait_status": 0,
+  "signal": null,
+  "wall_limit_kill": false,
+  "cpu_soft_limit_seconds": 19,
+  "cpu_hard_limit_seconds": 20,
+  "wall_limit_seconds": 60,
+  "child_user_cpu_seconds": 0.242756,
+  "child_system_cpu_seconds": 0.012228,
+  "child_total_cpu_seconds": 0.254984,
+  "maxrss_kib": 20356,
+  "elapsed_wall_seconds": 0.2783885319950059,
+  "supervisor_cpu_checkpoint_seconds": 0.001854030999999999,
+  "complete": true
+}

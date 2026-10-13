@@ -1,0 +1,42 @@
+{
+  "schema": "urp-original-report-version-preservation-v1",
+  "files": [
+    {
+      "current_edited_path": "experiments/results/优化与训练/DE自适应评测预算复验/REPORT_ZH.md",
+      "preserved_original_path": "experiments/provenance/reports/DE自适应.md",
+      "drive_id": "1Rko7CWtlRZcicDwva97iap2wJQ3skm8t",
+      "original_name": "REPORT_ZH.md",
+      "bytes": 11958,
+      "sha256": "e9846a03502a567a82e9c56bdefb0b4b1e3a562ea866a11d6bacfbb27c870441",
+      "drive_url": "https://drive.google.com/file/d/1Rko7CWtlRZcicDwva97iap2wJQ3skm8t/view?usp=drivesdk",
+      "different_content_overwrite": false,
+      "difference_note": "Historical original report has different bytes from current edited report; original source bytes retained here and current edited report left unchanged."
+    },
+    {
+      "current_edited_path": "experiments/results/优化与训练/差分进化参数搜索/实验报告.md",
+      "preserved_original_path": "experiments/provenance/reports/差分进化调参.md",
+      "drive_id": "1E4Jw_kqgvOKdj8COKxNBded2PrBp4veC",
+      "original_name": "实验报告.md",
+      "bytes": 9445,
+      "sha256": "cde5c9421915a8b33a25f32c0166205ca009d074873c34d0bd11b280b424875b",
+      "drive_url": "https://drive.google.com/file/d/1E4Jw_kqgvOKdj8COKxNBded2PrBp4veC/view?usp=drivesdk",
+      "different_content_overwrite": false,
+      "difference_note": "Historical original report has different bytes from current edited report; original source bytes retained here and current edited report left unchanged."
+    },
+    {
+      "current_edited_path": "experiments/results/搜索机制/FSSP固定扰动ILS/实验报告.md",
+      "preserved_original_path": "experiments/provenance/reports/FSSP扰动ILS.md",
+      "drive_id": "1FGSadnb0Xa6L8NorCWK-OsSz_Tj36KLJ",
+      "original_name": "实验报告.md",
+      "bytes": 10050,
+      "sha256": "e488c41fd9fe83ccd861e92d0035a53abb2e19e357e052809d13d7af289d63de",
+      "drive_url": "https://drive.google.com/file/d/1FGSadnb0Xa6L8NorCWK-OsSz_Tj36KLJ/view?usp=drivesdk",
+      "different_content_overwrite": false,
+      "difference_note": "Historical original report has different bytes from current edited report; original source bytes retained here and current edited report left unchanged."
+    }
+  ],
+  "original_source_bytes_verified": true,
+  "current_edited_reports_unchanged": true,
+  "different_content_overwrites": 0,
+  "manifest_is_new_recovery_record": true
+}

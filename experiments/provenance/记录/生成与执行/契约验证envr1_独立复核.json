@@ -1,0 +1,197 @@
+{
+  "status": "PASS_WITH_SCOPE_LIMITATIONS",
+  "utc": "2026-10-08T12:34:32.577710+00:00",
+  "checks": 1762,
+  "failures": [],
+  "counts": {
+    "format_cases": 6,
+    "admitted": 9,
+    "numeric_pass": 7,
+    "static_rejections": 13,
+    "expected_numeric_failure": 2
+  },
+  "dependency_differences": {
+    "pyc": 469,
+    "unchanged": 526,
+    "missing": 0
+  },
+  "changed_runtime_files": [
+    "pre_run_freeze.json",
+    "worker_freeze.json"
+  ],
+  "preexecution_zip_sha256": "48cf1d4a950f6d2bec878b57d94d051812faec4ea6cad6adb8ca536ea71c8dd6",
+  "frozen_claim_sha256": "809e4b2452fa0728c3b864ebdf7c65d0d336b86f470836575f9a3e75a4fc4afa",
+  "CPU": {
+    "new_driver_inclusive_once": 6.772971,
+    "new_controller": 0.106358,
+    "old_failed_dummy_driver_inclusive": 0.178969,
+    "old_failed_controller": 0.029668999999999997,
+    "bounded_execution_measured_combined": 7.087967000000001,
+    "configured_two_phase_envelope": 82,
+    "exact_preparation_recovery_analysis_all_in": null
+  },
+  "rows": [
+    {
+      "id": "C01",
+      "admission": "passed",
+      "numeric": "passed",
+      "steps": 1,
+      "score_requests": 1
+    },
+    {
+      "id": "C02",
+      "admission": "passed",
+      "numeric": "passed",
+      "steps": 1,
+      "score_requests": 1
+    },
+    {
+      "id": "C03",
+      "admission": "passed",
+      "numeric": "passed",
+      "steps": 1,
+      "score_requests": 1
+    },
+    {
+      "id": "C04",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C05",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C06",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C07",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C08",
+      "admission": "passed",
+      "numeric": "passed",
+      "steps": 1,
+      "score_requests": 1
+    },
+    {
+      "id": "C09",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C10",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C11",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C12",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C13",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C14",
+      "admission": "passed",
+      "numeric": "passed",
+      "steps": 1,
+      "score_requests": 1
+    },
+    {
+      "id": "C15",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C16",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C17",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    },
+    {
+      "id": "C18",
+      "admission": "passed",
+      "numeric": "numeric_failure",
+      "steps": 0,
+      "score_requests": 1
+    },
+    {
+      "id": "C19",
+      "admission": "passed",
+      "numeric": "numeric_failure",
+      "steps": 0,
+      "score_requests": 1
+    },
+    {
+      "id": "C20",
+      "admission": "passed",
+      "numeric": "passed",
+      "steps": 1,
+      "score_requests": 1
+    },
+    {
+      "id": "C21",
+      "admission": "passed",
+      "numeric": "passed",
+      "steps": 1,
+      "score_requests": 1
+    },
+    {
+      "id": "C22",
+      "admission": "static_rejection",
+      "numeric": "not_run_ineligible",
+      "steps": 0,
+      "score_requests": 0
+    }
+  ],
+  "caveats": [
+    "New environment-binding phase; original failed dummy retained, no old model candidates rerun.",
+    "28 handwritten interface fixtures are not scientific packing evaluation or evidence of prompt-quality improvement.",
+    "Memory limits and peaks are per-process; aggregate RSS and hard aggregate cap not measured.",
+    "wait4 driver CPU includes reaped worker CPU, which must not be added again. Preparation/recovery/analysis all-in cost remains unmeasured.",
+    "Outer 174-second timeout is declared in plan; observed short executions, per-action enforcement and worker/driver rlimits were checked from code/receipts; no long-timeout test was rerun."
+  ],
+  "review_execution_count": 0
+}

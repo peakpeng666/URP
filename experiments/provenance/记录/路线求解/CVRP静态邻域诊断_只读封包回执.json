@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "scope": "Read-only packaging of the exact independently audited original directory; no scientific execution or source changes. External original dependencies remain referenced by original hashes and URLs.",
+  "path": "/workspace/shared/supporting_artifacts_delivery_20261008/static_evidence_20261008.zip",
+  "bytes": 1230586,
+  "sha256": "b82f6a8468d90182d5f567e2cb71eaa4dd4b50fa85b8f89ab8f6c1e15cc85b48",
+  "zip_members": 11,
+  "payload_files": 10,
+  "source_hashes_unchanged": true,
+  "high_confidence_credential_scan_hits": 0,
+  "zip_crc_and_each_payload_byte_match": true,
+  "audit_source_sha256": "802e3a1a3a2b68f5627cdaccfa3cd26e568274b264a8ea3d27305af8276ea83c",
+  "science_execution": false,
+  "original_dependency_files_added": false,
+  "packaging_resource": {
+    "exit_code": 0,
+    "measured_child_cpu_seconds": 0.797906,
+    "measured_child_wall_seconds": 0.7986819630023092,
+    "scope": "Complete packaging child process including source verification, credential scan, ZIP creation and byte/CRC checks. Parent orchestration and this final receipt write are not measured; no all-in claim."
+  },
+  "scientific_resource_reference": "Original reports and shared independent audit retain their separate scientific/audit timings; do not add duplicate inner measurements."
+}

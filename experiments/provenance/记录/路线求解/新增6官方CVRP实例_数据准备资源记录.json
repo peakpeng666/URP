@@ -1,0 +1,41 @@
+{
+  "schema": "cvrp-data-preparation-resource-accounting-v1",
+  "measured_stages": {
+    "catalog_freeze": {
+      "local_cpu_seconds": 0.039797552,
+      "local_wall_seconds_excluding_network": 0.03985965400352143
+    },
+    "geometry_screening": {
+      "cpu_seconds": 0.043410246,
+      "network_wall_seconds": 38.3931290210312,
+      "local_wall_seconds_excluding_network": 0.0037070439720992
+    },
+    "reference_downloads": {
+      "cpu_seconds": 0.023245326000000004,
+      "network_wall_seconds": 20.90471285901731,
+      "local_wall_seconds_excluding_network": 0.0028275069780647755,
+      "selection_freeze_sha256": "06783cf1085234984c144c47d60df799039c6fbaf93234b45834344d794940f1",
+      "all_passed": true
+    },
+    "offline_validation": {
+      "cpu_seconds": 0.026806712,
+      "local_wall_seconds_excluding_network": 0.027867879005498253,
+      "network_wall_seconds": 0.0
+    },
+    "descriptive_overlap": {
+      "cpu_seconds": 0.001499012000000001,
+      "local_wall_seconds_excluding_network": 0.0035293959954287857,
+      "network_wall_seconds": 0.0
+    }
+  },
+  "measured_cpu_seconds": 0.13475884800000001,
+  "measured_local_wall_seconds_excluding_network": 0.07779147995461244,
+  "network_wall_seconds_separate": 59.29784188004851,
+  "resource_limits": {
+    "new_local_CPU_budget_seconds": 15,
+    "local_processing_wall_budget_seconds_excluding_network": 30,
+    "network_wait_accounted_separately": true
+  },
+  "budget_met": true,
+  "scope_note": "Recorded executable preparation stages; small read-only shell inspection and final serialization/archive overhead are not part of solver computation. No solver was run."
+}

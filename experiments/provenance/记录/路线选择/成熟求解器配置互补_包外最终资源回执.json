@@ -1,0 +1,23 @@
+{
+  "archive": "solver_portfolio_headroom_20261007.zip",
+  "sha256": "3ae2ac826e3c13529430ea80c4f84af5f236bceb09ddafca0aba11773c1b1306",
+  "bytes": 1094160,
+  "file_count": 52,
+  "child_cpu_s": 87.446257,
+  "supervisor_cpu_including_packaging_s": 0.337153573,
+  "total_measured_cpu_s": 88.073607778,
+  "prior_preflight_cpu_s": 0.044444159000000004,
+  "total_wall_s": 87.67221492799945,
+  "archive_crc_and_all_inner_hashes_verified": true,
+  "excluded": [
+    "original input instance files",
+    "venv",
+    "caches",
+    "credentials"
+  ],
+  "uploaded": false,
+  "prior_archive_sha256": "ef4232afa64875deb6885e8288db684490547cbd2ca19f233f87a9b69baeeb7d",
+  "postrun_reporting_and_repack_cpu_s": 0.245753046,
+  "postrun_pass_cpu_hard_limit_s": 0.8,
+  "all_frozen_files_unchanged": true
+}

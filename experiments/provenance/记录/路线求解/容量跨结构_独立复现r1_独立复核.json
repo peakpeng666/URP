@@ -1,0 +1,133 @@
+{
+  "status": "PASS_WITH_SCOPE_LIMITATIONS",
+  "utc": "2026-10-08T12:38:04.032797+00:00",
+  "checks": 119526,
+  "failures": [],
+  "claim_namespace": "capacity-cross-structure-reproduction-20261008-r1",
+  "freeze_sha256": "8c0691a3750f57e9d2d83fdf54f8c4fee0c1ab05da0bba8974395e44961fb4f9",
+  "preexec_zip_sha256": "97c6a0467761831d41d122d85807df9d3968a1dddb3bb8397928f219741a1521",
+  "raw_results_sha256": "9a53d37f9cc8ee097dd398e7755c86dec75930aacd9dcf53e8b7ad852b54e319",
+  "structures": 48,
+  "calls": 432,
+  "successful_outputs_checked": 314,
+  "witnesses_checked": 36,
+  "prune_states_checked": 14774,
+  "max_route_score_error": 0,
+  "summary": {
+    "partition_256/capacity_solver": {
+      "success": 31,
+      "nodes": 5601,
+      "prunes": 0,
+      "CPU": 0.004007412000000002,
+      "partition_CPU": 0.004007412000000002,
+      "zero_CPU": 47
+    },
+    "partition_256/pruned_solver": {
+      "success": 31,
+      "nodes": 5601,
+      "prunes": 0,
+      "CPU": 0.031511908000000005,
+      "partition_CPU": 0.031511908000000005,
+      "zero_CPU": 39
+    },
+    "partition_256/waste_solver": {
+      "success": 41,
+      "nodes": 3303,
+      "prunes": 1072,
+      "CPU": 0.015981052999999995,
+      "partition_CPU": 0.015981052999999995,
+      "zero_CPU": 44
+    },
+    "partition_4096/pruned_solver": {
+      "success": 32,
+      "nodes": 67070,
+      "prunes": 0,
+      "CPU": 0.09963043600000002,
+      "partition_CPU": 0.09963043600000002,
+      "zero_CPU": 30
+    },
+    "partition_4096/waste_solver": {
+      "success": 44,
+      "nodes": 22922,
+      "prunes": 12630,
+      "CPU": 0.103934733,
+      "partition_CPU": 0.103934733,
+      "zero_CPU": 39
+    },
+    "partition_4096/capacity_solver": {
+      "success": 32,
+      "nodes": 67070,
+      "prunes": 0,
+      "CPU": 0.05591424800000002,
+      "partition_CPU": 0.05591424800000002,
+      "zero_CPU": 34
+    },
+    "initialize_256/waste_solver": {
+      "success": 41,
+      "nodes": 2615,
+      "prunes": 1072,
+      "CPU": 0.07929644900000002,
+      "partition_CPU": 0.011910142999999991,
+      "zero_CPU": 29
+    },
+    "initialize_256/capacity_solver": {
+      "success": 31,
+      "nodes": 4913,
+      "prunes": 0,
+      "CPU": 0.072033519,
+      "partition_CPU": 0.004001918,
+      "zero_CPU": 29
+    },
+    "initialize_256/pruned_solver": {
+      "success": 31,
+      "nodes": 4913,
+      "prunes": 0,
+      "CPU": 0.059779909999999985,
+      "partition_CPU": 0.0039970510000000015,
+      "zero_CPU": 33
+    }
+  },
+  "paired": {
+    "partition_256": {
+      "added_success": 10,
+      "lost_success": 0,
+      "fewer_nodes": 17,
+      "equal_nodes": 31
+    },
+    "partition_4096": {
+      "added_success": 12,
+      "lost_success": 0,
+      "fewer_nodes": 20,
+      "equal_nodes": 28
+    },
+    "initialize_256": {
+      "added_success": 10,
+      "lost_success": 0,
+      "fewer_nodes": 17,
+      "equal_nodes": 31
+    }
+  },
+  "historical_identity": {
+    "known_before_execution": 12,
+    "additional_prior_hashes_recovered_by_reviewer_after_execution": 36,
+    "input_hashes_now_matched_to_historical_tool_output": 48,
+    "old_generator_original_file_hash_known": false,
+    "old_raw_results_recovered": false
+  },
+  "CPU": {
+    "children_initial": 1.107697,
+    "children_final_absolute": 24.638377000000002,
+    "per_call_and_delta": 23.530680000000018,
+    "parent": 0.622070688,
+    "parent_plus_children": 24.15275068800002
+  },
+  "oracle_review": "40346 saved bounds arithmetically checked;2268 stored solver truth comparisons and12 main oracle scope checked; no oracle recomputation by reviewer",
+  "scope": [
+    "Independent reproduction claim, not a new independent random sample and not recovery of old raw result bytes.",
+    "Original preparation stated12 matched36unknown; post-run reviewer recovery of additional historical hashes is appended, never retroactively changing pre-execution knowledge.",
+    "Original new generator/runner byte identity remains unproved.",
+    "Node-limit failure is unknown; unique synthetic structures do not establish population generalization.",
+    "One-run short CPU timing with zeros is not robust speed evidence.",
+    "No candidate/solver/oracle/generator ran during this review."
+  ]
+}

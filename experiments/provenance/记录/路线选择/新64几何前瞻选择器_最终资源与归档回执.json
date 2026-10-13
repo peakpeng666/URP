@@ -1,0 +1,19 @@
+{
+  "finished_utc": "2026-10-07T07:54:45.043193+00:00",
+  "archive": "/workspace/shared/diverse_geometry_selection_20261007_FINAL.zip",
+  "sha256": "7b05eb717643a1de6b775b8cf3841f560fb56372b305e14802ba46e03ba1d646",
+  "bytes": 2771500,
+  "file_count": 204,
+  "final_packaging_process_cpu_sample_s": 0.499060805,
+  "final_packaging_body_cpu_s": 0.475391519,
+  "measured_experiment_reporting_audit_packaging_subtotal_s": 103.784073077,
+  "unmetered_additional_readonly_audit_disclosed": true,
+  "crc_and_every_inner_hash_verified": true,
+  "all_original_173_artifact_hashes_unchanged": true,
+  "core_frozen_151_files_unchanged": true,
+  "one_frozen_shell_timing_exception_documented": true,
+  "original_archive_preserved_sha256": "a97903074f4af13039ee35f7b614cc73eb43dc3cdedf6024f221468901291c03",
+  "both_planned_controls_fully_presented": true,
+  "uploaded": false,
+  "extra_solver_calls": 0
+}

@@ -1,0 +1,340 @@
+{
+  "version": "v2",
+  "delivery_date_utc": "2026-10-08",
+  "status": "candidate_for_independent_review; not applied to frozen research",
+  "destination": {
+    "project": "实验项目",
+    "project_id": "1zs4eHCumbKPNV0ZnI9JWK6JnQHV1569T",
+    "folder": "报告与审计",
+    "folder_id": "1LfnXbRzcZlr59nZEotn0QE6mnbvT7Hhm",
+    "verified_direct_project_child": true,
+    "observed_permissions": [
+      {
+        "type": "user",
+        "role": "owner"
+      }
+    ],
+    "sharing_or_index_changes": false
+  },
+  "targeted_changes": [
+    "Check monotonic cleanup deadline before every wait4 iteration, including continuously successful harvests; require retained child ownership before group signalling.",
+    "Create a conservative exit record before validation; independently protect cleanup and status publication, preserve known harvested state and original exception chains, and persist failure records in main."
+  ],
+  "files": [
+    {
+      "workspace_path": "/workspace/experiment-reliability-20261008/v2/supervisor-reliability.patch",
+      "local_relative_path": "supervisor-reliability.patch",
+      "drive_file_name": "supervisor-reliability_v2.patch",
+      "role": "incremental v1 to v2 review patch",
+      "bytes": 36025,
+      "sha256": "490190f335ba801536938e4522acbe9d5e9cfd4e6dceee8d5464e13a95441e2a",
+      "drive_url": "https://drive.google.com/file/d/1_SBVLUKZL0EKKtxNYkIbsMZmPnHOxJ0d/view?usp=drivesdk",
+      "drive_id": "1_SBVLUKZL0EKKtxNYkIbsMZmPnHOxJ0d",
+      "parent_id": "1LfnXbRzcZlr59nZEotn0QE6mnbvT7Hhm",
+      "owner_only_verified": true,
+      "text_roundtrip_verified": true
+    },
+    {
+      "workspace_path": "/workspace/experiment-reliability-20261008/v2/analysis.txt",
+      "local_relative_path": "analysis.txt",
+      "drive_file_name": "analysis_v2.txt",
+      "role": "short targeted-change notes and scope",
+      "bytes": 4252,
+      "sha256": "136d9dc93615be6888cf221b66c5eda3e232fa6264f2bfda02174b4cb6e4a4cd",
+      "drive_url": "https://drive.google.com/file/d/1uYG43a1hRQkSH4h-mrrBaxBBZmRHG24v/view?usp=drivesdk",
+      "drive_id": "1uYG43a1hRQkSH4h-mrrBaxBBZmRHG24v",
+      "parent_id": "1LfnXbRzcZlr59nZEotn0QE6mnbvT7Hhm",
+      "owner_only_verified": true,
+      "text_roundtrip_verified": true
+    },
+    {
+      "workspace_path": "/workspace/experiment-reliability-20261008/v2/test-results.json",
+      "local_relative_path": "test-results.json",
+      "drive_file_name": "test-results_v2.json",
+      "role": "all 25 individual test results: original 14 plus new 11",
+      "bytes": 62746,
+      "sha256": "98c3b620174f36528c258f0851ae9a917efc191fd63bf0fd73809ed503de6060",
+      "drive_url": "https://drive.google.com/file/d/1YGF4jhyISlrPATuYzeY1dE__a85tzR-w/view?usp=drivesdk",
+      "drive_id": "1YGF4jhyISlrPATuYzeY1dE__a85tzR-w",
+      "parent_id": "1LfnXbRzcZlr59nZEotn0QE6mnbvT7Hhm",
+      "owner_only_verified": true,
+      "text_roundtrip_verified": true
+    },
+    {
+      "workspace_path": "/workspace/experiment-reliability-20261008/v2/verified-text-sources.json",
+      "local_relative_path": "verified-text-sources.json",
+      "drive_file_name": "verified-text-sources_v2.json",
+      "role": "nine source verification metadata; no source copies",
+      "bytes": 4087,
+      "sha256": "7aed13f9d3626eef4d41033e3f5b9fcf0b01e62b78ad9dd91d552234e0849f22",
+      "drive_url": "https://drive.google.com/file/d/1szNqwkFZTISIe56GzuUQC5QzfPRJtf7t/view?usp=drivesdk",
+      "drive_id": "1szNqwkFZTISIe56GzuUQC5QzfPRJtf7t",
+      "parent_id": "1LfnXbRzcZlr59nZEotn0QE6mnbvT7Hhm",
+      "owner_only_verified": true,
+      "text_roundtrip_verified": true
+    },
+    {
+      "workspace_path": "/workspace/experiment-reliability-20261008/v2/candidate/new/supervise.py",
+      "local_relative_path": "candidate/new/supervise.py",
+      "drive_file_name": "supervise_candidate_v2.py",
+      "role": "full v2 one-shot CLI candidate, not deployed",
+      "bytes": 13220,
+      "sha256": "c12c38ed08a6ce8431747f728d7075a4ebe5ebe1eb6c0a8fd464ccada6ce96e3",
+      "drive_url": "https://drive.google.com/file/d/1gg_CjtkXj80n0pN-4jccQmc9BVpgMKGx/view?usp=drivesdk",
+      "drive_id": "1gg_CjtkXj80n0pN-4jccQmc9BVpgMKGx",
+      "parent_id": "1LfnXbRzcZlr59nZEotn0QE6mnbvT7Hhm",
+      "owner_only_verified": true,
+      "text_roundtrip_verified": true
+    },
+    {
+      "workspace_path": "/workspace/experiment-reliability-20261008/v2/tests/test_supervise.py",
+      "local_relative_path": "tests/test_supervise.py",
+      "drive_file_name": "test_supervise_v2.py",
+      "role": "bounded standard-library test and per-case reporting script",
+      "bytes": 29506,
+      "sha256": "eecd0cb8ce63808df1b4e486e5b48fdea974f46b747ea1c760f0f0afc9dba01d",
+      "drive_url": "https://drive.google.com/file/d/1CLrqCcHJ-FEsvKFbrs8gBpHQFObZLyWJ/view?usp=drivesdk",
+      "drive_id": "1CLrqCcHJ-FEsvKFbrs8gBpHQFObZLyWJ",
+      "parent_id": "1LfnXbRzcZlr59nZEotn0QE6mnbvT7Hhm",
+      "owner_only_verified": true,
+      "text_roundtrip_verified": true
+    }
+  ],
+  "manifest_itself": {
+    "drive_file_name": "supervisor-reliability-delivery-manifest_v2.json",
+    "local_relative_path": "supervisor-reliability-delivery-manifest_v2.json",
+    "hash_recorded_in": "external upload receipt and final delivery message; omitted here to avoid self-reference"
+  },
+  "incremental_patch": {
+    "direction": "v1 to v2",
+    "targets": [
+      "new/supervise.py",
+      "tests/test_supervise.py"
+    ],
+    "application_scope": "isolated review directory only; never overwrite originals or published v1 files",
+    "v1_candidate": {
+      "sha256": "50466f3e5c47200faf1df87b7ddfa6b4e12da22d1f8987579ea8303654ce8503",
+      "drive_url": "https://drive.google.com/file/d/1LwXbc0ICth-kZ5-mcYdIZxlHfVfiA-Bd/view?usp=drivesdk"
+    },
+    "v1_tests": {
+      "sha256": "cce95886cb2b8c1ae373bba5d4125f39cb30ec3a9482e10669cafe19af2deea9",
+      "drive_url": "https://drive.google.com/file/d/1u6rhizWb8ikR9kxbHbSg0FikWU2yqf_H/view?usp=drivesdk"
+    },
+    "verification": {
+      "version": "v2",
+      "original_sources_unchanged": 9,
+      "published_v1_files_unchanged": 7,
+      "tests_passed": 25,
+      "original_v1_cases_passed": 14,
+      "new_v2_cases_passed": 11,
+      "per_case_results_complete": true,
+      "patch_baseline": "published v1 candidate and test script",
+      "git_apply_check": "pass",
+      "git_apply_whitespace_error_all": "pass",
+      "applied_bytes_identical": true,
+      "patch_sha256": "490190f335ba801536938e4522acbe9d5e9cfd4e6dceee8d5464e13a95441e2a",
+      "candidate_sha256": "c12c38ed08a6ce8431747f728d7075a4ebe5ebe1eb6c0a8fd464ccada6ce96e3",
+      "test_script_sha256": "eecd0cb8ce63808df1b4e486e5b48fdea974f46b747ea1c760f0f0afc9dba01d"
+    }
+  },
+  "tests": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python tests/test_supervise.py --record",
+    "working_directory": "v2",
+    "runtime": "Python 3.12.14 on Linux; standard library only",
+    "tests_run": 25,
+    "original_v1_cases": 14,
+    "new_v2_cases": 11,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "per_case_results": [
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_bad_result_keeps_exit_record_before_failing",
+        "status": "passed",
+        "duration_s": 0.03405553099992176,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_cleanup_does_not_reap_unrelated_child",
+        "status": "passed",
+        "duration_s": 0.46665008199988733,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_exception_leader_cannot_leave_descendants",
+        "status": "passed",
+        "duration_s": 0.19274492900012774,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_global_limit_reason_is_preserved",
+        "status": "passed",
+        "duration_s": 0.46647825799982456,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_normal_completion",
+        "status": "passed",
+        "duration_s": 0.03155758999992031,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_original_supervisor_reaps_leader_but_leaves_descendants",
+        "status": "passed",
+        "duration_s": 0.17566018999968946,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_real_main_preserves_exit_records_and_refuses_rerun",
+        "status": "passed",
+        "duration_s": 0.2540735079996921,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_real_main_supervisor_failure_keeps_exit_record",
+        "status": "passed",
+        "duration_s": 0.18646433100002469,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes",
+        "status": "passed",
+        "duration_s": 1.4532603469997412,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_successful_leader_cannot_leave_descendants",
+        "status": "passed",
+        "duration_s": 0.1833722639998996,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_supervisor_exception_cleans_then_propagates",
+        "status": "passed",
+        "duration_s": 0.19642250700007935,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_timeout_ignoring_sigterm_escalates_to_sigkill",
+        "status": "passed",
+        "duration_s": 0.46641476000013427,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_timeout_reaps_two_descendant_generations",
+        "status": "passed",
+        "duration_s": 0.46704747000012503,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorLifecycleTests.test_worker_exception_records_nonzero_exit",
+        "status": "passed",
+        "duration_s": 0.04154650399959792,
+        "original_v1_case": true
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_cleanup_keyboardinterrupt_is_recorded",
+        "status": "passed",
+        "duration_s": 0.034792578000178764,
+        "original_v1_case": false
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_cleanup_send_oserror_is_recorded",
+        "status": "passed",
+        "duration_s": 0.0349697209999249,
+        "original_v1_case": false
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_continuously_ready_wait4_cannot_defer_deadline",
+        "status": "passed",
+        "duration_s": 0.0015692650003984454,
+        "original_v1_case": false
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_main_missing_attribute_falls_back_to_conservative_record",
+        "status": "passed",
+        "duration_s": 0.013932829999703245,
+        "original_v1_case": false
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_no_sigkill_after_owned_group_children_disappear",
+        "status": "passed",
+        "duration_s": 0.0009490060001553502,
+        "original_v1_case": false
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_original_error_chain_survives_cleanup_and_bad_json",
+        "status": "passed",
+        "duration_s": 0.013805030999719747,
+        "original_v1_case": false
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_partial_drain_failure_retains_collected_leader",
+        "status": "passed",
+        "duration_s": 0.09557456299990008,
+        "original_v1_case": false
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_record_update_interrupt_preserves_primary_chain",
+        "status": "passed",
+        "duration_s": 0.0016613220000181173,
+        "original_v1_case": false
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_term_normally_exits_without_sigkill",
+        "status": "passed",
+        "duration_s": 0.3647900959999788,
+        "original_v1_case": false
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_valid_result_json_is_processed_and_sealed",
+        "status": "passed",
+        "duration_s": 0.035613913999895885,
+        "original_v1_case": false
+      },
+      {
+        "test_id": "__main__.SupervisorV2BranchTests.test_v2_validation_oserror_is_recorded_before_cleanup",
+        "status": "passed",
+        "duration_s": 0.014685704999919835,
+        "original_v1_case": false
+      }
+    ],
+    "full_log_and_associated_evidence": "test-results_v2.json",
+    "safety_bounds": {
+      "independent_test_wall_limit_s": 4,
+      "test_cleanup_wall_limit_s": 2,
+      "fixed_max_processes_per_worker": 3,
+      "fixed_max_concurrent_fixture_processes": 4,
+      "finite_max_worker_launches_per_test": 8,
+      "infinite_fork_tests": false
+    },
+    "baseline_comparison_requires": {
+      "relative_path_from_v2": "../originals/new/supervise.py",
+      "sha256": "bf1a00fd7661fd7947f22dc86682a79616bf27b05dd17e640bc1d5ce50b52b7c",
+      "missing_file_behavior": "baseline comparison skips; a skip must not be reported as passed"
+    },
+    "fault_injection_interpretation": "Tests assert honest incomplete cleanup records. Independent bounded fixture teardown is not attributed to candidate cleanup."
+  },
+  "preservation": {
+    "nine_frozen_source_files_unchanged": true,
+    "seven_published_v1_artifacts_unchanged": true,
+    "scientific_original_results_and_failure_records_modified": false,
+    "uploaded_scientific_source_copies": false,
+    "production_patch_applied": false,
+    "large_scientific_experiments_run": false,
+    "software_installed": false,
+    "paid_compute_or_paid_api_used": false,
+    "credentials_uploaded": false,
+    "github_push_or_pr": false
+  },
+  "unverified_boundaries": [
+    "Linux one-shot single-thread CLI; no competing waiters; descendants must remain in the owned session/process group.",
+    "Subreaper is process-wide and is not restored. This is not a claim of safe embedding in a long-lived or multithreaded host.",
+    "Live CPU checks observe only the leader. Summing harvested child usage is not a strict real-time process-tree CPU cap. The maximum wait4 RSS is not concurrent tree RSS.",
+    "Outer measure.py/reproduce.py wall-clock handling remains unchanged; no escaped-session, external supervisor SIGKILL/default SIGTERM, OOM, uninterruptible kernel wait or disk-write failure guarantee.",
+    "OS-denied cleanup can leave incomplete cleanup; the candidate records failure and propagates the error.",
+    "No real OR-Tools solve or scientific budget stress was run. The old SIGKILL root cause remains unproven; neither OR-Tools nor OOM is established as the cause.",
+    "Historical ZIP acquisition remains blocked; this delivery uses the separately authorized nine hash-verified text sources and did not resume signed-URL, base64 or network-escalation attempts."
+  ],
+  "next_step": "Independent review of v2 only; no scope expansion pending review."
+}

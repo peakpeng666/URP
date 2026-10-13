@@ -1,0 +1,126 @@
+{
+  "artifact_type": "evidence_bound_research_decision_brief",
+  "created_utc": "2026-10-08T01:24:30.323975+00:00",
+  "status": "DRAFT_FOR_ROOT_REVIEW_NOT_ARCHIVED",
+  "scope": "Summary of existing evidence only; no new scientific run, solver, model API, installation, upload, or changes to source packages or prior pause index.",
+  "report": {
+    "relative_path": "科研决策说明.txt",
+    "sha256": "c5cc088f359be6425e6d4530fd054837012cb71551d04d50cd7bcd942b452db3",
+    "bytes": 3578,
+    "body_han_characters": 890,
+    "body_characters_including_latin_and_whitespace": 1275
+  },
+  "source_path_base": "/workspace/shared",
+  "evidence_groups": {
+    "1": [
+      {
+        "path": "official_cvrp_neutral_validation_20261008/reports/REPORT_ZH.txt",
+        "sha256": "bd38609cddb414873c93d2c13a194ca6d6cc547229241efa0c9de688a4c13c31",
+        "bytes": 15233
+      },
+      {
+        "path": "independent_neutral_validation_audit_20261008/AUDIT_RESULT.json",
+        "sha256": "ad8430045bff36bd2c0811bda5881f0bfa556b2c51348dc3605ea97eb97a588f",
+        "bytes": 6113
+      }
+    ],
+    "2": [
+      {
+        "path": "cvrp_static_neighborhood_diagnostic_20261008/REPORT_ZH.txt",
+        "sha256": "f65132a7cd86a1ffa657399dbe830014ee20e8c20aa5d8149e4088c3e7074756",
+        "bytes": 4974
+      }
+    ],
+    "3": [
+      {
+        "path": "cvrp_budgeted_terminal_swap_20261008/REPORT_ZH.txt",
+        "sha256": "551f8b51d6e970c5f641529ef420c70919e0c29328cb96b02df2151a2314d632",
+        "bytes": 7623
+      },
+      {
+        "path": "cvrp_budgeted_terminal_swap_20261008/reports/PAIRED_RESULTS.csv",
+        "sha256": "18bc75fb097ea46317035f2b42dced543e8e80f17b19a91457c02c2fc1925e39",
+        "bytes": 2975
+      },
+      {
+        "path": "cvrp_budgeted_swap_independent_audit_20261008/REPORT_ZH.txt",
+        "sha256": "4f8cc849220c8da5255140a007340029ffe732cdf758ecbd1c097570344678e5",
+        "bytes": 2954
+      },
+      {
+        "path": "cvrp_budgeted_swap_independent_audit_20261008/CHECKS.json",
+        "sha256": "5371197558aa299c20b1bba42b89353f93ed4aeb045311338fcba25605b000ed",
+        "bytes": 15060
+      }
+    ],
+    "4": [
+      {
+        "path": "bpp_nearfit_distribution_20261008/SUMMARY_ZH.txt",
+        "sha256": "66e4d2e8cd2ed67d77d585fdcdb010e57785ae8df2257598f9360d51d0a1a02d",
+        "bytes": 3989
+      },
+      {
+        "path": "bpp_nearfit_distribution_20261008/D1_RESULT_REVIEW.json",
+        "sha256": "9c2bc2095d8d063d8dbbc2f57a1ccde6db6a58412161dd4767c99e643fe9edc4",
+        "bytes": 30892
+      }
+    ],
+    "5": [
+      {
+        "path": "bpp_distribution_classic_baselines_20261008/SUMMARY_ZH.txt",
+        "sha256": "860b1a862ddbd3fc5fb112cec421976ff1235e7b81639008b0bf2898aa706192",
+        "bytes": 3444
+      },
+      {
+        "path": "bpp_distribution_classic_independent_audit_20261008/独审结论.txt",
+        "sha256": "a8d2deb97024fbb1a19def9c0e2151cbc34ae57c85e88ef40ecf69611cfae3fd",
+        "bytes": 1329
+      },
+      {
+        "path": "bpp_distribution_classic_independent_audit_20261008/AUDIT_RESULT.json",
+        "sha256": "5d853c890625c5ce3cddeeb24385c98491a9c68e3821c21bfb866315e4013276",
+        "bytes": 38765
+      }
+    ],
+    "6": [
+      {
+        "path": "real_field_geometry_preparation_20261008/REPORT_ZH.txt",
+        "sha256": "65002bb41d0694c48e5f35f614a0252cc4b9c391a09e14c304e3559b6a883168",
+        "bytes": 3536
+      },
+      {
+        "path": "real_field_geometry_preparation_20261008/INPUT_MANIFEST.json",
+        "sha256": "971df8b158d57cae78288e02f2f150572c2256f164195c3c0903a552b597d769",
+        "bytes": 6108
+      },
+      {
+        "path": "real_field_geometry_preparation_20261008/NEXT_VALIDATION_DESIGN.txt",
+        "sha256": "56b6a934d5ba5ebb8cc8e085b116e3d1bcf672d29eed7e51ef86e62a7945b1e2",
+        "bytes": 2411
+      }
+    ]
+  },
+  "derived_descriptive_check": {
+    "source": "cvrp_budgeted_terminal_swap_20261008/reports/PAIRED_RESULTS.csv",
+    "operation": "Read and sum three existing CSV columns; no solver execution or new experiment",
+    "paired_rows": 24,
+    "column_sums": {
+      "reservation_cost_difference": 15.0,
+      "swap_improvement": -4.0,
+      "paired_cost_difference": 11.0
+    },
+    "sign_convention": "Positive terminal treatment minus full RR2 baseline means worse; swap_improvement is signed cost change."
+  },
+  "claim_boundaries": {
+    "old_neutral": "Generalization statement follows new six-instance report and independent audit; no claim to re-audit old three-instance experiment here.",
+    "online_selection": "Prospective minimum design requirements, not results of a validated selector. Existing twelve D1 streams are already seen; complete counterfactual algorithm trajectories do not validate state-consistent online switching.",
+    "next_run": "Two levels: fixed-protocol small exploratory runs require validity, no future leakage, full denominators, and no outcome-based threshold tuning; independent calibration and final confirmation are required only for calibrated-risk or generalization-reliability claims. No existing scientific evidence modified.",
+    "audit_status": "Original reports marked pending remain unchanged; later independent audit records provide status.",
+    "metric_blocker": "Original geometry manifest and report establish unknown source CRS; no projected or metric result claimed.",
+    "integrity_scope": "All fifteen cited files hashed and confirmed byte-identical across this binding operation. Source packages were read only. This is not a fresh independent scientific audit.",
+    "json_self_hash": "This JSON does not hash itself; report SHA-256 and all cited source hashes are bound here."
+  },
+  "cited_sources_unchanged_during_binding": true,
+  "revised_utc": "2026-10-08T01:25:28.066688+00:00",
+  "preparation_status_context": "Parent review message dated 2026-10-08: a new 12-stream prefix-gate experiment is authorized and in preparation. This is context only, not a completed experimental result or independently verified run."
+}

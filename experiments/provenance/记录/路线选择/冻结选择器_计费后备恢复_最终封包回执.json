@@ -1,0 +1,18 @@
+{
+  "created_utc": "2026-10-07T13:20:54.198957+00:00",
+  "final_zip": "/workspace/shared/selector_budgeted_recovery_20261007_FINAL.zip",
+  "final_zip_sha256": "75cadfa9e7d1a6d990942d48d07f3fe4a0c0ca4502a26803171b78d296d5f72a",
+  "final_zip_bytes": 1881646,
+  "final_zip_entries": 15,
+  "crc_passed": true,
+  "every_manifest_entry_verified": true,
+  "original_zip_sha256": "0836266d63ca7fc7842b22e380dc65170cfbf5703ef070660f0d31b0ee8433bb",
+  "original_zip_preserved": true,
+  "author_directory_unchanged": true,
+  "audit_directory_unchanged": true,
+  "packaging_cpu_s_before_receipt_write": 0.088191223,
+  "packaging_wall_s_before_receipt_write": 0.06351207399711711,
+  "resource_scope": "Outer packaging only,separate from experiment116.833CPU seconds and independent audit1.322CPU seconds. Full startup+serialization captured by packaging_shell_time.txt sidecar.",
+  "solver_calls": 0,
+  "uploaded": false
+}

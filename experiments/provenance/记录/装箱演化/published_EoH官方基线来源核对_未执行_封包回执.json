@@ -1,0 +1,42 @@
+{
+  "schema": "clean-source-review-packaging-receipt-v1",
+  "archive_path": "/workspace/shared/published_eoh_baseline_review_delivery_20261007/published_EoH官方基线来源核对_未执行_20261007.zip",
+  "archive_bytes": 21726,
+  "archive_sha256": "385814d0f0ebd7602e80a8f7bf97fddd1172dd1e99fa7e568ec766d3063d3633",
+  "archive_entries": 12,
+  "source_original_files": 15,
+  "all_source_files_unchanged": true,
+  "source_sha256": {
+    "paper_page_14.png": "d13318b1d864ee1d99dde9c88c7498b3a7e1c1bb21aac62fa13e74f3b17125ab",
+    "source_hashes.json": "49d66e41dbc33b1a015b2905fdfb9c9e5c9b69f788f8e326a6d8edd6581355f3",
+    "published_eoh_score_import_removed.py": "6dd1c8929c59e75dca893d68f1e2010868bd9b6c3a61a1f3565e3b338f8eed81",
+    "liu24bs_pmlr.pdf": "de3051b2c7bc4e334748f5d888f003a2c6caf62e727847adda62a31503664b0e",
+    "REVIEW.md": "1c0aa98ddc1a514202351c229dd2b6f78b9e3c32802760f6605f4395e5d4465b",
+    "liu24bs_pmlr.txt": "283787f35267ceff9fb10d3ca776d4462b3b26a5651fab97f775d829612fba80",
+    "runtime_compatibility_evidence.json": "7a0532ac0f7791d677312ece517d85bdedbdcce0229a4333cce8c8f7f72e442e",
+    "github_source_evidence.json": "543ed5e4c642d18fb9e8dc6e3403c534dad7fa668889c9a71796164664757fbd",
+    "import_removal_exact.diff": "06b26c3382cf5d8294b61a5743264c0a3b78d51e521f1df20464594ed78644ea",
+    "paper_page_17.png": "20313d3a3c9d6b60d09be874ec36528d586900cdbd09fabc7cef7ba18bf3aa68",
+    "upstream/LICENSE": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685",
+    "upstream/runEval.py": "f03cf35288e0cf301c1c61fb37233ba8b39b13646abd1ded222c127c15721b0e",
+    "upstream/UPSTREAM_BP_README.md": "2fc8842aa457777ec536eeecfc172fdc167f72926a3db19d581699a2054c5f19",
+    "upstream/heuristic_original_EoH_paper.py": "f3d50f0e81ca061a0377b9fb61b75cf16ecde9f091876db0d8baca8323655995",
+    "upstream/evaluation.py": "392692dca10a69d8a61a3cf3023273e7bbe3f33ddd3372ff8100b2404a2ebd56"
+  },
+  "manifest_sha256": "3d423a5c789feff5c414c87db868019f6057c387a893c4173b013b4260e66ea3",
+  "source_manifest_and_git_blob_checks_passed": true,
+  "archive_crc_and_manifest_sha_passed": true,
+  "scientific_runs": 0,
+  "candidate_executions": 0,
+  "raw_paper_caches_excluded": [
+    "liu24bs_pmlr.pdf",
+    "liu24bs_pmlr.txt",
+    "paper_page_14.png",
+    "paper_page_17.png"
+  ],
+  "package_script_sha256": "73c9a4208b60929622ca2b8cf85c77d8e946857a162a80c835054a389b92797e",
+  "packaging_process_cpu_seconds_before_receipt_write": 0.008379846,
+  "packaging_wall_seconds_before_receipt_write": 0.008380594,
+  "resource_scope": "Only this successful packaging invocation: snapshot, read-only source/hash checks, ZIP build, readback and source-unchanged checks. Excludes prior source review/preparation, interpreter startup and this final receipt write; unknown prior work is not zero.",
+  "scientific_state": "Source/manual compatibility review only, not admission success or executed confirmation; no historical seal asserted."
+}

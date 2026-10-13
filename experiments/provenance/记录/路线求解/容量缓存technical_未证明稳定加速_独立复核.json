@@ -1,0 +1,173 @@
+{
+  "utc": "2026-10-08T13:45:12.539550+00:00",
+  "status": "PASS_WITH_QUALIFICATIONS",
+  "scope": "Only saved JSON/ZIP, independent hashes, AST inspection, arithmetic. No author source imported or executed, no solver/candidate calls.",
+  "checks": {
+    "hashes:freeze/PRE_RUN_FREEZE.json": true,
+    "hashes:freeze/COMPLETE_PREEXEC_WITH_FIXTURE.json": true,
+    "hashes:PREEXECUTION_SNAPSHOT_SHA256.json": true,
+    "hashes:RAW_COMPLETE_UNAUDITED_SHA256.json": true,
+    "hashes:REPORT_AND_EVIDENCE_SHA256.json": true,
+    "old_source_tree_preserved": true,
+    "archive:capacity_bound_cached_invariants_20261008_technical_r1_REPORT_AND_EVIDENCE.zip": true,
+    "archive:capacity_bound_cached_invariants_20261008_RAW_COMPLETE_UNAUDITED.zip": true,
+    "archive:capacity_bound_cached_invariants_20261008_REPORT_AND_EVIDENCE.zip": true,
+    "archive:capacity_bound_cached_invariants_20261008_PREEXECUTION_SNAPSHOT.zip": true,
+    "receipt:provenance/PREEXEC_ARCHIVE_VERIFIED.json": true,
+    "receipt:provenance/RAW_ARCHIVE_VERIFIED.json": true,
+    "failed_raw_download_byte_identical": true,
+    "additive_fixture_base_preserved": true,
+    "unchanged_candidate_hash": true,
+    "same_48_inputs": true,
+    "unchanged_schedule": true,
+    "candidate_scoped_ast_changes": true,
+    "references_match_old_results": true,
+    "3936_calls_frozen_order": true,
+    "all_call_exact_semantics": true,
+    "all_saved_signatures_recomputed": true,
+    "all_call_input_hashes": true,
+    "independent_saved_output_feasibility_cost": true,
+    "96_partitions_exact_reference_semantics": true,
+    "48_pairs_full_trace_assignment_prune_exact": true,
+    "full_trace_arithmetic_accounting": true,
+    "7140_toy_saved_arithmetic": true,
+    "6_saved_negative_controls": true,
+    "12_batches_match_schedule": true,
+    "pretime_gate_passed": true,
+    "normal_exit": true,
+    "timing_report_recomputed": true,
+    "zero_current_clock_probe": true,
+    "400ms_conservative_batch_floor": true,
+    "author_directory_not_modified": true
+  },
+  "details": {
+    "hashes:freeze/PRE_RUN_FREEZE.json": {
+      "files": 76,
+      "mismatches": []
+    },
+    "hashes:freeze/COMPLETE_PREEXEC_WITH_FIXTURE.json": {
+      "files": 79,
+      "mismatches": []
+    },
+    "hashes:PREEXECUTION_SNAPSHOT_SHA256.json": {
+      "files": 77,
+      "mismatches": []
+    },
+    "hashes:RAW_COMPLETE_UNAUDITED_SHA256.json": {
+      "files": 96,
+      "mismatches": []
+    },
+    "hashes:REPORT_AND_EVIDENCE_SHA256.json": {
+      "files": 107,
+      "mismatches": []
+    },
+    "old_source_tree_preserved": {
+      "files": 1002
+    },
+    "archive:capacity_bound_cached_invariants_20261008_technical_r1_REPORT_AND_EVIDENCE.zip": {
+      "bytes": 2229083,
+      "sha256": "b72ae12199ae38804b06628ac4bb27603ed55e7874f0cd181675b787d84994cd",
+      "member_mismatches": []
+    },
+    "archive:capacity_bound_cached_invariants_20261008_RAW_COMPLETE_UNAUDITED.zip": {
+      "bytes": 343570,
+      "sha256": "12e29484697a44e75e2b1554b641dfa842519fea02803462b386a32bcee2b2dd",
+      "member_mismatches": []
+    },
+    "archive:capacity_bound_cached_invariants_20261008_REPORT_AND_EVIDENCE.zip": {
+      "bytes": 351646,
+      "sha256": "9082678ab4f6054f551214c22ac57e4d5fc4a1a63b961936b97924a70fac60e7",
+      "member_mismatches": []
+    },
+    "archive:capacity_bound_cached_invariants_20261008_PREEXECUTION_SNAPSHOT.zip": {
+      "bytes": 244814,
+      "sha256": "8225864937685d69504b005788791ad861ad8ea45bcc48e60724b01a3a78cf7a",
+      "member_mismatches": []
+    },
+    "receipt:provenance/PREEXEC_ARCHIVE_VERIFIED.json": {
+      "drive_id": "1z_PAALLFk38CUA1qNiExMuMa_9UT9WPW",
+      "sha256": "daad466b6a1299d27a8ce78315147f18b88f414221ab3cc512765e29598c5c0f"
+    },
+    "receipt:provenance/RAW_ARCHIVE_VERIFIED.json": {
+      "drive_id": "1vxdGGBQXqjzPnFG-xObxw7EKhQInwQKg",
+      "sha256": "6db13083c9c7daea45ad93cd42cd0c6c8a9c636ef672cc60f1e38c36cc377bc6"
+    },
+    "3936_calls_frozen_order": {
+      "warmup": 96,
+      "timed": 3840
+    },
+    "independent_saved_output_feasibility_cost": {
+      "success_records": 3362,
+      "initfail_records": 574,
+      "max_cost_abs_residual": 0,
+      "bad_calls": []
+    },
+    "full_trace_arithmetic_accounting": {
+      "totals": {
+        "waste_solver": {
+          "entry_calls": 3310,
+          "counted_nodes": 3303,
+          "uncounted_budget_return_calls": 7
+        },
+        "cached_solver": {
+          "entry_calls": 3310,
+          "counted_nodes": 3303,
+          "uncounted_budget_return_calls": 7
+        }
+      },
+      "mismatches": []
+    },
+    "7140_toy_saved_arithmetic": {
+      "mismatches": [],
+      "note": "Recomputed guard formula/suffix arithmetic; saved exhaustive feasibility labels were not regenerated."
+    }
+  },
+  "failures": [],
+  "timing": {
+    "cpu": {
+      "totals_ns": {
+        "waste_solver": 3075755528,
+        "cached_solver": 2983964449
+      },
+      "cached_over_original": 0.9701565751359676,
+      "round_ratios": [
+        1.049982851783104,
+        0.9287213418475492,
+        1.034527049607753,
+        1.104919724107886,
+        0.7804327878627504
+      ],
+      "median_ratio": 1.034527049607753,
+      "faster_rounds": 2,
+      "slower_rounds": 3,
+      "min": 0.7804327878627504,
+      "max": 1.104919724107886
+    },
+    "wall": {
+      "totals_ns": {
+        "waste_solver": 3077730034,
+        "cached_solver": 2984282069
+      },
+      "cached_over_original": 0.9696373743090945,
+      "round_ratios": [
+        1.0563161682601474,
+        0.9251026036306035,
+        1.0365211025967414,
+        1.1005356723370627,
+        0.778936460473911
+      ],
+      "median_ratio": 1.0365211025967414,
+      "faster_rounds": 2,
+      "slower_rounds": 3,
+      "min": 0.778936460473911,
+      "max": 1.1005356723370627
+    }
+  },
+  "limitations": [
+    "Same fixed 48 inputs, no additional independent samples from repeated runs.",
+    "No stable speedup: cached slower in 3/5 paired rounds despite ~3% lower aggregate time.",
+    "This run short CPU clock probes have no positive increments; 4ms is inherited conservative floor, not newly observed.",
+    "README report phrase process_time actual ~4ms must be read with INTERPRETATION.json qualification.",
+    "Equivalence proof applies to exact integer demands/residuals; finite test labels are not a proof of all inputs."
+  ]
+}

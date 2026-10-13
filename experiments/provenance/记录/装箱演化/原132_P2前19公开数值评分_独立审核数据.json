@@ -1,0 +1,235 @@
+{
+  "status": "PASS_independent_readonly_audit",
+  "reviewed_zip": "/workspace/shared/p2_public_scoring_1_19_delivery_20261007.zip",
+  "zip_bytes": 1206634,
+  "zip_sha256": "466b4ca95d37e7426e0a084dbdd764fde5726b545ab3a733f74b7cca2853a7e0",
+  "files_byte_matched_zip_and_directory": 529,
+  "manifest_entries_verified": 528,
+  "original_frozen_files_hash_matched": 48,
+  "result_slots": 19,
+  "counts": {
+    "scored": 11,
+    "admission_rejected": 4,
+    "generation_failure": 4
+  },
+  "arms": {
+    "IID_TC": {
+      "slots": 9,
+      "complete": 6,
+      "generation_failure": 2,
+      "AST_rejected": 1,
+      "admission_attempts": 7
+    },
+    "EOH_TC": {
+      "slots": 10,
+      "complete": 5,
+      "generation_failure": 2,
+      "AST_rejected": 3,
+      "admission_attempts": 8
+    }
+  },
+  "admission_receipts_fully_reverified": 15,
+  "pack_receipts_fully_reverified": 55,
+  "journal_claim_result_pairs": 70,
+  "reservations": 125,
+  "unknown_or_extra_claims": 0,
+  "HALT": false,
+  "reserved_cpu_seconds": 6615,
+  "reserved_shared_wall_seconds": 5025,
+  "usage_recomputed": {
+    "admissions": 15,
+    "instance_packs": 55,
+    "admission_cpu_seconds": 2.742346,
+    "child_cpu_seconds": 931.951528,
+    "supervisor_self_cpu_seconds": 1302.951925,
+    "supervisor_inclusive_wait4_cpu_seconds": 2234.903453,
+    "numerical_cpu_seconds_no_double_count": 2237.645799,
+    "shared_instance_wall_seconds": 2244.3509216060047,
+    "score_call_cpu_ns": 24487201450
+  },
+  "prefix_1_13_saved_hashes_unchanged": 13,
+  "second_pass_reused_read_only": 13,
+  "second_pass_new_slots": 6,
+  "exact_fitness_recomputed": [
+    {
+      "position": 1,
+      "arm": "IID_TC",
+      "slot_id": "b01_IID_TC_g2_e1_01",
+      "used_bins": [
+        3480,
+        3536,
+        3589,
+        3551,
+        3562
+      ],
+      "fitness_fraction": "7533834834668927/13428150974144400",
+      "fitness_decimal": 0.5610478202974598
+    },
+    {
+      "position": 2,
+      "arm": "EOH_TC",
+      "slot_id": "b01_EOH_TC_g2_e1_01",
+      "used_bins": [
+        2057,
+        2032,
+        2026,
+        2031,
+        2029
+      ],
+      "fitness_fraction": "28406307314996019/29080921274698480",
+      "fitness_decimal": 0.9768021806004681
+    },
+    {
+      "position": 4,
+      "arm": "IID_TC",
+      "slot_id": "b01_IID_TC_g2_e1_02",
+      "used_bins": [
+        2095,
+        2058,
+        2054,
+        2063,
+        2056
+      ],
+      "fitness_fraction": "1883064011091162/1956369784139225",
+      "fitness_decimal": 0.9625296947221476
+    },
+    {
+      "position": 5,
+      "arm": "IID_TC",
+      "slot_id": "b01_IID_TC_g2_e1_03",
+      "used_bins": [
+        2097,
+        2059,
+        2054,
+        2063,
+        2057
+      ],
+      "fitness_fraction": "8229681535295002/8553346375364505",
+      "fitness_decimal": 0.9621592735912429
+    },
+    {
+      "position": 7,
+      "arm": "EOH_TC",
+      "slot_id": "b01_EOH_TC_g2_e1_04",
+      "used_bins": [
+        2026,
+        1998,
+        1994,
+        1996,
+        1994
+      ],
+      "fitness_fraction": "833325641497/839110947435",
+      "fitness_decimal": 0.9931054338455665
+    },
+    {
+      "position": 8,
+      "arm": "IID_TC",
+      "slot_id": "b01_IID_TC_g2_e1_04",
+      "used_bins": [
+        2096,
+        2059,
+        2057,
+        2065,
+        2058
+      ],
+      "fitness_fraction": "1079799510870753/1122814637506100",
+      "fitness_decimal": 0.9616899128329066
+    },
+    {
+      "position": 9,
+      "arm": "IID_TC",
+      "slot_id": "b01_IID_TC_g2_e1_05",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ],
+      "fitness_fraction": "5039117513623279/5239871856954735",
+      "fitness_decimal": 0.961687165485736
+    },
+    {
+      "position": 13,
+      "arm": "EOH_TC",
+      "slot_id": "b01_EOH_TC_g2_e2_01",
+      "used_bins": [
+        2095,
+        2062,
+        2057,
+        2066,
+        2056
+      ],
+      "fitness_fraction": "5671171829079659/5897669527635325",
+      "fitness_decimal": 0.9615953899257423
+    },
+    {
+      "position": 14,
+      "arm": "IID_TC",
+      "slot_id": "b01_IID_TC_g2_e2_01",
+      "used_bins": [
+        2097,
+        2060,
+        2057,
+        2066,
+        2057
+      ],
+      "fitness_fraction": "44128782990851/45895517207100",
+      "fitness_decimal": 0.9615052989102019
+    },
+    {
+      "position": 16,
+      "arm": "EOH_TC",
+      "slot_id": "b01_EOH_TC_g2_e2_02",
+      "used_bins": [
+        2064,
+        2035,
+        2035,
+        2036,
+        2036
+      ],
+      "fitness_fraction": "2602482319/2672402700",
+      "fitness_decimal": 0.9738361359236765
+    },
+    {
+      "position": 17,
+      "arm": "EOH_TC",
+      "slot_id": "b01_EOH_TC_g2_e2_03",
+      "used_bins": [
+        2082,
+        2050,
+        2049,
+        2052,
+        2048
+      ],
+      "fitness_fraction": "102805843054733/106343296704000",
+      "fitness_decimal": 0.9667355276833923
+    }
+  ],
+  "best_public_design_candidate": {
+    "position": 7,
+    "arm": "EOH_TC",
+    "slot_id": "b01_EOH_TC_g2_e1_04",
+    "used_bins": [
+      2026,
+      1998,
+      1994,
+      1996,
+      1994
+    ],
+    "fitness_fraction": "833325641497/839110947435",
+    "fitness_decimal": 0.9931054338455665
+  },
+  "limitations": [
+    "Read-only verification of preserved records, not a new candidate execution or assignment reconstruction. Full assignment arrays were not persisted; checker success and assignment SHA are verified through original pinned receipt verifier.",
+    "No missing failures or retry evidence in the preserved fixed-scope journals/reservations. The snapshot cannot prove absence of unrecorded activity outside this scope.",
+    "Highest individual fitness on fixed public design only. No cross-arm effectiveness or heldout/generalization conclusion.",
+    "Historical overall remaining balance is unknown; no budget reset inferred.",
+    "R1 public captures retain local provenance; no independent provider HTTP proof."
+  ],
+  "candidate_executions_in_review": 0,
+  "heldout_metadata_or_instance_reads_in_review": 0,
+  "snapshot_files_modified": 0,
+  "review_cpu_seconds": 0.199675539,
+  "review_wall_seconds": 0.20127263799804496
+}

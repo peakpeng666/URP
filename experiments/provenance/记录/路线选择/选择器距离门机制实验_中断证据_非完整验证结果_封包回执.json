@@ -1,0 +1,17 @@
+{
+  "utc": "2026-10-07T16:50:22.139800+00:00",
+  "archive_path": "/workspace/shared/selector_distance_mechanism_20261007_DELIVERY.zip",
+  "bytes": 2501468,
+  "sha256": "df3e89031d51cadcfb6a5b6c73676ed3609606c9c8d80e7de7ae0bbd3a68d3ee",
+  "source_file_count": 265,
+  "archive_members": 267,
+  "roundtrip_crc_and_sha_verified": true,
+  "scientific_frozen_files_unchanged": 213,
+  "status": "INTERRUPTED_EXPERIMENT_COMPLETE_EVIDENCE_PACKAGE",
+  "solver_calls_during_packaging": 0,
+  "packaging_cpu_s": 0.468525608,
+  "packaging_wall_s": 0.4708830380041036,
+  "outside_main_and_independent_audit_budgets": true,
+  "receipt_excluded_from_zip_and_manifest": true,
+  "not_uploaded": true
+}

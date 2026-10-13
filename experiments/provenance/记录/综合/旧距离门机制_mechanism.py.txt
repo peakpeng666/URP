@@ -1,0 +1,123 @@
+"""Pure generation, gate and scoring functions; no solver calls or filesystem access."""
+import math,random,hashlib,statistics,collections
+FAMILIES=['uniform','elongated']; WIDTHS=[20,60]
+RADII=[.5,1.,2.,4.,None]
+RULES=[{'id':'r05','radius':.5},{'id':'r1','radius':1.},{'id':'r2','radius':2.},{'id':'r4','radius':4.},{'id':'rinf','radius':None},{'id':'reject','radius':None}]
+
+def mean(x):return statistics.mean(x) if x else None
+
+def decision(pred,kind,radius=.5):
+    c=pred['selected_config']; margin=pred['neighbor_margin']
+    if c=='pci250':return {'config':'pci250','accepted':False,'reason':'raw_pci','distance_pass':None,'margin_pass':None}
+    mp=margin is not None and margin>=.01
+    distance=pred['distance_without_window'] if kind=='GW' else pred['standardized_distance']
+    dp=kind=='GM' or (radius is None or distance<=radius)
+    if kind=='reject':dp=False
+    yes=mp and dp
+    return {'config':c if yes else 'pci250','accepted':yes,'reason':'accepted' if yes else ('margin' if not mp else 'distance_or_reject'),'distance_pass':dp,'margin_pass':mp}
+
+def policies(pred):
+    fixed={'B':{'config':'pci250','accepted':False,'reason':'fixed'},'G0':decision(pred,'G0'),'GW':decision(pred,'GW'),'GM':decision(pred,'GM'),'RAW':{'config':pred['selected_config'],'accepted':pred['selected_config']!='pci250','reason':'diagnostic_raw'}}
+    candidates={r['id']:decision(pred,'reject' if r['id']=='reject' else 'GC',r['radius']) for r in RULES}
+    return fixed,candidates
+
+def generate(source):
+    splits={}; originals={}; records=[]; geometries=[]
+    for fi,fam in enumerate(FAMILIES):
+        ids=[f'm{i:03}' for i in range(fi*12,fi*12+12)]
+        ordered=sorted(ids,key=lambda n:hashlib.sha256(('gate_mechanism_v1:split:'+n).encode()).hexdigest())
+        splits.update({n:'C' if n in ordered[:4] else 'E' for n in ids})
+    for i in range(24):
+        gid=f'm{i:03}';fam=FAMILIES[i//12];seed=202610079900+10007*i;rng=random.Random(seed)
+        xy=source.coordinate_set(fam,rng);demands=[rng.randint(1,10) for _ in range(100)];depot=(50,50)
+        order=sorted(range(1,101),key=lambda n:(math.atan2(xy[n-1][1]-50,xy[n-1][0]-50),math.hypot(xy[n-1][0]-50,xy[n-1][1]-50),n))
+        chunks=[];part=[];load=0
+        for n in order:
+            if load+demands[n-1]>100:chunks.append(part);part=[];load=0
+            part.append(n);load+=demands[n-1]
+        if part:chunks.append(part)
+        assert len(chunks)<=10,('WITNESS_CONSTRUCTION_FLEET',gid)
+        routes=[]
+        for chunk in chunks:
+            pending=set(chunk);route=[0];point=depot
+            while pending:
+                n=min(pending,key=lambda j:((xy[j-1][0]-point[0])**2+(xy[j-1][1]-point[1])**2,j))
+                route.append(n);pending.remove(n);point=xy[n-1]
+            routes.append(route+[0])
+        originals[gid]={'family':fam,'seed':seed,'split':splits[gid],'routes':routes,'demands':demands}
+        for variant in ['D0','D1']:
+            if variant=='D0':dv=depot;coords=xy
+            elif fam=='uniform':dv=(-25,-25);coords=xy
+            else:dv=(0,0);coords=[(x-50,round(.45*(x-50)+(y-50))) for x,y in xy]
+            starts={};returns=[]
+            for route in routes:
+                t=0.;point=dv
+                for n in route[1:-1]:
+                    t+=math.hypot(coords[n-1][0]-point[0],coords[n-1][1]-point[1]);starts[n]=t;t+=2;point=coords[n-1]
+                t+=math.hypot(point[0]-dv[0],point[1]-dv[1]);returns.append(t)
+            assert max(returns)<2000,('WITNESS_CONSTRUCTION_HORIZON',gid,variant,max(returns))
+            geom=source.digest({'depot':list(dv),'customers':sorted([list(z) for z in coords])})
+            customerhash=source.digest({'customers':sorted([list(z) for z in coords])})
+            geometries.append({'geometry_id':gid+'_'+variant,'base_group':gid,'variant':variant,'family':fam,'seed':seed,'split':splits[gid],'geometry_sha256':geom,'customer_coordinates_sha256':customerhash,'no_wait_returns':returns,'witness_routes':routes})
+            for width in WIDTHS:
+                nodes=[{'id':0,'x':dv[0],'y':dv[1],'demand':0,'ready':0,'due':2000,'service':0}]
+                for n in range(1,101):
+                    ready=max(0,math.floor(starts[n])-width//2)
+                    nodes.append({'id':n,'x':coords[n-1][0],'y':coords[n-1][1],'demand':demands[n-1],'ready':ready,'due':ready+width,'service':2})
+                records.append({'id':f'{gid}_{variant}_w{width:03}','base_group':gid,'geometry_id':gid+'_'+variant,'geometry_sha256':geom,'family':fam,'seed':seed,'split':splits[gid],'variant':variant,'width':width,'vehicles':10,'capacity':100,'nodes':nodes,'witness_routes':routes})
+    return records,geometries,originals
+
+def schedule(predictions):
+    rng=random.Random(202610079901); reqs=[]
+    for split in ['C','E']:
+        for rep in range(3):
+            pairs=[]
+            for fam in FAMILIES:
+                for variant in ['D0','D1']:
+                    for width in WIDTHS:
+                        rows=sorted([p for p in predictions if p['split']==split and p['family']==fam and p['variant']==variant and p['width']==width],key=lambda x:x['instance'])
+                        rng.shuffle(rows);assert len(rows) in [4,8]
+                        for pos,p in enumerate(rows):
+                            order=['A','B'] if pos<len(rows)//2 else ['B','A']
+                            pairs.append((p,order))
+            rng.shuffle(pairs)
+            for p,order in pairs:
+                for pos,slot in enumerate(order):
+                    cfg='pci250' if slot=='A' else p['prediction']['selected_config']
+                    reqs.append({'sequence':len(reqs),'run_id':p['instance']+f'__r{rep}__{slot}','instance':p['instance'],'base_group':p['base_group'],'family':p['family'],'variant':p['variant'],'width':p['width'],'phase':split,'repeat':rep,'slot':slot,'position':pos,'config_id':cfg,'budget_ms':250,'seed':2026100708})
+    return reqs
+
+def summarize(rows):
+    assert rows
+    groups=sorted({x['base_group'] for x in rows});lost=[x for x in rows if x['pci_valid'] and not x['valid']];rescues=[x for x in rows if x['valid'] and not x['pci_valid']]
+    quality={g:[x['gain'] for x in rows if x['base_group']==g and x['gain'] is not None] for g in groups}
+    q={g:mean(v) for g,v in quality.items()};full=not lost and all(v is not None for v in q.values())
+    bycase=collections.defaultdict(list)
+    for x in rows:bycase[x['instance']].append(x)
+    return {'measurements':len(rows),'problems':len(bycase),'base_groups':len(groups),'successes':sum(x['valid'] for x in rows),'pci_successes':sum(x['pci_valid'] for x in rows),'extra_failure_count':len(lost),'extra_failure_groups':sorted({x['base_group'] for x in lost}),'extra_success_count':len(rescues),'all_repeats_success_cases':sum(all(x['valid'] for x in v) for v in bycase.values()),'nonpci_adoption_cases':sum(v[0]['config']!='pci250' for v in bycase.values()),'nonpci_adoption_groups':sorted({x['base_group'] for x in rows if x['config']!='pci250'}),'full_pci_success_quality_defined':full,'full_pci_success_equal_group_gain':mean(list(q.values())) if full else None,'common_success_count':sum(x['gain'] is not None for x in rows),'common_success_equal_group_gain':mean([v for v in q.values() if v is not None]),'group_conditional_gain':q,'extra_failure_ids':[x['run_id'] for x in lost],'extra_success_ids':[x['run_id'] for x in rescues]}
+
+def choose(records):
+    ok=[x for x in records if x['summary']['extra_failure_count']==0 and len(x['summary']['nonpci_adoption_groups'])>=2 and x['summary']['full_pci_success_equal_group_gain'] is not None and x['summary']['full_pci_success_equal_group_gain']>0]
+    if not ok:return next(x for x in records if x['rule']['id']=='reject')
+    best=max(x['summary']['full_pci_success_equal_group_gain'] for x in ok)
+    tied=[x for x in ok if best-x['summary']['full_pci_success_equal_group_gain']<=1e-12]
+    return min(tied,key=lambda x:(x['summary']['nonpci_adoption_cases'],float('inf') if x['rule']['radius'] is None else x['rule']['radius'],x['rule']['id']))
+
+def selftest():
+    p={'selected_config':'pca250','neighbor_margin':.02,'standardized_distance':2/3,'distance_without_window':0.}
+    assert decision(p,'G0')['config']=='pci250' and decision(p,'GW')['config']=='pca250'
+    assert decision(p,'GM')['config']=='pca250' and decision(p,'reject')['config']=='pci250'
+    assert decision({**p,'neighbor_margin':.001},'GW')['config']=='pci250'
+    assert decision({**p,'selected_config':'pci250'},'GW')['config']=='pci250'
+    row={'instance':'toy','base_group':'g','pci_valid':True,'valid':False,'gain':None,'config':'pca250','run_id':'toy0'}
+    assert summarize([row])['full_pci_success_equal_group_gain'] is None
+    row2={**row,'valid':True,'gain':.1}
+    assert summarize([row2])['full_pci_success_equal_group_gain']==.1
+    assert summarize([row2,row])['full_pci_success_equal_group_gain'] is None
+    rec=[{'rule':r,'summary':{**summarize([{**row,'valid':True,'gain':0.,'config':'pci250'}]),'nonpci_adoption_groups':[]}} for r in RULES]
+    assert choose(rec)['rule']['id']=='reject'
+    rec[0]['summary'].update(full_pci_success_equal_group_gain=.1,nonpci_adoption_groups=['g','h'],nonpci_adoption_cases=4)
+    assert choose(rec)['rule']['id']=='r05'
+    rec[0]['summary']['extra_failure_count']=1
+    assert choose(rec)['rule']['id']=='reject'
+    return ['w20_gate_block','window_gate_ablation','margin_veto','pci_identity','full_quality_undefined_on_failure','calibration_no_eligible_fallback','candidate_success_and_failure_selection']

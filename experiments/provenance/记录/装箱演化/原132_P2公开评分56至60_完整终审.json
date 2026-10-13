@@ -1,0 +1,232 @@
+{
+  "status": "PASS_independent_incremental_readonly_audit",
+  "final_public60_checks": {
+    "全60闭账": "通过",
+    "safe_rows_and_generation_source_rows_verified": 60,
+    "full_exact_fitness_recomputed": 43,
+    "safe_bundle_sourcehash_bindings_verified": 50,
+    "new_claim_pairs": 24,
+    "all_runtime_pairs_verified_closed": 265,
+    "all_reservations_recomputed": 480,
+    "full_numeric_cpu_recomputed": 8830.994793,
+    "final_snapshot_and_live_switch_enabled": false,
+    "heldout_enabled": false,
+    "conditional_complete_only_means": {
+      "IID_TC": {
+        "complete_candidates": 19,
+        "all_slots": 30,
+        "exact_mean": "3500210163189361695383784147944790612231490631409407220119493134053691226987523/3753535894850182684567605124471549060566143630991830812681142470638044726370000",
+        "decimal_mean": 0.9325101081334052,
+        "full_arm_mean": null
+      },
+      "EOH_TC": {
+        "complete_candidates": 24,
+        "all_slots": 30,
+        "exact_mean": "29549113551948936962390252205438545759335830818395025679217038234203322024686580289480007455149907131200753455630465568328607870760335273397759381317/30416583772053324945132946074894269207658051440692349264126954452220349372958430754263913113771597228133019441808643596730113398147472711126610432000",
+        "decimal_mean": 0.9714803533951957,
+        "full_arm_mean": null
+      }
+    },
+    "CLI_token_partial_accounting": {
+      "IID_TC": {
+        "input": {
+          "known_sum": 67166,
+          "known_slots": 22,
+          "unknown_slots": 8,
+          "complete_sum": null
+        },
+        "output": {
+          "known_sum": 6397,
+          "known_slots": 22,
+          "unknown_slots": 8,
+          "complete_sum": null
+        },
+        "reasoning": {
+          "known_sum": 721582,
+          "known_slots": 22,
+          "unknown_slots": 8,
+          "complete_sum": null
+        }
+      },
+      "EOH_TC": {
+        "input": {
+          "known_sum": 110455,
+          "known_slots": 29,
+          "unknown_slots": 1,
+          "complete_sum": null
+        },
+        "output": {
+          "known_sum": 9524,
+          "known_slots": 29,
+          "unknown_slots": 1,
+          "complete_sum": null
+        },
+        "reasoning": {
+          "known_sum": 692937,
+          "known_slots": 29,
+          "unknown_slots": 1,
+          "complete_sum": null
+        }
+      }
+    },
+    "historical_P0_P1_remaining_balance": null,
+    "full_arm_means_not_zero_imputed": true,
+    "best_public_design_slot": 56,
+    "best_public_design_fitness": {
+      "denominator": 557161270697850,
+      "direction": "maximize",
+      "numerator": 553433026291573
+    },
+    "best_public_design_decimal": 0.9933085004246485,
+    "no_winner_population_or_heldout_selection_performed": true
+  },
+  "delta_zip_sha256": "8c3dab15aafcea7ad8ba79d7f2518546efe13229da59f16866fb3eec409cb629",
+  "delta_zip_bytes": 500560,
+  "delta_files_verified": 167,
+  "manifest_entries_verified": 166,
+  "base_state_files_unchanged": 1231,
+  "new_state_files": 120,
+  "combined_state_files": 1351,
+  "scientific_files_fully_reaudited": 0,
+  "prior_audit_reused": "/workspace/shared/p2_public_scoring_50_55_independent_review_20261007.json",
+  "new_positions": [
+    56,
+    57,
+    58,
+    59,
+    60
+  ],
+  "new_fitness_recomputed": [
+    {
+      "position": 56,
+      "arm": "EOH_TC",
+      "fitness_fraction": "553433026291573/557161270697850",
+      "fitness_decimal": 0.9933085004246485,
+      "used_bins": [
+        2028,
+        1997,
+        1995,
+        1994,
+        1992
+      ]
+    },
+    {
+      "position": 58,
+      "arm": "EOH_TC",
+      "fitness_fraction": "143417757158281/148986947580380",
+      "fitness_decimal": 0.9626196085459475,
+      "used_bins": [
+        2093,
+        2058,
+        2056,
+        2063,
+        2055
+      ]
+    },
+    {
+      "position": 59,
+      "arm": "IID_TC",
+      "fitness_fraction": "472778850392997/491707981560950",
+      "fitness_decimal": 0.961503307089176,
+      "used_bins": [
+        2096,
+        2060,
+        2057,
+        2066,
+        2058
+      ]
+    },
+    {
+      "position": 60,
+      "arm": "EOH_TC",
+      "fitness_fraction": "143417757158281/148986947580380",
+      "fitness_decimal": 0.9626196085459475,
+      "used_bins": [
+        2093,
+        2058,
+        2056,
+        2063,
+        2055
+      ]
+    }
+  ],
+  "new_timeout_generation_failures": [
+    57
+  ],
+  "new_AST_rejections": [],
+  "new_admission_receipts_reverified": 4,
+  "new_pack_receipts_reverified": 20,
+  "new_runtime_claim_result_pairs": 24,
+  "new_reservations": 44,
+  "cumulative_slot_claim_result_pairs": 60,
+  "cumulative_runtime_claim_result_pairs": 265,
+  "cumulative_reservations": 480,
+  "extra_or_unknown_claims": 0,
+  "HALT": false,
+  "previous_slots_readonly_reused": 55,
+  "cumulative_counts": {
+    "admission_rejected": 7,
+    "generation_failure": 10,
+    "scored": 43
+  },
+  "arms_recomputed": {
+    "IID_TC": {
+      "slots": 30,
+      "complete": 19,
+      "generation_failure": 8,
+      "AST_rejected": 3,
+      "admission_attempts": 22
+    },
+    "EOH_TC": {
+      "slots": 30,
+      "complete": 24,
+      "generation_failure": 2,
+      "AST_rejected": 4,
+      "admission_attempts": 28
+    }
+  },
+  "incremental_usage_recomputed": {
+    "admission_cpu_seconds": 0.750749,
+    "child_cpu_seconds": 369.672332,
+    "supervisor_self_cpu_seconds": 531.6642420000001,
+    "supervisor_inclusive_wait4_cpu_seconds": 901.336574,
+    "shared_instance_wall_seconds": 902.8577750579861,
+    "admissions": 4,
+    "instance_packs": 20,
+    "score_call_cpu_ns": 5314604004,
+    "reserved_cpu_seconds": 2404,
+    "reserved_shared_wall_seconds": 1820,
+    "numerical_cpu_seconds_no_double_count": 902.087323
+  },
+  "cumulative_usage_recomputed": {
+    "admission_cpu_seconds": 9.176019,
+    "child_cpu_seconds": 3680.14522,
+    "supervisor_self_cpu_seconds": 5141.673554,
+    "supervisor_inclusive_wait4_cpu_seconds": 8821.818774,
+    "shared_instance_wall_seconds": 8844.873881603955,
+    "admissions": 50.0,
+    "instance_packs": 215.0,
+    "score_call_cpu_ns": 80468382949.0,
+    "reserved_cpu_seconds": 25850.0,
+    "reserved_shared_wall_seconds": 19600.0,
+    "numerical_cpu_seconds_no_double_count": 8830.994793
+  },
+  "full_P2_generation_denominator": 60,
+  "best_public_design_position": 56,
+  "candidate_executions_in_review": 0,
+  "heldout_reads_in_review": 0,
+  "snapshot_files_modified": 0,
+  "public_scope_final_status": "all_60_terminal_dispatch_disabled",
+  "old_process_cpu_seconds": null,
+  "old_process_exit_code": null,
+  "independent_old_process_liveness_probe_performed": false,
+  "producer_ps_claim_used_as_independent_evidence": false,
+  "limitations": [
+    "Prior 1–55 scientific/receipt audits reused; only new receipts deeply checked.",
+    "No full assignment arrays were saved, so checker receipt and assignment SHA are verified, not reconstructed assignments.",
+    "No missing failures or retry evidence within preserved ledgers; this does not prove absence of activity outside the captured scope.",
+    "Highest individual fixed-public-design result does not establish cross-arm superiority or generalization. Historical global remaining budget remains unknown."
+  ],
+  "review_cpu_seconds": 0.260017355,
+  "review_wall_seconds": 0.2600464489951264
+}

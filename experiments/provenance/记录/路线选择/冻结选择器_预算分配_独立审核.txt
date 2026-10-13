@@ -1,0 +1,38 @@
+独立只读审计：冻结选择器预算分配
+结论：PASS_WITH_SCOPE_CAVEATS
+独立检查 614 项，失败 0 项。未运行solver，未导入作者模块，未调用模型API，未读P2heldout，未修改作者包，未上传。
+
+冻结事件 2026-10-07T13:25:13.975659+00:00，首个目标 2026-10-07T13:25:13.977633+00:00；82项冻结hash不变。最终manifest 100项，ZIP CRC、逐字节、目录一致性通过。
+ZIP SHA256: 4114ed234815fe12b401024d48c0a38e1ab5e1184d1d3768efe35837933312f5
+
+重算结论：
+selector100_pci400: 48/48；双窗24/24 geometry；每题charged CPU=0.162830308s；每题charged wall=0.162740652s。
+selector250_pci250: 48/48；双窗24/24 geometry；每题charged CPU=0.287409424s；每题charged wall=0.287525832s。
+selector400_pci100: 48/48；双窗24/24 geometry；每题charged CPU=0.412842422s；每题charged wall=0.412305597s。
+fixed_pci500: 48/48；双窗24/24 geometry；每题charged CPU=0.510847625s；每题charged wall=0.511502235s。
+三选择器首段均42/48，相同6题被条件PCI后备救回。全部192策略成功，336潜在请求=210真实执行+126明确跳过。独立60位Decimal连续重放192成功路线及48 witnesses，18无解返回核为失败。
+selector100_pci400 vs selector250_pci250: 同48题/24geometry相对距离均值 6.665932603%；24geometry-cluster描述性95%CI [4.804426950166419, 8.38668581562847]；胜/平/负 4/6/38。
+selector100_pci400 vs selector400_pci100: 同48题/24geometry相对距离均值 6.964191056%；24geometry-cluster描述性95%CI [4.584820401916089, 9.069187661038088]；胜/平/负 6/4/38。
+selector100_pci400 vs fixed_pci500: 同48题/24geometry相对距离均值 9.413117908%；24geometry-cluster描述性95%CI [7.249811916496035, 11.557794700131838]；胜/平/负 4/4/40。
+selector250_pci250 vs selector400_pci100: 同48题/24geometry相对距离均值 0.209813107%；24geometry-cluster描述性95%CI [-0.6479589047955713, 0.8993085755873969]；胜/平/负 6/25/17。
+selector250_pci250 vs fixed_pci500: 同48题/24geometry相对距离均值 2.575554186%；24geometry-cluster描述性95%CI [1.26334845219682, 4.0258255333138235]；胜/平/负 12/9/27。
+selector400_pci100 vs fixed_pci500: 同48题/24geometry相对距离均值 2.488146118%；24geometry-cluster描述性95%CI [0.9970682682205867, 4.154540027965786]；胜/平/负 13/10/25。
+
+main shell CPU=67.839s，wall=67.854s，硬限180CPU；实际search CPU=63.496460921s；对比charged费用包含每一选择器完整特征开销，不能将四臂charged总量等同物理进程。
+
+限定：
+Same nominal maximum 500ms OR-Tools search wall is not equal actual CPU or strict end-to-end 500ms. First-stage success ends that policy; actual charged costs differ.
+All 48 cases are four-family synthetic witness-constructed instances. Angle/capacity chunks and nearest-neighbor witness windows induce constructive-sampling bias; fresh hashes do not establish real-world representativeness.
+Two widths per geometry are paired; arms share problems, frozen model, order design and host. Geometry-cluster bootstrap uses 24 units, not 48/192 independent samples. Distinct seeds/hashes establish identity non-overlap, not mathematical stochastic independence or absence of higher-level family/order/host correlation.
+Coverage [0,0] paired empirical bootstrap differences are descriptive for this all-success sample, not proof of equal population coverage or certainty of future success. Six pairwise 95% intervals are unadjusted, not simultaneous inferential guarantees.
+100/400ms transfer the strategy chosen by an 80-case original 250ms-label 1NN; no evidence they are budget-optimal selectors. 250 versus 400ms direct paired distance delta is +0.2098% with CI spanning zero; reliable improvement is not established.
+Native ROUTING_FAIL code3 appears as generic UNKNOWN in 6 raw outcome values; native code/name and no-assignment/checker failure are retained. Another 12 failures are native timeout. No-success does not establish infeasibility.
+CPU/wall and logs are self-recorded with local fsync/hash sealing, not externally trusted timestamp attestation or independent process tracing. Static code and logs support no retries/refits/API/P2 reads within this run, but cannot prove absence of unseen external activity. PID-namespace snapshots cannot exclude host contention.
+Final ZIP/SHA intentionally exclude shell_time/stdout/stderr, which finish after the process writes ZIP. This audit independently records their hashes and content. Audit CPU and source-authoring time are outside the main experiment hard180CPU limit.
+
+最终独审完整外壳资源凭据（与主实验分开）：
+real_seconds=0.896
+user_cpu_seconds=0.840
+system_cpu_seconds=0.056
+cpu_percent=99.96
+审计计时只覆盖独立验证脚本；此前只读查看、脚本编写及本清单封装不计入该脚本CPU。先前独立核验运行一次0.848秒CPU，随后新增5项隔离核验重算；两次均未运行目标solver。

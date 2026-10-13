@@ -1,0 +1,15 @@
+独立增量只读审核：通过，范围严格止于49
+
+44–49 delta：168文件与ZIP逐字节一致，434509字节，SHA256 9650f0d784f85f19d5ca9a321d4cf20d785c4d82d2f266de650ad2beab2dad0b。167条manifest与前序链式引用通过；旧973状态文件哈希/大小不变，新增129文件，联合1102文件，无覆盖。复用既有科学审核，没有重审原全48科学文件。
+
+新增：45、46、47、48四槽完整，44为AST static拒绝，49为timeout生成失败；没有数值失败。四个精确Fraction fitness独立重算通过，5份admission和20份pack通过原只读ReceiptBridge验证，case输入/L1/used_bins、checker、安全门及来源绑定一致。25对新runtime claim/result、45条新预约完整闭合，无额外/未知claim或HALT。
+
+累计49槽=35完整+6 AST拒绝+8生成失败。IID完整17/25、生成失败6/25、AST拒绝2/19实际admission；EOH完整18/24、生成失败2/24、AST拒绝4/22实际admission。前43槽只读复用，失败保持null fitness且留在分母。累计41 admissions、175 packs、216对runtime claim/result、391条预约；全P2分母仍60、两臂各30。
+
+新增去重数值CPU823.408204秒，累计7136.682561秒；新增预约2405 CPU秒/1825共享wall秒，累计21041 CPU秒/15955共享wall秒，与报告一致。未重复加入inclusive wait4或重置原池。该累计是保存数值回执的计账，不是含恢复前未知进程的全系统总开销。旧恢复进程CPU和exit仍unknown，未做独立进程存活probe，未把producer的ps观察作为独审证据。
+
+边界50已明确核验：pass停在50 not_collected；stage50–60均not_collected、sources为空、candidate=null；本包只有44–49的原capture，联合账本无50–60的slot claim/result或其他按slot路径状态。没有依据恢复STATUS扩大执行范围。
+
+最高public设计集单候选仍slot7，不推断跨臂胜负或heldout泛化。完整assignment数组未保存，审核为原checker回执与assignment SHA；保留账本内未见遗漏/重试，不证明范围外没有未记录活动。历史总余额仍未知。本次未运行solver/candidate、未读heldout、未改交付包、未上传。
+
+核验程序CPU约0.145秒、wall约0.145秒。详细复算见同名JSON。

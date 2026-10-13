@@ -1,0 +1,28 @@
+恢复后两项新阶段的独立只读复核
+2026-10-08
+
+范围
+本复核仅覆盖capacity-cross-structure-reproduction-20261008-r1与generation-contract-validation-envr1-20261008的新证据，不延用原丢失数据的审计。只做保存证据、哈希、字节比较、算术及源码文本审阅；没有运行任何候选、求解器、oracle、提取器、AST解析或重新生成样本。新报告位于单独独审目录。
+
+容量复现r1：通过，有明确适用范围
+119526项检查无失败。运行前备份ZIP的SHA256与私有回读记录一致，全部备份成员和当前输入/源码逐字节一致；新冻结、STARTED及432条调用的输入hash、次序、唯一call_id和claim namespace对齐。三臂算法源码与恢复的旧24结构包一致。
+314份成功输出重新计算客户唯一覆盖、容量、车辆数和欧氏路线成本通过；36份可行见证通过；14774个剪枝现场均重建分组、余量、DFS固定前缀、剩余需求，W>U必要性矛盾成立。全部失败是节点限额unknown，不代表不可行。baseline/full-tight逐例输出及节点完全一致。
+直接分区256节点成功31/31/41、节点5601/5601/3303；直接分区4096成功32/32/44、节点67070/67070/22922；完整初始化256成功31/31/41、节点4913/4913/2615。三数为baseline/full-tight/new-bound。三个端点不能混为相同初始化路径的单变量预算实验。
+CPU修正已实际核验：子计数初值1.107697、绝对终值24.638377，净23.530680秒，与432条逐调用差分math.fsum一致；父CPU0.622070688秒，合计24.152750688秒。没有重复叠加内部阶段CPU。单次短测量含大量零读数，不能据此声称稳定CPU加速。
+40346个保存小状态的必要界整数算术重算通过；2268份小完整分区保存oracle对比及12主实例oracle范围一致。本独审没有重新求解这些oracle。补充oracle脚本在最初云备份后加入，但单独source freeze与代码hash一致，时间先于oracle结果及432调用；该边界被保留。
+最终作者包1327600字节，SHA256 fa78e37d0210a5fbe09c15361e0715b4fb546a74a36e371307c25a3aeb26f5c2；CRC、全部成员与当前文件、最终清单均通过。
+
+额外恢复的历史输入指纹
+准备时作者仅有12份旧input hash，36份未知，这段历史不得改写。独审者在运行后从自己失效前可见工具回执（2026-10-08 12:05:12，chunk f0614a，原PRE_RUN_FREEZE打印内容）另转录36份hash，48/48现均与新输入字节吻合。详细值和来源见RECOVERED_HISTORICAL_INPUT_HASHES.json。
+这支持跨阶段输入完全相同，不找回原raw、原ZIP或生成器的原始逐文件hash。新输出仍是新的复现claim，不能称独立新随机样本或丢失旧结果的逐字节恢复。作者报告原有“12已知/36未知”是准备时证据状态，应与本跑后补充共同阅读。
+
+契约envr1：实际结果通过，报告分类标签须读勘误
+1762项独立检查无执行证据失败。运行前备份ZIP与新冻结输入、预期、源码一致。38个原runtime登记文件中仅worker_freeze.json和pre_run_freeze.json改变，分别只改dependencies及相应交叉hash；其余36代码/配置字节相同。环境依赖995项中469个变化全为.pyc，无非.pyc变化、缺失0。
+逐项receipt重核：6格式例为2接受4拒绝；22源码Session为9准入13静态拒绝；9准入中7数值通过、2按预期NumericContractError。13静态拒绝没有score请求；9准入仅各1次冻结输入请求。source hash、唯一claim、registry/freeze绑定和输入预期对应，无测试重跑。最小英文示例文件逐字等于实际C01/C02。
+新的startup-only dummy在发送源码前验证启动/资源/清理；旧dummy exit70、WorkerEOF、source_sent=false、steps0及HALT保留。新24driver/23worker均reaped、exit0，无timeout或adopted残留。worker的CPU1秒、AS512MiB及安全标志由实际receipt核对；driver CPU软1硬2、AS软128硬512MiB匹配。没有把每进程AS/RSS冒充进程树总内存。
+新driver inclusive CPU6.772971秒已含worker，controller0.106358秒；加旧dummy与其controller共7.087967秒，仅是有测量的受限执行至summary成本，准备/恢复/分析/归档all-in仍null。不得再加嵌套worker CPU。
+最终报告范围审阅发现一个分类标签错误：526个未变依赖实际为525个非.pyc加1个未变.pyc（urllib/__pycache__/__init__.cpython-312.pyc）。原报告及冻结证明把526标成全部非.pyc，须追加勘误。469变化全为.pyc及所有非.pyc不变的核心事实正确；该标签不改变实际28例结果，不要求改freeze或重跑。
+最终原包1414332字节，SHA256 d29818d65d5d38d1453493963c82d67a25f1bc6712691cf6beca80626538580d；CRC和全部成员字节一致。英文契约仅是未发送的新阶段保守附录，不修改现有冻结提示。28个具体手写输入符合预期不等于整个语言正确、完整安全证明、模型可用率提升或装箱性能提升。
+
+交付记录
+CAPACITY_REPRODUCTION_REVIEW.json、RECOVERED_HISTORICAL_INPUT_HASHES.json、CONTRACT_ENVR1_REVIEW.json为主要独审。FINAL_PACKAGE_REVIEW.json保留发现“526非pyc”标签错误的首次报告；待作者追加勘误后应另外附正式释放回执，不能覆盖问题历史。两个独立检查脚本、最终包检查脚本及读取证据指纹随独审包保留。

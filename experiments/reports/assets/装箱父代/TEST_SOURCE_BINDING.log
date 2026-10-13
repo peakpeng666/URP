@@ -1,0 +1,15 @@
+test_altered_failed_score_routing (__main__.Tests.test_altered_failed_score_routing) ... ok
+test_duplicate_generation_same_length (__main__.Tests.test_duplicate_generation_same_length) ... ok
+test_duplicate_score_same_length (__main__.Tests.test_duplicate_score_same_length) ... ok
+test_forged_current_joint_identity (__main__.Tests.test_forged_current_joint_identity) ... ok
+test_metadata_baseline (__main__.Tests.test_metadata_baseline) ... ok
+test_snapshot_ancillary_field (__main__.Tests.test_snapshot_ancillary_field) ... ok
+test_spurious_phase2_winner (__main__.Tests.test_spurious_phase2_winner) ... ok
+test_two_zero_logical_counts_keep_total (__main__.Tests.test_two_zero_logical_counts_keep_total) ... ok
+test_wrong_current_code (__main__.Tests.test_wrong_current_code) ... ok
+test_wrong_historical_code (__main__.Tests.test_wrong_historical_code) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.342s
+
+OK

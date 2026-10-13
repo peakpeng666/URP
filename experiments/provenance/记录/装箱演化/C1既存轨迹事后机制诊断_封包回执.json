@@ -1,0 +1,20 @@
+{
+  "schema": "C1-posthoc-diagnosis-packaging-receipt-v1",
+  "zip": {
+    "name": "C1机制诊断_完整证据_20261008.zip",
+    "bytes": 5734641,
+    "sha256": "773c874f4de9f0d01f6c2373a281e7bdf1565dfe1146c1e1e650bcdd0f6951c0"
+  },
+  "file_count": 110,
+  "all_entries_crc_and_sha256_verified": true,
+  "independent_trace_audit": "PASS",
+  "scope_not_a_new_experiment": true,
+  "A1_source_unexecuted": true,
+  "packaging_CPU_seconds_at_emit": 0.319917269,
+  "packaging_wall_seconds_at_emit": 0.320396969007561,
+  "not_charged_to_closed_C1_budget": true,
+  "analysis_run1_receipt": "execution_history/EXECUTION_RECEIPT.json",
+  "analysis_run2_receipt": "EXECUTION_RECEIPT.json",
+  "audit_receipt": "independent_audit/AUDIT_RECEIPT.json",
+  "cost_note": "Source analysis full-process wait4 CPU8.091156s/wall6.438793s; independent audit2.589862CPU/2.598646wall measured before emission. Text inspection/control-plane not claimed as exact all-in metering."
+}

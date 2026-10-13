@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "package": "/workspace/shared/bpp_prefix_gate_drift_20261008_CLEAN.zip",
+  "sha256": "f5d4fe95bc8a033d51adfc83c6aef2cecfe424641bc9ea4fbdd50ef37cd7dea4",
+  "bytes": 1682554,
+  "members": 118,
+  "manifest_sha256": "3c5e9840d28f1e14ec2984d6a3cc925d4bb2bff6b7618fea4623d8cba0be303d",
+  "all_manifest_members_verified": true,
+  "scientific_runs": 1,
+  "trajectories": 64,
+  "new_candidate_runs_after_main": 0,
+  "created_unix": 1791423146.9702065
+}

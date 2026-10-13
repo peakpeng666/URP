@@ -1,0 +1,218 @@
+{
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "utc": "2026-10-08T13:08:36.579868+00:00",
+  "method": "Saved-evidence-only independent review. No solver imports, candidate runs, new input generation, scientific reruns, network or model calls. All writes confined to review directory. Toy check is independent recomputation of the 7140 stored states.",
+  "checks": {
+    "archive_PREEXECUTION_SNAPSHOT": true,
+    "manifest_PREEXECUTION_SNAPSHOT": true,
+    "archive_RAW_COMPLETE_UNAUDITED": true,
+    "manifest_RAW_COMPLETE_UNAUDITED": true,
+    "archive_REPORT_AND_EVIDENCE": true,
+    "manifest_REPORT_AND_EVIDENCE": true,
+    "frozen_hashes": true,
+    "old_tree_unchanged": true,
+    "old_results_sha": true,
+    "recorded_drive_readback_PREEXECUTION": true,
+    "recorded_drive_readback_RAW": true,
+    "preexec_before_run_recorded": true,
+    "exact_two_line_candidate": true,
+    "source_copies_exact": true,
+    "inputs_exact_integer_domain": true,
+    "references_exact_old_raw": true,
+    "schedule_regeneration": true,
+    "all_initialize_records_exact_reference": true,
+    "all_partition_records_exact_reference": true,
+    "functional_and_trace_arithmetic": true,
+    "toy_saved_states_independent_recompute": true,
+    "batches_exact_schedule": true,
+    "clock_thresholds": true,
+    "timing_independent_arithmetic": true,
+    "normal_finish_and_no_rerun_evidence": true,
+    "resource_arithmetic": true,
+    "author_self_audit_has_16_checks": true,
+    "no_active_experiment_worker": true,
+    "review_did_not_change_original": true
+  },
+  "details": {
+    "manifest_PREEXECUTION_SNAPSHOT": 73,
+    "manifest_RAW_COMPLETE_UNAUDITED": 88,
+    "manifest_REPORT_AND_EVIDENCE": 98,
+    "frozen_hashes": 72,
+    "old_tree_unchanged": 1002,
+    "source_copies_exact": 9,
+    "all_initialize_records_exact_reference": {
+      "calls": 3936,
+      "valid_success_outputs_recomputed": 3362
+    },
+    "functional_and_trace_arithmetic": {
+      "initialize": {
+        "statuses": {
+          "SUCCESS": 41,
+          "INITFAIL": 7
+        },
+        "nodes": 2615,
+        "prunes": 1072,
+        "waste_checks": 2598,
+        "residual_checks": 27267,
+        "gate_skips": 0,
+        "saved_residual_checks": 0,
+        "gate_skip_instances": 0
+      },
+      "partition": {
+        "statuses": {
+          "SUCCESS": 41,
+          "NODE_LIMIT": 7
+        },
+        "nodes": 3303,
+        "prunes": 1072,
+        "waste_checks": 3262,
+        "residual_checks": 33553,
+        "gate_skips": 306,
+        "saved_residual_checks": 3006,
+        "gate_skip_instances": 12
+      }
+    },
+    "toy_saved_states_independent_recompute": {
+      "states": 7140,
+      "decision_mismatches": 0,
+      "false_prunes": 0,
+      "gate_skips": 2604
+    },
+    "clock_thresholds": {
+      "effective_quantum_ns": 4000000,
+      "threshold_ns": 400000000,
+      "positive_jumps": [
+        1952026
+      ],
+      "empty_cpu_zero": 1000
+    },
+    "timing_independent_arithmetic": {
+      "cpu": {
+        "total_ns": {
+          "waste_solver": 3135528886,
+          "gated_solver": 2987750517
+        },
+        "ratio": 0.9528697153262329,
+        "round_ratio_min": 0.7397293240200558,
+        "round_ratio_max": 1.204212744595474,
+        "per_call_total_divided_by_1920": {
+          "waste_solver": 1633087.9614583333,
+          "gated_solver": 1556120.0609375
+        }
+      },
+      "wall": {
+        "total_ns": {
+          "waste_solver": 3128144261,
+          "gated_solver": 2984609203
+        },
+        "ratio": 0.9541149493041235,
+        "round_ratio_min": 0.7407534489313522,
+        "round_ratio_max": 1.2070098917023597,
+        "per_call_total_divided_by_1920": {
+          "waste_solver": 1629241.8026041666,
+          "gated_solver": 1554483.9598958334
+        }
+      }
+    },
+    "resource_arithmetic": {
+      "execution_cpu_seconds": 15.792390031000002,
+      "execution_wall_seconds": 15.819651709,
+      "analysis_cpu_seconds": 2.678855589,
+      "analysis_wall_seconds": 2.682122894,
+      "analysis_peakrss_KiB": 30164,
+      "worker_peakrss_KiB": 40312,
+      "supervisor_peakrss_KiB": 12288,
+      "limit_envelope": "CPU100+5+10=115s<120s; wall220+10=230s<240s; concurrent worker768MiB+supervisor128MiB<=896MiB address space; analysis256MiB sequential"
+    },
+    "author_self_audit_has_16_checks": 16,
+    "no_active_experiment_worker": []
+  },
+  "archives": {
+    "PREEXECUTION_SNAPSHOT": {
+      "bytes": 236871,
+      "sha256": "54934b137211d29164403109db5b529b740cf10f1446b11484afa5c28db335f3",
+      "entries": 74,
+      "crc_ok": true,
+      "all_members_equal_current_tree": true
+    },
+    "RAW_COMPLETE_UNAUDITED": {
+      "bytes": 1947644,
+      "sha256": "a20e3c572b0f858f2d1aca43fdc78568b9f641e6bd5bc65e4a5f86ecfc72aea5",
+      "entries": 89,
+      "crc_ok": true,
+      "all_members_equal_current_tree": true
+    },
+    "REPORT_AND_EVIDENCE": {
+      "bytes": 1965863,
+      "sha256": "b2f753d61fc8463d40a0ce31101a32d77dc8514ffd1ba860da08eda7b3395dec",
+      "entries": 99,
+      "crc_ok": true,
+      "all_members_equal_current_tree": true
+    }
+  },
+  "functional": {
+    "initialize": {
+      "statuses": {
+        "SUCCESS": 41,
+        "INITFAIL": 7
+      },
+      "nodes": 2615,
+      "prunes": 1072,
+      "waste_checks": 2598,
+      "residual_checks": 27267,
+      "gate_skips": 0,
+      "saved_residual_checks": 0,
+      "gate_skip_instances": 0
+    },
+    "partition": {
+      "statuses": {
+        "SUCCESS": 41,
+        "NODE_LIMIT": 7
+      },
+      "nodes": 3303,
+      "prunes": 1072,
+      "waste_checks": 3262,
+      "residual_checks": 33553,
+      "gate_skips": 306,
+      "saved_residual_checks": 3006,
+      "gate_skip_instances": 12
+    }
+  },
+  "timing": {
+    "cpu": {
+      "total_ns": {
+        "waste_solver": 3135528886,
+        "gated_solver": 2987750517
+      },
+      "ratio": 0.9528697153262329,
+      "round_ratio_min": 0.7397293240200558,
+      "round_ratio_max": 1.204212744595474,
+      "per_call_total_divided_by_1920": {
+        "waste_solver": 1633087.9614583333,
+        "gated_solver": 1556120.0609375
+      }
+    },
+    "wall": {
+      "total_ns": {
+        "waste_solver": 3128144261,
+        "gated_solver": 2984609203
+      },
+      "ratio": 0.9541149493041235,
+      "round_ratio_min": 0.7407534489313522,
+      "round_ratio_max": 1.2070098917023597,
+      "per_call_total_divided_by_1920": {
+        "waste_solver": 1629241.8026041666,
+        "gated_solver": 1554483.9598958334
+      }
+    }
+  },
+  "limitations": [
+    "Integer domain only; floating residuals not covered.",
+    "Initializer gate hits and saved scans are zero. Direct-partition savings occur only on 12 high-slack inputs that never enter partition during initializer.",
+    "Descriptive time ratios only; five technical rounds on 48 artificial inputs, not independent generalization samples.",
+    "Signed node visit sequence is not stored; exact stored node counts, prune traces, assignments and semantic outputs match.",
+    "Recorded archive/readback and source/runner controls support chronology and no reruns; independent review cannot prove absence of every unrecorded process or historical network event. No server-side Drive permission re-query performed in this read-only local review.",
+    "Resource usage comes from saved process accounting and explicit caps; analysis timing recorded shortly before final report writes and excludes review.",
+    "Self-audit has 16 checks, not 18."
+  ]
+}

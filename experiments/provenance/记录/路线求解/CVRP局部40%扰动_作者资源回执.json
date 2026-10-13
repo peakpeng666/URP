@@ -1,0 +1,8 @@
+{
+  "archive": "/workspace/shared/vrp_partial_perturbation_20261008.zip",
+  "bytes": 1342357,
+  "sha256": "1db866947d7ce96a022a368f29ff6f0663d80ca352f2db64d10746224f62ac76",
+  "supervisor_cpu_seconds": 0.276572365,
+  "stage_cpu_seconds": 27.496550999999993,
+  "total_wall_seconds": 27.781463731007534
+}

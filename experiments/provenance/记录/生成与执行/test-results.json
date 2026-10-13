@@ -1,0 +1,1531 @@
+{
+  "version": "v2",
+  "tests_run": 25,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "original_v1_cases": 14,
+  "new_v2_cases": 11,
+  "cases": [
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_bad_result_keeps_exit_record_before_failing",
+      "status": "passed",
+      "duration_s": 0.03405553099992176,
+      "original_v1_case": true,
+      "evidence": []
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_cleanup_does_not_reap_unrelated_child",
+      "status": "passed",
+      "duration_s": 0.46665008199988733,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_cleanup_does_not_reap_unrelated_child",
+          "mode": "timeout_tree",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1881,
+            1882,
+            1883
+          ],
+          "exit_record": {
+            "pid": 1881,
+            "returncode": -9,
+            "wait4_raw_status": 9,
+            "user_cpu_s": 0.052561,
+            "system_cpu_s": 0.019864,
+            "total_cpu_s": 0.07242499999999999,
+            "max_rss_kib": 21400,
+            "watchdog_killed": true,
+            "kill_reason": "child_wall_limit",
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.11131041899989214,
+            "cleanup_error": null,
+            "adopted_descendants": [
+              {
+                "pid": 1883,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.012459,
+                "system_cpu_s": 0.008208,
+                "max_rss_kib": 9344
+              },
+              {
+                "pid": 1882,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.021501,
+                "system_cpu_s": 0.0037419999999999997,
+                "max_rss_kib": 9344
+              }
+            ],
+            "supervisor_error": null,
+            "minor_faults": 7737,
+            "major_faults": 0,
+            "voluntary_context_switches": 21,
+            "involuntary_context_switches": 5,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_exception_leader_cannot_leave_descendants",
+      "status": "passed",
+      "duration_s": 0.19274492900012774,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_exception_leader_cannot_leave_descendants",
+          "mode": "error_tree",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1884,
+            1885,
+            1886
+          ],
+          "exit_record": {
+            "pid": 1884,
+            "returncode": 1,
+            "wait4_raw_status": 256,
+            "user_cpu_s": 0.054991,
+            "system_cpu_s": 0.020086999999999997,
+            "total_cpu_s": 0.07507799999999999,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.11120877900020787,
+            "cleanup_error": null,
+            "adopted_descendants": [
+              {
+                "pid": 1885,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.012761999999999999,
+                "system_cpu_s": 0.011800999999999999,
+                "max_rss_kib": 9344
+              },
+              {
+                "pid": 1886,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.014258999999999999,
+                "system_cpu_s": 0.003643,
+                "max_rss_kib": 9344
+              }
+            ],
+            "supervisor_error": null,
+            "minor_faults": 7783,
+            "major_faults": 0,
+            "voluntary_context_switches": 20,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_global_limit_reason_is_preserved",
+      "status": "passed",
+      "duration_s": 0.46647825799982456,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_global_limit_reason_is_preserved",
+          "mode": "timeout",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1887
+          ],
+          "exit_record": {
+            "pid": 1887,
+            "returncode": -9,
+            "wait4_raw_status": 9,
+            "user_cpu_s": 0.024395999999999998,
+            "system_cpu_s": 0.0,
+            "total_cpu_s": 0.024395999999999998,
+            "max_rss_kib": 21400,
+            "watchdog_killed": true,
+            "kill_reason": "global_resource_limit",
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.1112102820002292,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 2674,
+            "major_faults": 0,
+            "voluntary_context_switches": 2,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_normal_completion",
+      "status": "passed",
+      "duration_s": 0.03155758999992031,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_normal_completion",
+          "mode": "normal",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1888
+          ],
+          "exit_record": {
+            "pid": 1888,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.021484,
+            "system_cpu_s": 0.004062,
+            "total_cpu_s": 0.025546,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 5.9749000229203375e-05,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 2697,
+            "major_faults": 0,
+            "voluntary_context_switches": 1,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_original_supervisor_reaps_leader_but_leaves_descendants",
+      "status": "passed",
+      "duration_s": 0.17566018999968946,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_original_supervisor_reaps_leader_but_leaves_descendants",
+          "baseline_leader_reaped": true,
+          "baseline_descendants_still_present": [
+            1891,
+            1892
+          ],
+          "scope": "synthetic worker only, cleaned by the test harness"
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_real_main_preserves_exit_records_and_refuses_rerun",
+      "status": "passed",
+      "duration_s": 0.2540735079996921,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_real_main_preserves_exit_records_and_refuses_rerun",
+          "synthetic_batch_requests": 3,
+          "exit_codes": [
+            0,
+            1,
+            0
+          ],
+          "resource_records_persisted": true,
+          "rerun_refused_without_mutation": true
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_real_main_supervisor_failure_keeps_exit_record",
+      "status": "passed",
+      "duration_s": 0.18646433100002469,
+      "original_v1_case": true,
+      "evidence": []
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes",
+      "status": "passed",
+      "duration_s": 1.4532603469997412,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes",
+          "mode": "normal",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1901
+          ],
+          "exit_record": {
+            "pid": 1901,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.012386,
+            "system_cpu_s": 0.015712,
+            "total_cpu_s": 0.028097999999999998,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 9.253700000044773e-05,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 2695,
+            "major_faults": 0,
+            "voluntary_context_switches": 1,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        },
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes",
+          "mode": "timeout_tree",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1902,
+            1903,
+            1904
+          ],
+          "exit_record": {
+            "pid": 1902,
+            "returncode": -9,
+            "wait4_raw_status": 9,
+            "user_cpu_s": 0.046679,
+            "system_cpu_s": 0.014698,
+            "total_cpu_s": 0.061376999999999994,
+            "max_rss_kib": 21400,
+            "watchdog_killed": true,
+            "kill_reason": "child_wall_limit",
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.11213558800000101,
+            "cleanup_error": null,
+            "adopted_descendants": [
+              {
+                "pid": 1903,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.017783999999999998,
+                "system_cpu_s": 0.003642,
+                "max_rss_kib": 9344
+              },
+              {
+                "pid": 1904,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.012705,
+                "system_cpu_s": 0.004340999999999999,
+                "max_rss_kib": 9344
+              }
+            ],
+            "supervisor_error": null,
+            "minor_faults": 7738,
+            "major_faults": 0,
+            "voluntary_context_switches": 21,
+            "involuntary_context_switches": 4,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        },
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes",
+          "mode": "exception",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1905
+          ],
+          "exit_record": {
+            "pid": 1905,
+            "returncode": 1,
+            "wait4_raw_status": 256,
+            "user_cpu_s": 0.030868,
+            "system_cpu_s": 0.0,
+            "total_cpu_s": 0.030868,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 8.485599983032444e-05,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 2718,
+            "major_faults": 0,
+            "voluntary_context_switches": 1,
+            "involuntary_context_switches": 4,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        },
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes",
+          "mode": "success_tree",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1906,
+            1907,
+            1908
+          ],
+          "exit_record": {
+            "pid": 1906,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.055781,
+            "system_cpu_s": 0.015849,
+            "total_cpu_s": 0.07163,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.11131838200026323,
+            "cleanup_error": null,
+            "adopted_descendants": [
+              {
+                "pid": 1907,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.020479999999999998,
+                "system_cpu_s": 0.003874,
+                "max_rss_kib": 9344
+              },
+              {
+                "pid": 1908,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.013484999999999999,
+                "system_cpu_s": 0.00453,
+                "max_rss_kib": 9344
+              }
+            ],
+            "supervisor_error": null,
+            "minor_faults": 7764,
+            "major_faults": 0,
+            "voluntary_context_switches": 20,
+            "involuntary_context_switches": 4,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        },
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes",
+          "mode": "normal",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1909
+          ],
+          "exit_record": {
+            "pid": 1909,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.016392,
+            "system_cpu_s": 0.008246999999999999,
+            "total_cpu_s": 0.024639,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 6.838199988123961e-05,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 2695,
+            "major_faults": 0,
+            "voluntary_context_switches": 1,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        },
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes",
+          "mode": "timeout_tree",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1910,
+            1911,
+            1912
+          ],
+          "exit_record": {
+            "pid": 1910,
+            "returncode": -9,
+            "wait4_raw_status": 9,
+            "user_cpu_s": 0.050938,
+            "system_cpu_s": 0.007826999999999999,
+            "total_cpu_s": 0.058765,
+            "max_rss_kib": 21400,
+            "watchdog_killed": true,
+            "kill_reason": "child_wall_limit",
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.11148413599994456,
+            "cleanup_error": null,
+            "adopted_descendants": [
+              {
+                "pid": 1911,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.017608,
+                "system_cpu_s": 0.0035689999999999997,
+                "max_rss_kib": 9344
+              },
+              {
+                "pid": 1912,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.016627,
+                "system_cpu_s": 0.0,
+                "max_rss_kib": 9344
+              }
+            ],
+            "supervisor_error": null,
+            "minor_faults": 7736,
+            "major_faults": 0,
+            "voluntary_context_switches": 20,
+            "involuntary_context_switches": 2,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        },
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes",
+          "mode": "exception",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1913
+          ],
+          "exit_record": {
+            "pid": 1913,
+            "returncode": 1,
+            "wait4_raw_status": 256,
+            "user_cpu_s": 0.026118,
+            "system_cpu_s": 0.0,
+            "total_cpu_s": 0.026118,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 8.94029999471968e-05,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 2718,
+            "major_faults": 0,
+            "voluntary_context_switches": 1,
+            "involuntary_context_switches": 2,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        },
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes",
+          "mode": "success_tree",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1914,
+            1915,
+            1916
+          ],
+          "exit_record": {
+            "pid": 1914,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.052934999999999996,
+            "system_cpu_s": 0.015554,
+            "total_cpu_s": 0.068489,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.11129453600005945,
+            "cleanup_error": null,
+            "adopted_descendants": [
+              {
+                "pid": 1915,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.018494999999999998,
+                "system_cpu_s": 0.004372,
+                "max_rss_kib": 9344
+              },
+              {
+                "pid": 1916,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.012053999999999999,
+                "system_cpu_s": 0.007331,
+                "max_rss_kib": 9344
+              }
+            ],
+            "supervisor_error": null,
+            "minor_faults": 7764,
+            "major_faults": 0,
+            "voluntary_context_switches": 20,
+            "involuntary_context_switches": 1,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_successful_leader_cannot_leave_descendants",
+      "status": "passed",
+      "duration_s": 0.1833722639998996,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_successful_leader_cannot_leave_descendants",
+          "mode": "success_tree",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1917,
+            1918,
+            1919
+          ],
+          "exit_record": {
+            "pid": 1917,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.051104,
+            "system_cpu_s": 0.016334,
+            "total_cpu_s": 0.067438,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.11136554599988813,
+            "cleanup_error": null,
+            "adopted_descendants": [
+              {
+                "pid": 1918,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.020338,
+                "system_cpu_s": 0.0,
+                "max_rss_kib": 9344
+              },
+              {
+                "pid": 1919,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.008709999999999999,
+                "system_cpu_s": 0.008595,
+                "max_rss_kib": 9344
+              }
+            ],
+            "supervisor_error": null,
+            "minor_faults": 7763,
+            "major_faults": 0,
+            "voluntary_context_switches": 19,
+            "involuntary_context_switches": 2,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_supervisor_exception_cleans_then_propagates",
+      "status": "passed",
+      "duration_s": 0.19642250700007935,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_supervisor_exception_cleans_then_propagates",
+          "mode": "timeout_tree",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1920,
+            1921,
+            1922
+          ],
+          "exit_record": {
+            "pid": 1920,
+            "returncode": -9,
+            "wait4_raw_status": 9,
+            "user_cpu_s": 0.049186999999999995,
+            "system_cpu_s": 0.024378,
+            "total_cpu_s": 0.07356499999999999,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.11142956100002266,
+            "cleanup_error": null,
+            "adopted_descendants": [
+              {
+                "pid": 1921,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.016662,
+                "system_cpu_s": 0.008295,
+                "max_rss_kib": 9344
+              },
+              {
+                "pid": 1922,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.014575999999999999,
+                "system_cpu_s": 0.003757,
+                "max_rss_kib": 9344
+              }
+            ],
+            "supervisor_error": {
+              "type": "ValueError",
+              "message": "synthetic supervisor error"
+            },
+            "minor_faults": 7737,
+            "major_faults": 0,
+            "voluntary_context_switches": 21,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_timeout_ignoring_sigterm_escalates_to_sigkill",
+      "status": "passed",
+      "duration_s": 0.46641476000013427,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_timeout_ignoring_sigterm_escalates_to_sigkill",
+          "mode": "timeout",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1923
+          ],
+          "exit_record": {
+            "pid": 1923,
+            "returncode": -9,
+            "wait4_raw_status": 9,
+            "user_cpu_s": 0.016857999999999998,
+            "system_cpu_s": 0.009082,
+            "total_cpu_s": 0.025939999999999998,
+            "max_rss_kib": 21400,
+            "watchdog_killed": true,
+            "kill_reason": "child_wall_limit",
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.11142649099974733,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 2675,
+            "major_faults": 0,
+            "voluntary_context_switches": 2,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_timeout_reaps_two_descendant_generations",
+      "status": "passed",
+      "duration_s": 0.46704747000012503,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_timeout_reaps_two_descendant_generations",
+          "mode": "timeout_tree",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1924,
+            1925,
+            1926
+          ],
+          "exit_record": {
+            "pid": 1924,
+            "returncode": -9,
+            "wait4_raw_status": 9,
+            "user_cpu_s": 0.042106,
+            "system_cpu_s": 0.030538,
+            "total_cpu_s": 0.072644,
+            "max_rss_kib": 21400,
+            "watchdog_killed": true,
+            "kill_reason": "child_wall_limit",
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.11158662800016828,
+            "cleanup_error": null,
+            "adopted_descendants": [
+              {
+                "pid": 1925,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.012074999999999999,
+                "system_cpu_s": 0.011812999999999999,
+                "max_rss_kib": 9344
+              },
+              {
+                "pid": 1926,
+                "returncode": -9,
+                "wait4_raw_status": 9,
+                "user_cpu_s": 0.007944,
+                "system_cpu_s": 0.013465,
+                "max_rss_kib": 9344
+              }
+            ],
+            "supervisor_error": null,
+            "minor_faults": 7736,
+            "major_faults": 0,
+            "voluntary_context_switches": 23,
+            "involuntary_context_switches": 1,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorLifecycleTests.test_worker_exception_records_nonzero_exit",
+      "status": "passed",
+      "duration_s": 0.04154650399959792,
+      "original_v1_case": true,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorLifecycleTests.test_worker_exception_records_nonzero_exit",
+          "mode": "exception",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1927
+          ],
+          "exit_record": {
+            "pid": 1927,
+            "returncode": 1,
+            "wait4_raw_status": 256,
+            "user_cpu_s": 0.022965,
+            "system_cpu_s": 0.008771,
+            "total_cpu_s": 0.031736,
+            "max_rss_kib": 21400,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 0.00011550099998203223,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 2718,
+            "major_faults": 0,
+            "voluntary_context_switches": 1,
+            "involuntary_context_switches": 1,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_cleanup_keyboardinterrupt_is_recorded",
+      "status": "passed",
+      "duration_s": 0.034792578000178764,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_cleanup_keyboardinterrupt_is_recorded",
+          "injected": "cleanup KeyboardInterrupt",
+          "exit_record": {
+            "run_id": "synthetic_0",
+            "mode": "normal",
+            "info": "/tmp/supervise-synthetic-57icv34q/pids_0.json",
+            "descendant": "import json,os,signal,subprocess,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nleaf_ready=Path(sys.argv[1]+'.leaf')\nleaf=subprocess.Popen([sys.executable,'-B','-c',sys.argv[2],str(leaf_ready)])\nwhile not leaf_ready.exists():time.sleep(.005)\nPath(sys.argv[1]).write_text(json.dumps([os.getpid(),int(leaf_ready.read_text())]))\ntime.sleep(30)\n",
+            "leaf": "import os,signal,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nPath(sys.argv[1]).write_text(str(os.getpid()))\ntime.sleep(30)\n",
+            "launched": true,
+            "pid": 1928,
+            "returncode": null,
+            "wait4_raw_status": null,
+            "user_cpu_s": 0,
+            "system_cpu_s": 0,
+            "total_cpu_s": 0,
+            "max_rss_kib": 0,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": false,
+            "process_group_reaped": false,
+            "usage_complete": false,
+            "cleanup_sigterm_sent": false,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 9.324800021204283e-05,
+            "cleanup_error": {
+              "type": "KeyboardInterrupt",
+              "message": "cleanup interrupt",
+              "phase": "SIGTERM"
+            },
+            "adopted_descendants": [],
+            "supervisor_error": {
+              "type": "KeyboardInterrupt",
+              "message": "cleanup interrupt"
+            },
+            "minor_faults": 0,
+            "major_faults": 0,
+            "voluntary_context_switches": 0,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection",
+            "observed_process_wall_s": 0.032968546000120114,
+            "completed_at_utc": "2026-10-08T02:40:49.336705+00:00",
+            "result_exists": false
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_cleanup_send_oserror_is_recorded",
+      "status": "passed",
+      "duration_s": 0.0349697209999249,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_cleanup_send_oserror_is_recorded",
+          "injected": "cleanup send PermissionError",
+          "exit_record": {
+            "run_id": "synthetic_0",
+            "mode": "normal",
+            "info": "/tmp/supervise-synthetic-9h089x_m/pids_0.json",
+            "descendant": "import json,os,signal,subprocess,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nleaf_ready=Path(sys.argv[1]+'.leaf')\nleaf=subprocess.Popen([sys.executable,'-B','-c',sys.argv[2],str(leaf_ready)])\nwhile not leaf_ready.exists():time.sleep(.005)\nPath(sys.argv[1]).write_text(json.dumps([os.getpid(),int(leaf_ready.read_text())]))\ntime.sleep(30)\n",
+            "leaf": "import os,signal,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nPath(sys.argv[1]).write_text(str(os.getpid()))\ntime.sleep(30)\n",
+            "launched": true,
+            "pid": 1929,
+            "returncode": null,
+            "wait4_raw_status": null,
+            "user_cpu_s": 0,
+            "system_cpu_s": 0,
+            "total_cpu_s": 0,
+            "max_rss_kib": 0,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": false,
+            "process_group_reaped": false,
+            "usage_complete": false,
+            "cleanup_sigterm_sent": false,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 9.464000004300033e-05,
+            "cleanup_error": {
+              "type": "PermissionError",
+              "message": "send denied",
+              "phase": "SIGTERM"
+            },
+            "adopted_descendants": [],
+            "supervisor_error": {
+              "type": "PermissionError",
+              "message": "send denied"
+            },
+            "minor_faults": 0,
+            "major_faults": 0,
+            "voluntary_context_switches": 0,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection",
+            "observed_process_wall_s": 0.03306298600000446,
+            "completed_at_utc": "2026-10-08T02:40:49.371668+00:00",
+            "result_exists": false
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_continuously_ready_wait4_cannot_defer_deadline",
+      "status": "passed",
+      "duration_s": 0.0015692650003984454,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_continuously_ready_wait4_cannot_defer_deadline",
+          "simulated": true,
+          "wait4_success_count": 9,
+          "signals_at_wait_counts": [
+            [
+              15,
+              0
+            ],
+            [
+              9,
+              4
+            ]
+          ],
+          "exit_record": {
+            "pid": 900001,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.09,
+            "system_cpu_s": 0.18,
+            "total_cpu_s": 0.27,
+            "max_rss_kib": 10,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": false,
+            "usage_complete": false,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": true,
+            "cleanup_wall_s": 0.00027931299973715795,
+            "cleanup_error": {
+              "type": "TimeoutError",
+              "message": "Worker process-group cleanup incomplete",
+              "phase": "KILL_drain"
+            },
+            "adopted_descendants": [
+              {
+                "pid": 900002,
+                "returncode": 0,
+                "wait4_raw_status": 0,
+                "user_cpu_s": 0.01,
+                "system_cpu_s": 0.02,
+                "max_rss_kib": 10
+              },
+              {
+                "pid": 900003,
+                "returncode": 0,
+                "wait4_raw_status": 0,
+                "user_cpu_s": 0.01,
+                "system_cpu_s": 0.02,
+                "max_rss_kib": 10
+              },
+              {
+                "pid": 900004,
+                "returncode": 0,
+                "wait4_raw_status": 0,
+                "user_cpu_s": 0.01,
+                "system_cpu_s": 0.02,
+                "max_rss_kib": 10
+              },
+              {
+                "pid": 900005,
+                "returncode": 0,
+                "wait4_raw_status": 0,
+                "user_cpu_s": 0.01,
+                "system_cpu_s": 0.02,
+                "max_rss_kib": 10
+              },
+              {
+                "pid": 900006,
+                "returncode": 0,
+                "wait4_raw_status": 0,
+                "user_cpu_s": 0.01,
+                "system_cpu_s": 0.02,
+                "max_rss_kib": 10
+              },
+              {
+                "pid": 900007,
+                "returncode": 0,
+                "wait4_raw_status": 0,
+                "user_cpu_s": 0.01,
+                "system_cpu_s": 0.02,
+                "max_rss_kib": 10
+              },
+              {
+                "pid": 900008,
+                "returncode": 0,
+                "wait4_raw_status": 0,
+                "user_cpu_s": 0.01,
+                "system_cpu_s": 0.02,
+                "max_rss_kib": 10
+              },
+              {
+                "pid": 900009,
+                "returncode": 0,
+                "wait4_raw_status": 0,
+                "user_cpu_s": 0.01,
+                "system_cpu_s": 0.02,
+                "max_rss_kib": 10
+              }
+            ],
+            "supervisor_error": null,
+            "minor_faults": 0,
+            "major_faults": 0,
+            "voluntary_context_switches": 0,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_main_missing_attribute_falls_back_to_conservative_record",
+      "status": "passed",
+      "duration_s": 0.013932829999703245,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_main_missing_attribute_falls_back_to_conservative_record",
+          "injected": "missing exit attribute",
+          "exit_record": {
+            "run_id": "synthetic_0",
+            "mode": "timeout",
+            "info": "/tmp/supervise-synthetic-mx1il_n2/pids_0.json",
+            "descendant": "import json,os,signal,subprocess,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nleaf_ready=Path(sys.argv[1]+'.leaf')\nleaf=subprocess.Popen([sys.executable,'-B','-c',sys.argv[2],str(leaf_ready)])\nwhile not leaf_ready.exists():time.sleep(.005)\nPath(sys.argv[1]).write_text(json.dumps([os.getpid(),int(leaf_ready.read_text())]))\ntime.sleep(30)\n",
+            "leaf": "import os,signal,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nPath(sys.argv[1]).write_text(str(os.getpid()))\ntime.sleep(30)\n",
+            "launched": true,
+            "pid": 1930,
+            "returncode": null,
+            "wait4_raw_status": null,
+            "user_cpu_s": 0.0,
+            "system_cpu_s": 0.0,
+            "total_cpu_s": 0.0,
+            "max_rss_kib": 0,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": false,
+            "process_group_reaped": false,
+            "usage_complete": false,
+            "cleanup_sigterm_sent": false,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 0.0,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": {
+              "type": "OSError",
+              "message": "failure before lifecycle publication"
+            },
+            "minor_faults": 0,
+            "major_faults": 0,
+            "voluntary_context_switches": 0,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection",
+            "observed_process_wall_s": 0.0022875090003253717,
+            "completed_at_utc": "2026-10-08T02:40:49.377414+00:00",
+            "result_exists": false
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_no_sigkill_after_owned_group_children_disappear",
+      "status": "passed",
+      "duration_s": 0.0009490060001553502,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_no_sigkill_after_owned_group_children_disappear",
+          "simulated": true,
+          "signals": [
+            15
+          ],
+          "exit_record": {
+            "pid": 900002,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.01,
+            "system_cpu_s": 0.02,
+            "total_cpu_s": 0.03,
+            "max_rss_kib": 10,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 7.648399969184538e-05,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 0,
+            "major_faults": 0,
+            "voluntary_context_switches": 0,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_original_error_chain_survives_cleanup_and_bad_json",
+      "status": "passed",
+      "duration_s": 0.013805030999719747,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_original_error_chain_survives_cleanup_and_bad_json",
+          "injected": "primary + cleanup + malformed JSON",
+          "exception_type": "ValueError",
+          "cause_type": "OSError",
+          "exit_record": {
+            "run_id": "synthetic_0",
+            "mode": "timeout",
+            "info": "/tmp/supervise-synthetic-d2mf9vvc/pids_0.json",
+            "descendant": "import json,os,signal,subprocess,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nleaf_ready=Path(sys.argv[1]+'.leaf')\nleaf=subprocess.Popen([sys.executable,'-B','-c',sys.argv[2],str(leaf_ready)])\nwhile not leaf_ready.exists():time.sleep(.005)\nPath(sys.argv[1]).write_text(json.dumps([os.getpid(),int(leaf_ready.read_text())]))\ntime.sleep(30)\n",
+            "leaf": "import os,signal,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nPath(sys.argv[1]).write_text(str(os.getpid()))\ntime.sleep(30)\n",
+            "launched": true,
+            "pid": 1931,
+            "returncode": null,
+            "wait4_raw_status": null,
+            "user_cpu_s": 0,
+            "system_cpu_s": 0,
+            "total_cpu_s": 0,
+            "max_rss_kib": 0,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": false,
+            "process_group_reaped": false,
+            "usage_complete": false,
+            "cleanup_sigterm_sent": false,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 2.889300003516837e-05,
+            "cleanup_error": {
+              "type": "OSError",
+              "message": "cleanup fault",
+              "phase": "SIGTERM"
+            },
+            "adopted_descendants": [],
+            "supervisor_error": {
+              "type": "ValueError",
+              "message": "primary supervision fault"
+            },
+            "minor_faults": 0,
+            "major_faults": 0,
+            "voluntary_context_switches": 0,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection",
+            "observed_process_wall_s": 0.0020976370001335454,
+            "completed_at_utc": "2026-10-08T02:40:49.392041+00:00",
+            "result_exists": true,
+            "result_read_error": {
+              "type": "JSONDecodeError",
+              "message": "Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_partial_drain_failure_retains_collected_leader",
+      "status": "passed",
+      "duration_s": 0.09557456299990008,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_partial_drain_failure_retains_collected_leader",
+          "injected": "partial drain OSError",
+          "exit_record": {
+            "run_id": "synthetic_0",
+            "mode": "success_tree",
+            "info": "/tmp/supervise-synthetic-dran__18/pids_0.json",
+            "descendant": "import json,os,signal,subprocess,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nleaf_ready=Path(sys.argv[1]+'.leaf')\nleaf=subprocess.Popen([sys.executable,'-B','-c',sys.argv[2],str(leaf_ready)])\nwhile not leaf_ready.exists():time.sleep(.005)\nPath(sys.argv[1]).write_text(json.dumps([os.getpid(),int(leaf_ready.read_text())]))\ntime.sleep(30)\n",
+            "leaf": "import os,signal,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nPath(sys.argv[1]).write_text(str(os.getpid()))\ntime.sleep(30)\n",
+            "launched": true,
+            "pid": 1932,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.027191999999999997,
+            "system_cpu_s": 0.0,
+            "total_cpu_s": 0.027191999999999997,
+            "max_rss_kib": 17216,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": false,
+            "usage_complete": false,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 0.00018583500013846788,
+            "cleanup_error": {
+              "type": "OSError",
+              "message": "drain failed after collection",
+              "phase": "TERM_drain"
+            },
+            "adopted_descendants": [],
+            "supervisor_error": {
+              "type": "OSError",
+              "message": "drain failed after collection"
+            },
+            "minor_faults": 3038,
+            "major_faults": 0,
+            "voluntary_context_switches": 11,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection",
+            "observed_process_wall_s": 0.08370891999993546,
+            "completed_at_utc": "2026-10-08T02:40:49.487493+00:00",
+            "result_exists": false
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_record_update_interrupt_preserves_primary_chain",
+      "status": "passed",
+      "duration_s": 0.0016613220000181173,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_record_update_interrupt_preserves_primary_chain",
+          "simulated": true,
+          "injected": "record update interrupt",
+          "exception_type": "ValueError",
+          "cause_type": "KeyboardInterrupt",
+          "exit_record": {
+            "pid": 900003,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.0,
+            "system_cpu_s": 0.0,
+            "total_cpu_s": 0.0,
+            "max_rss_kib": 0,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": false,
+            "usage_complete": false,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 0.0,
+            "cleanup_error": {
+              "type": "KeyboardInterrupt",
+              "message": "record publication interrupt",
+              "phase": "record_update"
+            },
+            "adopted_descendants": [],
+            "supervisor_error": {
+              "type": "ValueError",
+              "message": "primary before record update"
+            },
+            "minor_faults": 0,
+            "major_faults": 0,
+            "voluntary_context_switches": 0,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_term_normally_exits_without_sigkill",
+      "status": "passed",
+      "duration_s": 0.3647900959999788,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_term_normally_exits_without_sigkill",
+          "mode": "term",
+          "all_observed_pids_gone": true,
+          "observed_pids": [
+            1935
+          ],
+          "exit_record": {
+            "pid": 1935,
+            "returncode": -15,
+            "wait4_raw_status": 15,
+            "user_cpu_s": 0.017551,
+            "system_cpu_s": 0.004108,
+            "total_cpu_s": 0.021659,
+            "max_rss_kib": 21400,
+            "watchdog_killed": true,
+            "kill_reason": "child_wall_limit",
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 0.010215664000043034,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 2675,
+            "major_faults": 0,
+            "voluntary_context_switches": 2,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection"
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_valid_result_json_is_processed_and_sealed",
+      "status": "passed",
+      "duration_s": 0.035613913999895885,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_valid_result_json_is_processed_and_sealed",
+          "valid_json_processed": true,
+          "exit_record": {
+            "run_id": "synthetic_0",
+            "mode": "valid_result",
+            "info": "/tmp/supervise-synthetic-kyqhul62/pids_0.json",
+            "descendant": "import json,os,signal,subprocess,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nleaf_ready=Path(sys.argv[1]+'.leaf')\nleaf=subprocess.Popen([sys.executable,'-B','-c',sys.argv[2],str(leaf_ready)])\nwhile not leaf_ready.exists():time.sleep(.005)\nPath(sys.argv[1]).write_text(json.dumps([os.getpid(),int(leaf_ready.read_text())]))\ntime.sleep(30)\n",
+            "leaf": "import os,signal,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nPath(sys.argv[1]).write_text(str(os.getpid()))\ntime.sleep(30)\n",
+            "launched": true,
+            "pid": 1936,
+            "returncode": 0,
+            "wait4_raw_status": 0,
+            "user_cpu_s": 0.024692,
+            "system_cpu_s": 0.004291,
+            "total_cpu_s": 0.028983,
+            "max_rss_kib": 17276,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": true,
+            "process_group_reaped": true,
+            "usage_complete": true,
+            "cleanup_sigterm_sent": true,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 7.414899982904899e-05,
+            "cleanup_error": null,
+            "adopted_descendants": [],
+            "supervisor_error": null,
+            "minor_faults": 3030,
+            "major_faults": 0,
+            "voluntary_context_switches": 1,
+            "involuntary_context_switches": 1,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection",
+            "observed_process_wall_s": 0.03322382900023513,
+            "completed_at_utc": "2026-10-08T02:40:49.898931+00:00",
+            "result_exists": true,
+            "result_sha256": "d0bd21d182442a12729f018825170253e6a813c543736129e1f4ea236f447e4f",
+            "startup_serialization_exit_and_unattributed_cpu_s": 0.028983,
+            "startup_serialization_exit_and_reap_wall_s": 0.03322382900023513
+          }
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.SupervisorV2BranchTests.test_v2_validation_oserror_is_recorded_before_cleanup",
+      "status": "passed",
+      "duration_s": 0.014685704999919835,
+      "original_v1_case": false,
+      "evidence": [
+        {
+          "test": "__main__.SupervisorV2BranchTests.test_v2_validation_oserror_is_recorded_before_cleanup",
+          "injected": "ownership validation OSError",
+          "exit_record": {
+            "run_id": "synthetic_0",
+            "mode": "timeout",
+            "info": "/tmp/supervise-synthetic-yz0m1fmk/pids_0.json",
+            "descendant": "import json,os,signal,subprocess,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nleaf_ready=Path(sys.argv[1]+'.leaf')\nleaf=subprocess.Popen([sys.executable,'-B','-c',sys.argv[2],str(leaf_ready)])\nwhile not leaf_ready.exists():time.sleep(.005)\nPath(sys.argv[1]).write_text(json.dumps([os.getpid(),int(leaf_ready.read_text())]))\ntime.sleep(30)\n",
+            "leaf": "import os,signal,sys,time\nfrom pathlib import Path\nsignal.signal(signal.SIGTERM,signal.SIG_IGN)\nPath(sys.argv[1]).write_text(str(os.getpid()))\ntime.sleep(30)\n",
+            "launched": true,
+            "pid": 1937,
+            "returncode": null,
+            "wait4_raw_status": null,
+            "user_cpu_s": 0,
+            "system_cpu_s": 0,
+            "total_cpu_s": 0,
+            "max_rss_kib": 0,
+            "watchdog_killed": false,
+            "kill_reason": null,
+            "reaped": false,
+            "process_group_reaped": false,
+            "usage_complete": false,
+            "cleanup_sigterm_sent": false,
+            "cleanup_sigkill_sent": false,
+            "cleanup_wall_s": 1.778699970600428e-05,
+            "cleanup_error": {
+              "type": "OwnershipNotVerified",
+              "phase": "validation",
+              "message": "No process-group signal sent"
+            },
+            "adopted_descendants": [],
+            "supervisor_error": {
+              "type": "OSError",
+              "message": "validation fault"
+            },
+            "minor_faults": 0,
+            "major_faults": 0,
+            "voluntary_context_switches": 0,
+            "involuntary_context_switches": 0,
+            "rss_accounting": "maximum collected wait4 peak; not simultaneous tree RSS",
+            "live_cpu_accounting": "leader only; descendant usage added after collection",
+            "observed_process_wall_s": 0.002667440999630344,
+            "completed_at_utc": "2026-10-08T02:40:49.904535+00:00",
+            "result_exists": false
+          }
+        }
+      ]
+    }
+  ],
+  "log": "test_bad_result_keeps_exit_record_before_failing (__main__.SupervisorLifecycleTests.test_bad_result_keeps_exit_record_before_failing) ... ok\ntest_cleanup_does_not_reap_unrelated_child (__main__.SupervisorLifecycleTests.test_cleanup_does_not_reap_unrelated_child) ... ok\ntest_exception_leader_cannot_leave_descendants (__main__.SupervisorLifecycleTests.test_exception_leader_cannot_leave_descendants) ... ok\ntest_global_limit_reason_is_preserved (__main__.SupervisorLifecycleTests.test_global_limit_reason_is_preserved) ... ok\ntest_normal_completion (__main__.SupervisorLifecycleTests.test_normal_completion) ... ok\ntest_original_supervisor_reaps_leader_but_leaves_descendants (__main__.SupervisorLifecycleTests.test_original_supervisor_reaps_leader_but_leaves_descendants) ... ok\ntest_real_main_preserves_exit_records_and_refuses_rerun (__main__.SupervisorLifecycleTests.test_real_main_preserves_exit_records_and_refuses_rerun) ... ok\ntest_real_main_supervisor_failure_keeps_exit_record (__main__.SupervisorLifecycleTests.test_real_main_supervisor_failure_keeps_exit_record) ... ok\ntest_repeated_runs_leave_no_processes (__main__.SupervisorLifecycleTests.test_repeated_runs_leave_no_processes) ... ok\ntest_successful_leader_cannot_leave_descendants (__main__.SupervisorLifecycleTests.test_successful_leader_cannot_leave_descendants) ... ok\ntest_supervisor_exception_cleans_then_propagates (__main__.SupervisorLifecycleTests.test_supervisor_exception_cleans_then_propagates) ... ok\ntest_timeout_ignoring_sigterm_escalates_to_sigkill (__main__.SupervisorLifecycleTests.test_timeout_ignoring_sigterm_escalates_to_sigkill) ... ok\ntest_timeout_reaps_two_descendant_generations (__main__.SupervisorLifecycleTests.test_timeout_reaps_two_descendant_generations) ... ok\ntest_worker_exception_records_nonzero_exit (__main__.SupervisorLifecycleTests.test_worker_exception_records_nonzero_exit) ... ok\ntest_v2_cleanup_keyboardinterrupt_is_recorded (__main__.SupervisorV2BranchTests.test_v2_cleanup_keyboardinterrupt_is_recorded) ... ok\ntest_v2_cleanup_send_oserror_is_recorded (__main__.SupervisorV2BranchTests.test_v2_cleanup_send_oserror_is_recorded) ... ok\ntest_v2_continuously_ready_wait4_cannot_defer_deadline (__main__.SupervisorV2BranchTests.test_v2_continuously_ready_wait4_cannot_defer_deadline) ... ok\ntest_v2_main_missing_attribute_falls_back_to_conservative_record (__main__.SupervisorV2BranchTests.test_v2_main_missing_attribute_falls_back_to_conservative_record) ... ok\ntest_v2_no_sigkill_after_owned_group_children_disappear (__main__.SupervisorV2BranchTests.test_v2_no_sigkill_after_owned_group_children_disappear) ... ok\ntest_v2_original_error_chain_survives_cleanup_and_bad_json (__main__.SupervisorV2BranchTests.test_v2_original_error_chain_survives_cleanup_and_bad_json) ... ok\ntest_v2_partial_drain_failure_retains_collected_leader (__main__.SupervisorV2BranchTests.test_v2_partial_drain_failure_retains_collected_leader) ... ok\ntest_v2_record_update_interrupt_preserves_primary_chain (__main__.SupervisorV2BranchTests.test_v2_record_update_interrupt_preserves_primary_chain) ... ok\ntest_v2_term_normally_exits_without_sigkill (__main__.SupervisorV2BranchTests.test_v2_term_normally_exits_without_sigkill) ... ok\ntest_v2_valid_result_json_is_processed_and_sealed (__main__.SupervisorV2BranchTests.test_v2_valid_result_json_is_processed_and_sealed) ... ok\ntest_v2_validation_oserror_is_recorded_before_cleanup (__main__.SupervisorV2BranchTests.test_v2_validation_oserror_is_recorded_before_cleanup) ... ok\n\n----------------------------------------------------------------------\nRan 25 tests in 5.229s\n\nOK\n",
+  "candidate_sha256": "c12c38ed08a6ce8431747f728d7075a4ebe5ebe1eb6c0a8fd464ccada6ce96e3",
+  "test_script_sha256": "eecd0cb8ce63808df1b4e486e5b48fdea974f46b747ea1c760f0f0afc9dba01d",
+  "safety_bounds": {
+    "independent_test_wall_limit_s": 4,
+    "test_cleanup_wall_limit_s": 2,
+    "fixed_max_processes_per_worker": 3,
+    "fixed_max_concurrent_fixture_processes": 4,
+    "finite_max_worker_launches_per_test": 8,
+    "infinite_fork_tests": false
+  },
+  "scope": "Linux one-shot CLI, same-group non-escaping fixtures; standard library only"
+}

@@ -1,0 +1,31 @@
+独立审计结论：运行中断；不得作完整E主结论。
+
+唯一预定576槽，实际347完成（C192/E155）、1开始后中断、228未启动。Shell exit137，wall 118.965秒，CPU 111.258秒<180秒。终止原因未知。
+213项科学冻结SHA全部匹配。96输入、24独立基础组（C8/E16）、变换/需求/窗口、固定8D近邻与门控、3重复双槽计划、192个C完成后锁r1再开始E均独立核对。546条成功轨迹（新结果与历史训练）和96条见证均通过独立连续可行性及50位Decimal整数目标核验。
+C只选r1，校准完整成功96/96，零额外失败，采用3题/2组；校准等组分数0.200868%，仅阈值选择。
+G0/GW全部96题均退化PCI，GW恢复采用支持组=0。保留w20必拒结构证明；不能称去掉窗宽门已恢复收益。
+
+B：预定E192观测/64题/16组；已观察成功75；状态{'SUCCESS': 75, 'NOT_RUN_ABORT_UNKNOWN': 114, 'TIMEOUT': 2, 'INTERRUPTED': 1}；可用成对观测77；已观察额外失败0；完整质量未定义。
+G0：预定E192观测/64题/16组；已观察成功75；状态{'SUCCESS': 75, 'NOT_RUN_ABORT_UNKNOWN': 114, 'TIMEOUT': 2, 'INTERRUPTED': 1}；可用成对观测77；已观察额外失败0；完整质量未定义。
+GW：预定E192观测/64题/16组；已观察成功75；状态{'SUCCESS': 75, 'NOT_RUN_ABORT_UNKNOWN': 114, 'TIMEOUT': 2, 'INTERRUPTED': 1}；可用成对观测77；已观察额外失败0；完整质量未定义。
+GM：预定E192观测/64题/16组；已观察成功63；状态{'SUCCESS': 63, 'NOT_RUN_ABORT_UNKNOWN': 114, 'TIMEOUT': 14, 'UNKNOWN': 1}；可用成对观测77；已观察额外失败13；完整质量未定义。
+GC：预定E192观测/64题/16组；已观察成功76；状态{'SUCCESS': 76, 'NOT_RUN_ABORT_UNKNOWN': 114, 'TIMEOUT': 2}；可用成对观测77；已观察额外失败0；完整质量未定义。
+RAW：预定E192观测/64题/16组；已观察成功63；状态{'SUCCESS': 63, 'NOT_RUN_ABORT_UNKNOWN': 114, 'TIMEOUT': 14, 'UNKNOWN': 1}；可用成对观测77；已观察额外失败13；完整质量未定义。
+
+重要修正与边界：
+- SIGKILL exit137 stopped the unique run after 347/576 completed slots. No restart, no complete E comparison, no complete E quality/CI/positive signal.
+- Frozen after_exit.py incorrectly labels all unstarted requests as NOT_RUN_BUDGET whenever exit137 or152. Retain raw record and use explicit erratum: 1 INTERRUPTED,228 NOT_RUN_ABORT_UNKNOWN.
+- G0 and GW choose PCI on all96 cases: deleting the window component did not restore any adoption; this branch has zero active support. w20 lower bound2/3 is structural; w80 lower bound1/3 is not mandatory rejection.
+- C-only r1 selection is reproducible, but C8 groups and optimistic tuning score are not a safety or generalization result.
+- Substantial RSS growth57MiB to2157MiB suggests resource pressure. Kill cause is not established.
+- Main host process visibility is isolated; external ffmpeg concurrency disclosed by parent remains a confounder even though not present in snapshots.
+- No solver reruns, candidate calls, third-party sends or author-file writes by this audit.
+
+审计自身使用标准库只读重算，不导入作者程序或ORTools，不执行任何solver/candidate。审计计算费用另记audit_cost.json。
+
+补充核验：576槽随机顺序及24组D0见证顺序均独立从种子重建一致。作者229缺失项纠正账本与独审一致。
+GC封存E决策为6题/3基础组（m011、m015、m022）非PCI采用，低于预注册4组最低支持门槛；即使没有中断，也不能达到预定正信号标准。
+E中GC已观察成功76、B成功75的差异含GC有结果而配对B中断的槽，绝不是一例经确认的GC救回成功；禁止比较这些不齐分母。
+内存只读诊断：源码callback引用routing，可能存在RoutingModel与Python回调跨边界保留。仅为待验证假设，不能等同OOM原因。下一轮先用独立toy验证生命周期；如改每槽进程隔离，须累计所有子进程CPU并另预注册总预算。
+
+并发证据：父协调消息在16:38:23记视频正在编码、16:40:20记修字幕重新导出、16:43:58记最终保存，支持研究执行期间有视频编码任务。此为协调消息观察，并非伪造的进程日志；缺少同核调度证据，不能量化竞争或归因研究SIGKILL。未复制任何课堂/视频内容。

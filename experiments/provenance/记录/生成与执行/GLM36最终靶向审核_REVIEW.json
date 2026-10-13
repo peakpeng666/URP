@@ -1,0 +1,53 @@
+{
+  "status": "PASS_targeted_record_review",
+  "manifest_files": 10507,
+  "request_records": 36,
+  "identical_context_questions": 6,
+  "terminal_counts": {
+    "completed": 35,
+    "timeout": 1
+  },
+  "admission_counts": {
+    "ast_passed": 30,
+    "not_run": 1,
+    "ast_rejected": 5
+  },
+  "scored_candidates": 30,
+  "recorded_passed_cases": 90,
+  "pairs": [
+    {
+      "question": "q01",
+      "gap_delta_pp": 0.5000000000000115,
+      "wall_delta_s": 194.64089569399857
+    },
+    {
+      "question": "q02",
+      "gap_delta_pp": -0.9166666666666767,
+      "wall_delta_s": 37.11495381299892
+    },
+    {
+      "question": "q03",
+      "gap_delta_pp": 1.083333333333325,
+      "wall_delta_s": 46.539275229999475
+    },
+    {
+      "question": "q04",
+      "gap_delta_pp": 1.416666666666666,
+      "wall_delta_s": 315.9002808180003
+    },
+    {
+      "question": "q05",
+      "gap_delta_pp": 0.0,
+      "wall_delta_s": 3.9992093259998
+    },
+    {
+      "question": "q06",
+      "gap_delta_pp": 0.24999999999999467,
+      "wall_delta_s": 20.85532053099905
+    }
+  ],
+  "mean_gap_delta_pp": 0.3888888888888868,
+  "mean_wall_delta_s": 103.17498923533269,
+  "review_cpu_s": 0.822094863,
+  "scope": "Independent archive hashes, actual request bodies, recorded score arithmetic. No model calls, no candidate execution rerun, no proof of provider internal HTTP count or billing; not a full sandbox audit."
+}

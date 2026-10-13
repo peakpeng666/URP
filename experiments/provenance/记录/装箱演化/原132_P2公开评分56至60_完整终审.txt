@@ -1,0 +1,25 @@
+P2完整60槽独立只读终审：通过
+
+一、交付与闭账
+56–60最终delta为167文件、500560字节ZIP，SHA256 8c3dab15aafcea7ad8ba79d7f2518546efe13229da59f16866fb3eec409cb629；manifest SHA256 49a0b8db3d8a270a4685e6496c046f5d814fb75be54958da24c2cc87451d68d2。目录与ZIP逐字节一致，166条manifest及全部前序链式引用通过。旧1231状态文件不变，新增120文件，联合1351文件无覆盖。
+60个slot claim/result、265对runtime claim/result、480条资源预约完整闭合，无未知claim、额外执行身份、numeric failure或HALT。末次pass仅新增56–60、复用前55槽，stop_at=null。最终快照与实时EXECUTION_SWITCH逐字节一致，enabled=false、heldout=false；public派发关闭。
+
+二、新增与最终分母
+本次56、58、59、60四槽完整；57为timeout生成失败。新增4份admission、20份pack经原只读ReceiptBridge验证，四个精确Fraction fitness独立重算通过。
+全60结果：43完整、7 AST static拒绝、10生成失败；50 admissions、215 packs。
+IID：19/30完整、3/30 AST拒绝、8/30生成失败；实际22次admission，AST拒绝率3/22。
+EOH：24/30完整、4/30 AST拒绝、2/30生成失败；实际28次admission，AST拒绝率4/28。
+失败均保留null fitness，不补0、不从两臂各30的生成分母删除。
+
+三、完整数值、来源与导出核对
+独立重算全43个完整候选的5-case exact mean(L1/used_bins)，全部一致；case顺序、固定L1、used_bins及checker证据保持原定义。safe_facts的60条结果与原terminal逐项一致，50份bundle来源/描述/code identity哈希绑定一致。全部60条generation安全成本记录与原R1 result/dispatch对齐，父票含重复次数、operator及prompt/request/claim身份保持原冻结内容。
+完整候选条件均值：IID 0.9325101081334052（n=19）；EOH 0.9714803533951957（n=24）。精确分数已核对并保存在JSON。这些是complete-only均值；两臂全30槽总体均值保持null，不作零填充。
+最高单候选变为EOH slot56：553433026291573/557161270697850 = 0.9933085004246485，used_bins=[2028,1997,1995,1994,1992]。仅为固定public设计集观察，不等于跨臂胜负、最终种群选择或heldout泛化结论。
+
+四、预算与不确定性
+从全部原bundle重新累加去重数值CPU8830.994793秒：admission9.176019 + child3680.145220 + supervisor self5141.673554；inclusive wait4未重复计入。累计预约25850 CPU秒、19600共享wall秒；均在原60 admissions/300 packs、36060 CPU秒/27300共享wall秒上限内。原P0/P1及全局剩余余额仍unknown，没有重置预算池。
+CLI tokens仅为部分客户端报告：IID已知22槽、未知8槽；EOH已知29槽、未知1槽。已知sum按原记录复核，完整sum仍null，不当provider usage或计费证明。旧恢复进程CPU/exit保持unknown，未做独立存活probe、未采用producer ps观察作独审证据。
+
+五、审核边界
+完整assignment数组未保存，审核范围为原checker回执和assignment SHA，不重建不存在的数组。保留账本内无遗漏/重跑证据，不能证明范围外不存在未记录活动。本次不执行candidate/solver、不调用生成、不读heldout、不重审全48科学源码、不改交付包、不上传或开启新任务。
+成功核验程序CPU约0.260秒、wall约0.260秒；详细精确均值、来源核对、token与资源计账见同名JSON。

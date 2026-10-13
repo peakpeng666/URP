@@ -1,0 +1,297 @@
+{
+  "status": "PASS_WITH_TIMING_LIMITATIONS",
+  "checks": 185146,
+  "failures": [],
+  "frozen_files": 74,
+  "source_snapshot_files": 75,
+  "planned_cells": 1152,
+  "calls": 16272,
+  "independently_checked_outputs": 11639,
+  "max_cost_error": 0,
+  "diagnostic_contents": 96,
+  "counts": {
+    "warmup/capacity_solver/SUCCESS": 31,
+    "warmup/waste_solver/SUCCESS": 41,
+    "warmup/waste_solver/INITFAIL": 7,
+    "warmup/pruned_solver/INITFAIL": 17,
+    "warmup/capacity_solver/INITFAIL": 17,
+    "warmup/pruned_solver/SUCCESS": 31,
+    "timed/capacity_solver/SUCCESS": 3472,
+    "timed/capacity_solver/INITFAIL": 1904,
+    "timed/waste_solver/SUCCESS": 4592,
+    "timed/pruned_solver/SUCCESS": 3472,
+    "timed/pruned_solver/INITFAIL": 1904,
+    "timed/waste_solver/INITFAIL": 784
+  },
+  "nonpositive_algorithm_calls": {
+    "warmup/cpu": 98,
+    "warmup/wall": 0,
+    "timed/cpu": 11118,
+    "timed/wall": 0
+  },
+  "algorithm_seconds": {
+    "capacity_solver/cpu": 6.263703203,
+    "capacity_solver/wall": 6.243147297,
+    "waste_solver/cpu": 7.511007406,
+    "waste_solver/wall": 7.494968803,
+    "pruned_solver/cpu": 6.685712124,
+    "pruned_solver/wall": 6.627354021
+  },
+  "paired_stats": [
+    {
+      "numerator": "pruned_solver",
+      "denominator": "capacity_solver",
+      "clock": "cpu",
+      "eligible_instances": 0,
+      "total_ratio": null,
+      "median_instance_median_ratio": null,
+      "p25": null,
+      "p75": null,
+      "min": null,
+      "max": null,
+      "geometric_mean": null
+    },
+    {
+      "numerator": "pruned_solver",
+      "denominator": "capacity_solver",
+      "clock": "wall",
+      "eligible_instances": 48,
+      "total_ratio": 1.0615405508988427,
+      "median_instance_median_ratio": 1.064800007896299,
+      "p25": 0.9825981143833014,
+      "p75": 1.1306325345017139,
+      "min": 0.8749519320378002,
+      "max": 1.4501898653086653,
+      "geometric_mean": 1.0652078492705137
+    },
+    {
+      "numerator": "waste_solver",
+      "denominator": "capacity_solver",
+      "clock": "cpu",
+      "eligible_instances": 0,
+      "total_ratio": null,
+      "median_instance_median_ratio": null,
+      "p25": null,
+      "p75": null,
+      "min": null,
+      "max": null,
+      "geometric_mean": null
+    },
+    {
+      "numerator": "waste_solver",
+      "denominator": "capacity_solver",
+      "clock": "wall",
+      "eligible_instances": 48,
+      "total_ratio": 1.2005112880488233,
+      "median_instance_median_ratio": 1.0405273430659854,
+      "p25": 0.9875124558882206,
+      "p75": 1.1935415113855201,
+      "min": 0.8792830137384274,
+      "max": 2.4365298558963095,
+      "geometric_mean": 1.14012152904466
+    },
+    {
+      "numerator": "waste_solver",
+      "denominator": "pruned_solver",
+      "clock": "cpu",
+      "eligible_instances": 0,
+      "total_ratio": null,
+      "median_instance_median_ratio": null,
+      "p25": null,
+      "p75": null,
+      "min": null,
+      "max": null,
+      "geometric_mean": null
+    },
+    {
+      "numerator": "waste_solver",
+      "denominator": "pruned_solver",
+      "clock": "wall",
+      "eligible_instances": 48,
+      "total_ratio": 1.1309142048622727,
+      "median_instance_median_ratio": 0.998438852705309,
+      "p25": 0.9578244546655521,
+      "p75": 1.065927468422024,
+      "min": 0.6603702912740499,
+      "max": 1.949812084364679,
+      "geometric_mean": 1.0615837759688507
+    }
+  ],
+  "run_and_dummy_cpu_seconds": 25.046276810000002,
+  "run_and_dummy_wall_seconds": 25.048498652000003,
+  "conservative_concurrent_maxrss_KiB": 76584,
+  "independent_audit_cpu_seconds": 2.458348764,
+  "independent_audit_wall_seconds": 2.4616364540001996,
+  "independent_audit_maxrss_KiB": 225080,
+  "batch_secondary_characterization": {
+    "cpu": {
+      "timed_cells": 1008,
+      "nonpositive": 17,
+      "minimum_ns": 0,
+      "minimum_positive_ns": 3340287,
+      "median_ns": 16000547,
+      "maximum_ns": 88001777
+    },
+    "wall": {
+      "timed_cells": 1008,
+      "nonpositive": 0,
+      "minimum_ns": 2603936,
+      "minimum_positive_ns": 2603936,
+      "median_ns": 16472196,
+      "maximum_ns": 89086925
+    }
+  },
+  "batch_secondary_pairs": [
+    {
+      "numerator": "pruned_solver",
+      "denominator": "capacity_solver",
+      "clock": "cpu",
+      "eligible_instances": 44,
+      "all_cells_positive": false,
+      "reported_ratio": null,
+      "note": "CPU batch ratios withheld: zero batches and incomplete full-panel positive coverage; positive subset cannot replace original48 evidence."
+    },
+    {
+      "numerator": "waste_solver",
+      "denominator": "capacity_solver",
+      "clock": "cpu",
+      "eligible_instances": 44,
+      "all_cells_positive": false,
+      "reported_ratio": null,
+      "note": "CPU batch ratios withheld: zero batches and incomplete full-panel positive coverage; positive subset cannot replace original48 evidence."
+    },
+    {
+      "numerator": "waste_solver",
+      "denominator": "pruned_solver",
+      "clock": "cpu",
+      "eligible_instances": 45,
+      "all_cells_positive": false,
+      "reported_ratio": null,
+      "note": "CPU batch ratios withheld: zero batches and incomplete full-panel positive coverage; positive subset cannot replace original48 evidence."
+    },
+    {
+      "numerator": "pruned_solver",
+      "denominator": "capacity_solver",
+      "clock": "wall",
+      "eligible_instances": 48,
+      "all_cells_positive": true,
+      "total_ratio": 1.061153119586087,
+      "median_instance_median_ratio": 1.066073586120381,
+      "median_ratio_p25": 0.9832925126211282,
+      "median_ratio_p75": 1.1294392868242107
+    },
+    {
+      "numerator": "waste_solver",
+      "denominator": "capacity_solver",
+      "clock": "wall",
+      "eligible_instances": 48,
+      "all_cells_positive": true,
+      "total_ratio": 1.200424418169781,
+      "median_instance_median_ratio": 1.0385750655557355,
+      "median_ratio_p25": 0.9848261965641709,
+      "median_ratio_p75": 1.1895002763785056
+    },
+    {
+      "numerator": "waste_solver",
+      "denominator": "pruned_solver",
+      "clock": "wall",
+      "eligible_instances": 48,
+      "all_cells_positive": true,
+      "total_ratio": 1.1312452425697226,
+      "median_instance_median_ratio": 0.998760315980016,
+      "median_ratio_p25": 0.9602270929938727,
+      "median_ratio_p75": 1.063954469478039
+    }
+  ],
+  "empirical_resolution": {
+    "cpu": {
+      "calibration_nonpositive": 1000,
+      "positive_algorithm_min_ns": 955027,
+      "positive_algorithm_median_ns": 3999935
+    },
+    "wall": {
+      "calibration_nonpositive": 0,
+      "positive_algorithm_min_ns": 147809,
+      "positive_algorithm_median_ns": 980751
+    }
+  },
+  "receipt": {
+    "stage": "capacity-bound-timing-reproduction-20261008-r1",
+    "status": "PREEXECUTION_PRIVATE_DRIVE_UPLOAD_AND_DOWNLOAD_VERIFIED",
+    "drive_id": "18kiAs9otVU8T_w8_Ef7pNDcHIO4Ay72g",
+    "url": "https://drive.google.com/file/d/18kiAs9otVU8T_w8_Ef7pNDcHIO4Ay72g/view?usp=drivesdk",
+    "parent_id": "129-0z2ejXZg2rAkJe_Yxz876foi5mTy6",
+    "shared": false,
+    "permissions": "owner_only",
+    "bytes": 204545,
+    "sha256": "d1439db8960d0aeaed5bc61aab73a4b6bf4953bb4919479e4053c73e235f4748",
+    "download_byte_identical": true,
+    "source": "/workspace/shared/capacity_bound_timing_reproduction_20261008_r1_PREEXECUTION_SNAPSHOT.zip",
+    "download_path": "/workspace/scratch/27470b7a9f17/attachments/44724623-5872-4829-b385-c737a3331863/容量计时_复现r1_未执行_过程快照_20261008.zip"
+  },
+  "namespace": "capacity-bound-timing-reproduction-20261008-r1",
+  "freeze_sha256": "7224e43e2d5557d9b49f31a123532b0d8f4583da1c241a6fea52df86a3f01ac2",
+  "raw_calls_sha256": "4a40765426be0b6d1f9246bea630eac471e2e3c26cd9f56cb56c18dd5c2e8722",
+  "raw_cells_sha256": "d524a2f0ba87bced65b3e904b1c572198b6f0f2631218518dae2a5302c18a0ae",
+  "scope": [
+    "Read-only independent verification; no solver, generator, or oracle was executed and no source or raw artifact changed.",
+    "Every stored call was checked against new reproduction source records. Output routes and costs were checked independently for all 11639 successful calls including warmups.",
+    "Primary CPU estimates are unavailable under the frozen positive-call validity rule. process_time_ns and reported 1ns clock resolution did not yield fine effective CPU resolution.",
+    "All 16128 timed wall values are positive; wall totals and complete 48-instance paired descriptive estimates are valid under the frozen protocol.",
+    "Wrapper-inclusive batch timing is a separately recorded boundary, not a replacement for algorithm-only timing. Seventeen timed CPU batches remain zero. CPU batch subset ratios are exploratory characterization only and must not substitute for full-panel primary CPU inference.",
+    "Quantized CPU totals are retained only as raw sums, not validated primary estimates.",
+    "Memory cap is per-process address space, not aggregate; observed worker plus supervisor peak RSS gives a conservative concurrent bound of 76584KiB, with independent audit peak225080KiB.",
+    "Success gains and runtime are relative to this fixed synthetic panel and source reproduction; repeated timing calls do not add independent scientific instances. No infeasibility claim follows from node-limit failure.",
+    "Cloud verification uses local receipt and downloaded bytes; this auditor did not perform network operations.",
+    "Independent comparison with formal SUMMARY/AUDIT passed611additional checks over10strata and60pair/clock groups. Final narrative,README,and clock-limit sidecar passed review at the recorded hashes."
+  ],
+  "utc": "2026-10-08T12:50:45+00:00",
+  "formal_analysis_report_review": {
+    "status": "PASS",
+    "checks": 611,
+    "failures": [],
+    "summary_strata": 10,
+    "summary_pair_groups": 60,
+    "cpu_seconds": 1.572830155,
+    "maxrss_KiB": 169368
+  },
+  "total_checks_including_formal_summary": 185757,
+  "execution_resource_accounting": {
+    "dummy_run_supervisor_worker_analysis_cpu_seconds": 26.85031083,
+    "dummy_run_supervisor_worker_analysis_wall_seconds": 26.854083217000003,
+    "formal_analysis_peak_KiB": 218984,
+    "independent_raw_audit_cpu_seconds": 2.458348764,
+    "independent_summary_audit_cpu_seconds": 1.572830155,
+    "note": "Independent audit/review time is additional to the formal execution ledger; all observed usage remains well below300CPU/600wall/1GiB perprocess. Source/raw contents unchanged."
+  },
+  "narrative_report_review": {
+    "status": "PASS",
+    "utc": "2026-10-08T12:54:55.428457+00:00",
+    "reviewed_sha256": {
+      "reports/REPORT_ZH.txt": "a48ad031ed9ac73c85bfc289298136e2fc0d35eaf5350590b5156232fc3dcbc9",
+      "README.txt": "5084fe67509d380f6f0dc87a3a39cc2ac9b930770f8644d85a199000f56fe17f",
+      "reports/CLOCK_LIMITATION.json": "317101a43f6fd93679b1a6019bdc73265b64be24775fc330babfb3583ae05fcc",
+      "reports/AUDIT.json": "00b9ca7932cdcba2241e18a6c116a479cf20f0dd2bc6131ebe205bc7d7343cb0",
+      "reports/SUMMARY.json": "3aa37e57333223e2c220237b6256923d3817eaf36c1e6d548d031276d268df92"
+    },
+    "checks": [
+      "Reported full wall totals,paired ratios and all declared strata agree with independently checked data.",
+      "Primary CPU estimates correctly described as non-estimable;17zero CPU batches and44/45subset rejection disclosed.",
+      "No CPU batch ratio from zero data or selected subset is published in the narrative.",
+      "Historical-input hash recovery correctly described as post-source-run evidence;old432raw not recovered.",
+      "Runtime budget accounting explicitly separates dummy/run/formal analysis from independent review,packaging,archive wait and preparation.",
+      "Retained warmups,failures,zero readings and round data disclosed;no population generalization or added scientific sample size claim.",
+      "Local preexecution and raw-first downloaded archive bytes match recorded SHA256;all archived raw artifact members match current originals.",
+      "Reanalysis instructions require a copy and restoration of source reproduction path for snapshot validation."
+    ],
+    "raw_archive_members_verified": 105,
+    "raw_files_added_after_snapshot": [
+      "raw/ANALYSIS_STDOUT.txt"
+    ],
+    "raw_added_file_scope": "Formal analyzer stdout only;no extra solver calls.",
+    "raw_archive_sha256": "42945237be6528cda3747c331bd4500f15d0a6900e0e65369e426159466cf369",
+    "frozen_files_still_unchanged": true,
+    "raw_calls_cells_still_unchanged": true,
+    "no_solver_execution_by_reviewer": true
+  }
+}

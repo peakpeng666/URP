@@ -1,0 +1,11 @@
+{
+  "utc": "2026-10-08T00:52:46.918419+00:00",
+  "zip_bytes": 17670,
+  "zip_sha256": "b0717a754572bcc15497e7b5c45e8601e4458a16e8bbb94e73483ebb80ce7919",
+  "exit_code": 0,
+  "archive_readback_passed": true,
+  "schedule_extension_check_passed": true,
+  "packaging_process_cpu_seconds": 0.004268774999999999,
+  "packaging_wall_seconds": 0.004274999999324791,
+  "experiment_unchanged": true
+}

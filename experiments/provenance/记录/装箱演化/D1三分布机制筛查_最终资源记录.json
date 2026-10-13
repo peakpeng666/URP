@@ -1,0 +1,104 @@
+{
+  "schema": "D1-final-resource-sidecar-v1",
+  "status": "COMPLETE_AND_INDEPENDENTLY_AUDITED",
+  "archive_path": "/workspace/shared/bpp_nearfit_distribution_20261008_PRIVATE_HANDOFF.tar.gz",
+  "archive_sha256": "24da2f1275f014413f86509bb5b2a1ed3e896114487c110c0bebb42f060416c5",
+  "archive_bytes": 603268,
+  "archive_member_count": 402,
+  "all_archive_members_verified_against_manifest": true,
+  "scientific_packs": 36,
+  "toy_packs": 3,
+  "analysis_actions": 1,
+  "missing_failures_unknown_retries": 0,
+  "independent_result_review_sha256": "9c2bc2095d8d063d8dbbc2f57a1ccde6db6a58412161dd4767c99e643fe9edc4",
+  "independent_export_review_sha256": "90e2eff514a2c0d0c0e40004785bf3217460cd5502c3490bb886e4800b206fae",
+  "fixed_budget_caps": {
+    "CPU_seconds": 5100,
+    "active_wall_seconds": 3900
+  },
+  "fixed_conservative_reservations": {
+    "CPU_seconds": 4977,
+    "active_wall_seconds": 3797
+  },
+  "unallocated_margin": {
+    "CPU_seconds": 123,
+    "active_wall_seconds": 103
+  },
+  "measured_complete_nonoverlapping_shell_stages": {
+    "author_time_receipt.txt": {
+      "wall_seconds": 0.03,
+      "user_CPU_seconds": 0.015,
+      "system_CPU_seconds": 0.015
+    },
+    "setup_time_receipt.txt": {
+      "wall_seconds": 0.056,
+      "user_CPU_seconds": 0.048,
+      "system_CPU_seconds": 0.008
+    },
+    "prepare_time_receipt.txt": {
+      "wall_seconds": 1.507,
+      "user_CPU_seconds": 1.221,
+      "system_CPU_seconds": 0.287
+    },
+    "generation_time_receipt.txt": {
+      "wall_seconds": 0.094,
+      "user_CPU_seconds": 0.565,
+      "system_CPU_seconds": 0.021
+    },
+    "handoff_check_time_receipt.txt": {
+      "wall_seconds": 0.036,
+      "user_CPU_seconds": 0.031,
+      "system_CPU_seconds": 0.005
+    },
+    "activation_time_receipt.txt": {
+      "wall_seconds": 0.027,
+      "user_CPU_seconds": 0.022,
+      "system_CPU_seconds": 0.005
+    },
+    "science_time_receipt.txt": {
+      "wall_seconds": 87.628,
+      "user_CPU_seconds": 81.767,
+      "system_CPU_seconds": 5.243
+    },
+    "export_time_receipt.txt": {
+      "wall_seconds": 0.039,
+      "user_CPU_seconds": 0.026,
+      "system_CPU_seconds": 0.013
+    },
+    "PACKAGING_TIME.txt": {
+      "wall_seconds": 0.237,
+      "user_CPU_seconds": 0.205,
+      "system_CPU_seconds": 0.032
+    }
+  },
+  "known_complete_shell_CPU_seconds": 89.529,
+  "known_complete_shell_active_wall_seconds": 89.654,
+  "science_plus_analysis_CPU_seconds": 87.01,
+  "science_plus_analysis_active_wall_seconds": 87.628,
+  "cost_scope": "Known complete shell stages only, not measured all-in. Does not re-add inner wait4. Initial/final read/copy/export administration and sidecar creation stay conservatively inside original static_admin_data20/20; independent audit uses its single30/30 reservation. Audit reports retain their measured/check timing and conservative prior-read charges. No new budget requested.",
+  "auditor_reported_resource_evidence": {
+    "actuals_do_not_replace_reservations": true,
+    "audit_previous_reads_and_preparation_conservative_CPU": 3,
+    "audit_previous_reads_and_preparation_conservative_wall": 4,
+    "audits_shared_reservation_CPU": 30,
+    "audits_shared_reservation_wall": 30,
+    "caps_CPU": 5100,
+    "caps_wall": 3900,
+    "dispatch_self_CPU_at_emit_not_final": 0.086555815,
+    "dispatch_wall_at_emit_not_final": 87.59336281199649,
+    "resource_reservations_CPU": 4977,
+    "resource_reservations_wall": 3797,
+    "result_verification_CPU_at_emit": 0.338497895,
+    "result_verification_wall_at_emit": 0.3406904309958918,
+    "science_dispatch_shell_exit_receipt": "\nreal\t1m27.628s\nuser\t1m21.767s\nsys\t0m5.243s\n",
+    "science_guard_descendants_complete_wait4_CPU_once": 86.91574800000001,
+    "toy_guard_descendants_complete_wait4_CPU_once": 1.465067
+  },
+  "provider_calls": 0,
+  "installs": 0,
+  "purchases": 0,
+  "uploads_by_science_worker": 0,
+  "old_packages_unchanged": true,
+  "delivery_privacy": "Existing project private folder only. Experimental master is reproducibility entropy, not service credential; no public sharing.",
+  "boundary": "Uniform family versus published_EoH: patch bin differences10,0,6,6;0wins1tie3losses. No general robustness/SOTA claim; original Weibull-domain evidence remains distinct."
+}

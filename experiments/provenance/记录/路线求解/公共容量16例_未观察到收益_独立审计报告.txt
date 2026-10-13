@@ -1,0 +1,50 @@
+公共容量16任务×3臂×2端点首次执行：独立审计
+结论：PASS_WITH_SCOPE_LIMITS。96份结果独立算术核验通过；本面板没有观察到剪枝收益。不得据此宣称一般无效、速度提升、原CVRP最优gap或现实车队有效性。
+
+一、主要发现
+1. 96个预定且唯一的调用全部正常退出，96份stderr均为空；48次直接partition与48次完整initialize全部输出合法。每个端点每臂16/16成功。
+2. 对每份输出独立从输入重算：客户整型编号、精确一次覆盖、仓库首尾、无嵌入仓库、每组非空、逐路线需求和不超过Q、非空路线数不超过K。48份初始化的连续欧氏路线成本也全部通过。没有导入或调用候选、solver、原执行方检查器或搜索过程。
+3. 每个实例×端点的三臂输出完全相同。分别以baseline比较full-tight与waste，两端点的四组配对表均为：共同成功16、共同失败0、挽救失败0、损失成功0。
+4. 直接partition端点：每臂16次、总926进入节点，逐例节点数都等于客户数+1；三臂所有剪枝数为0。full-tight有910次guard但tight条件0次；waste有910次guard/扫描、6683个桶剩余容量检查，剪枝0。节点为诊断计数，结合源代码与保存输出一致性核查，未另跑DFS。
+5. 完整initialize端点：每臂9例savings直接满足K，7例经一次FFD成功，实际进入capacity DFS均为0/16。强制直接调用partition的48次不能当成完整初始化中观察到的DFS工作量。
+6. P-n23-k8未被静态上界排除，但本次直接partition三臂均23节点、无剪枝，输出8组载荷为40、40、40、40、38、39、37、39。完整初始化先有9条savings路线，超过K=8，随后FFD成功而未进入capacity DFS；连续成本693.6462124616816。这个结果不能改写成事前必然不触发，也不能转称原EUC_2D gap。
+
+二、冻结、输入、归档与单次执行核验
+- 最终执行冻结v3中146项文件的字节数/SHA-256全部匹配；启动记录所绑定的freeze哈希也完全一致。
+- 96条调用的instance/arm/endpoint/node_limit及顺序与准备期提案一致，全部node_limit=256，ID为C001至C096，无替换、追加或重复。
+- 16份执行输入只保留公开ID、坐标、需求、容量Q、K；数值逐字段与准备期输入一致。执行ID取原公开ID而非派生长ID。3个既有算法、audit.py、legacy/experiment.py及6个vendor源码共11个文件与既有来源逐字节相同。
+- 16个容量/车队任务对应14个带编号坐标需求底本。E/P两对共享底本；14个不同底本也不等于14个统计独立样本。15例静态不能触发所述waste剪枝，P-n23-k8事前仅是未被该界排除。
+- 96份逐次stdout的原始字段与results.jsonl一致；逐次stdout/stderr/input哈希、FINISHED结果封存哈希全部匹配。raw共有195项文件：192份stdout/stderr加STARTED、results、FINISHED。没有ABORTED标记。
+- 本审计直接读取预执行v3原zip与私有归档回读zip，289191字节逐字节相同，sha256为025bd19c56c2cd0455d535d1d9637eeaec9d544d410f47bb7750f420a5afa2eb；解压读取核对146项冻结文件及freeze本身。预执行zip没有任何执行raw结果。
+- 回读确认14:22:27Z先于执行开始14:23:21.638103Z；执行结束14:23:27.748769Z。
+- 未审原始结果包与回读包也逐字节相同，454327字节，sha256为a13f8463e0e2453620e2f7a5a112441cf023fc0bd6b8b06cdc21256270d9b409；其中195项执行raw全部与本地原始材料一致。
+- 私有/owner-only属性依据归档回执；本审计另验了回读文件的实际字节，未再次请求云端权限API。未上传任何文件。
+- exactly-once的依据是本次固定调度、exclusive-create防覆盖、唯一96记录与完整原始流。日志不能证明其他地方从未出现任何未记录执行。本审计没有重跑、扩大数据、追加预算、调用模型或执行局部搜索。
+
+三、资源与计时
+- 子进程CPU逐次差分相加：6.020939000000001秒。
+- 最终累计children 6.048188减开始累计0.027249：6.020938999999999秒，与上述一致。
+- 只加一次父进程CPU差分0.097196008秒，总计6.118135008秒；没有把最终累计children当新成本再次相加。
+- 全程wall为6.110759166秒。最大单次实际记录CPU约0.096279秒、wall约0.096887秒；均远低于单次1/2秒，总量远低于120/240秒。
+- 源码配置父进程RLIMIT_AS 768MiB、串行唯一子进程启动后256MiB。逐次child_self_maxrss峰值最大13696KiB。children_maxrss是此前所有子进程累计最大值，不是每次独立峰值；没有保存父进程自身峰值，也没有cgroup合计内存高水位，不应声称直接测得了合计峰值RSS。
+- 直接partition的measured_cpu_ns出现0的次数为baseline14/16、full-tight16/16、waste13/16；完整initialize分别为2/16、3/16、3/16。即使clock_info报告1ns名义分辨率，这些短片段CPU读数仍未分辨，不能表示零工作或速度优势。单次确定性调用只支持功能计数和描述性开销，不支持稳定速度排序。
+
+四、审计修正与隔离边界
+- 预执行只读检查发现并在执行前v3修复：路线检查器未严格拒绝bool/float depot、缺少独立parse计时与自身RSS字段、父1GiB+子256MiB不符合原拟定合计配置。算法与输入没有变动。最终源码再次AST解析通过；本审计另写的纯算术检查器有2个正例和11个拒绝自测。
+- 参考解和成本资料实际保留在执行根目录provenance中，预执行zip内也有这些资料。子进程的Python open audit hook只允许source/input/stdlib，阻止provenance访问；96条文件读取日志仅有源码与对应input，冻结源码没有参考读取路径，未见参考污染证据。这是文件审计钩子隔离，不能说参考文件物理不存在，也不是OS级安全沙箱。它与提案中“工作区只包含输入/源码、不复制参考解”的字面描述有实现差异，需要披露。
+- 没有完整逐节点DFS轨迹。节点、guard和阶段到达是基于冻结源码加保存诊断的一致性审查，没有独立重放每个状态。若有prune_trace可逐项做算术检查，本次所有trace为空，不能把这种一致性核验说成独立逐节点执行证明。
+- 固定参考路线数K是可行槽上限，不是最小车队证明。连续hypot目标是公开EUC_2D实例的派生目标。参考解原逐边取整成本已由准备独审核验，本执行审计没有重新定义该成本，也没有使用它计算连续目标最优gap。
+
+五、报告交叉核验与交付
+执行方后续生成的SUMMARY六个单元汇总、METRICS的96行身份/计时字段、PAIRED的32个三臂配对组均从原始结果另算一致；报告已明确计时未分辨、参考隔离差异和合计内存监控缺口。source/analyze.py为跑后新增分析脚本，已只读审阅，不属于冻结算法/runner，也未被本审计导入或运行。
+
+INDEPENDENT_EXECUTION_AUDIT.json：逐文件、逐调用、逐输出、配对与CPU独立核验。
+ARCHIVE_AND_PHASE_AUDIT.json：归档实际字节、阶段工作量、计时未分辨次数与隔离披露。
+PER_CALL_ARITHMETIC_AND_TIMING.csv：逐调用完整时间字段；算术明细在前述JSON的call_checks。
+PAIRED_COUNTS_AND_DIAGNOSTICS.json：64个实例/端点/比较臂的逐项配对。
+STATIC_REVIEW_INITIAL.json：执行前发现与复制核对；其中问题已由最终v3修复，不代表仍存在。
+AUDITOR_ARITHMETIC_SELF_TESTS.json：本审计纯算术检查器自测。
+REPORT_CONSISTENCY_AUDIT.json：对执行方SUMMARY/METRICS/PAIRED的独立交叉核验及报告哈希。
+audit_execution.py、audit_archive_and_summary.py、audit_report_consistency.py：只读复验脚本，均不导入或执行solver。
+
+在本任务目录运行上述三个audit脚本，只会重算/重写审计材料，不会调用候选或改动执行原始材料。本次检查前后原始source/input/raw/freeze/provenance文件集合与哈希保持不变。

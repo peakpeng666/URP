@@ -1,0 +1,124 @@
+科研大模型调用层：五个公开实现的源码核查
+核查日期：2026-10-08（UTC）
+
+范围与状态
+本报告只读检索、下载和阅读公开源码；没有安装或运行这些第三方项目，没有发起模型调用。本报告区分“源码已实现机制”和“我们的后续建议”。固定提交标识用于避免主分支变化；当前代码不能自动代表论文发表时版本。许可证名称来自仓库许可证与元数据，正式复制时仍须保留相应声明并核查依赖条款。
+
+当前任务优先级
+先让已有实验通过原客户端、原Coding Plan恢复运行。以下架构改造是后续参考，不应阻塞本轮恢复。技术上的OpenAI协议兼容、允许配置base_url或存在智谱适配器，都不能证明任意fork、科研批量工作流或其他客户端已经获得Coding Plan服务许可。不能擅自改用按量API、升级套餐或启用跨计费端点fallback。
+
+一、EoH：作者仓库，MIT
+固定提交：472545785c936dcfc863d2bc0d6109cf23c7ce62
+
+源码已核实：
+1. 远程调用使用HTTPSConnection，请求超时可配置，最多5次尝试，按2^attempt退避；请求仅包含model/messages，返回message.content，没有将完整usage与响应模型版本交给上层。
+https://github.com/FeiLiu36/EoH/blob/472545785c936dcfc863d2bc0d6109cf23c7ce62/eoh/src/eoh/llm/api_general.py
+2. 多个sampler线程和独立评测线程池；共享状态锁、样本记录、种群检查点；本地random.seed(2024)。这只固定本地随机源，不保证并发完成顺序或远程生成完全复现。
+https://github.com/FeiLiu36/EoH/blob/472545785c936dcfc863d2bc0d6109cf23c7ce62/eoh/src/eoh/eoh/eoh.py
+3. prompt构造与LLM调用分离；spawn子进程评测，Unix独立进程组，超时SIGTERM/SIGKILL。
+https://github.com/FeiLiu36/EoH/blob/472545785c936dcfc863d2bc0d6109cf23c7ce62/eoh/src/eoh/eoh/evolution.py
+4. 候选执行入口仍使用exec；子进程硬超时不是文件、网络或凭证权限隔离。
+https://github.com/FeiLiu36/EoH/blob/472545785c936dcfc863d2bc0d6109cf23c7ce62/eoh/src/eoh/problem.py
+5. 适配器写死/v1/chat/completions，不能不经验证直接作为Coding Plan接口。
+许可证：
+https://github.com/FeiLiu36/EoH/blob/472545785c936dcfc863d2bc0d6109cf23c7ce62/LICENSE
+
+后续建议：可按MIT条款借鉴算子、检查点和硬超时，但调用审计需要补齐。当前main是新版实现，不应和原论文版本混称。
+
+二、ReEvo：作者仓库，MIT
+固定提交：6dce18257da5e11db2d138e417a2fffc5c72d05f
+
+源码已核实：
+1. BaseClient使用同步SDK加ThreadPoolExecutor并发；非“gpt”模型靠重复请求得到n个样本；最多1000次重试、固定1秒间隔。
+https://github.com/ai4co/reevo/blob/6dce18257da5e11db2d138e417a2fffc5c72d05f/utils/llm_client/base.py
+2. OpenAI适配器支持base_url，但只返回response.choices，usage等响应元数据未向上传递。
+https://github.com/ai4co/reevo/blob/6dce18257da5e11db2d138e417a2fffc5c72d05f/utils/llm_client/openai.py
+3. 确有ZhipuAI适配器，要求n=1；配置默认GLM-3-Turbo。这证明旧智谱API集成存在，不证明当前Coding Plan接入或许可。
+https://github.com/ai4co/reevo/blob/6dce18257da5e11db2d138e417a2fffc5c72d05f/utils/llm_client/zhipuai.py
+https://github.com/ai4co/reevo/blob/6dce18257da5e11db2d138e417a2fffc5c72d05f/cfg/llm_client/zhipuai.yaml
+4. generator、short/long reflector、crossover、mutation可指定不同客户端；候选响应与stdout落盘；Popen评测、communicate(timeout)、超时kill。这不构成安全sandbox。
+https://github.com/ai4co/reevo/blob/6dce18257da5e11db2d138e417a2fffc5c72d05f/reevo.py
+5. 搜索后对best运行val；TSP评测器显式读取train或val文件。有逻辑数据分离，但未对候选代码实施确认集文件权限隔离。
+https://github.com/ai4co/reevo/blob/6dce18257da5e11db2d138e417a2fffc5c72d05f/main.py
+https://github.com/ai4co/reevo/blob/6dce18257da5e11db2d138e417a2fffc5c72d05f/problems/tsp_aco/eval.py
+许可证：
+https://github.com/ai4co/reevo/blob/6dce18257da5e11db2d138e417a2fffc5c72d05f/LICENSE
+
+后续建议：可借鉴角色拆分、prompt组织、搜索结束后val；不要原样采用1000次重试、按名称猜能力或丢弃usage的行为。
+
+三、官方FunSearch：算法骨架，Apache-2.0
+固定提交：cc53f274237d7ab05c19df939edbc1f9616a7c19
+
+源码已核实：
+1. LLM._draw_sample是NotImplementedError；draw_samples是顺序列表调用。注释说明可以远端并行，不等于仓库已实现并行执行设施。
+https://github.com/google-deepmind/funsearch/blob/cc53f274237d7ab05c19df939edbc1f9616a7c19/implementation/sampler.py
+2. Sandbox.run也是NotImplementedError。
+https://github.com/google-deepmind/funsearch/blob/cc53f274237d7ab05c19df939edbc1f9616a7c19/implementation/evaluator.py
+3. config含sampler/evaluator数量和每prompt样本数；配置参数本身并非可运行调度器。
+https://github.com/google-deepmind/funsearch/blob/cc53f274237d7ab05c19df939edbc1f9616a7c19/implementation/config.py
+许可证：
+https://github.com/google-deepmind/funsearch/blob/cc53f274237d7ab05c19df939edbc1f9616a7c19/LICENSE
+
+后续建议：可按Apache-2.0条款借鉴island、程序数据库、函数抽取和采样/评测分离；不要声称官方公开代码已经提供provider、重试、计费审计或安全隔离的完整系统。
+
+四、OpenEvolve：社区AlphaEvolve复现，Apache-2.0
+固定提交：9196d8763300d1e46cc8b48cb0dc987966db3d48
+注意：不是Google官方AlphaEvolve源码。
+
+源码已核实：
+1. provider registry支持自定义init_client；默认按权重随机选一个模型。generate_multiple和parallel_generate使用asyncio.gather；generate_all_with_context则逐个await。
+https://github.com/algorithmicsuperintelligence/openevolve/blob/9196d8763300d1e46cc8b48cb0dc987966db3d48/openevolve/llm/ensemble.py
+2. 同步OpenAI SDK通过run_in_executor执行；wait_for、可配重试/间隔/超时；发送seed、reasoning_effort；记录prompt/completion/total tokens。
+https://github.com/algorithmicsuperintelligence/openevolve/blob/9196d8763300d1e46cc8b48cb0dc987966db3d48/openevolve/llm/openai.py
+3. usage保存在可变self.last_usage，而不是每次调用的不可变返回对象。共享实例并发可能导致元数据错配，这是源码结构上的风险判断，本次未执行复现。
+4. 并行迭代使用ProcessPoolExecutor。
+https://github.com/algorithmicsuperintelligence/openevolve/blob/9196d8763300d1e46cc8b48cb0dc987966db3d48/openevolve/process_parallel.py
+5. 核心评测器使用ThreadPoolExecutor与asyncio.wait_for。超时不保证杀执行线程；源码专门避免孤儿线程阻塞默认executor关闭。cascade多级评测也不等于严格训练/确认集隔离。
+https://github.com/algorithmicsuperintelligence/openevolve/blob/9196d8763300d1e46cc8b48cb0dc987966db3d48/openevolve/evaluator.py
+许可证：
+https://github.com/algorithmicsuperintelligence/openevolve/blob/9196d8763300d1e46cc8b48cb0dc987966db3d48/LICENSE
+
+后续建议：适合后续多岛进化；不应直接把随机ensemble用于固定父代模型消融，否则引入模型选择概率和搜索轨迹差异。其源码可按Apache-2.0条款复用，但需要重新设计消融分配和每请求审计。
+
+五、Inspect AI：调用、审计与sandbox基础设施，MIT
+固定提交：4acfd207ecca8e1c3b754a147c191f2f0f21ba71
+英国AI Security Institute官方项目。
+
+源码已核实：
+1. Model/ModelAPI统一provider接口，含连接并发控制、usage记录、重试分类。
+https://github.com/UKGovernmentBEIS/inspect_ai/blob/4acfd207ecca8e1c3b754a147c191f2f0f21ba71/src/inspect_ai/model/_model.py
+2. GenerateConfig具有seed、reasoning_effort、extra_body、max_connections、max_retries、总超时与attempt_timeout；配置字段存在不代表所有模型都支持。
+https://github.com/UKGovernmentBEIS/inspect_ai/blob/4acfd207ecca8e1c3b754a147c191f2f0f21ba71/src/inspect_ai/core/_generate_config.py
+3. tenacity指数退避+jitter、重试日志；没有显式设置max_retries/timeout时可能无限重试。
+https://github.com/UKGovernmentBEIS/inspect_ai/blob/4acfd207ecca8e1c3b754a147c191f2f0f21ba71/src/inspect_ai/model/_retry.py
+4. 日志schema覆盖模型、generation config、dataset、sandbox、task version、代码revision、依赖版本及usage；可记录原始API请求/响应。
+https://github.com/UKGovernmentBEIS/inspect_ai/blob/4acfd207ecca8e1c3b754a147c191f2f0f21ba71/src/inspect_ai/log/_log.py
+5. Docker sandbox是真实容器实现；容器内/usr/bin/timeout处理进程树，host timeout提供缓冲。网络、挂载、资源策略仍需配置。
+https://github.com/UKGovernmentBEIS/inspect_ai/blob/4acfd207ecca8e1c3b754a147c191f2f0f21ba71/src/inspect_ai/util/_sandbox/docker/docker.py
+许可证：
+https://github.com/UKGovernmentBEIS/inspect_ai/blob/4acfd207ecca8e1c3b754a147c191f2f0f21ba71/LICENSE
+
+后续建议：最值得借鉴typed adapter、每请求日志、连接限制与容器执行接口；固定依赖版本和有限重试预算。它提供评测工程，并不代替我们的启发式生成与消融实验设计。
+
+六、适合本项目的最小后续设计（本节全部为建议，尚未实施）
+
+1. 不可变实验清单
+保存parent_code_sha256、完整prompt_sha256、数据划分hash、模型ID、思考配置、重复编号、评测seed、代码commit与依赖锁文件。显式展开父代×提示×模型×思考档位×重复，不随机抽模型。
+
+2. 薄provider adapter
+GenerationRequest输入；不可变GenerationResult输出。包含原始响应、候选代码、实际发送参数、requested/returned model、request ID、finish reason、usage、延迟和错误。模型不支持seed或思考档位时标为unsupported，不能静默忽略。无法固定服务端模型版本时如实记录。
+
+3. 有界并发与尝试记录
+每provider设并发和速率上限。仅对可恢复错误做有限重试，指数退避+jitter；每attempt单独记录。客户端超时不代表服务端未生成或未计费，因此区分逻辑样本数、真实请求数与成功次数。
+
+4. 不可变审计记录
+保存原始prompt/response与JSONL或SQLite台账。usage缺失记null，不能记为0；避免共享last_usage。自动排除key与Authorization header。如果调用基于编码客户端，还应核对系统prompt、tools、摘要/压缩、重试、辅助请求是否构成额外模型调用；不能仅按“启动一次客户端”统计请求数。
+
+5. 独立候选评测器
+调用进程持有凭证，候选容器不持有。禁网、只读输入、限制CPU/内存/PID/时间、每候选独立目录，结束时杀进程树。训练阶段只挂载train；搜索结束和规则冻结后，由单独流程挂载确认集。分文件与分权限是不同层次的隔离。
+
+6. 配对消融报告
+同一父代、提示和评测seed配对比较；同时报告有效代码率、超时率、质量分布、真实请求数、token或可用配额消耗与延迟，而非仅比较各组最优样本。
+
+边界总结
+编排源码开源、评测可复现、底层模型权重开放是三个维度。可以用完全开源的调用/审计层调用获授权的闭源模型，但不能据此声称模型也开源。上述五个项目均有明确开源许可证；“仅借鉴”主要是工程适配判断，而非声称其许可禁止复用。本轮并未验证Coding Plan对任意特化客户端与科研批量调用的服务许可，实际运行须继续保持已确认的原客户端、原套餐与授权边界。

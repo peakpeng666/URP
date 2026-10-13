@@ -1,0 +1,179 @@
+{
+  "schema": "fixed-fleet-delivery-receipt-v1",
+  "created_utc": "2026-10-07T23:41:40.357313+00:00",
+  "purpose": "Outer immutable-source delivery receipt, assembled from existing verified stage receipts. No experiment or audit recomputed.",
+  "scientific_archive": {
+    "path": "/workspace/shared/fixed_fleet_cvrp_20261008/fixed_fleet_cvrp_20261008.zip",
+    "bytes": 525038,
+    "sha256": "66b9f040c67c0ff41dc1fe723e576797788f515248e58430076353164b1758de"
+  },
+  "stages": {
+    "prepare": {
+      "source_path": "/workspace/shared/fixed_fleet_cvrp_20261008/receipts/prepare.json",
+      "source_bytes": 530,
+      "source_sha256": "d04d2d9ba51acda46a266016bb1ca3600dd2ea73eb022c5a25e9b778fbd518b3",
+      "receipt": {
+        "stage": "prepare",
+        "utc": "2026-10-07T23:26:29.000462+00:00",
+        "exit_code": 0,
+        "raw_wait_status": 0,
+        "signal": null,
+        "wall_limit_kill": false,
+        "cpu_soft_limit_seconds": 19,
+        "cpu_hard_limit_seconds": 20,
+        "wall_limit_seconds": 60,
+        "child_user_cpu_seconds": 0.332798,
+        "child_system_cpu_seconds": 0.020479999999999998,
+        "child_total_cpu_seconds": 0.353278,
+        "maxrss_kib": 13952,
+        "elapsed_wall_seconds": 0.3794923779933015,
+        "supervisor_cpu_checkpoint_seconds": 0.0021882540000000006,
+        "complete": true
+      }
+    },
+    "main": {
+      "source_path": "/workspace/shared/fixed_fleet_cvrp_20261008/receipts/main.json",
+      "source_bytes": 526,
+      "source_sha256": "f61ea430753dcd551354d370982e586cebc9ab39b692a488061a1eceb7cb12ba",
+      "receipt": {
+        "stage": "main",
+        "utc": "2026-10-07T23:26:40.584227+00:00",
+        "exit_code": 0,
+        "raw_wait_status": 0,
+        "signal": null,
+        "wall_limit_kill": false,
+        "cpu_soft_limit_seconds": 89,
+        "cpu_hard_limit_seconds": 90,
+        "wall_limit_seconds": 150,
+        "child_user_cpu_seconds": 2.118539,
+        "child_system_cpu_seconds": 0.17940399999999998,
+        "child_total_cpu_seconds": 2.297943,
+        "maxrss_kib": 65024,
+        "elapsed_wall_seconds": 2.3165903840126703,
+        "supervisor_cpu_checkpoint_seconds": 0.007389602999999998,
+        "complete": true
+      }
+    },
+    "audit": {
+      "source_path": "/workspace/shared/fixed_fleet_cvrp_20261008/receipts/audit.json",
+      "source_bytes": 505,
+      "source_sha256": "d07e0f33369ccf30ce822678ba666c9a15cb08f9e8c20a226485db9ce7127f47",
+      "receipt": {
+        "stage": "audit",
+        "utc": "2026-10-07T23:26:41.502425+00:00",
+        "exit_code": 0,
+        "raw_wait_status": 0,
+        "signal": null,
+        "wall_limit_kill": false,
+        "cpu_soft_limit_seconds": 19,
+        "cpu_hard_limit_seconds": 20,
+        "wall_limit_seconds": 60,
+        "child_user_cpu_seconds": 0.77852,
+        "child_system_cpu_seconds": 0.083641,
+        "child_total_cpu_seconds": 0.862161,
+        "maxrss_kib": 68604,
+        "elapsed_wall_seconds": 0.8824970870045945,
+        "supervisor_cpu_checkpoint_seconds": 0.003905011,
+        "complete": true
+      }
+    },
+    "package": {
+      "source_path": "/workspace/shared/fixed_fleet_cvrp_20261008/receipts/package.json",
+      "source_bytes": 529,
+      "source_sha256": "8fa7830613c8aac0f18748420b18c814928b566ff495b8815fef0f1b5ea13400",
+      "receipt": {
+        "stage": "package",
+        "utc": "2026-10-07T23:27:52.924415+00:00",
+        "exit_code": 0,
+        "raw_wait_status": 0,
+        "signal": null,
+        "wall_limit_kill": false,
+        "cpu_soft_limit_seconds": 19,
+        "cpu_hard_limit_seconds": 20,
+        "wall_limit_seconds": 60,
+        "child_user_cpu_seconds": 0.344699,
+        "child_system_cpu_seconds": 0.039608,
+        "child_total_cpu_seconds": 0.38430699999999995,
+        "maxrss_kib": 19840,
+        "elapsed_wall_seconds": 0.40366790400003083,
+        "supervisor_cpu_checkpoint_seconds": 0.002050512000000001,
+        "complete": true
+      }
+    }
+  },
+  "independent_audit": {
+    "source_path": "/workspace/shared/audit_fixed_fleet_cvrp_20261008/AUDIT.json",
+    "source_bytes": 4392,
+    "source_sha256": "3b0de3d372920ec20cd4a06b705f40549e4f4f818e490eb499afaf0b7667a425",
+    "status": "PASS",
+    "resource": {
+      "audit_process_cpu_seconds": 0.811509131,
+      "audit_wall_seconds": 0.8134012329974212,
+      "cpu_cap_seconds": 15,
+      "wall_cap_seconds": 30,
+      "main_solver_reruns": 0,
+      "external_api_calls": 0,
+      "scientific_model_calls": 0,
+      "installs": 0,
+      "monetary_cost": "No billable external API or purchase; assistant/platform token cost unavailable, not asserted zero."
+    }
+  },
+  "assembly": {
+    "operation": "Zip nine existing frozen auditor files without content modification; no solver reruns, oracle reruns, or source edits.",
+    "audit_zip": {
+      "path": "/workspace/shared/fixed_fleet_cvrp_20261008_delivery/INDEPENDENT_AUDIT.zip",
+      "bytes": 13009,
+      "sha256": "38481ce020d6d7f810b84da0301123d09f5638f160b2a0de8ece35b7da9bd1ea"
+    },
+    "audit_files": [
+      {
+        "path": "AUDIT.json",
+        "bytes": 4392,
+        "sha256": "3b0de3d372920ec20cd4a06b705f40549e4f4f818e490eb499afaf0b7667a425"
+      },
+      {
+        "path": "GEOMETRY_METRICS.json",
+        "bytes": 4333,
+        "sha256": "716e0bca108c3e05d21ea52f0c45fe30a7d5c3392d6095d9c0106f08e3d2345d"
+      },
+      {
+        "path": "INDEPENDENT_EXACT.json",
+        "bytes": 45111,
+        "sha256": "e71835aaf552a21774b8eac2570f10eb8a571edc63fc0e8936095e8af736798d"
+      },
+      {
+        "path": "REPORT_ZH.txt",
+        "bytes": 2016,
+        "sha256": "9757b765e3c37dfb0abd436058e5055b0f3d568ecfe87920b6b31fe7bb6bef43"
+      },
+      {
+        "path": "RUN_METRICS.json",
+        "bytes": 31802,
+        "sha256": "b7772dec87c05a1e1f6239c86c9a1bcfa0f365738b2ca48a18028910a7fbd0ae"
+      },
+      {
+        "path": "SHA256SUMS.txt",
+        "bytes": 647,
+        "sha256": "84183adab9dfb3e07474f2b71f6294f4c1d31aeaaa219ec3439399cdceb073d3"
+      },
+      {
+        "path": "audit.py",
+        "bytes": 11773,
+        "sha256": "c234c06d885df3feb4146fe37bbf9787f7545f956b269b2a646d95729e9ea7cd"
+      },
+      {
+        "path": "stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "stdout.json",
+        "bytes": 3692,
+        "sha256": "06da68859841d371c3b4b048ec95232b5998533b43ceae9799717ec0b4405f96"
+      }
+    ]
+  },
+  "cost_scope": "Scientific stage receipts retain wait4 child CPU/wall and exit data. Independent audit uses its own reported process CPU/wall; not conflated with supervisor wait4. Source authoring and delivery assembly not included in these compute measurements. External API/model calls and purchases zero; assistant/platform token cost unavailable, not asserted zero.",
+  "observed_scientific_stages_wait4_cpu_seconds_total": 3.8976889999999997,
+  "observed_scientific_stages_elapsed_wall_seconds_sum": 3.982247753010597
+}

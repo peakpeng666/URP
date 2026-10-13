@@ -1,0 +1,87 @@
+{
+  "review_date_utc": "2026-10-08",
+  "verdict": "PASS_targeted_static_review",
+  "independently_executed_candidate": false,
+  "independently_executed_tests": false,
+  "author_test_results": {
+    "unique_cases": 25,
+    "original": 14,
+    "added": 11,
+    "passed": 25,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "manifest_cases_match": true,
+    "added_cases_all_have_detailed_evidence": true
+  },
+  "integrity": {
+    "all_seven_text_fetch_utf8_lengths_and_sha256_match": true,
+    "v1_plus_incremental_patch_matches_full_v2_candidate_and_tests": true,
+    "files": [
+      {
+        "name": "supervisor-reliability_v2.patch",
+        "bytes": 36025,
+        "sha256": "490190f335ba801536938e4522acbe9d5e9cfd4e6dceee8d5464e13a95441e2a",
+        "url": "https://drive.google.com/file/d/1_SBVLUKZL0EKKtxNYkIbsMZmPnHOxJ0d/view?usp=drivesdk"
+      },
+      {
+        "name": "analysis_v2.txt",
+        "bytes": 4252,
+        "sha256": "136d9dc93615be6888cf221b66c5eda3e232fa6264f2bfda02174b4cb6e4a4cd",
+        "url": "https://drive.google.com/file/d/1uYG43a1hRQkSH4h-mrrBaxBBZmRHG24v/view?usp=drivesdk"
+      },
+      {
+        "name": "test-results_v2.json",
+        "bytes": 62746,
+        "sha256": "98c3b620174f36528c258f0851ae9a917efc191fd63bf0fd73809ed503de6060",
+        "url": "https://drive.google.com/file/d/1YGF4jhyISlrPATuYzeY1dE__a85tzR-w/view?usp=drivesdk"
+      },
+      {
+        "name": "verified-text-sources_v2.json",
+        "bytes": 4087,
+        "sha256": "7aed13f9d3626eef4d41033e3f5b9fcf0b01e62b78ad9dd91d552234e0849f22",
+        "url": "https://drive.google.com/file/d/1szNqwkFZTISIe56GzuUQC5QzfPRJtf7t/view?usp=drivesdk"
+      },
+      {
+        "name": "supervise_candidate_v2.py",
+        "bytes": 13220,
+        "sha256": "c12c38ed08a6ce8431747f728d7075a4ebe5ebe1eb6c0a8fd464ccada6ce96e3",
+        "url": "https://drive.google.com/file/d/1gg_CjtkXj80n0pN-4jccQmc9BVpgMKGx/view?usp=drivesdk"
+      },
+      {
+        "name": "test_supervise_v2.py",
+        "bytes": 29506,
+        "sha256": "eecd0cb8ce63808df1b4e486e5b48fdea974f46b747ea1c760f0f0afc9dba01d",
+        "url": "https://drive.google.com/file/d/1CLrqCcHJ-FEsvKFbrs8gBpHQFObZLyWJ/view?usp=drivesdk"
+      },
+      {
+        "name": "supervisor-reliability-delivery-manifest_v2.json",
+        "bytes": 15242,
+        "sha256": "d3edae3983ce43a19456c26402e5b69fef7cac85aede51464ad4bff799ce82bd",
+        "url": "https://drive.google.com/file/d/1sqrSfdMLQvqSUqSESQ5HLCKsskM3SnO8/view"
+      }
+    ]
+  },
+  "findings": [
+    {
+      "former_blocker": "deadline bypass on continuously successful wait4",
+      "status": "resolved",
+      "candidate_lines": "50–69",
+      "tests_lines": "314–360"
+    },
+    {
+      "former_blocker": "cleanup exception loses exit record or obscures original failure",
+      "status": "resolved",
+      "candidate_lines": "45–46,103–147,168–204",
+      "tests_lines": "362–477"
+    }
+  ],
+  "scope": [
+    "Linux one-shot single-thread CLI; no competing waiters; same-group non-escaping descendants",
+    "Read-only review of source and author evidence; no independent test execution",
+    "Denied cleanup can remain incomplete; failure state is preserved",
+    "Live CPU observes leader only; RSS is not simultaneous process-tree RSS",
+    "Outer measure.py/reproduce.py unchanged",
+    "No real scientific validation or proof of historical SIGKILL/OOM cause"
+  ]
+}

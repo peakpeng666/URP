@@ -1,0 +1,634 @@
+diff --git a/new/supervise.py b/new/supervise.py
+--- a/new/supervise.py
++++ b/new/supervise.py
+@@ -14,85 +14,138 @@
+     except (FileNotFoundError,ProcessLookupError):return 0
+ 
+ def enable_subreaper():
+-    """Linux: adopt orphaned descendants so group cleanup also reaps zombies."""
++    """One-shot Linux CLI only: process-wide subreaper setting, not restored."""
+     if not sys.platform.startswith('linux'):
+         raise RuntimeError('This supervisor requires Linux wait4 and child-subreaper support')
+     libc=ctypes.CDLL(None,use_errno=True)
+     if libc.prctl(36,1,0,0,0)!=0:  # PR_SET_CHILD_SUBREAPER
+         raise OSError(ctypes.get_errno(),'Cannot enable child subreaper')
+ 
++def empty_exit_record(proc):
++    """Conservative state available before ownership checks or cleanup syscalls."""
++    return {'pid':proc.pid,'returncode':proc.returncode,'wait4_raw_status':None,
++            'user_cpu_s':0.,'system_cpu_s':0.,'total_cpu_s':0.,'max_rss_kib':0,
++            'watchdog_killed':False,'kill_reason':None,'reaped':False,
++            'process_group_reaped':False,'usage_complete':False,
++            'cleanup_sigterm_sent':False,'cleanup_sigkill_sent':False,
++            'cleanup_wall_s':0.,'cleanup_error':None,'adopted_descendants':[],
++            'supervisor_error':None,'minor_faults':0,'major_faults':0,
++            'voluntary_context_switches':0,'involuntary_context_switches':0,
++            'rss_accounting':'maximum collected wait4 peak; not simultaneous tree RSS',
++            'live_cpu_accounting':'leader only; descendant usage added after collection'}
++
++
+ def wait_for_worker(proc,limit_reason,*,termination_grace_s=.1,cleanup_timeout_s=2.):
+-    """Wait for one private-session worker; terminate and reap its inherited group.
+-
+-    Call enable_subreaper before Popen(start_new_session=True). Keep the leader
+-    waitable until cleanup starts; never poll/reap it in another thread.
+-    Descendants that create another session/process group are outside this scope.
++    """Linux one-shot CLI: reap non-escaping members of one private process group.
++
++    enable_subreaper changes the entire calling process and is not restored.
++    Call it before Popen(start_new_session=True); no other thread/signal handler
++    may reap these children. This is not a long-lived-host embedding interface.
+     """
+-    if os.getpgid(proc.pid)!=proc.pid or os.getsid(proc.pid)!=proc.pid:
+-        raise ValueError('Worker must have its own session and process group')
+-    killed=False;kill_reason=None;supervisor_error=None;collected=[]
+-
+-    def send(sig):
++    record=empty_exit_record(proc)
++    proc.supervisor_exit_record=record
++    collected=[];group_owned=False;complete=False
++    failure=None;failure_tb=None;cleanup_failure=None;cleanup_phase=None
++
++    def send_owned(sig):
++        # WNOWAIT pins an owned group member across the signal. If none remain,
++        # do not signal a group ID that might since have been reused.
++        try:
++            os.waitid(os.P_PGID,proc.pid,os.WEXITED|os.WNOHANG|os.WNOWAIT)
++        except ChildProcessError:return False
+         try:os.killpg(proc.pid,sig);return True
+         except ProcessLookupError:return False
+ 
+     def drain(deadline):
+         while True:
++            # Check even when every wait4 succeeds; ready descendants cannot
++            # indefinitely defer SIGKILL escalation or the cleanup deadline.
++            if time.monotonic()>=deadline:return False
+             try:pid,status,usage=os.wait4(-proc.pid,os.WNOHANG)
+             except ChildProcessError:return True
+             if pid:
+                 collected.append((pid,status,usage))
+                 if pid==proc.pid:proc.returncode=os.waitstatus_to_exitcode(status)
+-                continue
+-            if time.monotonic()>=deadline:return False
+-            time.sleep(.01)
++            else:time.sleep(.01)
+ 
+     try:
++        if os.getpgid(proc.pid)!=proc.pid or os.getsid(proc.pid)!=proc.pid:
++            raise ValueError('Worker must have its own session and process group')
++        group_owned=True
+         while True:
+-            # WNOWAIT keeps the leader PID owned until group cleanup begins.
+             ready=os.waitid(os.P_PID,proc.pid,os.WEXITED|os.WNOHANG|os.WNOWAIT)
+             if ready is not None:break
+             reason=limit_reason()
+             if reason:
+-                killed=True;kill_reason=reason;break
++                record['watchdog_killed']=True;record['kill_reason']=reason;break
+             time.sleep(.01)
+     except BaseException as exc:
+-        supervisor_error={'type':type(exc).__name__,'message':str(exc)}
+-        raise
++        failure=exc;failure_tb=exc.__traceback__
++        record['supervisor_error']={'type':type(exc).__name__,'message':str(exc)}
+     finally:
+-        cleanup_started=time.perf_counter()
+-        term_sent=send(signal.SIGTERM)
+-        complete=drain(time.monotonic()+termination_grace_s)
+-        kill_sent=False
+-        if not complete:
+-            kill_sent=send(signal.SIGKILL)
+-            complete=drain(time.monotonic()+cleanup_timeout_s)
+-        leader=next((entry for entry in collected if entry[0]==proc.pid),None)
+-        usages=[entry[2] for entry in collected]
+-        descendants=[{'pid':pid,'returncode':os.waitstatus_to_exitcode(status),
+-                      'wait4_raw_status':status,'user_cpu_s':usage.ru_utime,
+-                      'system_cpu_s':usage.ru_stime,'max_rss_kib':usage.ru_maxrss}
+-                     for pid,status,usage in collected if pid!=proc.pid]
+-        proc.supervisor_exit_record={
+-            'pid':proc.pid,'returncode':proc.returncode,
+-            'wait4_raw_status':leader[1] if leader else None,
+-            'user_cpu_s':sum(u.ru_utime for u in usages),
+-            'system_cpu_s':sum(u.ru_stime for u in usages),
+-            'total_cpu_s':sum(u.ru_utime+u.ru_stime for u in usages),
+-            'max_rss_kib':max((u.ru_maxrss for u in usages),default=0),
+-            'watchdog_killed':killed,'kill_reason':kill_reason,
+-            'reaped':leader is not None,'process_group_reaped':complete,
+-            'cleanup_sigterm_sent':term_sent,'cleanup_sigkill_sent':kill_sent,
+-            'cleanup_wall_s':time.perf_counter()-cleanup_started,
+-            'adopted_descendants':descendants,'supervisor_error':supervisor_error,
+-            'minor_faults':sum(u.ru_minflt for u in usages),
+-            'major_faults':sum(u.ru_majflt for u in usages),
+-            'voluntary_context_switches':sum(u.ru_nvcsw for u in usages),
+-            'involuntary_context_switches':sum(u.ru_nivcsw for u in usages),
+-            'rss_accounting':'maximum wait4 peak among collected processes; not simultaneous tree RSS'}
+-        if not complete or leader is None:
+-            raise RuntimeError('Worker process group cleanup did not complete; see exit record')
+-    return proc.supervisor_exit_record
++        cleanup_started=None
++        try:
++            cleanup_phase='cleanup_start'
++            cleanup_started=time.perf_counter()
++            if group_owned:
++                cleanup_phase='SIGTERM'
++                record['cleanup_sigterm_sent']=send_owned(signal.SIGTERM)
++                cleanup_phase='TERM_drain'
++                complete=drain(time.monotonic()+termination_grace_s)
++                if not complete:
++                    cleanup_phase='SIGKILL'
++                    record['cleanup_sigkill_sent']=send_owned(signal.SIGKILL)
++                    cleanup_phase='KILL_drain'
++                    complete=drain(time.monotonic()+cleanup_timeout_s)
++            else:
++                record['cleanup_error']={'type':'OwnershipNotVerified','phase':'validation',
++                                         'message':'No process-group signal sent'}
++        except BaseException as exc:
++            cleanup_failure=exc
++            record['cleanup_error']={'type':type(exc).__name__,'message':str(exc),
++                                     'phase':cleanup_phase}
++        finally:
++            # Preserve conservative state and the original chain even if
++            # metadata publication itself is interrupted.
++            try:
++                leader=next((entry for entry in collected if entry[0]==proc.pid),None)
++                usages=[entry[2] for entry in collected]
++                record.update(returncode=proc.returncode,
++                    wait4_raw_status=leader[1] if leader else None,
++                    user_cpu_s=sum(u.ru_utime for u in usages),
++                    system_cpu_s=sum(u.ru_stime for u in usages),
++                    total_cpu_s=sum(u.ru_utime+u.ru_stime for u in usages),
++                    max_rss_kib=max((u.ru_maxrss for u in usages),default=0),
++                    reaped=leader is not None,process_group_reaped=complete and leader is not None,
++                    usage_complete=complete and leader is not None,
++                    cleanup_wall_s=time.perf_counter()-cleanup_started if cleanup_started is not None else 0.,
++                    adopted_descendants=[{'pid':pid,'returncode':os.waitstatus_to_exitcode(status),
++                        'wait4_raw_status':status,'user_cpu_s':usage.ru_utime,
++                        'system_cpu_s':usage.ru_stime,'max_rss_kib':usage.ru_maxrss}
++                        for pid,status,usage in collected if pid!=proc.pid],
++                    minor_faults=sum(u.ru_minflt for u in usages),
++                    major_faults=sum(u.ru_majflt for u in usages),
++                    voluntary_context_switches=sum(u.ru_nvcsw for u in usages),
++                    involuntary_context_switches=sum(u.ru_nivcsw for u in usages))
++            except BaseException as exc:
++                if cleanup_failure is not None and cleanup_failure is not exc:
++                    exc.__cause__=cleanup_failure
++                cleanup_failure=exc
++                record['cleanup_error']={'type':type(exc).__name__,'message':str(exc),
++                                         'phase':'record_update'}
++                leader=next((entry for entry in collected if entry[0]==proc.pid),None)
++                record.update(returncode=proc.returncode,reaped=leader is not None,
++                    wait4_raw_status=leader[1] if leader else None,
++                    process_group_reaped=False,usage_complete=False)
++    if group_owned and not record['process_group_reaped'] and cleanup_failure is None:
++        cleanup_failure=TimeoutError('Worker process-group cleanup incomplete')
++        record['cleanup_error']={'type':type(cleanup_failure).__name__,
++                                 'message':str(cleanup_failure),'phase':cleanup_phase}
++    if failure is not None:
++        if cleanup_failure is not None:raise failure.with_traceback(failure_tb) from cleanup_failure
++        raise failure.with_traceback(failure_tb)
++    if cleanup_failure is not None:raise cleanup_failure
++    return record
+ 
+ def main():
+     freeze=json.loads((P/'freeze.json').read_text())
+@@ -112,18 +165,27 @@
+         with Path(str(base)+'.stdout').open('x') as out,Path(str(base)+'.stderr').open('x') as err:
+             proc=subprocess.Popen([sys.executable,'-B',str(P/'worker.py'),json.dumps(req)],stdout=out,stderr=err,
+                                   preexec_fn=child_limit,cwd=P,start_new_session=True)
+-            def limit_reason():
+-                observed=time.perf_counter()
+-                if observed-w>6:return 'child_wall_limit'
+-                if observed-start>118 or spent+live_cpu(proc.pid)+time.process_time()-startcpu>58:
+-                    return 'global_resource_limit'
+-                return None
++            initial_record=empty_exit_record(proc)
++            proc.supervisor_exit_record=initial_record
++            wait_failure=None;wait_failure_tb=None;result_failure=None
+             try:
++                def limit_reason():
++                    observed=time.perf_counter()
++                    if observed-w>6:return 'child_wall_limit'
++                    # Live accounting observes the leader, not strict tree CPU.
++                    if observed-start>118 or spent+live_cpu(proc.pid)+time.process_time()-startcpu>58:
++                        return 'global_resource_limit'
++                    return None
+                 wait_for_worker(proc,limit_reason)
++            except BaseException as exc:
++                wait_failure=exc;wait_failure_tb=exc.__traceback__
+             finally:
+                 wall=time.perf_counter()-w
+-                rec={**req,'launched':True,**proc.supervisor_exit_record,
++                lifecycle=getattr(proc,'supervisor_exit_record',initial_record)
++                rec={**req,'launched':True,**lifecycle,
+                      'observed_process_wall_s':wall,'completed_at_utc':datetime.now(timezone.utc).isoformat()}
++                if wait_failure is not None and rec['supervisor_error'] is None:
++                    rec['supervisor_error']={'type':type(wait_failure).__name__,'message':str(wait_failure)}
+                 spent+=rec['total_cpu_s']
+                 if rec['kill_reason']=='global_resource_limit':stop_reason=rec['kill_reason']
+                 result_path=Path(str(base)+'.result.json')
+@@ -134,10 +196,12 @@
+                         rec['startup_serialization_exit_and_unattributed_cpu_s']=rec['total_cpu_s']-result['internal_before_serialization_cpu_s']
+                         rec['startup_serialization_exit_and_reap_wall_s']=wall-result['internal_before_serialization_wall_s']
+                     except Exception as exc:
++                        result_failure=exc
+                         rec['result_read_error']={'type':type(exc).__name__,'message':str(exc)}
+                 write('raw/'+req['run_id']+'.resource.json',rec);records.append(rec)
+-                if rec.get('result_read_error'):
+-                    raise RuntimeError('Worker result could not be read; exit record preserved')
++            if wait_failure is not None:raise wait_failure.with_traceback(wait_failure_tb)
++            if result_failure is not None:
++                raise RuntimeError('Worker result could not be read; exit record preserved') from result_failure
+         print(req['run_id'],rec['returncode'],round(rec['total_cpu_s'],4),round(wall,4),'reaped',flush=True)
+     write('process_resources.json',records)
+     write('run_resources.json',{'children_cpu_s':spent,'supervisor_internal_cpu_s':time.process_time()-startcpu,
+diff --git a/tests/test_supervise.py b/tests/test_supervise.py
+--- a/tests/test_supervise.py
++++ b/tests/test_supervise.py
+@@ -1,5 +1,6 @@
+ """Synthetic lifecycle checks for the copied real supervisor; standard library only."""
+ import hashlib
++import io
+ import importlib.util
+ import json
+ import os
+@@ -9,9 +10,12 @@
+ import tempfile
+ import time
+ import unittest
++from unittest import mock
++from types import SimpleNamespace
+ from pathlib import Path
+ 
+ BASE=Path(__file__).resolve().parents[1]
++ORIGINAL_SUPERVISOR=BASE.parent/'originals/new/supervise.py'
+ SUPERVISOR=BASE/'candidate/new/supervise.py'
+ if not SUPERVISOR.exists():SUPERVISOR=BASE/'new/supervise.py'
+ spec=importlib.util.spec_from_file_location('candidate_supervise',SUPERVISOR)
+@@ -37,7 +41,7 @@
+ WORKER="""import json,os,signal,subprocess,sys,time
+ from pathlib import Path
+ req=json.loads(sys.argv[1]); mode=req['mode']; info=Path(req['info'])
+-signal.signal(signal.SIGTERM,signal.SIG_IGN)
++signal.signal(signal.SIGTERM,signal.SIG_DFL if mode=='term' else signal.SIG_IGN)
+ pids=[os.getpid()]
+ if mode in {'timeout_tree','success_tree','error_tree'}:
+     ready=Path(str(info)+'.descendant')
+@@ -45,8 +49,11 @@
+     while not ready.exists():time.sleep(.005)
+     pids+=json.loads(ready.read_text())
+ info.write_text(json.dumps({'pids':pids,'pgid':os.getpgid(0),'sid':os.getsid(0)}))
+-if mode in {'timeout','timeout_tree'}:time.sleep(30)
++if mode in {'timeout','timeout_tree','term'}:time.sleep(30)
+ elif mode in {'exception','error_tree'}:raise RuntimeError('synthetic worker exception')
++elif mode=='valid_result':
++    result={'internal_before_serialization_cpu_s':0.,'internal_before_serialization_wall_s':0.,'outcome':'synthetic_valid'}
++    (Path(__file__).parent/'raw'/f"{req['run_id']}.result.json").write_text(json.dumps(result))
+ elif mode=='bad_result':
+     (Path(__file__).parent/'raw'/f"{req['run_id']}.result.json").write_text('{invalid json')
+ """
+@@ -62,20 +69,35 @@
+         self.worker=self.root/'worker.py'
+         self.worker.write_text(WORKER,encoding='utf-8')
+         self.processes=[]
++        self.previous_alarm=signal.signal(signal.SIGALRM,self.wall_limit)
++        signal.setitimer(signal.ITIMER_REAL,4.)
++
++    @staticmethod
++    def wall_limit(signum,frame):
++        raise TimeoutError('Independent four-second test wall limit')
+ 
+     def tearDown(self):
+-        # On an assertion failure, clean only groups owned by this test.
+-        for proc in self.processes:
+-            if proc.returncode is None:
++        signal.setitimer(signal.ITIMER_REAL,0.)
++        # Fixed fixture: at most two descendant spawns, or four processes in
++        # the baseline/unrelated-child comparisons. Never generate a fork loop.
++        deadline=time.monotonic()+2
++        try:
++            for proc in self.processes:
++                try:
++                    os.waitid(os.P_PGID,proc.pid,os.WEXITED|os.WNOHANG|os.WNOWAIT)
++                except ChildProcessError:continue
+                 try:os.killpg(proc.pid,signal.SIGKILL)
+                 except ProcessLookupError:pass
+-            deadline=time.monotonic()+2
+-            while time.monotonic()<deadline:
+-                try:pid,status,_=os.wait4(-proc.pid,os.WNOHANG)
+-                except ChildProcessError:break
+-                if pid==proc.pid:proc.returncode=os.waitstatus_to_exitcode(status)
+-                if not pid:time.sleep(.01)
+-        self.temp.cleanup()
++            for proc in self.processes:
++                while time.monotonic()<deadline:
++                    try:pid,status,_=os.wait4(-proc.pid,os.WNOHANG)
++                    except ChildProcessError:break
++                    if pid==proc.pid:proc.returncode=os.waitstatus_to_exitcode(status)
++                    if not pid:time.sleep(.01)
++                with self.assertRaises(ChildProcessError):os.wait4(-proc.pid,os.WNOHANG)
++        finally:
++            signal.signal(signal.SIGALRM,self.previous_alarm)
++            self.temp.cleanup()
+ 
+     def request(self,mode,index=0):
+         return {'run_id':f'synthetic_{index}','mode':mode,'info':str(self.root/f'pids_{index}.json'),
+@@ -85,6 +107,7 @@
+         proc=subprocess.Popen([sys.executable,'-B',str(self.worker),json.dumps(req)],
+                               start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+         self.processes.append(proc)
++        self.assertLessEqual(len(self.processes),8,'Finite task launch cap')
+         return proc
+ 
+     def assert_gone(self,pids):
+@@ -94,6 +117,7 @@
+ 
+     def observe(self,proc,req,record):
+         info=json.loads(Path(req['info']).read_text())
++        self.assertLessEqual(len(info['pids']),3,'Fixed fixture process cap')
+         self.assertEqual(info['pgid'],proc.pid)
+         self.assertEqual(info['sid'],proc.pid)
+         self.assertTrue(record['reaped'])
+@@ -177,11 +201,11 @@
+         finally:
+             if other.returncode is None:other.kill();other.wait(timeout=2)
+ 
+-    @unittest.skipUnless((BASE/'originals/new/supervise.py').is_file(),'original supervisor required for comparison')
++    @unittest.skipUnless((ORIGINAL_SUPERVISOR).is_file(),'original supervisor required for comparison')
+     def test_original_supervisor_reaps_leader_but_leaves_descendants(self):
+         requests=self.prepare_batch(['success_tree'])
+         script=self.root/'baseline_supervise.py'
+-        script.write_bytes((BASE/'originals/new/supervise.py').read_bytes())
++        script.write_bytes((ORIGINAL_SUPERVISOR).read_bytes())
+         proc=subprocess.Popen([sys.executable,'-B',str(script)],cwd=self.root,start_new_session=True,
+                               stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+         self.processes.append(proc)
+@@ -259,8 +283,10 @@
+         requests=self.prepare_batch(['timeout_tree'])
+         original=supervise.wait_for_worker
+         def failing_wait(proc,unused_reason):
++            began=time.monotonic()
+             def reason():
+                 if Path(requests[0]['info']).exists():raise ValueError('synthetic main supervisor error')
++                if time.monotonic()-began>2:return 'fixture_startup_timeout'
+             return original(proc,reason)
+         try:
+             supervise.wait_for_worker=failing_wait
+@@ -271,4 +297,257 @@
+         self.assertEqual(record['supervisor_error']['type'],'ValueError')
+         self.assert_gone(json.loads((self.root/'pids_0.json').read_text())['pids'])
+ 
+-if __name__=='__main__':unittest.main()
++class ControlledClock:
++    def __init__(self,step=.01):self.value=0.;self.step=step
++    def __call__(self):
++        self.value+=self.step
++        return self.value
++
++
++class SupervisorV2BranchTests(SupervisorLifecycleTests):
++    # Do not inherit and rerun the original methods: the suite loads the
++    # original class once and only this class's own branch methods below.
++    def fake_usage(self):
++        return SimpleNamespace(ru_utime=.01,ru_stime=.02,ru_maxrss=10,
++            ru_minflt=0,ru_majflt=0,ru_nvcsw=0,ru_nivcsw=0)
++
++    def test_v2_continuously_ready_wait4_cannot_defer_deadline(self):
++        proc=SimpleNamespace(pid=900001,returncode=None)
++        clock=ControlledClock();waits=[];signals=[]
++        def ready_wait4(pid,flags):
++            child=proc.pid if not waits else proc.pid+len(waits)
++            waits.append(child)
++            return child,0,self.fake_usage()
++        def send(pid,sig):signals.append((sig,len(waits)))
++        with mock.patch.object(supervise.os,'getpgid',return_value=proc.pid), \
++             mock.patch.object(supervise.os,'getsid',return_value=proc.pid), \
++             mock.patch.object(supervise.os,'waitid',return_value=SimpleNamespace(si_pid=proc.pid)), \
++             mock.patch.object(supervise.os,'wait4',side_effect=ready_wait4), \
++             mock.patch.object(supervise.os,'killpg',side_effect=send), \
++             mock.patch.object(supervise.time,'monotonic',side_effect=clock), \
++             mock.patch.object(supervise.time,'sleep'):
++            with self.assertRaises(TimeoutError):
++                supervise.wait_for_worker(proc,lambda:None,termination_grace_s=.05,cleanup_timeout_s=.05)
++        self.assertEqual([s for s,n in signals],[signal.SIGTERM,signal.SIGKILL])
++        self.assertLessEqual(signals[1][1],6)
++        self.assertLessEqual(len(waits),12)
++        self.assertTrue(proc.supervisor_exit_record['reaped'])
++        self.assertFalse(proc.supervisor_exit_record['process_group_reaped'])
++        EVIDENCE.append({'test':self.id(),'simulated':True,'wait4_success_count':len(waits),
++                         'signals_at_wait_counts':signals,'exit_record':proc.supervisor_exit_record})
++
++    def test_v2_no_sigkill_after_owned_group_children_disappear(self):
++        proc=SimpleNamespace(pid=900002,returncode=None)
++        clock=ControlledClock();collected=False;signals=[]
++        def waitid(kind,pid,flags):
++            if kind==os.P_PGID and collected:raise ChildProcessError()
++            return SimpleNamespace(si_pid=proc.pid)
++        def wait4(pid,flags):
++            nonlocal collected
++            if collected:raise ChildProcessError()
++            collected=True
++            return proc.pid,0,self.fake_usage()
++        with mock.patch.object(supervise.os,'getpgid',return_value=proc.pid), \
++             mock.patch.object(supervise.os,'getsid',return_value=proc.pid), \
++             mock.patch.object(supervise.os,'waitid',side_effect=waitid), \
++             mock.patch.object(supervise.os,'wait4',side_effect=wait4), \
++             mock.patch.object(supervise.os,'killpg',side_effect=lambda pid,sig:signals.append(sig)), \
++             mock.patch.object(supervise.time,'monotonic',side_effect=clock), \
++             mock.patch.object(supervise.time,'sleep'):
++            record=supervise.wait_for_worker(proc,lambda:None,termination_grace_s=.015,cleanup_timeout_s=.1)
++        self.assertEqual(signals,[signal.SIGTERM])
++        self.assertTrue(record['reaped'] and record['process_group_reaped'])
++        EVIDENCE.append({'test':self.id(),'simulated':True,'signals':signals,'exit_record':record})
++
++    def test_v2_record_update_interrupt_preserves_primary_chain(self):
++        proc=SimpleNamespace(pid=900003,returncode=None)
++        collected=False
++        def waitid(kind,pid,flags):return None
++        def wait4(pid,flags):
++            nonlocal collected
++            if collected:raise ChildProcessError()
++            collected=True
++            return proc.pid,0,self.fake_usage()
++        def clock():
++            if collected:raise KeyboardInterrupt('record publication interrupt')
++            return 0.
++        def primary():raise ValueError('primary before record update')
++        with mock.patch.object(supervise.os,'getpgid',return_value=proc.pid), \
++             mock.patch.object(supervise.os,'getsid',return_value=proc.pid), \
++             mock.patch.object(supervise.os,'waitid',side_effect=waitid), \
++             mock.patch.object(supervise.os,'wait4',side_effect=wait4), \
++             mock.patch.object(supervise.os,'killpg'), \
++             mock.patch.object(supervise.time,'perf_counter',side_effect=clock):
++            with self.assertRaisesRegex(ValueError,'primary before record update') as caught:
++                supervise.wait_for_worker(proc,primary)
++        self.assertIsInstance(caught.exception.__cause__,KeyboardInterrupt)
++        record=proc.supervisor_exit_record
++        self.assertTrue(record['reaped'])
++        self.assertFalse(record['process_group_reaped'] or record['usage_complete'])
++        self.assertEqual(record['cleanup_error']['phase'],'record_update')
++        EVIDENCE.append({'test':self.id(),'simulated':True,'injected':'record update interrupt',
++                         'exception_type':'ValueError','cause_type':'KeyboardInterrupt','exit_record':record})
++
++    def tracked_main(self):
++        real_popen=subprocess.Popen
++        def track(*args,**kwargs):
++            proc=real_popen(*args,**kwargs);self.processes.append(proc)
++            return proc
++        return mock.patch.object(supervise.subprocess,'Popen',side_effect=track)
++
++    def fault_record(self):
++        return json.loads((self.root/'raw/synthetic_0.resource.json').read_text())
++
++    def test_v2_validation_oserror_is_recorded_before_cleanup(self):
++        self.prepare_batch(['timeout'])
++        with self.tracked_main(),mock.patch.object(supervise.os,'getpgid',side_effect=OSError('validation fault')):
++            with self.assertRaisesRegex(OSError,'validation fault'):self.invoke_batch()
++        record=self.fault_record()
++        self.assertFalse(record['reaped'] or record['process_group_reaped'])
++        self.assertEqual(record['supervisor_error']['type'],'OSError')
++        self.assertEqual(record['cleanup_error']['type'],'OwnershipNotVerified')
++        EVIDENCE.append({'test':self.id(),'injected':'ownership validation OSError','exit_record':record})
++
++    def test_v2_cleanup_send_oserror_is_recorded(self):
++        self.prepare_batch(['normal'])
++        with self.tracked_main(),mock.patch.object(supervise.os,'killpg',side_effect=PermissionError('send denied')):
++            with self.assertRaisesRegex(PermissionError,'send denied'):self.invoke_batch()
++        record=self.fault_record()
++        self.assertFalse(record['reaped'] or record['process_group_reaped'])
++        self.assertEqual(record['cleanup_error']['type'],'PermissionError')
++        self.assertEqual(record['cleanup_error']['phase'],'SIGTERM')
++        EVIDENCE.append({'test':self.id(),'injected':'cleanup send PermissionError','exit_record':record})
++
++    def test_v2_cleanup_keyboardinterrupt_is_recorded(self):
++        self.prepare_batch(['normal'])
++        with self.tracked_main(),mock.patch.object(supervise.os,'killpg',side_effect=KeyboardInterrupt('cleanup interrupt')):
++            with self.assertRaisesRegex(KeyboardInterrupt,'cleanup interrupt'):self.invoke_batch()
++        record=self.fault_record()
++        self.assertFalse(record['reaped'] or record['process_group_reaped'])
++        self.assertEqual(record['cleanup_error']['type'],'KeyboardInterrupt')
++        EVIDENCE.append({'test':self.id(),'injected':'cleanup KeyboardInterrupt','exit_record':record})
++
++    def test_v2_partial_drain_failure_retains_collected_leader(self):
++        self.prepare_batch(['success_tree'])
++        real_wait4=os.wait4;collected=[]
++        def partial(pid,flags):
++            if collected:raise OSError('drain failed after collection')
++            item=real_wait4(pid,flags)
++            if item[0]:collected.append(item[0])
++            return item
++        with self.tracked_main(),mock.patch.object(supervise.os,'wait4',side_effect=partial):
++            with self.assertRaisesRegex(OSError,'after collection'):self.invoke_batch()
++        record=self.fault_record()
++        self.assertTrue(record['reaped'])
++        self.assertEqual(record['returncode'],0)
++        self.assertFalse(record['process_group_reaped'] or record['usage_complete'])
++        self.assertEqual(record['cleanup_error']['phase'],'TERM_drain')
++        EVIDENCE.append({'test':self.id(),'injected':'partial drain OSError','exit_record':record})
++
++    def test_v2_original_error_chain_survives_cleanup_and_bad_json(self):
++        self.prepare_batch(['timeout'])
++        (self.root/'raw/synthetic_0.result.json').write_text('{bad json')
++        original=supervise.wait_for_worker
++        def failing(proc,reason):
++            def primary():raise ValueError('primary supervision fault')
++            return original(proc,primary)
++        with self.tracked_main(),mock.patch.object(supervise,'wait_for_worker',side_effect=failing), \
++             mock.patch.object(supervise.os,'killpg',side_effect=OSError('cleanup fault')):
++            with self.assertRaisesRegex(ValueError,'primary supervision fault') as caught:self.invoke_batch()
++        self.assertIsInstance(caught.exception.__cause__,OSError)
++        self.assertIn('cleanup fault',str(caught.exception.__cause__))
++        record=self.fault_record()
++        self.assertFalse(record['reaped'] or record['process_group_reaped'])
++        self.assertEqual(record['supervisor_error']['type'],'ValueError')
++        self.assertEqual(record['cleanup_error']['type'],'OSError')
++        self.assertEqual(record['result_read_error']['type'],'JSONDecodeError')
++        EVIDENCE.append({'test':self.id(),'injected':'primary + cleanup + malformed JSON',
++                         'exception_type':'ValueError','cause_type':'OSError','exit_record':record})
++
++    def test_v2_main_missing_attribute_falls_back_to_conservative_record(self):
++        self.prepare_batch(['timeout'])
++        def failure(proc,reason):
++            del proc.supervisor_exit_record
++            raise OSError('failure before lifecycle publication')
++        with self.tracked_main(),mock.patch.object(supervise,'wait_for_worker',side_effect=failure):
++            with self.assertRaisesRegex(OSError,'before lifecycle publication'):self.invoke_batch()
++        record=self.fault_record()
++        self.assertFalse(record['reaped'] or record['process_group_reaped'])
++        self.assertEqual(record['supervisor_error']['type'],'OSError')
++        EVIDENCE.append({'test':self.id(),'injected':'missing exit attribute','exit_record':record})
++
++    def test_v2_term_normally_exits_without_sigkill(self):
++        record,info=self.run_mode('term')
++        self.assertEqual(record['returncode'],-signal.SIGTERM)
++        self.assertFalse(record['cleanup_sigkill_sent'])
++        self.assertEqual(len(info['pids']),1)
++
++    def test_v2_valid_result_json_is_processed_and_sealed(self):
++        self.prepare_batch(['valid_result'])
++        self.invoke_batch()
++        record=self.fault_record()
++        path=self.root/'raw/synthetic_0.result.json'
++        self.assertTrue(record['result_exists'])
++        self.assertEqual(record['result_sha256'],hashlib.sha256(path.read_bytes()).hexdigest())
++        self.assertGreaterEqual(record['startup_serialization_exit_and_unattributed_cpu_s'],0)
++        self.assertGreaterEqual(record['startup_serialization_exit_and_reap_wall_s'],0)
++        seal=json.loads((self.root/'output_seal.json').read_text())
++        self.assertEqual(seal['sha256']['raw/synthetic_0.result.json'],record['result_sha256'])
++        self.assert_gone(json.loads((self.root/'pids_0.json').read_text())['pids'])
++        EVIDENCE.append({'test':self.id(),'valid_json_processed':True,'exit_record':record})
++
++
++def load_tests(loader,tests,pattern):
++    suite=loader.loadTestsFromTestCase(SupervisorLifecycleTests)
++    for name in sorted(SupervisorV2BranchTests.__dict__):
++        if name.startswith('test_'):suite.addTest(SupervisorV2BranchTests(name))
++    return suite
++
++
++class PerCaseResult(unittest.TextTestResult):
++    def __init__(self,*args,**kwargs):
++        super().__init__(*args,**kwargs);self.case_results=[]
++    def startTest(self,test):
++        super().startTest(test)
++        self.case_start=time.perf_counter()
++    def save_case(self,test,status,detail=None):
++        item={'test_id':test.id(),'status':status,
++              'duration_s':time.perf_counter()-self.case_start,
++              'original_v1_case':not test._testMethodName.startswith('test_v2_'),
++              'evidence':[entry for entry in EVIDENCE if entry['test']==test.id()]}
++        if detail is not None:item['detail']=detail
++        self.case_results.append(item)
++    def addSuccess(self,test):
++        super().addSuccess(test);self.save_case(test,'passed')
++    def addFailure(self,test,err):
++        super().addFailure(test,err);self.save_case(test,'failed',self._exc_info_to_string(err,test))
++    def addError(self,test,err):
++        super().addError(test,err);self.save_case(test,'error',self._exc_info_to_string(err,test))
++    def addSkip(self,test,reason):
++        super().addSkip(test,reason);self.save_case(test,'skipped',reason)
++
++
++def run_and_record():
++    stream=io.StringIO()
++    suite=load_tests(unittest.defaultTestLoader,None,None)
++    result=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=PerCaseResult).run(suite)
++    report={'version':'v2','tests_run':result.testsRun,'failures':len(result.failures),
++            'errors':len(result.errors),'skipped':len(result.skipped),'passed':result.wasSuccessful(),
++            'original_v1_cases':sum(row['original_v1_case'] for row in result.case_results),
++            'new_v2_cases':sum(not row['original_v1_case'] for row in result.case_results),
++            'cases':result.case_results,'log':stream.getvalue(),
++            'candidate_sha256':hashlib.sha256(SUPERVISOR.read_bytes()).hexdigest(),
++            'test_script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
++            'safety_bounds':{'independent_test_wall_limit_s':4,'test_cleanup_wall_limit_s':2,
++                             'fixed_max_processes_per_worker':3,'fixed_max_concurrent_fixture_processes':4,
++                             'finite_max_worker_launches_per_test':8,'infinite_fork_tests':False},
++            'scope':'Linux one-shot CLI, same-group non-escaping fixtures; standard library only'}
++    (BASE/'test-results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
++    (BASE/'test-results.txt').write_text(stream.getvalue(),encoding='utf-8')
++    print(stream.getvalue())
++    raise SystemExit(0 if result.wasSuccessful() else 1)
++
++
++if __name__=='__main__':
++    if sys.argv[1:]==['--record']:run_and_record()
++    else:unittest.main()

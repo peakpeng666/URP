@@ -1,0 +1,24 @@
+{
+  "archive": "/workspace/shared/field_aware_cvrp_20261008_evidence.zip",
+  "sha256": "d311e3fa9a81a89f04978e5d323a516ad02151bf805aebe5549eac9ca02be990",
+  "bytes": 2644932,
+  "utc": "2026-10-07T23:46:37.014882+00:00",
+  "members": 70,
+  "package_validation": {
+    "utc": "2026-10-07T23:46:36.920824+00:00",
+    "status": "PASS",
+    "frozen_files_unchanged": 16,
+    "original_source_files_unchanged": {
+      "source/geometry.py": true,
+      "source/independent_geometry.py": true,
+      "source/original_geometry_experiment.py": true,
+      "source/original_fixed_fleet_oracle.py": true
+    },
+    "all_12_primary_results_present": true,
+    "canonical_plans_total": 119016,
+    "files_with_secrets_added": false,
+    "external_writes": 0,
+    "standalone_zip": true
+  },
+  "uploads": 0
+}

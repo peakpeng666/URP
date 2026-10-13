@@ -1,0 +1,30 @@
+{
+  "status": "PASS_WITH_SCOPE_LIMITATIONS",
+  "utc": "2026-10-08T12:11:54.644801+00:00",
+  "evidence_files_checked": 33,
+  "runtime_bindings_checked": 6,
+  "registered_byte_spans_checked": 2,
+  "draft_cases_count": 28,
+  "candidate_executions": 0,
+  "host_candidate_AST_parses": 0,
+  "fixture_test_runs": 0,
+  "independent_arithmetic": {
+    "candidate_mean_F": "65919007/67572510",
+    "parent_mean_F": "18093833783/18558129600",
+    "difference": "167326221217/305114208753600",
+    "difference_percentage_points": 0.05484052083334049,
+    "candidate_total_bins": 1633,
+    "parent_total_bins": 1634
+  },
+  "textual_review": [
+    "W2 float(item), nested def/helper call, and mask-times-float each conflict with frozen finite language. np.asarray(...,dtype=np.float64) is allowed.",
+    "All 28 fixtures remain drafts, not readiness certificates. Source-case predictions were reviewed against the text rules, not executed.",
+    "Conservative shared contract draft is a new generation subset, not a complete language spec. It preserves both-arm equality and does not amend the currently frozen phase.",
+    "Preregistration draft separates planned/attempted denominators, effective candidate performance, transport failures, W2 ineligibility and new-phase causal claims.",
+    "Failure reason/line was not serialized by worker; textual diagnosis is not evidence of the first runtime rejection.",
+    "Online transmitted message envelope and provider timeout cause remain unverified; historical prompt hash is weaker than full wire recovery."
+  ],
+  "errors": [],
+  "author_report_sha256": "c6093d8e30ab2c32b38cfe972731fa71d3ad236413ef1262d8508c2d1075b05f",
+  "author_package_sha256": "c1aec719bbd80eee422b08222ca6095bcbd36a5b5148fa3d5e6ce44298ffe2e2"
+}

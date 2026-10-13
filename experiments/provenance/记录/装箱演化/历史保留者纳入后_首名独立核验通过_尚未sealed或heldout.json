@@ -1,0 +1,452 @@
+{
+  "status": "PASS_TOP1_SELECTION_PREPARATION_ONLY_NOT_A_SEAL",
+  "original_P1_snapshot_binding": {
+    "status": "MATCHED_ORIGINAL_PINNED_P1_SNAPSHOTS",
+    "source_path": "/workspace/shared/audit64k/candidate/original132_p2_budget64k_implemented_disabled_20261007/package/INTERNAL_PARENT_PROVENANCE.json",
+    "source_file_sha256": "b43ce612f6a9a77fdefefe815f03cd70c4e9e6e0656ad58dec542c8957cc9139",
+    "decoded_fields_only": [
+      "P1",
+      "audited_P1_ledger_sha256"
+    ],
+    "records_decoded": false,
+    "snapshot_contents_equal_frozen_copy": true,
+    "audited_P1_ledger_sha256": "16423d0c433762de7640c6731c83f58dc8975a22822eab51a2bda078214cda4b",
+    "IID_snapshot_sha256": "13ceffe91b54ce1dd1bad2c3b606d0c712d2cdbb771a7e2b011a192c6fb449b3",
+    "P2_frozen_inputs_sha256": "52f1505c9bab0ef6a821be8a28564b8ee601a66d20bbe17e918226bb5719865f"
+  },
+  "old_results": [
+    {
+      "id": "b01_EOH_TC_g1_e1_03",
+      "arm": "EOH_TC",
+      "phase": 1,
+      "fitness": {
+        "numerator": 143417757158281,
+        "denominator": 148986947580380,
+        "decimal": 0.9626196085459475
+      },
+      "used_bins": [
+        2093,
+        2058,
+        2056,
+        2063,
+        2055
+      ],
+      "source_sha256": "29263d1b755923995ba791642febf4d95bee59940bacb8ba912a3cf6cd3a4e3a",
+      "description_sha256": "197ae09771671bcf38f2f26e09074710bdf83a1405841c3748c3dfe10151aade",
+      "pair_sha256": "1fc14d088106210dcf8475fe0845caf6404fdc8dd0159522af1763fc3fdaf0b1",
+      "code_identity": "a1648860c28b9038bbe0e547344ba306f3c342078eed3513a4fe36c506520182",
+      "joint_identity": "2b7e125326c1e3dd51009f50b443401e1aee0e511929daf1e30cd1b38d5411a6",
+      "tie_priority": "28411270baa6ed0696b422afdb07a7ed2fc4ce225c49f8649fa1bae94099d7a2",
+      "source_receipt_path": "/workspace/shared/p2_parent_evidence_recovery_20261007/evidence_public_receipts/b01_EOH_TC_g1_e1_03.json",
+      "source_receipt_sha256": "1bc1ddf9d53e91c6b744891af4b112af3dd2691effb05f60daaffecc2b3c93ae"
+    },
+    {
+      "id": "b01_EOH_TC_g1_e1_05",
+      "arm": "EOH_TC",
+      "phase": 1,
+      "fitness": {
+        "numerator": 7923277263,
+        "denominator": 8167108600,
+        "decimal": 0.9701447171891409
+      },
+      "used_bins": [
+        2080,
+        2036,
+        2044,
+        2044,
+        2041
+      ],
+      "source_sha256": "226f64567bac28be639c4192b1ef5229337e1d0d73d316aee4ba08ee87bf203b",
+      "description_sha256": "7e3b5429931c9414130be8e96686045fb37503bc12d4b5aae184362fe12ae86a",
+      "pair_sha256": "358739d5b234ca999b153c467400bfd5bfee5f0350a53a1406531c08af79077d",
+      "code_identity": "8d0b0cf0d0451a23cda33a6fe65474b394588f9f12c592e1b0601b7ef0242ee5",
+      "joint_identity": "8e14d5baf35f2ed599079bd42fb6bbd73436a4e50ced91edcd6c361215facf80",
+      "tie_priority": "b9ba737c2c015a16e92848cef473613ee3291384c1dda3015b610407d1631710",
+      "source_receipt_path": "/workspace/shared/p2_parent_evidence_recovery_20261007/evidence_public_receipts/b01_EOH_TC_g1_e1_05.json",
+      "source_receipt_sha256": "a71c9f30b74aa28ea850aceefc9cadf15468095eb2f9de3cc49b6f4b41c597a4"
+    },
+    {
+      "id": "b01_EOH_TC_g1_e2_05",
+      "arm": "EOH_TC",
+      "phase": 1,
+      "fitness": {
+        "numerator": 8598892127022737,
+        "denominator": 8822924076332964,
+        "decimal": 0.9746079703993848
+      },
+      "used_bins": [
+        2067,
+        2033,
+        2027,
+        2039,
+        2032
+      ],
+      "source_sha256": "35c784b173e89e66c3c03a8bf880ee867841cf8a17ca4371e881cf09447715d1",
+      "description_sha256": "989372978ee0014b424b95d0855aa6f387e0f61a5dab1e8300ed5db8e8a028cb",
+      "pair_sha256": "f9b4de281efdc3fa6abdd8897c8d736aabafea54357ace6533e1aac649a41afa",
+      "code_identity": "e23d3100a0484be8333110918633b333610a1044b8423184b7084601fb0449ee",
+      "joint_identity": "3e12a61015eb16164d389b8c4f8d2a69d5b6c7069d05fe81574308951d9b0952",
+      "tie_priority": "fea20d14a4e70288f08004b7e371e02cefe5f5efcb185226ec7fe540b5295ca8",
+      "source_receipt_path": "/workspace/shared/p2_parent_evidence_recovery_20261007/evidence_public_receipts/b01_EOH_TC_g1_e2_05.json",
+      "source_receipt_sha256": "53c1a5ed901bf9fa1efeb0d2a216c104f50ea061a5ba5d3047e9a1a59dae4691"
+    },
+    {
+      "id": "b01_EOH_TC_g1_m1_03",
+      "arm": "EOH_TC",
+      "phase": 1,
+      "fitness": {
+        "numerator": 39947558289907,
+        "denominator": 40216818698175,
+        "decimal": 0.9933047810099356
+      },
+      "used_bins": [
+        2026,
+        1997,
+        1995,
+        1995,
+        1993
+      ],
+      "source_sha256": "d848364e3c3a97621fcb64f122dcb2b9e77a34230c5517439a9c8b64adc0f3e5",
+      "description_sha256": "3e6e19994cb5e6ee2f767ae50b6996d0297b851e8e0a2dd134fa79ad6f8e5acb",
+      "pair_sha256": "7b9b5990793de293f6e0f94c5f4f7345e4ae13a281836b43c97c67fac616bfcc",
+      "code_identity": "32af666c6e5f44f2fbe4c8ba0e6ba2299a84f3f86ab8f601144acd541d787236",
+      "joint_identity": "ebc243ae8e9152c7de03817ceed8d2704706ea14dd1d2fa03c83f00ca571542a",
+      "tie_priority": "ece6626e93d3624949dab416aecaed06ad364074dffe61ef44d984b60140c739",
+      "source_receipt_path": "/workspace/shared/p2_parent_evidence_recovery_20261007/evidence_public_receipts/b01_EOH_TC_g1_m1_03.json",
+      "source_receipt_sha256": "812991894dfbe192c93848953d3fb136b655195cf6451005ba8a8f439d6b0b95"
+    },
+    {
+      "id": "b01_EOH_TC_g1_m1_06",
+      "arm": "EOH_TC",
+      "phase": 1,
+      "fitness": {
+        "numerator": 2193299224571,
+        "denominator": 2278258380200,
+        "decimal": 0.9627087268207297
+      },
+      "used_bins": [
+        2090,
+        2056,
+        2059,
+        2060,
+        2059
+      ],
+      "source_sha256": "f45b02107cc0c555c6a0c24cc2b230a9f4bafcccc3b6728d16b1d5f61af4ea8c",
+      "description_sha256": "0b23c823f07d170e5331a93035b909a03f72f9c470e4c8a55545e0ea2437875b",
+      "pair_sha256": "2d80e4a742edabfb205681aff4db6d2fdf2141b31cdc03efbc94351e01272941",
+      "code_identity": "00ab82bbee8fd66a06ff20e257bb528bf7d7321f943a1b90ccf78db999dfcb2a",
+      "joint_identity": "e60ce9a3d7dea27efe812a3fa0d70b2ead2d94b0688aec1400c6e91092c6f6d6",
+      "tie_priority": "407cbc1466c3a8c49cafba18b41d4c53c7c7d92865a2306d5e1aaa2ff5d161e3",
+      "source_receipt_path": "/workspace/shared/p2_parent_evidence_recovery_20261007/evidence_public_receipts/b01_EOH_TC_g1_m1_06.json",
+      "source_receipt_sha256": "d37aad3c3010c08ddd93804dd0f343002df9d52f6ab7793899d36e0b5bad59ac"
+    },
+    {
+      "id": "b01_EOH_TC_g1_m2_06",
+      "arm": "EOH_TC",
+      "phase": 1,
+      "fitness": {
+        "numerator": 119725650770421,
+        "denominator": 124182010768970,
+        "decimal": 0.9641142869973359
+      },
+      "used_bins": [
+        2090,
+        2055,
+        2053,
+        2060,
+        2051
+      ],
+      "source_sha256": "b9d1b4420fd8b0b991970fa91940e350994ce9b6a2e231416c359361019375e4",
+      "description_sha256": "6222d395491f98caec726ff722bad8024a68de69d1ecf62e8efb27f0cbb99579",
+      "pair_sha256": "2661cf299cc4eb81e1a413b0b91c184fda95de1609d90cfcbbf30e8d3da06e3c",
+      "code_identity": "50e3b053e8148f767a2df99f7ddf0b2c7e2109e1f5287eadd98bf2c60eeaa9fa",
+      "joint_identity": "5d8000c8fb5f90b3711cb4984793d915857b727cc078fdd0954d4cbaa60e6542",
+      "tie_priority": "7b604f45de45763d0ef9a44d9b15fc1a933cc2d6a69468137c2a65043930dcff",
+      "source_receipt_path": "/workspace/shared/p2_parent_evidence_recovery_20261007/evidence_public_receipts/b01_EOH_TC_g1_m2_06.json",
+      "source_receipt_sha256": "6973bce642f9bde9675c558f0b4628499091dd83feea2c96f3e56cbaa4fe2ada"
+    },
+    {
+      "id": "b01_IID_TC_g1_m2_04",
+      "arm": "IID_TC",
+      "phase": 1,
+      "fitness": {
+        "numerator": 561169740881,
+        "denominator": 566701510740,
+        "decimal": 0.990238653410723
+      },
+      "used_bins": [
+        2032,
+        1997,
+        1997,
+        2007,
+        2004
+      ],
+      "source_sha256": "415dca074dca8fd1a15360bd37384671e5997cd4bc1281981ca49f435cfcd64e",
+      "description_sha256": "b16eda2c238f6ab1a7f8d79635f321f50b6bde9b0aadac4388ec3defa4a80e78",
+      "pair_sha256": "4d3b58bdbd6ef53e8f2e60568b551607f3ac40c19a1a3ca79003c68f4de7a9ed",
+      "code_identity": "1f6cd0c2b7cfe40e68329d27e437658005f719cbcd78cc974f406bd725931ffd",
+      "joint_identity": "949e692e38561da79cc24a744e78082011dc6b7e2df662a2b559ecd780208790",
+      "tie_priority": "64c932bea29118ddec918c3712ee626428e789f276065f0433d97c84c620602c",
+      "source_receipt_path": "/workspace/shared/p2_parent_evidence_recovery_20261007/evidence_public_receipts/b01_IID_TC_g1_m2_04.json",
+      "source_receipt_sha256": "e51a1d15fdefd0076c20c18fef0e9a7fd071c00492681954f028b92c4488aeb9"
+    }
+  ],
+  "EOH_phase2_survivor_preparation": [
+    {
+      "id": "b01_EOH_TC_g2_m3_04",
+      "arm": "EOH_TC",
+      "phase": 2,
+      "order": 128,
+      "fitness": {
+        "denominator": 557161270697850,
+        "direction": "maximize",
+        "numerator": 553433026291573
+      },
+      "used_bins": [
+        2028,
+        1997,
+        1995,
+        1994,
+        1992
+      ],
+      "source_sha256": "79d213f10dc21d18cb22de0d94154bdf0d385418c20481ae2904573020534220",
+      "description_sha256": "6a15d29e6fea4fc0d2076d8ff739b6ce6e10a458804afc7ff7c2b63baba5d07f",
+      "code_identity": "d55693d215fd4a13f0b6d5589e007bf1bc6d31b53de9221ad9e5259ce1dafc8d",
+      "joint_identity": "784c2b5df0e981a7db977b2a80df4358b7265187daf1e048b503cd4d46db1433",
+      "tie_priority": null,
+      "pair_sha256": "b1a56be3b75d783ce3ded4746691f5ca388bd66d2626c82a7b351db853d79d55",
+      "source_capture_path": "/workspace/shared/p2_public_scoring_56_60_delta_20261007/state_delta/slots/b01_EOH_TC_g2_m3_04/capture.json",
+      "source_capture_file_sha256": "06937fba383e78847d58aef74ce68feed6373665fd7831f0ee6ce428ad443e38",
+      "source_bundle_path": "/workspace/shared/p2_public_scoring_56_60_delta_20261007/state_delta/slots/b01_EOH_TC_g2_m3_04/bundle.json",
+      "source_bundle_file_sha256": "f97ace11cb773e03338027469e021d01001dfe7ab9441d785e136cc6afbdfc6d",
+      "raw_response_sha256": "06125f088c174c5ec00b642776cfc2249a795a5b7a0f6849f612b27c161f4b9d"
+    },
+    {
+      "id": "b01_EOH_TC_g1_m1_03",
+      "arm": "EOH_TC",
+      "phase": 1,
+      "fitness": {
+        "numerator": 39947558289907,
+        "denominator": 40216818698175,
+        "decimal": 0.9933047810099356
+      },
+      "used_bins": [
+        2026,
+        1997,
+        1995,
+        1995,
+        1993
+      ],
+      "source_sha256": "d848364e3c3a97621fcb64f122dcb2b9e77a34230c5517439a9c8b64adc0f3e5",
+      "description_sha256": "3e6e19994cb5e6ee2f767ae50b6996d0297b851e8e0a2dd134fa79ad6f8e5acb",
+      "pair_sha256": "7b9b5990793de293f6e0f94c5f4f7345e4ae13a281836b43c97c67fac616bfcc",
+      "code_identity": "32af666c6e5f44f2fbe4c8ba0e6ba2299a84f3f86ab8f601144acd541d787236",
+      "joint_identity": "ebc243ae8e9152c7de03817ceed8d2704706ea14dd1d2fa03c83f00ca571542a",
+      "tie_priority": "ece6626e93d3624949dab416aecaed06ad364074dffe61ef44d984b60140c739",
+      "source_receipt_path": "/workspace/shared/p2_parent_evidence_recovery_20261007/evidence_public_receipts/b01_EOH_TC_g1_m1_03.json",
+      "source_receipt_sha256": "812991894dfbe192c93848953d3fb136b655195cf6451005ba8a8f439d6b0b95"
+    },
+    {
+      "id": "b01_EOH_TC_g2_e1_04",
+      "arm": "EOH_TC",
+      "phase": 2,
+      "order": 79,
+      "fitness": {
+        "denominator": 839110947435,
+        "direction": "maximize",
+        "numerator": 833325641497
+      },
+      "used_bins": [
+        2026,
+        1998,
+        1994,
+        1996,
+        1994
+      ],
+      "source_sha256": "c142c9be3698d15a0b489e536f248491bc72c40fb01789ce98103fb85d4728fd",
+      "description_sha256": "043ff25a3f51ccfe9357e6478471ede903b7b836ea94e0f70a2b9355f961940c",
+      "code_identity": "47a64336dd320f9bf564025bee3c5ae2f0f0bd204e13b0abecc0801ca0b22488",
+      "joint_identity": "6fffba6bc800ee3e4fa4c03513dc73c9a2f25ea530ae2749d6f8c470412a2c1c",
+      "tie_priority": null
+    },
+    {
+      "id": "b01_EOH_TC_g2_m1_01",
+      "arm": "EOH_TC",
+      "phase": 2,
+      "order": 98,
+      "fitness": {
+        "denominator": 166993291585,
+        "direction": "maximize",
+        "numerator": 165511409379
+      },
+      "used_bins": [
+        2031,
+        1999,
+        1999,
+        2001,
+        1998
+      ],
+      "source_sha256": "7fc19a9d7728a8ec21799b0154c4dc4b07a4bcbfdf7403d3ecf072e844b8f525",
+      "description_sha256": "eb188adfab6adbbf8e75593c8fbd8f953c1c7b57e7b48d916baa1ddc528bd545",
+      "code_identity": "1ff74c9d136b53e431278edd25910bc9799f03eb070158e217f77f01c57d82ba",
+      "joint_identity": "bf8c570fc9ec369fcd964dc19a74549f0a682ae01dbcc9616c2d9b63b9b04748",
+      "tie_priority": null
+    },
+    {
+      "id": "b01_EOH_TC_g2_m1_04",
+      "arm": "EOH_TC",
+      "phase": 2,
+      "order": 103,
+      "fitness": {
+        "denominator": 234715966920435,
+        "direction": "maximize",
+        "numerator": 231781834667491
+      },
+      "used_bins": [
+        2046,
+        2002,
+        2003,
+        2006,
+        2008
+      ],
+      "source_sha256": "c1a5437b7678d394c56cd481be993d336f5d0f4430260dd6078266362d748ab6",
+      "description_sha256": "2ef1a51ec3f827f0be5ec5c207f87a26f2651fd2d3655b326581d4fcecae8dd9",
+      "code_identity": "3ed832e0078aab6fabe5352373720883528cdde0a40098d9125d7657f4b4d326",
+      "joint_identity": "05aa028cba2740d7e07fb7aa2ed8adc3ce48a73d25423bad218f7dd60ba7e6f8",
+      "tie_priority": null
+    },
+    {
+      "id": "b01_EOH_TC_g2_m2_04",
+      "arm": "EOH_TC",
+      "phase": 2,
+      "order": 115,
+      "fitness": {
+        "denominator": 8665495252960,
+        "direction": "maximize",
+        "numerator": 8505451447011
+      },
+      "used_bins": [
+        2041,
+        2016,
+        2028,
+        2018,
+        2023
+      ],
+      "source_sha256": "78d1a0cda2e6b7f95f02829bbba097c9d5c8f86b0f793e2321cc7d956d77c259",
+      "description_sha256": "2315e12ad2f2873111b746941f179eebb2a2d9809dddb46182a7df2e2864e4e5",
+      "code_identity": "4e5adc25dd76871496233407d935e4bfd6cad4eca3cf1169c710025e12fd94fa",
+      "joint_identity": "dc7a0181d3191051f422f2ee6af874b9089a32c9dcbfc3c7811eba56a9cca2fe",
+      "tie_priority": null
+    }
+  ],
+  "EOH_nominee": {
+    "id": "b01_EOH_TC_g2_m3_04",
+    "arm": "EOH_TC",
+    "phase": 2,
+    "order": 128,
+    "fitness": {
+      "denominator": 557161270697850,
+      "direction": "maximize",
+      "numerator": 553433026291573
+    },
+    "used_bins": [
+      2028,
+      1997,
+      1995,
+      1994,
+      1992
+    ],
+    "source_sha256": "79d213f10dc21d18cb22de0d94154bdf0d385418c20481ae2904573020534220",
+    "description_sha256": "6a15d29e6fea4fc0d2076d8ff739b6ce6e10a458804afc7ff7c2b63baba5d07f",
+    "code_identity": "d55693d215fd4a13f0b6d5589e007bf1bc6d31b53de9221ad9e5259ce1dafc8d",
+    "joint_identity": "784c2b5df0e981a7db977b2a80df4358b7265187daf1e048b503cd4d46db1433",
+    "tie_priority": null,
+    "pair_sha256": "b1a56be3b75d783ce3ded4746691f5ca388bd66d2626c82a7b351db853d79d55",
+    "source_capture_path": "/workspace/shared/p2_public_scoring_56_60_delta_20261007/state_delta/slots/b01_EOH_TC_g2_m3_04/capture.json",
+    "source_capture_file_sha256": "06937fba383e78847d58aef74ce68feed6373665fd7831f0ee6ce428ad443e38",
+    "source_bundle_path": "/workspace/shared/p2_public_scoring_56_60_delta_20261007/state_delta/slots/b01_EOH_TC_g2_m3_04/bundle.json",
+    "source_bundle_file_sha256": "f97ace11cb773e03338027469e021d01001dfe7ab9441d785e136cc6afbdfc6d",
+    "raw_response_sha256": "06125f088c174c5ec00b642776cfc2249a795a5b7a0f6849f612b27c161f4b9d"
+  },
+  "IID_nominee": {
+    "id": "b01_IID_TC_g1_m2_04",
+    "arm": "IID_TC",
+    "phase": 1,
+    "fitness": {
+      "numerator": 561169740881,
+      "denominator": 566701510740,
+      "decimal": 0.990238653410723
+    },
+    "used_bins": [
+      2032,
+      1997,
+      1997,
+      2007,
+      2004
+    ],
+    "source_sha256": "415dca074dca8fd1a15360bd37384671e5997cd4bc1281981ca49f435cfcd64e",
+    "description_sha256": "b16eda2c238f6ab1a7f8d79635f321f50b6bde9b0aadac4388ec3defa4a80e78",
+    "pair_sha256": "4d3b58bdbd6ef53e8f2e60568b551607f3ac40c19a1a3ca79003c68f4de7a9ed",
+    "code_identity": "1f6cd0c2b7cfe40e68329d27e437658005f719cbcd78cc974f406bd725931ffd",
+    "joint_identity": "949e692e38561da79cc24a744e78082011dc6b7e2df662a2b559ecd780208790",
+    "tie_priority": "64c932bea29118ddec918c3712ee626428e789f276065f0433d97c84c620602c",
+    "source_receipt_path": "/workspace/shared/p2_parent_evidence_recovery_20261007/evidence_public_receipts/b01_IID_TC_g1_m2_04.json",
+    "source_receipt_sha256": "e51a1d15fdefd0076c20c18fef0e9a7fd071c00492681954f028b92c4488aeb9"
+  },
+  "IID_newborn_best": {
+    "id": "b01_IID_TC_g2_m2_01",
+    "arm": "IID_TC",
+    "phase": 2,
+    "order": 109,
+    "fitness": {
+      "denominator": 654498805217950,
+      "direction": "maximize",
+      "numerator": 633527990782627
+    },
+    "used_bins": [
+      2077,
+      2046,
+      2051,
+      2045,
+      2049
+    ],
+    "source_sha256": "a8294cb6cdc235f246747b1131237d3727138b8675a72fc0f91694074f23195f",
+    "description_sha256": "8eb1c898c1c4747c3b4ff44fb35ce01dcef10187cd800b74ed5d01914a5eb2c6",
+    "code_identity": "b96585b176435dd284d35ecff3017ed80eafbccc96111be82c8b7bd94304103c",
+    "joint_identity": "04c6f3634350a64ba1e3dc7572d6049c9057c137bffdb983f13214ea764611ef",
+    "tie_priority": null
+  },
+  "EOH_best_parent_exact_delta": {
+    "numerator": 2095049092403,
+    "denominator": 563273862725751450,
+    "decimal": 3.7194147128801607e-06
+  },
+  "EOH_vs_historical_IID_exact_delta": {
+    "numerator": 16179038330885933687,
+    "denominator": 5270307692042892489900,
+    "decimal": 0.0030698470139253987
+  },
+  "IID_top1_invariance_argument": "Frozen phase1 archive selection identifies the prior top1. All phase2 additions have later orders and strictly lower exact fitness; earliest-order joint dedup can only drop a new entry, never displace the historical representative. Thus prior top1 remains, without reconstructing every old archive joint relation.",
+  "IID_full_archive_joint_reconstruction": "not performed; remaining old archive identities not all recovered",
+  "EOH_joint_identities_unique": 30,
+  "EOH_top6_and_cutoff_have_no_exact_fitness_ties": true,
+  "IID_old_snapshot_sha256": "13ceffe91b54ce1dd1bad2c3b606d0c712d2cdbb771a7e2b011a192c6fb449b3",
+  "EOH_old_snapshot_sha256": "824404cdbeee44c89d47fa87f74b2a394888ad73e205b96af444cac3062e915c",
+  "source_provenance_expected_sha256": "b43ce612f6a9a77fdefefe815f03cd70c4e9e6e0656ad58dec542c8957cc9139",
+  "public_design_sha256": "5358c41aa758e1d399d29157f8cbdc5fb422f4c8acd56b2cb95c41af3f1750ca",
+  "P1_archive_sha256": "aa14a4a33993850df91c2195b247ae5d29b9cb9d9d1ac845f913ce3b33b6178c",
+  "recovered_analysis_sha256": "eb570c72ec193d4cd0053fc64f9d58fd77a6565c46fa9bbd77a3c026b05a7478",
+  "P2_final_safe_facts_sha256": "46646452838aa11c19070e0bb7fe6f45d410d13465868bc9c7fa37adab2d3d4d",
+  "audit_CPU_seconds": 0.03810930900000001,
+  "audit_wall_seconds": 0.038117513999168295,
+  "candidate_executions": 0,
+  "heldout_reads": 0,
+  "seal_created": false,
+  "analysis_script_sha256": "55d346103976355eb5d127254358083b3d8ea4405ab4a16157767ce5248637ed",
+  "known_limits": [
+    "All7 prior public receipts and source bindings verified. Original archived candidates and scheduler were not executed.",
+    "IID prior archive all15 ranking identities are frozen in the matched original P1 snapshot. Detailed new-versus-all-old joint mapping is not reconstructed, and is not required to prove an unchanged strict top1 when all additions have later order and lower exact fitness.",
+    "EOH30 joint identities are distinct, and top6 plus cutoff are strictly ordered by exact fitness, so missing P2 tie priorities cannot affect this selected prefix. No seed was read.",
+    "These are candidate selection facts for parent review, not a committed final seal, external ledger update or heldout authorization."
+  ]
+}

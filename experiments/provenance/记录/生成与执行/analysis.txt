@@ -1,0 +1,51 @@
+Supervisor reliability v2 — 定点修复说明
+
+版本与范围
+这是独立审核候选，未部署或应用到冻结研究。第一版文件及其已上传 Drive 版本保留。
+v2 增量补丁基于第一版 candidate/new/supervise.py 与 tests/test_supervise.py；补丁只改
+new/supervise.py 和对应测试。原九件科研源码不变，没有读取新增科学文件或原始记录。
+
+两项阻断修复
+1. drain 每轮在 wait4 之前检查单调期限，无论上一轮是否成功收取 PID。连续 ready 的
+   后代不能无限推迟 TERM→KILL 升级或最终清理期限。发信号前用
+   waitid(P_PGID, WNOWAIT) 确认仍有自己持有的组成员；ECHILD 后不再向该组 ID 发信号。
+   此所有权判断要求独立单线程 CLI 内没有其他线程或 signal handler 收取这些子进程。
+2. 校验 session/group 之前就建立 supervisor_exit_record，默认 reaped、process_group_reaped
+   和 usage_complete 为 False。清理调用及状态发布分别受保护；OSError、KeyboardInterrupt、
+   部分 drain 失败或状态发布被中断都留下 cleanup_error，并更新已经确知的收取状态。
+   确实收取的 leader 保留实际退出码/reaped=True；未完成或未确证的组回收仍为 False。
+   main 在属性缺失时回退到先前保守记录，不用 AttributeError 覆盖原故障，并在失败时
+   落盘退出记录。原监督异常通过异常链保留清理异常；次要 JSON 解析错误不覆盖原监督异常。
+
+实际验证
+标准库 unittest，Python 3.12.14 / Linux，25 项逐项结果全部通过，失败/错误/跳过均为 0。
+原 14 项名称和覆盖全部保留，新增 11 项：连续成功 wait4 的受控时钟、失去持有成员后
+不发 SIGKILL、校验 OSError、清理 send OSError、清理 KeyboardInterrupt、部分 drain
+失败、原故障+清理故障+截断 JSON 的异常链、属性缺失回退、状态发布中断、TERM 正常
+生效，以及有效 result.json 处理/封存。每项 status、耗时和关联证据均在 test-results.json，
+该文件也包含完整 unittest 日志及候选/测试脚本 SHA-256，不只提供汇总计数。
+
+无限 ready 情景使用模拟 wait4 与受控单调时钟，没有无限 fork。真实夹具只固定创建最多
+三进程的 worker/后代结构；基线或无关进程对照最多四个夹具进程并存，每项最多八个
+有限 worker 调用。测试另有独立 4 秒墙钟中断和统一 2 秒夹具清理期限。
+故障注入项通过“候选如实报告未完成”断言；由测试夹具独立收尾，不把夹具清理伪写成
+候选回收成功。TERM 生效项检查返回 -SIGTERM 且不发送 SIGKILL；有效 JSON 项检查
+实际文件 SHA-256、成本字段和输出 seal。没有压测真实科学预算阈值。
+
+明确边界
+- 仍只适用于 Linux 独立一次性 CLI、未逃逸同 session/进程组的生命周期修补。
+- subreaper 改变整个调用进程且不恢复；不宣称可直接嵌入长驻或多线程宿主。
+- 活跃阶段 CPU 检查仅观察 leader；收取后加总子代用量不等于整树严格实时 CPU 上限。
+  wait4 峰值最大值也不是进程树同时 RSS 总量。
+- measure.py/reproduce.py 的外层墙钟、跨 session 树、supervisor 被外部强杀或默认
+  SIGTERM、OOM、不可中断内核等待、磁盘写失败，以及真实 OR-Tools 求解仍未加固/验证。
+- 清理系统调用真实被拒绝时可能无法完成回收；本补丁保留失败状态并传播故障，没有
+  声称绕过该限制。旧 SIGKILL 的根因、是否 OOM 或是否来自 OR-Tools 均未证明。
+- 原九件源码、第一版候选、索引和共享权限不变；无科学批次、安装、收费 API、推送或 PR。
+
+复核方式
+v2 补丁是 v1→v2 增量，应在独立审核目录应用，不能覆盖 originals 或历史 Drive 文件。
+完整 v2 候选同时交付。复现本次逐项证据命令：
+  PYTHONDONTWRITEBYTECODE=1 python tests/test_supervise.py --record
+在 v2 目录运行，并保留其父目录下已经授权、校验的 originals/new/supervise.py，供原版
+对照使用。缺该文件时基线对照会 skip；本次实际运行没有 skip，不能将未来 skip 写成通过。

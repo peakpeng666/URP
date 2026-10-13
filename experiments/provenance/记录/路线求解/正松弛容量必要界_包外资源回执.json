@@ -1,0 +1,77 @@
+{
+  "utc": "2026-10-08T04:47:05.406790+00:00",
+  "artifacts": [
+    {
+      "path": "/workspace/shared/positive_slack_capacity_bound_20261008.zip",
+      "bytes": 235318,
+      "sha256": "3ac4f8ac6ae8a99a3339c78f452dd80a817b1ccfad2d4d536278216bcd6ad842"
+    },
+    {
+      "path": "/workspace/shared/positive_slack_capacity_bound_audit_20261008.zip",
+      "bytes": 34549,
+      "sha256": "0a6e301de4a2a93b95b0eba4116c3add35c38872fc753c3424f4d12e6170308b"
+    },
+    {
+      "path": "/workspace/shared/positive_slack_capacity_bound_20261008/reports/REPORT_ZH.txt",
+      "bytes": 5496,
+      "sha256": "b42e8459863b9be555c0421b08bb8544dcf18ec0d2e1e0e4f3fafdf1bfa62d4c"
+    },
+    {
+      "path": "/workspace/shared/positive_slack_capacity_bound_audit_20261008/AUDIT_REPORT_ZH.txt",
+      "bytes": 7925,
+      "sha256": "0d1e4d414f3cb4b65c5659a11a942da41512a7827c9f5395e83fe8a79ed59edd"
+    }
+  ],
+  "packaging_cpu_seconds": 0.06376040899999999,
+  "packaging_wall_seconds": 0.06384935199457686,
+  "main_run": {
+    "utc": "2026-10-08T04:39:53.511253+00:00",
+    "calls": 72,
+    "process_cpu_seconds": 0.204658955,
+    "process_wall_seconds": 0.20792496998910792,
+    "rusage": [
+      0.186949,
+      0.036482,
+      15232,
+      0,
+      0,
+      0,
+      5069,
+      0,
+      0,
+      0,
+      960,
+      0,
+      0,
+      0,
+      8,
+      6
+    ],
+    "results_sha256": "308dc5d145af3f58f6faedb4197371baa5a86e2ceec33c2dbc310205332301fc",
+    "witness_files_opened": 0,
+    "local_search_calls": 0,
+    "oracle_calls": 0
+  },
+  "toy_run": {
+    "passed": true,
+    "states": 38346,
+    "pruned": 28488,
+    "feasible": 8821,
+    "full_search_checks": 2751,
+    "negative_input_errors_checked": 2,
+    "cpu_seconds": 0.200229019,
+    "wall_seconds": 0.2008291460078908,
+    "limits": {
+      "cpu": 15,
+      "wall": 30
+    },
+    "method": "independent labeled-bin oracle without symmetry or candidate pruning"
+  },
+  "independent_audit_manifest_sha256": "dba8ae1aca862b8c965b1342319c37d57443deea36330bf7a3b8e1d14fad6e22",
+  "archived_to_drive": false,
+  "uploaded_by_worker": false,
+  "api_calls": 0,
+  "main_runs": 1,
+  "followup_search_runs": 0,
+  "zip_integrity": "PASS"
+}

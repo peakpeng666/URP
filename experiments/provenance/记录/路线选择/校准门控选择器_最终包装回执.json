@@ -1,0 +1,16 @@
+{
+  "archive": "/workspace/shared/selector_calibrated_abstention_20261007_DELIVERY.zip",
+  "bytes": 1500156,
+  "sha256": "0f73fd03ca6e1ff0e9097f1c88df2dd806563cb1461d7708e94e4dbd07414a73",
+  "files": 6,
+  "crc_pass": true,
+  "embedded_archives_preserved_byte_for_byte": true,
+  "original_archives_still_same_hash": true,
+  "manifest_sha256": "c7ca1dba1b1b847bf9677812f638049bbfd03bcc5bb53e7eaa8898d15fcf4ff7",
+  "outer_packaging_process_cpu_s_through_final_snapshot": 0.043991006,
+  "outer_packaging_wall_s_through_final_snapshot": 0.040551609999965876,
+  "scope": "This builder only through completed ZIP/CRC/hash verification; excludes its final receipt writing and shell startup/exit. Complete Bash boundary is independent same-basename shell_time.txt. Main experiment and audit costs are separate.",
+  "solver_calls": 0,
+  "uploads": 0,
+  "created_utc": "2026-10-07T15:34:10.584416+00:00"
+}

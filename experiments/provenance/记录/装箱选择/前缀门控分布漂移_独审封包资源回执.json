@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "package": "/workspace/shared/bpp_prefix_gate_drift_audit_20261008.zip",
+  "sha256": "69f3e276d696025d2d311f0befdfc779e8e5a888fcbec32dfb78bfe86256db8d",
+  "bytes": 16475,
+  "members": 7,
+  "CPU_seconds": 0.004454001000000003,
+  "wall_seconds": 0.004453640998690389,
+  "scope": "Audit packaging and verification; excludes interactive inspection and writing"
+}

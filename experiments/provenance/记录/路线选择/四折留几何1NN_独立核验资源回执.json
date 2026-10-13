@@ -1,0 +1,23 @@
+{
+  "zip_path": "/workspace/shared/audit_geometry_selector_20261007_clean.zip",
+  "sha256": "ea8077354670fd0ec8db005f140fccfbe9e8053fc971d0aba8cd23adc36cfd7e",
+  "bytes": 57952,
+  "member_count": 9,
+  "member_whitelist": [
+    "independent_audit.py",
+    "audit_result.json",
+    "recomputed_predictions.json",
+    "source_snapshot.json",
+    "report_zh.txt",
+    "stdout.json",
+    "stderr.log",
+    "time_wrapper_missing.log",
+    "SHA256SUMS.txt"
+  ],
+  "audit_cpu_hard_limit_s": 2,
+  "packaging_cpu_hard_limit_s": 1,
+  "total_hard_cap_s": 3,
+  "audit_plus_packaging_budget_s": 5,
+  "packaging_cpu_s_at_receipt": 0.036121315,
+  "zip_verified": true
+}

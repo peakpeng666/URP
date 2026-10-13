@@ -1,0 +1,319 @@
+{
+  "schema": "A2-independent-result-review-v1",
+  "status": "PASS_A2_RESULTS",
+  "reviewed_at_utc": "2026-10-07T23:54:49.706492+00:00",
+  "source_freeze_sha256": "c94aa760da1f1bc401ed5b564fdbb04c033725167aad5452e428406712bdb5fb",
+  "data_seal_sha256": "faafe3488eef8aa50d703708bee3883c87d19b4669852741f30f3db500d7b496",
+  "analysis_result_sha256": "28ab16d022fc8ab4ce0a9fb3fa8303d94e39bc217ed309f520e7d3d890f2a87f",
+  "raw_terminal_freeze_sha256": "2e758feb39462f81e4987eae5644a91b1ebf1bbbeefce820dbbfbf19e87f18fc",
+  "science_completion_sha256": "10f6a535d766b0ca0218d6fabd6f7b4b5db99f2f9c9091d74b874ab8f4a4bbd8",
+  "data_manifest_sha256": "1d00c9a32ddee2f2164f3739705e9e0ee0511656cf5db2c3467b756e6997ecc7",
+  "authorization_sha256": "fea33a902a3617795832b1443c2d1730d4ffbef0627e48f28f22e4007f48136f",
+  "preactivation_audit_sha256": "8878e39751cfb60f6f632715438f535939f7ccc0631bbf3b270e51c4dab3c0d8",
+  "result_evidence_sha256": "3d4127ec43bd1199baa907964fd5311d147d9b806b46d4741b82c577371e969b",
+  "result_checker_source_sha256": "3941622b35983ee4ed3def82df818d67c4ba25ae2965b4d70a5ba1258f57a331",
+  "scientific_packs": 18,
+  "independent_sequences": 6,
+  "items_per_sequence": 5000,
+  "capacity": 100,
+  "assignment_steps_independently_replayed": 90000,
+  "claims_with_three_toys_and_analysis": 22,
+  "raw_preanalysis_terminals": 21,
+  "failures": 0,
+  "unknown": 0,
+  "retries": 0,
+  "passed_checks": [
+    "All67 frozen study/runtime/source-evidence files remain exact. Data manifest/seal, authorizing root activation, exact prior PASS hash and analysis source/result bindings remain intact.",
+    "Exactly18 fixed scientific actions and one analysis completed after three preflight toys;22 claims/results/outer observations,21 raw sealed terminals before analysis. No unexpected action, retry, HALT, unknown, or missing result.",
+    "Every saved5000-item assignment independently replayed as exact integers: all indices valid, online placements feasible, capacity respected, final remaining arrays equal, item mass conserved, used-bin counts and assignment hashes match original checker_status=passed. No candidate or solver ran during this audit.",
+    "All18 exact source/input/method/sequence identities and A2 claim_id/instance/0 execution IDs agree across report, worker and supervisor. Admitted canonical_text equals each method toy, source sent after host gate,5000 worker steps complete, all workers/supervisors/drivers and outer descendants reaped.",
+    "Per-sequence lower bounds, F fractions, each exact paired difference and six-sequence mean, bin differences, total savings, wins/ties/losses, coverage and all saved mechanism proxies independently reproduce exactly.",
+    "Frozen PCG64(20261008) paired sequence bootstrap,20000 resamples, shared primary/secondary indices and linear95% percentile intervals independently reproduce exactly. Intervals remain descriptive, not a confirmatory significance or SOTA claim.",
+    "Raw immutable terminal hashes were bound into the analysis claim before analysis. Full6 null-unless-all-six semantics and no-imputation were reviewed statically; all six primary and secondary pairs actually completed.",
+    "Every scientific pack is within125CPU/93wall reservation; analysis within its60wall reservation. Complete outer wait4 CPU is summed once, nested CPU not re-added; dispatcher child sum reconciles with outer records and full shell exit receipt.",
+    "Permanent consumed claims plus named static/dispatcher/shared-audit allowances reconcile to2727CPU/2123active-wall reserved under2800/2200. No A1/C1 budget used and no provider calls introduced."
+  ],
+  "method_totals": {
+    "EOH_original": {
+      "bins": 12202,
+      "mean_F": {
+        "numerator": 486496319886686501,
+        "denominator": 491245303384757844,
+        "decimal": 0.9903327655952127
+      },
+      "mechanism_totals": {
+        "r1_placements": 0,
+        "final_r1_bins": 0,
+        "final_capacity_r11_45": 11160,
+        "full_bins": 11743,
+        "voluntary_openings": 6559,
+        "forced_openings": 5643
+      }
+    },
+    "EOH_nearfit_one": {
+      "bins": 12180,
+      "mean_F": {
+        "numerator": 296691678953037397,
+        "denominator": 299047177673240724,
+        "decimal": 0.9921233206795982
+      },
+      "mechanism_totals": {
+        "r1_placements": 4241,
+        "final_r1_bins": 4240,
+        "final_capacity_r11_45": 4710,
+        "full_bins": 7732,
+        "voluntary_openings": 6259,
+        "forced_openings": 5921
+      }
+    },
+    "published_EoH": {
+      "bins": 12176,
+      "mean_F": {
+        "numerator": 70727004375727547,
+        "denominator": 71265271989055890,
+        "decimal": 0.992446985771541
+      },
+      "mechanism_totals": {
+        "r1_placements": 4462,
+        "final_r1_bins": 4462,
+        "final_capacity_r11_45": 3539,
+        "full_bins": 7551,
+        "voluntary_openings": 8441,
+        "forced_openings": 3735
+      }
+    }
+  },
+  "contrasts": {
+    "EOH_nearfit_one_minus_EOH_original": {
+      "mean_paired_F_difference": {
+        "numerator": 1200975365650964982837690056,
+        "denominator": 670727963704647535380416801169,
+        "decimal": 0.001790555084385612
+      },
+      "paired_F_differences": [
+        {
+          "numerator": 4040,
+          "denominator": 4169763,
+          "decimal": 0.000968880005890023
+        },
+        {
+          "numerator": 503,
+          "denominator": 343239,
+          "decimal": 0.00146545118707373
+        },
+        {
+          "numerator": 2015,
+          "denominator": 2070612,
+          "decimal": 0.0009731422400720174
+        },
+        {
+          "numerator": 1685,
+          "denominator": 693259,
+          "decimal": 0.0024305490444408223
+        },
+        {
+          "numerator": 1003,
+          "denominator": 680403,
+          "decimal": 0.0014741263633464285
+        },
+        {
+          "numerator": 14063,
+          "denominator": 4098588,
+          "decimal": 0.003431181665490652
+        }
+      ],
+      "paired_bins_patch_minus_comparator": [
+        -2,
+        -3,
+        -2,
+        -5,
+        -3,
+        -7
+      ],
+      "total_bin_savings": 22,
+      "wins_ties_losses": [
+        6,
+        0,
+        0
+      ],
+      "descriptive_95_percentile_bootstrap": [
+        0.0011380058307391572,
+        0.0025285604407218705
+      ],
+      "resamples": 20000,
+      "analysis_seed": 20261008,
+      "bootstrap_only_descriptive": true
+    },
+    "EOH_nearfit_one_minus_published_EoH": {
+      "mean_paired_F_difference": {
+        "numerator": -29914804659213444307,
+        "denominator": 92425180854868945459740,
+        "decimal": -0.00032366509194271744
+      },
+      "paired_F_differences": [
+        {
+          "numerator": -4040,
+          "denominator": 4161599,
+          "decimal": -0.0009707807023213913
+        },
+        {
+          "numerator": 503,
+          "denominator": 1028703,
+          "decimal": 0.0004889652309753155
+        },
+        {
+          "numerator": -403,
+          "denominator": 206451,
+          "decimal": -0.0019520370451099776
+        },
+        {
+          "numerator": 0,
+          "denominator": 1,
+          "decimal": 0.0
+        },
+        {
+          "numerator": 1003,
+          "denominator": 2039190,
+          "decimal": 0.0004918619647997489
+        },
+        {
+          "numerator": 0,
+          "denominator": 1,
+          "decimal": 0.0
+        }
+      ],
+      "paired_bins_patch_minus_comparator": [
+        2,
+        -1,
+        4,
+        0,
+        -1,
+        0
+      ],
+      "total_bin_savings": -4,
+      "wins_ties_losses": [
+        2,
+        2,
+        2
+      ],
+      "descriptive_95_percentile_bootstrap": [
+        -0.0010563211011126682,
+        0.00032645960962094923
+      ],
+      "resamples": 20000,
+      "analysis_seed": 20261008,
+      "bootstrap_only_descriptive": true
+    }
+  },
+  "concise_result": {
+    "bins_original": 12202,
+    "bins_patch": 12180,
+    "bins_published": 12176,
+    "primary_patch_minus_original_bins": [
+      -2,
+      -3,
+      -2,
+      -5,
+      -3,
+      -7
+    ],
+    "primary_total_bins_saved": 22,
+    "primary_wins_ties_losses": [
+      6,
+      0,
+      0
+    ],
+    "primary_mean_F_gain": 0.001790555084385612,
+    "primary_descriptive_95_percent_interval": [
+      0.0011380058307391572,
+      0.0025285604407218705
+    ],
+    "secondary_patch_minus_published_bins": [
+      2,
+      -1,
+      4,
+      0,
+      -1,
+      0
+    ],
+    "secondary_extra_patch_bins": 4,
+    "secondary_wins_ties_losses": [
+      2,
+      2,
+      2
+    ],
+    "secondary_mean_F_difference": -0.00032366509194271744,
+    "secondary_descriptive_95_percent_interval": [
+      -0.0010563211011126682,
+      0.00032645960962094923
+    ],
+    "interpretation": "The fixed0.5 near-fit patch used fewer bins than original EOH on all six new5000-item sequences. It did not beat the public reference in aggregate. This supports a narrow small-sample length-scale replication of the original-comparator benefit; no general superiority, confirmatory significance or SOTA conclusion."
+  },
+  "mechanism_interpretation": "Patch r1 placements4241 versus original0; final capacity at residual11..45 falls11160 to4710; full bins fall11743 to7732 while total used bins fall22. Thus full-bin count alone is not a valid optimization objective here. These saved-assignment proxies are descriptive; they do not separately establish causal mediation.",
+  "resource_accounting": {
+    "new_A2_cap": {
+      "CPU": 2800,
+      "active_wall": 2200
+    },
+    "fixed_total_reservation": {
+      "CPU": 2727,
+      "active_wall": 2123
+    },
+    "reservation_margin": {
+      "CPU": 73,
+      "active_wall": 77
+    },
+    "core_execution_full_shell_receipts": {
+      "setup_time_receipt.txt": {
+        "wall_seconds": 0.052,
+        "user_CPU_seconds": 0.048,
+        "system_CPU_seconds": 0.004
+      },
+      "prepare_time_receipt.txt": {
+        "wall_seconds": 1.637,
+        "user_CPU_seconds": 1.283,
+        "system_CPU_seconds": 0.358
+      },
+      "generation_time_receipt.txt": {
+        "wall_seconds": 0.086,
+        "user_CPU_seconds": 0.082,
+        "system_CPU_seconds": 0.004
+      },
+      "science_time_receipt.txt": {
+        "wall_seconds": 808.175,
+        "user_CPU_seconds": 789.568,
+        "system_CPU_seconds": 12.228
+      }
+    },
+    "measured_core_execution_CPU_seconds": 803.5749999999999,
+    "measured_core_execution_wall_seconds": 809.9499999999999,
+    "science_guard_trees_CPU_counted_once": 801.714175,
+    "result_check_complete_shell_receipt": {
+      "wall_seconds": 0.211,
+      "user_CPU_seconds": 0.189,
+      "system_CPU_seconds": 0.021
+    },
+    "shared_preflight_plus_result_audit_reservation": {
+      "CPU": 30,
+      "active_wall": 30,
+      "includes_stopped_parallel_auditor": true
+    },
+    "cost_limit_note": "Measured core execution totals exclude individually unmetered short author/auditor control-plane commands; those retain conservative named reservations, not zero. All reservations remain2727CPU/2123activewall within2800/2200. Audit uses original30/30 only.",
+    "timing_caveat": "Concurrent host video synthesis was disclosed in root authorization. Report time as task resource consumption only; no exclusive-host or algorithm runtime-speed comparison is made."
+  },
+  "limits": [
+    "Six independent sequences at one prespecified distribution and horizon; results do not establish broad generalization or full SOTA.",
+    "Public-formula contrast is secondary; patch uses four more bins overall and its descriptive interval spans zero.",
+    "Missing-result semantics were inspected statically because there were no missing scientific outputs.",
+    "All replay was on saved assignments and metrics; no original candidate, solver or study analysis source was executed by auditor.",
+    "This review covers frozen experiment and analysis artifacts. Delivery packaging produced afterward is not automatically covered by this result review."
+  ],
+  "reviewer_actions": {
+    "candidate_execution": false,
+    "solver_execution": false,
+    "study_analysis_source_execution": false,
+    "study_directory_modified": false,
+    "old_A1_C1_files_modified": false,
+    "external_API_calls": 0
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "exit_code": 0,
+  "reaped": true,
+  "complete_packaging_tree_wait4_CPU": 0.08118399999999999,
+  "wall_seconds": 0.08136408998689149,
+  "peak_RSS_kib": 12576,
+  "charged_to": "existing22CPU/60wall forward preparation/control allocation; no cap expansion",
+  "exact_all_in_CPU_claimed": false
+}

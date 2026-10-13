@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-07T14:20:54.969069+00:00",
+  "final_package_path": "/workspace/shared/solver_repeatability_20261007_FINAL.zip",
+  "final_package_sha256": "301304522f9f3da3631f789229287b9ce86bbd88efc22bd0ee1a94808e57ff82",
+  "final_package_bytes": 714611,
+  "final_file_count": 34,
+  "final_crc_test_passed": true,
+  "embedded_original_sha256": "9b8c67e638ae376f86f3e0c96394ff1088a7990e75a5c3229873b0db441c9f4e",
+  "embedded_original_bytes": 589457,
+  "embedded_original_crc_test_passed": true,
+  "embedded_original_byte_identical": true,
+  "author_72_files_unchanged": true,
+  "audit_all_files_unchanged": true,
+  "audit_file_count": 26,
+  "delivery_path": "/workspace/shared/solver_repeatability_20261007_FINAL_delivery_zh.txt",
+  "delivery_sha256": "d0e9ab61ee03ad0a1545eb1f1c0b8c13872f37b29bfbd6bcb0ed3748cf5256a1",
+  "final_wrapping_cpu_s": 0.11916254400000001,
+  "final_wrapping_wall_s": 0.1193176559972926,
+  "resource_scope": "Final wrapper process through final ZIP CRC/hash/source-immutability verification,before receipt write/stdout/interpreter exit. Complete-process bash time is sibling FINAL_packaging_time.txt. Separate from main37.720 CPU and180CPU hardlimit,original wrapping0.234866379CPU,and audits1.131CPU. Source authoring/read-only inspection outside this measured wrapper.",
+  "solver_calls": 0,
+  "uploads": 0
+}

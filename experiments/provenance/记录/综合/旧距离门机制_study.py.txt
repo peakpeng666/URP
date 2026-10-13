@@ -1,0 +1,267 @@
+"""Single prospective mechanism run. No imports before the sole 180s CPU limit."""
+import resource
+resource.setrlimit(resource.RLIMIT_CPU,(180,180))
+import os
+os.environ['OMP_NUM_THREADS']='1';os.environ['OPENBLAS_NUM_THREADS']='1';os.environ['PYTHONDONTWRITEBYTECODE']='1'
+import sys,json,time,math,hashlib,random,statistics,collections,shutil,traceback,platform,importlib.metadata
+from pathlib import Path
+from datetime import datetime,timezone
+from decimal import Decimal,localcontext,ROUND_HALF_UP
+import core,checker,selector,source_generator,mechanism
+P=Path(__file__).resolve().parent.parent
+OLD=Path('/workspace/shared/selector_calibrated_abstention_20261007')
+CP0=time.process_time();T0=time.perf_counter();SEQ=0;METERS={};SQRT={};RESULTS=[]
+FEATURES=selector.PRIMARY+selector.SPATIAL
+STRATEGIES=dict(zip(selector.CONFIGS,['PARALLEL_CHEAPEST_INSERTION','PATH_CHEAPEST_ARC','SAVINGS']))
+
+def now():return datetime.now(timezone.utc).isoformat()
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def read(p):return json.loads(p.read_text())
+def write(rel,z):
+    p=P/rel
+    with p.open('w') as f:json.dump(z,f,ensure_ascii=False,indent=2,allow_nan=False);f.write('\n');f.flush();os.fsync(f.fileno())
+def append(rel,z):
+    with (P/rel).open('a') as f:f.write(json.dumps(z,ensure_ascii=False,allow_nan=False)+'\n');f.flush();os.fsync(f.fileno())
+def event(kind,**kw):
+    global SEQ
+    z={'sequence':SEQ,'utc':now(),'monotonic_ns':time.monotonic_ns(),'cpu_s':time.process_time(),'event':kind,**kw};SEQ+=1;append('raw/events.jsonl',z);return z
+
+def timed(name,fn):
+    c=time.process_time();t=time.perf_counter();ret=fn();METERS[name]={'cpu_s':time.process_time()-c,'wall_s':time.perf_counter()-t};return ret
+
+def data(path):
+    z=checker.read_original(path)
+    return {'id':path.stem,'vehicles':z['fleet'],'capacity':z['capacity'],'nodes':[dict(zip(['id','x','y','demand','ready','due','service'],[i]+z['nodes'][i])) for i in sorted(z['nodes'])]}
+
+def audit(path,r):
+    c=time.process_time();t=time.perf_counter();a=None
+    if r.get('assignment_returned'):
+        d=checker.read_original(path);a=checker.check(d,r['routes']);obj=0;arcs=0
+        if a['valid']:
+            for route in r['routes']:
+                ns=route['nodes'] if isinstance(route,dict) else route
+                for u,v in zip(ns,ns[1:]):
+                    x,y=d['nodes'][u],d['nodes'][v];s=(x[0]-y[0])**2+(x[1]-y[1])**2
+                    if s not in SQRT:
+                        with localcontext() as ctx:ctx.prec=50;SQRT[s]=int((Decimal(s).sqrt()*core.SCALE).to_integral_value(rounding=ROUND_HALF_UP))
+                    obj+=SQRT[s];arcs+=1
+            err=abs(obj/core.SCALE-a['distance']);bound=arcs*.5/core.SCALE+1e-9
+            a.update(independent_objective_integer=obj,reported_objective_integer=r['objective_integer'],rounding_error=err,rounding_bound=bound)
+            if obj!=r['objective_integer']:a['errors'].append('integer objective mismatch')
+            if err>bound:a['errors'].append('rounding bound exceeded')
+            a['valid']=not a['errors']
+        r['outcome']='SUCCESS' if a['valid'] else 'FAIL_CHECKER'
+        r['check_summary']={k:v for k,v in a.items() if k!='route_audits'}
+    r['check_cpu_s']=time.process_time()-c;r['check_wall_s']=time.perf_counter()-t
+    return a
+
+def prepare_train():
+    ids=read(OLD/'train/ids.json');assert len(ids)==80 and len({n.split('_')[0] for n in ids})==40
+    model=read(OLD/'train/frozen_model.json');assert sha(OLD/'train/frozen_model.json')=='0e02905ba6b1c0a529a4dad060c4ff0f399709ec8ff2dfec9d80fd31ad39d900'
+    provenance=[];features={}
+    for n in ids:
+        src=OLD/'train/inputs'/f'{n}.txt';dst=P/'train/inputs'/src.name;shutil.copyfile(src,dst)
+        features[n]=source_generator.features(data(dst));assert features[n]==read(OLD/'train/features.json')[n]
+        provenance.append({'source':str(src),'local':str(dst.relative_to(P)),'sha256':sha(dst)})
+    for f in FEATURES:
+        values=[features[n][f] for n in sorted(features)]
+        assert statistics.mean(values)==model['feature_means'][f]
+        assert (statistics.pstdev(values) or 1.)==model['feature_scales'][f]
+    shutil.copyfile(OLD/'train/frozen_model.json',P/'train/frozen_model.json');shutil.copyfile(OLD/'train/raw_labels.jsonl',P/'train/raw_labels.jsonl')
+    raw=[json.loads(s) for s in (P/'train/raw_labels.jsonl').read_text().splitlines()];assert len(raw)==240
+    assert {(r['instance'],r['config_id']) for r in raw}=={(n,c) for n in ids for c in selector.CONFIGS}
+    outcomes={};checks=[]
+    for r in raw:
+        assert r['budget_ms']==250 and r['phase']=='train'
+        before=r['outcome'];distance=r.get('check_summary',{}).get('distance')
+        a=audit(P/'train/inputs'/f"{r['instance']}.txt",r)
+        assert r['outcome']==before
+        if before=='SUCCESS':assert abs(r['check_summary']['distance']-distance)<1e-9
+        outcomes[r['instance'],r['config_id']]={'valid':r['outcome']=='SUCCESS','distance':distance if before=='SUCCESS' else None}
+        checks.append({'run_id':r['run_id'],'outcome':r['outcome'],'independent_check_valid':None if a is None else a['valid']})
+    write('train/ids.json',ids);write('train/features.json',features);write('evidence/train_recheck.json',checks);write('evidence/train_provenance.json',provenance)
+    write('evidence/historical_costs.json',{'training_calls':240,'new_training_calls':0,'historical_nominal_search_wall_s':60,'historical_search_cpu_s':sum(r['solve_cpu_s'] for r in raw),'current_training_preparation_separately_metered':True})
+    return model,outcomes
+
+def predict(model,f,outcomes):
+    p=selector.predict(model,[f[k] for k in FEATURES]);assert p['neighbor'] is not None
+    n=p['neighbor'];c=p['selected_config'];margin=None
+    if outcomes[n,'pci250']['valid'] and outcomes[n,c]['valid']:
+        margin=(outcomes[n,'pci250']['distance']-outcomes[n,c]['distance'])/outcomes[n,'pci250']['distance']
+    terms={key:((f[key]-model['feature_means'][key])/model['feature_scales'][key]-model['vectors'][n][i])**2 for i,key in enumerate(FEATURES)}
+    assert abs(sum(terms.values())-p['neighbor_squared_distance'])<1e-10
+    window=terms['mean_window_width_over_depot_duration'];distance=math.sqrt(p['neighbor_squared_distance'])
+    return {**p,'neighbor_margin':margin,'standardized_distance':distance,'squared_distance_contributions':terms,'distance_without_window':math.sqrt(max(0,p['neighbor_squared_distance']-window))}
+
+def prepare():
+    assert not (P/'raw/events.jsonl').exists() and not (P/'protocol/freeze.json').exists(),'NO_RERUN'
+    event('start',prereg_sha256=sha(P/'protocol/preregistration_zh.txt'))
+    assert importlib.metadata.version('ortools')=='9.14.6206'
+    write('evidence/environment.json',{'executable':sys.executable,'python':sys.version,'platform':platform.platform(),'ortools':importlib.metadata.version('ortools'),'cpu_hard_limit':resource.getrlimit(resource.RLIMIT_CPU),'no_install':True})
+    write('evidence/checker_tests.json',{'checker':checker.tests(),'mechanism':mechanism.selftest()})
+    model,outcomes=timed('training_preparation',prepare_train)
+    records,geometries,base=timed('generation',lambda:mechanism.generate(source_generator))
+    write('protocol/geometries.json',geometries);write('protocol/base_groups.json',base)
+    oldhash=set();oldseed=set();prior=[]
+    for name in ['diverse_geometry_selection_20261007','selector_calibrated_abstention_20261007','selector_budgeted_recovery_20261007','selector_budget_split_20261007','solver_repeatability_20261007']:
+        path=Path('/workspace/shared')/name/'protocol/geometries.json';gs=read(path)
+        oldhash.update(g['geometry_sha256'] for g in gs);oldseed.update(g['seed'] for g in gs)
+        prior.append({'path':str(path),'sha256':sha(path),'geometries':len(gs),'geometry_hashes':[g['geometry_sha256'] for g in gs],'seeds':[g['seed'] for g in gs]})
+    # Solomon transfer geometry identities use their archive's own canonical hash; no input/outcome read.
+    path=Path('/workspace/shared/frozen_selector_transfer_20261007/raw/target_metadata.json')
+    z=read(path);oldhash.update(v['geometry_sha256'] for v in z.values())
+    write('evidence/old_solomon_geometry_metadata.json',{'source':str(path),'sha256':sha(path),'geometry_hashes':sorted({v['geometry_sha256'] for v in z.values()}),'used_for':'hash overlap only; no outcomes'})
+    assert len(records)==96 and len(geometries)==48 and len({g['geometry_sha256'] for g in geometries})==48
+    assert not oldhash & {g['geometry_sha256'] for g in geometries}
+    assert not oldseed & {g['seed'] for g in geometries}
+    # Uniform D0/D1 intentionally share customer coordinates; no sharing across independent groups.
+    seen={}
+    for g in geometries:
+        h=g['customer_coordinates_sha256'];assert h not in seen or seen[h]==g['base_group'];seen[h]=g['base_group']
+    write('evidence/old_geometry_reference.json',prior)
+    predictions=[];witnesses=[];manifest=[];features={};fc=pc=fw=pw=0.;data_by={}
+    for d in records:
+        path=P/'inputs'/f"{d['id']}.txt";path.write_text(source_generator.as_text(d));clean=data(path);data_by[d['id']]=clean
+        a=checker.check(checker.read_original(path),d['witness_routes']);witnesses.append({'instance':d['id'],'routes':d['witness_routes'],**a})
+        assert a['valid'],('WITNESS_INVALID_ABORT',d['id'],a['errors'])
+        c=time.process_time();t=time.perf_counter();f=source_generator.features(clean);fc+=time.process_time()-c;fw+=time.perf_counter()-t;features[d['id']]=f
+        c=time.process_time();t=time.perf_counter();pred=predict(model,f,outcomes);fixed,candidates=mechanism.policies(pred);pc+=time.process_time()-c;pw+=time.perf_counter()-t
+        if d['width']==20:assert pred['standardized_distance']>=2/3-1e-12 and fixed['G0']['config']=='pci250'
+        z={k:d[k] for k in ['base_group','geometry_id','geometry_sha256','family','seed','split','variant','width']}
+        predictions.append({'instance':d['id'],**z,'prediction':pred,'fixed':fixed,'candidates':candidates})
+        manifest.append({'instance':d['id'],**z,'sha256':sha(path)})
+    for gid in base:
+        rows=[d for d in records if d['base_group']==gid];assert len(rows)==4 and len({d['split'] for d in rows})==1
+        assert all([n['demand'] for n in d['nodes'][1:]]==base[gid]['demands'] and d['witness_routes']==base[gid]['routes'] for d in rows)
+        for variant in ['D0','D1']:
+            rr=sorted([d for d in rows if d['variant']==variant],key=lambda d:d['width'])
+            assert all(a['x']==b['x'] and a['y']==b['y'] and b['ready']<=a['ready']<=a['due']<=b['due'] for a,b in zip(rr[0]['nodes'],rr[1]['nodes']))
+    write('protocol/features.json',features);write('protocol/predictions_sealed.json',predictions);write('protocol/input_manifest.json',manifest);write('evidence/witness_checks.json',witnesses)
+    write('evidence/feature_prediction_cost.json',{'features_cpu_s':fc,'features_wall_s':fw,'prediction_cpu_s':pc,'prediction_wall_s':pw,'instances':96,'physically_once_per_instance':True,'clock':'time.process_time and perf_counter; zero values are timer resolution limitations'})
+    reqs=mechanism.schedule(predictions);assert len(reqs)==576 and len({r['run_id'] for r in reqs})==576
+    assert collections.Counter(r['phase'] for r in reqs)=={'C':192,'E':384}
+    balance=collections.Counter((r['phase'],r['family'],r['variant'],r['width'],r['repeat'],r['slot'],r['position']) for r in reqs)
+    assert all(v==(2 if key[0]=='C' else 4) for key,v in balance.items())
+    write('evidence/order_balance.json',[{'stratum':list(k),'count':v} for k,v in balance.items()]);write('protocol/requests.json',reqs)
+    from ortools.constraint_solver import pywrapcp
+    for cfg in selector.CONFIGS:
+        src=OLD/'protocol'/f'parameters_{cfg}.textproto';shutil.copyfile(src,P/'protocol'/src.name)
+        pars=core.params(250,STRATEGIES[cfg]);assert str(pars)==src.read_text();assert not pywrapcp.FindErrorInRoutingSearchParameters(pars)
+    write('protocol/design.json',{'study':'DISTANCE_GATE_MECHANISM_V1','status':'approved_before_execution','preregistration_sha256':sha(P/'protocol/preregistration_zh.txt'),'base_groups':24,'calibration_groups':8,'test_groups':16,'variants_per_group':4,'repeats':3,'request_slots':2,'solver_calls':576,'nominal_search_wall_cap_s':144,'main_cpu_hard_limit_s':180,'rules':mechanism.RULES,'global_possible_configs':selector.CONFIGS,'existing_model_no_fit':True,'runtime_receipts_excluded_from_scientific_freeze':True})
+    files=[p for folder in ['source','inputs','train','protocol','evidence'] for p in (P/folder).rglob('*') if p.is_file() and '__pycache__' not in str(p) and p.name!='freeze.json']
+    freeze={'utc':now(),'sha256':{str(p.relative_to(P)):sha(p) for p in sorted(files)},'solver_calls_before_seal':0,'runtime_excluded':True};write('protocol/freeze.json',freeze)
+    event('scientific_freeze',sha256=sha(P/'protocol/freeze.json'),file_count=len(files))
+    print('PREPARED',json.dumps({'cases':96,'calls':576,'config_counts':dict(collections.Counter(p['prediction']['selected_config'] for p in predictions)),'cpu_s':time.process_time()},ensure_ascii=False),flush=True)
+    return data_by,predictions,reqs
+
+def host(req):
+    z={'run_id':req['run_id'],'utc':now(),'loadavg':Path('/proc/loadavg').read_text().strip(),'proc_stat_first_lines':Path('/proc/stat').read_text().splitlines()[:3]}
+    proc=[]
+    for p in Path('/proc').iterdir():
+        if p.name.isdigit():
+            try:proc.append({'pid':int(p.name),'stat':(p/'stat').read_text().strip()})
+            except (OSError,PermissionError):pass
+    z['visible_process_stats']=proc
+    append('runtime/host_snapshots.jsonl',z)
+
+def execute(reqs,data_by):
+    for req in reqs:
+        event('request_start',run_id=req['run_id'],phase=req['phase'],config=req['config_id']);host(req);c=time.process_time();t=time.perf_counter()
+        try:r=core.solve(data_by[req['instance']],req)
+        except Exception as exc:r={**req,'assignment_returned':False,'outcome':'EXCEPTION','exception_type':type(exc).__name__,'exception':str(exc),'traceback':traceback.format_exc()}
+        a=audit(P/'inputs'/f"{req['instance']}.txt",r)
+        r['request_cpu_s']=time.process_time()-c;r['request_wall_s']=time.perf_counter()-t
+        append('raw/results.jsonl',r)
+        if a:append('raw/continuous_checks.jsonl',{'run_id':r['run_id'],**a})
+        RESULTS.append(r);event('request_done',run_id=r['run_id'],phase=r['phase'],outcome=r['outcome'])
+        if r['outcome']=='FAIL_CHECKER':raise RuntimeError('CHECKER_MISMATCH_ABORT: '+r['run_id'])
+        if len(RESULTS)%48==0:print('PROGRESS',len(RESULTS),'CPU',round(time.process_time(),3),flush=True)
+
+def rows_for(preds,results,method,rule=None):
+    by={(r['instance'],r['repeat'],r['slot']):r for r in results};rows=[]
+    for p in preds:
+        gate=p['candidates'][rule] if rule is not None else p['fixed'][method]
+        for rep in range(3):
+            b=by[p['instance'],rep,'A'];r=b if gate['config']=='pci250' else by[p['instance'],rep,'B']
+            assert r['config_id']==gate['config'];v=r['outcome']=='SUCCESS';bv=b['outcome']=='SUCCESS'
+            q=(b['check_summary']['distance']-r['check_summary']['distance'])/b['check_summary']['distance'] if v and bv else None
+            rows.append({'instance':p['instance'],'base_group':p['base_group'],'family':p['family'],'variant':p['variant'],'width':p['width'],'repeat':rep,'config':gate['config'],'valid':v,'pci_valid':bv,'gain':q,'run_id':r['run_id'],'pci_run_id':b['run_id'],'distance':r['check_summary']['distance'] if v else None,'pci_distance':b['check_summary']['distance'] if bv else None,'selected_request_cpu_s':r['request_cpu_s']})
+    return rows
+
+def calibrate(preds):
+    cp=[p for p in preds if p['split']=='C'];results=[r for r in RESULTS if r['phase']=='C'];records=[]
+    for rule in mechanism.RULES:
+        rows=rows_for(cp,results,'GC',rule['id']);records.append({'rule':rule,'summary':mechanism.summarize(rows),'rows':rows})
+    chosen=mechanism.choose(records);write('reports/calibration_candidates.json',records)
+    selection={'rule':chosen['rule'],'summary':chosen['summary'],'selected_by':'C only; preregistered radius eligibility/ties; no test costs observed','selection_optimistic':True};write('protocol/calibration_selection.json',selection)
+    decisions=[{'instance':p['instance'],'base_group':p['base_group'],'decision':p['candidates'][chosen['rule']['id']]} for p in preds if p['split']=='E'];write('protocol/test_gc_decisions.json',decisions)
+    write('protocol/calibration_seal.json',{'utc':now(),'test_calls_before_seal':0,'sha256':{r:sha(P/r) for r in ['reports/calibration_candidates.json','protocol/calibration_selection.json','protocol/test_gc_decisions.json']}})
+    event('calibration_sealed',selected_rule=chosen['rule'],sha256=sha(P/'protocol/calibration_seal.json'));print('CALIBRATED',json.dumps(selection,ensure_ascii=False),flush=True)
+    return chosen['rule']['id']
+
+def percentile(v,p):
+    v=sorted(v);x=(len(v)-1)*p;i=int(x);return v[i] if i==len(v)-1 else v[i]*(i+1-x)+v[i+1]*(x-i)
+
+def bootstrap(rows):
+    by=collections.defaultdict(list);family={}
+    for r in rows:by[r['base_group']].append(r);family[r['base_group']]=r['family']
+    strata=[[g for g in sorted(by) if family[g]==f] for f in mechanism.FAMILIES];s=mechanism.summarize(rows)
+    gd={g:statistics.mean([int(r['valid'])-int(r['pci_valid']) for r in rr]) for g,rr in by.items()};gq=s['group_conditional_gain'];rng=random.Random(202610079902);cs=[];qs=[]
+    for _ in range(5000):
+        draw=[rng.choice(st) for st in strata for i in range(len(st))];cs.append(statistics.mean(gd[g] for g in draw))
+        if s['full_pci_success_quality_defined']:qs.append(statistics.mean(gq[g] for g in draw))
+    return {'n_base_groups':len(by),'stratified_by':['uniform','elongated'],'resamples':5000,'coverage_difference_95pct':[percentile(cs,.025),percentile(cs,.975)],'full_quality_gain_95pct':None if not qs else [percentile(qs,.025),percentile(qs,.975)],'interpretation':'descriptive small-sample intervals only; no safety or population significance guarantee'}
+
+def report(preds,chosen):
+    ep=[p for p in preds if p['split']=='E'];results=[r for r in RESULTS if r['phase']=='E'];allrows={m:rows_for(ep,results,m,chosen if m=='GC' else None) for m in ['B','G0','GW','GM','GC','RAW']};summaries={m:mechanism.summarize(rr) for m,rr in allrows.items()}
+    write('reports/test_policy_rows.json',allrows);write('reports/summary.json',summaries)
+    overhead=read(P/'evidence/feature_prediction_cost.json');average_overhead=(overhead['features_cpu_s']+overhead['prediction_cpu_s'])/96
+    write('reports/offline_policy_cost_accounting.json',{m:{'selected_observed_request_cpu_s':sum(r['selected_request_cpu_s'] for r in rr),'estimated_recommendation_cpu_s':0. if m=='B' else len(rr)*average_overhead,'physical_execution':'shared result slots; these policy charges must not be summed as real processCPU','deployment_budget_ms':250,'overhead_estimator':'mean over all96 precomputed features/predictions, charged for each replayed invocation; not independent deployment measurement'} for m,rr in allrows.items()})
+    print('CORE_RESULT',json.dumps({'chosen_rule':chosen,'summaries':summaries},ensure_ascii=False),flush=True)
+    bs=bootstrap(allrows['GC']);write('reports/primary_bootstrap.json',bs)
+    cells={m:{f'{d}_w{w}':mechanism.summarize([r for r in rr if r['variant']==d and r['width']==w]) for d in ['D0','D1'] for w in [20,60]} for m,rr in allrows.items()};write('reports/cells.json',cells)
+    families={m:{f:mechanism.summarize([r for r in rr if r['family']==f]) for f in mechanism.FAMILIES} for m,rr in allrows.items()};write('reports/families.json',families)
+    groups={m:{g:mechanism.summarize([r for r in rr if r['base_group']==g]) for g in sorted({p['base_group'] for p in ep})} for m,rr in allrows.items()};write('reports/base_groups.json',groups)
+    mech=[]
+    for gid in sorted({p['base_group'] for p in ep}):
+        rr=[p for p in ep if p['base_group']==gid];by={(p['variant'],p['width']):p for p in rr};out={'base_group':gid,'family':rr[0]['family']}
+        for m in ['G0','GW','GM','GC','RAW']:
+            acc={k:float((p['candidates'][chosen] if m=='GC' else p['fixed'][m])['config']!='pci250') for k,p in by.items()}
+            out[m]={'cell_adoption':{f'{d}_w{w}':v for (d,w),v in acc.items()},'D1_minus_D0':sum(acc['D1',w]-acc['D0',w] for w in [20,60])/2,'w20_minus_w60':sum(acc[d,20]-acc[d,60] for d in ['D0','D1'])/2,'difference_in_differences':(acc['D1',20]-acc['D0',20])-(acc['D1',60]-acc['D0',60])}
+        out['mean_GW_minus_G0']=sum(out['GW']['cell_adoption'][k]-out['G0']['cell_adoption'][k] for k in out['GW']['cell_adoption'])/4;mech.append(out)
+    write('reports/paired_mechanisms.json',mech)
+    noise=[]
+    for p in ep:
+        rr=[r for r in results if r['instance']==p['instance']];z={'instance':p['instance'],'base_group':p['base_group'],'raw_config':p['prediction']['selected_config'],'slots':{}}
+        for slot in ['A','B']:
+            obs=[r for r in rr if r['slot']==slot];ds=[r['check_summary']['distance'] for r in obs if r['outcome']=='SUCCESS'];z['slots'][slot]={'successes':len(ds),'repeats':3,'distance_range':max(ds)-min(ds) if ds else None,'distance_sd':statistics.pstdev(ds) if ds else None,'outcomes':[r['outcome'] for r in obs],'request_cpu_s':[r['request_cpu_s'] for r in obs]}
+        noise.append(z)
+    write('reports/repeatability.json',noise);write('reports/all_failures.json',[r for r in RESULTS if r['outcome']!='SUCCESS'])
+    primary=summaries['GC'];positive=primary['extra_failure_count']==0 and len(primary['nonpci_adoption_groups'])>=4 and primary['full_pci_success_equal_group_gain'] is not None and primary['full_pci_success_equal_group_gain']>0 and bs['full_quality_gain_95pct'][0]>0
+    write('reports/conclusion.json',{'chosen_radius_rule':chosen,'positive_research_signal':positive,'no_safety_guarantee':True,'mechanism_support_groups':len(primary['nonpci_adoption_groups']),'primary_quality_defined':primary['full_pci_success_quality_defined'],'old_test_data_not_reused_for_scoring':True})
+    lines=['距离门机制实验：预注册v1执行报告','24个新独立基础geometry：8校准、16测试。每组D0/D1×w20/w60，组内3重复不当独立样本。',f'校准选中：{chosen}。576个预定槽全部完成；单槽250ms，无重试或fallback。','共享潜在结果矩阵离线政策回放；不是五臂独立部署运行。同为PCI的政策共用A槽，差异严格为0。全局配置PCI/PCA/SAV；每题两个请求槽。','']
+    for m,s in summaries.items():lines.append(f"{m}: 测试成功{s['successes']}/{s['measurements']}；三重复均成功题{s['all_repeats_success_cases']}/{s['problems']}；额外失败{s['extra_failure_count']}；非PCI采用{s['nonpci_adoption_cases']}题/{len(s['nonpci_adoption_groups'])}基础组；完整PCI成功集等组质量改善{s['full_pci_success_equal_group_gain']}（比例；None为未定义）；共同成功{s['common_success_count']}。")
+    lines+=['',f'GC主比较分族基础组bootstrap：{bs}',f'达到预定继续研究正信号门槛：{positive}。这不是安全/外部泛化或部署证明。','w20窗宽单维距离下界2/3>0.5；GW只删除门控距离中窗宽贡献，原预测/近邻/标准化保持不变。','D1会重新计算同一见证路径行程及窗口中心，因此不是纯单特征因果干预。两基础族不能外推全部shift家族或真实场景。','旧训练240条250ms标签仅继承。所有已见旧测试仅设计背景；未读LLM/P2 heldout，未调用API/安装/上传。','失败先行；任何PCI成功而政策失败都使完整基线成功集质量未定义；共同成功质量不能抵销coverage损失。','共享主机、同seed、短wall cutoff可有噪声；raw/results.jsonl保存所有请求，repeatability.json保存重复变化。','科学freeze不含runtime变动回执；shell退出后记录在runtime/。实际CPU成本见evidence/run_resources.json，独审与最终打包另计。']
+    (P/'reports/report_zh.txt').write_text('\n'.join(lines)+'\n')
+    return summaries
+
+def verify():
+    f=read(P/'protocol/freeze.json');m=[k for k,h in f['sha256'].items() if sha(P/k)!=h];assert not m
+    f2=read(P/'protocol/calibration_seal.json');assert all(sha(P/k)==h for k,h in f2['sha256'].items())
+    reqs=read(P/'protocol/requests.json');assert len(RESULTS)==576 and [r['run_id'] for r in RESULTS]==[r['run_id'] for r in reqs]
+    ev=[json.loads(x) for x in (P/'raw/events.jsonl').read_text().splitlines()];seal=next(e['sequence'] for e in ev if e['event']=='scientific_freeze');cs=next(e['sequence'] for e in ev if e['event']=='calibration_sealed')
+    assert all(e['sequence']>seal for e in ev if e['event']=='request_start')
+    assert all(e['sequence']>cs for e in ev if e['event']=='request_start' and e['phase']=='E')
+    write('evidence/verification.json',{'passed':True,'scientific_file_count':len(f['sha256']),'mutated_scientific_files':m,'requests_once_only':576,'all_starts_after_freeze':True,'all_test_starts_after_calibration_seal':True,'no_extra_solver_calls':True})
+
+def main():
+    data_by,preds,reqs=timed('prepare',prepare)
+    timed('calibration_execution',lambda:execute([r for r in reqs if r['phase']=='C'],data_by));chosen=timed('calibration',lambda:calibrate(preds))
+    timed('test_execution',lambda:execute([r for r in reqs if r['phase']=='E'],data_by));timed('analysis_reports',lambda:report(preds,chosen));timed('integrity_verification',verify)
+    resources={'phases':METERS,'current_total_process_cpu_s':time.process_time(),'run_cpu_s_after_imports':time.process_time()-CP0,'run_wall_s_after_imports':time.perf_counter()-T0,'cpu_hard_limit_s':180,'solver_calls':len(RESULTS),'nominal_search_wall_cap_s':144,'actual_search_cpu_s':sum(r.get('solve_cpu_s',0) for r in RESULTS),'actual_search_wall_s':sum(r.get('solve_wall_s',0) for r in RESULTS),'actual_model_cpu_s':sum(r.get('model_cpu_s',0) for r in RESULTS),'actual_checker_cpu_s':sum(r.get('check_cpu_s',0) for r in RESULTS),'actual_request_cpu_s':sum(r['request_cpu_s'] for r in RESULTS),'physical_vs_policy_accounting':'Physical requests counted once. Offline policies selecting same slot share observations, not separately executed costs. Deployment estimate:one250ms chosen request plus measured recommendation overhead; no free two-slot best-of.','source_authoring_and_static_tests_outside_main':True,'independent_audit_and_post_exit_packaging_outside_main':True}
+    write('evidence/run_resources.json',resources);event('complete',requests=len(RESULTS));print('COMPLETE',json.dumps(resources,ensure_ascii=False),flush=True)
+
+if __name__=='__main__':
+    try:main()
+    except Exception:
+        write('runtime/abort.json',{'utc':now(),'traceback':traceback.format_exc(),'completed_requests':len(RESULTS),'process_cpu_s':time.process_time(),'no_retry':True});raise

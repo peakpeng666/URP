@@ -1,0 +1,125 @@
+{
+  "utc": "2026-10-09T00:02:02.934178+00:00",
+  "audit_status": "CONFIRMED_INFRASTRUCTURE_FAILURE_BEFORE_OPTIMIZATION",
+  "experiment_id": "public_route_strong_baseline_20261009",
+  "read_only_scope": "Diagnosis only. No optimiser/package import, model construction, route/reference endpoint scoring, test run, source edit or rerun occurred in this audit. Output is in a sibling directory, not the failed run directory.",
+  "counts": {
+    "planned_slots": 48,
+    "retained_process_result_rows": 48,
+    "spawned_worker_processes": 48,
+    "started_attempt_records": 48,
+    "finished_attempt_records": 48,
+    "unique_call_ids": 48,
+    "returncode_1": 48,
+    "empty_stdout_files": 48,
+    "unique_stderr_contents": 1,
+    "actual_public_solver_entries": 0,
+    "model_build_entries": 0,
+    "payload_read_entries": 0,
+    "valid_new_solutions": 0
+  },
+  "stderr": "Traceback (most recent call last):\n  File \"/workspace/shared/public_route_strong_baseline_20261009/source/worker.py\", line 120, in <module>\n    resource.setrlimit(resource.RLIMIT_AS,(1024*1024**2,1024*1024**2))\nValueError: not allowed to raise maximum limit\n",
+  "stderr_sha256": "c5c21880f55d5be44df74df8d71ae0108076f57f261f730097de07defcbe3e9e",
+  "root_cause": {
+    "supervisor_file": "source/run_once.py",
+    "supervisor_line": 15,
+    "supervisor_RLIMIT_AS_soft_bytes": 536870912,
+    "supervisor_RLIMIT_AS_hard_bytes": 536870912,
+    "worker_file": "source/worker.py",
+    "worker_line": 120,
+    "worker_requested_RLIMIT_AS_soft_bytes": 1073741824,
+    "worker_requested_RLIMIT_AS_hard_bytes": 1073741824,
+    "mechanism": "Child inherits the supervisor hard address-space limit across process creation/exec; its attempted hard-limit increase raises ValueError before payload read at line 121 and run(payload) at line 122.",
+    "limit_telemetry_caveat": "The worker did not log getrlimit values. Inheritance and exact requested values are established by frozen source, documented OS semantics and identical exception traces, rather than a child-side limit telemetry record."
+  },
+  "failure_classification": "PRE_PAYLOAD_RLIMIT_AS_CONFIGURATION_ERROR; not a CPU timeout, infeasible CVRP output, or solver-quality result",
+  "review_gap": "The pre-execution review passed standalone worker synthetic solves and separate cleanup tests but missed supervisor-to-worker RLIMIT_AS inheritance. Its functional readiness conclusion was insufficient; the old PASS remains immutable as historical evidence and cannot authorise r1.",
+  "preservation": {
+    "frozen_files_hash_verified": 133,
+    "raw_manifest_files_hash_verified": 104,
+    "archived_raw_members_hash_verified": 104,
+    "one_recorded_attempt_per_scheduled_call": true,
+    "schedule_order_exact": true,
+    "recorded_retries": 0,
+    "original_raw_statuses_unmodified": true,
+    "r0_directory_files_written_by_this_diagnosis": 0,
+    "archives": {
+      "PREEXEC": {
+        "file": "/workspace/shared/public_route_strong_baseline_20261009_PREEXEC.zip",
+        "bytes": 42943291,
+        "sha256": "bcc0aa841c36cbebb60b7b37e2f1d9999235cf4131a005236b90577a5e2b8c82",
+        "recorded_remote_download_path": "/workspace/shared/drive_readback_20261009/public_route_strong_baseline_PREEXEC_reconstructed_readback.zip",
+        "local_archive_equals_recorded_remote_readback_bytes": true,
+        "readback_method": "Official Drive connector and download_file per byte-exact transport part, ordered reconstruction, whole ZIP byte comparison and all 133 freeze entries checked. No further failed-URL requests.",
+        "receipt_owner_only": true,
+        "receipt_shared": false
+      },
+      "RAW_UNREVIEWED": {
+        "file": "/workspace/shared/public_route_strong_baseline_20261009_RAW_UNREVIEWED.zip",
+        "bytes": 42987789,
+        "sha256": "6aadb3f0b0746d7d948209345535a587e0a76d97f9632b28d57a4a1834b7d8cd",
+        "recorded_remote_download_path": "/workspace/shared/drive_readback_20261009/public_route_strong_baseline_RAW_reconstructed_readback.zip",
+        "local_archive_equals_recorded_remote_readback_bytes": true,
+        "readback_method": "Reused byte-identical PREEXEC parts 1/2 with previously authenticated downloaded bytes and refreshed owner-only metadata; newly uploaded and downloaded RAW part3. Ordered reconstruction equals complete new RAW archive.",
+        "receipt_owner_only": true,
+        "receipt_shared": false
+      }
+    }
+  },
+  "r1_recommendation": {
+    "preferred_if_preserving_original_worker_budget": "Supervisor AS soft512/hard1024 MiB; worker soft1024/hard1024 MiB. Keep all algorithm, seed, CPU/wall and MaxRuntime settings unchanged. New protocol must state supervisor hard1024 and combined hard ceilings2048 MiB; current effective soft sum1536 MiB is a separate quantity.",
+    "alternative_small_patch": "Worker soft512/hard512 MiB with supervisor soft512/hard512 MiB, yielding combined hard1024 MiB. This reduces the worker budget and requires explicit disclosure plus actual integrated synthetic validation.",
+    "larger_alternative": "Launch supervisor and workers as siblings from an outer controller with sufficient hard limits; allows different per-process hard ceilings but changes lifecycle architecture more substantially.",
+    "implementation_performed": false,
+    "public_optimization_performed": false
+  },
+  "required_r1_tests": [
+    "Run invented instances through the actual selected outer launcher and resource-limited supervisor to the exact venv worker; do not launch the worker directly as the only positive test.",
+    "Record parent and child AS/CPU soft and hard limits before and after setup; verify actual inheritance and selected limits, interpreter path, environment whitelist, and captured exit/stdout/stderr.",
+    "Run at least one invented fixture at the formal MaxRuntime1.0s and exact CPU5/wall10/AS limits; independently validate returned routes and reported cost. Cover all intended seeds across invented fixtures without touching public optimisation.",
+    "Use an isolated fixture workspace and the same production spawn/limit/record/cleanup code, with synthetic schedule and explicit fixture gates, so a miniature successful schedule reaches FINISHED, seals raw and preserves hashes.",
+    "Add a negative regression that reproduces parenthard512-to-childhard1024 setup failure, retains its stderr and empty stdout, and proves zero model/solve entry; additionally test positive inherited-soft-limit raise within hard limit for the selected fix.",
+    "Verify failure retention, no retry, duplicate STARTED rejection, worker timeout/CPU death, supervisor death/orphan cleanup, and stable archive bytes through the same integration path.",
+    "Recheck model matrices without solving, independent source/protocol review, new freeze, new private PREEXEC byte readback, exact parent approval, and prior r0 RAW readback before any new48 attempt schedule."
+  ],
+  "reporting_rules": [
+    "Preserve all48 failed r0 execution attempts and both r0 archives; do not replace, delete or silently relabel them.",
+    "No r0 quality estimate exists. Any all16 comparison involving r0 baseline is unavailable; no claim that PyVRP was poor or infeasible is justified.",
+    "If r1 is approved, label it a new technical revision and disclose combined attempt counts across r0 and r1 separately from actual optimisation counts; do not pool failed r0 with successful r1 into a hidden retry selection."
+  ],
+  "official_sources": [
+    {
+      "url": "https://docs.python.org/3.12/library/resource.html#resource.setrlimit",
+      "supports": "Soft/hard resource-limit semantics and ValueError on disallowed hard-limit increases."
+    },
+    {
+      "url": "https://docs.python.org/3.12/library/multiprocessing.html#contexts-and-start-methods",
+      "supports": "General Python fork resource inheritance; this is contextual and not a claim that the experiment used multiprocessing."
+    },
+    {
+      "url": "https://man7.org/linux/man-pages/man2/getrlimit.2.html",
+      "supports": "Author-maintained Linux man-pages reference explicitly specifies fork inheritance and execve preservation, and that unprivileged hard-limit increases require capability."
+    }
+  ],
+  "evidence_sha256": {
+    "freeze/FROZEN_FILES.json": "77181d4b00ed1186c70d38691962e99daf255d212ab674c30e323260b6ca50ae",
+    "freeze/PROTOCOL.json": "9d0225a8f21a82e87247c9099da13ed0d3c1ecc0d455520fd19e936fdbbfb12c",
+    "freeze/SCHEDULE.json": "88a0f5ab526db0ef79a9a6f7e9c285fd9947dac10266a5a58a6f92f35f989649",
+    "freeze/INDEPENDENT_PRECHECK.json": "65a1babb63d645a255d5692210f999cc87355766673e70a2fc0cd627a04bebeb",
+    "source/worker.py": "5ee4ace0e3bf187e4249d015c0c883a34116183a9fbcbd0043a271cd3f6517e8",
+    "source/run_once.py": "b94650a575e80ba8a90616e6b708f5c685f1da40dac143e22608be409515cc63",
+    "source/execute_and_seal.py": "2ab334050504022ed411dc68844074eb6c59e3f14a72f57d2234cd0d07d90a54",
+    "source/test_synthetic.py": "06edc4fee25d6899c5902ce904f5b29d4f04269bef7b72c94a0c504b3d2ddbdd",
+    "source/test_process_cleanup.py": "3d7410045ba82c04d3feff035aa0022da41aea4e25f171a6385be0dc57c70450",
+    "raw/results.jsonl": "96dd16566a7a1dc802f09231158e0de62e03ca095e5a44d872d53af68ef4f340",
+    "raw/attempts.jsonl": "590815195ad37ce056431dfb38a89862c51fad9c1d7f99d22f02425f59abbd2a",
+    "raw/STARTED.json": "a1996dac6353df7e7f18314bb2f4f32deaa1ee734103e69c7d5bad358fe6d9ee",
+    "raw/FINISHED.json": "d0bb74ab5ff2634cf4813dffa3eba7660a1cdc8ffd153fdcac289fed930eea43",
+    "raw/EXECUTOR_STARTED.json": "133de3793f042e020dc26e092c86b2b1f9e808be6629ce6db80e1a3ae53094f9",
+    "raw/EXECUTOR_FINISHED.json": "0b99844be9579e6dbad9767e2278b3db2f19f66a004284eb5068dea6b4da15ab",
+    "raw/RAW_UNREVIEWED_MANIFEST.json": "3f91f56fd6b2bb02c5a7db4fa640c76082f8fd0072a56f5db50ef2c1f0a21a6c",
+    "provenance/PARENT_EXECUTION_APPROVAL.json": "c85227b0a10936148ca7c58936b1b332a854f057daf6be9485163a13c5c7d5d1",
+    "provenance/PREEXEC_DRIVE_RECEIPT.json": "64b095819dc9f4efc10faa8e42ce442b8530e48aeca69b0224631f5261856035",
+    "provenance/RAW_UNREVIEWED_DRIVE_RECEIPT.json": "3a158cd24facfadcb1b11d2d02715f2827e94b4cae1082660c805b82066f876f"
+  }
+}

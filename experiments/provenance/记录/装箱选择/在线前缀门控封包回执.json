@@ -1,0 +1,9 @@
+{
+  "package": "/workspace/shared/bpp_online_prefix_gate_20261008_CLEAN.zip",
+  "sha256": "e105b8fce756f12ca35bf690baee3edcf91b531943bc74bb18b4eb2a541095aa",
+  "bytes": 814142,
+  "members": 96,
+  "exact_files_from_delivery_manifest_plus_manifest": true,
+  "excluded_packaging_draft": "/workspace/shared/bpp_online_prefix_gate_20261008/bpp_online_prefix_gate_20261008_COMPLETE.zip",
+  "exclusion_reason": "Draft packaging accidentally captured its in-progress ZIP; scientific files unaffected. Clean package selects only explicit manifest. No experiment rerun."
+}

@@ -1,0 +1,69 @@
+{
+  "title": "URP云盘终点冻结交接：私有交付回执",
+  "status": "TWO_PRIMARY_ARTIFACTS_ACTUALLY_DOWNLOADED_AND_BYTE_IDENTICAL",
+  "issued_at_utc": "2026-10-09T11:20:24.344894+00:00",
+  "execution_frozen_at_utc": "2026-10-09T10:03:51.872412+00:00",
+  "execution_frozen_at_beijing": "2026-10-09T18:03:51.872412+08:00",
+  "artifacts": [
+    {
+      "drive_id": "1pSvCSwbvyYoMaZgrq1dT8JphTqyDtoVU",
+      "drive_name": "URP云盘终点冻结交接_完整清单与审计_20261009.zip",
+      "url": "https://drive.google.com/file/d/1pSvCSwbvyYoMaZgrq1dT8JphTqyDtoVU/view?usp=drivesdk",
+      "parent_id": "129-0z2ejXZg2rAkJe_Yxz876foi5mTy6",
+      "bytes": 12594840,
+      "sha256": "4e1b8a4e0e2c8a2c0d5e9a85141697a306e1b69be2653e4a15c540815a7ee33f",
+      "download_sha256": "4e1b8a4e0e2c8a2c0d5e9a85141697a306e1b69be2653e4a15c540815a7ee33f",
+      "confirmed_at_utc": "2026-10-09T11:19:17.670Z",
+      "owner_only": true,
+      "shared": false,
+      "verified": true,
+      "remote_readback_sha256_verified": true,
+      "download_byte_identical": true
+    },
+    {
+      "drive_id": "1Q90ZX7xh4YGCVm0CElmiI54sElNCxIcB",
+      "drive_name": "URP云盘终点冻结交接总说明_20261009.txt",
+      "url": "https://drive.google.com/file/d/1Q90ZX7xh4YGCVm0CElmiI54sElNCxIcB/view?usp=drivesdk",
+      "parent_id": "1LfnXbRzcZlr59nZEotn0QE6mnbvT7Hhm",
+      "bytes": 16097,
+      "sha256": "dfec715e1287c32909b04c5105caeba9f242b2a1b330d6cd040f85e43081ce1d",
+      "download_sha256": "dfec715e1287c32909b04c5105caeba9f242b2a1b330d6cd040f85e43081ce1d",
+      "confirmed_at_utc": "2026-10-09T11:19:34.837Z",
+      "owner_only": true,
+      "shared": false,
+      "verified": true,
+      "remote_readback_sha256_verified": true,
+      "download_byte_identical": true
+    }
+  ],
+  "package_members_verified": 28,
+  "package_payload_members_verified": 26,
+  "package_content_manifest_sha256": "dcdf8f85a0a291104ba587e0435b6763245a7bdf14c830edf52f75e1b24ed8b9",
+  "inventory_counts": {
+    "all_unique_observed_items": 83869,
+    "URP_definite_scope_items": 66589,
+    "two_roots_unique_items_including_roots": 48297,
+    "URP_confirmed_panel_items": 18292,
+    "all_observed_folder_count": 8084,
+    "project_limit_gaps_closed": 7,
+    "limit_gaps_remaining": 4,
+    "truncation_new_unique_ids_added": 4987,
+    "known_sha_items": 282,
+    "revision_id_verified_items": 282
+  },
+  "permissions_verification": {
+    "authorized_project_root_id": "1zs4eHCumbKPNV0ZnI9JWK6JnQHV1569T",
+    "data_parent_id": "129-0z2ejXZg2rAkJe_Yxz876foi5mTy6",
+    "report_parent_id": "1LfnXbRzcZlr59nZEotn0QE6mnbvT7Hhm",
+    "each_target_parent_is_direct_child_of_project_root": true,
+    "project_parents_and_new_files_single_authenticated_owner_verified": true,
+    "shared": false,
+    "permissions_changed": false
+  },
+  "old_indexes_modified": false,
+  "replacement_index_created": false,
+  "new_frozen_handoff_artifacts_created": true,
+  "handoff_artifacts_in_source_scan_base": false,
+  "receipt_note": "This supplementary receipt records the two primary artifacts. Its own upload identity and byte-readback outcome are reported separately after upload to avoid circular self-hashing.",
+  "boundary": "All 7 observed URP/BPP project cap gaps closed; 4 non-URP embedded-database caps and account-invisible boundaries remain explicit. Source inventory hashes are not source file content hashes."
+}

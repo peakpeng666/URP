@@ -1,0 +1,99 @@
+{
+  "transfer": "Drive fetch default text; UTF-8 content written unchanged",
+  "verified_files": 9,
+  "total_bytes": 60979,
+  "syntax_only": "all_pass",
+  "sources": [
+    {
+      "group": "old",
+      "path": "source/study.py",
+      "expected_bytes": 26943,
+      "actual_bytes": 26943,
+      "expected_sha256": "4d0a81ca728668ab7c49af338f84d86c55694173635f54fe2f1bdfaf44bb0d0e",
+      "actual_sha256": "4d0a81ca728668ab7c49af338f84d86c55694173635f54fe2f1bdfaf44bb0d0e",
+      "verified": true,
+      "workspace_path": "/workspace/experiment-reliability-20261008/originals/old/source/study.py"
+    },
+    {
+      "group": "old",
+      "path": "source/mechanism.py",
+      "expected_bytes": 9548,
+      "actual_bytes": 9548,
+      "expected_sha256": "df6fd9aab8c8a7e349010aa80306467df0ccfd4a635447e1350d908ef4e6d003",
+      "actual_sha256": "df6fd9aab8c8a7e349010aa80306467df0ccfd4a635447e1350d908ef4e6d003",
+      "verified": true,
+      "workspace_path": "/workspace/experiment-reliability-20261008/originals/old/source/mechanism.py"
+    },
+    {
+      "group": "old",
+      "path": "source/core.py",
+      "expected_bytes": 5320,
+      "actual_bytes": 5320,
+      "expected_sha256": "db9d31a3e9446e66a694f6e318804e87e6f25d624523615484d63589351d726e",
+      "actual_sha256": "db9d31a3e9446e66a694f6e318804e87e6f25d624523615484d63589351d726e",
+      "verified": true,
+      "workspace_path": "/workspace/experiment-reliability-20261008/originals/old/source/core.py"
+    },
+    {
+      "group": "old",
+      "path": "source/checker.py",
+      "expected_bytes": 3550,
+      "actual_bytes": 3550,
+      "expected_sha256": "67ad3171ff4a7b736313226c3e9540d40b8d5021fcbf33acd262a20c86ccf8d5",
+      "actual_sha256": "67ad3171ff4a7b736313226c3e9540d40b8d5021fcbf33acd262a20c86ccf8d5",
+      "verified": true,
+      "workspace_path": "/workspace/experiment-reliability-20261008/originals/old/source/checker.py"
+    },
+    {
+      "group": "new",
+      "path": "supervise.py",
+      "expected_bytes": 4665,
+      "actual_bytes": 4665,
+      "expected_sha256": "bf1a00fd7661fd7947f22dc86682a79616bf27b05dd17e640bc1d5ce50b52b7c",
+      "actual_sha256": "bf1a00fd7661fd7947f22dc86682a79616bf27b05dd17e640bc1d5ce50b52b7c",
+      "verified": true,
+      "workspace_path": "/workspace/experiment-reliability-20261008/originals/new/supervise.py"
+    },
+    {
+      "group": "new",
+      "path": "worker.py",
+      "expected_bytes": 4386,
+      "actual_bytes": 4386,
+      "expected_sha256": "06bc359e63fb3db25132bd14da98bf75464369a500f852f6d85263facc545bdf",
+      "actual_sha256": "06bc359e63fb3db25132bd14da98bf75464369a500f852f6d85263facc545bdf",
+      "verified": true,
+      "workspace_path": "/workspace/experiment-reliability-20261008/originals/new/worker.py"
+    },
+    {
+      "group": "new",
+      "path": "measure.py",
+      "expected_bytes": 1171,
+      "actual_bytes": 1171,
+      "expected_sha256": "067c30085574f2de87b734115e3125d8b09d85fd3837e116738962bcd2106b41",
+      "actual_sha256": "067c30085574f2de87b734115e3125d8b09d85fd3837e116738962bcd2106b41",
+      "verified": true,
+      "workspace_path": "/workspace/experiment-reliability-20261008/originals/new/measure.py"
+    },
+    {
+      "group": "new",
+      "path": "reproduce.py",
+      "expected_bytes": 2696,
+      "actual_bytes": 2696,
+      "expected_sha256": "5cc4fc24dbffc3e6c3b0a9bec3cf7e3df8d5474caea801772675de41e8e40ed0",
+      "actual_sha256": "5cc4fc24dbffc3e6c3b0a9bec3cf7e3df8d5474caea801772675de41e8e40ed0",
+      "verified": true,
+      "workspace_path": "/workspace/experiment-reliability-20261008/originals/new/reproduce.py"
+    },
+    {
+      "group": "new",
+      "path": "checker.py",
+      "expected_bytes": 2700,
+      "actual_bytes": 2700,
+      "expected_sha256": "cde743f28185eca794a14e4420978d4e54977717010a7484f7a8632e720038e1",
+      "actual_sha256": "cde743f28185eca794a14e4420978d4e54977717010a7484f7a8632e720038e1",
+      "verified": true,
+      "workspace_path": "/workspace/experiment-reliability-20261008/originals/new/checker.py"
+    }
+  ],
+  "zip_binary_delivery_blocker_resolved": false
+}

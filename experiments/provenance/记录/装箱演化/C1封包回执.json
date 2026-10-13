@@ -1,0 +1,55 @@
+{
+  "artifact_delivery_resources_separate_from_closed_scientific_budget": {
+    "observed_parent_wait_wall_seconds": 1.3304448119888548,
+    "packager_child_exit_code": 0,
+    "packager_child_reaped": true,
+    "packager_complete_inclusive_CPU_seconds": 1.32731,
+    "packager_peak_RSS_kib": 20632,
+    "receipt_parent_CPU_at_emit": 0.026133,
+    "receipt_parent_final_tail_unmeasured": true
+  },
+  "created_utc": "2026-10-07T20:22:24.872458+00:00",
+  "credentials_or_browser_material_added": false,
+  "deliverables": {
+    "ZIP": {
+      "bytes": 5086965,
+      "path": "/workspace/shared/c1_prospective_confirmation_final_delivery_20261007_v2/C1新前瞻确认_完整证据_20261007_v2.zip",
+      "sha256": "a866e8bf8fe491e2972a19187dcfa0e64dba95a59bca2a3e17d2de4fdd6eed7e"
+    },
+    "final_audit": {
+      "bytes": 9459,
+      "path": "/workspace/shared/c1_prospective_confirmation_final_delivery_20261007_v2/C1最终独立验收.json",
+      "sha256": "6c3fec410211fe5fd06782ac6c69adf46f9e6172f8229619204c0cb45f42fe5f"
+    },
+    "report": {
+      "bytes": 5041,
+      "path": "/workspace/shared/c1_prospective_confirmation_final_delivery_20261007_v2/C1最终结果_简明中文报告_v2.txt",
+      "sha256": "f1cdcbf65e252f855b85549d3eef06069700a4f0bde194abbeb83d65583e9553"
+    }
+  },
+  "delivery_revision": 2,
+  "global_all_in_actual_CPU_including_unknown_or_control_plane": null,
+  "old_scientific_packages_and_two_paused_indices_modified": false,
+  "payload_manifest": {
+    "bytes": 234534,
+    "path": "/workspace/shared/c1_prospective_confirmation_final_delivery_20261007_v2/evidence/PAYLOAD_MANIFEST.json",
+    "payload_files": 1362,
+    "sha256": "935d5f41370dc3fe33af013a1184869866b405590ec5ee3bf80466dc58c998ef",
+    "zip_entries": 1363
+  },
+  "research_master_seed_is_not_authentication_credential": true,
+  "revision_scope": "Only one historical-evidence-strength sentence and version references changed. All1361 nonreport scientific/audit/source/data payload files are byte-identical to v1.",
+  "schema": "C1-private-final-package-receipt",
+  "scientific_reservations_unchanged": {
+    "CPU": 14138,
+    "wall": 11999
+  },
+  "status": "PACKAGED_AND_VERIFIED",
+  "v1_preserved_and_not_uploaded": true,
+  "verification": {
+    "all_archive_SHA256_bytes_and_CRC_passed": true,
+    "final_audit_JSON_unchanged": true,
+    "scientific_rerun_or_reaudit": false,
+    "unchanged_nonreport_files": 1361
+  }
+}

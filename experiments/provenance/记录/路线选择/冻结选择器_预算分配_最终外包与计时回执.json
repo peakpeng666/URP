@@ -1,0 +1,10 @@
+{
+  "path": "/workspace/shared/selector_budget_split_20261007_FINAL.zip",
+  "bytes": 1097485,
+  "sha256": "da3872b52f128fb84c67720d755d67a106e7eb508bbe42fae6a34a8cee0fe434",
+  "members": 15,
+  "packaging_cpu_seconds": 0.044717718000000004,
+  "packaging_wall_seconds": 0.04471951999585144,
+  "solver_calls": 0,
+  "scope": "outer packaging only, outside main180CPU"
+}

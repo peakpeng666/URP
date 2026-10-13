@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "exit_code": 0,
+  "reaped": true,
+  "inclusive_tree_CPU": 0.103392,
+  "active_wall": 0.10404501899029128,
+  "charged_to": "existing80CPU/100wall analysis_and_package reservation; no extra budget",
+  "outer_control_complete_CPU": null,
+  "no_scientific_execution": true
+}

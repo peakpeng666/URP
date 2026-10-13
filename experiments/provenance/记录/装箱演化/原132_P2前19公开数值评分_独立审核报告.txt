@@ -1,0 +1,15 @@
+独立只读审核：通过
+
+对象：p2_public_scoring_1_19_delivery_20261007 及同名ZIP。529文件逐字节一致；ZIP为1206634字节，SHA256 466b4ca95d37e7426e0a084dbdd764fde5726b545ab3a733f74b7cca2853a7e0。528条manifest与48份原冻结文件哈希全部通过。
+
+数值：独立重算11个精确Fraction fitness；逐一验证每槽5个public case的输入SHA、L1、used_bins及checker证据。使用已核对哈希的原只读ReceiptBridge重验15份admission、55份pack回执，全部通过。
+
+分母：19槽无遗漏，11完整、4 AST拒绝、4生成失败；所有失败fitness=null，未补零。IID为6/9完整、生成失败2/9、AST拒绝1/7实际admission；EOH为5/10、2/10、3/8。全P2分母仍为60，两臂各30。
+
+一次性与预算：19个slot claim/result、70对runtime claim/result及125条role预约精确闭合；无未知、额外或重复执行身份，无HALT。第二轮13槽只读复用，前13个结果的追加前已保存哈希全部保持；仅14–19新增。去重数值CPU重算2237.645799秒，预约6615 CPU秒/5025共享wall秒，未超原60 admissions/300 packs及36060 CPU秒/27300 wall秒上限。
+
+最高public设计集候选仍为slot7，833325641497/839110947435 = 0.9931054338455665。不能据此前缀推断跨臂胜负或heldout泛化。
+
+边界：本审核未执行或重跑候选，未读取heldout元数据或实例，未改交付快照。完整assignment数组未保存，审核范围为原checker回执及其assignment SHA；不可重建未保存数组。保留账本内未见重试，不能证明该快照范围之外不存在未记录活动。原历史总余额未知；R1本地capture也不等于provider原始HTTP证明。
+
+独立审核CPU约0.200秒，wall约0.201秒。逐候选复算及完整核验计数见同名JSON；可重复只读核验脚本为p2_public_scoring_1_19_independent_audit_20261007.py。

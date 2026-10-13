@@ -1,0 +1,9 @@
+{
+  "archive": "/workspace/shared/bpp_zero_generation_precheck_20261008/forward-r1/零生成4pack完整证据_20261008.zip",
+  "sha256": "ccb822b4d18c1be34723e4f6cba15b0716c15ae0325dc55340ae11a9332bc2bc",
+  "bytes": 308652,
+  "payload_files": 151,
+  "CRC_and_all_member_hashes": "PASS",
+  "evidence_sealed": true,
+  "scientific_execution_in_packaging": false
+}

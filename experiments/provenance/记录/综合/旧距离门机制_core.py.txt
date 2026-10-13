@@ -1,0 +1,81 @@
+"""Fresh fixed-configuration portfolio study. Adapted solver model; no network in run."""
+import os
+os.environ['OMP_NUM_THREADS']='1'
+import sys,json,math,time,hashlib,re,platform,importlib.metadata,traceback,resource
+from pathlib import Path
+from datetime import datetime,timezone
+from ortools.constraint_solver import pywrapcp,routing_enums_pb2
+from ortools.util import optional_boolean_pb2
+from google.protobuf import text_format
+P=Path(__file__).resolve().parent.parent
+SCALE=1_000_000
+SEED=2026100708
+BUDGETS=[250,750]
+def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
+def write(path,value): (P/path).write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n')
+def parse(path):
+    lines=path.read_text().splitlines();name=lines[0].strip().lower()
+    assert name==path.stem.lower(),(name,path.name)
+    vindex=next(i for i,l in enumerate(lines) if l.strip()=='VEHICLE')
+    k,q=map(int,lines[vindex+2].split())
+    nodes=[]
+    for line in lines:
+        toks=line.split()
+        if len(toks)==7 and all(re.fullmatch(r'-?\d+',t) for t in toks):
+            vals=list(map(int,toks));nodes.append(dict(zip(['id','x','y','demand','ready','due','service'],vals)))
+    assert len(nodes)==101 and [x['id'] for x in nodes]==list(range(101)),name
+    assert k>0 and q>0 and nodes[0]['demand']==0 and nodes[0]['ready']==0 and nodes[0]['service']==0
+    assert all(0<=x['ready']<=x['due'] and x['service']>=0 and 0<=x['demand']<=q for x in nodes)
+    return {'id':name,'family':re.match(r'(rc|r|c)[12]',name).group(0).upper(),'vehicles':k,'capacity':q,'nodes':nodes}
+def params(ms, strategy):
+    p=pywrapcp.DefaultRoutingSearchParameters()
+    p.first_solution_strategy=getattr(routing_enums_pb2.FirstSolutionStrategy,strategy)
+    p.local_search_metaheuristic=routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
+    p.guided_local_search_lambda_coefficient=0.1
+    p.time_limit.FromMilliseconds(ms);p.lns_time_limit.FromMilliseconds(100)
+    p.use_cp=optional_boolean_pb2.BOOL_TRUE;p.use_cp_sat=optional_boolean_pb2.BOOL_FALSE
+    p.use_generalized_cp_sat=optional_boolean_pb2.BOOL_FALSE;p.fallback_to_cp_sat_size_threshold=0
+    p.sat_parameters.num_search_workers=1;p.sat_parameters.random_seed=SEED;p.log_search=False
+    return p
+def encode(d):
+    nodes=d['nodes'];cost=[];travel=[]
+    for a in nodes:
+        c=[];t=[]
+        for b in nodes:
+            z=((a['x']-b['x'])**2+(a['y']-b['y'])**2)*SCALE*SCALE
+            s=math.isqrt(z);c.append(s+int(4*z>=(2*s+1)**2));t.append(s+int(s*s<z))
+        cost.append(c);travel.append(t)
+    return cost,travel
+
+def solve(d,req):
+    t0=time.perf_counter();c0=time.process_time();cost,travel=encode(d);n=len(d['nodes']);k=d['vehicles']
+    manager=pywrapcp.RoutingIndexManager(n,k,0);routing=pywrapcp.RoutingModel(manager);routing.solver().ReSeed(SEED)
+    def c(a,b):return cost[manager.IndexToNode(a)][manager.IndexToNode(b)]
+    def t(a,b):
+        i=manager.IndexToNode(a);j=manager.IndexToNode(b)
+        return travel[i][j]+d['nodes'][i]['service']*SCALE
+    def q(a):return d['nodes'][manager.IndexToNode(a)]['demand']
+    routing.SetArcCostEvaluatorOfAllVehicles(routing.RegisterTransitCallback(c))
+    routing.AddDimensionWithVehicleCapacity(routing.RegisterUnaryTransitCallback(q),0,[d['capacity']]*k,True,'Capacity')
+    horizon=d['nodes'][0]['due']*SCALE
+    routing.AddDimension(routing.RegisterTransitCallback(t),horizon,horizon,True,'Time');td=routing.GetDimensionOrDie('Time')
+    for node in d['nodes'][1:]:td.CumulVar(manager.NodeToIndex(node['id'])).SetRange(node['ready']*SCALE,node['due']*SCALE)
+    for v in range(k):td.CumulVar(routing.Start(v)).SetValue(0);td.CumulVar(routing.End(v)).SetRange(0,horizon)
+    p=pywrapcp.DefaultRoutingSearchParameters();p.Clear();text_format.Parse((P/f"protocol/parameters_{req['config_id']}.textproto").read_text(),p)
+    first=[];ts=time.perf_counter();cs=time.process_time()
+    def callback():
+        if not first:first.append({'wall_s':time.perf_counter()-ts,'cpu_s':time.process_time()-cs,'objective':routing.CostVar().Value()})
+    routing.AddAtSolutionCallback(callback);sol=routing.SolveWithParameters(p);sw=time.perf_counter()-ts;sc=time.process_time()-cs
+    status=routing.status();out={**req,'assignment_returned':sol is not None,'ortools_status':status,'ortools_status_name':routing_enums_pb2.RoutingSearchStatus.Value.Name(status),'solve_wall_s':sw,'solve_cpu_s':sc,'model_wall_s':ts-t0,'model_cpu_s':cs-c0,'first_solution':first[0] if first else None,'routes':None,'objective_integer':None,'outcome':'TIMEOUT' if status==4 else ('FAIL' if status==5 else 'UNKNOWN')}
+    if sol is not None:
+        routes=[]
+        for v in range(k):
+            idx=routing.Start(v);route=[0];cumul=[]
+            while not routing.IsEnd(idx):
+                idx=sol.Value(routing.NextVar(idx));node=manager.IndexToNode(idx);route.append(node)
+                cv=td.CumulVar(idx);cumul.append({'node':node,'min':sol.Min(cv),'max':sol.Max(cv)})
+            if len(route)>2:routes.append({'vehicle':v,'nodes':route,'encoded_cumul_ranges':cumul})
+        out.update(routes=routes,vehicles_used=len(routes),objective_integer=sol.ObjectiveValue(),outcome='ASSIGNMENT_UNCHECKED')
+    out.update(total_wall_s=time.perf_counter()-t0,total_cpu_s=time.process_time()-c0)
+    return out
+

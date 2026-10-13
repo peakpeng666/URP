@@ -1,0 +1,39 @@
+科研工作区清点与归类审计
+截至 2026年10月8日 04时41分 UTC
+
+结论
+本次已完成实验项目范围的目录元数据清点和一组无歧义的可逆归类。没有重跑科学实验，没有删除原始结果，没有改动本地原目录，也没有更新两份暂停写入的旧交接索引。本文是当次清点审计记录，不替代原实验协议、科学验收或恢复入口。
+
+覆盖范围与证据强度
+1. Google Drive 实验项目根及其全部列出的后代：18个已扫描目录，552个唯一条目（包含目录，不含项目根本身）。根5项；实验资料153项；报告与审计275项；交接记录33项；递归14个更深目录共86项。使用folder listing，逐目录请求上限1000，单目录最多275项，结果未提供续页。所有已列条目shared为false；项目根和三个直接子目录已另核permissions仅owner、parents正确。此结论是可见目录元数据覆盖，不是552项逐字节全文审阅。没有访问范围外个人资料。
+2. 本地/workspace/shared中244个非隐藏、非课堂顶层目录，共50,622个非敏感候选文件元数据。统计排除隐藏目录、node_modules、缓存、venv及文件名含credential/secret/auth/token的项；跳过clock课堂、m4_image_review和task-ui-evidence。未读取.env、凭据或认证内容。目录统计是时点快照，活跃实验后续可能增长；目录名归属仍有需要逐项确认之处，不把全部候选都宣称已验收科研。
+3. 62份既有FINAL_VERIFICATION回执已读取并保留；626条历史上传/manifest映射记录已汇总，记录可含重复引用，不等于626个云盘文件。既有archive_new_research原回执称17项新产物已经核验、下载字节一致，本次未重复上传。
+4. 73个本地顶层非课堂科研ZIP/tar.gz压缩包重新计算SHA256，未发现完全相同的压缩包。压缩包hash不同不证明内部内容完全不同，也不意味着可删除旧版。没有全面展开所有压缩包。
+
+已执行的归类
+将官方CVRP三实例ORTools参照的5份源码文本、1份质量对照包、1份独审包、1份中文报告和2份包外资源回执，共10项，移动至实验资料与报告与审计下各自“官方CVRP三实例 ORTools参照”子目录。
+每项移动前读取当前parent及owner-only，移动后复读新parent、ID、大小和权限；所有10项通过。仅变更父目录，未改名、未替换bytes、未修改分享。可按reversible_move_log.json中原parent逐项恢复。其它实验或跨问题混合材料保持原位置。
+资料子目录：https://drive.google.com/drive/folders/1wDdZ3WdZ89CCKIelf5ajub92a2J6yNN5
+报告子目录：https://drive.google.com/drive/folders/1eOncleKLax-2lldfbnlswXpzg_LSDd8k
+
+重要缺口与状态边界
+C1最终包v2的RESULT_SUMMARY明确：原100格、101次尝试、99条数值成功终态；完整EOH–IID比较因两条基础设施缺失不能成立，不能把unknown补零或当作统计失败。旧历史预算未知保留。此次只引用已存摘要，没有重新验收100格或修复缺失。
+A2尺度复核现有摘要和结果独审标为18/18完整、PASS_A2_RESULTS、失败/unknown/重试0。六条5000项序列上补丁对原EOH少22箱；对公开式多4箱。仅该批小样本尺度复核，不能宣称一般优越或SOTA。
+紧容量剪枝现有报告记录72次初始化、无后续搜索；构造失败不代表数学不可行。报告标题仍带“待独立审计”，但另有独审目录和归档；需要联读最终独审才能决定最终验收口径，不能单靠旧标题回退或单靠目录名升级。
+真实田块准备现有报告明确6个原始凹多边形已冻结，但source_crs=null、metric_ready=false。仍缺作者导出链/可信PRJ与要素匹配证据，不得转换成假米制后声称道路或机械部署可用。
+仅设计/冻结/候选/已验收应分开：local_research_catalog中的source、raw、failure_unknown、audit、design_freeze均仅文件路径信号，不是自动科学状态判决。已有README可能为历史设计，不可用它覆盖后续结果独审。
+
+重复与缺件处理
+云盘同名ARCHIVE_MANIFEST.json（2项）、阅读入口.md（2项）、实验报告.md（4项）在不同实验目录，未认定为重复，也未移动删除。本地多个FINAL/DELIVERY/v2与审计副本均保留。历史回执中指向的文件、旧云盘链接与当前bytes未逐一全部复核；626条映射仅便于定位，不能称全面下载一致。源代码和结果是否成套需按实验的原manifest逐项核验，不能靠文件数判定。
+GitHub未纳入本次清点，因此不声明repo/PR的实时状态；未push、改PR或合并。
+
+后续接收规则
+其它实验线给出明确交付清单后，先核科学状态、manifest、SHA256、敏感内容与既有云盘映射，再上传缺少的指定文件，并记录下载/readback核验。失败、unknown、负结果、设计材料与候选均保留原标签。未经核验的新文件不覆盖旧科学包，不写入暂停的两份旧索引。已有共享权限保持私有。
+
+随附清单
+local_research_catalog.json：244目录及源码/原始结果/失败/审计/设计路径信号。
+local_archive_hashes.json：73个顶层压缩包SHA256，无完全相同组。
+historical_archive_mapping.json：历史回执提取的626条映射。
+prior_final_verifications.json：62份既有最终核验回执，保留各回执原说法。
+drive_root/materials/reports/handoff/recursive.json：归类前Drive元数据快照。
+reversible_move_log.json：10项移动前后与可逆原parent证据。

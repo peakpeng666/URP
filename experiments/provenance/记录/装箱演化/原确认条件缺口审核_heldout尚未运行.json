@@ -1,0 +1,241 @@
+{
+  "schema": "confirmation-safe-readiness-review-v1",
+  "created_utc": "2026-10-07T16:30:26.757279+00:00",
+  "status": "BLOCKED_FOR_ORIGINAL_CONFIRMATION_NEW_PROSPECTIVE_REVISION_POSSIBLE",
+  "immutable_selection_decision": {
+    "path": "/workspace/shared/p2_candidate_selection_decision_20261007/CANDIDATE_SELECTION_DECISION.json",
+    "sha256": "f95a80540b68fd2fb7039c8499d478a9acc74798fd39454f97404d26ce26d393",
+    "selected_ids": {
+      "EOH_TC": "b01_EOH_TC_g2_m3_04",
+      "IID_TC": "b01_IID_TC_g1_m2_04"
+    },
+    "historical_complete_seal": false
+  },
+  "frozen_protocol_evidence": {
+    "protocol_sha256": "c9bf8f09d0c00752b3ac5001898660fda7a0c77051ff501607a7e61e2dc02d43",
+    "score_plan_sha256": "9cc4b662399498c0c705e19988407c2b601235b59d66aaf952bd1936f476e053",
+    "provenance_contract_sha256": "4e3a6d9b9c6d01091620802d51b114655c131f12e7139e7c4ad8e034d9cbee0c",
+    "scheduler_score_plan_identical_to_protocol_draft": true,
+    "safe_confirmation_metadata": {
+      "state": "not_generated",
+      "must_materialize_and_seal_before_first_new_model_request": true,
+      "count": 20,
+      "n": 5000,
+      "capacity": 100,
+      "official_instances_claim": false,
+      "name": "new research confirmation instances from documented original distribution",
+      "preseal_checks": [
+        "valid integer bounds/length",
+        "actual JSON and per-instance hashes",
+        "duplicates against all prior full/prefix panels"
+      ],
+      "access": "generator and selector receive no heldout bytes, seeds, fitness or file access",
+      "winner_rule": "seal one final winner per arm using development F before unblinding",
+      "policies": [
+        "EOH final",
+        "IID final",
+        "FF",
+        "BF",
+        "published_EoH"
+      ],
+      "pack_slots": 100,
+      "winner_reselection": false,
+      "after_method_change": "used holdout becomes development; new confirmation panel needed",
+      "OOD_claim": false
+    },
+    "final_seal_required": [
+      "all slots terminal and actual budget",
+      "winner ID/code/description hash per arm",
+      "selection metric/data hash",
+      "analysis code hash",
+      "heldout manifest hash",
+      "seal timestamp preceding heldout fitness"
+    ],
+    "evaluation_required": [
+      "slot and candidate hashes",
+      "split/instance/input hash/n/capacity",
+      "runtime and isolation profile hash",
+      "limits and actual CPU/wall/RSS",
+      "outcome and used_bins/L1 or null",
+      "complete assignment and independent checker",
+      "nonfinite/exception provenance",
+      "cleanup and budget debit",
+      "no-cache flag and not_run reason"
+    ],
+    "snapshot_required": [
+      "P0/P1/P2",
+      "all eligible and failed offspring",
+      "exact F sorting and ties",
+      "duplicates and survivor reasons",
+      "code/behavior/initial-lineage diversity",
+      "actual G1-to-G2 lineage"
+    ]
+  },
+  "confirmation_mapping": {
+    "instances": 20,
+    "items_per_instance": 5000,
+    "capacity": 100,
+    "policies": {
+      "EOH_TC_final": 20,
+      "IID_TC_final": 20,
+      "FF": 20,
+      "BF": 20,
+      "published_EoH": 20
+    },
+    "candidate_numeric_packs": 40,
+    "control_numeric_packs": 60,
+    "total_numeric_packs": 100,
+    "indices_per_policy": [
+      0,
+      19
+    ],
+    "all_planned_not_run": true,
+    "all_code_runtime_data_hashes_unbound": true,
+    "winner_source_binding": "resolved_from_sealed_winner"
+  },
+  "manifest_lookup": {
+    "scope": "One bounded filename-only inventory of original473-file P2 source tree plus pinned SOURCE_INPUT_PLAN; no broad or iterative search.",
+    "pinned_confirmation_files": [],
+    "original_tree_files": 473,
+    "matching_filenames": [],
+    "pre_model_actual_confirmation_manifest_found": false,
+    "absence_claim_limit": "No qualifying manifest found in these inspected frozen inputs; not a claim that no file could exist elsewhere."
+  },
+  "resource_requirements": {
+    "historical_protocol_budget_is_proposal": {
+      "logical_generation_slots": 132,
+      "configured_completion_tokens_ceiling": 4224000,
+      "serial_generation_wall_ceiling_seconds": 118800,
+      "development_candidate_pack_slots": 660,
+      "control_pack_slots": 20,
+      "heldout_pack_slots": 100,
+      "pack_total": 780,
+      "worker_cpu_seconds": 60,
+      "worker_wall_seconds": 90,
+      "worker_address_space_bytes": 2147483648,
+      "worker_threads": 1,
+      "supervisor_checker_reserve_cpu_per_slot": 2,
+      "supervisor_checker_reserve_wall_per_slot": 2,
+      "finalization_cpu_seconds": 600,
+      "finalization_wall_seconds": 600,
+      "aggregate_numerical_cpu_seconds": 48960,
+      "aggregate_numerical_active_wall_seconds": 72360,
+      "native_calibration_required_before_freeze": true,
+      "trusted_build_probe_data_preparation": "separate measured ledger",
+      "remote_generation_CPU": null,
+      "currency_cost": null,
+      "equal_calls_is_equal_actual_cost": false
+    },
+    "later_resource_amendment_sha256": "fd69499ee3b2f431e90f6ad0a419c4558ac7d4a624887f4a30d7c98b1406234b",
+    "later_status": "PARENT_APPROVED_ACCOUNTING_ENVELOPE_NOT_EXTRA_EXECUTION_AUTHORITY",
+    "later_scope": {
+      "additional_admissions_authorized_by_reservation": false,
+      "cross_slot_score_cache": false,
+      "existing_phase_and_confirmation_gates_preserved": true,
+      "extra_generation_or_scores_authorized": false,
+      "first_dispatch_phase": 0,
+      "first_dispatch_slots": 12,
+      "generation_invocation_maximum": 132,
+      "generation_phase_caps": [
+        12,
+        60,
+        60
+      ],
+      "outer_retries": 0,
+      "paid_provider_fallback": false,
+      "retained_parent_fitness": "reuse already verified design fitness; no extra retained-parent rescoring",
+      "score_plan_components": {
+        "candidate_design": 660,
+        "confirmation": 100,
+        "controls": 20
+      },
+      "score_plan_pack_maximum": 780
+    },
+    "later_accounting": {
+      "account_separate_generation_wall": true,
+      "actual_consumption_and_actual_counts_reported_separately": true,
+      "enforcement_is_not_implemented_by_this_artifact": true,
+      "no_retry_or_reroll_on_cap_or_failure": true,
+      "reserve_before_work": true,
+      "unknown_or_unreconciled_work_stops_dispatch": true
+    },
+    "later_numerical_instances": {
+      "child_cpu_seconds_each": 60,
+      "cleanup_within_shared_wall": true,
+      "cpu_seconds_reserved": 93600,
+      "packs_reserved": 780,
+      "resource_profile_sha256": "b6442176c02a8b1e44f36798c9b66d082452bb0fb8eff4c65823f32344d0c9e8",
+      "shared_wall_seconds_each": 90,
+      "supervisor_cpu_seconds_each": 60,
+      "wall_seconds_reserved": 70200
+    },
+    "later_admissions": {
+      "actual_count_must_be_reported": true,
+      "conservative_maximum_reserved": 780,
+      "cpu_seconds_each": 1,
+      "cpu_seconds_reserved": 780,
+      "reservation_does_not_require_or_authorize_extra_admissions": true,
+      "wall_seconds_each": 5,
+      "wall_seconds_reserved": 3900
+    },
+    "later_totals": {
+      "generation_native_cli_cpu_included": false,
+      "numerical_and_trusted_cpu_seconds_reserved": 95100,
+      "summed_wall_is_actual_or_predicted_elapsed_duration": false,
+      "summed_wall_seconds_reserved": 194220,
+      "wall_interpretation": "conservative sum of reservations; generation waiting and overlapping work are not predicted elapsed duration",
+      "whole_system_CPU_limit_claimed": false
+    },
+    "historical_remaining_CPU_or_wall": null,
+    "reservation_envelope_is_not_confirmation_execution_authorization": true,
+    "per100_numeric_packs_arithmetic_only": {
+      "child_plus_supervisor_CPU_seconds": 12000,
+      "shared_wall_seconds": 9000,
+      "admissions_trusted_prep_bookkeeping_not_added_or_authorized_here": true
+    }
+  },
+  "entrypoint_review": {
+    "scope": "Original eoh_evolution_runner_v1, phase2 continuation orchestrator and frozen runtime_revision_v3 source files only.",
+    "reviewed_existing_confirmation_orchestrator_found": false,
+    "existing_P2_orchestrator_scope": "phase2_numerical.py explicitly requires controls=0 and heldout=0, reports heldout_activated=False and ends before separate heldout activation. Current local append is closed public5-case path.",
+    "scheduler_role": "computes phase2 survivor IDs; no confirmation-execution/final-seal method found in this original scheduler.",
+    "runtime_limit": "Existing RegistryBackend restricts one panel to profile.max_instances=5 and instance IDs0–4. No reviewed20-instance/5-policy confirmation mapping/manifest/claim loop is supplied by the current P2 adapter.",
+    "reuse_note": "Original restricted numerical runtime may be a component of a separately reviewed adapter; this audit does not implement or authorize that adapter."
+  },
+  "already_satisfied": [
+    "Immutable, timestamped two-candidate selection and exact code/description/joint identities saved.",
+    "Public selection evidence and all60 P2 scoring claims closed; P2 enabled/heldout stay false.",
+    "Original100-pack count/mapping, required evidence fields and historical resource envelope identified without reading seeds/data/scores."
+  ],
+  "blocking_conditions": [
+    "No qualifying actual confirmation-data/per-instance-hash manifest or pre-first-model-request seal evidence found. Original protocol says not_generated and requires this historical gate. If not performed then, it cannot now be retroactively satisfied or claimed as original preregistered confirmation.",
+    "Original complete final seal requires all-slot terminal/actual-budget evidence, heldout manifest and seal preceding heldout fitness. This new selection record is not that historical seal; oldP0/P1/global actual-or-remaining budget remains unknown.",
+    "No currently reviewed confirmation orchestrator,20-instance input provider,100 once-only pack mapping, exact policy source bindings and bounded reservations are established. Existing P2 entrypoints do not authorize this work.",
+    "published_EoH requires precise public source/version/code and license or other authorization, plus compatibility and independent-checker validation; no guessed replacement implementation is acceptable.",
+    "No confirmation execution is authorized by this metadata-review task or by historical resource reservations alone."
+  ],
+  "transparent_new_prospective_revision_requirements": [
+    "Keep the locked two-candidate decision and public results unchanged; explicitly disclose failure/unverified status of original pre-model data-seal gate. Label any new work a new prospective independent confirmation revision, not completion of the original preregistered confirmation.",
+    "Before seeing any confirmation outcome, freeze the amended purpose,20-instance same-distribution design,eligible policies,metrics,comparison/uncertainty analysis,failure/missing-data rules,exclusion rules,no-reselection rule and exact100-pack mapping.",
+    "Separately authorize a blind data-custodian/materialization step with no selector/generator access to instance bytes or seeds; pin actual JSON and per-instance hashes and document duplicate checks against prior full/prefix panels. This review selects no seed and generates no data.",
+    "Resolve exact FF/BF/published_EoH sources, versions and legal permissions; freeze their code and numerical semantics, compatibility/checker evidence. If a policy changes, revise scope/counts transparently before outcomes, rather than silently substituting.",
+    "Provide and independently review a new manifest-bound confirmation entrypoint, stable once-only claims,crash/UNKNOWN stop behavior,shared resource accounting and complete raw checker/cleanup receipts. Never clear P2 or oldHALT state.",
+    "Approve an explicit forward bounded resource scope and execution authorization, keeping all unreconciled historical costs unknown. Do not fabricate old budget proof or reset the original pool.",
+    "Only after readiness/authorization and before any confirmation fitness, create a new clearly dated prospective candidate+dataset+analysis seal with all required hashes; then run once under reviewed bounds."
+  ],
+  "boundaries": {
+    "seed_values_read": 0,
+    "heldout_instance_bytes_read": 0,
+    "heldout_scores_read": 0,
+    "candidate_or_confirmation_executions": 0,
+    "data_generated": 0,
+    "P2_closed_state_modified": false,
+    "old_HALT_modified": false,
+    "old_budget_proof_fabricated": false,
+    "external_ledger_writes": 0,
+    "uploads": 0
+  },
+  "cost_scope": "Successful metadata-report invocation only; prior interactive inspection CPU not fully measured, not zero and not algorithm runtime.",
+  "report_invocation_CPU_seconds": 0.077266699,
+  "report_invocation_wall_seconds": 0.07742034600232728
+}

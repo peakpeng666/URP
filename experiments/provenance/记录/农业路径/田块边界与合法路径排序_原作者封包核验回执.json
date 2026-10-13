@@ -1,0 +1,10 @@
+{
+  "archive_name": "field_geometry_route_test_20261008_6009a3f579e2.tar.gz",
+  "archive_path": "/workspace/shared/field_geometry_route_test_20261008_6009a3f579e2.tar.gz",
+  "sha256": "6009a3f579e206f84cb32389f0c0a040d53e2271f6e4f55fb2095c323bdf02e4",
+  "bytes": 2367742,
+  "members": 65,
+  "payload_hash_verification": "PASS",
+  "pre_run_hashes_verified": 8,
+  "archive_creation": "deterministic tar+gzip, timestamps normalized; content-addressed name; no claim of OS immutability"
+}

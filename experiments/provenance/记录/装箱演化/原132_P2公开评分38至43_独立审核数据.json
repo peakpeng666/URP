@@ -1,0 +1,172 @@
+{
+  "status": "PASS_independent_incremental_readonly_audit",
+  "delta_zip_sha256": "830195983ab4ed0ffa7d2d87685fe79819c9c0d22e97ba16d343eb9a591d0f0c",
+  "delta_zip_bytes": 494653,
+  "delta_files_verified": 214,
+  "manifest_entries_verified": 213,
+  "base_state_files_unchanged": 797,
+  "new_state_files": 176,
+  "combined_state_files": 973,
+  "scientific_files_fully_reaudited": 0,
+  "prior_audit_reused": "/workspace/shared/p2_public_scoring_32_37_independent_review_20261007.json",
+  "new_positions": [
+    38,
+    39,
+    40,
+    41,
+    42,
+    43
+  ],
+  "new_fitness_recomputed": [
+    {
+      "position": 38,
+      "arm": "EOH_TC",
+      "fitness_fraction": "43687269517601/45300216620050",
+      "fitness_decimal": 0.9643942739617032,
+      "used_bins": [
+        2089,
+        2053,
+        2051,
+        2060,
+        2053
+      ]
+    },
+    {
+      "position": 39,
+      "arm": "IID_TC",
+      "fitness_fraction": "1761376419029/1823753061180",
+      "fitness_decimal": 0.965797649101331,
+      "used_bins": [
+        2085,
+        2052,
+        2049,
+        2055,
+        2050
+      ]
+    },
+    {
+      "position": 40,
+      "arm": "EOH_TC",
+      "fitness_fraction": "7284741733119293/7505367161772200",
+      "fitness_decimal": 0.970604312367736,
+      "used_bins": [
+        2071,
+        2040,
+        2044,
+        2047,
+        2038
+      ]
+    },
+    {
+      "position": 41,
+      "arm": "EOH_TC",
+      "fitness_fraction": "7235430967217/7423249075060",
+      "fitness_decimal": 0.9746986655110341,
+      "used_bins": [
+        2064,
+        2033,
+        2028,
+        2037,
+        2035
+      ]
+    },
+    {
+      "position": 42,
+      "arm": "IID_TC",
+      "fitness_fraction": "5039117513623279/5239871856954735",
+      "fitness_decimal": 0.961687165485736,
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "position": 43,
+      "arm": "EOH_TC",
+      "fitness_fraction": "8505451447011/8665495252960",
+      "fitness_decimal": 0.9815309106661467,
+      "used_bins": [
+        2041,
+        2016,
+        2028,
+        2018,
+        2023
+      ]
+    }
+  ],
+  "new_timeout_generation_failures": [],
+  "new_AST_rejections": [],
+  "new_admission_receipts_reverified": 6,
+  "new_pack_receipts_reverified": 30,
+  "new_runtime_claim_result_pairs": 36,
+  "new_reservations": 66,
+  "cumulative_slot_claim_result_pairs": 43,
+  "cumulative_runtime_claim_result_pairs": 191,
+  "cumulative_reservations": 346,
+  "extra_or_unknown_claims": 0,
+  "HALT": false,
+  "previous_slots_readonly_reused": 37,
+  "cumulative_counts": {
+    "admission_rejected": 5,
+    "generation_failure": 7,
+    "scored": 31
+  },
+  "arms_recomputed": {
+    "IID_TC": {
+      "slots": 21,
+      "complete": 15,
+      "generation_failure": 5,
+      "AST_rejected": 1,
+      "admission_attempts": 16
+    },
+    "EOH_TC": {
+      "slots": 22,
+      "complete": 16,
+      "generation_failure": 2,
+      "AST_rejected": 4,
+      "admission_attempts": 20
+    }
+  },
+  "incremental_usage_recomputed": {
+    "admission_cpu_seconds": 1.055953,
+    "child_cpu_seconds": 516.980181,
+    "supervisor_self_cpu_seconds": 714.842005,
+    "supervisor_inclusive_wait4_cpu_seconds": 1231.8221859999999,
+    "shared_instance_wall_seconds": 1234.8548239179872,
+    "admissions": 6,
+    "instance_packs": 30,
+    "score_call_cpu_ns": 9226370359,
+    "reserved_cpu_seconds": 3606,
+    "reserved_shared_wall_seconds": 2730,
+    "numerical_cpu_seconds_no_double_count": 1232.878139
+  },
+  "cumulative_usage_recomputed": {
+    "admission_cpu_seconds": 6.656003,
+    "child_cpu_seconds": 2634.68526,
+    "supervisor_self_cpu_seconds": 3671.933094,
+    "supervisor_inclusive_wait4_cpu_seconds": 6306.618354,
+    "shared_instance_wall_seconds": 6324.359067284975,
+    "admissions": 36.0,
+    "instance_packs": 155.0,
+    "score_call_cpu_ns": 58030178532.0,
+    "reserved_cpu_seconds": 18636.0,
+    "reserved_shared_wall_seconds": 14130.0,
+    "numerical_cpu_seconds_no_double_count": 6313.274357
+  },
+  "full_P2_generation_denominator": 60,
+  "best_public_design_position": 7,
+  "candidate_executions_in_review": 0,
+  "heldout_reads_in_review": 0,
+  "snapshot_files_modified": 0,
+  "limitations": [
+    "Prior 1–37 scientific/receipt audits reused; only new receipts deeply checked.",
+    "No full assignment arrays were saved, so checker receipt and assignment SHA are verified, not reconstructed assignments.",
+    "No missing failures or retry evidence within preserved ledgers; this does not prove absence of activity outside the captured scope.",
+    "Highest individual fixed-public-design result does not establish cross-arm superiority or generalization. Historical global remaining budget remains unknown."
+  ],
+  "review_cpu_seconds": 0.14400152700000002,
+  "review_wall_seconds": 0.1440857519992278
+}

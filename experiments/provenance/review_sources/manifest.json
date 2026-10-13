@@ -1,0 +1,168 @@
+{
+  "schema": "urp-original-review-evidence-sources-v1",
+  "files": [
+    {
+      "target_relative_path": "experiments/provenance/review_sources/复盘0350.zip",
+      "original_drive_id": "1ssWBc8qIUH2SUvNcr1LzJjUy6okhFeh_",
+      "original_drive_name": "URP历史复盘增补_截至20261009T0350Z_小证据包.zip",
+      "bytes": 11108628,
+      "sha256": "a69ed0aae67a450e4d897ecf51bf322783a3745f46697b0856a48a09ea4d12a9",
+      "original_documented_aliases": [
+        "experiments/results/URP历史复盘增补_截至20261009T0350Z_小证据包.zip"
+      ],
+      "documented_historical_consolidation_target": "experiments/provenance/review_locations.json",
+      "archive_members": 493,
+      "source_bytes_unchanged": true,
+      "sensitive_pattern_scan_passed": true,
+      "existing_other_current_zip_same_sha256": [],
+      "copy_disposition": "unique_original_evidence_archive_retained",
+      "created_duplicate_withdrawn_to_staging": null
+    },
+    {
+      "target_relative_path": "experiments/provenance/review_sources/复盘0502.zip",
+      "original_drive_id": "1QGJDs-n7ovEy0cd9_olMr3xabNh_Jdqp",
+      "original_drive_name": "URP历史复盘增补_截至20261009T0502Z_小证据包.zip",
+      "bytes": 3120638,
+      "sha256": "738a01f15d74c416a8da714b25497810e4b8288a201dcfa6209c03bbb1806d8a",
+      "original_documented_aliases": [
+        "experiments/results/URP历史复盘增补_截至20261009T0502Z_小证据包.zip"
+      ],
+      "documented_historical_consolidation_target": "experiments/provenance/review_locations.json",
+      "archive_members": 622,
+      "source_bytes_unchanged": true,
+      "sensitive_pattern_scan_passed": true,
+      "existing_other_current_zip_same_sha256": [],
+      "copy_disposition": "unique_original_evidence_archive_retained",
+      "created_duplicate_withdrawn_to_staging": null
+    },
+    {
+      "target_relative_path": "experiments/provenance/review_sources/复盘0929.zip",
+      "original_drive_id": "1DexiReZgSTAZ18T2_5mvJJF-uHCCmIsl",
+      "original_drive_name": "URP历史复盘增补_截至20261009T0929Z_小证据包.zip",
+      "bytes": 22338694,
+      "sha256": "6ef8807673a10bdad8d27ce6858b5d1339061d3f54e72aace8123ca860472ac0",
+      "original_documented_aliases": [
+        "experiments/results/URP历史复盘增补_截至20261009T0929Z_小证据包.zip"
+      ],
+      "documented_historical_consolidation_target": "experiments/provenance/review_locations.json",
+      "archive_members": 2690,
+      "source_bytes_unchanged": true,
+      "sensitive_pattern_scan_passed": true,
+      "existing_other_current_zip_same_sha256": [],
+      "copy_disposition": "unique_original_evidence_archive_retained",
+      "created_duplicate_withdrawn_to_staging": null
+    },
+    {
+      "target_relative_path": "experiments/provenance/review_sources/复盘0545.zip",
+      "original_drive_id": "1qvpS8uWdUl4FAV6HZAaLFsFUfwGyJFSN",
+      "original_drive_name": "URP历史复盘短增补_截至20261009T0545Z_小证据包.zip",
+      "bytes": 6179922,
+      "sha256": "13a4e808e5030340cef15de3d443ee899c2a413903815e27be6c5c4f0e6bfd93",
+      "original_documented_aliases": [
+        "experiments/results/URP历史复盘短增补_截至20261009T0545Z_小证据包.zip"
+      ],
+      "documented_historical_consolidation_target": "experiments/provenance/review_locations.json",
+      "archive_members": 378,
+      "source_bytes_unchanged": true,
+      "sensitive_pattern_scan_passed": true,
+      "existing_other_current_zip_same_sha256": [],
+      "copy_disposition": "unique_original_evidence_archive_retained",
+      "created_duplicate_withdrawn_to_staging": null
+    },
+    {
+      "target_relative_path": "experiments/provenance/review_sources/复盘0623.zip",
+      "original_drive_id": "1-pMvWKZr59E8XwoIb4UvG-CNi8IbwUmB",
+      "original_drive_name": "URP历史复盘短增补_截至20261009T0623Z_小证据包.zip",
+      "bytes": 6832909,
+      "sha256": "e99c95980c4001da725d36b80a5e0558d34c6b713a1b4e013d64fd89ef3277d6",
+      "original_documented_aliases": [
+        "experiments/results/URP历史复盘短增补_截至20261009T0623Z_小证据包.zip"
+      ],
+      "documented_historical_consolidation_target": "experiments/provenance/review_locations.json",
+      "archive_members": 462,
+      "source_bytes_unchanged": true,
+      "sensitive_pattern_scan_passed": true,
+      "existing_other_current_zip_same_sha256": [],
+      "copy_disposition": "unique_original_evidence_archive_retained",
+      "created_duplicate_withdrawn_to_staging": null
+    },
+    {
+      "target_relative_path": "experiments/provenance/review_sources/复盘0706.zip",
+      "original_drive_id": "16T4xwZWzaQWP5LZ6381_ifoSv8oUOyUo",
+      "original_drive_name": "URP历史复盘短增补_截至20261009T0706Z_小证据包.zip",
+      "bytes": 18830214,
+      "sha256": "9b0f8f5d12c0e4c34a1122b47f6924236e50148b3a7606d472b4efb19d53dd87",
+      "original_documented_aliases": [
+        "experiments/results/URP历史复盘短增补_截至20261009T0706Z_小证据包.zip"
+      ],
+      "documented_historical_consolidation_target": "experiments/provenance/review_locations.json",
+      "archive_members": 567,
+      "source_bytes_unchanged": true,
+      "sensitive_pattern_scan_passed": true,
+      "existing_other_current_zip_same_sha256": [],
+      "copy_disposition": "unique_original_evidence_archive_retained",
+      "created_duplicate_withdrawn_to_staging": null
+    },
+    {
+      "target_relative_path": "experiments/provenance/review_sources/复盘0741.zip",
+      "original_drive_id": "1xphvL6vtcCKsGdyvypacDL9Yz2dMT3Vc",
+      "original_drive_name": "URP历史复盘短增补_截至20261009T0741Z_小证据包.zip",
+      "bytes": 7299699,
+      "sha256": "6e9acf16e5004bc7d27f440aa57285d4ac136f7312d3f31f80be2e5b9b964c33",
+      "original_documented_aliases": [
+        "experiments/results/URP历史复盘短增补_截至20261009T0741Z_小证据包.zip"
+      ],
+      "documented_historical_consolidation_target": "experiments/provenance/review_locations.json",
+      "archive_members": 354,
+      "source_bytes_unchanged": true,
+      "sensitive_pattern_scan_passed": true,
+      "existing_other_current_zip_same_sha256": [],
+      "copy_disposition": "unique_original_evidence_archive_retained",
+      "created_duplicate_withdrawn_to_staging": null
+    },
+    {
+      "target_relative_path": "experiments/provenance/review_sources/全量复盘.zip",
+      "original_drive_id": "1r5I1KSPgMJA3cdIjugdpztHMm0LHlxfp",
+      "original_drive_name": "URP历史实验全量范围复盘_20261009.zip",
+      "bytes": 145404,
+      "sha256": "61d962e43c4338df6e465f389a8e6589ed168a055ac8bb870bc2266bf8d11f55",
+      "original_documented_aliases": [
+        "experiments/results/URP历史实验全量范围复盘_20261009.zip"
+      ],
+      "documented_historical_consolidation_target": "experiments/provenance/review_locations.json",
+      "archive_members": 7,
+      "source_bytes_unchanged": true,
+      "sensitive_pattern_scan_passed": true,
+      "existing_other_current_zip_same_sha256": [],
+      "copy_disposition": "unique_original_evidence_archive_retained",
+      "created_duplicate_withdrawn_to_staging": null
+    },
+    {
+      "target_relative_path": "experiments/provenance/review_sources/结论证据.zip",
+      "original_drive_id": "1eF4pgqPC1zRvugtHzp3rKgmRiPaAhg15",
+      "original_drive_name": "旧实验结论与证据台账_20261007.zip",
+      "bytes": 118535,
+      "sha256": "75f3553c12f95ed5c4a8af426ca08adbb100f64a373fddfc8d38cd1c12861aa1",
+      "original_documented_aliases": [
+        "experiments/results/旧实验结论与证据台账_20261007.zip"
+      ],
+      "documented_historical_consolidation_target": "experiments/provenance/review_locations.json",
+      "archive_members": 9,
+      "source_bytes_unchanged": true,
+      "sensitive_pattern_scan_passed": true,
+      "existing_other_current_zip_same_sha256": [],
+      "copy_disposition": "unique_original_evidence_archive_retained",
+      "created_duplicate_withdrawn_to_staging": null
+    }
+  ],
+  "source_count": 9,
+  "bytes": 75974643,
+  "new_recovery_manifest_not_original_index": true,
+  "original_index_missing": "experiments/provenance/review_locations.json",
+  "reason": "Retain the nine original review evidence archives whose former consolidated index is unavailable. This manifest does not fabricate that historical index.",
+  "different_content_overwrites": 0,
+  "downloaded_code_executed": false,
+  "unique_new_archive_files_retained": 9,
+  "byte_identical_duplicate_copies_withdrawn": 0,
+  "all_nine_sources_mapped": true
+}

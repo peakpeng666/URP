@@ -1,0 +1,162 @@
+{
+  "description": "Supplemental descriptive resource rollup of already-frozen report output. No optimizer execution.",
+  "groups": {
+    "0.1": {
+      "process_wall_audit_only": {
+        "n": 48,
+        "min": 0.2649516590026906,
+        "mean": 0.2654169744793459,
+        "median": 0.2653739970010065,
+        "max": 0.2663928100009798,
+        "sum": 12.740014775008603
+      },
+      "process_cpu_audit_only": {
+        "n": 48,
+        "min": 0.215522,
+        "mean": 0.23100520833333318,
+        "median": 0.23125499999999732,
+        "max": 0.2500530000000367,
+        "sum": 11.088249999999992
+      },
+      "solve_wall_audit_only": {
+        "n": 48,
+        "min": 0.10063685000204714,
+        "mean": 0.1031542301667893,
+        "median": 0.10333446250297129,
+        "max": 0.10564144200179726,
+        "sum": 4.951403048005886
+      },
+      "solve_cpu_audit_only": {
+        "n": 48,
+        "min": 0.09910276300000001,
+        "mean": 0.10253686195833334,
+        "median": 0.1039740435,
+        "max": 0.104427514,
+        "sum": 4.921769374
+      },
+      "solve_pre_first_stop_wall_audit_only": {
+        "n": 48,
+        "min": 0.00043914200068684295,
+        "mean": 0.0021998420211275516,
+        "median": 0.0022096305001468863,
+        "max": 0.00406549599574646,
+        "sum": 0.10559241701412247
+      },
+      "build_wall_audit_only": {
+        "n": 48,
+        "min": 0.001103367998439353,
+        "mean": 0.005857507687627124,
+        "median": 0.0053737429989269,
+        "max": 0.01096929799678037,
+        "sum": 0.281160369006102
+      },
+      "worker_maxrss_KiB_audit_only": {
+        "n": 48,
+        "min": 70176,
+        "mean": 70176,
+        "median": 70176.0,
+        "max": 70176
+      },
+      "iterations": {
+        "n": 48,
+        "min": 149,
+        "mean": 342.0208333333333,
+        "median": 267.0,
+        "max": 974,
+        "sum": 16417
+      },
+      "search_runtime_audit_only": {
+        "n": 48,
+        "min": 0.1000220409987378,
+        "mean": 0.10032638899929225,
+        "median": 0.10027998099758406,
+        "max": 0.10121873000025516,
+        "sum": 4.815666671966028
+      }
+    },
+    "5.0": {
+      "process_wall_audit_only": {
+        "n": 48,
+        "min": 5.238582933001453,
+        "mean": 5.290134396708254,
+        "median": 5.248727862002852,
+        "max": 5.525193474000844,
+        "sum": 253.9264510419962
+      },
+      "process_cpu_audit_only": {
+        "n": 48,
+        "min": 5.1900879999999745,
+        "mean": 5.2504359166666665,
+        "median": 5.227338999999985,
+        "max": 5.468021999999991,
+        "sum": 252.020924
+      },
+      "solve_wall_audit_only": {
+        "n": 48,
+        "min": 5.000733179003873,
+        "mean": 5.003040383208524,
+        "median": 5.003195439501724,
+        "max": 5.005035285001213,
+        "sum": 240.14593839400914
+      },
+      "solve_cpu_audit_only": {
+        "n": 48,
+        "min": 4.993981301,
+        "mean": 5.001335353479167,
+        "median": 5.0021946145000005,
+        "max": 5.00678277,
+        "sum": 240.064096967
+      },
+      "solve_pre_first_stop_wall_audit_only": {
+        "n": 48,
+        "min": 0.0004532630046014674,
+        "mean": 0.0022203852710542074,
+        "median": 0.0023315819998970255,
+        "max": 0.004126025996811222,
+        "sum": 0.10657849301060196
+      },
+      "build_wall_audit_only": {
+        "n": 48,
+        "min": 0.0011113000000477768,
+        "mean": 0.006008055458551098,
+        "median": 0.0059672249990398996,
+        "max": 0.011868772999150679,
+        "sum": 0.2883866620104527
+      },
+      "worker_maxrss_KiB_audit_only": {
+        "n": 48,
+        "min": 70176,
+        "mean": 70176,
+        "median": 70176.0,
+        "max": 70176
+      },
+      "iterations": {
+        "n": 48,
+        "min": 10127,
+        "mean": 17218.583333333332,
+        "median": 13484.5,
+        "max": 46969,
+        "sum": 826492
+      },
+      "search_runtime_audit_only": {
+        "n": 48,
+        "min": 5.000010005001968,
+        "mean": 5.000250225583386,
+        "median": 5.000195898002858,
+        "max": 5.001019393996103,
+        "sum": 240.01201082800253
+      }
+    }
+  },
+  "supervisor_wall_seconds": 267.4514301300005,
+  "supervisor_cpu_seconds": 1.98082181,
+  "supervisor_maxrss_KiB": 70440,
+  "scope_notes": [
+    "solve_pre_first_stop_wall includes solve setup/random/exhaustive initialization and ILS pre-loop preparation; not pure initialization algorithm time.",
+    "MaxRuntime excludes imports/model/initialization; this is not a claim that a complete solution is produced within0.1 seconds.",
+    "RLIMIT CPU enforcement may overshoot by kernel accounting/scheduling granularity. AS limit is not actual RSS.",
+    "Outer packaging, archival, re-analysis and unrelated services are outside supervisor/worker safety caps.",
+    "process_wall is launch through supervisor output read/validation and cleanup. It is not isolated child-lifetime wall.",
+    "worker maxrss is a ru_maxrss high-water sampled before final result JSON output; supervisor samples while constructing FINISHED. These do not prove coverage of subsequent JSON output or cleanup peaks. Fork/exec inheritance can affect the observation; it is not incremental solver memory."
+  ]
+}

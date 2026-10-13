@@ -1,0 +1,10 @@
+{
+  "path": "/workspace/shared/vrp_operator_restart_ablation_20261008_final.zip",
+  "bytes": 1973356,
+  "sha256": "aad44f722525074542180dc2539f588d347f04daffbc657be13faac278440929",
+  "file_count": 85,
+  "cpu_seconds": 0.289607391,
+  "wall_seconds": 0.2900727480009664,
+  "integrity_test": "all CRC passed",
+  "no_solver_rerun": true
+}
