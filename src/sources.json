@@ -465,7 +465,6 @@
   },
   "local_git": "前端原始未提交Git状态、Code下15仓库工作区均未重置",
   "current_layout": {
-    "record": "experiments/provenance/整理.json",
     "verification": "src/checks.json",
     "implementation_changes": [
       "研究CLI使用统一数据与运行输出目录",

@@ -15,7 +15,7 @@
 | [EoH](EoH/README.md) | `472545785c93` | 2026-08-06 | main | 0 | [LICENSE](EoH/LICENSE) |
 | [G-LNS](G-LNS/README.md) | `ea834aaa23a6` | 2026-02-10 | main | 65 | [LICENSE](G-LNS/LICENSE) |
 | [HeurAgenix](HeurAgenix/README.md) | `e84bfb19e785` | 2025-12-15 | main | 198 | [LICENSE](HeurAgenix/LICENSE) |
-| [HGS-CARP](HGS-CARP/README.pdf) | `08fde6a5672c` | 2021-06-13 | master | 977 | [LICENSE](HGS-CARP/LICENSE) |
+| [HGS-CARP](HGS-CARP/) | `08fde6a5672c` | 2021-06-13 | master | 977 | [LICENSE](HGS-CARP/LICENSE) |
 | [HGS-TDCARP](HGS-TDCARP/README.md) | `9638127242a9` | 2020-05-01 | master | 130 | [LICENSE](HGS-TDCARP/LICENSE) |
 | [LitCEoH](LitCEoH/README.md) | `7498ab841c25` | 2025-06-05 | main | 85 | [LICENSE](LitCEoH/LICENSE) |
 | [LLaMEA](LLaMEA/README.md) | `2a200f6b4803` | 2026-08-24 | main | 118 | [LICENSE](LLaMEA/LICENSE) |

@@ -99,7 +99,6 @@
   },
   "external_git_repositories_unchanged": 15,
   "evidence_directory": "src/verification",
-  "organization_record": "experiments/provenance/整理.json",
   "next_stage": "下一阶段.md",
   "remaining": [
     "装箱与TSP共用生成演化循环",
