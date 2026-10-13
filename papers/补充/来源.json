@@ -1,0 +1,25 @@
+{
+  "supplements": [
+    {
+      "path": "papers/补充/A tree-search heuristic for the container loading problem.pdf",
+      "title": "A tree-search heuristic for the container loading problem",
+      "author": "David Pisinger",
+      "publication_year": null,
+      "drive_file_id": "1tUTweXxSgoFpoI0Hkj-hcnolSZRdkM6I",
+      "drive_url": "https://drive.google.com/file/d/1tUTweXxSgoFpoI0Hkj-hcnolSZRdkM6I/view?usp=drivesdk",
+      "original_drive_filename": "A General Heuristic for Vehicle Routing Problems (Pisinger & Ropke 2007).pdf",
+      "bytes": 215446,
+      "sha256": "7077c76eebb7af1ff566954a6aa0ff3693f8ad121ac838587c1b4c8df9050413",
+      "pages": 12,
+      "identity_evidence": "首页题名与作者视觉核验；不由PDF生成时间推断出版年份",
+      "reading_status": "未精读",
+      "canonical_registered_558": false,
+      "used_for_P009": false,
+      "duplicate_check": {
+        "same_sha_in_current_before_copy": [],
+        "same_title_in_620_literature_md": [],
+        "container_loading_in_catalog": []
+      }
+    }
+  ]
+}

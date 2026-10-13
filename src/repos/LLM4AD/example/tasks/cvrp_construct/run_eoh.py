@@ -17,7 +17,7 @@ def main():
     #                timeout=60)
 
     llm = HttpsApi(host='api.bltcy.ai',  # your host endpoint, e.g., api.openai.com/v1/completions, api.deepseek.com
-                   key='sk-qMAtcWpKnF64zZxWqyLcqXRQYEtwnyiriaB0nR5GBldQ7S0A',  # your key, e.g., sk-abcdefghijklmn
+                   key='REDACTED_API_KEY',  # your key, e.g., sk-abcdefghijklmn
                    model='gpt-4o-mini',  # your llm, e.g., gpt-3.5-turbo, deepseek-chat, gpt-4o-mini
                    timeout=120)
 
