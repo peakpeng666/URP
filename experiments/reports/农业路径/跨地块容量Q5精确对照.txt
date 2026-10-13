@@ -1,0 +1,27 @@
+容量约束多车辆距离代理精确诊断
+固定12个已观察NL边界；每田原depot及前12个合成任务；单位需求Q5、最多3车强制恰3条路线。
+通过完整核验：12/12。主24+独24计划目标槽保留；候选回路/分区/DP转移不是目标调用次数。
+完整12田均值Delta(mm)：2943.4166666666665。完整案例描述均值：2943.4166666666665；分母12。
+Delta是E最优集合内最小G成本减全局G最优成本。两非负分量仅描述规范选定E最优代表：固定该分组后的组内排序损失，以及该分组相对全局G最优的损失。
+nl_field_40: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_44: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_63: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_187: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_1: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_2: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_7: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_8: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_17: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_67: Delta=35321 mm，排序=3356 mm，分组=31965 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_89: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+nl_field_143: Delta=0 mm，排序=0 mm，分组=0 mm，状态=VERIFIED_INTEGER_PROXY_DIAGNOSTIC
+所有实现均复用原G合法有限图路径；未选8服务点仍terminal-only，不重新构图或取整。没有车际碰撞/时间调度模型。
+15腿两代表方案差的取整界0.015米；计入旧每腿1e-8米保存路径核验容差后为0.01500030米。不是连续几何最优或测绘误差界。
+真实边界、合成任务与容量；旧结果已观察。这是探索性机制实验，不称未见泛化、实车验证或自动算法优越性。
+不能将旧20任务单车与新12任务三车总长度或Delta变化归因于车辆数；不作总体或有孔结构因果推断。
+
+读者说明（仅补充表述；冻结程序生成原文另存GENERATED_REPORT_ZH.txt）：
+实际已执行主24次及独立24次，共48次正式目标求解；主/独未知启动槽均为0，未补跑或换字段。准备期纯合成测试及控制流emitter与正式账本分列。
+唯一正值nl_field_67的整数Delta为35,321毫米=3,356毫米组内排序损失+31,965毫米分组损失。分解仅适用于按冻结并列规则选出的E最优代表；不能称所有E最优解统一的因果分解。
+这一对代表路线在同一旧图上保存的未取整实现路长差为35.320053112835467…米，与35.321米整数代理差分列；差异落在已声明0.01500030米界内。它不是连续平面最优或实车节省的证明。
+其余11田的Delta=0表示存在共同整数最优解；不表示每个E最优解都同样好，不说明矩阵处处相等，也不构成有孔田块总体的规律。

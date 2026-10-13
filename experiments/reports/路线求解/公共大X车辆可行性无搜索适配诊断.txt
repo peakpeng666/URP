@@ -1,0 +1,56 @@
+车辆约束失败的源码诊断与原SOL无搜索原生适配核验
+
+核心结论
+原12题参考见证全部通过原生与独立核验：12/12。正式原生Solution构造12次，新增优化调用0次；两类计数未知槽均为0/12。
+尤其是旧冷启动失败的X-n524-k153：原SOL在Q=125、K_ref=155车辆配置下被相同PyVRP原生模型接受为可行，原生目标与独立精确重算成本均为154593。这证实当前编码能接受该可行见证，不能据此识别唯一冷启动失败机制，也没有重新求解或改写旧25/250的3个失败。
+源码解释已由独立监督复核：25/250步只登记25/250次每维候选，尚未触发默认500次自适应罚项更新；未找到可行candidate时，best保留初始化解。因此旧保存超载3/13/10描述返回的初始化best，不能当作搜索末端或全程最接近可行状态。完整源码行号、版本/文件身份与证据界限见下文。
+
+原生接受并经独立核验：12/12。可读输出中能够判定的Solution构造合计12次、优化调用合计0次；构造计数不可判定0/12槽，优化计数不可判定0/12槽。缺失、不可读或坏计数保留为未知，不视作0次证据。
+源码证据另列：独立审阅确认本批程序没有solve、ILS、LocalSearch或随机初始化调用路径；这不代替缺失输出的运行计数核验。
+另有1次虚构两客户构造预检，优化调用0；无seed重复、无warm-start求解。
+固定原SOL路线，不排序、不修复，K_ref为实际非空路线数。CLIENT索引为SOL节点j−1，起终仓由原生Route自动添加；回读逐项还原闭合路线。
+全部成本使用独立整数isqrt的精确EUC_2D最近整数半上舍入复核，且核对完整距离矩阵。
+
+逐题结果
+X-n101-k25：K_ref=26，参考成本=27591，NATIVE_REFERENCE_ACCEPTED。
+X-n106-k14：K_ref=14，参考成本=26362，NATIVE_REFERENCE_ACCEPTED。
+X-n110-k13：K_ref=13，参考成本=14971，NATIVE_REFERENCE_ACCEPTED。
+X-n204-k19：K_ref=19，参考成本=19565，NATIVE_REFERENCE_ACCEPTED。
+X-n209-k16：K_ref=16，参考成本=30656，NATIVE_REFERENCE_ACCEPTED。
+X-n214-k11：K_ref=11，参考成本=10856，NATIVE_REFERENCE_ACCEPTED。
+X-n303-k21：K_ref=21，参考成本=21736，NATIVE_REFERENCE_ACCEPTED。
+X-n308-k13：K_ref=13，参考成本=25859，NATIVE_REFERENCE_ACCEPTED。
+X-n313-k71：K_ref=72，参考成本=94043，NATIVE_REFERENCE_ACCEPTED。
+X-n502-k39：K_ref=39，参考成本=69226，NATIVE_REFERENCE_ACCEPTED。
+X-n513-k21：K_ref=21，参考成本=24201，NATIVE_REFERENCE_ACCEPTED。
+X-n524-k153：K_ref=155，参考成本=154593，NATIVE_REFERENCE_ACCEPTED。
+
+只读源码诊断补充
+只读源码诊断（2026-10-09；原25/250结果的补充，旧文件不改）
+
+版本与证据
+复核安装PyVRP 0.14.0。已安装的Python模块与两原生扩展逐文件等于原冻结官方PyPI wheel成员；wheel SHA256为4e0053459a9320b79f074f2cd05ecbb4cd255df4d166945c62547c956b1e4170。solve、ILS、PenaltyManager、Statistics的安装源码还与此次获取的官方v0.14.0标签逐字节一致。详见source_evidence/VERIFIED_IDENTITY.json与OFFICIAL_FETCH.json。官方C++标签代码用于实现解释；未声称重新编译或反汇编证明二进制等价。
+下述行号指包内保存的原始源码行号，不是网页提取器重新编号。源码来自 https://github.com/PyVRP/PyVRP/tree/v0.14.0/pyvrp 。
+
+保存证据能说明什么
+1. 250档72个调用完整保存。3个不可行调用仍为X-n524-k153的seed0/1/2，K_ref155、Q125，返回155路线且覆盖完整。按保存路线重算，总超载分别3、13、10；超载路线数2、7、6。实例总需求17067，总车容量19375，有2308容量总余量；总量余量不能替代逐路线可行性，也不是搜索容易性的证明。冻结原SOL155路线已有独立可行见证。
+2. 这3个调用共750条迭代末统计的current/candidate/best可行标志均为false。best的罚后成本各自250步恒为312055、807213、658967；current罚后成本最低达到207663、207402、307898。保存的返回路线与旧25档对应返回路线完全相同。可确认搜索中的罚后current曾改善，同时未保存可行incumbent。
+3. 六字段是Statistics.py 16–21、95–103定义的三个解的罚后成本与可行标志。它们不保存每步路线、距离/超载分解、完整随机状态、局部搜索内瞬态解或具体move，不能把罚后成本下降解释成已知的超载量下降，不能声称搜索内从未短暂访问任何可行状态。前25字段相同不等于完整状态逐字节相同。
+
+best语义：返回失败解不是“全程最佳不可行解”
+4. ILS.py 218令best=curr=init。CostEvaluator.h 212–218对所有不可行解返回相同max sentinel；Measure.h 33、245–251说明Cost为int64且max为底层int64最大值。ILS.py 240–242仅在cost严格下降时更新best。该面板的正常可行距离远低于此sentinel；因此某个不可行candidate即使罚后成本更低，也不能替换仍不可行的best。没有可行candidate成为best时，best保留初始化解。
+5. 这不是把Python别名当作不变性的假设：LocalSearch.cpp 17–51接受const Solution&，加载至搜索自有状态并unload返回；search/Solution.cpp 159–211将活动装入自有routes，214–234重建原生Route并返回新Solution；Python search/LocalSearch.py 114–121也说明返回不同对象。默认回调不修改初始解。
+6. 一旦best可行，普通cand只有更低真实可行目标才替换；exhaustive_on_best阶段ILS.py 244–251还显式拒绝不可行cand覆盖best。故原SOL warm-start的“返回可行”大体由实现保留规则预期，36次warm250主要是集成回归，不能解释冷启动难以找到可行解，也不能当公平算法改进证据。本次选择先做无搜索原生适配核验。
+
+初始化、修复与罚项
+7. solve.py 163–180建立新RNG/LS/PM；无initial_solution时先Solution.make_random，再最大罚项的exhaustive LS，随后182–183运行ILS。初始化不在25/250计数循环中；显式initial_solution会跳过这两步，所以warm与cold并非相同前缀加一个起点，RNG消耗也不同。
+8. Solution.cpp 157–243的随机构造按客户活动数分组，而非按载荷；在X-n524-k153，523客户/155车得每组最多4客户、131条初始随机路线，再由初始化LS处理。这是可核的构造机制，不是已证明失败原因。LocalSearch.cpp 230–335的ensureStructuralFeasibility处理必需客户、组、shipment等结构；不是保证容量修复成功的精确可行性算法。容量通过罚后目标和局部移动搜索处理，不能把“structural feasibility”读成容量一定可行。
+9. PenaltyManager.py 83–89默认每500次登记更新，初始罚项为50000.05（113–132）；初始化使用100000的max evaluator（253–259）。不能只由500常量断言：这里进一步核实solve.py 172–180新建PM后初始化没有register；包内只有ILS.py 237登记cand，每个完成迭代恰一次；额外exhaustive LS不登记，默认回调为空，重启只改current/history且默认阈值150000。PenaltyManager.py 168初始每维列表为空，200–205每次追加且长度恰500才更新；233–244每维各登记一次。因此本批25/250分别25/250次每维登记，确实尚未自适应更新。
+10. 若另有500步调用，第500步的普通LS仍用235取得的旧evaluator，237登记后才更新管理器，第501步才取新值；更新是否增减或不变取决于500次登记的逐维可行比例和容差。本次没有进行500步实验，也不据此主张自动升预算。250负结果不能归因于“已完成罚项适应仍失败”。
+
+下一步问题边界
+采用全12原SOL→相同原生模型→原生Route/Solution构造及精确独立核验；不调用solve、ILS、LocalSearch、随机初始化或修复。它能检验给定合法见证是否被原生模型接受及目标/节点映射是否一致，不能识别全部搜索失败机制。若以后确需机制观察，应另行预注册全12×3seed、仍250且默认参数不变的只读回调观测，记录初始和每步current/candidate/best的载荷/距离/路线hash，并核全部旧六字段重放一致。迭代末candidate可能已被exhaustive阶段替换，不应误当PM实际登记的前阶段candidate；必要时另定义观测边界。该方案尚未批准或启动。
+
+
+解释边界
+该核验仅证明给定可行见证可由同一原生模型编码和评价，不是新的可行解发现，不证明冷启动初始化/邻域/罚项中哪一项是唯一失败原因；不改变旧25/250的33/36、失败路线或报告。没有公平算法优越性、SOTA、泛化或农业实际车队结论。

@@ -1,0 +1,114 @@
+完整距离前沿支持性诊断：已审结果导读
+85个完整非支配目标值点中：42个有正长度支持区间，0个仅单权重并列支持，43个不支持。
+不支持指：不存在任何非负且不同时为0的权重，使该值点成为加权和的精确最优值。启发式近似解可能偶然返回这些点；本诊断没有测量启发式算法。
+18/72个既定预算派生决策选中不支持值点。以下限制损失假定已经获得全部支持点及全部并列最优点；它不等于某个实际算法的测量表现。
+每档固定12田；保留零损失。均值和中位数单位为米，显示四舍五入到6位；精确整数毫米与有理数见SUMMARY和CSV。
+额外总距预算 | 正损失田数 | 零损失田数 | 均值损失（米） | 中位损失（米） | 最大损失（米）
+0% | 0/12 | 12/12 | 0.000000 | 0.000000 | 0.000
+1% | 1/12 | 11/12 | 0.170000 | 0.000000 | 2.040
+2% | 3/12 | 9/12 | 0.544750 | 0.000000 | 2.491
+5% | 4/12 | 8/12 | 0.901417 | 0.000000 | 8.616
+10% | 8/12 | 4/12 | 3.407250 | 0.118000 | 29.540
+20% | 2/12 | 10/12 | 0.322333 | 0.000000 | 3.613
+10%预算档均值明显高于中位数；不能将均值解释为典型田块的额外负担。六档全部列出，不据差额选预算。
+若目标是覆盖这份完整前沿或复现全部既定预算决策，仅保留精确加权和最优值不够。此结论针对已审整数G代理及已观察的12田合成任务，不作实车或未见总体推断。
+本次仅数学派生诊断：实际主12+独12，未知启动0；新增路线、局部TSP和完整前沿求解均为0。85点及72预算行不是独立科学样本。
+
+以下为冻结报告器生成的逐田逐预算全文，原文也完整保存于GENERATED_REPORT_ZH.txt：
+完整距离前沿：全权重支持性与理想完整支持集预算损失
+固定原12田合成任务/容量/有限图G整数毫米模型，继承已审85个完整前沿值点。
+计划12主有理分类+12独整数凸包验证，新增路线/TSP/完整前沿优化均为0。
+实际主分类已知启动12槽、启动未知0槽；独立凸包已知启动12槽、启动未知0槽；每侧计划与保留均12槽。
+核验12/12田；85值点、72固定预算行均保留。点/预算/分组不是独立科学样本。
+UNSUPPORTED：没有任何非负非零权重可使该值点最优；SUPPORTED_TIE_ONLY：仅单点λ并列可达；SUPPORTED_INTERVAL：存在正长度权重区间。
+λS+(1−λ)M含端点0与1。支持不保证某固定tie规则返回给定Pcode，也不保证分组或路线唯一。
+各田分类：
+nl_field_40：{"SUPPORTED_INTERVAL": 3, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 1}
+nl_field_44：{"SUPPORTED_INTERVAL": 4, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 4}
+nl_field_63：{"SUPPORTED_INTERVAL": 3, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 5}
+nl_field_187：{"SUPPORTED_INTERVAL": 3, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 2}
+nl_field_1：{"SUPPORTED_INTERVAL": 3, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 0}
+nl_field_2：{"SUPPORTED_INTERVAL": 4, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 2}
+nl_field_7：{"SUPPORTED_INTERVAL": 5, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 5}
+nl_field_8：{"SUPPORTED_INTERVAL": 2, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 3}
+nl_field_17：{"SUPPORTED_INTERVAL": 3, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 3}
+nl_field_67：{"SUPPORTED_INTERVAL": 3, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 4}
+nl_field_89：{"SUPPORTED_INTERVAL": 4, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 9}
+nl_field_143：{"SUPPORTED_INTERVAL": 5, "SUPPORTED_TIE_ONLY": 0, "UNSUPPORTED": 5}
+理想完整支持集在同预算下的可达损失（整数G毫米）：
+nl_field_40 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_40 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_40 p=2%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_40 p=5%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_40 p=10%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_40 p=20%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_44 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_44 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_44 p=2%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_44 p=5%：23 mm；原预算点 UNSUPPORTED
+nl_field_44 p=10%：23 mm；原预算点 UNSUPPORTED
+nl_field_44 p=20%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_63 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_63 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_63 p=2%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_63 p=5%：172 mm；原预算点 UNSUPPORTED
+nl_field_63 p=10%：172 mm；原预算点 UNSUPPORTED
+nl_field_63 p=20%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_187 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_187 p=1%：2040 mm；原预算点 UNSUPPORTED
+nl_field_187 p=2%：2040 mm；原预算点 UNSUPPORTED
+nl_field_187 p=5%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_187 p=10%：618 mm；原预算点 UNSUPPORTED
+nl_field_187 p=20%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_1 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_1 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_1 p=2%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_1 p=5%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_1 p=10%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_1 p=20%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_2 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_2 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_2 p=2%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_2 p=5%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_2 p=10%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_2 p=20%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_7 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_7 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_7 p=2%：2006 mm；原预算点 UNSUPPORTED
+nl_field_7 p=5%：2006 mm；原预算点 UNSUPPORTED
+nl_field_7 p=10%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_7 p=20%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_8 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_8 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_8 p=2%：2491 mm；原预算点 UNSUPPORTED
+nl_field_8 p=5%：8616 mm；原预算点 UNSUPPORTED
+nl_field_8 p=10%：9303 mm；原预算点 UNSUPPORTED
+nl_field_8 p=20%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_17 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_17 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_17 p=2%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_17 p=5%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_17 p=10%：343 mm；原预算点 UNSUPPORTED
+nl_field_17 p=20%：3613 mm；原预算点 UNSUPPORTED
+nl_field_67 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_67 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_67 p=2%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_67 p=5%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_67 p=10%：64 mm；原预算点 UNSUPPORTED
+nl_field_67 p=20%：255 mm；原预算点 UNSUPPORTED
+nl_field_89 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_89 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_89 p=2%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_89 p=5%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_89 p=10%：824 mm；原预算点 UNSUPPORTED
+nl_field_89 p=20%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_143 p=0%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_143 p=1%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_143 p=2%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_143 p=5%：0 mm；原预算点 SUPPORTED_INTERVAL
+nl_field_143 p=10%：29540 mm；原预算点 UNSUPPORTED
+nl_field_143 p=20%：0 mm；原预算点 SUPPORTED_INTERVAL
+该损失假定所有支持值点和共线并列最优点均已得到；不是实际权重扫描、求解器或自动算法生成的实验表现。
+原模型只比较总距和最长路线距离负担，不代表工期、速度、能耗、实车效果或未见泛化。
+结论对冻结G整数代理精确；旧路径取整误差界不保证物理长度下的凸包/支持性成员关系。
+横纵不同正系数缩放保持支持集合，但改变λ区间；区间宽度不是概率或与单位无关的重要性。

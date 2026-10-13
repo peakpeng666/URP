@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "upstream_upload": {
+    "name": "bpp-research-console-delivery.zip",
+    "drive_file_id": "1btVHe_R2tTYsmbCHe1HQg85A8o0nek8b",
+    "sha256": "2c0a05db644cb9749dbeed8db1c2961f075f62cbad28ae24069711c060bcb239"
+  },
+  "runtime": {
+    "python": ">=3.10",
+    "third_party_dependencies": [],
+    "tested_python": "3.12.14",
+    "tested_platform": "Linux"
+  },
+  "archives": [
+    {
+      "name": "research-backend-core-20261007.zip",
+      "purpose": "Backend source and five normalized real research packages; sufficient for integration checks",
+      "url": "https://drive.google.com/file/d/1NbcekvX809gAW5fRb_8Y1ymDaaFnwilv/view",
+      "bytes": 302949,
+      "sha256": "9fcff5d1dc990fe4242181daba4fcd323ed565d149b2d0772e90d8df1518b96d",
+      "package_root": "bpp-research-console/packages"
+    },
+    {
+      "name": "research-panel-backend-20261007.zip",
+      "purpose": "Complete source handoff with original BPP input; not required for backend unit tests",
+      "url": "https://drive.google.com/file/d/1GMJyq8rjLsB6hlKCjruw9EHKvKeZUBgy/view",
+      "bytes": 26065013,
+      "sha256": "8f606f8886119c40e5018bd1fd017f44c8d3ee0c12235409f08c8b41caeb27d3",
+      "package_root": "bpp-research-console/packages"
+    }
+  ],
+  "expected_experiment_ids": [
+    "selector",
+    "budget",
+    "fleet",
+    "turns",
+    "bpp-history"
+  ],
+  "external_downloads": "Manual, using the existing authorized Drive account; no automatic login or download",
+  "route_extension": {
+    "base_backend_commit": "fe9435f97b00b7e5819c18347c29ebfeb412656a",
+    "source_archive_url": "https://drive.google.com/file/d/1K2-CnygJC-RpODyU9u7GpQLyClXvEg4T/view",
+    "source_archive_sha256": "3069b7cc3ab97443188eabf76b34d574fcb4652c1a249e5f9eb6ccfea291547f",
+    "run_count": 240,
+    "instance_count": 48,
+    "documentation": "docs/ROUTE_API.md",
+    "raw_data_in_repository": false,
+    "solver_api": false,
+    "frontend_modified": false
+  },
+  "mature_route_extension": {
+    "base_backend_commit": "3497978a5224e137d260e24d08e0727b3d909132",
+    "source_format": "vrptw-mature-solver-v1",
+    "source_input_sha256": "a899e22baf91e1435b8aca7af88c0107ea90a7439f257e4ba2bc55d2275af6bb",
+    "new_runs": 96,
+    "old_runs": 240,
+    "logical_unique_inputs": 48,
+    "documentation": "docs/MATURE_ROUTE_API.md",
+    "solver_executed": false,
+    "source_python_executed": false,
+    "raw_data_in_repository": false
+  },
+  "public_route_extension": {
+    "base_backend_commit": "7dde7ac48a378b9edf94bfe90a0dd43d00b43044",
+    "source_formats": [
+      "vrptw-archived-solomon-v1",
+      "vrptw-solver-portfolio-v1"
+    ],
+    "new_runs": 336,
+    "new_logical_inputs": 56,
+    "geometry_groups": 4,
+    "new_feasible": 329,
+    "new_no_solution": 7,
+    "official_byte_identity": "unverified",
+    "objective": "fixed K upper bound, distance only",
+    "documentation": "docs/PUBLIC_ROUTE_API.md",
+    "raw_instances_in_source": false,
+    "solver_executed": false,
+    "frontend_modified": false
+  }
+}

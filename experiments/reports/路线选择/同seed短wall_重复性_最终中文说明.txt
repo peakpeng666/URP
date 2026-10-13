@@ -1,0 +1,33 @@
+同 seed 短 wall cutoff 重复性研究 最终交付说明
+
+已完成96个计划策略测量与独立只读审计，审计为PASS_WITH_CAVEATS，1448/1448项通过。
+本包保留作者原589457字节ZIP原样，连同原包装收据、独立审计全部报告、复核代码、诊断记录与资源收据，不覆盖原包或原实验目录。未运行新的solver请求，未上传。
+
+主要发现
+- 从原24几何按每家族coordinate hash升序前2事前选样，8旧几何、16题、两臂各3次。8几何才是独立块，96策略是重复测量，不能当96独立样本。
+- 144潜在请求终态完整：99实际调用、45次首阶段成功后的跳过。两臂均48/48策略成功，本轮coverage三次不变。
+- 相同输入、模型、seed和wall预算下，selector250失败PCI250有5/16题路线及距离变化，fixed PCI500有4/16题变化；最大题内距离极差/成功均值分别为5.162172778324567%与1.6909626732827727%。
+- 每次调用新建RoutingModel并重设相同seed，但在同一个Python进程内；不是进程、库、缓存、硬件状态完全冷启动。
+- 因此本轮同seed短wall重复中有可观测的路线/距离差异。不能只归因于宿主负载，也不能据未变化的题证明一般bitwise可复现。没有总体胜出、显著性或SOTA结论。
+- “8/16题两臂平均距离差不超过同臂极差”中5题是差=极差=0的平局，仅3题是非零差满足该描述；不是8个真实差异都被噪声淹没。
+
+审计限定
+- 三次SAV首阶段失败均为b019_w080，原生code3/ROUTING_FAIL保留，继承core的通用outcome将其记为UNKNOWN；三次均按原计划回退成功。
+- 若未来checker异常，当前except路径可能覆盖已经返回的solver记录并丢失native状态；这是未触发的源码限制。本轮零异常，99实际请求原native码完整。
+- freeze、日志与hash提供本地一致证据，没有系统调用级执行跟踪或第三方时间戳见证。共享宿主/PID命名空间可见性不能证明无并发或隔离。
+
+资源单列
+- 主运行完整bash time：37.720 CPU秒（37.396 user + 0.324 sys），37.745 wall秒，退出码0。180 CPU秒硬限只覆盖main进程。
+- 原作者退出后包装：0.234866379 CPU秒、0.23506015600287355 wall秒，另计；该计量截止于包hash/CRC验证附近，不含末尾receipt写入和解释器退出。
+- 独立审计程序3次累计1.131 CPU秒、1.134 wall秒；最后一轮0.385 CPU秒、0.385 wall秒。前两次是复核程序诊断和校正，均不是solver补跑。阅读、编写、检查和收据写入不包含在这些已测CPU里。
+- 此最终外层包装资源另见同名solver_repeatability_20261007_FINAL_packaging_receipt.json；完整进程退出计时见solver_repeatability_20261007_FINAL_packaging_time.txt。未将包装或审计并入main的180秒硬限，不宣称整段工作会话全部步骤受该限制。
+
+导航与校验
+1. author/solver_repeatability_20261007_package.zip：作者原封包，内含冻结协议、源码、输入、全部原始结果、checker、中文报告及完整主运行shell/exit receipt。
+2. author/solver_repeatability_20261007_package_receipt.json：作者原外包收据。
+3. audit/audit_report_zh.txt、audit/audit_final_receipt.json：独审结论及全部计量；audit/audit_repeatability.py为自写独立复核代码，其余audit文件为完整证据和诊断记录。
+4. manifest.json及SHA256SUMS.txt：此外包内容清单和hash。source/build_final_package.py为本轮封包源码，不调用solver或审计器。
+5. evidence/source_immutability.json：打包前与独审author inventory相符，打包后在外部最终receipt再次确认原作者72文件、原包及全部审计文件均未变化。
+
+作者原包SHA256：9b8c67e638ae376f86f3e0c96394ff1088a7990e75a5c3229873b0db441c9f4e
+此交付只作本地封存，等待根任务的统一交付与中心索引更新许可。

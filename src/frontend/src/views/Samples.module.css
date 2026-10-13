@@ -1,0 +1,255 @@
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--s5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+}
+
+.page > * {
+  min-width: 0;
+}
+
+.header {
+  padding-top: var(--s2);
+}
+
+.title {
+  font-size: var(--fs-24);
+  font-weight: 600;
+}
+
+.sub {
+  margin-top: var(--s2);
+  max-width: 70ch;
+  font-size: var(--fs-14);
+  color: var(--ink-3);
+  line-height: 1.6;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3) var(--s5);
+}
+
+.filters2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-top: var(--s3);
+  padding-top: var(--s3);
+  border-top: 1px solid var(--line);
+}
+
+.chipGroup,
+.familyChips {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.chipGroup[data-disabled] {
+  opacity: 0.45;
+}
+
+.chipLabel {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+  margin-right: 4px;
+}
+
+.chip {
+  padding: 4px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink-2);
+  font-size: var(--fs-13);
+}
+
+.chip:hover:not(:disabled):not([data-active]) {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.chip[data-active] {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+.chip:disabled {
+  cursor: not-allowed;
+}
+
+.search {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  color: var(--ink-3);
+  min-width: 260px;
+}
+
+.search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--fs-13);
+  width: 100%;
+  color: var(--ink);
+}
+
+.count {
+  margin-top: var(--s3);
+  font-size: var(--fs-13);
+  color: var(--ink-3);
+}
+
+.tableWrap {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-13);
+  min-width: 720px;
+}
+
+.table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--inset);
+  z-index: 1;
+  text-align: right;
+  padding: 10px 12px;
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--ink-3);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.thLeft,
+.tdLeft {
+  text-align: left !important;
+}
+
+.table tbody td {
+  padding: 9px 12px;
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.row {
+  cursor: pointer;
+}
+
+.row:hover {
+  background: var(--inset);
+}
+
+.row:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+.row[data-newgroup] td {
+  border-top: 2px solid var(--line-strong);
+}
+
+.sampleName {
+  display: block;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.sampleId {
+  display: block;
+  font-size: var(--fs-11);
+  color: var(--ink-4);
+}
+
+.splitTag {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: var(--fs-11);
+  font-weight: 500;
+}
+
+.splitTag[data-split='train'] {
+  background: var(--bf-wash);
+  color: var(--bf);
+}
+.splitTag[data-split='confirmation'] {
+  background: var(--save-wash);
+  color: var(--save);
+}
+.splitTag[data-split='risk'] {
+  background: var(--risk-wash);
+  color: var(--risk);
+}
+
+.delta[data-tone='save'] {
+  color: var(--save);
+  font-weight: 600;
+}
+.delta[data-tone='harm'] {
+  color: var(--harm);
+  font-weight: 600;
+}
+.delta[data-tone='zero'] {
+  color: var(--ink-4);
+}
+
+.sortTh {
+  padding: 0 !important;
+}
+
+.sortBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 12px;
+  width: 100%;
+  justify-content: flex-end;
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: var(--fs-12);
+  font-weight: 600;
+}
+
+.sortBtn:hover {
+  color: var(--ink);
+}
+
+.sortBtn[data-active] {
+  color: var(--ink);
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: var(--s4) var(--s3) var(--s6);
+  }
+  .search {
+    min-width: 0;
+    width: 100%;
+  }
+  .table thead th {
+    top: 0;
+  }
+}

@@ -1,0 +1,57 @@
+.fig {
+  margin: 0;
+}
+
+.cap {
+  font-size: var(--fs-13);
+  color: var(--ink-3);
+  line-height: 1.5;
+  margin-bottom: var(--s2);
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+}
+
+.grid,
+.gridX {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.boundary {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.zero {
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+}
+
+.cursor {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+  opacity: 0.5;
+}
+
+.deltaLine {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.tickX,
+.tickY {
+  fill: var(--ink-3);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.axisTitle {
+  fill: var(--ink-3);
+  font-size: 11px;
+}

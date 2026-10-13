@@ -1,0 +1,76 @@
+.flow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: stretch;
+  gap: var(--s2);
+}
+
+.stage {
+  flex: 1;
+  min-width: 0;
+  background: var(--inset);
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  border-top: 3px solid var(--line-strong);
+  padding: var(--s3);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stage[data-split='train'] {
+  border-top-color: var(--bf);
+}
+.stage[data-split='freeze'] {
+  border-top-color: var(--ink-3);
+}
+.stage[data-split='confirmation'] {
+  border-top-color: var(--save);
+}
+.stage[data-split='risk'] {
+  border-top-color: var(--risk);
+}
+
+.stageHead {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stageName {
+  font-size: var(--fs-15, 0.9375rem);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.stageCount {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+}
+
+.stageBody {
+  font-size: var(--fs-13);
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  color: var(--ink-4);
+  font-size: var(--fs-20);
+  flex: 0 0 auto;
+}
+
+@media (max-width: 900px) {
+  .flow {
+    flex-direction: column;
+  }
+  .arrow {
+    justify-content: center;
+    transform: rotate(90deg);
+    height: 18px;
+  }
+}

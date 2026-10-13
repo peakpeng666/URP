@@ -1,0 +1,22 @@
+仅训练内校准的拒绝选择器：新分布检验
+
+固定候选网格25条+全拒绝；40个geometry的LOGO，80行，原240条250ms标签不重跑。选中规则：{"id": "r0_m2", "radius": 0.5, "margin": 0.01}。
+训练OOF合格候选4/26；选中记录：{"rule": {"id": "r0_m2", "radius": 0.5, "margin": 0.01}, "eligible": true, "extra_failures_vs_pci": 0, "extra_successes_vs_pci": 0, "successes": 80, "pci_successes": 80, "accepted_non_pci_count": 5, "common_success_n": 80, "equal_geometry_full_pci_success_improvement": 0.0011496243566281182, "common_success_mean_improvement": 0.0011496243566281182, "usable_pci_success_geometries": 40}。
+训练OOF用于选阈，因此此训练表现有择优乐观性。每折两个窗一并排除，模型/标准化/邻居margin仅用其余78行。训练零额外失败是观察，不能当风险上界或安全保证。
+
+新target24个独立geometry，四shift家族各6，窗口20/80，共48问题；全部先独立验证构造witness。实际门控接受非PCI：0/48。
+覆盖率为主，全部48问题保留。每个方法每个问题独立运行一次250ms；即使都选择PCI也分别计费，绝不共用一个成功输出。
+frozen_1nn8: 成功44/48；PCI成功48/48；PCI成功而本法失败4，反向0；共同成功44；共同成功等geometry相对距离差-0.631248738598808%（负为较好）；完整PCI成功集质量改善None%；实际请求CPU12.128054s。
+calibrated_abstention: 成功48/48；PCI成功48/48；PCI成功而本法失败0，反向0；共同成功48；共同成功等geometry相对距离差-0.2859129140715376%（负为较好）；完整PCI成功集质量改善0.2859129140715376%；实际请求CPU12.472277s。
+fixed_pci250: 成功48/48；PCI成功48/48；PCI成功而本法失败0，反向0；共同成功48；共同成功等geometry相对距离差0.0%（负为较好）；完整PCI成功集质量改善-0.0%；实际请求CPU12.500573s。
+
+若出现任何PCI成功而门控失败，完整基线成功集的质量记为未定义；共同成功条件均值不能掩盖覆盖损失。若无target非PCI采用，则门控与PCI是同一算法选择政策，运行输出差异只属runtime噪声，不能当门控收益。
+本次是否满足预定的描述性转移正收益必要条件：False（仍不是统计/风险保证）。
+
+实验限制：24个而非48个独立统计单元；每geometry双窗相关。40训练geometry校准选择具有多候选择优乐观性；目标是新样本但四家族来自已知shift机制，不是未知机制泛化。人工窗口围绕角度分组+最近邻可行构造，存在witness偏置。固定随机种子加wall-time截止不保证逐位复现；三法同策略重复求解的结果差异单独记录。2000次geometry cluster bootstrap仅作描述。
+
+审计入口：protocol/design.json，train/folds.json、candidate_records.json、selection.json，evidence/training_rule_seal.json，protocol/freeze.json，raw/events.jsonl，raw/target_results.jsonl，evidence/witness_checks.json，reports/failures.json，evidence/resource_accounting.json。
+
+最终补充：门控32个非PCI原推荐全部因距离拒绝，最小标准化距离0.780811>0.5；16个原推荐已为PCI。该规则在此目标集等同固定PCI，无额外选择收益。
+计费：主实验Bash wall38.606s、user38.136s+sys0.456s=38.592s；main内240个历史标签读取/重核+特征+原模型重建CPU0.347807s，其中80训练特征0.227830s；40折/26候选校准0.149560s；48目标特征0.151991s；目标144调用请求CPU37.100904s。原逐次预测CPU读数0、wall7.274592ms，属于计时测量局限，不能报零开销。附录无solver重复计量整个程序CPU0.378392s另计。
+审计例外：原freeze误纳入当时为空的shell_time.txt。Bash结束写入后曾被作者恢复为空，现已纠正为完整原始receipt，原freeze及中间错误postrun记录均保留。科学source/训练/model/规则/input/prediction/order/参数164项均未变；1项receipt为明确例外，不能声称所有freeze hash都未变。详见evidence/receipt_erratum.json和final_freeze_verification.json。

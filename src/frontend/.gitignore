@@ -1,0 +1,14 @@
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+inputs/*.zip
+research/
+public/data/
+dist/
+artifacts/
+delivery/
+.cache/
+test-results/
+playwright-report/
+*.log

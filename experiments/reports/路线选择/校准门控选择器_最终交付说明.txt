@@ -1,0 +1,25 @@
+训练内校准拒绝选择器：完整交付与独立审计
+
+结论
+- 新24个geometry×两个时间窗，共48问题。训练校准门控最终全部选择固定PCI：门控48/48成功，PCI48/48；未门控1NN44/48。
+- 32个非PCI建议全部因标准化距离超过训练所选0.5而被拒绝。因此没有证实新增的selection benefit；门控在此target是固定PCI政策。
+- 同政策独立运行的观测距离差−0.285913%属于runtime噪声，不能算学习选择器收益。训练OOF改善0.114962%有择阈乐观性，不能当安全保证。
+
+原始材料与审核
+本包保留两个内层ZIP的完整原字节，主实验与独审均不重新压改。manifest.json、SHA256SUMS.txt给出校验。
+- selector_calibrated_abstention_20261007_FINAL.zip：完整训练80输入/240历史标签、40折LOGO、26候选、模型/规则/新输入/预测/均衡顺序先封存、144独立250ms目标调用、所有成功失败/CPU/中文报告。
+- selector_calibrated_abstention_audit_20261007_FINAL.zip：只读独审181/181通过，状态PASS_WITH_DECLARED_RECEIPT_EXCEPTION_AND_SCOPE_LIMITS；详细范围见audit_report.json及README_zh.txt。
+
+必须保留的完整性例外
+原freeze错误包含当时为空的shell_time占位。主进程结束后，Bash写入完整真实receipt；作者曾复制完整原文后把原路径恢复为空，并形成错误的all-match报告；随后按纠正要求又恢复完整原文。完整→空→完整的操作、原始bytes副本、原freeze与中间错误all-pass记录全部保留，未覆盖或隐藏。最终仅shell_time这1项非科学、运行收尾receipt与原freeze不同，其他164项相符，不能声称全过程无改动或全部freeze hash不变。主包入口：evidence/receipt_erratum.json、final_freeze_verification.json。
+
+计费边界
+- 主实验Bash完整边界：CPU38.592秒（user38.136+sys0.456），wall38.606秒；180秒硬限仅适用主实验进程。
+- 后验复核与无solver预测计时附录：CPU0.378392秒另计。原逐次prediction CPU观测0仍保留，表示测量局限；未用后测估计替换原时耗。
+- 原主包封装：CPU0.277109秒另计。
+- 独审两次process快照合计2.103731秒，非完整端到端CPU；终次独审外部shell完整边界1.131秒已包含同一终次工作，不能再次相加。独审封包快照0.009079秒另计，未计互动阅读/脚本编写等；详见独审audit_cpu_ledger.json与外层final_cpu_receipt.json。
+- 此次外层封包单列，包内记录到快照，完成后的独立receipt见同级DELIVERY_package_receipt.json和DELIVERY_shell_time.txt；不把它混入主38.592秒。
+
+其他限制
+24而非48个独立统计单元；双窗相关、witness构造偏置、已知shift机制、单次wall-time截断均限制外推。250ms是求解器搜索参数，实测单次solve wall最高265.416ms。继承wrapper把native ROUTING_FAIL(3)映射为UNKNOWN的记录仍全算失败，未从分母删除。异常/checker拒绝/CPU中断分支未触发，不能称都已验证。
+本次合包没有solver调用、模型API或上传，原source、erratum与旧ZIP不变。

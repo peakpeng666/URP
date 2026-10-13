@@ -1,0 +1,4 @@
+# Optional, exact CPU environment used by the frozen experiment.
+# Install torch separately with the official CPU index; see docs/NAS_FIDELITY.md.
+numpy==2.5.3
+torch==2.14.1+cpu

@@ -1,0 +1,102 @@
+{
+  "P0_P1_total_admissions": 33,
+  "P0_P1_total_design_packs": 165,
+  "P0_P1_total_generation": 72,
+  "P1_admissions": 29,
+  "P1_design_packs": 145,
+  "P1_generation": 60,
+  "P1_snapshot_sha256": {
+    "EOH_TC": "824404cdbeee44c89d47fa87f74b2a394888ad73e205b96af444cac3062e915c",
+    "IID_TC": "13ceffe91b54ce1dd1bad2c3b606d0c712d2cdbb771a7e2b011a192c6fb449b3"
+  },
+  "P1_survivors": {
+    "EOH_TC": [
+      "b01_EOH_TC_g1_m1_03",
+      "b01_EOH_TC_g1_e2_05",
+      "b01_EOH_TC_g1_e1_05",
+      "b01_EOH_TC_g1_m2_06",
+      "b01_EOH_TC_g1_m1_06",
+      "b01_EOH_TC_g1_e1_03"
+    ],
+    "IID_TC": [
+      "b01_IID_TC_g1_m2_04"
+    ]
+  },
+  "accepted": true,
+  "authenticated_index_identity": {
+    "file_id": "file_00000000c8b081fdb633650f46bb748d",
+    "library_file_id": "libfile_9afab4077ef48191ba90b2adbe95093f",
+    "sha256": "c8a8f6ecabd3ee5f58d61e61f1a4c9ff04ee4dbcb534479e068d69fb05188717",
+    "version": 120
+  },
+  "controls": 0,
+  "evidence_file_sha256": {
+    "audit": "5bd03441f306580f198e89c361d52966b0449306492450bea7e3c312a2f5bf33",
+    "ledger": "fe1b8365506f0ae0403d3411655066f6325588ed7137746a0a3e52389942a22f",
+    "packet": "c4a321ab9d6dc7497cfb1634db30ce0cea3eb123a9570a13628aeb5938200450",
+    "report": "021b823f06b966de761714d7470d169b6947b65914c0b1dc3fe193aea4abbfe7"
+  },
+  "generation_readback": {
+    "file_sha256": "6b9dfaa0f8b5123d14979dd1006170d66a3657412baabd44981955c83072ab31",
+    "path": "/workspace/scratch/27470b7a9f17/original132_phase1_authenticated_readback_20261006/readback.receipt.json"
+  },
+  "heldout": 0,
+  "historical_original_shared_cap_compliance": "not authenticated; not claimed",
+  "historical_shared_balance": null,
+  "independent_scheduler_replay": {
+    "file_sha256": "19c00752c647d329e7b705e4e02000fd1a268a830579840bdae1fa4cb14dd698",
+    "path": "/workspace/scratch/27470b7a9f17/audit_original132_phase1_terminal_independent_20261006/SCHEDULER_REPLAY.json"
+  },
+  "independent_strong_rerun": {
+    "file_sha256": "8549ebbbd773d1c83146dc5a789bc181e4f462f31b19d65152681020c96f9689",
+    "path": "/workspace/scratch/27470b7a9f17/audit_original132_phase1_terminal_independent_20261006/STRONG_AUDIT_RERUN.json"
+  },
+  "independent_terminal_verification": {
+    "file_sha256": "5ceb16c57b8033e8059f7949c51f03e01821234eaa4e56e981faf66f6e44cebe",
+    "path": "/workspace/scratch/27470b7a9f17/audit_original132_phase1_terminal_independent_20261006/TERMINAL_EVIDENCE_VERIFICATION.json"
+  },
+  "ledger_sha256": "16423d0c433762de7640c6731c83f58dc8975a22822eab51a2bda078214cda4b",
+  "meter_actual_terminal_tool_provenance": {
+    "file_sha256": "a2ffb8d72f4d76f3f3eb126a57e433229d8ab0b2b715f53749ef4aa9a77300f7",
+    "path": "/workspace/scratch/27470b7a9f17/original132_phase1_coordination_20261006/RUN_TERMINAL_TOOL_RESULT_PROVENANCE.json"
+  },
+  "meter_actual_terminal_tool_result": {
+    "file_sha256": "348c399688513331a8675aae1a08a804430125c88905e07314b8e3e4f5c3771b",
+    "path": "/workspace/scratch/27470b7a9f17/original132_phase1_coordination_20261006/RUN_TERMINAL_TOOL_RESULT.json"
+  },
+  "meter_complete_clean_reaping": true,
+  "meter_exit_code": 0,
+  "meter_post_fsync_within_inclusive_wall": true,
+  "meter_receipt": {
+    "file_sha256": "3eec01f09d2bd3abc16b671f5a59ea2bd60a76761563a46ccd36fea81be5ce32",
+    "path": "/workspace/scratch/27470b7a9f17/original132_phase1_forward_accounting_20261006/run.receipt.json"
+  },
+  "operational_run_id": "urp132_20261005_b01_phase1",
+  "parent_rescores": 0,
+  "phase2_generation_execution_granted": false,
+  "phase2_numeric_execution_granted": false,
+  "phase2_resource_accounting_granted": false,
+  "phase2_still_planned": true,
+  "plan_sha256": "69f7c2563cc341c1240da49bf790419da3fe785e7956a2700919b2c02f8caae1",
+  "producer_fence": {
+    "file_sha256": "b4e89d5c0a118b76ff45550c95886f469ae9484bb8e31e1af16c2a842c6238bc",
+    "path": "/workspace/scratch/27470b7a9f17/original132_phase1_authenticated_readback_20261006/producer-fence-status.stdout.json"
+  },
+  "report_sha256": "6eab5ab8c5879c88a4348bd2e70acfa8ddde932352af43796cc302413e2ba357",
+  "review_kind": "independent_read_only_terminal_evidence_review",
+  "reviewed_at_utc": "2026-10-06T07:55:22.042189+00:00",
+  "schema": "phase1-terminal-parent-review-v1",
+  "scientific_run_id": "urp132_20261005_b01",
+  "scope": "Accepts only the exact completed P1 evidence. Disabled phase2 input preparation retains its separate accounting gate; this review grants no phase2, control, or heldout execution.",
+  "sha256": "5449aad8bec7663aeda641814c0f2f162e0e8a88c6264fa823dd2023de79af29",
+  "status": "FINAL_P1_INDEPENDENTLY_ACCEPTED",
+  "strong_audit": {
+    "file_sha256": "8549ebbbd773d1c83146dc5a789bc181e4f462f31b19d65152681020c96f9689",
+    "path": "/workspace/scratch/27470b7a9f17/original132_phase1_evaluation_ready_20261006/STRONG_TERMINAL_AUDIT.json"
+  },
+  "strong_audit_same_report_plan_ledger": true,
+  "strong_audit_source": {
+    "file_sha256": "c26eb06b65376c0ec8b45869c6f569ad3659a6bd376452cde166ea9137729699",
+    "path": "/workspace/scratch/27470b7a9f17/original132_phase1_evaluation_ready_20261006/audit_source_binding.py"
+  }
+}

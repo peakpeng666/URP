@@ -1,0 +1,31 @@
+真实田块几何准备：6个原始凹多边形已冻结，米制实验仍阻塞
+核查日期：2026-10-08 UTC
+
+完成结果
+- 复用2026-10-07下载的Fields2Benchmark v1.0，未重复下载几何包。211710字节的ZIP通过既有SHA256与Zenodo页面MD5双重核对。
+- 先冻结规则，再从140个NL成员按数字ID递增，取前6个OGR有效、非空、二维Polygon且相对凸包面积缺口>1e-6的成员。取得nl_field_1、2、7、8、10、11；扫描6个，排除0个。该规则不读solver表现，不依好看程度选样。原坐标判定不是米制验收。
+- 每个WKT逐字节保留；完整140成员哈希清单、选样审计、规则哈希、环境版本、来源README和LICENSE均在同目录。未简化、buffer修复、MakeValid、重排环、删除孔洞或投影。
+- 默认Python缺pyproj和Shapely，但系统/usr/bin/python3已有pyproj和GDAL/OGR；实际使用系统Python，未安装软件。Shapely不是此次原坐标筛选的必要条件。
+
+来源及许可
+[1] https://zenodo.org/records/14524735
+原作者声明350个真实农业田块来自EuroCrops荷兰、爱沙尼亚、立陶宛。发布版为2024-12-19 v1.0。包内LICENSE为CC BY-SA 4.0；作者同时保留NL源CC0/PDM声明。本次仅取NL，保留署名与完整许可；不据顶层许可证覆盖LT非商用来源限制。未公开分享、未上传。
+[2] https://github.com/maja601/EuroCrops
+[3] https://www.nature.com/articles/s41597-023-02517-0
+EuroCrops说明几何来自农业补贴作物申报；这是农业边界来源证据，不是实时可通行空间、入口、车宽、任务或地头真值。
+
+CRS核查与阻塞
+- ZIP仅含wkt目录和350个普通WKT，无PRJ/CRS sidecar；README、官方记录已读部分不声明每国或整包EPSG、轴序、单位。未发现可证明转换链的元数据。
+- EuroCrops官方仓库及NL/EE/LT wiki、论文网页正文关键词查找没有补上Fields2Benchmark导出CRS。这里只报告所查页面证据不足，不声称所有相关文献均无CRS。
+- Zenodo REST API本次web读取不可达；不能声称核完未取得的API JSON。已有官方网页列出的全部四个文件为imgs.zip、LICENSE、README.md、wkt.zip；图片大包未下载。
+[4] https://fields2cover.github.io/source/tutorials/complete_flow.html
+教程示例明确test1.xml为EPSG:4258；缺CRS时库会尝试WGS84或ETRS89。该示例不是本包元数据，猜测机制不可作为数据证明。
+[5] https://api.pdok.nl/rvo/gewaspercelen/ogc/v1/collections?f=json
+官方当前NL源服务的storageCrs是EPSG:28992，支持CRS84、28992、3857、4258。它证明当前服务坐标契约，不能反推本WKT历史导出过程。昨日已有单要素实际为Sloot沟渠，并非可直接代替农田样本。
+
+结论：原始几何可以追溯并冻结，但source_crs=null，metric_ready=false。没有任何“经纬度乘常数”的假米制处理，也不把角度面积当平方米。仍需作者导出脚本/明确声明，或同版本EuroCrops原始PRJ与可验证的要素匹配及转换链，才能释放米制输入。不能靠把国家原始CRS贴到已转换坐标上消除阻塞。
+
+最小下一步
+优先只读查找可对应到这6个WKT的原作者导出过程及上游版本/PRJ。若必须询问作者，先由主代理取得外发许可。独立PDOK新切片可作另一条数据线，但必须另立版本和选样规则，不能悄悄替换已冻结6块。
+
+未做：求解、性能比较、GLM调用、付费、安装、上传、车辆/曲率部署验证。

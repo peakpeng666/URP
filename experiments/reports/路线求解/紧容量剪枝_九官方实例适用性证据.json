@@ -1,0 +1,46 @@
+{
+  "scope": "Read-only applicability audit of the nine frozen official CVRP inputs; no solver or initializer execution",
+  "rows_columns": ["name", "K", "Q", "sumDemand", "KQ", "slack"],
+  "rows": [
+    ["A-n32-k5", 5, 100, 410, 500, 90],
+    ["B-n31-k5", 5, 100, 412, 500, 88],
+    ["P-n40-k5", 5, 140, 618, 700, 82],
+    ["A-n33-k5", 5, 100, 446, 500, 54],
+    ["A-n33-k6", 6, 100, 541, 600, 59],
+    ["B-n34-k5", 5, 100, 457, 500, 43],
+    ["B-n35-k5", 5, 100, 437, 500, 63],
+    ["P-n45-k5", 5, 150, 692, 750, 58],
+    ["P-n50-k10", 10, 100, 951, 1000, 49]
+  ],
+  "invariant": "sum(all_K_residuals)-sum(remaining_demands)=K*Q-sum(initial_customer_demands)",
+  "all_tight_gates_unreachable": true,
+  "all_customer_demands_positive_integers": true,
+  "all_depot_demands_zero": true,
+  "all_demands_verified_against_raw": true,
+  "all_input_hashes_match_manifest": true,
+  "actual_DFS_entry_tested": false,
+  "conditional_if_DFS_entered": {"tight_checks": 0, "residual_checks": 0, "prunes": 0},
+  "source": {
+    "path": "/workspace/shared/tight_capacity_pruning_20261008/source/pruned_solver.py",
+    "sha256": "1d881520fb3e98d82e905c525fa561b1cc68a4ee61c0d1d9bcf98e3a27340299",
+    "all_K_bins_lines": [70, 88, 93, 96],
+    "strict_total_fill_gate_lines": [49, 51, 52],
+    "gate_called_lines": [77, 79, 80],
+    "fallback_entry_lines": [134, 135, 136, 137, 138, 139, 140, 141]
+  },
+  "manifest_sha256": {
+    "official_cvrp_benchmarks_20261008/manifest.json": "23e7b68e05b2c1abdf747fc542a9fc5c3d32bffed722245a39c402b6928574f3",
+    "new_official_cvrp_validation_set_20261008/manifest.json": "4a59f1dcc4cc0ee159d5cdd9a229150f2bb82b68209e1ce037fc7c130ef8e408"
+  },
+  "input_sha256": {
+    "A-n32-k5": "0a1e99ad8bfca778df8e11be58b99a914d26f342dcce08266168d0aa8312b10d",
+    "B-n31-k5": "d966e34fe0521afe18fb72346851896a6f2194adc233d8ca3cff1815277d826c",
+    "P-n40-k5": "221f789fed89ba33a258bc47a89887f2bb8f902b5a29e5c58346e6b826119f40",
+    "A-n33-k5": "6ba8cfc798a5c1daeab3d9bebfe85f2ea1190787b0346b5667b26ded4926d16d",
+    "A-n33-k6": "a18429bf238d63f01ada86718850b75722fc3ec7a9156be9fafb5e9fbaf2a1d2",
+    "B-n34-k5": "ff9a54a800fd8c77066fac7e554f1662dadbf3f3aab32775494edeb49fbb6875",
+    "B-n35-k5": "5d59c01ce30e7a39ede603313503557a4b242ccaa9a31a3c77936e0d5331621a",
+    "P-n45-k5": "4fab11acda789ad1ab99540513a2c0816c221cb1087ca73dae834ba857b2cf7f",
+    "P-n50-k10": "de211365f28def576e1093470f6d29c6f2155cbc659d039d6780417b3cc0b7a0"
+  }
+}

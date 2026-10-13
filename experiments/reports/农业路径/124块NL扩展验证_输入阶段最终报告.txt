@@ -1,0 +1,140 @@
+历史已定位面板之外的124块NL输入构造结果
+固定124个原始边界；124/124获得完整的独立几何与矩阵证据。
+其中124/124满足已冻结native数值准入，124/124满足精确标量化整数界。
+这是输入阶段结果。本阶段0精确求解、0native模型/求解；数据就绪不等于真实农业可行、算法质量或后续运行批准。
+任务为每田13点合成流，12单位需求客户、Q5、至多3车。124分母固定，失败/未知/未启动均保留，不换地/改seed。
+技术准入被阻断不代表数学无解。G是有限冻结候选图保存路径，不是连续平面最短路径；没有真实车辆部署或总体推断。
+历史只穷尽已定位面板，未穷尽全部历史压缩包；全部原WKT已有元数据接触。
+
+作者调用账本：{'planned': 124, 'known_spawned': 124, 'unknown_spawned_slots': 0, 'not_started': 0, 'retained': 124}
+独立输入账本：{'planned': 124, 'known_spawned': 124, 'unknown_spawned_slots': 0, 'not_started': 0, 'retained': 124}
+
+逐田结果
+nl_field_12: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_13: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_14: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_15: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_18: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_19: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_20: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_21: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_23: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_24: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_25: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_26: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_28: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_29: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_30: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_31: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_33: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_35: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_36: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_37: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_39: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_42: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_43: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_46: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_47: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_48: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_49: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_50: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_52: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_53: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_54: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_56: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_57: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_58: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_59: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_60: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_61: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_62: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_64: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_65: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_66: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_69: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_70: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_71: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_72: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_73: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_77: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_78: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_79: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_81: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_82: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_83: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_84: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_85: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_87: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_88: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_90: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_91: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_94: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_95: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_96: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_98: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_99: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_100: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_101: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_104: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_105: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_106: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_108: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_109: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_110: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_111: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_112: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_113: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_117: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_119: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_122: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_123: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_127: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_134: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_136: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_137: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_138: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_139: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_147: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_149: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_151: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_152: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_158: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_160: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_162: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_163: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_165: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_166: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_168: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_171: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_174: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_178: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_188: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_30475: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_44533: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_59131: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_66921: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_85439: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_134649: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_159417: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_175965: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_187374: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_191476: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_200637: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_278678: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_300075: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_338399: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_371656: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_372467: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_462244: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_532603: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_558824: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_576946: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_586195: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_657406: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_702198: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_716551: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+nl_field_729253: input_ready=True; native_numeric=True; exact_integer=True; failure=None
+
+源码/输入冻结SHA256 43a3a05519bbfa4689a071e1dc71e44c86585c2f215ead4319a8318f708e05ef
+RAW_MAIN SHA256 fbf239d3e57ff38d6f20818370d61d6f3f1c7f07363e0bb7e350189d275d8f06
+RAW_VERIFICATION SHA256 35a9ea0c0e52aeb9e60b9c9fb85f59d9fae49a027034d77b61fa471947b78b6e

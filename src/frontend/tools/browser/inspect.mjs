@@ -1,0 +1,17 @@
+import { chromium } from 'playwright';
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+const url=process.argv[2]||'http://127.0.0.1:4174';
+const out=path.resolve(process.argv[3]||'artifacts/codex-browser');await mkdir(out,{recursive:true});
+const browser=await chromium.launch({headless:true});
+const page=await browser.newPage({viewport:{width:1366,height:900}});
+const errors=[],requests=[];
+page.on('pageerror',e=>errors.push(e.message));
+page.on('console',e=>{if(e.type()==='error')errors.push(e.text());});
+page.on('requestfailed',r=>requests.push({url:r.url(),failure:r.failure()}));
+await page.goto(url,{waitUntil:'networkidle'});
+await page.screenshot({path:path.join(out,'initial-desktop.png'),fullPage:true});
+const report={url,title:await page.title(),text:(await page.locator('body').innerText()).slice(0,16000),errors,requests,overflow:await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)};
+await writeFile(path.join(out,'initial-inspection.json'),JSON.stringify(report,null,2));
+console.log(JSON.stringify(report,null,2));
+await browser.close();

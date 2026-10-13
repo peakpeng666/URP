@@ -1,0 +1,137 @@
+124块NL扩展验证：容量约束双目标精确参照
+输入阶段已审124块全部保留。每田depot+12合成单位需求客户，Q5/最多3车强制恰3条路线。
+两目标均已核：124/124；已核单目标：248/248（每目标作者与独立各一个预定槽）。
+作者248+独立248共496目标槽全部保留；局部回路、分区和DP转移不是独立样本或目标调用。
+主已知/未知/未启动：{'planned': 248, 'known_spawned': 248, 'unknown_spawned_slots': 0, 'not_started': 0, 'retained': 248}；独：{'planned': 248, 'known_spawned': 248, 'unknown_spawned_slots': 0, 'not_started': 0, 'retained': 248}。
+完整124田均值Delta(mm)：7270.653225806452。完整案例均值：7270.653225806452；分母124。
+Delta=E最优集合内的最小G成本−全局G最优成本。排序损失与分区损失均非负、和为Delta；分解只描述规范代表，不是所有E最优分区或因果效应。
+nl_field_12：E_G核验=True，G_E核验=True，E_star=1360590，G_star=1360590，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_13：E_G核验=True，G_E核验=True，E_star=612482，G_star=612482，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_14：E_G核验=True，G_E核验=True，E_star=831853，G_star=831853，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_15：E_G核验=True，G_E核验=True，E_star=682714，G_star=682714，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_18：E_G核验=True，G_E核验=True，E_star=3250843，G_star=3250843，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_19：E_G核验=True，G_E核验=True，E_star=1577796，G_star=1577796，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_20：E_G核验=True，G_E核验=True，E_star=1147991，G_star=1147991，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_21：E_G核验=True，G_E核验=True，E_star=686425，G_star=686425，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_23：E_G核验=True，G_E核验=True，E_star=988143，G_star=988143，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_24：E_G核验=True，G_E核验=True，E_star=1841905，G_star=1841905，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_25：E_G核验=True，G_E核验=True，E_star=1004954，G_star=1004954，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_26：E_G核验=True，G_E核验=True，E_star=586709，G_star=586709，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_28：E_G核验=True，G_E核验=True，E_star=1091247，G_star=1091247，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_29：E_G核验=True，G_E核验=True，E_star=1828525，G_star=1828525，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_30：E_G核验=True，G_E核验=True，E_star=1881870，G_star=1881870，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_31：E_G核验=True，G_E核验=True，E_star=792957，G_star=792957，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_33：E_G核验=True，G_E核验=True，E_star=1059628，G_star=1059628，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_35：E_G核验=True，G_E核验=True，E_star=673867，G_star=673867，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_36：E_G核验=True，G_E核验=True，E_star=666186，G_star=666186，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_37：E_G核验=True，G_E核验=True，E_star=863684，G_star=880024，Delta=557 mm，排序=0 mm，分区=557 mm，失败={'E_G': None, 'G_E': None}
+nl_field_39：E_G核验=True，G_E核验=True，E_star=639049，G_star=639992，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_42：E_G核验=True，G_E核验=True，E_star=1399183，G_star=2606615，Delta=638238 mm，排序=95953 mm，分区=542285 mm，失败={'E_G': None, 'G_E': None}
+nl_field_43：E_G核验=True，G_E核验=True，E_star=668101，G_star=668101，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_46：E_G核验=True，G_E核验=True，E_star=544209，G_star=544209，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_47：E_G核验=True，G_E核验=True，E_star=998915，G_star=998915，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_48：E_G核验=True，G_E核验=True，E_star=667542，G_star=667542，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_49：E_G核验=True，G_E核验=True，E_star=1552592，G_star=1552592，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_50：E_G核验=True，G_E核验=True，E_star=2239561，G_star=2239561，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_52：E_G核验=True，G_E核验=True，E_star=1075729，G_star=1075729，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_53：E_G核验=True，G_E核验=True，E_star=480767，G_star=480767，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_54：E_G核验=True，G_E核验=True，E_star=755404，G_star=755404，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_56：E_G核验=True，G_E核验=True，E_star=1006163，G_star=1006163，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_57：E_G核验=True，G_E核验=True，E_star=689232，G_star=689232，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_58：E_G核验=True，G_E核验=True，E_star=1023311，G_star=1023311，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_59：E_G核验=True，G_E核验=True，E_star=1973628，G_star=1973628，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_60：E_G核验=True，G_E核验=True，E_star=751334，G_star=751334，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_61：E_G核验=True，G_E核验=True，E_star=543637，G_star=543637，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_62：E_G核验=True，G_E核验=True，E_star=560647，G_star=560647，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_64：E_G核验=True，G_E核验=True，E_star=1335855，G_star=1335855，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_65：E_G核验=True，G_E核验=True，E_star=1064666，G_star=1064703，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_66：E_G核验=True，G_E核验=True，E_star=328482，G_star=328482，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_69：E_G核验=True，G_E核验=True，E_star=857554，G_star=857554，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_70：E_G核验=True，G_E核验=True，E_star=863771，G_star=863771，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_71：E_G核验=True，G_E核验=True，E_star=701632，G_star=701632，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_72：E_G核验=True，G_E核验=True，E_star=703055，G_star=707039，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_73：E_G核验=True，G_E核验=True，E_star=923176，G_star=923176，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_77：E_G核验=True，G_E核验=True，E_star=561550，G_star=561550，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_78：E_G核验=True，G_E核验=True，E_star=584314，G_star=584314，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_79：E_G核验=True，G_E核验=True，E_star=1251475，G_star=1251475，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_81：E_G核验=True，G_E核验=True，E_star=877111，G_star=877111，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_82：E_G核验=True，G_E核验=True，E_star=748132，G_star=748132，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_83：E_G核验=True，G_E核验=True，E_star=864450，G_star=864450，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_84：E_G核验=True，G_E核验=True，E_star=742133，G_star=832206，Delta=1899 mm，排序=1899 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_85：E_G核验=True，G_E核验=True，E_star=807778，G_star=807778，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_87：E_G核验=True，G_E核验=True，E_star=1155055，G_star=1155055，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_88：E_G核验=True，G_E核验=True，E_star=502768，G_star=514098，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_90：E_G核验=True，G_E核验=True，E_star=680623，G_star=680623，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_91：E_G核验=True，G_E核验=True，E_star=817907，G_star=817907，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_94：E_G核验=True，G_E核验=True，E_star=597936，G_star=597936，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_95：E_G核验=True，G_E核验=True，E_star=1108852，G_star=1108852，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_96：E_G核验=True，G_E核验=True，E_star=1090798，G_star=1090798，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_98：E_G核验=True，G_E核验=True，E_star=711439，G_star=714297，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_99：E_G核验=True，G_E核验=True，E_star=627416，G_star=627416，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_100：E_G核验=True，G_E核验=True，E_star=618468，G_star=618468，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_101：E_G核验=True，G_E核验=True，E_star=403913，G_star=444026，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_104：E_G核验=True，G_E核验=True，E_star=662240，G_star=662240，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_105：E_G核验=True，G_E核验=True，E_star=584336，G_star=586208，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_106：E_G核验=True，G_E核验=True，E_star=1966974，G_star=1967513，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_108：E_G核验=True，G_E核验=True，E_star=874834，G_star=874834，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_109：E_G核验=True，G_E核验=True，E_star=655189，G_star=655189，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_110：E_G核验=True，G_E核验=True，E_star=451748，G_star=451748，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_111：E_G核验=True，G_E核验=True，E_star=882414，G_star=882414，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_112：E_G核验=True，G_E核验=True，E_star=452986，G_star=452986，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_113：E_G核验=True，G_E核验=True，E_star=1031419，G_star=1031419，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_117：E_G核验=True，G_E核验=True，E_star=971030，G_star=1014204，Delta=2600 mm，排序=0 mm，分区=2600 mm，失败={'E_G': None, 'G_E': None}
+nl_field_119：E_G核验=True，G_E核验=True，E_star=1190004，G_star=1190004，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_122：E_G核验=True，G_E核验=True，E_star=520859，G_star=520859，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_123：E_G核验=True，G_E核验=True，E_star=507127，G_star=507127，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_127：E_G核验=True，G_E核验=True，E_star=324291，G_star=324291，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_134：E_G核验=True，G_E核验=True，E_star=1076847，G_star=1076847，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_136：E_G核验=True，G_E核验=True，E_star=592443，G_star=592443，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_137：E_G核验=True，G_E核验=True，E_star=509247，G_star=509247，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_138：E_G核验=True，G_E核验=True，E_star=360291，G_star=379517，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_139：E_G核验=True，G_E核验=True，E_star=687966，G_star=692843，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_147：E_G核验=True，G_E核验=True，E_star=867955，G_star=867955，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_149：E_G核验=True，G_E核验=True，E_star=839328，G_star=839328，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_151：E_G核验=True，G_E核验=True，E_star=658049，G_star=658049，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_152：E_G核验=True，G_E核验=True，E_star=416576，G_star=416576，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_158：E_G核验=True，G_E核验=True，E_star=1057911，G_star=1089425，Delta=978 mm，排序=978 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_160：E_G核验=True，G_E核验=True，E_star=899240，G_star=899240，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_162：E_G核验=True，G_E核验=True，E_star=2055293，G_star=2155868，Delta=4225 mm，排序=0 mm，分区=4225 mm，失败={'E_G': None, 'G_E': None}
+nl_field_163：E_G核验=True，G_E核验=True，E_star=1200251，G_star=1200251，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_165：E_G核验=True，G_E核验=True，E_star=1129944，G_star=1131661，Delta=4201 mm，排序=4201 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_166：E_G核验=True，G_E核验=True，E_star=735160，G_star=735160，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_168：E_G核验=True，G_E核验=True，E_star=406272，G_star=406301，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_171：E_G核验=True，G_E核验=True，E_star=509510，G_star=509510，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_174：E_G核验=True，G_E核验=True，E_star=1152731，G_star=1170368，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_178：E_G核验=True，G_E核验=True，E_star=1057376，G_star=1057376，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_188：E_G核验=True，G_E核验=True，E_star=497081，G_star=511189，Delta=3774 mm，排序=3774 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_30475：E_G核验=True，G_E核验=True，E_star=844984，G_star=845020，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_44533：E_G核验=True，G_E核验=True，E_star=840240，G_star=840240，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_59131：E_G核验=True，G_E核验=True，E_star=1235302，G_star=1235336，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_66921：E_G核验=True，G_E核验=True，E_star=663009，G_star=663009，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_85439：E_G核验=True，G_E核验=True，E_star=1016299，G_star=1016299，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_134649：E_G核验=True，G_E核验=True，E_star=817717，G_star=827549，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_159417：E_G核验=True，G_E核验=True，E_star=1187429，G_star=1187429，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_175965：E_G核验=True，G_E核验=True，E_star=449398，G_star=449473，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_187374：E_G核验=True，G_E核验=True，E_star=917697，G_star=917697，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_191476：E_G核验=True，G_E核验=True，E_star=741637，G_star=1033695，Delta=53645 mm，排序=47366 mm，分区=6279 mm，失败={'E_G': None, 'G_E': None}
+nl_field_200637：E_G核验=True，G_E核验=True，E_star=888767，G_star=888767，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_278678：E_G核验=True，G_E核验=True，E_star=804392，G_star=901228，Delta=17111 mm，排序=0 mm，分区=17111 mm，失败={'E_G': None, 'G_E': None}
+nl_field_300075：E_G核验=True，G_E核验=True，E_star=902943，G_star=902943，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_338399：E_G核验=True，G_E核验=True，E_star=551314，G_star=738385，Delta=139488 mm，排序=1 mm，分区=139487 mm，失败={'E_G': None, 'G_E': None}
+nl_field_371656：E_G核验=True，G_E核验=True，E_star=502281，G_star=502281，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_372467：E_G核验=True，G_E核验=True，E_star=526821，G_star=526821，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_462244：E_G核验=True，G_E核验=True，E_star=767248，G_star=767248，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_532603：E_G核验=True，G_E核验=True，E_star=1115598，G_star=1179200，Delta=34338 mm，排序=16468 mm，分区=17870 mm，失败={'E_G': None, 'G_E': None}
+nl_field_558824：E_G核验=True，G_E核验=True，E_star=700946，G_star=700956，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_576946：E_G核验=True，G_E核验=True，E_star=857851，G_star=857851，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_586195：E_G核验=True，G_E核验=True，E_star=1060554，G_star=1063355，Delta=507 mm，排序=507 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_657406：E_G核验=True，G_E核验=True，E_star=748445，G_star=748445，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_702198：E_G核验=True，G_E核验=True，E_star=692004，G_star=692004，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_716551：E_G核验=True，G_E核验=True，E_star=627709，G_star=627709，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+nl_field_729253：E_G核验=True，G_E核验=True，E_star=1131031，G_star=1181924，Delta=0 mm，排序=0 mm，分区=0 mm，失败={'E_G': None, 'G_E': None}
+原冻结13×13E/G整数矩阵直接使用，无新任务/图/路径/取整。G只针对已核合法有限候选图，不称连续平面最优；没有车际避碰和同时调度模型。
+15腿每方案取整界0.0075米，两方案差0.015米；计入每腿既定保存路径容差为0.01500030米，不是测绘、投影或实车误差界。
+历史已定位面板之外的124块NL扩展验证；元数据与原几何字节曾见，不承诺全历史未见，不作全国总体、实车泛化或新旧田地单因素结论。
+truth/EXACT_REFERENCE.json只供native结果保存后处理。每目标verified独立决定own gap/hit是否可用；双目标参考指标要求两侧已核，失败保留null。精确真值不进入nativeworker。
+P可行性为条件不变式迁移/接线检查；250有限预算质量和精确命中另报。E搜索A/P配对G差、自身gap、精确代理Delta、有符号参考偏移分别定义。
+父输入FINAL、双RAW私有实际字节回读、独保存审计均已核。此报告只处理保存证据；终稿审阅与FINAL归档仍为后续交付步骤。

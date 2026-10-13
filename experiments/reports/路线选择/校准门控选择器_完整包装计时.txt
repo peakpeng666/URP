@@ -1,0 +1,2 @@
+wall_s=0.078 user_cpu_s=0.057 system_cpu_s=0.021
+exit_status=0

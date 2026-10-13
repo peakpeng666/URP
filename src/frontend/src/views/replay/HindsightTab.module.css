@@ -1,0 +1,154 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+.lead {
+  font-size: var(--fs-13);
+  color: var(--ink-2);
+  line-height: 1.6;
+  padding: var(--s2) var(--s3);
+  background: var(--hind-wash);
+  border-left: 3px solid var(--hind);
+  border-radius: var(--r-chip);
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: var(--s2);
+  align-items: center;
+}
+
+.barLabel {
+  font-size: var(--fs-13);
+  color: var(--ink-2);
+}
+
+.barTrack {
+  height: 14px;
+  background: var(--inset);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 3px;
+  min-width: 2px;
+}
+
+.barFill[data-kind='plain'] {
+  background: var(--bf);
+}
+.barFill[data-kind='muted'] {
+  background: var(--full-eoh);
+}
+.barFill[data-kind='selector'] {
+  background: var(--sel);
+}
+
+.barRow[data-kind='selector'] .barLabel {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.barValue {
+  font-size: var(--fs-13);
+  font-weight: 600;
+  min-width: 48px;
+  text-align: right;
+}
+
+.oracleNote {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+
+.choiceRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s2);
+}
+
+.choiceCard {
+  padding: var(--s2) var(--s3);
+  background: var(--inset);
+  border-radius: var(--r-control);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.choiceCard[data-ok] {
+  background: var(--save-wash);
+}
+.choiceCard[data-bad] {
+  background: var(--harm-wash);
+}
+
+.choiceLabel {
+  font-size: var(--fs-11);
+  color: var(--ink-3);
+}
+
+.choiceValue {
+  font-size: var(--fs-14);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.stats {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.statLabel {
+  font-size: var(--fs-13);
+  color: var(--ink-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statValue {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  font-size: var(--fs-14);
+  font-weight: 600;
+}
+
+.statValue[data-tone='save'] {
+  color: var(--save);
+}
+.statValue[data-tone='harm'] {
+  color: var(--harm);
+}
+
+.statHint {
+  font-size: var(--fs-11);
+  font-weight: 400;
+  color: var(--ink-3);
+  text-align: right;
+}

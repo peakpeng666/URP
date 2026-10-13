@@ -1,0 +1,278 @@
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--s5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+}
+
+.page > * {
+  min-width: 0;
+}
+
+.header {
+  padding-top: var(--s2);
+}
+
+.title {
+  font-size: var(--fs-24);
+  font-weight: 600;
+}
+
+.sub {
+  margin-top: var(--s2);
+  max-width: 78ch;
+  font-size: var(--fs-14);
+  color: var(--ink-2);
+  line-height: 1.65;
+}
+
+.integrity {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--s3);
+}
+
+.intItem {
+  display: grid;
+  gap: 3px;
+}
+
+.intLabel {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+}
+
+.intValue {
+  font-size: var(--fs-14);
+  font-weight: 600;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  word-break: break-all;
+}
+
+.note {
+  margin-top: var(--s3);
+  font-size: var(--fs-13);
+  color: var(--ink-3);
+  line-height: 1.6;
+}
+
+.scopes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s3);
+}
+
+.scopeCard {
+  min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--line-strong);
+  border-radius: var(--r-panel);
+  padding: var(--s4);
+}
+
+.scopeCard[data-status='pass'] {
+  border-top-color: var(--ok);
+}
+.scopeCard[data-status='pending'] {
+  border-top-color: var(--pending);
+}
+.scopeCard[data-status='fail'] {
+  border-top-color: var(--fail);
+}
+.scopeCard[data-status='none'] {
+  border-top-color: var(--ink-4);
+}
+
+.scopeHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-bottom: var(--s3);
+  color: var(--ink-2);
+}
+
+.scopeTitle {
+  font-size: var(--fs-15, 0.9375rem);
+  font-weight: 600;
+  color: var(--ink);
+  flex: 1;
+}
+
+.scopeLines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.scopeLines li {
+  overflow-wrap: anywhere;
+  font-size: var(--fs-13);
+  color: var(--ink-2);
+  line-height: 1.5;
+  padding-left: 14px;
+  position: relative;
+}
+
+.scopeLines li::before {
+  content: '·';
+  position: absolute;
+  left: 2px;
+  color: var(--ink-4);
+}
+
+.fileList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: 8px 10px;
+  border-radius: var(--r-control);
+  text-decoration: none;
+  color: var(--ink-2);
+}
+
+.fileRow:hover {
+  background: var(--inset);
+}
+
+.fileIcon {
+  color: var(--ink-4);
+  flex-shrink: 0;
+}
+
+.filePath {
+  flex: 1;
+  font-size: var(--fs-13);
+  color: var(--ink);
+  word-break: break-all;
+}
+
+.fileBytes {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* preview */
+.previewHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  flex-wrap: wrap;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: var(--fs-13);
+}
+
+.back:hover {
+  background: var(--inset);
+  color: var(--ink);
+}
+
+.previewPath {
+  flex: 1;
+  font-size: var(--fs-13);
+  color: var(--ink);
+  word-break: break-all;
+}
+
+.download {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-13);
+  color: var(--bf);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.download:hover {
+  text-decoration: underline;
+}
+
+.verifyRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s3);
+}
+
+.hashBlock {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hashLabel {
+  font-size: var(--fs-11);
+  color: var(--ink-3);
+}
+
+.hashVal {
+  font-size: var(--fs-12);
+  color: var(--ink);
+  word-break: break-all;
+}
+
+.sizeNote {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+}
+
+.textContent {
+  margin: 0;
+  max-height: 560px;
+  overflow: auto;
+  padding: var(--s3);
+  background: var(--inset);
+  border-radius: var(--r-control);
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+  line-height: 1.6;
+  color: var(--ink);
+  white-space: pre;
+  tab-size: 2;
+}
+
+.image {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+}
+
+@media (max-width: 900px) {
+  .scopes {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: var(--s4) var(--s3) var(--s6);
+  }
+}

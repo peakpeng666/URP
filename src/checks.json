@@ -1,0 +1,109 @@
+{
+  "status": "PASS",
+  "checked_at_utc": "2026-10-10T09:31:31.952059+00:00",
+  "root": "/home/peakpeng/Desktop/URP",
+  "environment": {
+    "python": "3.10.12",
+    "node": "v24.14.0",
+    "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35"
+  },
+  "tests": {
+    "backend_unit": 56,
+    "backend_package_integration": 1,
+    "research_modules": 73,
+    "frontend_python": 28,
+    "frontend_node": 23,
+    "frontend_ui": 9,
+    "routing_components": 26,
+    "execution_supervisor": 25,
+    "generator_offline": 12
+  },
+  "tests_total": 253,
+  "frontend_build": "PASS",
+  "frontend_portable_package": "PASS",
+  "archive_restore_and_verify": [
+    "parent-selection",
+    "cvrp-selection-crc",
+    "turn-modes"
+  ],
+  "research_python_files_parsed": 86,
+  "current_documents": {
+    "markdown_files": 783,
+    "local_links": 2164,
+    "broken_links": []
+  },
+  "literature": {
+    "notes": 565,
+    "originals": 574,
+    "paper_pdfs": 558,
+    "reader_entries": 637,
+    "reader_broken_links": [],
+    "math_formulas_checked": 317,
+    "math_render_errors": []
+  },
+  "experiment_preservation": {
+    "files_checked": 4921,
+    "byte_identical": 4914,
+    "archives_checked": 279,
+    "changed_documents_and_test_path": [
+      {
+        "original": "experiments/reports/test_supervise_v2.py",
+        "current": "src/research/execution/tests/test_supervise.py",
+        "before_sha256": "eecd0cb8ce63808df1b4e486e5b48fdea974f46b747ea1c760f0f0afc9dba01d",
+        "after_sha256": "ab88d0fd71bdeeeb95d3e7a87fa6b4b5f96140fc237021b98afc42ee5828ca6e"
+      },
+      {
+        "original": "experiments/reports/原132槽研究_P1中文阶段报告_20261006.md",
+        "current": "experiments/reports/装箱演化/原132槽研究_P1中文阶段报告.md",
+        "before_sha256": "6345529345f2671e967683f68645f5c997ed89c46b28a80be9ebd22fb5cb352c",
+        "after_sha256": "5c859f29d2027530404477759cb8b7a0db0d2faed036b88f3cb82b4029929a56"
+      },
+      {
+        "original": "experiments/reports/README.md",
+        "current": "experiments/reports/README.md",
+        "before_sha256": "81f8d9b209361b0a8294e1ecb1945440f6e0a1c849f9f5d49880c70eed09d34b",
+        "after_sha256": "da3d74c6cbdabc50be1de03392aaceb527373ea2065a8ca88049d1a808267827"
+      },
+      {
+        "original": "experiments/reports/生成契约检查.md",
+        "current": "experiments/reports/生成与执行/生成契约检查.md",
+        "before_sha256": "25bc53e2986448c3fa22bbd489e45d5cdc5e98cf2271afe02df507ad5d63a8d6",
+        "after_sha256": "9778002f8e91b43b8d444c948715c9d1fd6be674f637acd9c056a28aa2fb3f49"
+      },
+      {
+        "original": "experiments/reports/ee130净空感知重规划1m_仅模型安全_中文报告_20261008.md",
+        "current": "experiments/reports/农业路径/ee130净空感知重规划1m_仅模型安全.md",
+        "before_sha256": "4568cc8a99a0f49ff3c560a232576d5a1093e91478ac834ca992a8ba925689a3",
+        "after_sha256": "98f8a133ecd664b4f502004caa43f9c72b838d18eb2496b6f136d6bffdca572f"
+      },
+      {
+        "original": "experiments/reports/装箱演化与新数据验证.md",
+        "current": "experiments/reports/装箱演化/装箱演化与新数据验证.md",
+        "before_sha256": "4bce611a23fba6c903394782bd11a4a1c8f09ffb397c0ddb0076af58cdce985b",
+        "after_sha256": "64be6e44a1d16082d3f703701b37c89f4f4f09ad24fbf1a640637a4f70581784"
+      },
+      {
+        "original": "experiments/reports/模型推理档位对照.md",
+        "current": "experiments/reports/生成与执行/模型推理档位对照.md",
+        "before_sha256": "2ed538f9c344d3bdc469c0ad51b4a6cf4713d10254cf5dc63fea01f902bf6aae",
+        "after_sha256": "10fd371ba2390f03a9a88f6b179cb2101a2941ac49166d963e9e3cca6af011d9"
+      }
+    ],
+    "missing": []
+  },
+  "data_links": {
+    "src/frontend/inputs": "../../data/bpp/inputs",
+    "src/frontend/research": "../../data/bpp/records",
+    "src/frontend/public/data": "../../../data/bpp/exports",
+    "src/backend/packages": "../../data/packages"
+  },
+  "external_git_repositories_unchanged": 15,
+  "evidence_directory": "src/verification",
+  "organization_record": "experiments/provenance/整理.json",
+  "next_stage": "下一阶段.md",
+  "remaining": [
+    "装箱与TSP共用生成演化循环",
+    "前后端API连接",
+    "算法准入方式的同预算实验"
+  ]
+}

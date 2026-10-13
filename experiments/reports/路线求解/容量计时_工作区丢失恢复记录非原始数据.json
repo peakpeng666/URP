@@ -1,0 +1,41 @@
+{
+  "status": "blocked_before_freeze_before_any_solver_call",
+  "observed_at_utc": "2026-10-08T12:17:08Z",
+  "old_root_required": "/workspace/shared/capacity_cross_structure_20261008",
+  "new_root_planned": "/workspace/shared/capacity_bound_timing_20261008",
+  "missing": ["old frozen48 instances and solver sources", "new prepared harness and protocol source files"],
+  "solver_calls_this_stage": 0,
+  "prior_completed_work": ["read all3 frozen solver implementations and legacy Budget", "verified complete initialize callable without algorithm modification", "copied sources48 inputs144 old initialize records unchanged", "created static-validated harness and analysis", "independent protocol and implementation prereview"],
+  "fixed_design": {
+    "endpoint": "complete initialize_256",
+    "node_limit": 256,
+    "rounds": 7,
+    "timed_repetitions_per_cell": 16,
+    "timed_calls": 16128,
+    "warmup_calls": 144,
+    "round_seeds": [2026100801,2026100802,2026100803,2026100804,2026100805,2026100806,2026100807],
+    "warmup_seed": 2026100800,
+    "execution": "single persistent worker, each round shuffle144 arm-instance cells,16 consecutive calls per cell",
+    "gc": "enabled default thresholds, no manual collection",
+    "algorithm_boundary": "instance_for,Budget,matrix_for,initialize with internal check,external output_for; snapshots and external validation/hash/IO outside",
+    "timing": "process_time_ns/perf_counter_ns per-call full algorithm and setup/matrix/initialize/output components; separately batch wrapper-inclusive CPU/wall",
+    "validation": "per-call independent successful-output check, old status/normalized assignment/normalized route/exact output/non-time diagnostic/non-time budget signatures; content-addressed full diagnostics; no input mutation",
+    "zero_clocks": "retain raw, invalidate whole cell primary clock when any nonpositive algorithm reading; require all7 paired cells for instance ratio; no replacement",
+    "statistics": "all failures retained; total arm CPU/wall; each round paired mean ratios, median over7 rounds per instance;IQR,CV/range; all48 and family/outcome/capacity-trigger strata",
+    "resource_limits": "300CPU600wall1GiB; worker255soft260hardCPU580wall, supervisor20CPU589wall, analysis10CPU",
+    "scope": "new timing claims only, no altered old scores, no new scientific instances, no algorithms edits, no network/model/install/upload"
+  },
+  "cost_estimate_from_old_only": {
+    "old_initialize_measured_cpu_sum": 0.225158345,
+    "old_initialize_measured_wall_sum": 0.2212379310367396,
+    "projected113_panel_equivalents_sum_max_cpu_wall": 36.94756299268858,
+    "conservative5x_plus20_seconds": 204.7378149634429
+  },
+  "pending_prereview_changes": ["strengthen audit passed with exact call schedule and IDs,normal supervisor/worker completion,resource limits", "correct snapshot timer comment: old outer timer included snapshot; new timing intentionally excludes"],
+  "known_source_hashes": {
+    "capacity_solver.py": "ce5a253f043b1bb8689c7a870b89b33649002f7ca0c10935ec41490070016a49",
+    "pruned_solver.py": "1d881520fb3e98d82e905c525fa561b1cc68a4ee61c0d1d9bcf98e3a27340299",
+    "waste_solver.py": "c954ec675d690b74194ba9b1d2da461dc7464038302907c2ceb6f2207d7d3f89",
+    "legacy/experiment.py": "137ba7a6f9a8c2e1ebc39987fd64801cd78094df2171eb6b7a1c80af15bc33e7"
+  }
+}

@@ -1,0 +1,40 @@
+严格满载必要剪枝：冻结官方 CVRP 九例的适用性限定
+
+结论
+冻结官方3例＋新6例全部具有正容量松弛。即使进入当前capacity DFS，严格满载门槛也永远不可达；此剪枝在这9例中必然剪掉0个节点。构造tight实例的救回不能称为这批官方实例或通用CVRP的提升。本说明不否定构造实例结果，只限制其可推广范围；不得将构造集36/36等结果表述为官方CVRP九例上的收益。
+
+精确算术（K为冻结输入车辆上限，未替换成容量下界；slack=KQ-sumDemand）
+实例          K    Q    sumDemand    KQ    slack
+A-n32-k5      5  100          410   500       90
+B-n31-k5      5  100          412   500       88
+P-n40-k5      5  140          618   700       82
+A-n33-k5      5  100          446   500       54
+A-n33-k6      6  100          541   600       59
+B-n34-k5      5  100          457   500       43
+B-n35-k5      5  100          437   500       63
+P-n45-k5      5  150          692   750       58
+P-n50-k10    10  100          951  1000       49
+
+数学不变量与源码核对
+源文件：/workspace/shared/tight_capacity_pruning_20261008/source/pruned_solver.py
+SHA-256：1d881520fb3e98d82e905c525fa561b1cc68a4ee61c0d1d9bcf98e3a27340299
+第70行建立residual=[capacity]*K，包含全部K箱，包括空箱。
+第79–80行把全部剩余需求与完整residual传给条件检查。
+第93、96行每次仅从一个箱扣除一个需求、回溯时恢复，没有删箱或缩小容量集合。
+因此每个递归状态都满足：sum(all K residuals)-sum(remaining demands)=初始KQ-sumDemand。
+第51–52行在两侧总量不等时立即返回，无法进入“某箱正残余容量小于最小剩余需求”的必要障碍检查。
+九例初始差值都严格大于0，故满载门槛在整棵DFS树中均不可达。
+
+结果边界
+没有测试savings/FFD是否失败或DFS是否实际进入；这些事实不影响门槛不可达结论。
+若DFS被调用，guard_checks可以非零，但tight_checks、residual_checks、prunes必为0。
+即使其他实例初始slack=0，也仅代表通过满载门槛，不保证一定出现可剪分支或性能改善。
+本次不增加改进公式或主实验，不声称已测得运行时间、目标值或解质量变化。
+
+来源与验证
+官方3例：/workspace/shared/official_cvrp_benchmarks_20261008/clean/*.instance.json
+新6例：/workspace/shared/new_official_cvrp_validation_set_20261008/solver_inputs/*.instance.json
+两个manifest及九个输入的SHA-256列于applicability.json。
+九个输入哈希全部与manifest一致；客户需求全部为正整数、仓库需求为零。
+独立解析各raw .vrp的DEMAND_SECTION，与对应冻结JSON需求完全一致，并独立求和。
+未运行或导入solver/initializer，未根据.sol排名筛选，未改写任何原输入/代码；本说明的落盘不增加新实验。

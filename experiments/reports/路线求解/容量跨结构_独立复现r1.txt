@@ -1,0 +1,56 @@
+工作区丢失后的独立复现实验 r1：容量必要界
+
+新claim namespace：capacity-cross-structure-reproduction-20261008-r1
+状态与证据边界
+这是工作区丢失后的一次明确分开的复现运行，不是原48结构原始数据找回，也不是独立新采样。使用同一已记录seed=202610081156、同一48结构生成规则、同一三臂及预定432调用。原阶段完整输入/raw/两个归档包没有找回；只恢复了两份报告原文并通过历史SHA256。
+本轮12份生成输入与丢失前可见的历史SHA256逐字节匹配，其余36份没有可获得的原hash，只能称按记录协议复现。旧三臂源码来自已从Drive恢复的24结构/72调用positive_slack包，逐文件hash核对通过；该旧包不是原48结构结果包。新增生成/运行脚本从完整可见工具参数恢复，但其丢失前逐文件hash未暴露，因此不能宣称已完成原源码字节一致性验证。
+预执行快照已先私有保存并下载逐字节/hash核验后，才在root明确放行下执行。预执行包147730 bytes，SHA256 97c6a0467761831d41d122d85807df9d3968a1dddb3bb8397928f219741a1521。已声明oracle源码在初快照之后、任何本轮执行之前补齐并单独冻结，详见freeze/ORACLE_SOURCE_FREEZE.json；相同测试矩阵/种子/算法，增加新阶段标识和执行门。分析/报告代码为跑后新增，只读取本轮结果，不改算法或输入。
+本轮432次主调用完成后立即打未审过程包私有保存并回读核验：1190921 bytes，SHA256 38bbc998aed83cd33e5dd4bb5fc845a34f2f8b7816784b32a64a2d7ac93ae986。没有等待最终审计才保留唯一备份。
+
+预定设计
+4族各12例，K=4/7/10/13：异质三元组Q=37/61/89，异质四元组Q=41/67/97，全局均匀有界组成Q=43/71/101，不触发高松弛对照Q=47/73/103。48个需求多重集不同，(K,Q,需求)及按Q归一化结构各48个不同值，与旧24结构零重叠。前三种以不同需求分布和装载结构考察界，不能把这些人工样本当作真实CVRP分布。
+三元组、四元组和高松弛对照共36例由可行分组生成，见证单独保存；全局组成族未按可行性过滤。全部正松弛。高松弛对照预先满足U≥K(m−1)，因此界理论上不能触发。输入不按性能筛选，没有择优样本或失败后扩增。
+每输入共享同一需求、几何、节点排序、分箱顺序与预算。三端点：直接容量分区256节点、直接容量分区4096节点、完整初始化256节点（savings→一次FFD→必要时容量DFS）。4096预算是已记录的预定端点。432调用=48输入×3臂×3端点，不是432独立样本。
+
+本轮结果
+partition_256：baseline/full-tight/new-bound成功 31/31/41（各48例）；节点 5601/5601/3303；新界新增成功10，丢失成功0。
+  bounded_global_composition：成功4/4/7（各12例）；新界剪枝650次。
+  heterogeneous_quads：成功10/10/11（各12例）；新界剪枝143次。
+  heterogeneous_triples：成功5/5/11（各12例）；新界剪枝279次。
+  nontrigger_high_slack：成功12/12/12（各12例）；新界剪枝0次。
+  三臂状态：capacity_solver={'SUCCESS': 31, 'NODE_LIMIT': 17}；pruned_solver={'SUCCESS': 31, 'NODE_LIMIT': 17}；waste_solver={'SUCCESS': 41, 'NODE_LIMIT': 7}
+  本轮新界多找到解的结构：S04-heterogeneous_triples-K7-Q37, S05-heterogeneous_triples-K7-Q61, S06-heterogeneous_triples-K7-Q89, S08-heterogeneous_triples-K10-Q61, S10-heterogeneous_triples-K13-Q37, S12-heterogeneous_triples-K13-Q89, S24-heterogeneous_quads-K13-Q97, S28-bounded_global_composition-K7-Q43, S31-bounded_global_composition-K10-Q43, S32-bounded_global_composition-K10-Q71
+partition_4096：baseline/full-tight/new-bound成功 32/32/44（各48例）；节点 67070/67070/22922；新界新增成功12，丢失成功0。
+  bounded_global_composition：成功4/4/10（各12例）；新界剪枝7012次。
+  heterogeneous_quads：成功10/10/11（各12例）；新界剪枝2560次。
+  heterogeneous_triples：成功6/6/11（各12例）；新界剪枝3058次。
+  nontrigger_high_slack：成功12/12/12（各12例）；新界剪枝0次。
+  三臂状态：capacity_solver={'SUCCESS': 32, 'NODE_LIMIT': 16}；pruned_solver={'SUCCESS': 32, 'NODE_LIMIT': 16}；waste_solver={'SUCCESS': 44, 'NODE_LIMIT': 4}
+  本轮新界多找到解的结构：S05-heterogeneous_triples-K7-Q61, S06-heterogeneous_triples-K7-Q89, S08-heterogeneous_triples-K10-Q61, S10-heterogeneous_triples-K13-Q37, S12-heterogeneous_triples-K13-Q89, S24-heterogeneous_quads-K13-Q97, S28-bounded_global_composition-K7-Q43, S30-bounded_global_composition-K7-Q101, S31-bounded_global_composition-K10-Q43, S32-bounded_global_composition-K10-Q71, S34-bounded_global_composition-K13-Q43, S35-bounded_global_composition-K13-Q71
+initialize_256：baseline/full-tight/new-bound成功 31/31/41（各48例）；节点 4913/4913/2615；新界新增成功10，丢失成功0。
+  bounded_global_composition：成功4/4/7（各12例）；新界剪枝650次。
+  heterogeneous_quads：成功10/10/11（各12例）；新界剪枝143次。
+  heterogeneous_triples：成功5/5/11（各12例）；新界剪枝279次。
+  nontrigger_high_slack：成功12/12/12（各12例）；新界剪枝0次。
+  三臂状态：capacity_solver={'SUCCESS': 31, 'INITFAIL': 17}；pruned_solver={'SUCCESS': 31, 'INITFAIL': 17}；waste_solver={'SUCCESS': 41, 'INITFAIL': 7}
+  本轮新界多找到解的结构：S04-heterogeneous_triples-K7-Q37, S05-heterogeneous_triples-K7-Q61, S06-heterogeneous_triples-K7-Q89, S08-heterogeneous_triples-K10-Q61, S10-heterogeneous_triples-K13-Q37, S12-heterogeneous_triples-K13-Q89, S24-heterogeneous_quads-K13-Q97, S28-bounded_global_composition-K7-Q43, S31-bounded_global_composition-K10-Q43, S32-bounded_global_composition-K10-Q71
+
+必要性与本轮正确性检查
+数学必要界与经验结果分开：U=全部箱剩余容量和−剩余需求和；若最小正需求m存在，则W=sum(0<r<m的r)是必然浪费的容量。任何完成后空闲总量恰为U，因此W>U必无补全。W≤U不能推出可行；空需求/全零需求不拒绝，负需求或负余量为非法输入。
+本轮全局正松弛在DFS过程中不变，full-tight不触发；baseline/full-tight状态、分组/路线和节点逐例完全相同。12个对照三臂全部找到解且新剪枝0；完整初始化的对照全部在前置构造阶段完成。完整初始化其余失败均是节点限额，不能判为数学不可行。
+本轮分离重算代码通过314份成功输出的覆盖/容量/车数及路线距离校验、36份见证、14774个剪枝现场的分配/余量/W>U验证。该检查是与求解器分离的实现，不等于已收到另一代理的最终独审PASS。
+本轮oracle实际执行：40346个非负小状态、2268个完整小分区、12个n≤16主实例的精确子集DP核验；误剪0，三臂小分区与真值一致。原始逐状态证据重新产生并归属于本次复现，不沿用原阶段审计覆盖。
+
+CPU归属与资源
+432个子进程逐调用CPU差分合计=23.530680000秒；RUSAGE_CHILDREN初值=1.107697000、终值=24.638377000，净值=23.530680000秒，两种重算一致。
+父进程CPU=0.622070688秒；本轮主进程+子进程可归属CPU合计=24.152750688秒；主wall=24.174727444秒。oracle CPU=1.036072739秒，独立分析CPU=0.570710026秒，分别列示。未经扣基线的累计终值不可再次作为本轮子CPU相加。
+主调用硬超时0次，程序/额外预算错误0次；子进程峰值RSS=30688KiB。串行执行，每调用1CPU秒/2wall秒/256MiB；总要求600CPU秒/1200wall秒/1GiB，实际远低于限额。没有主调用重跑、性能筛样、结果后追增预算或外部模型/付费服务。
+partition_256三臂单次测量CPU合计：0.004007412/0.031511908/0.015981053秒；零CPU观测次数：47/39/44（各48次）。
+partition_4096三臂单次测量CPU合计：0.055914248/0.099630436/0.103934733秒；零CPU观测次数：34/30/39（各48次）。
+initialize_256三臂单次测量CPU合计：0.072033519/0.059779910/0.079296449秒；零CPU观测次数：29/33/29（各48次）。
+存在大量短调用CPU零观测；不能理解为零成本，具体成因未由本实验识别。单次计时、系统噪声、剪枝轨迹记录均影响成本，等节点预算不等CPU预算。本轮支持在所测人工矩阵/预算下提高找到可行解的比例、减少搜索节点；不支持稳定CPU加速、真实CVRP总体效益或替换正式求解器的结论。
+
+文件与复现
+freeze/REPRODUCTION_PROTOCOL.json及PRE_RUN_FREEZE.json给出新阶段、授权边界和冻结记录；reports/PREPARATION_CHECKS.json给出12历史hash匹配与36未知；provenance/transcript_sources保留恢复的工具参数文本；原三臂源hash和新runner变更分别在SOURCE_ORIGIN与REPRODUCTION_SOURCE_CHANGES。
+raw/results.jsonl与逐调用stdout/stderr为本轮原始证据；raw/toy_states.jsonl、raw/toy_partition.jsonl与reports/ORACLE.json为本轮oracle；METRICS.csv使用正确budget.deltas键，并保留CPU、wall、节点、状态和剪枝；PAIRED.json列出所有配对结果。
+所有恢复/复现文件位于新目录，旧claim和遗失的原raw没有被覆盖。未来重现应复制到另一个独立目录、创建新的claim namespace并保持相同预定方案，不能把重现的时序/CPU/raw冒充旧字节。该文本是本轮报告；最终另一代理的独立复核及其回执应另附。

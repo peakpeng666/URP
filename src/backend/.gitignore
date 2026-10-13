@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+backend_data/
+packages/
+inputs/
+artifacts/
+*.sqlite3*
+*.db*
+*.log
+*.zip
+.env*
+*.pem
+*.key
+node_modules/

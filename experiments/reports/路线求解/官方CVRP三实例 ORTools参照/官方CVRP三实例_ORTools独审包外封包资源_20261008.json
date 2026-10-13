@@ -1,0 +1,10 @@
+{
+  "created_at_utc": "2026-10-08T00:40:21.445117+00:00",
+  "archive_sha256": "575a07f71e05f39a812ec4cbd85849c30e54b8b5afa34ed042144d45fd8bb381",
+  "archive_bytes": 19144,
+  "internal_packaging_cpu_s": 0.0035457089999999976,
+  "internal_packaging_wall_s": 0.0035504569968907163,
+  "max_rss_kib": 11136,
+  "no_solver_executed": true,
+  "note": "This post-archive sidecar contains internal packaging measurements, not complete-process wait4 accounting. Audit wait4 accounting is in receipt.json and attempt_01.resource.json."
+}

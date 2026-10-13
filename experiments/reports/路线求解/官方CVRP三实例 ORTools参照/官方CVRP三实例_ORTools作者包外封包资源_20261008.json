@@ -1,0 +1,14 @@
+{
+  "label": "package",
+  "target": "package.py",
+  "pid": 7,
+  "returncode": 0,
+  "reaped": true,
+  "process_tree_user_cpu_s": 0.04165,
+  "process_tree_system_cpu_s": 0.012131999999999999,
+  "process_tree_total_cpu_s": 0.053781999999999996,
+  "observed_process_tree_wall_s": 0.054089958997792564,
+  "process_tree_max_rss_kib": 11520,
+  "wrapper_internal_cpu_s": 0.00041854399999999986,
+  "accounting": "Linux wait4 resource usage includes reaped descendants. Do not add run child CPU again."
+}

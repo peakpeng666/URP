@@ -1,0 +1,80 @@
+{
+  "repositories": [
+    {
+      "name": "G-LNS",
+      "head": "ea834aaa23a6952ff5e47d377940ec38b7e97482",
+      "changed_records": 65
+    },
+    {
+      "name": "ReEvo",
+      "head": "6dce18257da5e11db2d138e417a2fffc5c72d05f",
+      "changed_records": 222
+    },
+    {
+      "name": "rl4co",
+      "head": "f2846281bf7accb2bd0303437b746f46e84b7120",
+      "changed_records": 405
+    },
+    {
+      "name": "HGS-TDCARP",
+      "head": "9638127242a9ad36ecaf9335c8df540cad6575fc",
+      "changed_records": 130
+    },
+    {
+      "name": "autorank",
+      "head": "10b65d3764e5ba9e464d3ee7866bf51ac513c8e8",
+      "changed_records": 15
+    },
+    {
+      "name": "PyVRP",
+      "head": "5d9776a954b810bdb3fe71d47b1e7de7cffe90d2",
+      "changed_records": 310
+    },
+    {
+      "name": "DR-ALNS",
+      "head": "144e48f6912ad9967968561b6b0ce90cedcc14aa",
+      "changed_records": 2062
+    },
+    {
+      "name": "HeurAgenix",
+      "head": "e84bfb19e785ae2d670af6e3ab68890c71c536ea",
+      "changed_records": 198
+    },
+    {
+      "name": "LLM4AD",
+      "head": "ffb6acf64497be93932c98d25369352efd3865cf",
+      "changed_records": 494
+    },
+    {
+      "name": "EoH",
+      "head": "472545785c936dcfc863d2bc0d6109cf23c7ce62",
+      "changed_records": 0
+    },
+    {
+      "name": "HGS-CARP",
+      "head": "08fde6a5672c3814dca1b4450aa9e5968b1d273a",
+      "changed_records": 977
+    },
+    {
+      "name": "LitCEoH",
+      "head": "7498ab841c25f75567359a382ffdb36a1f36f9eb",
+      "changed_records": 85
+    },
+    {
+      "name": "CEoH",
+      "head": "bde2a1c20122cc72f0ad5b24c496509fd5ba15c1",
+      "changed_records": 103
+    },
+    {
+      "name": "LLaMEA",
+      "head": "2a200f6b48038358223326b45869892b8ca09c4d",
+      "changed_records": 118
+    },
+    {
+      "name": "ShinkaEvolve",
+      "head": "9912af12d423504b8d580f4179fd15f5f88b8c50",
+      "changed_records": 314
+    }
+  ],
+  "changed": []
+}

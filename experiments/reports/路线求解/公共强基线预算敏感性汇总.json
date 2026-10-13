@@ -1,0 +1,135 @@
+{
+  "short": {
+    "max_runtime_seconds": 0.1,
+    "valid_calls": 48,
+    "unavailable_calls": 0,
+    "complete_task_count": 16,
+    "all16_mean_reference_gap_percent": 0.9329458410114224,
+    "available_complete_task_mean_gap_percent_descriptive": 0.9329458410114224,
+    "reference_equal": 21,
+    "reference_below": 0,
+    "reference_above": 27,
+    "seed_gap_distribution_descriptive": {
+      "count": 48,
+      "minimum": 0.0,
+      "q1_inclusive": 0.0,
+      "median": 0.24125452352231605,
+      "q3_inclusive": 1.3544711666223757,
+      "maximum": 6.286266924564797,
+      "sample_sd": 1.3441949033598624
+    }
+  },
+  "long": {
+    "max_runtime_seconds": 5.0,
+    "valid_calls": 48,
+    "unavailable_calls": 0,
+    "complete_task_count": 16,
+    "all16_mean_reference_gap_percent": 0.057943186969172264,
+    "available_complete_task_mean_gap_percent_descriptive": 0.057943186969172264,
+    "reference_equal": 40,
+    "reference_below": 0,
+    "reference_above": 8,
+    "seed_gap_distribution_descriptive": {
+      "count": 48,
+      "minimum": 0.0,
+      "q1_inclusive": 0.0,
+      "median": 0.0,
+      "q3_inclusive": 0.0,
+      "maximum": 0.7352941176470589,
+      "sample_sd": 0.1684565469956522
+    }
+  },
+  "complete_two_budget_task_count": 16,
+  "all16_short_minus_long_gap_pp": 0.8750026540422502,
+  "available_complete_two_budget_task_delta_descriptive": 0.8750026540422502,
+  "current_stage_same_instance_seed_descriptive_pairs": {
+    "long_lower_cost": 27,
+    "equal_cost": 21,
+    "long_higher_cost": 0,
+    "unavailable_pair": 0
+  },
+  "utc": "2026-10-09T01:26:04.380998+00:00",
+  "stage": "DESCRIPTIVE_TWO_BUDGET_SENSITIVITY",
+  "solver": "PyVRP0.14.0 default ILS, no warmstart",
+  "planned_instances": 16,
+  "planned_calls": 96,
+  "observed_calls": 96,
+  "valid_calls": 96,
+  "historical_one_second": {
+    "context": "Previously archived cross-period context; no new1s calls and no strict same-stage paired timing comparison",
+    "summary": {
+      "utc": "2026-10-09T00:18:56.670063+00:00",
+      "stage": "DESCRIPTIVE_STRONG_BASELINE_QUALITY_COMPARISON",
+      "solver": "PyVRP 0.14.0 default ILS, no warmstart",
+      "execution_history": [
+        {
+          "revision": "r0",
+          "planned_process_attempts": 48,
+          "observed_process_attempts": 48,
+          "startup_failures": 48,
+          "actual_public_optimizer_calls": 0,
+          "quality_result_available": false,
+          "cause": "Inherited supervisor512MiB hard AS prevented worker raising to1024MiB; failed before payload/PyVRP import/model/solve."
+        },
+        {
+          "revision": "r1",
+          "planned_process_attempts": 48,
+          "observed_process_attempts": 48,
+          "completed_valid_solver_outputs": 48,
+          "unavailable_call_count": 0
+        }
+      ],
+      "planned_instances": 16,
+      "planned_calls": 48,
+      "observed_calls": 48,
+      "valid_calls": 48,
+      "complete_three_seed_tasks": 16,
+      "all16_mean_PyVRP_reference_gap_percent": 0.14874690080787073,
+      "all16_mean_historical_TSR_reference_gap_percent": 11.992317722371023,
+      "all16_mean_historical_TSR_minus_PyVRP_gap_pp": 11.843570821563151,
+      "descriptive_available_complete_tasks_mean_PyVRP_reference_gap_percent": 0.14874690080787073,
+      "descriptive_available_complete_tasks_mean_gap_delta_pp": 11.843570821563151,
+      "descriptive_complete_task_denominator": 16,
+      "PyVRP_mean_better_equal_worse_vs_TSR": {
+        "better": 16,
+        "equal": 0,
+        "worse": 0,
+        "unavailable": 0
+      },
+      "positive_delta_interpretation": "Historical TSR higher distance cost than PyVRP mean3, normalized by same public reference.",
+      "no_equal_compute_or_speed_claim": true,
+      "no_optimality_proof_claim": true,
+      "no_repeated_calls_within_each_frozen_revision": true,
+      "separately_declared_r1_technical_retry": true,
+      "old_files_unchanged_count": 389,
+      "limitations": [
+        "Mature public package chosen by capability/availability before formal outputs; no assumption it must beat TSR.",
+        "Quality comparison only, different search algorithms/initialization/stopping rules/compute budgets.",
+        "Public references are feasible comparison values, not optimality proofs established here.",
+        "No significance, universal superiority or SOTA claims; selected 16 task panel only.",
+        "No new data generalization test: these tasks were already analyzed in historic TSR study.",
+        "Timed search realizations hardware/load dependent; public source benchmarks do not establish this panel outcome.",
+        "The Python audit hook records/blocks Python-level IO events after imports. It is not an OS/native-code syscall sandbox or proof of zero native IO; algorithm payload and reviewed adapter isolate reference/history data.",
+        "r0 failed technical execution is retained as 48 process attempts, 0 actual solves; r1 is a separately frozen technical retry, not an undisclosed replacement. Supervisor hard AS limit increased from512 to1024MiB only to permit inherited worker1024MiB budget; soft supervisor limit remains512MiB."
+      ]
+    },
+    "reference_equal_count": 34
+  },
+  "limitations": [
+    "Mature public package chosen by capability/availability before formal outputs; no assumption it must beat TSR.",
+    "Quality comparison only, different search algorithms/initialization/stopping rules/compute budgets.",
+    "Public references are feasible comparison values, not optimality proofs established here.",
+    "No significance, universal superiority or SOTA claims; selected 16 task panel only.",
+    "No new data generalization test: these tasks were already analyzed in historic TSR study.",
+    "Timed search realizations hardware/load dependent; public source benchmarks do not establish this panel outcome.",
+    "The Python audit hook records/blocks Python-level IO events after imports. It is not an OS/native-code syscall sandbox or proof of zero native IO; algorithm payload and reviewed adapter isolate reference/history data.",
+    "r0 failed technical execution is retained as 48 process attempts, 0 actual solves; r1 is a separately frozen technical retry, not an undisclosed replacement. Supervisor hard AS limit increased from512 to1024MiB only to permit inherited worker1024MiB budget; soft supervisor limit remains512MiB.",
+    "Only0.1s and5s are new current-stage budget conditions. Historical1s remains cross-period context and cannot establish strict same-stage paired time-budget effects.",
+    "Independent wall-timed restarts may produce nonmonotone realized costs even under identical seeds. Fixed seeds do not imply bitwise repeatability or a fixed iteration budget.",
+    "No claim of producing solutions within0.1s total: upstream initialization and full process are measured separately and excluded from MaxRuntime."
+  ],
+  "old_r1_files_verified_unchanged": 276,
+  "prior_r0_files_verified_unchanged": 250,
+  "below_reference_requires_independent_review": [],
+  "final_claims_blocked_until_below_review": false
+}

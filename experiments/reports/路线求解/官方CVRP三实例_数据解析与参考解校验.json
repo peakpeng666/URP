@@ -1,0 +1,157 @@
+{
+  "all_passed": true,
+  "nint_tie_tests": [
+    {
+      "input": 0.0,
+      "nint_nonnegative": 0
+    },
+    {
+      "input": 0.49,
+      "nint_nonnegative": 0
+    },
+    {
+      "input": 0.5,
+      "nint_nonnegative": 1
+    },
+    {
+      "input": 1.5,
+      "nint_nonnegative": 2
+    },
+    {
+      "input": 2.5,
+      "nint_nonnegative": 3
+    },
+    {
+      "input": 3.5,
+      "nint_nonnegative": 4
+    }
+  ],
+  "instances": [
+    {
+      "name": "A-n32-k5",
+      "all_passed": true,
+      "raw_hashes_match_download_audit": true,
+      "table_file_name_dimension_capacity_K_UB_agree": true,
+      "customers_covered_exactly_once": true,
+      "all_routes_nonempty": true,
+      "route_count": 5,
+      "capacity_lower_bound_on_routes": 5,
+      "route_loads": [
+        98,
+        72,
+        44,
+        98,
+        98
+      ],
+      "route_costs": [
+        155,
+        73,
+        59,
+        267,
+        230
+      ],
+      "sum_route_costs": 784,
+      "raw_solution_cost": 784,
+      "official_table_UB": 784,
+      "raw_comment_optimal_value": 784,
+      "matrix_symmetric_integer_zero_diagonal": true,
+      "integer_exact_and_published_float_formulas_agree_for_every_pair": true,
+      "duplicate_coordinate_pairs_normalized": [],
+      "off_diagonal_zero_distance_pairs": [],
+      "rounded_triangle_inequality_violations_unordered_endpoint_pairs_all_middle_nodes": 33,
+      "continuous_euclidean_reference_cost_diagnostic_only": 787.8082774366646,
+      "solution_index_mapping": "sol customer label c maps to vrp original node c+1 and clean index c; validated by full coverage and all costs",
+      "no_solver_or_search_executed": true
+    },
+    {
+      "name": "B-n31-k5",
+      "all_passed": true,
+      "raw_hashes_match_download_audit": true,
+      "table_file_name_dimension_capacity_K_UB_agree": true,
+      "customers_covered_exactly_once": true,
+      "all_routes_nonempty": true,
+      "route_count": 5,
+      "capacity_lower_bound_on_routes": 5,
+      "route_loads": [
+        97,
+        86,
+        96,
+        38,
+        95
+      ],
+      "route_costs": [
+        107,
+        112,
+        110,
+        189,
+        154
+      ],
+      "sum_route_costs": 672,
+      "raw_solution_cost": 672,
+      "official_table_UB": 672,
+      "raw_comment_optimal_value": 672,
+      "matrix_symmetric_integer_zero_diagonal": true,
+      "integer_exact_and_published_float_formulas_agree_for_every_pair": true,
+      "duplicate_coordinate_pairs_normalized": [
+        [
+          7,
+          30
+        ],
+        [
+          13,
+          17
+        ]
+      ],
+      "off_diagonal_zero_distance_pairs": [
+        [
+          7,
+          30
+        ],
+        [
+          13,
+          17
+        ]
+      ],
+      "rounded_triangle_inequality_violations_unordered_endpoint_pairs_all_middle_nodes": 60,
+      "continuous_euclidean_reference_cost_diagnostic_only": 676.7582609500148,
+      "solution_index_mapping": "sol customer label c maps to vrp original node c+1 and clean index c; validated by full coverage and all costs",
+      "no_solver_or_search_executed": true
+    },
+    {
+      "name": "P-n40-k5",
+      "all_passed": true,
+      "raw_hashes_match_download_audit": true,
+      "table_file_name_dimension_capacity_K_UB_agree": true,
+      "customers_covered_exactly_once": true,
+      "all_routes_nonempty": true,
+      "route_count": 5,
+      "capacity_lower_bound_on_routes": 5,
+      "route_loads": [
+        119,
+        116,
+        114,
+        131,
+        138
+      ],
+      "route_costs": [
+        85,
+        92,
+        94,
+        89,
+        98
+      ],
+      "sum_route_costs": 458,
+      "raw_solution_cost": 458,
+      "official_table_UB": 458,
+      "raw_comment_optimal_value": 458,
+      "matrix_symmetric_integer_zero_diagonal": true,
+      "integer_exact_and_published_float_formulas_agree_for_every_pair": true,
+      "duplicate_coordinate_pairs_normalized": [],
+      "off_diagonal_zero_distance_pairs": [],
+      "rounded_triangle_inequality_violations_unordered_endpoint_pairs_all_middle_nodes": 58,
+      "continuous_euclidean_reference_cost_diagnostic_only": 461.7261717631887,
+      "solution_index_mapping": "sol customer label c maps to vrp original node c+1 and clean index c; validated by full coverage and all costs",
+      "no_solver_or_search_executed": true
+    }
+  ]
+}

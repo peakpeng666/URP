@@ -1,0 +1,60 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s2);
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  max-height: 210px;
+}
+
+.binBox {
+  fill: var(--inset);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.binBoxActive {
+  fill: #fff;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+}
+
+.segLabel {
+  fill: #fff;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.binId {
+  fill: var(--ink-3);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.binIdActive {
+  fill: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.binRem {
+  fill: var(--ink-4);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.caption {
+  font-size: var(--fs-13);
+  color: var(--ink-2);
+}
+
+.idle {
+  font-size: var(--fs-13);
+  color: var(--ink-3);
+  padding: var(--s3) 0;
+}

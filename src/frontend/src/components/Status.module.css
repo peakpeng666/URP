@@ -1,0 +1,47 @@
+.mark {
+  display: inline-flex;
+  line-height: 0;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: var(--fs-12);
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.pass {
+  color: var(--ok);
+}
+.tag.pass {
+  background: var(--ok-wash);
+  border-color: color-mix(in srgb, var(--ok) 22%, transparent);
+}
+
+.pending {
+  color: var(--pending);
+}
+.tag.pending {
+  background: var(--pending-wash);
+  border-color: var(--line);
+}
+
+.fail {
+  color: var(--fail);
+}
+.tag.fail {
+  background: var(--fail-wash);
+  border-color: color-mix(in srgb, var(--fail) 24%, transparent);
+}
+
+.none {
+  color: var(--ink-4);
+}
+.tag.none {
+  background: var(--inset);
+  border-color: var(--line);
+}

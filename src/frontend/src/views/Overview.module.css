@@ -1,0 +1,243 @@
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--s5);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s4);
+}
+
+/* Grid items must be allowed to shrink below their content's min width so a
+   wide chart scrolls inside its own overflow box instead of widening the page. */
+.page > * {
+  min-width: 0;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--s5);
+  align-items: center;
+  padding: var(--s5) 0 var(--s2);
+}
+
+.heroText {
+  min-width: 0;
+}
+
+.kicker {
+  font-size: var(--fs-13);
+  color: var(--ink-3);
+  margin-bottom: var(--s2);
+}
+
+.headline {
+  font-size: var(--fs-32);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.bigDelta {
+  color: var(--save);
+  font-variant-numeric: tabular-nums;
+}
+
+.lede {
+  margin-top: var(--s3);
+  max-width: 54ch;
+  font-size: var(--fs-15, 0.9375rem);
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+
+.heroChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: var(--s4);
+}
+
+.heroChip {
+  display: grid;
+  gap: 2px;
+  padding: 8px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+}
+
+.heroChip[data-tone='save'] {
+  border-left: 3px solid var(--save);
+}
+.heroChip[data-tone='warn'] {
+  border-left: 3px solid var(--harm);
+}
+.heroChip[data-tone='neutral'] {
+  border-left: 3px solid var(--line-strong);
+}
+
+.heroChipLabel {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+}
+
+.heroChipValue {
+  font-size: var(--fs-18);
+  font-weight: 600;
+}
+
+.statusRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s3);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+}
+
+.statusMore {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-13);
+  text-decoration: none;
+  color: var(--bf);
+}
+
+.statusMore:hover {
+  text-decoration: underline;
+}
+
+.twoCol {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: var(--s4);
+}
+
+.twoCol > * {
+  min-width: 0;
+}
+
+.defList {
+  list-style: none;
+  margin: 0 0 var(--s3);
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+
+.defItem {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s3);
+  padding: var(--s2) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.defItem[data-emphasis] {
+  border-bottom: none;
+  margin-top: 2px;
+  padding-top: var(--s3);
+}
+
+.defItem[data-emphasis] .defValue {
+  font-size: var(--fs-24);
+  color: var(--save);
+}
+
+.defLabel {
+  font-size: var(--fs-13);
+  color: var(--ink-2);
+}
+
+.defValue {
+  font-size: var(--fs-16);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.note {
+  font-size: var(--fs-13);
+  color: var(--ink-3);
+  line-height: 1.6;
+}
+
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  text-decoration: none;
+  color: var(--bf);
+  white-space: nowrap;
+}
+
+.inlineLink:hover {
+  text-decoration: underline;
+}
+
+.riskGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s3);
+  margin-bottom: var(--s3);
+}
+
+.riskStat {
+  padding: var(--s3);
+  border-radius: var(--r-control);
+  background: var(--inset);
+  display: grid;
+  gap: 4px;
+}
+
+.riskStat[data-tone='warn'] {
+  background: var(--risk-wash);
+}
+
+.riskValue {
+  font-size: var(--fs-20);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.riskStat[data-tone='warn'] .riskValue {
+  color: var(--harm);
+}
+
+.riskLabel {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+  .twoCol {
+    grid-template-columns: 1fr;
+  }
+  .riskGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: var(--s4) var(--s3) calc(var(--s6));
+  }
+  .headline {
+    font-size: var(--fs-24);
+  }
+}
+
+@media (max-width: 420px) {
+  .riskGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

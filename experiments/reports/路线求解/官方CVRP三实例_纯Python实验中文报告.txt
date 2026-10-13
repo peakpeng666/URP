@@ -1,0 +1,35 @@
+官方 CVRP 整数距离控制实验（仅3个具名实例）
+
+计划24条搜索轨迹=3实例×2方法×4固定新seed；每条观察40k与160k，共48检查点，绝不是48个独立实例。
+合法轨迹 24/24；合法检查点 48/48；实际达到预算检查点 48/48。
+进程实际CPU 2.978681s，wall 2.998596s；退出码 0。
+以下每行均为同一实例/方法的4 seed；mean/min/worst是成本，gap为相对官方所报值的百分比。
+
+A-n32-k5 | 40000 deltas | cheapest | legal 4/4 reached 4/4 | mean/min/worst 827.75/827/829 | mean/min/worst gap 5.5804/5.4847/5.7398% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+A-n32-k5 | 40000 deltas | regret2 | legal 4/4 reached 4/4 | mean/min/worst 827/827/827 | mean/min/worst gap 5.4847/5.4847/5.4847% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+A-n32-k5 | 160000 deltas | cheapest | legal 4/4 reached 4/4 | mean/min/worst 827/827/827 | mean/min/worst gap 5.4847/5.4847/5.4847% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+A-n32-k5 | 160000 deltas | regret2 | legal 4/4 reached 4/4 | mean/min/worst 827/827/827 | mean/min/worst gap 5.4847/5.4847/5.4847% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+B-n31-k5 | 40000 deltas | cheapest | legal 4/4 reached 4/4 | mean/min/worst 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+B-n31-k5 | 40000 deltas | regret2 | legal 4/4 reached 4/4 | mean/min/worst 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+B-n31-k5 | 160000 deltas | cheapest | legal 4/4 reached 4/4 | mean/min/worst 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+B-n31-k5 | 160000 deltas | regret2 | legal 4/4 reached 4/4 | mean/min/worst 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+P-n40-k5 | 40000 deltas | cheapest | legal 4/4 reached 4/4 | mean/min/worst 508.75/507/512 | mean/min/worst gap 11.0808/10.6987/11.7904% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+P-n40-k5 | 40000 deltas | regret2 | legal 4/4 reached 4/4 | mean/min/worst 506/503/507 | mean/min/worst gap 10.4803/9.8253/10.6987% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+P-n40-k5 | 160000 deltas | cheapest | legal 4/4 reached 4/4 | mean/min/worst 504.25/500/507 | mean/min/worst gap 10.0983/9.1703/10.6987% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+P-n40-k5 | 160000 deltas | regret2 | legal 4/4 reached 4/4 | mean/min/worst 503.25/503/504 | mean/min/worst gap 9.8799/9.8253/10.0437% | 官方值命中 0/4 | INIT_FAIL 0 CONSTRUCTION_FAIL 0
+
+初始化：
+A-n32-k5：8次共用初始解均一致，初始成本842.0，savings路线数5，FFD启用False，DFS启用False，DFS节点每次0、总0；初始化计费delta=465。
+B-n31-k5：8次共用初始解均一致，初始成本677.0，savings路线数5，FFD启用False，DFS启用False，DFS节点每次0、总0；初始化计费delta=435。
+P-n40-k5：8次共用初始解均一致，初始成本516.0，savings路线数5，FFD启用False，DFS启用False，DFS节点每次0、总0；初始化计费delta=741。
+
+证据与边界：
+逐边EUC_2D nint，非未舍入欧氏距离。B中两对同坐标客户仍有不同ID并必须各服务一次；所有整数矩阵存在三角违例，不假定metric。
+K≤5为本地明确协议；官方reportedK=5不在此被改写成已证明的官方上界语义。官方参考路线按ID和逐边整数成本独立重算合法，官网Opt=yes仅归属于官网，未独立证明最优。
+五字段solver输入不含参考cost/路线；主进程禁止读取reference/provenance/外部shared路径。所有输出写盘、fsync、hash封存后，评分进程才读参考值。准备阶段确曾为语义验证读取参考，不作为搜索调参或终止条件。
+唯一主跑，无pilot、补跑、换实例、oracle、ORTools、安装、API调用、购买或上传。原包和原core未改动，整数适配仅换矩阵与checker两处依赖。
+固定delta总量3840000；矩阵边计算28680；完整目标边计算214879；额外DFS节点0。计数公平不等于CPU相同。
+3个具名小实例仅做描述性比较，seed不是新实例，不作显著性、SOTA或推广优越性结论。整数参考值命中只表示达到给定参考成本。
+低于官方值异常0；如出现只封存待核，不称突破。
+本worker的17项任务玩具与结果审计通过；独立审计由父任务另行执行。
+这三个实例都在savings阶段得到合法5车初始解，FFD/DFS从未触发，因此本轮不提供容量fallback救援效果的新实证。两算法使用成对相同seed，不能把所有轨迹当成统计独立样本。

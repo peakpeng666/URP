@@ -1,0 +1,37 @@
+恢复旧P1公开证据后的补充说明
+2026-10-07，UTC
+
+现在可以比较：已从原P1交付恢复6个EOH父代及1个IID历史保留者的既有公开结果，并核对源码、输入、容量、runtime、checker与精确Fraction口径。未重新运行算法。原P2-only报告和第一份“安全P2包内缺父代结果”的附录均保留原版本，本补充说明增加定向恢复的旧证据。
+
+一、EOH超过旧最强父代了吗？
+按原预定的五case mean Fraction(L1,used_bins)排名目标，确有极小正增量：
+- 旧最强父代 b01_EOH_TC_g1_m1_03：39947558289907/40216818698175 = 0.9933047810099356
+- P2最佳 b01_EOH_TC_g2_m3_04（slot56）：553433026291573/557161270697850 = 0.9933085004246485
+- 子代减父代：2095049092403/563273862725751450 ≈ 0.000003719414713
+
+但五case总箱数没有下降：
+- 父代：[2026,1997,1995,1995,1993]，总10006
+- 子代：[2028,1997,1995,1994,1992]，总10006
+- 子代减父代：[+2,0,0,-1,-1]，两例改善、两例相同、一例变差
+
+因此可以写“在原精确比值均值上略有提升，总箱数持平”。不能把这段极小差值写成明显代际收益、统计显著改进或算法创新。原排名目标仍是精确Fraction均值，没有事后改为总箱数排名。
+
+slot56的直接父代是b01_EOH_TC_g1_e1_05，而非六父代中的最强者。它的fitness为7923277263/8167108600≈0.9701447171891409，bins为[2080,2036,2044,2044,2041]，总10245。slot56相对直接父代提升约0.02316378324，总箱数少239。比较直接父代与比较整个父代池最佳，回答的是两个不同问题，需同时说明。
+
+二、原累计协议不能用P2新生IID最佳替代历史IID
+恢复的IID历史保留者为b01_IID_TC_g1_m2_04：561169740881/566701510740≈0.990238653410723，bins为[2032,1997,1997,2007,2004]，总10037。它高于本轮P2新生IID最佳0.9679589721659771。
+原冻结规则规定EOH池为“前代保留者＋本代合格后代”，容量6；IID池为该臂archive全部eligible，容量1。按joint_identity保留最早记录后，依次按精确Fraction降序、原tie_priority、ID排名；最终取每臂phase2 survivor首名。
+因此原P2-only的跨臂最佳差0.02534952826不能当成原累计协议的最终差。P2 EOH最佳与恢复的IID历史保留者相比，fitness差为16179038330885933687/5270307692042892489900≈0.003069847014，总箱数少31。
+本补充只恢复并解释已有证据，没有运行原scheduler、创建最终winner封存记录或启动确认评价。两个已有候选的差值仍只是固定public设计观察，尚无heldout证据。
+
+三、可比性如何闭合
+- 原P1 ZIP来自既有阶段交付索引，文件ID 1SYo9awdPdO9uVQBY6I18Llp0v4B7LFSO；5368638字节，SHA256 aa14a4a33993850df91c2195b247ae5d29b9cb9d9d1ac845f913ce3b33b6178c。
+- P1与P2公开design_5000整文件SHA均为5358c41aa758e1d399d29157f8cbdc5fb422f4c8acd56b2cb95c41af3f1750ca；各5×5000输入SHA、capacity=100与L1逐项一致。
+- 6父代的P1原始source SHA及pair SHA与P2 prompt里实际冻结的父代一致；既有code/joint身份也与冻结快照一致。7个fitness均从已保存的5case bins重新计算，并与快照exact值相等。
+- P1/P2 runtime freeze均为7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8；checker、intake以及实际host runner哈希一致。host使用可行箱中的stable first argmax，未变更tie规则。
+- P1回执的kind=externally_verified、registry_mode=registered_source_study；P2把同一registry模式写在kind。保留此封装标签差异；上述科学执行绑定一致。
+
+四、证据与范围
+RECOVERED_PUBLIC_FACTS.json保留全部7个候选的exact值、五case bins、来源成员及绑定；evidence_public_receipts保留对应7份原回执字节；INPUT_DEPENDENCIES.json记录读取依赖。规则摘录及只读复算源码一并提供。
+发现原P1整包含protocol_draft后只列目录并报告，未整包解压。随后按明确P1/public白名单读取；为定位文件名，读取phase1 rows的ID→claim/source映射。具体范围收紧前还读过P1 panel、plan和一份非目标P1 result作结构核对，已在范围日志登记；plan明确phase1、heldout_this_run=0。
+未读取heldout实例、成绩或seed，未打开protocol_draft，未执行归档脚本或父代函数，未新调用模型，未改父代、原结果、原报告或后续协议。P0/P1与P2生成预算不同，恢复数值并不消除阶段比较的因果与成本限制。

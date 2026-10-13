@@ -1,0 +1,466 @@
+{
+  "status": "COMPLETE_WITH_INDEPENDENT_AUDIT",
+  "all_instances": 12,
+  "all_instance_method_combinations": 24,
+  "saved_routes": 8,
+  "endpoint_infeasible_instances": 8,
+  "counting_unit": "Occurrences across8 saved routes; not deduplicated physical vertices/services and not independent samples.",
+  "route_rows": [
+    {
+      "instance_id": "n08_s202610081001",
+      "method": "nearest_neighbor",
+      "original_segments": 9,
+      "robust_internal_corners": 8,
+      "scheduled_service_corner_occurrences": 8,
+      "min_abs_turn_deg": 1.123302714075429,
+      "max_abs_turn_deg": 118.30075576600638,
+      "original_full_polyline_clearance_m": 3.3561882996890815,
+      "saved_polyline_positive_speed_bounded_curvature": "NOT_TRACKABLE_AS_SAVED"
+    },
+    {
+      "instance_id": "n08_s202610081001",
+      "method": "nn_2opt_budget",
+      "original_segments": 9,
+      "robust_internal_corners": 8,
+      "scheduled_service_corner_occurrences": 8,
+      "min_abs_turn_deg": 39.936891169345046,
+      "max_abs_turn_deg": 118.30075576600638,
+      "original_full_polyline_clearance_m": 3.3561882996890815,
+      "saved_polyline_positive_speed_bounded_curvature": "NOT_TRACKABLE_AS_SAVED"
+    },
+    {
+      "instance_id": "n08_s202610081002",
+      "method": "nearest_neighbor",
+      "original_segments": 18,
+      "robust_internal_corners": 17,
+      "scheduled_service_corner_occurrences": 8,
+      "min_abs_turn_deg": 1.072549100246202,
+      "max_abs_turn_deg": 154.2796208781412,
+      "original_full_polyline_clearance_m": 1.1039748380335126,
+      "saved_polyline_positive_speed_bounded_curvature": "NOT_TRACKABLE_AS_SAVED"
+    },
+    {
+      "instance_id": "n08_s202610081002",
+      "method": "nn_2opt_budget",
+      "original_segments": 20,
+      "robust_internal_corners": 19,
+      "scheduled_service_corner_occurrences": 8,
+      "min_abs_turn_deg": 1.072549100246202,
+      "max_abs_turn_deg": 154.2796208781412,
+      "original_full_polyline_clearance_m": 1.1039748380335126,
+      "saved_polyline_positive_speed_bounded_curvature": "NOT_TRACKABLE_AS_SAVED"
+    },
+    {
+      "instance_id": "n12_s202610081001",
+      "method": "nearest_neighbor",
+      "original_segments": 18,
+      "robust_internal_corners": 17,
+      "scheduled_service_corner_occurrences": 12,
+      "min_abs_turn_deg": 0.541306356649527,
+      "max_abs_turn_deg": 160.5508576664402,
+      "original_full_polyline_clearance_m": 1.1029153127122928,
+      "saved_polyline_positive_speed_bounded_curvature": "NOT_TRACKABLE_AS_SAVED"
+    },
+    {
+      "instance_id": "n12_s202610081001",
+      "method": "nn_2opt_budget",
+      "original_segments": 13,
+      "robust_internal_corners": 12,
+      "scheduled_service_corner_occurrences": 12,
+      "min_abs_turn_deg": 26.51050110198967,
+      "max_abs_turn_deg": 118.30075576600638,
+      "original_full_polyline_clearance_m": 1.2210479430006163,
+      "saved_polyline_positive_speed_bounded_curvature": "NOT_TRACKABLE_AS_SAVED"
+    },
+    {
+      "instance_id": "n20_s202610081001",
+      "method": "nearest_neighbor",
+      "original_segments": 52,
+      "robust_internal_corners": 51,
+      "scheduled_service_corner_occurrences": 20,
+      "min_abs_turn_deg": 0.010503964663569636,
+      "max_abs_turn_deg": 171.3749838822874,
+      "original_full_polyline_clearance_m": 1.1029153127122928,
+      "saved_polyline_positive_speed_bounded_curvature": "NOT_TRACKABLE_AS_SAVED"
+    },
+    {
+      "instance_id": "n20_s202610081001",
+      "method": "nn_2opt_budget",
+      "original_segments": 25,
+      "robust_internal_corners": 24,
+      "scheduled_service_corner_occurrences": 20,
+      "min_abs_turn_deg": 0.010503964663569636,
+      "max_abs_turn_deg": 136.93058744116698,
+      "original_full_polyline_clearance_m": 1.104087068545648,
+      "saved_polyline_positive_speed_bounded_curvature": "NOT_TRACKABLE_AS_SAVED"
+    }
+  ],
+  "radius_rows": [
+    {
+      "assumed_radius_m": 0.5,
+      "internal_corner_occurrences": 156,
+      "local_arc_clearance_pass": 156,
+      "local_cutback_length_fail": 0,
+      "local_clearance_fail": 0,
+      "shared_segment_occurrences": 164,
+      "shared_segment_overlap": 0,
+      "minimum_constructed_arc_clearance_lower_bound_m": 1.1043045481596192,
+      "service_vertex_occurrences_that_would_be_removed_by_nonzero_fillet": 96,
+      "full_path_feasibility_established": false
+    },
+    {
+      "assumed_radius_m": 1.0,
+      "internal_corner_occurrences": 156,
+      "local_arc_clearance_pass": 156,
+      "local_cutback_length_fail": 0,
+      "local_clearance_fail": 0,
+      "shared_segment_occurrences": 164,
+      "shared_segment_overlap": 1,
+      "minimum_constructed_arc_clearance_lower_bound_m": 1.1036309528404404,
+      "service_vertex_occurrences_that_would_be_removed_by_nonzero_fillet": 96,
+      "full_path_feasibility_established": false
+    },
+    {
+      "assumed_radius_m": 2.0,
+      "internal_corner_occurrences": 156,
+      "local_arc_clearance_pass": 155,
+      "local_cutback_length_fail": 1,
+      "local_clearance_fail": 0,
+      "shared_segment_occurrences": 164,
+      "shared_segment_overlap": 42,
+      "minimum_constructed_arc_clearance_lower_bound_m": 1.1026769860094061,
+      "service_vertex_occurrences_that_would_be_removed_by_nonzero_fillet": 96,
+      "full_path_feasibility_established": false
+    },
+    {
+      "assumed_radius_m": 5.0,
+      "internal_corner_occurrences": 156,
+      "local_arc_clearance_pass": 107,
+      "local_cutback_length_fail": 49,
+      "local_clearance_fail": 0,
+      "shared_segment_occurrences": 164,
+      "shared_segment_overlap": 53,
+      "minimum_constructed_arc_clearance_lower_bound_m": 1.1036040472365323,
+      "service_vertex_occurrences_that_would_be_removed_by_nonzero_fillet": 96,
+      "full_path_feasibility_established": false
+    }
+  ],
+  "all_24_conditions": [
+    {
+      "instance_id": "n08_s202610081001",
+      "n": 8,
+      "seed": 202610081001,
+      "method": "nearest_neighbor",
+      "prior_task_status": "VALID_SAFE_ROUTES",
+      "status": "SAVED_POLYLINE_AUDITED",
+      "raw_file": "n08_s202610081001_nearest_neighbor_turn_audit.json",
+      "exact_polyline_status": "NOT_TRACKABLE_AS_SAVED",
+      "corner_counts": {
+        "ROBUST_NONZERO_CORNER": 8
+      },
+      "service_corner_count": 8
+    },
+    {
+      "instance_id": "n08_s202610081001",
+      "n": 8,
+      "seed": 202610081001,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "VALID_SAFE_ROUTES",
+      "status": "SAVED_POLYLINE_AUDITED",
+      "raw_file": "n08_s202610081001_nn_2opt_budget_turn_audit.json",
+      "exact_polyline_status": "NOT_TRACKABLE_AS_SAVED",
+      "corner_counts": {
+        "ROBUST_NONZERO_CORNER": 8
+      },
+      "service_corner_count": 8
+    },
+    {
+      "instance_id": "n08_s202610081002",
+      "n": 8,
+      "seed": 202610081002,
+      "method": "nearest_neighbor",
+      "prior_task_status": "VALID_SAFE_ROUTES",
+      "status": "SAVED_POLYLINE_AUDITED",
+      "raw_file": "n08_s202610081002_nearest_neighbor_turn_audit.json",
+      "exact_polyline_status": "NOT_TRACKABLE_AS_SAVED",
+      "corner_counts": {
+        "ROBUST_NONZERO_CORNER": 17
+      },
+      "service_corner_count": 8
+    },
+    {
+      "instance_id": "n08_s202610081002",
+      "n": 8,
+      "seed": 202610081002,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "VALID_SAFE_ROUTES",
+      "status": "SAVED_POLYLINE_AUDITED",
+      "raw_file": "n08_s202610081002_nn_2opt_budget_turn_audit.json",
+      "exact_polyline_status": "NOT_TRACKABLE_AS_SAVED",
+      "corner_counts": {
+        "ROBUST_NONZERO_CORNER": 19
+      },
+      "service_corner_count": 8
+    },
+    {
+      "instance_id": "n08_s202610081003",
+      "n": 8,
+      "seed": 202610081003,
+      "method": "nearest_neighbor",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        3,
+        5,
+        8
+      ]
+    },
+    {
+      "instance_id": "n08_s202610081003",
+      "n": 8,
+      "seed": 202610081003,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        3,
+        5,
+        8
+      ]
+    },
+    {
+      "instance_id": "n12_s202610081001",
+      "n": 12,
+      "seed": 202610081001,
+      "method": "nearest_neighbor",
+      "prior_task_status": "VALID_SAFE_ROUTES",
+      "status": "SAVED_POLYLINE_AUDITED",
+      "raw_file": "n12_s202610081001_nearest_neighbor_turn_audit.json",
+      "exact_polyline_status": "NOT_TRACKABLE_AS_SAVED",
+      "corner_counts": {
+        "ROBUST_NONZERO_CORNER": 17
+      },
+      "service_corner_count": 12
+    },
+    {
+      "instance_id": "n12_s202610081001",
+      "n": 12,
+      "seed": 202610081001,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "VALID_SAFE_ROUTES",
+      "status": "SAVED_POLYLINE_AUDITED",
+      "raw_file": "n12_s202610081001_nn_2opt_budget_turn_audit.json",
+      "exact_polyline_status": "NOT_TRACKABLE_AS_SAVED",
+      "corner_counts": {
+        "ROBUST_NONZERO_CORNER": 12
+      },
+      "service_corner_count": 12
+    },
+    {
+      "instance_id": "n12_s202610081002",
+      "n": 12,
+      "seed": 202610081002,
+      "method": "nearest_neighbor",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        10
+      ]
+    },
+    {
+      "instance_id": "n12_s202610081002",
+      "n": 12,
+      "seed": 202610081002,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        10
+      ]
+    },
+    {
+      "instance_id": "n12_s202610081003",
+      "n": 12,
+      "seed": 202610081003,
+      "method": "nearest_neighbor",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        3,
+        5,
+        8,
+        9
+      ]
+    },
+    {
+      "instance_id": "n12_s202610081003",
+      "n": 12,
+      "seed": 202610081003,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        3,
+        5,
+        8,
+        9
+      ]
+    },
+    {
+      "instance_id": "n20_s202610081001",
+      "n": 20,
+      "seed": 202610081001,
+      "method": "nearest_neighbor",
+      "prior_task_status": "VALID_SAFE_ROUTES",
+      "status": "SAVED_POLYLINE_AUDITED",
+      "raw_file": "n20_s202610081001_nearest_neighbor_turn_audit.json",
+      "exact_polyline_status": "NOT_TRACKABLE_AS_SAVED",
+      "corner_counts": {
+        "ROBUST_NONZERO_CORNER": 51
+      },
+      "service_corner_count": 20
+    },
+    {
+      "instance_id": "n20_s202610081001",
+      "n": 20,
+      "seed": 202610081001,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "VALID_SAFE_ROUTES",
+      "status": "SAVED_POLYLINE_AUDITED",
+      "raw_file": "n20_s202610081001_nn_2opt_budget_turn_audit.json",
+      "exact_polyline_status": "NOT_TRACKABLE_AS_SAVED",
+      "corner_counts": {
+        "ROBUST_NONZERO_CORNER": 24
+      },
+      "service_corner_count": 20
+    },
+    {
+      "instance_id": "n20_s202610081002",
+      "n": 20,
+      "seed": 202610081002,
+      "method": "nearest_neighbor",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        10
+      ]
+    },
+    {
+      "instance_id": "n20_s202610081002",
+      "n": 20,
+      "seed": 202610081002,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        10
+      ]
+    },
+    {
+      "instance_id": "n20_s202610081003",
+      "n": 20,
+      "seed": 202610081003,
+      "method": "nearest_neighbor",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        3,
+        5,
+        8,
+        9
+      ]
+    },
+    {
+      "instance_id": "n20_s202610081003",
+      "n": 20,
+      "seed": 202610081003,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        3,
+        5,
+        8,
+        9
+      ]
+    },
+    {
+      "instance_id": "n40_s202610081001",
+      "n": 40,
+      "seed": 202610081001,
+      "method": "nearest_neighbor",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        27
+      ]
+    },
+    {
+      "instance_id": "n40_s202610081001",
+      "n": 40,
+      "seed": 202610081001,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        27
+      ]
+    },
+    {
+      "instance_id": "n40_s202610081002",
+      "n": 40,
+      "seed": 202610081002,
+      "method": "nearest_neighbor",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        10
+      ]
+    },
+    {
+      "instance_id": "n40_s202610081002",
+      "n": 40,
+      "seed": 202610081002,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        10
+      ]
+    },
+    {
+      "instance_id": "n40_s202610081003",
+      "n": 40,
+      "seed": 202610081003,
+      "method": "nearest_neighbor",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        3,
+        5,
+        8,
+        9,
+        32
+      ]
+    },
+    {
+      "instance_id": "n40_s202610081003",
+      "n": 40,
+      "seed": 202610081003,
+      "method": "nn_2opt_budget",
+      "prior_task_status": "TASK_INFEASIBLE",
+      "status": "NO_ROUTE_PRIOR_ENDPOINT_INFEASIBILITY",
+      "failing_service_ids": [
+        3,
+        5,
+        8,
+        9,
+        32
+      ]
+    }
+  ],
+  "source_raw_sha256": "ee410d3f52b9965dc77fd5659c00078575823511173339deef79a273b3048514",
+  "independent_review_sha256": "842a77ee133ec5a1ccb468b6f299d9cb25725e86e9b92704b7451762f689b9a7",
+  "not_a_new_route": true,
+  "not_real_vehicle_validation": true
+}

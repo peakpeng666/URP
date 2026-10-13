@@ -1,0 +1,42 @@
+.picker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.field {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.label {
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--ink-3);
+}
+
+.select {
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  background: var(--panel);
+  color: var(--ink);
+  font-size: var(--fs-13);
+  max-width: 140px;
+}
+
+.select:hover {
+  border-color: var(--line-strong);
+}
+
+.vs {
+  font-size: var(--fs-12);
+  color: var(--ink-4);
+}
+
+@media (max-width: 420px) {
+  .select {
+    max-width: 110px;
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "utc": "2026-10-09T01:26:00.892239+00:00",
+  "stage": "STANDARD_X_SHORT_BUDGET_DESCRIPTIVE_QUALITY",
+  "solver": "PyVRP 0.14.0 default ILS",
+  "task_semantics": "Standard CVRP: no fixed fleet size, num_available=n_customers, zero fixed vehicle cost. Not the old at-most-K_ref derived panel.",
+  "planned_instances": 12,
+  "planned_calls": 36,
+  "observed_scheduled_rows": 36,
+  "spawned_calls": 36,
+  "valid_calls": 36,
+  "complete_three_seed_tasks": 12,
+  "all12_mean_reference_gap_percent": 2.6483161483549815,
+  "descriptive_available_complete_mean_gap_percent": 2.6483161483549815,
+  "descriptive_complete_task_denominator": 12,
+  "descriptive_bands": [
+    {
+      "band": 1,
+      "customer_interval": [
+        100,
+        125
+      ],
+      "planned_tasks": 3,
+      "complete_tasks": 3,
+      "three_task_mean_gap_percent": 1.0493935799140077,
+      "available_complete_mean_gap_percent": 1.0493935799140077
+    },
+    {
+      "band": 2,
+      "customer_interval": [
+        200,
+        225
+      ],
+      "planned_tasks": 3,
+      "complete_tasks": 3,
+      "three_task_mean_gap_percent": 3.092086138873374,
+      "available_complete_mean_gap_percent": 3.092086138873374
+    },
+    {
+      "band": 3,
+      "customer_interval": [
+        300,
+        325
+      ],
+      "planned_tasks": 3,
+      "complete_tasks": 3,
+      "three_task_mean_gap_percent": 3.284295496149682,
+      "available_complete_mean_gap_percent": 3.284295496149682
+    },
+    {
+      "band": 4,
+      "customer_interval": [
+        500,
+        525
+      ],
+      "planned_tasks": 3,
+      "complete_tasks": 3,
+      "three_task_mean_gap_percent": 3.167489378482863,
+      "available_complete_mean_gap_percent": 3.167489378482863
+    }
+  ],
+  "failed_or_unavailable_seed_slots": 0,
+  "strict_blind": false,
+  "preregistered_confirmatory": false,
+  "old_TSR_comparator_available": false,
+  "cross_panel_difference_cannot_be_attributed_only_to_size": true,
+  "no_equal_compute_or_speed_claim": true,
+  "no_optimality_proof_claim": true,
+  "old_files_verified_unchanged": 796,
+  "limitations": [
+    "Standard X CVRP differs from the previous derived at-most-K_ref small panel; no scale-only causal attribution.",
+    "This 12-task metadata-selected panel does not establish general CVRP performance, SOTA, universal superiority or statistical significance.",
+    "No historical TSR outputs exist for this large panel, so there is no large-panel TSR comparison.",
+    "Public catalog and reference values may be known to researchers; this is neither strictly blind nor preregistered confirmatory research.",
+    "Reference feasibility is verified; no optimality proof is established here.",
+    "Wall-time stopping is sensitive to machine speed and load. Fixed seeds do not ensure bitwise repeatability.",
+    "The one-second search stop does not include initialization or model construction. Configured guard sums are not measured end-to-end resources.",
+    "The Python audit hook does not prove zero native IO.",
+    "The private external wheel archive is a required restoration dependency, identified by exact Drive ID, archive hash, transport-part hashes and wheel-member hashes."
+  ]
+}

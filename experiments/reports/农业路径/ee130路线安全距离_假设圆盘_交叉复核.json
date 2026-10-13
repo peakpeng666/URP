@@ -1,0 +1,149 @@
+{
+  "utc": "2026-10-08T13:47:41.672562+00:00",
+  "status": "PASS_WITH_QUALIFICATIONS",
+  "scope": "Independent frozen/raw hashes and saved primitive classification/aggregation arithmetic; separately reviewed and bound peer Fraction/GEOS full geometric audit, without repeating it or executing solver.",
+  "checks": {
+    "hashes:freeze/PREEXECUTION_FREEZE.json": true,
+    "hashes:evidence/RAW_COMPLETE_UNAUDITED_MANIFEST.json": true,
+    "40_source_files_unchanged": true,
+    "original_source_archive_hash": true,
+    "receipt:evidence/PREEXECUTION_DRIVE_RECEIPT.json": true,
+    "receipt:evidence/RAW_DRIVE_RECEIPT.json": true,
+    "raw_zip_members_byte_identical": true,
+    "independent_geometry_source_and_records_bound": true,
+    "peer_geometry_distance_tolerance": true,
+    "exact_condition_keys": true,
+    "96_conditions_rebuilt_from_saved_primitives": true,
+    "all_saved_primitive_classifications": true,
+    "route_global_from_all_segments": true,
+    "no_real_conditions_near_threshold": true,
+    "reported_radius_summary_recomputed": true,
+    "24_centerlines_21_exact_zero": true,
+    "all_depots_pass_up_to_2m": true,
+    "preexecution_threshold_tests_exist": true,
+    "report_limitations_explicit": true,
+    "readonly_frozen_inputs_and_raw": true
+  },
+  "details": {
+    "hashes:freeze/PREEXECUTION_FREEZE.json": {
+      "count": 47,
+      "mismatches": []
+    },
+    "hashes:evidence/RAW_COMPLETE_UNAUDITED_MANIFEST.json": {
+      "count": 85,
+      "mismatches": []
+    },
+    "40_source_files_unchanged": {
+      "mismatches": []
+    },
+    "receipt:evidence/PREEXECUTION_DRIVE_RECEIPT.json": {
+      "drive_id": "1lllyKLxVw0O-4LU0ZDbAJqaQp6BTAdeV",
+      "sha256": "0815d917b6ce4e2ff484e24bfef3c8a7a7a012233f70b6c2b6f12e37186f54da",
+      "bytes": 77527
+    },
+    "receipt:evidence/RAW_DRIVE_RECEIPT.json": {
+      "drive_id": "1Gd0wwsBD55vVvbAqxf8tT5-Fb13NcY-H",
+      "sha256": "2e30cfc5652cd1f0c61df5146cc2faad40011477c2c7d2ae16c8c9dc957b0ffe",
+      "bytes": 313081
+    },
+    "raw_zip_members_byte_identical": {
+      "mismatches": []
+    },
+    "independent_geometry_source_and_records_bound": {
+      "checks_executed": 22122,
+      "rational_review": {
+        "coordinate_basis": "Exact Fraction conversion of original binary64 values passed to GDAL; all primitive-edge squared distances minimized algebraically. Square roots only converted for comparison/reporting. No path samples, no optimizer, no replanning.",
+        "unique_primitives": 416,
+        "primitive_edge_pairs": 58656,
+        "maximum_all_pair_rational_vs_geos_abs_difference_m": 5.684341886080802e-14,
+        "maximum_saved_minimum_vs_rational_abs_difference_m": 7.105427357601002e-15,
+        "maximum_witness_location_or_distance_error_m": 7.04477365331968e-10,
+        "all_pair_tolerance_m": 1e-08
+      }
+    },
+    "96_conditions_rebuilt_from_saved_primitives": {
+      "mismatches": []
+    },
+    "all_saved_primitive_classifications": {
+      "mismatches": []
+    },
+    "route_global_from_all_segments": {
+      "mismatches": []
+    },
+    "no_real_conditions_near_threshold": {
+      "minimum_distance_to_positive_threshold_m": 0.012702178299703881
+    },
+    "all_depots_pass_up_to_2m": {
+      "depot_minimum_clearances_m": {
+        "n08_s202610081001": 4.401724777536818,
+        "n08_s202610081002": 17.905951909160418,
+        "n08_s202610081003": 17.82834069070417,
+        "n12_s202610081001": 4.401724777536818,
+        "n12_s202610081002": 17.905951909160418,
+        "n12_s202610081003": 17.82834069070417,
+        "n20_s202610081001": 4.401724777536818,
+        "n20_s202610081002": 17.905951909160418,
+        "n20_s202610081003": 17.82834069070417,
+        "n40_s202610081001": 4.401724777536818,
+        "n40_s202610081002": 17.905951909160418,
+        "n40_s202610081003": 17.82834069070417
+      }
+    }
+  },
+  "failures": [],
+  "by_radius": [
+    {
+      "radius_m": 0.0,
+      "PASS": 24,
+      "FAIL": 0,
+      "BORDERLINE": 0,
+      "service_point_failing_routes": 0,
+      "depot_failing_routes": 0,
+      "task_failing_routes": 0,
+      "connecting_segment_failing_routes": 0,
+      "connector_only_failing_routes": 0
+    },
+    {
+      "radius_m": 0.5,
+      "PASS": 3,
+      "FAIL": 21,
+      "BORDERLINE": 0,
+      "service_point_failing_routes": 16,
+      "depot_failing_routes": 0,
+      "task_failing_routes": 16,
+      "connecting_segment_failing_routes": 21,
+      "connector_only_failing_routes": 5
+    },
+    {
+      "radius_m": 1.0,
+      "PASS": 3,
+      "FAIL": 21,
+      "BORDERLINE": 0,
+      "service_point_failing_routes": 16,
+      "depot_failing_routes": 0,
+      "task_failing_routes": 16,
+      "connecting_segment_failing_routes": 21,
+      "connector_only_failing_routes": 5
+    },
+    {
+      "radius_m": 2.0,
+      "PASS": 2,
+      "FAIL": 22,
+      "BORDERLINE": 0,
+      "service_point_failing_routes": 18,
+      "depot_failing_routes": 0,
+      "task_failing_routes": 18,
+      "connecting_segment_failing_routes": 22,
+      "connector_only_failing_routes": 4
+    }
+  ],
+  "source_report_sha256": "2fc7412ffc8f52b20d128aad4b8d29e3bfdbe0462d249f82efe7eaf569d5c7eb",
+  "peer_report_sha256": "ee41814c2ce9c78fb24a6bff6cf2e704e9a7dbe39a3ba8a0fef9d6ee06642dea",
+  "peer_source_sha256": "4f731f2d3c1e95809c7ff062e423f0ee41fe07ac2a38226288d47df39a52c288",
+  "limitations": [
+    "Containment is independently rerun with the same GDAL/GEOS kernel, not a separate formal full-containment proof.",
+    "Rational checks use represented binary64 geometry, not survey truth.",
+    "Hypothetical translating disk only; no machine dimensions, turning/heading/dynamics/implement/coverage conclusions.",
+    "Twelve instances are nested prefixes on one field, not twelve independent fields."
+  ]
+}

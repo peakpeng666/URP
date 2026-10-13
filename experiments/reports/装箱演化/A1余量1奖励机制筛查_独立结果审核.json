@@ -1,0 +1,316 @@
+{
+  "schema": "A1-independent-final-readonly-result-review-v1",
+  "status": "PASS_A1_RESULTS",
+  "reviewed_at_utc": "2026-10-07T23:29:43.374505+00:00",
+  "original_preactivation_report_preserved": true,
+  "original_preactivation_report_sha256": "c9c924b4b2c377d516376be370d5bbbba32817fdddcb2245a3d009dc3bf91188",
+  "source_freeze_sha256": "d1b347f6d2aeaf02b2ad2a324ee7937ab6a0eb3fcb7be394adc3fd044095ae3d",
+  "data_seal_sha256": "a39f98c421645a07a696a56811b002075cd993fbbe677cbd4f089c164834b983",
+  "analysis_result_sha256": "3481ed403cb8eb8736f79686e4f509dbc4312c24ba31c88753f37cb741b4d740",
+  "raw_terminal_freeze_sha256": "86609204b93de0e689de41f41e51cb7f630a4cd0947baf77638d33125d7b02ee",
+  "science_completion_sha256": "c142535c976f0b44b812de27f438b9ed43e03cb04e8bafcc80c5cd7615b9a418",
+  "result_evidence_check_sha256": "0e6cd64987d7dd7c45a78ddba7d3745e9e4dd94dcc53bc43161da2d152309e64",
+  "result_verification_source_sha256": "b056bf4ad723cabbc16ef9bf3b4b2d52f171714f82ba90cb79a54a42c5dbedcd",
+  "scope": {
+    "independent_units": "8 wholly new paired sequences, not24 independent arm runs and not24000 independent items",
+    "sequences": 8,
+    "items_per_sequence": 1000,
+    "capacity": 100,
+    "arms": 3,
+    "scientific_packs": 24,
+    "checked_saved_assignments": 24000,
+    "old_C1_observations_used_in_new_sample": 0,
+    "new_candidate_or_solver_executions_by_auditor": 0,
+    "producer_analysis_source_executions_by_auditor": 0,
+    "additional_trials": 0
+  },
+  "passed_checks": [
+    "Original61-file source freeze and8-input seal unchanged from independent activation review; authorization matches exact root-approved hashes.",
+    "Exactly28 permanent claims/terminals/outer observations:3 original toys+24 formal packs+1 locked analysis. No extra attempt, retry, failure, unknown or HALT.",
+    "Each24 science action binds exact method/source/input/sequence, immutable runtime, distinct /instance/0 ID and toy canonical_text, admitted after host gate;1000 worker steps and complete assignment.",
+    "Every saved assignment independently replayed with integer capacity feasibility, conservation, full remaining vector, used-bin counts, assignment digest and L1. No scoring function or solver invoked.",
+    "Eight shared input sequences paired across all3 methods, all original hash identities verified, disjoint from known25 old prefixes. Old C1 arrays were not added to the sample.",
+    "Both8-pair contrasts independently reproduced exactly as Fractions; all per-sequence F/bin differences, mean F differences, total savings and W/T/L match.",
+    "Fixed PCG64 analysis seed20261008 and20000 paired sequence resamples independently reproduced; same index matrix for both contrasts and linear percentile endpoints match exactly.",
+    "All predeclared proxy totals independently replayed from saved placements, without recomputing policies.",
+    "Raw terminal map contains exactly3 toy+24 science results and matches every file; its hash is bound in analysis claim before analysis driver release; analysis terminal binds exact output hash.",
+    "Worker, supervisor and driver cleanups and complete outer rawwait4 receipts verified; no uncollected descendant reported. Nested inclusive CPU counted once.",
+    "Final dispatcher completed exact24+analysis order, is fully covered by complete shell-exit receipt, and uses its sole permanent reservation.",
+    "Cumulative reservation still3477CPU/2681activewall, includes original30/30 independent audit, within3500/2750; closed C1 budget untouched."
+  ],
+  "primary": {
+    "contrast": "EOH_nearfit_one minus EOH_original",
+    "comparator_total_bins": 3333,
+    "patch_total_bins": 3282,
+    "mean_paired_F_difference": {
+      "numerator": 4461247295868177871,
+      "denominator": 298167715659603160800,
+      "decimal": 0.01496220771587916
+    },
+    "paired_F_differences": [
+      {
+        "numerator": 1215,
+        "denominator": 86108,
+        "decimal": 0.014110187206763599
+      },
+      {
+        "numerator": 405,
+        "denominator": 42848,
+        "decimal": 0.00945201643017177
+      },
+      {
+        "numerator": 197,
+        "denominator": 16200,
+        "decimal": 0.012160493827160494
+      },
+      {
+        "numerator": 15,
+        "denominator": 1066,
+        "decimal": 0.014071294559099437
+      },
+      {
+        "numerator": 4040,
+        "denominator": 173031,
+        "decimal": 0.02334841733562194
+      },
+      {
+        "numerator": 729,
+        "denominator": 35360,
+        "decimal": 0.020616515837104072
+      },
+      {
+        "numerator": 401,
+        "denominator": 42848,
+        "decimal": 0.009358663181478715
+      },
+      {
+        "numerator": 217,
+        "denominator": 13088,
+        "decimal": 0.01658007334963325
+      }
+    ],
+    "paired_bins_patch_minus_comparator": [
+      -6,
+      -4,
+      -5,
+      -6,
+      -10,
+      -9,
+      -4,
+      -7
+    ],
+    "total_bin_savings": 51,
+    "wins_ties_losses": [
+      8,
+      0,
+      0
+    ],
+    "descriptive_95_percentile_bootstrap": [
+      0.011842847580426958,
+      0.018358591906101576
+    ],
+    "resamples": 20000,
+    "analysis_seed": 20261008,
+    "bootstrap_only_descriptive": true
+  },
+  "secondary": {
+    "contrast": "EOH_nearfit_one minus published_EoH",
+    "comparator_total_bins": 3285,
+    "patch_total_bins": 3282,
+    "mean_paired_F_difference": {
+      "numerator": 33839694819157,
+      "denominator": 37402115431466240,
+      "decimal": 0.0009047534993351689
+    },
+    "paired_F_differences": [
+      {
+        "numerator": 405,
+        "denominator": 170156,
+        "decimal": 0.0023801687862902276
+      },
+      {
+        "numerator": 45,
+        "denominator": 9476,
+        "decimal": 0.004748839172646686
+      },
+      {
+        "numerator": 0,
+        "denominator": 1,
+        "decimal": 0.0
+      },
+      {
+        "numerator": 40,
+        "denominator": 16851,
+        "decimal": 0.002373746365200878
+      },
+      {
+        "numerator": 808,
+        "denominator": 169743,
+        "decimal": 0.004760137384163117
+      },
+      {
+        "numerator": -1215,
+        "denominator": 171808,
+        "decimal": -0.007071847643881542
+      },
+      {
+        "numerator": -401,
+        "denominator": 84460,
+        "decimal": -0.00474780961401847
+      },
+      {
+        "numerator": 806,
+        "denominator": 168099,
+        "decimal": 0.0047947935442804535
+      }
+    ],
+    "paired_bins_patch_minus_comparator": [
+      -1,
+      -2,
+      0,
+      -1,
+      -2,
+      3,
+      2,
+      -2
+    ],
+    "total_bin_savings": 3,
+    "wins_ties_losses": [
+      5,
+      1,
+      2
+    ],
+    "descriptive_95_percentile_bootstrap": [
+      -0.002348420082058025,
+      0.0035765770226281164
+    ],
+    "resamples": 20000,
+    "analysis_seed": 20261008,
+    "bootstrap_only_descriptive": true,
+    "interval_includes_zero": true
+  },
+  "method_totals": {
+    "EOH_original": {
+      "bins": 3333,
+      "mean_F": {
+        "numerator": 1946078875361,
+        "denominator": 2016116593920,
+        "decimal": 0.9652610772758814
+      },
+      "mechanism_totals": {
+        "r1_placements": 0,
+        "final_r1_bins": 0,
+        "final_capacity_r11_45": 10425,
+        "full_bins": 2917,
+        "voluntary_openings": 1830,
+        "forced_openings": 1503
+      }
+    },
+    "EOH_nearfit_one": {
+      "bins": 3282,
+      "mean_F": {
+        "numerator": 57894132730613,
+        "denominator": 59062188806400,
+        "decimal": 0.9802232849917606
+      },
+      "mechanism_totals": {
+        "r1_placements": 1155,
+        "final_r1_bins": 1155,
+        "final_capacity_r11_45": 4301,
+        "full_bins": 1932,
+        "voluntary_openings": 1708,
+        "forced_openings": 1574
+      }
+    },
+    "published_EoH": {
+      "bins": 3285,
+      "mean_F": {
+        "numerator": 250811543933,
+        "denominator": 256108238400,
+        "decimal": 0.9793185314924254
+      },
+      "mechanism_totals": {
+        "r1_placements": 1160,
+        "final_r1_bins": 1160,
+        "final_capacity_r11_45": 3453,
+        "full_bins": 1955,
+        "voluntary_openings": 2358,
+        "forced_openings": 927
+      }
+    }
+  },
+  "mechanism_interpretation": {
+    "observation": "In these8 new1000-item sequences, the fixed r1 bonus increases retained near fits and decreases medium residual capacity while using51 fewer bins despite985 fewer full bins. This supports the proposed mechanism screen and contradicts treating exact-fill count alone as an efficiency objective.",
+    "published_comparator": "Only3 total bins saved versus public EoH,5 wins/1 tie/2 losses; descriptive interval crosses zero. No reliable superiority conclusion from this screen.",
+    "r1_original_to_patch": [
+      0,
+      1155
+    ],
+    "final_capacity_r11_45_original_to_patch": [
+      10425,
+      4301
+    ],
+    "full_bins_original_to_patch": [
+      2917,
+      1932
+    ]
+  },
+  "scientific_limits": [
+    "Exploratory mechanism screening with8 independent1000-item sequences only; not a5000-item confirmation, SOTA result, generalization guarantee, or confirmatory statistical superiority claim.",
+    "Hypothesis was generated post hoc from prior C1. Fresh sequence evaluation supports testing that fixed hypothesis but cannot retroactively make its origin prospective.",
+    "Coefficient0.5 and all methods/metrics were frozen before new research data and results; no tuning, sample extension, candidate reselection or re-solving occurred.",
+    "All8 pairs are complete here. Unchanged policy still keeps full8 contrast null for any missing pair, without imputation. The failure branch was inspected statically rather than induced by new fault/candidate probes.",
+    "Known25 prefix exclusion is independently checked; unavailable historic heldout equality is not claimed exhaustively checked. Fresh entropy/domain and unchanged generator establish no deliberate reuse.",
+    "Bootstrap endpoints are descriptive sequence-percentile intervals at this horizon; even primary interval above zero is not presented as a confirmatory significance claim."
+  ],
+  "failure_accounting": {
+    "complete_pairs_primary": 8,
+    "complete_pairs_secondary": 8,
+    "denominator": 8,
+    "failed": 0,
+    "unknown": 0,
+    "retries": 0,
+    "imputation": null,
+    "full8_null_rule_unchanged": true
+  },
+  "resources": {
+    "caps": {
+      "CPU": 3500,
+      "active_wall": 2750
+    },
+    "total_reserved": {
+      "CPU": 3477,
+      "active_wall": 2681
+    },
+    "remaining_unallocated_margin": {
+      "CPU": 23,
+      "active_wall": 69
+    },
+    "core_execution_complete_receipt_CPU_seconds": 61.31399999999999,
+    "core_execution_complete_receipt_wall_seconds": 61.753,
+    "science_guard_tree_CPU_counted_once": 59.5018,
+    "independent_audit_original_reservation": {
+      "CPU": 30,
+      "active_wall": 30
+    },
+    "independent_audit_reservation_increase": 0,
+    "bounded_audit_verification_complete_receipts": {
+      "check_time_receipt.txt": {
+        "wall_seconds": 0.041,
+        "user_CPU_seconds": 0.041,
+        "system_CPU_seconds": 0.0
+      },
+      "result_check_time_receipt.txt": {
+        "wall_seconds": 0.227,
+        "user_CPU_seconds": 0.197,
+        "system_CPU_seconds": 0.03
+      }
+    },
+    "measured_bounded_audit_checks_CPU_seconds": 0.268,
+    "measured_bounded_audit_checks_wall_seconds": 0.268,
+    "scope_caveat": "These measured totals are not all-in: short author/auditor read, write, report and packaging commands were not individually full CPU-metered, and remain covered by their conservative20/20 and30/30 named reservations. Reasoning/wait time is not active process wall. No unmetered work is filled with0 and no innerCPU is double-added.",
+    "old_C1_debit": false,
+    "new_provider_calls": 0,
+    "new_paid_model_cost": 0
+  }
+}

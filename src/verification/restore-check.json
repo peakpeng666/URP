@@ -1,0 +1,44 @@
+[
+  {
+    "name": "parent-selection",
+    "command": "restore",
+    "exit_code": 0,
+    "output": "{\n  \"verified\": true,\n  \"files\": 23,\n  \"archive_sha256\": \"192c16dcfbd1b466584210b0670d3828316e70fe3907a2d907033ac48171d4e3\"\n}\n",
+    "error": ""
+  },
+  {
+    "name": "parent-selection",
+    "command": "verify",
+    "exit_code": 0,
+    "output": "{\n  \"verified\": true,\n  \"files\": 23,\n  \"archive_sha256\": \"192c16dcfbd1b466584210b0670d3828316e70fe3907a2d907033ac48171d4e3\"\n}\n",
+    "error": ""
+  },
+  {
+    "name": "cvrp-selection-crc",
+    "command": "restore",
+    "exit_code": 0,
+    "output": "{\n  \"verified\": true,\n  \"files\": 44,\n  \"archive_sha256\": \"09e3d27150f1711c53a58bd97e19693b1197b6761b14e1650391ba6e4c44a0dc\"\n}\n",
+    "error": ""
+  },
+  {
+    "name": "cvrp-selection-crc",
+    "command": "verify",
+    "exit_code": 0,
+    "output": "{\n  \"verified\": true,\n  \"files\": 44,\n  \"archive_sha256\": \"09e3d27150f1711c53a58bd97e19693b1197b6761b14e1650391ba6e4c44a0dc\"\n}\n",
+    "error": ""
+  },
+  {
+    "name": "turn-modes",
+    "command": "restore",
+    "exit_code": 0,
+    "output": "{\n  \"verified\": true,\n  \"files\": 93,\n  \"archive_sha256\": \"e9e5acbf8a3a78c2acd844226a72790701e8a4049b5c2ca75e4562e9d2b68a9b\"\n}\n",
+    "error": ""
+  },
+  {
+    "name": "turn-modes",
+    "command": "verify",
+    "exit_code": 0,
+    "output": "{\n  \"verified\": true,\n  \"files\": 93,\n  \"archive_sha256\": \"e9e5acbf8a3a78c2acd844226a72790701e8a4049b5c2ca75e4562e9d2b68a9b\"\n}\n",
+    "error": ""
+  }
+]

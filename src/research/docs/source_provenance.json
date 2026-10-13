@@ -1,0 +1,201 @@
+{
+  "schema": "urp-release-provenance-v1",
+  "files": [
+    {
+      "source_file": "independent_parent_selection_20261006/replay.py",
+      "source_sha256": "96fb870a575b27b998da4f2b43071dd9a193850c4f05f4e79a98c4cb7acb1ffd",
+      "release_file": "src/urp_research/parent_selection.py",
+      "release_sha256": "9ecf1fbe3201da5ce12760c0fd268252f0bd0e85fd7a25198efb66fe664a7e70",
+      "changes": [
+        "removed legacy standalone __main__ entry point"
+      ]
+    },
+    {
+      "source_file": "independent_cvrp_selection_crc_20261006/src/experiment.py",
+      "source_sha256": "80c903765807d3cc2fd87dd0c5e59a0f57f24d883bb49e6237550df818e0bfb5",
+      "release_file": "src/urp_research/cvrp_selection/experiment.py",
+      "release_sha256": "2aceafef9f0fdf55bc0f46a84bc0869760757fd6174b498e334f184f178fb036",
+      "changes": [
+        "removed legacy standalone __main__ entry point",
+        "from preflight import -> from .preflight import"
+      ]
+    },
+    {
+      "source_file": "independent_cvrp_selection_crc_20261006/src/preflight.py",
+      "source_sha256": "dce9ec20d79521068ea7b78b4d11af2dad1dc34db1e6cda903fc9a833404c439",
+      "release_file": "src/urp_research/cvrp_selection/preflight.py",
+      "release_sha256": "ebf0c4d398a5efbf0fd0b79b85eade27872b40e595f726f7b7bce17d4299286c",
+      "changes": [
+        "removed legacy standalone __main__ entry point"
+      ]
+    },
+    {
+      "source_file": "independent_turn_modes_20261006/solver.py",
+      "source_sha256": "944c59abece5feb8dbc7de7b7481f44bd9c3fcf6dd6743c1523329a645ffa456",
+      "release_file": "src/urp_research/turn_modes/solver.py",
+      "release_sha256": "944c59abece5feb8dbc7de7b7481f44bd9c3fcf6dd6743c1523329a645ffa456",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_turn_modes_20261006/oracle.py",
+      "source_sha256": "ed2c74f57f1df85f8a621ed77130e1337d3bf677ab264cc8d99cc7887c7a7619",
+      "release_file": "src/urp_research/turn_modes/oracle.py",
+      "release_sha256": "ed2c74f57f1df85f8a621ed77130e1337d3bf677ab264cc8d99cc7887c7a7619",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_turn_modes_20261006/checker.py",
+      "source_sha256": "d1c5971d79c7597f4e0d106cf125934f0c20ed527c44f874039c071be79364cc",
+      "release_file": "src/urp_research/turn_modes/checker.py",
+      "release_sha256": "d1c5971d79c7597f4e0d106cf125934f0c20ed527c44f874039c071be79364cc",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_turn_modes_20261006/generate_data.py",
+      "source_sha256": "3396c6198e1ec79ca4c38bf37acbb549949698c47ae5b558768c053405da2b38",
+      "release_file": "src/urp_research/turn_modes/generate_data.py",
+      "release_sha256": "d7b100580bb6c65a26271dc52e6f7816851ac8526e3b07eaeb4300211dbcfc35",
+      "changes": [
+        "removed legacy standalone __main__ entry point"
+      ]
+    },
+    {
+      "source_file": "independent_turn_modes_20261006/evaluate_candidate.py",
+      "source_sha256": "c011642ada16b33766f684c2bcae59fc1f0740f6492a88ecbf8503df38e2a15f",
+      "release_file": "src/urp_research/turn_modes/evaluate_candidate.py",
+      "release_sha256": "2553c6658a1dcbea05d3fb609d2f4312ed144202182564654f5b160b8f6029b2",
+      "changes": [
+        "removed legacy standalone __main__ entry point",
+        "import solver,checker -> from . import solver,checker"
+      ]
+    },
+    {
+      "source_file": "independent_turn_modes_20261006/run.py",
+      "source_sha256": "1c86dad86c62ae8bc5243557f1c55ce6add1e56697482b9b43fdf6b59669e2bb",
+      "release_file": "src/urp_research/turn_modes/run.py",
+      "release_sha256": "47ba0de73b6a3641a63c29532cd7b2f88693a79e569bc5c3e4ffd82531bfe255",
+      "changes": [
+        "removed legacy standalone __main__ entry point",
+        "import solver,oracle,checker -> from . import solver,oracle,checker",
+        "def main():\n    p=argparse.ArgumentParser();p.add_argument('--split',choices=['smoke','formal','fixtures'],required=True);p.add_argument('--out',required=True);a=p.parse_args() -> def replay(split, output):\n    from types import SimpleNamespace\n    a=SimpleNamespace(split=split,out=output)",
+        "    records=[];started=time.time() ->     input_files=sorted((ROOT/'data'/a.split).glob('*.json'))\n    expected={'formal':36,'smoke':6,'fixtures':3}[a.split]\n    if len(input_files)!=expected:\n        raise RuntimeError(f'Expected {expected} {a.split} inputs, found {len(input_files)}')\n    records=[];started=time.time()",
+        "    for f in sorted((ROOT/'data'/a.split).glob('*.json')): ->     for f in input_files:",
+        "    if summary['completed']!=summary['total']:sys.exit(1) ->     if summary['completed']!=expected:\n        raise RuntimeError('Incomplete frozen panel; inspect per-instance errors')\n    return summary"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/source/smoke_timing.py",
+      "source_sha256": "95bc9ca7adf6f08e9c91ad931da866ee25efc1f1d0e640ed17558f0ce369aadc",
+      "release_file": "src/urp_research/nas_fidelity/frozen/source/smoke_timing.py",
+      "release_sha256": "95bc9ca7adf6f08e9c91ad931da866ee25efc1f1d0e640ed17558f0ce369aadc",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/source/build_report.py",
+      "source_sha256": "4f6f9399167cc21e0ea937c90edada39e636455614d7909312a06cf37d2f9ed2",
+      "release_file": "src/urp_research/nas_fidelity/frozen/source/build_report.py",
+      "release_sha256": "4f6f9399167cc21e0ea937c90edada39e636455614d7909312a06cf37d2f9ed2",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/source/analyze.py",
+      "source_sha256": "8a46213e0f0b2e6f6dd14a628efdf81ec13159bc434ee9c9582b4000597f992e",
+      "release_file": "src/urp_research/nas_fidelity/frozen/source/analyze.py",
+      "release_sha256": "8a46213e0f0b2e6f6dd14a628efdf81ec13159bc434ee9c9582b4000597f992e",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/source/run_fidelity.py",
+      "source_sha256": "52551b9cea0b1c68a38c6a33d556536b19960151a300837b70bff482f1936117",
+      "release_file": "src/urp_research/nas_fidelity/frozen/source/run_fidelity.py",
+      "release_sha256": "52551b9cea0b1c68a38c6a33d556536b19960151a300837b70bff482f1936117",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/source/test_recovery.py",
+      "source_sha256": "fbc01077614070df1ae43c3418ccedb92cf4105afb0bbe26115e0367ff692d79",
+      "release_file": "src/urp_research/nas_fidelity/frozen/source/test_recovery.py",
+      "release_sha256": "fbc01077614070df1ae43c3418ccedb92cf4105afb0bbe26115e0367ff692d79",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/source/metrics.py",
+      "source_sha256": "5609d44bc6aae22657f3aef40327f2667a1429ed95312fadf4fce0639b9181e2",
+      "release_file": "src/urp_research/nas_fidelity/frozen/source/metrics.py",
+      "release_sha256": "5609d44bc6aae22657f3aef40327f2667a1429ed95312fadf4fce0639b9181e2",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/source/prepare_data.py",
+      "source_sha256": "45ce9b35dc511aab1b6123be1c8e92aa22b9c22a58c998dd0672fbf8af6379ed",
+      "release_file": "src/urp_research/nas_fidelity/frozen/source/prepare_data.py",
+      "release_sha256": "45ce9b35dc511aab1b6123be1c8e92aa22b9c22a58c998dd0672fbf8af6379ed",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/source/core.py",
+      "source_sha256": "601acff8fddfb9e512c205b39287a8309155a1d3c866aeb446aead108c6811ad",
+      "release_file": "src/urp_research/nas_fidelity/frozen/source/core.py",
+      "release_sha256": "601acff8fddfb9e512c205b39287a8309155a1d3c866aeb446aead108c6811ad",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/source/test_primitives.py",
+      "source_sha256": "95948cf87bd3040186507883300078800f359ad2df25b97f3dbd1c90cb8bc7ad",
+      "release_file": "src/urp_research/nas_fidelity/frozen/source/test_primitives.py",
+      "release_sha256": "95948cf87bd3040186507883300078800f359ad2df25b97f3dbd1c90cb8bc7ad",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/source/freeze.py",
+      "source_sha256": "39ff3b9e8df79b00251bfd4b102b2525771d3f2be274d63cca27d349c2e0b232",
+      "release_file": "src/urp_research/nas_fidelity/frozen/source/freeze.py",
+      "release_sha256": "39ff3b9e8df79b00251bfd4b102b2525771d3f2be274d63cca27d349c2e0b232",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/audit/test_audit.py",
+      "source_sha256": "1d5990bc0fba66c5b02475c6629646fef3300cb401d56bea1294565cb19e7148",
+      "release_file": "src/urp_research/nas_fidelity/frozen/audit/test_audit.py",
+      "release_sha256": "1d5990bc0fba66c5b02475c6629646fef3300cb401d56bea1294565cb19e7148",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    },
+    {
+      "source_file": "independent_nas_fidelity_20261006/audit/check_fidelity.py",
+      "source_sha256": "8b52812627e6072ca28157af2bbbc35db7b28c4f4bc983c5697097c273cb0714",
+      "release_file": "src/urp_research/nas_fidelity/frozen/audit/check_fidelity.py",
+      "release_sha256": "8b52812627e6072ca28157af2bbbc35db7b28c4f4bc983c5697097c273cb0714",
+      "changes": [
+        "byte-identical; no changes"
+      ]
+    }
+  ]
+}

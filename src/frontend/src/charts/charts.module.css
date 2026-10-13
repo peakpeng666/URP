@@ -1,0 +1,146 @@
+.figure {
+  margin: 0;
+}
+
+.scrollX {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.grid {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.zeroLine {
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+}
+
+.rowRule {
+  stroke: var(--line);
+  stroke-width: 1;
+  stroke-dasharray: 0;
+  opacity: 0.6;
+}
+
+.tickX,
+.tickY {
+  fill: var(--ink-3);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.axisTitle {
+  fill: var(--ink-3);
+  font-size: 12px;
+}
+
+.rowLabel {
+  fill: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.rowDetail {
+  fill: var(--ink-3);
+  font-size: 11px;
+}
+
+.dotValue {
+  fill: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.rowHit {
+  cursor: default;
+  outline: none;
+}
+
+.rowHit:focus-visible .dotValue {
+  text-decoration: underline;
+}
+
+.clickDot {
+  cursor: pointer;
+  transition: r 0.1s var(--ease);
+}
+
+.clickDot:hover,
+.clickDot:focus-visible {
+  r: 6;
+  outline: none;
+}
+
+/* ---- cell matrix ---- */
+.matrixCaption {
+  font-size: var(--fs-13);
+  color: var(--ink-3);
+  line-height: 1.55;
+  margin-bottom: var(--s3);
+}
+
+.matrix {
+  border-collapse: separate;
+  border-spacing: 3px;
+  width: 100%;
+  min-width: 440px;
+}
+
+.matrixCorner {
+  font-size: var(--fs-11);
+  font-weight: 500;
+  color: var(--ink-3);
+  text-align: left;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.matrixColHead {
+  font-size: var(--fs-12);
+  font-weight: 600;
+  color: var(--ink-2);
+  padding: 4px;
+  text-align: center;
+}
+
+.matrixRowHead {
+  font-size: var(--fs-13);
+  font-weight: 500;
+  color: var(--ink);
+  text-align: right;
+  padding: 4px 10px 4px 4px;
+  white-space: nowrap;
+}
+
+.matrixTd {
+  padding: 0;
+}
+
+.cellBtn {
+  width: 100%;
+  min-width: 72px;
+  height: 46px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-chip);
+  font-size: var(--fs-14);
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.cellBtn:hover {
+  border-color: var(--line-strong);
+}
+
+.cellBtn[data-active] {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}

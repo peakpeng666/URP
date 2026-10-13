@@ -1,0 +1,230 @@
+{
+  "study": "8 reused n200 geometries, constant5, seed75101, descriptive budget reproduction only",
+  "validation": {
+    "independent_outputs_checked": 160,
+    "independent_routes_checked": 5440,
+    "all_independent_outputs_passed": true,
+    "all_monotonicity_and_ledger_checks": true,
+    "exact_reproduction_all_passed": true,
+    "exact_reproduction_checkpoint_count": 64,
+    "main_checkpoint_count": 96,
+    "failure_count": 0
+  },
+  "aggregates": [
+    {
+      "budget": 160000,
+      "algorithm": "random_cheapest",
+      "available_geometries": 8,
+      "zero_completed_rounds": 8,
+      "mean_completed_rounds": 0,
+      "min_completed_rounds": 0,
+      "max_completed_rounds": 0,
+      "improved_vs_baseline_count": 0,
+      "mean_baseline_gain_pct": 0.0,
+      "mean_rank": 2.5625,
+      "mean_relative_regret_pct": 0.015280778074056034
+    },
+    {
+      "budget": 160000,
+      "algorithm": "random_regret2",
+      "available_geometries": 8,
+      "zero_completed_rounds": 7,
+      "mean_completed_rounds": 0.125,
+      "min_completed_rounds": 0,
+      "max_completed_rounds": 1,
+      "improved_vs_baseline_count": 1,
+      "mean_baseline_gain_pct": 0.015262120707699469,
+      "mean_rank": 2.3125,
+      "mean_relative_regret_pct": 0.0
+    },
+    {
+      "budget": 160000,
+      "algorithm": "worst_cheapest",
+      "available_geometries": 8,
+      "zero_completed_rounds": 0,
+      "mean_completed_rounds": 1,
+      "min_completed_rounds": 1,
+      "max_completed_rounds": 1,
+      "improved_vs_baseline_count": 0,
+      "mean_baseline_gain_pct": 0.0,
+      "mean_rank": 2.5625,
+      "mean_relative_regret_pct": 0.015280778074056034
+    },
+    {
+      "budget": 160000,
+      "algorithm": "worst_regret2",
+      "available_geometries": 8,
+      "zero_completed_rounds": 0,
+      "mean_completed_rounds": 1,
+      "min_completed_rounds": 1,
+      "max_completed_rounds": 1,
+      "improved_vs_baseline_count": 0,
+      "mean_baseline_gain_pct": 0.0,
+      "mean_rank": 2.5625,
+      "mean_relative_regret_pct": 0.015280778074056034
+    },
+    {
+      "budget": 640000,
+      "algorithm": "random_cheapest",
+      "available_geometries": 8,
+      "zero_completed_rounds": 0,
+      "mean_completed_rounds": 5,
+      "min_completed_rounds": 5,
+      "max_completed_rounds": 5,
+      "improved_vs_baseline_count": 0,
+      "mean_baseline_gain_pct": 0.0,
+      "mean_rank": 3.125,
+      "mean_relative_regret_pct": 0.11985313329670177
+    },
+    {
+      "budget": 640000,
+      "algorithm": "random_regret2",
+      "available_geometries": 8,
+      "zero_completed_rounds": 0,
+      "mean_completed_rounds": 5,
+      "min_completed_rounds": 5,
+      "max_completed_rounds": 5,
+      "improved_vs_baseline_count": 8,
+      "mean_baseline_gain_pct": 0.11676538025756743,
+      "mean_rank": 1.125,
+      "mean_relative_regret_pct": 0.0029006280998306044
+    },
+    {
+      "budget": 640000,
+      "algorithm": "worst_cheapest",
+      "available_geometries": 8,
+      "zero_completed_rounds": 0,
+      "mean_completed_rounds": 11,
+      "min_completed_rounds": 6,
+      "max_completed_rounds": 13,
+      "improved_vs_baseline_count": 0,
+      "mean_baseline_gain_pct": 0.0,
+      "mean_rank": 3.125,
+      "mean_relative_regret_pct": 0.11985313329670177
+    },
+    {
+      "budget": 640000,
+      "algorithm": "worst_regret2",
+      "available_geometries": 8,
+      "zero_completed_rounds": 0,
+      "mean_completed_rounds": 10.5,
+      "min_completed_rounds": 6,
+      "max_completed_rounds": 12,
+      "improved_vs_baseline_count": 2,
+      "mean_baseline_gain_pct": 0.00871249931007963,
+      "mean_rank": 2.625,
+      "mean_relative_regret_pct": 0.1111359779156218
+    },
+    {
+      "budget": 1280000,
+      "algorithm": "random_cheapest",
+      "available_geometries": 8,
+      "zero_completed_rounds": 0,
+      "mean_completed_rounds": 12.75,
+      "min_completed_rounds": 12,
+      "max_completed_rounds": 13,
+      "improved_vs_baseline_count": 0,
+      "mean_baseline_gain_pct": 0.0,
+      "mean_rank": 3.25,
+      "mean_relative_regret_pct": 0.383639137976019
+    },
+    {
+      "budget": 1280000,
+      "algorithm": "random_regret2",
+      "available_geometries": 8,
+      "zero_completed_rounds": 0,
+      "mean_completed_rounds": 12.875,
+      "min_completed_rounds": 12,
+      "max_completed_rounds": 13,
+      "improved_vs_baseline_count": 8,
+      "mean_baseline_gain_pct": 0.3546880074185984,
+      "mean_rank": 1.125,
+      "mean_relative_regret_pct": 0.027017033379175825
+    },
+    {
+      "budget": 1280000,
+      "algorithm": "worst_cheapest",
+      "available_geometries": 8,
+      "zero_completed_rounds": 0,
+      "mean_completed_rounds": 23.75,
+      "min_completed_rounds": 18,
+      "max_completed_rounds": 30,
+      "improved_vs_baseline_count": 0,
+      "mean_baseline_gain_pct": 0.0,
+      "mean_rank": 3.25,
+      "mean_relative_regret_pct": 0.383639137976019
+    },
+    {
+      "budget": 1280000,
+      "algorithm": "worst_regret2",
+      "available_geometries": 8,
+      "zero_completed_rounds": 0,
+      "mean_completed_rounds": 23.25,
+      "min_completed_rounds": 17,
+      "max_completed_rounds": 27,
+      "improved_vs_baseline_count": 4,
+      "mean_baseline_gain_pct": 0.08719675566310987,
+      "mean_rank": 2.375,
+      "mean_relative_regret_pct": 0.29603022417608593
+    }
+  ],
+  "first_improvement": [
+    {
+      "algorithm": "random_cheapest",
+      "count": 8,
+      "first_improvement_observed": 0,
+      "censored": 8,
+      "first_improvement_after160k": 0,
+      "observed_first_delta_min": null,
+      "observed_first_delta_median": null,
+      "observed_first_delta_max": null,
+      "observed_only_warning": "Conditional on improvement by attained budget; censored trajectories retained separately."
+    },
+    {
+      "algorithm": "random_regret2",
+      "count": 8,
+      "first_improvement_observed": 8,
+      "censored": 0,
+      "first_improvement_after160k": 7,
+      "observed_first_delta_min": 154030,
+      "observed_first_delta_median": 245967.0,
+      "observed_first_delta_max": 522393,
+      "observed_only_warning": "Conditional on improvement by attained budget; censored trajectories retained separately."
+    },
+    {
+      "algorithm": "worst_cheapest",
+      "count": 8,
+      "first_improvement_observed": 0,
+      "censored": 8,
+      "first_improvement_after160k": 0,
+      "observed_first_delta_min": null,
+      "observed_first_delta_median": null,
+      "observed_first_delta_max": null,
+      "observed_only_warning": "Conditional on improvement by attained budget; censored trajectories retained separately."
+    },
+    {
+      "algorithm": "worst_regret2",
+      "count": 8,
+      "first_improvement_observed": 4,
+      "censored": 4,
+      "first_improvement_after160k": 4,
+      "observed_first_delta_min": 543537,
+      "observed_first_delta_median": 846390.5,
+      "observed_first_delta_max": 1145384,
+      "observed_only_warning": "Conditional on improvement by attained budget; censored trajectories retained separately."
+    }
+  ],
+  "paired_regret2_advantage_mean_pct": {
+    "160000": 0.015262120707699469,
+    "640000": 0.11676538025756743,
+    "1280000": 0.3546880074185984
+  },
+  "paired_geometry_count": {
+    "160000": 8,
+    "640000": 8,
+    "1280000": 8
+  },
+  "geometries_with_rank_change160k_to1280k": 8,
+  "no_pvalues_or_population_claims": true,
+  "no_new_independent_geometries": true
+}

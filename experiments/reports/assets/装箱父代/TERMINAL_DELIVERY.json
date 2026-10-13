@@ -1,0 +1,150 @@
+{
+  "P1_best": [
+    {
+      "P0_fitness_decimal": 0.961687165485736,
+      "arm": "EOH_TC",
+      "fitness": {
+        "denominator": 40216818698175,
+        "numerator": 39947558289907
+      },
+      "fitness_decimal": 0.9933047810099356,
+      "improvement_percentage_points": 3.1617615524199563,
+      "report_gap_percent": 0.6741120837106349,
+      "slot_id": "b01_EOH_TC_g1_m1_03",
+      "used_bins": [
+        2026,
+        1997,
+        1995,
+        1995,
+        1993
+      ]
+    },
+    {
+      "P0_fitness_decimal": 0.961687165485736,
+      "arm": "IID_TC",
+      "fitness": {
+        "denominator": 566701510740,
+        "numerator": 561169740881
+      },
+      "fitness_decimal": 0.990238653410723,
+      "improvement_percentage_points": 2.8551487924987047,
+      "report_gap_percent": 0.9860146896066002,
+      "slot_id": "b01_IID_TC_g1_m2_04",
+      "used_bins": [
+        2032,
+        1997,
+        1997,
+        2007,
+        2004
+      ]
+    }
+  ],
+  "P1_survivors": {
+    "EOH_TC": [
+      "b01_EOH_TC_g1_m1_03",
+      "b01_EOH_TC_g1_e2_05",
+      "b01_EOH_TC_g1_e1_05",
+      "b01_EOH_TC_g1_m2_06",
+      "b01_EOH_TC_g1_m1_06",
+      "b01_EOH_TC_g1_e1_03"
+    ],
+    "IID_TC": [
+      "b01_IID_TC_g1_m2_04"
+    ]
+  },
+  "controls": 0,
+  "cumulative_phase0_plus_phase1_admissions": 33,
+  "cumulative_phase0_plus_phase1_design_packs": 165,
+  "cumulative_phase0_plus_phase1_generation": 72,
+  "files": {
+    "base_audit": {
+      "bytes": 28653,
+      "file_sha256": "5bd03441f306580f198e89c361d52966b0449306492450bea7e3c312a2f5bf33",
+      "path": "/workspace/scratch/27470b7a9f17/original132_phase1_evaluation_ready_20261006/BASE_TERMINAL_AUDIT.json"
+    },
+    "deployment": {
+      "bytes": 992,
+      "file_sha256": "9d890fe4794cc36fe7687826b951ce7f7153d3925a1529e496f3c5109f451e0e",
+      "path": "/workspace/scratch/27470b7a9f17/urp132_20261005_b01_phase1_numerical_state/deployment.json"
+    },
+    "ledger": {
+      "bytes": 5804048,
+      "file_sha256": "fe1b8365506f0ae0403d3411655066f6325588ed7137746a0a3e52389942a22f",
+      "path": "/workspace/scratch/27470b7a9f17/urp132_20261005_b01_phase1_numerical_state/scheduler-ledger-01beb081fc2f939a551567107241f15978f369ed336175d4e90046dac48438e7.json"
+    },
+    "meter_receipt": {
+      "bytes": 3853,
+      "file_sha256": "3eec01f09d2bd3abc16b671f5a59ea2bd60a76761563a46ccd36fea81be5ce32",
+      "path": "/workspace/scratch/27470b7a9f17/original132_phase1_forward_accounting_20261006/run.receipt.json"
+    },
+    "meter_step": {
+      "bytes": 1610,
+      "file_sha256": "25672677b1dd536373d113e6439a7d74f1fed47e3d359210cd52cee24de5845f",
+      "path": "/workspace/scratch/27470b7a9f17/original132_phase1_forward_accounting_20261006/run.step.json"
+    },
+    "plan": {
+      "bytes": 22886,
+      "file_sha256": "4847d024caabd01ac515b1e466fdb2058282a3808cb8dd8a192681047fccbd82",
+      "path": "/workspace/scratch/27470b7a9f17/urp132_20261005_b01_phase1_numerical_state/plan.json"
+    },
+    "registry": {
+      "bytes": 16044,
+      "file_sha256": "d30fa25f8c349d9fd3d3505f668ff3eb05c2ba0694d78d8e1c7ffeecbe901bcb",
+      "path": "/workspace/scratch/27470b7a9f17/urp132_20261005_b01_phase1_numerical_state/registry.json"
+    },
+    "report": {
+      "bytes": 15438,
+      "file_sha256": "021b823f06b966de761714d7470d169b6947b65914c0b1dc3fe193aea4abbfe7",
+      "path": "/workspace/scratch/27470b7a9f17/urp132_20261005_b01_phase1_numerical_state/report-6eab5ab8c5879c88a4348bd2e70acfa8ddde932352af43796cc302413e2ba357.json"
+    },
+    "scheduler_packet": {
+      "bytes": 2516443,
+      "file_sha256": "c4a321ab9d6dc7497cfb1634db30ce0cea3eb123a9570a13628aeb5938200450",
+      "path": "/workspace/scratch/27470b7a9f17/urp132_20261005_b01_phase1_numerical_state/scheduler-input-01beb081fc2f939a551567107241f15978f369ed336175d4e90046dac48438e7.json"
+    },
+    "strong_audit": {
+      "bytes": 31857,
+      "file_sha256": "8549ebbbd773d1c83146dc5a789bc181e4f462f31b19d65152681020c96f9689",
+      "path": "/workspace/scratch/27470b7a9f17/original132_phase1_evaluation_ready_20261006/STRONG_TERMINAL_AUDIT.json"
+    }
+  },
+  "forward_trusted_child_cpu_seconds": 14.946955999997954,
+  "heldout": 0,
+  "historical_shared_cap_compliance": "not authenticated; not claimed",
+  "interpretation": "Five-design-set selection only, not held-out performance or a completed 132-slot study.",
+  "ledger_sha256": "16423d0c433762de7640c6731c83f58dc8975a22822eab51a2bda078214cda4b",
+  "meter_exit_code": 0,
+  "meter_self_cpu_at_receipt": 216.35621600000002,
+  "meter_terminal_stdout": {
+    "final_stdout_exit_tail_unmeasured": true,
+    "receipt_sha256": "3eec01f09d2bd3abc16b671f5a59ea2bd60a76761563a46ccd36fea81be5ce32",
+    "status": "completed",
+    "wall_seconds_after_receipt_fsync": 5107.886133109001,
+    "within_inclusive_wall_after_receipt_fsync": true
+  },
+  "native_exec_session_id": 51454,
+  "numerical_usage": {
+    "admission_cpu_seconds": 5.235438999999999,
+    "admissions": 29,
+    "child_cpu_seconds": 2118.3778580000007,
+    "inclusive_wait4_not_added_again": true,
+    "instance_packs": 145,
+    "numerical_cpu_seconds_no_double_count": 5089.824491000002,
+    "reserved_cpu_seconds": 17429,
+    "reserved_shared_wall_seconds": 13195,
+    "score_call_cpu_ns": 26649328851,
+    "score_timing_scope": "function call including facade; excludes prep/check/serialization; already inside child CPU",
+    "shared_instance_wall_seconds": 5097.428222070928,
+    "supervisor_inclusive_wait4_cpu_seconds": 5084.589052000001,
+    "supervisor_self_cpu_seconds": 2966.2111940000013
+  },
+  "parent_rescores": 0,
+  "phase1_admissions": 29,
+  "phase1_design_packs": 145,
+  "phase1_empty_length_failures": 31,
+  "phase1_generation_denominator": 60,
+  "phase2_activated": false,
+  "report_sha256": "6eab5ab8c5879c88a4348bd2e70acfa8ddde932352af43796cc302413e2ba357",
+  "schema": "phase1-terminal-delivery-v1",
+  "status": "numerical_and_strong_audit_complete_awaiting_independent_parent_acceptance"
+}

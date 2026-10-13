@@ -1,0 +1,26 @@
+紧容量必要条件剪枝：一次性初始化实验（待独立审计）
+安全性：证明见PROOF_ZH；穷举见TOYS。全部输出独立复算覆盖、容量、车辆上限、成本；36构造见证只在此事后分析解析。
+72初始化，无后续搜索。原fallback256与新增剪枝fallback256；节点均包括根/完成叶，剪枝状态也扣已入节点。
+每组4例；成功/失败如下：
+n=9 tight capacity_solver: 4/0；限额命中0，节点合计177，剪枝0，检查0/0/0，实际CPU=0.003988s
+n=9 tight pruned_solver: 4/0；限额命中0，节点合计36，剪枝6，检查33/33/87，实际CPU=0.000000s
+n=9 full_random capacity_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.000000s
+n=9 full_random pruned_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.000000s
+n=9 loose capacity_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.004001s
+n=9 loose pruned_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.000000s
+n=27 tight capacity_solver: 0/4；限额命中4，节点合计1024，剪枝0，检查0/0/0，实际CPU=0.007994s
+n=27 tight pruned_solver: 4/0；限额命中0，节点合计144，剪枝32，检查140/140/1004，实际CPU=0.000000s
+n=27 full_random capacity_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.007998s
+n=27 full_random pruned_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.000000s
+n=27 loose capacity_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.004001s
+n=27 loose pruned_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.000000s
+n=54 tight capacity_solver: 0/4；限额命中4，节点合计1024，剪枝0，检查0/0/0，实际CPU=0.012001s
+n=54 tight pruned_solver: 4/0；限额命中0，节点合计288，剪枝68，检查284/284/3956，实际CPU=0.012000s
+n=54 full_random capacity_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.012024s
+n=54 full_random pruned_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.015985s
+n=54 loose capacity_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.011980s
+n=54 loose pruned_solver: 4/0；限额命中0，节点合计0，剪枝0，检查0/0/0，实际CPU=0.012008s
+检查三数为：非终端状态调用/满载状态/实际逐箱检查数；还存在求和、min和日志开销。相同节点上限不等于同CPU；单次亚毫秒计时不适合作稳定性能结论。
+所有未调用DFS例的status/output/完整initialization与delta非时序数据一致。失败无输出，构造失败不等于数学不可行。
+tight是机制关联探索；full_random是每车正整数三元组满载生成的特定分布，非现实普适分布；loose全1为宽松对照。36例不能支持一般分布改进或路径搜索质量结论。
+准备、玩具、主跑、分析、打包分别有资源收据；人工编辑/工具传输未作为可测子进程CPU汇总，不能把主跑CPU称全任务成本。无模型/API、安装、购买、上传；原目录未改。

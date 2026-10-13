@@ -1,0 +1,846 @@
+{
+  "admissions": 29,
+  "all_reaped_cleanly": true,
+  "assignment_verification_scope": "The frozen runtime independently checks every full assignment using exact integers before emitting receipts. This audit checks accepted checker receipts, assignment hashes, exact rational fitness and selection. Candidate vectors are not persisted; no claimed second offline vector replay.",
+  "authenticated_index_identity": {
+    "file_id": "file_00000000c8b081fdb633650f46bb748d",
+    "library_file_id": "libfile_9afab4077ef48191ba90b2adbe95093f",
+    "sha256": "c8a8f6ecabd3ee5f58d61e61f1a4c9ff04ee4dbcb534479e068d69fb05188717",
+    "version": 120
+  },
+  "candidate_execution_during_audit": 0,
+  "candidates": [
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "d08d374491470e0279c106215fde1dd3e2b3adfc95a6a6793f7cd5b964971be1",
+        "62c944d1b48b178a55596091ce706e28a8f67f9c9dc9fa3d40e2274c3833da03",
+        "33f754b5cc292f0bc1c69d4508aeb7838469a9f1f5d58831eb57c5dcc76472f8",
+        "c58ca6b67df3106d484f1a8aab4cd87384195379ff16ab12aa2c2fcceb02d6f2",
+        "0848be60c9f29512bcd073a09ece9e8d8f47856ab2e019285daae9f58488ed7d"
+      ],
+      "fitness": {
+        "denominator": 46184987119715,
+        "numerator": 44329762517876
+      },
+      "fitness_decimal": 0.9598305701151303,
+      "slot_id": "b01_EOH_TC_g1_e1_01",
+      "source_sha256": "4858b13ddc6281cda3c034a2476d1dceb8069fe82d6a140eb6325a2dd8dde264",
+      "used_bins": [
+        2099,
+        2063,
+        2062,
+        2069,
+        2062
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "9877cdc285d2bd6d3dcca4e601be6641de7b7ef7cb057f5d4aceafcea90ae731",
+        "9d031fe5ee397991a8e2929d5de4f466ed6888a52f56d04eff66405bf96f682b",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_IID_TC_g1_e1_02",
+      "source_sha256": "af62a8794bb5b3dd69b204607b76cc5fe89661e8849be9e5cf1b8f23fcb86565",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_IID_TC_g1_e1_03",
+      "source_sha256": "c75aa313091ccf88ea46688d5ebc4e51c8389a6d3d1de82ee2cd0c33e73ab554",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "0f9e9a212c4bf009f4eca0f8324e83b57eace16dada6c20b1e27999c9e91453b",
+        "cb55d3b72f4db7e08428e4d72df7a1576ac41f8f86af7ae8713ca5d342b6c897",
+        "f2bbed8b81b987401ac09aa0f240ef59d370ae10e8128763235bafd58c39743b",
+        "a668824b9d384e3638181afc8e77a6c39e0cea22e6667b6a9950c5d94ecb163e",
+        "95cc69e79cea41103d68e64fe460e8fe342aa412ec8645a698c593dabd702ff2"
+      ],
+      "fitness": {
+        "denominator": 148986947580380,
+        "numerator": 143417757158281
+      },
+      "fitness_decimal": 0.9626196085459475,
+      "slot_id": "b01_EOH_TC_g1_e1_03",
+      "source_sha256": "29263d1b755923995ba791642febf4d95bee59940bacb8ba912a3cf6cd3a4e3a",
+      "used_bins": [
+        2093,
+        2058,
+        2056,
+        2063,
+        2055
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "8a4ed2a1e28d90e1141a206bfd096c2ddc9a36aa146b65a0957a886925a2a7ab",
+        "76ee466e00d2e0d187763b2dea478d7e05cf56079a71889a24f7e337e0b764f5",
+        "95281de3c9438759dad26a2629f9c134e250e9d66bfb06aea93a1fecba23b6ff",
+        "897b10544a18aedfe3e700a1af510cc7acb7bb59195a5da2c22bc0248e779f19",
+        "cad7906d4ecf70f7a4bfd50f0c4742c955a1ba8ed84ef5e97f9d9f325643e7db"
+      ],
+      "fitness": {
+        "denominator": 8167108600,
+        "numerator": 7923277263
+      },
+      "fitness_decimal": 0.9701447171891409,
+      "slot_id": "b01_EOH_TC_g1_e1_05",
+      "source_sha256": "226f64567bac28be639c4192b1ef5229337e1d0d73d316aee4ba08ee87bf203b",
+      "used_bins": [
+        2080,
+        2036,
+        2044,
+        2044,
+        2041
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "2e931878c52e43b348b34d5eabaf7aa1f8b0cc3aead4efe9f5525ea76931f6d0",
+        "bcf8df57ca1361d3121741946b82efef7655f67bf0ea6ef2e046444f4b62ab82",
+        "5d2ac03666c9fc159414e0850d4e4ac10cc9d4ae15d77becc494cb1c45f60d7e",
+        "450b326df7404d357ce2b038d087047fb5abf3dbdd368c58f56778e3bff78a5a",
+        "d16b1e7dbd446a876fad1143353816d83416c9b2dea3c4860499c8afc398e66c"
+      ],
+      "fitness": {
+        "denominator": 89465201779200,
+        "numerator": 86539932730931
+      },
+      "fitness_decimal": 0.9673027166977328,
+      "slot_id": "b01_IID_TC_g1_e2_02",
+      "source_sha256": "2fd9299c9690ba924b4254235eaa982cf723cb996f3461ad965329a0fd0bb4f0",
+      "used_bins": [
+        2080,
+        2042,
+        2049,
+        2056,
+        2048
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "c8e7bc2c30774e4aa6d2eba6b3c029ec1e5ac6ecc878d983996f52eaf1f3ee33",
+        "a5116641c166ab9638f64fedd913156f66dc77a64bbef7d74831971a21da9b41",
+        "98dea09845975d803f9262f470e7c5662ff68199b09ea1d6263cf97e7f713b05",
+        "68d20954e71141ec3b7d0c11a1c3b3885988129e289e30b0be346252d2f6dd47",
+        "7c0d8cffec3edd384ed5e389d59c538845817bca37ecd19564fda264a4cbec0f"
+      ],
+      "fitness": {
+        "denominator": 43909822000,
+        "numerator": 41866989641
+      },
+      "fitness_decimal": 0.9534766422191372,
+      "slot_id": "b01_IID_TC_g1_e2_03",
+      "source_sha256": "1b55e46c657cfffe619faeceaa4edc84eb3ed3048077ce227832b3e2641abe72",
+      "used_bins": [
+        2112,
+        2075,
+        2076,
+        2085,
+        2076
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "6cca50f81c28ac20eb07260a1b888c5b4272b9ed4829f8abff4b9acd30334178",
+        "8904aa5bddc5d86c9e1cc9165ace734f54969b9abd4b1829fdab01bad7d6e4dc",
+        "06d7d95f30b0bd394d11dbe5f9c28a2de3091fc3e50897618f6f3dfe229d225d",
+        "d8b2dae862742db92bfd8cce405728ffea958257f777763f27a3526c6961acd2",
+        "4fad5e24f7718d99975c91fb350623bdf737b84a0042245c2bbe2f09880113a0"
+      ],
+      "fitness": {
+        "denominator": 35912926191989,
+        "numerator": 34540389901411
+      },
+      "fitness_decimal": 0.961781552323515,
+      "slot_id": "b01_EOH_TC_g1_e2_04",
+      "source_sha256": "806a7149eaff36b6291dfd43b37f0ff6ba65f0e93fe61a056f27045260fe1064",
+      "used_bins": [
+        2095,
+        2059,
+        2057,
+        2065,
+        2058
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "9858a4b569c9b8b9fca456dbea009227d66f9c33f44efe6da73c9151dc096b9b",
+        "bed2868556a0e1b3f65a219a837e8490ec541c2498810de67b27c50678dee3ae",
+        "11ec15fcfba765790d563d9caad72449cd92324a0cb803e2503c15454bcb58b7",
+        "c763152ae21354b531d4af2c8a76e5bf53ebb41326c3084d28d45892a8be5df3",
+        "5fe746b8b3f2b79b334ca478e8ff081b772b2e3f8f5148e1048c94ae63a0836b"
+      ],
+      "fitness": {
+        "denominator": 8822924076332964,
+        "numerator": 8598892127022737
+      },
+      "fitness_decimal": 0.9746079703993848,
+      "slot_id": "b01_EOH_TC_g1_e2_05",
+      "source_sha256": "35c784b173e89e66c3c03a8bf880ee867841cf8a17ca4371e881cf09447715d1",
+      "used_bins": [
+        2067,
+        2033,
+        2027,
+        2039,
+        2032
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_IID_TC_g1_e2_05",
+      "source_sha256": "fc7a252f53129c930c81cbe96e4c0a2b597a75a75a5ee810a595fab70e4e00b1",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_IID_TC_g1_e2_06",
+      "source_sha256": "1bf2b1b717d5e6023dd92a4eb6bbbcea2dd0054b0f32a10b975379d30541745a",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_EOH_TC_g1_m1_01",
+      "source_sha256": "4a4c47418fcd6718e15674a6a677f8f62441961a812d06de768f0ac9e1377833",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_IID_TC_g1_m1_01",
+      "source_sha256": "756a4402b43de25ae37a2388def037c2a977feadedf2f62b6b6a6aedfd83af97",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "5e117b03b234cacde399517d38f8c6f084bc164a22ed003a0c13a85b4fbdd9d9",
+        "362d416987cb49cea8b74f8058f8765a158cf3052004f19c0c1c50ab6f29397f",
+        "54863ca73b53936bb5e9e3a5a77b7a2a3d3ab62f00833832662b6c9f36dad4ba",
+        "568e3cccf4db4bb419f6e1347413625e353529ed5ea373f2b6cf6c0b911958a2",
+        "c0220ea72753439e1910cd98e14d6d859351df965b061c8a1be8ac7b06d08c3e"
+      ],
+      "fitness": {
+        "denominator": 33054370800451000,
+        "numerator": 21994628956100897
+      },
+      "fitness_decimal": 0.6654075822190751,
+      "slot_id": "b01_EOH_TC_g1_m1_02",
+      "source_sha256": "776db4ec9fe2c550ff875b7c2b4b244d1f05a9c5776732074c1392a08f3d7816",
+      "used_bins": [
+        2950,
+        2984,
+        3007,
+        3003,
+        2994
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "f8ddd85820e24102126884369427fe0356facd2f00b74006421d2316d5cb8d3e",
+        "066a4fb893c2670e84bfc8857cf2a578654cd36720098e4ad0652ea6b0db4661",
+        "aaac46f2cf7d2ec3da776c2b39c9e536387dde9adb033a17288a47882b030c49",
+        "d829309b4e22dc19f9397f2d762e5d4152962a3921e29647cd5d0c748a4adb28",
+        "b461fba2f02921640e26009f28aded0935d8ca7e4e4a55f1b635df42130ad1de"
+      ],
+      "fitness": {
+        "denominator": 40216818698175,
+        "numerator": 39947558289907
+      },
+      "fitness_decimal": 0.9933047810099356,
+      "slot_id": "b01_EOH_TC_g1_m1_03",
+      "source_sha256": "d848364e3c3a97621fcb64f122dcb2b9e77a34230c5517439a9c8b64adc0f3e5",
+      "used_bins": [
+        2026,
+        1997,
+        1995,
+        1995,
+        1993
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "2b38ca589296c5bebe4e7bf714d4b34e32ed8d3cbe0ac68bf8c0352c0ed32334",
+        "94cf21db24698ec9580339caf7c1a313a6f18c365ba501dc50a9be5451406a9b",
+        "054f15a65da0ee426add414837b33c4cb77dc0a1da0fc58a99e43f8821c5f8a9",
+        "3638a8f461273170f05fb61c701913f70cf136b3d3f9eef2583829c3db7d2892",
+        "81d947ee99b980fb93eb6f45bc843981e88ac54fef3a10585f96dc8987413be9"
+      ],
+      "fitness": {
+        "denominator": 2278258380200,
+        "numerator": 2193299224571
+      },
+      "fitness_decimal": 0.9627087268207297,
+      "slot_id": "b01_EOH_TC_g1_m1_06",
+      "source_sha256": "f45b02107cc0c555c6a0c24cc2b230a9f4bafcccc3b6728d16b1d5f61af4ea8c",
+      "used_bins": [
+        2090,
+        2056,
+        2059,
+        2060,
+        2059
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "577e451c7f79a8684565c9c769bc28a511cc6fe83c5881abf54c4e24bc8b8502",
+        "4d9d4325b1b13b68339611e50b223672eda459d7cb6da6dc37a3e7a7eec5d922",
+        "3d1cd5d0beb186550a15fa87be887097f9e60cf18ad3509ae17e69db7fc0a223",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 249518411009175,
+        "numerator": 239958453066949
+      },
+      "fitness_decimal": 0.9616863625270743,
+      "slot_id": "b01_IID_TC_g1_m2_02",
+      "source_sha256": "7fc79180029779b85e057774075426c988788af30e3e037c6f1420c9e27b7d4b",
+      "used_bins": [
+        2094,
+        2061,
+        2057,
+        2065,
+        2058
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "0a9808403cba3b5947f28e34d59009fb3a1cb9279c21cbb6ebef4f92d81f58a1",
+        "7de2d0178ecd351ca13440bc15374332d510470aeaf1b65b0077633cb194ff9f",
+        "3cc60a07480bd8dbd4247def06996aa22c0386564e9cd67dd8365bb0e7e36591",
+        "ac0933c5e54368e232b8ec70dd3acd0e1aa8170b5a112eaa0f55210a12574714",
+        "3590a399fbb90c62d745843fcc3ed0f8edfd076751b26d9be27cfd6e6195a6f3"
+      ],
+      "fitness": {
+        "denominator": 566701510740,
+        "numerator": 561169740881
+      },
+      "fitness_decimal": 0.990238653410723,
+      "slot_id": "b01_IID_TC_g1_m2_04",
+      "source_sha256": "415dca074dca8fd1a15360bd37384671e5997cd4bc1281981ca49f435cfcd64e",
+      "used_bins": [
+        2032,
+        1997,
+        1997,
+        2007,
+        2004
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_EOH_TC_g1_m2_05",
+      "source_sha256": "3204b65c1e19935d6adbe6f5f0263fe70ae683ceabbdc3e37d3327264ab6721a",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "e5182467d7e435b909112b836ed373a62ff485003b0367dd805fb589c64d06ac",
+        "74e6e1a5d757309d0f7c8d358c256bb4c8ae7b8e79b65f65d03e704de51222b8",
+        "c6c5a22e91b0cef0b828d63a95d4dd984e26537ade4a1452f3f927690670226e",
+        "eff3fe47a92340285da6fea7172097f06ec51c289d2cd0c9edc6a50e8ca7a891",
+        "9a55658313d79a3d1502ba8c54802c2dfa016dce274a49a09b902698a1284756"
+      ],
+      "fitness": {
+        "denominator": 49759539558300,
+        "numerator": 33790833525619
+      },
+      "fitness_decimal": 0.679082520167384,
+      "slot_id": "b01_IID_TC_g1_m2_05",
+      "source_sha256": "6d19c9de10abc213debfefc29019e0b9f6cd16454ba7f79bdb82199d2487910d",
+      "used_bins": [
+        2902,
+        2910,
+        2952,
+        2948,
+        2925
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "3278f35215e8d46f46254636f852dbaf8eb0c9a3a8fac0abf0a4ce505dddd22a",
+        "4363a024ca97c9488a5d73701b902b33cc2dee8bef605cad4a649c6a145f598e",
+        "e6e5077068db2fda9a24df5e38a2e951db26931d50ca545913cfb681829cc0a0",
+        "f126928631b696cd38d48b08191b62fe41e5d45cb13bce36b163cd5b193c5d36",
+        "aa0896995c6178ec10c5ba4fa8d62798834d9fcbe9080d499d24681c29c0b15e"
+      ],
+      "fitness": {
+        "denominator": 124182010768970,
+        "numerator": 119725650770421
+      },
+      "fitness_decimal": 0.9641142869973359,
+      "slot_id": "b01_EOH_TC_g1_m2_06",
+      "source_sha256": "b9d1b4420fd8b0b991970fa91940e350994ce9b6a2e231416c359361019375e4",
+      "used_bins": [
+        2090,
+        2055,
+        2053,
+        2060,
+        2051
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "90c270c643ef2701a3c7d2631055d0088cfbab5d15925dc110ed0740763f52ac",
+        "b61ad936c2ecec878640293810faf0995effc1bac83116c5eef120ca1a22be53",
+        "588fab14f0a082bcfce743d2c0b117974ab9b23fa54dbbd14b4fdcc3be7e09aa",
+        "8e85308edebc5a4448d11701acd69e63544c55a54a52ad6542129ea920d3c559",
+        "e64ba80d4ffb21f65660e3f35a93b67a9ec0375ab5b0bb5b2c297ebd50579b5b"
+      ],
+      "fitness": {
+        "denominator": 455544895806,
+        "numerator": 433479696499
+      },
+      "fitness_decimal": 0.9515630632454791,
+      "slot_id": "b01_IID_TC_g1_m3_01",
+      "source_sha256": "8db6b43672ea49e3cdf56aa10c8a39de05126d66a8e5080ec276b95ed69c2246",
+      "used_bins": [
+        2119,
+        2082,
+        2079,
+        2086,
+        2079
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_EOH_TC_g1_m3_01",
+      "source_sha256": "15224c2a71b952cd4ec9772cbf6b25d7e643d33595c083523b2a27750262b989",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_EOH_TC_g1_m3_02",
+      "source_sha256": "5ee3fb9e955dc8f9b3fe319cef63ba47f7d2024362b79da80af85988dc274365",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "assignment_hashes": [
+        "ffcb4bf97eb48e6042d4d97752f2f567f584d39b6169d9af16f8f6e641ae069a",
+        "8ede20aeb63c6f9cb42a91f710716a777959db3b34bfdc835417e72f51efd981",
+        "827fcc770572a40b6cfd1bdbb0284db0ab5150ffbc5aa07aa3cd170c67012100",
+        "743c3f61a71258e2417f4aee926de569bca2a5914f727217de44b6e611969ccf",
+        "1094f0efd46e71203723c7c88c676400de361e540fb84b3851cbd2368500b70a"
+      ],
+      "fitness": {
+        "denominator": 200921188326400,
+        "numerator": 195743436593151
+      },
+      "fitness_decimal": 0.974229936740979,
+      "slot_id": "b01_IID_TC_g1_m3_03",
+      "source_sha256": "0effcb31427aabf631a1c207217b95a39439fa09eb7c57c32b365184c6464aef",
+      "used_bins": [
+        2060,
+        2026,
+        2048,
+        2033,
+        2035
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_EOH_TC_g1_m3_03",
+      "source_sha256": "15224c2a71b952cd4ec9772cbf6b25d7e643d33595c083523b2a27750262b989",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_EOH_TC_g1_m3_04",
+      "source_sha256": "15224c2a71b952cd4ec9772cbf6b25d7e643d33595c083523b2a27750262b989",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_EOH_TC_g1_m3_05",
+      "source_sha256": "15224c2a71b952cd4ec9772cbf6b25d7e643d33595c083523b2a27750262b989",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "assignment_hashes": [
+        "af7a28f8b0fa7f9464e02011b698727167518f4860578b22c6ac0517dd58e111",
+        "5a6b35e1da1577ffd2da406e6490f09133116a0d6f13f409bcf9e5c95d8936f1",
+        "4f65f054bf63a17f38953a912dc0ccdfe77d2050538372846524ac3b6d048c77",
+        "aeb5fa31abb586c8229c8abdd99c7a49310b539370584b14addf7ff3b385f9b2",
+        "953b710285f017eef2544096f2457098e2c1e258d0fc71be0dec3f6923b59c40"
+      ],
+      "fitness": {
+        "denominator": 5239871856954735,
+        "numerator": 5039117513623279
+      },
+      "fitness_decimal": 0.961687165485736,
+      "slot_id": "b01_EOH_TC_g1_m3_06",
+      "source_sha256": "15224c2a71b952cd4ec9772cbf6b25d7e643d33595c083523b2a27750262b989",
+      "used_bins": [
+        2094,
+        2059,
+        2057,
+        2067,
+        2058
+      ]
+    }
+  ],
+  "controls": 0,
+  "design_packs": 145,
+  "eligible_per_arm": {
+    "EOH_TC": 17,
+    "IID_TC": 12
+  },
+  "frozen_state_unchanged": true,
+  "generation_denominator": 60,
+  "generation_per_arm": {
+    "EOH_TC": 30,
+    "IID_TC": 30
+  },
+  "generation_states": {
+    "eligible": 29,
+    "generation_failed": 31
+  },
+  "heldout": 0,
+  "ledger_sha256": "16423d0c433762de7640c6731c83f58dc8975a22822eab51a2bda078214cda4b",
+  "model_calls_during_audit": 0,
+  "parent_rescores": 0,
+  "phase": 1,
+  "plan_sha256": "69f7c2563cc341c1240da49bf790419da3fe785e7956a2700919b2c02f8caae1",
+  "report_file_sha256": "021b823f06b966de761714d7470d169b6947b65914c0b1dc3fe193aea4abbfe7",
+  "report_sha256": "6eab5ab8c5879c88a4348bd2e70acfa8ddde932352af43796cc302413e2ba357",
+  "runtime_claim_result_pairs": 174,
+  "schema": "phase1-independent-terminal-audit-v1",
+  "selection_recomputation": [
+    {
+      "arm": "EOH_TC",
+      "capacity": 6,
+      "joint_duplicates": {},
+      "phase": 0,
+      "ranked_ids": [
+        "b01_EOH_TC_g0_i1_05"
+      ],
+      "survivor_ids": [
+        "b01_EOH_TC_g0_i1_05"
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "capacity": 1,
+      "joint_duplicates": {},
+      "phase": 0,
+      "ranked_ids": [
+        "b01_IID_TC_g0_i1_01",
+        "b01_IID_TC_g0_i1_06",
+        "b01_IID_TC_g0_i1_04"
+      ],
+      "survivor_ids": [
+        "b01_IID_TC_g0_i1_01"
+      ]
+    },
+    {
+      "arm": "EOH_TC",
+      "capacity": 6,
+      "joint_duplicates": {},
+      "phase": 1,
+      "ranked_ids": [
+        "b01_EOH_TC_g1_m1_03",
+        "b01_EOH_TC_g1_e2_05",
+        "b01_EOH_TC_g1_e1_05",
+        "b01_EOH_TC_g1_m2_06",
+        "b01_EOH_TC_g1_m1_06",
+        "b01_EOH_TC_g1_e1_03",
+        "b01_EOH_TC_g1_e2_04",
+        "b01_EOH_TC_g1_m2_05",
+        "b01_EOH_TC_g0_i1_05",
+        "b01_EOH_TC_g1_m3_06",
+        "b01_EOH_TC_g1_m3_03",
+        "b01_EOH_TC_g1_m3_04",
+        "b01_EOH_TC_g1_m3_01",
+        "b01_EOH_TC_g1_m3_05",
+        "b01_EOH_TC_g1_m1_01",
+        "b01_EOH_TC_g1_m3_02",
+        "b01_EOH_TC_g1_e1_01",
+        "b01_EOH_TC_g1_m1_02"
+      ],
+      "survivor_ids": [
+        "b01_EOH_TC_g1_m1_03",
+        "b01_EOH_TC_g1_e2_05",
+        "b01_EOH_TC_g1_e1_05",
+        "b01_EOH_TC_g1_m2_06",
+        "b01_EOH_TC_g1_m1_06",
+        "b01_EOH_TC_g1_e1_03"
+      ]
+    },
+    {
+      "arm": "IID_TC",
+      "capacity": 1,
+      "joint_duplicates": {},
+      "phase": 1,
+      "ranked_ids": [
+        "b01_IID_TC_g1_m2_04",
+        "b01_IID_TC_g1_m3_03",
+        "b01_IID_TC_g1_e2_02",
+        "b01_IID_TC_g1_e1_02",
+        "b01_IID_TC_g1_e2_05",
+        "b01_IID_TC_g0_i1_01",
+        "b01_IID_TC_g0_i1_06",
+        "b01_IID_TC_g1_e2_06",
+        "b01_IID_TC_g1_m1_01",
+        "b01_IID_TC_g0_i1_04",
+        "b01_IID_TC_g1_e1_03",
+        "b01_IID_TC_g1_m2_02",
+        "b01_IID_TC_g1_e2_03",
+        "b01_IID_TC_g1_m3_01",
+        "b01_IID_TC_g1_m2_05"
+      ],
+      "survivor_ids": [
+        "b01_IID_TC_g1_m2_04"
+      ]
+    }
+  ],
+  "source_AST_calls_during_audit": 0,
+  "source_files_verified": 280,
+  "state_files_hashed": 827,
+  "status": "passed",
+  "supervisor_receipts": 145,
+  "unknown_claims": 0,
+  "usage": {
+    "admission_cpu_seconds": 5.235438999999999,
+    "admissions": 29,
+    "child_cpu_seconds": 2118.3778580000007,
+    "inclusive_wait4_not_added_again": true,
+    "instance_packs": 145,
+    "numerical_cpu_seconds_no_double_count": 5089.824491000002,
+    "reserved_cpu_seconds": 17429,
+    "reserved_shared_wall_seconds": 13195,
+    "score_call_cpu_ns": 26649328851,
+    "score_timing_scope": "function call including facade; excludes prep/check/serialization; already inside child CPU",
+    "shared_instance_wall_seconds": 5097.428222070928,
+    "supervisor_inclusive_wait4_cpu_seconds": 5084.589052000001,
+    "supervisor_self_cpu_seconds": 2966.2111940000013
+  },
+  "worker_receipts": 174
+}

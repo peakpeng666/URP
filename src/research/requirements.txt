@@ -1,0 +1,2 @@
+# No third-party runtime or unit-test dependencies.
+# Requires CPython 3.10+; this candidate was verified on CPython 3.12.

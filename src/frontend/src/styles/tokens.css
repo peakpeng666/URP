@@ -1,0 +1,95 @@
+/*
+ * Design tokens. Policy identity colors were checked with the dataviz palette
+ * validator (all-pairs CVD and contrast pass for BF / BF→EoH / save green on
+ * white). Never use more than three identity hues on one chart; full-run EoH is
+ * a neutral gray with its own marker shape.
+ */
+:root {
+  color-scheme: light;
+
+  /* surfaces */
+  --page: #f1f3f1;
+  --panel: #ffffff;
+  --inset: #f6f7f6;
+  --line: #dde2df;
+  --line-strong: #c3cbc6;
+
+  /* ink */
+  --ink: #1b2126;
+  --ink-2: #4a545c;
+  --ink-3: #66707a;
+  --ink-4: #8e979f; /* decoration only, never body text */
+
+  /* policy identity */
+  --bf: #2f6fb3;
+  --bf-soft: #d6e3f2;
+  --bf-wash: rgba(47, 111, 179, 0.1);
+  --eoh: #d08317;
+  --eoh-soft: #f4e2c4;
+  --eoh-wash: rgba(208, 131, 23, 0.12);
+  --full-eoh: #7a7f87;
+  --sel: #1b2126;
+
+  /* outcome (diverging: savings ↔ harm, neutral middle) */
+  --save: #1a7f4b;
+  --save-soft: #cfe8da;
+  --save-wash: #e7f3ec;
+  --harm: #b5482f;
+  --harm-soft: #f0d2c9;
+  --harm-wash: #f9ebe7;
+  --mid: #eceeef;
+
+  /* hindsight (事后对照) mode */
+  --hind: #4b47a8;
+  --hind-soft: #dcdbf3;
+  --hind-wash: #f3f2fb;
+
+  /* constructed risk set */
+  --risk: #b5482f;
+  --risk-wash: #fbf1ee;
+
+  /* status: always icon + label, never color alone */
+  --ok: #0b7a43;
+  --ok-wash: #e6f3ec;
+  --pending: #5f6a73;
+  --pending-wash: #eef0f1;
+  --fail: #c0362c;
+  --fail-wash: #fbe9e7;
+
+  --focus: #1b5fd1;
+
+  /* type */
+  --font-sans: "IBM Plex Sans", "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC",
+    "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Hiragino Sans GB", system-ui,
+    sans-serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Mono", "Noto Sans Mono CJK SC", ui-monospace,
+    SFMono-Regular, Menlo, Consolas, monospace;
+  --fs-11: 0.6875rem;
+  --fs-12: 0.75rem;
+  --fs-13: 0.8125rem;
+  --fs-14: 0.875rem;
+  --fs-16: 1rem;
+  --fs-18: 1.125rem;
+  --fs-20: 1.25rem;
+  --fs-24: 1.5rem;
+  --fs-32: 2rem;
+  --fs-44: 2.75rem;
+
+  /* radius follows hierarchy: chips < controls < panels */
+  --r-chip: 4px;
+  --r-control: 6px;
+  --r-panel: 10px;
+
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+
+  --topbar-h: 52px;
+  --bottomnav-h: 60px;
+  --shadow-pop: 0 10px 30px rgba(27, 33, 38, 0.16), 0 1px 3px rgba(27, 33, 38, 0.1);
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}

@@ -1,0 +1,251 @@
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  flex-wrap: wrap;
+}
+
+.transport {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  background: var(--panel);
+  color: var(--ink-2);
+}
+
+.iconBtn:hover {
+  background: var(--inset);
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+.playBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 36px;
+  border: 1px solid var(--ink);
+  border-radius: var(--r-control);
+  background: var(--ink);
+  color: #fff;
+}
+
+.playBtn:hover {
+  background: #000;
+}
+
+.readout {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.phaseTag {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: var(--fs-12);
+  font-weight: 600;
+}
+
+.phaseTag[data-phase='prefix'] {
+  background: var(--bf-wash);
+  color: var(--bf);
+}
+.phaseTag[data-phase='decision'] {
+  background: var(--ink);
+  color: #fff;
+}
+.phaseTag[data-phase='continuation'] {
+  background: var(--inset);
+  color: var(--ink-2);
+}
+
+.posLabel {
+  font-size: var(--fs-13);
+  color: var(--ink-3);
+}
+
+.posInput {
+  width: 72px;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  text-align: right;
+  font-weight: 600;
+}
+
+.posTotal {
+  font-size: var(--fs-13);
+  color: var(--ink-3);
+}
+
+.speed {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.speedLabel {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+  margin-right: 2px;
+}
+
+.speedBtn {
+  min-width: 36px;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  background: var(--panel);
+  color: var(--ink-2);
+  font-size: var(--fs-12);
+  font-variant-numeric: tabular-nums;
+}
+
+.speedBtn[data-active] {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+.trackRow {
+  padding: 18px 8px 8px;
+}
+
+.track {
+  position: relative;
+  height: 20px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.trackBase,
+.trackPrefix,
+.trackFill {
+  position: absolute;
+  top: 7px;
+  height: 6px;
+  border-radius: 3px;
+}
+
+.trackBase {
+  left: 0;
+  right: 0;
+  background: var(--line);
+}
+
+.trackPrefix {
+  left: 0;
+  background: var(--bf-soft);
+}
+
+.trackFill {
+  left: 0;
+  background: var(--ink);
+}
+
+.boundaryMark {
+  position: absolute;
+  top: -12px;
+  bottom: -2px;
+  width: 0;
+  border-left: 2px dashed var(--ink-3);
+  transform: translateX(-1px);
+}
+
+.boundaryFlag {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: var(--fs-11);
+  color: var(--ink-2);
+  background: var(--panel);
+  padding: 0 4px;
+}
+
+.handle {
+  position: absolute;
+  top: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 3px solid var(--ink);
+  transform: translateX(-8px);
+  box-shadow: 0 1px 3px rgba(27, 33, 38, 0.3);
+}
+
+.track:focus-visible .handle {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.jumps {
+  display: flex;
+  align-items: center;
+  gap: var(--s1);
+  flex-wrap: wrap;
+}
+
+.jumpsLabel {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+  margin-right: 4px;
+}
+
+.jumpBtn {
+  min-width: 46px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  background: var(--panel);
+  color: var(--ink-2);
+  font-size: var(--fs-13);
+  font-variant-numeric: tabular-nums;
+}
+
+.jumpBtn:hover {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.jumpBtn[data-active] {
+  background: var(--bf-wash);
+  border-color: var(--bf);
+  color: var(--bf);
+  font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  .controls {
+    gap: var(--s2) var(--s3);
+  }
+  .speed {
+    margin-left: 0;
+    width: 100%;
+    order: 3;
+  }
+  .readout {
+    order: 2;
+  }
+}

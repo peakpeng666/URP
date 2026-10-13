@@ -1,0 +1,29 @@
+A2：固定近似填满补丁的5000项尺度复核
+
+完成情况：6条全新独立序列，每条5000项、容量100；3种固定方法，共18/18科学pack成功，3次toy与锁定分析均成功。失败、未知、重试、模型调用和付费均为0。
+
+结论：固定r=1奖励0.5的补丁在本次6条长序列上均比原EOH少用箱，合计少22箱；与公开式相比合计多4箱，不能说优于公开式。
+
+主比较（补丁−原EOH）：逐序列箱数差为−2、−3、−2、−5、−3、−7；6胜0平0负。平均配对F差+0.001790555084（约+0.1791个百分点）；20000次配对描述bootstrap的95%区间[0.001138005831, 0.002528560441]。
+
+次比较（补丁−公开式）：逐序列箱数差为+2、−1、+4、0、−1、0；2胜2平2负。平均配对F差−0.000323665092（约−0.03237个百分点）；描述95%区间[−0.001056321101, 0.000326459610]跨0。
+
+边界：这只是6序列的小样本尺度复核。可说固定补丁相对原EOH的收益在这批5000项新实例上保留；不能据此宣称完整SOTA、一般优越性或确认性显著。新实例与A1不同，不能把跨批次效果大小当作严格长度因果比较。
+
+方法：三种方法、0.5、分布、host/checker/Session/sandbox保持与A1一致；仅尺度5000、样本数6、新命名空间和对应预注册参数变化。新研究熵只抽一次，全部实例与方法绑定先封存。三方法轮换，首位各2次。F=ceil(总物品大小/100)/已用箱数，精确Fraction存于原始分析；缺失不填0，所有6为分母。
+
+费用与资源：上限2800CPU秒/2200活动墙钟秒，保守预留2727/2123；科学dispatch完整shell实测801.796CPU秒、808.175墙钟秒。已计时5个完整shell合计803.613CPU秒、809.988墙钟秒，不能冒称全部工具的总实测；短读写/归档/独审由预留覆盖。旧A1/C1预算未动。视频合成可能同时运行，因此不声称独占宿主或严谨方法耗时排名。
+
+文件导航：
+- deliverables/source/：三个真正可审阅的固定方法源码
+- custody/instances/：六条真实输入；master.bin仅作私有复现
+- results/、payloads/、claims/、observations/、logs/：原始终态、sandbox回执与资源证据
+- deliverables/assignments/：18份完整assignment与remaining，绑定源码/输入/终态SHA
+- paired_sequence_results.csv：逐实例箱数与差值
+- mechanism_results.csv：预注册机制代理
+- analysis_result.json：精确Fraction与描述bootstrap
+- policy.json、source_delta.json、source_freeze.json、data_manifest.json、data_seal.json：固定计划与封存
+- independent_review.json：启用前独审；结果独审已收录A2_RESULT_REVIEW.json
+- closeout.json：资源/预算/完整性说明
+
+结果独审已通过PASS_A2_RESULTS，18份共90000次分配已独立完整重放，统计与资源证据一致。报告A2_RESULT_REVIEW.json的SHA256：e2da0166c060efbda2da9e488f43a9ba654358a77126d8cbc48391412227ae43。本包不授权增加实验、改系数或重新运行。

@@ -1,0 +1,1433 @@
+{
+  "created_at": "2026-10-10T13:53:17.988054+08:00",
+  "trash": "/home/peakpeng/.local/share/Trash/files/URP实验整理_20261010_135317",
+  "retired": [
+    {
+      "path": "experiments/results/124块NL容量精确参照_PREEXEC_20261009.zip",
+      "files": 1,
+      "bytes": 11085614,
+      "sha256": "0135e4fe016e3cc138521c539e19726b3b106fc335dc1362a41a67de0293968e",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/124块NL容量精确参照_20261009.zip"
+    },
+    {
+      "path": "experiments/results/124块NL容量精确参照_RAW_MAIN_未审_20261009.zip",
+      "files": 1,
+      "bytes": 17626964,
+      "sha256": "55bdaf8cc29d713a97f15d11139acc2e649979900136343406ef9f0e3a5b7ba0",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/124块NL容量精确参照_20261009.zip"
+    },
+    {
+      "path": "experiments/results/124块NL容量精确参照_RAW_VERIFICATION_未审_20261009.zip",
+      "files": 1,
+      "bytes": 24268799,
+      "sha256": "738c6905a8603111bef683ead5a269b20d88a0ab966b2801f87ff8b149241457",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/124块NL容量精确参照_20261009.zip"
+    },
+    {
+      "path": "experiments/results/124块NL扩展验证_输入RAW_MAIN_20261009.zip",
+      "files": 1,
+      "bytes": 9727047,
+      "sha256": "fbf239d3e57ff38d6f20818370d61d6f3f1c7f07363e0bb7e350189d275d8f06",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/124块NL扩展验证_输入阶段_20261009.zip"
+    },
+    {
+      "path": "experiments/results/124块NL扩展验证_输入RAW_VERIFICATION_20261009.zip",
+      "files": 1,
+      "bytes": 11400133,
+      "sha256": "35a9ea0c0e52aeb9e60b9c9fb85f59d9fae49a027034d77b61fa471947b78b6e",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/124块NL扩展验证_输入阶段_20261009.zip"
+    },
+    {
+      "path": "experiments/results/124块NL扩展验证_输入阶段_PREEXEC_20261009.zip",
+      "files": 1,
+      "bytes": 1648601,
+      "sha256": "233abcdc0d0e0a371fa5b1a05e4bc6747530af81ddb829466a5ec94d8d7d3675",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/124块NL扩展验证_输入阶段_20261009.zip"
+    },
+    {
+      "path": "experiments/results/CVRP配对需求变化_完整实验与独审_20261006.zip",
+      "files": 1,
+      "bytes": 1203527,
+      "sha256": "11edf911bfa2aaf75bfb1154e14d65bf4b3d35ba816aee77aa806baa1c10cfee",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/四路实验_CVRP搜索预算_源码冻结原始结果成本_20261007.zip"
+    },
+    {
+      "path": "experiments/results/P102有限异构车具机制复验/P102_报告源码数据与独立审计_20261006.zip",
+      "files": 1,
+      "bytes": 2872012,
+      "sha256": "7435b47635d42def934080a36c657bd16bdd61802251db7e1f4134eb043cb88d",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/四路实验_P102容量空间_源码冻结原始结果成本_20261007.zip"
+    },
+    {
+      "path": "experiments/results/public-handoff-minimal.zip",
+      "files": 1,
+      "bytes": 19539,
+      "sha256": "a55a58e7dc2ed087b8410134824be33db00e0b0e12ab5c67624b0ce4b8b896eb",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/旧阶段两候选_完整结果与证据_20261008.zip"
+    },
+    {
+      "path": "experiments/results/公共固定分组排序诊断_独立审计证据_20261008.zip",
+      "files": 1,
+      "bytes": 30367,
+      "sha256": "98d06de3d9eb1ffe1ea2d7dfd2950d8f167cb699213ea53cba2b6cdcdf3b4afe",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/公共固定分组排序诊断_20261008.zip"
+    },
+    {
+      "path": "experiments/results/公共大X实例迁移_20261009.zip",
+      "files": 1,
+      "bytes": 2257839,
+      "sha256": "2b5be01f37646ffcdd35ad69f38c26df14618f82c7751659435a9122fc702e75",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/公共大X固定5秒预算_20261009.zip"
+    },
+    {
+      "path": "experiments/results/公共容量面板_准备过程v1_未求解_20261008.zip",
+      "files": 1,
+      "bytes": 112661,
+      "sha256": "4ba60edf0d8835a9290d19baae77bfd549fd554f4292df2f0295ececc77883d2",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/公共容量16例_r1_未观察到收益_20261008.zip"
+    },
+    {
+      "path": "experiments/results/公共算子顺序诊断_TSR_独立审计证据_20261008.zip",
+      "files": 1,
+      "bytes": 46463,
+      "sha256": "90e1b347c15e07124e53859e9f6b9ee237be7fa3bd241a982c0e8db3bb91d5ae",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/公共算子顺序诊断_TSR_20261008.zip"
+    },
+    {
+      "path": "experiments/results/公共跨组算子消融_独立审计证据_20261008.zip",
+      "files": 1,
+      "bytes": 58845,
+      "sha256": "065c1d91c7b7ef63cfe6607e05273e0e2314ce06db827ee8b448c69e99d66ca5",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/公共跨组算子消融_20261008.zip"
+    },
+    {
+      "path": "experiments/results/公共路线强基线_r1_20261009.zip",
+      "files": 1,
+      "bytes": 45735218,
+      "sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/results/原132_INIT_ONLY_禁用候选绑定_待父核验_20261006.zip",
+      "files": 1,
+      "bytes": 45184,
+      "sha256": "afe0408054d89d7981c04939ff0ee852b4b182a19b436054d757bc4dd966fc92",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/原132_INIT_ONLY_唯一真实恢复_20261006.zip"
+    },
+    {
+      "path": "experiments/results/原132停点_只读恢复诊断与未执行说明_20261006.zip",
+      "files": 1,
+      "bytes": 13955,
+      "sha256": "2afc223f899a425fcbb5398da281ef10b3ea96d7b2ea22c136cffec11780ef33",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/原132_P2_未验收离线恢复候选_r2_20261006.zip"
+    },
+    {
+      "path": "experiments/results/原132槽研究_P2已绑定禁用输入_可移植预备包_20261006.zip",
+      "files": 1,
+      "bytes": 1944110,
+      "sha256": "b48fcbf84aab8def4f676d3b12873926683d116c309ccdd3efb5116726a13760",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/reports/GLM53独立消融_实验记录源码固定_不含原生CLI_20261007.zip"
+    },
+    {
+      "path": "experiments/results/契约验证envr1_未审_原始结果_20261008.zip",
+      "files": 1,
+      "bytes": 422642,
+      "sha256": "0065c06c481493916057075611864ca451f86c153f3cf73bf018dde2d05fccd1",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/契约验证envr1_20261008.zip"
+    },
+    {
+      "path": "experiments/results/完整距离前沿支持性诊断_PREEXEC_20261009.zip",
+      "files": 1,
+      "bytes": 23833920,
+      "sha256": "432568b3dc7023af53b5fcc28bc8b31fbfd9b75ea99a48e3b2778c2a79d79489",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/完整距离前沿支持性诊断_20261009.zip"
+    },
+    {
+      "path": "experiments/results/完整距离前沿支持性诊断_RAW_MAIN_未审_20261009.zip",
+      "files": 1,
+      "bytes": 23877587,
+      "sha256": "4722dce8ea8ac64d6fe59b396a95dbaef554db4dde80c33c88973585295593c2",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/完整距离前沿支持性诊断_20261009.zip"
+    },
+    {
+      "path": "experiments/results/完整距离前沿支持性诊断_RAW_VERIFICATION_未审_20261009.zip",
+      "files": 1,
+      "bytes": 23924701,
+      "sha256": "8637bd48d2f506973ae8dc5b23fd59eab591cb826290435b351e809275ac1c61",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/完整距离前沿支持性诊断_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块完整距离前沿_PREEXEC_20261009.zip",
+      "files": 1,
+      "bytes": 13068391,
+      "sha256": "a6a016dcb0bde3f78ca6520cc9f125dbfe9b431e64369844c3ca603cc8f44dc7",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块完整距离前沿_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块完整距离前沿_RAW_MAIN_未审_20261009.zip",
+      "files": 1,
+      "bytes": 18361558,
+      "sha256": "600bcac8bc5ecc12bff7f2f079580392d7815ca69e8e14572a5598bc5a237e17",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块完整距离前沿_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块完整距离前沿_RAW_VERIFICATION_未审_20261009.zip",
+      "files": 1,
+      "bytes": 23656882,
+      "sha256": "faeb6042348b602c16573e0333c2ce579fc015586d5accb022cd8a5e4f0c9ba0",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块完整距离前沿_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块容量Q5精确对照_PREEXEC_20261009.zip",
+      "files": 1,
+      "bytes": 6831471,
+      "sha256": "295490c871bec358c0cf1b889d4b636578fbbbad2b8935c6a2a699a33145c71b",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块容量Q5精确对照_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块容量Q5精确对照_RAW_MAIN_未审_20261009.zip",
+      "files": 1,
+      "bytes": 7485284,
+      "sha256": "e511a868e67ab549804a0cb3cd28d2709b8c50b299b9c56d4f3ff683923b703b",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块容量Q5精确对照_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块容量Q5精确对照_RAW_VERIFICATION_未审_20261009.zip",
+      "files": 1,
+      "bytes": 8145610,
+      "sha256": "b3a73f517455cff4c0111bb3c789748f6e153ec87af11a243857bc3fd185cc82",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块容量Q5精确对照_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块距离代理精确验证_RAW_MAIN_未审_20261009.zip",
+      "files": 1,
+      "bytes": 2450674,
+      "sha256": "32cb4a2e35543dfdd59d889d2f0aa8281f50c837172ec07a839bb8bfebebb15c",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块距离代理精确验证_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块距离代理精确验证_RAW_VERIFICATION_未审_20261009.zip",
+      "files": 1,
+      "bytes": 3595600,
+      "sha256": "68485b972ad48dd4fb40b9475598558b119413d91854e3525bd349ce791584bd",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块距离代理精确验证_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块距离代理精确验证_未执行_PREEXEC_20261009.zip",
+      "files": 1,
+      "bytes": 1344242,
+      "sha256": "1aab8f44c4f000c8bb70623cad813300a80ba725e7b9edc8902d394dda163a9c",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块距离代理精确验证_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块路线均衡权衡_PREEXEC_20261009.zip",
+      "files": 1,
+      "bytes": 6255241,
+      "sha256": "f784a4733c6d999de7301727a1764d35942030f54309cf4dc8bee6fed32b6a36",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块路线均衡权衡_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块路线均衡权衡_RAW_MAIN_未审_20261009.zip",
+      "files": 1,
+      "bytes": 6316856,
+      "sha256": "cd2b8ebe5843f2ec253ea543b7e45faf2202089ebcee09cf6b55dde867c0e1ee",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块路线均衡权衡_20261009.zip"
+    },
+    {
+      "path": "experiments/results/跨地块路线均衡权衡_RAW_VERIFICATION_未审_20261009.zip",
+      "files": 1,
+      "bytes": 6382955,
+      "sha256": "6c8ee089353c661d6629ab7d71b359b6823e0053b1c6d84ba2b77745e44e8e37",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/跨地块路线均衡权衡_20261009.zip"
+    },
+    {
+      "path": "experiments/results/转向状态路径搜索_求解完成与汇总恢复_20261006.zip",
+      "files": 1,
+      "bytes": 148536,
+      "sha256": "9443cd5ff23504fff98d0c48a88222e4178cd93f03a5d28fceedbb23131738d2",
+      "reason": "成员内容已归并至保留包",
+      "replacement": "experiments/results/朝向搜索批量计时_完整实验与独立审计_20261006.zip"
+    },
+    {
+      "path": "experiments/reports/GLM53独立36任务消融_20261007.zip.part01",
+      "files": 1,
+      "bytes": 31457280,
+      "sha256": "6d3e26dd8f40c466ed7348d281f3db71eb1c82256784381acaca438ec9aaba2b",
+      "reason": "分卷已还原为完整ZIP",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/reports/GLM53独立36任务消融_20261007.zip.part02",
+      "files": 1,
+      "bytes": 31457280,
+      "sha256": "8bf76f9dbfedeb50a6d7a0d18fcd287b248edb8bef1ec273d33ab3d13c04f2ac",
+      "reason": "分卷已还原为完整ZIP",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/reports/GLM53独立36任务消融_20261007.zip.part03",
+      "files": 1,
+      "bytes": 28058758,
+      "sha256": "9a8dd31bcdea713045cc5d0f9329d23af992156d0b253830f6b596b8118457bc",
+      "reason": "分卷已还原为完整ZIP",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_r1_FINAL_REVIEWED.zip.part01",
+      "files": 1,
+      "bytes": 16777216,
+      "sha256": "23c9eff5ab82ba648a101c47f0ceba34c5d2ca99975dfbe16c5c3ef38533481a",
+      "reason": "分卷已还原为完整ZIP",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_r1_FINAL_REVIEWED.zip.part02",
+      "files": 1,
+      "bytes": 16777216,
+      "sha256": "eb1a5ec6e173681f789cedff265bf112e71aeaba9fc807af007ea42b45233cdf",
+      "reason": "分卷已还原为完整ZIP",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_r1_FINAL_REVIEWED.zip.part03",
+      "files": 1,
+      "bytes": 12180786,
+      "sha256": "532be70dcbb4de8d0df99e0e4c13f806de00757f2e896a97d67a390c6e0da8be",
+      "reason": "分卷已还原为完整ZIP",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/withdrawn",
+      "files": 452,
+      "bytes": 36514870,
+      "reason": "已撤回的旧实验"
+    },
+    {
+      "path": "experiments/reports/URP历史复盘增补_截至20261009T0350Z.txt",
+      "files": 1,
+      "bytes": 14686,
+      "sha256": "924dd04a4bf044d1af14e55f59faf20134925682f51648b9527e976987443396",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/URP历史复盘增补_截至20261009T0502Z.txt",
+      "files": 1,
+      "bytes": 15100,
+      "sha256": "92ed8ece13a3cd4a64ca2baa7a31ac7ba044d95f3e028110772b7f7eb7e92cf0",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/URP历史复盘增补_截至20261009T0929Z.txt",
+      "files": 1,
+      "bytes": 10476,
+      "sha256": "3c09068776fa0dd9646c1ebd1c99bcdd29afece7f2b15ce3e42b78a55e58e92a",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/URP历史复盘短增补_截至20261009T0545Z.txt",
+      "files": 1,
+      "bytes": 6216,
+      "sha256": "dff036b5d5a5250f8725ad998b1c6c45004786d6d54a4ffb97b71e801e1b6c0a",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/URP历史复盘短增补_截至20261009T0623Z.txt",
+      "files": 1,
+      "bytes": 6186,
+      "sha256": "b1e8e9b11dd68d3a4599047cbc26939b8f2ab2da26e8230b815a2951ab936818",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/URP历史复盘短增补_截至20261009T0706Z.txt",
+      "files": 1,
+      "bytes": 7328,
+      "sha256": "192fc3f3576884b1dcb60d76a80d931577ee9d34ddf36b9e1d57da4a4ad93d15",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/URP历史复盘短增补_截至20261009T0741Z.txt",
+      "files": 1,
+      "bytes": 7755,
+      "sha256": "dd49b12a978efcf38836b1e66553855803727b27b608e5d1e4aaad61525b6917",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/verified-text-sources.json",
+      "files": 1,
+      "bytes": 4087,
+      "sha256": "7aed13f9d3626eef4d41033e3f5b9fcf0b01e62b78ad9dd91d552234e0849f22",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/原132_P2公开评分20至25_增量交付说明_20261007.txt",
+      "files": 1,
+      "bytes": 790,
+      "sha256": "206683d9b908c685f35bf82142d4ba3a0d5347af21703b83bed77bf634347395",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/原132_P2公开评分26至31_增量交付说明_20261007.txt",
+      "files": 1,
+      "bytes": 884,
+      "sha256": "df27bead50ebed0697a535a1a58afc5ba531371f6fa5e701ee03cd82220f0daf",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/原132_P2公开评分32至37_增量交付说明_20261007.txt",
+      "files": 1,
+      "bytes": 756,
+      "sha256": "ca834161812744cd3a0926d7253a39a4d04fff46f4862d6de326c1b1bdd2e541",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/原132_P2公开评分38至43_增量交付说明_20261007.txt",
+      "files": 1,
+      "bytes": 756,
+      "sha256": "ca834161812744cd3a0926d7253a39a4d04fff46f4862d6de326c1b1bdd2e541",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/旧实验结论与下一步_观察截止133830UTC_20261007.docx",
+      "files": 1,
+      "bytes": 44733,
+      "sha256": "9ee272c1752130da445cd4757bec7306bf31eefc2e47c58051862984bdc3801c",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/reports/旧实验结论与下一步_观察截止133830UTC_20261007.txt",
+      "files": 1,
+      "bytes": 10165,
+      "sha256": "a72b09d1bb1018ecbfca95658314dd400fb00790404b0173188c2adc5f88dff5",
+      "reason": "进度已归并至当前汇总",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/results/GLM53消融_第03批_累计18终态_20261007.zip",
+      "files": 1,
+      "bytes": 410312,
+      "sha256": "7d852a528528dc23f5716dc936e9acd01adc52bebd9d091b914348a58772c8c6",
+      "reason": "阶段记录已合入完整结果，独有源码见provenance/source_supplements.zip",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/results/GLM53消融_第04批_累计24终态_20261007.zip",
+      "files": 1,
+      "bytes": 453582,
+      "sha256": "4a9c5261dcd0e8ef89e842355a9efc4c80c24f765af749ef334d366010c11440",
+      "reason": "阶段记录已合入完整结果，独有源码见provenance/source_supplements.zip",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/results/GLM53独立消融_首条真实终态_20261007.zip",
+      "files": 1,
+      "bytes": 190533,
+      "sha256": "5dcc1ce00e832c2d2a7deff035754fe662c794cfe8bc9ee28d0a0bbc6280f17a",
+      "reason": "阶段记录已合入完整结果，独有源码见provenance/source_supplements.zip",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/results/GLM53消融_第02批_累计12终态_20261007.zip",
+      "files": 1,
+      "bytes": 649924,
+      "sha256": "76aa88d2c1bcaf0e2356e7eb90da72722a41cc7f79bc6b6fb08b78736e06210d",
+      "reason": "阶段记录已合入完整结果，独有源码见provenance/source_supplements.zip",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/results/GLM53独立消融_中止2of36_完整审计包_20261007.zip",
+      "files": 1,
+      "bytes": 87242318,
+      "sha256": "c7ee06f6fe0e42156c3ad6a2108cd5dc74e95c9def8d9e94816771864850a8e1",
+      "reason": "阶段记录已合入完整结果，独有源码见provenance/source_supplements.zip",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/results/GLM53消融_第05批_累计30终态_20261007.zip",
+      "files": 1,
+      "bytes": 319093,
+      "sha256": "c33a12527bc5a880378c788ce316a79e832385982c8aa8ba759b691802a97e3b",
+      "reason": "阶段记录已合入完整结果，独有源码见provenance/source_supplements.zip",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/results/GLM53消融_第06批_累计36终态_20261007.zip",
+      "files": 1,
+      "bytes": 514178,
+      "sha256": "ceb3510a29cf9e3e25422545c39bb0cbea3d8abbcf20427bbb8ef6c39b74d145",
+      "reason": "阶段记录已合入完整结果，独有源码见provenance/source_supplements.zip",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/results/GLM53消融_第01批_累计06终态_20261007.zip",
+      "files": 1,
+      "bytes": 658629,
+      "sha256": "c9bde56e3204520d2b1101e897c9652f5a0cdfd60cd3634c3195faed955d945d",
+      "reason": "阶段记录已合入完整结果，独有源码见provenance/source_supplements.zip",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/reports/GLM53独立消融_实验记录源码固定_不含原生CLI_20261007.zip",
+      "files": 1,
+      "bytes": 33098743,
+      "sha256": "61e788e8a87633097dbfccab1057d59f8b2e812658e354b4e41f7f9c00c9c5df",
+      "reason": "阶段记录已合入完整结果，独有源码见provenance/source_supplements.zip",
+      "replacement": "experiments/results/GLM53独立36任务消融_20261007.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_PREEXEC.zip.part01",
+      "files": 1,
+      "bytes": 16777216,
+      "sha256": "e79ebba4b97d8af2139dd7f43f655f9493bd1c49851789ae9c2228ea90862555",
+      "reason": "传输分卷内容已归并至完整结果及源码补充",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_PREEXEC.zip.part02",
+      "files": 1,
+      "bytes": 16777216,
+      "sha256": "71c83d4d66ddf7fc5b56d995f85a226a2a9d7c7a05f21a8d6cae0fa172f36a85",
+      "reason": "传输分卷内容已归并至完整结果及源码补充",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_PREEXEC.zip.part03",
+      "files": 1,
+      "bytes": 9388859,
+      "sha256": "e3d7bf254d5fa4482c9be5e93560879261dd89594b34c765e564ee814faf8732",
+      "reason": "传输分卷内容已归并至完整结果及源码补充",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_RAW_UNREVIEWED.zip.part03",
+      "files": 1,
+      "bytes": 9433357,
+      "sha256": "c0cdb5eb4bdc99ae006cde95e540da93675250b71ca37c5650b91664d95d3b99",
+      "reason": "传输分卷内容已归并至完整结果及源码补充",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_r1_PREEXEC.zip.part01",
+      "files": 1,
+      "bytes": 16777216,
+      "sha256": "c26b0cccf864ca2170f47852cc6a491fd44f237ba62c201bce726fd58075e46f",
+      "reason": "传输分卷内容已归并至完整结果及源码补充",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_r1_PREEXEC.zip.part02",
+      "files": 1,
+      "bytes": 16777216,
+      "sha256": "f4847c8ba3652aed77c2d8dfc761a4949fb0e3f6d92080fe5dcb51a36c16a8c7",
+      "reason": "传输分卷内容已归并至完整结果及源码补充",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_r1_PREEXEC.zip.part03",
+      "files": 1,
+      "bytes": 10087376,
+      "sha256": "748538c22588f727550e6c927197c7a809e0b097270f5a8b9f9682badfff612b",
+      "reason": "传输分卷内容已归并至完整结果及源码补充",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/results/public_route_strong_baseline_20261009_r1_RAW_UNREVIEWED.zip.part03",
+      "files": 1,
+      "bytes": 12138561,
+      "sha256": "49d3b19e161e8493b98153192f7d964c73f7275b6f44661c0b05efa7728f0a83",
+      "reason": "传输分卷内容已归并至完整结果及源码补充",
+      "replacement": "experiments/results/公共路线强基线_完整依赖_20261009.zip"
+    },
+    {
+      "path": "experiments/reports/C1最终结果_简明中文报告_v2.txt",
+      "files": 1,
+      "bytes": 5041,
+      "sha256": "f1cdcbf65e252f855b85549d3eef06069700a4f0bde194abbeb83d65583e9553",
+      "reason": "报告已合并为当前简明正文",
+      "replacement": "experiments/reports/装箱演化与新数据验证.md"
+    },
+    {
+      "path": "experiments/reports/P2完整60槽_public科学解释回顾_20261007.txt",
+      "files": 1,
+      "bytes": 6399,
+      "sha256": "3f6243b0cb2d9795252abf6aceb64bf7499b4d38fc768e3e1c6bdd4b49ef3e41",
+      "reason": "报告已合并为当前简明正文",
+      "replacement": "experiments/reports/装箱演化与新数据验证.md"
+    },
+    {
+      "path": "experiments/reports/GLM53独立消融_36任务中文报告_20261007.md",
+      "files": 1,
+      "bytes": 45337,
+      "sha256": "19e7da198e488fe06ae9b98fc517dbf51c7c65e283a29282de527ca6b5d90670",
+      "reason": "报告已合并为当前简明正文",
+      "replacement": "experiments/reports/模型推理档位对照.md"
+    },
+    {
+      "path": "experiments/reports/GLM53独立消融_最终交付索引_20261007.md",
+      "files": 1,
+      "bytes": 19172,
+      "sha256": "de62d3ade57385330356b0d2862808dd8238b843cff5621715b42dc2e2a68d1a",
+      "reason": "报告已合并为当前简明正文",
+      "replacement": "experiments/reports/模型推理档位对照.md"
+    },
+    {
+      "path": "experiments/reports/GLM53独立消融_中止2of36_中文报告_20261007.md",
+      "files": 1,
+      "bytes": 9454,
+      "sha256": "64ebe8274695b9b8c49197000bdd986262e9860fd2dd3ba34033155f18d68b4c",
+      "reason": "报告已合并为当前简明正文",
+      "replacement": "experiments/reports/模型推理档位对照.md"
+    },
+    {
+      "path": "experiments/reports/契约验证envr1_最终中文报告_须同读依赖勘误_20261008.txt",
+      "files": 1,
+      "bytes": 6753,
+      "sha256": "d834a8aaa6a2132eb05fb82201b11d8da63722fd7a63da1ffa013dbd7bdfcee9",
+      "reason": "报告已合并为当前简明正文",
+      "replacement": "experiments/reports/生成契约检查.md"
+    },
+    {
+      "path": "experiments/reports/契约验证envr1_依赖分类计数勘误_20261008.txt",
+      "files": 1,
+      "bytes": 1048,
+      "sha256": "1801ebd940e621bc2f56661c1ed0bc5ff1cabc793999ca2883c4ba8c4be93727",
+      "reason": "报告已合并为当前简明正文",
+      "replacement": "experiments/reports/生成契约检查.md"
+    },
+    {
+      "path": "experiments/reports/URP全量历史实验复盘_20261009.txt",
+      "files": 1,
+      "bytes": 26248,
+      "sha256": "50a056685dae5568826dfc4c351daa5f6481ba9394406ea7711f10b797772c71",
+      "reason": "报告已合并为当前简明正文",
+      "replacement": "experiments/状态.md"
+    },
+    {
+      "path": "experiments/results/URP历史复盘增补_截至20261009T0350Z_小证据包.zip",
+      "files": 1,
+      "bytes": 11108628,
+      "sha256": "a69ed0aae67a450e4d897ecf51bf322783a3745f46697b0856a48a09ea4d12a9",
+      "reason": "过程复盘已归并，独有来源材料按内容保留",
+      "replacement": "experiments/provenance/review_locations.json"
+    },
+    {
+      "path": "experiments/results/URP历史复盘增补_截至20261009T0502Z_小证据包.zip",
+      "files": 1,
+      "bytes": 3120638,
+      "sha256": "738a01f15d74c416a8da714b25497810e4b8288a201dcfa6209c03bbb1806d8a",
+      "reason": "过程复盘已归并，独有来源材料按内容保留",
+      "replacement": "experiments/provenance/review_locations.json"
+    },
+    {
+      "path": "experiments/results/URP历史复盘增补_截至20261009T0929Z_小证据包.zip",
+      "files": 1,
+      "bytes": 22338694,
+      "sha256": "6ef8807673a10bdad8d27ce6858b5d1339061d3f54e72aace8123ca860472ac0",
+      "reason": "过程复盘已归并，独有来源材料按内容保留",
+      "replacement": "experiments/provenance/review_locations.json"
+    },
+    {
+      "path": "experiments/results/URP历史复盘短增补_截至20261009T0545Z_小证据包.zip",
+      "files": 1,
+      "bytes": 6179922,
+      "sha256": "13a4e808e5030340cef15de3d443ee899c2a413903815e27be6c5c4f0e6bfd93",
+      "reason": "过程复盘已归并，独有来源材料按内容保留",
+      "replacement": "experiments/provenance/review_locations.json"
+    },
+    {
+      "path": "experiments/results/URP历史复盘短增补_截至20261009T0623Z_小证据包.zip",
+      "files": 1,
+      "bytes": 6832909,
+      "sha256": "e99c95980c4001da725d36b80a5e0558d34c6b713a1b4e013d64fd89ef3277d6",
+      "reason": "过程复盘已归并，独有来源材料按内容保留",
+      "replacement": "experiments/provenance/review_locations.json"
+    },
+    {
+      "path": "experiments/results/URP历史复盘短增补_截至20261009T0706Z_小证据包.zip",
+      "files": 1,
+      "bytes": 18830214,
+      "sha256": "9b0f8f5d12c0e4c34a1122b47f6924236e50148b3a7606d472b4efb19d53dd87",
+      "reason": "过程复盘已归并，独有来源材料按内容保留",
+      "replacement": "experiments/provenance/review_locations.json"
+    },
+    {
+      "path": "experiments/results/URP历史复盘短增补_截至20261009T0741Z_小证据包.zip",
+      "files": 1,
+      "bytes": 7299699,
+      "sha256": "6e9acf16e5004bc7d27f440aa57285d4ac136f7312d3f31f80be2e5b9b964c33",
+      "reason": "过程复盘已归并，独有来源材料按内容保留",
+      "replacement": "experiments/provenance/review_locations.json"
+    },
+    {
+      "path": "experiments/results/URP历史实验全量范围复盘_20261009.zip",
+      "files": 1,
+      "bytes": 145404,
+      "sha256": "61d962e43c4338df6e465f389a8e6589ed168a055ac8bb870bc2266bf8d11f55",
+      "reason": "过程复盘已归并，独有来源材料按内容保留",
+      "replacement": "experiments/provenance/review_locations.json"
+    },
+    {
+      "path": "experiments/results/旧实验结论与证据台账_20261007.zip",
+      "files": 1,
+      "bytes": 118535,
+      "sha256": "75f3553c12f95ed5c4a8af426ca08adbb100f64a373fddfc8d38cd1c12861aa1",
+      "reason": "过程复盘已归并，独有来源材料按内容保留",
+      "replacement": "experiments/provenance/review_locations.json"
+    }
+  ],
+  "updated_documents": [
+    {
+      "path": "README.md",
+      "before_sha256": "c0275f7045a23fde39950d493ee9b3d03bb735537347181ae0ad7116a9c45e52",
+      "after_sha256": "0ff5b316afa4f86b852ce9f865ca8eece5ffac345953309a905cad59396b4614"
+    },
+    {
+      "path": "experiments/README.md",
+      "before_sha256": "44e0661ff8f11a6a188eaa494d48b4f84da57875cf479bd67d3e4d771ee6dc99",
+      "after_sha256": "2931444038640f931fcd5d0ea48450166d6e32a80a5d3f7006a8b360833c2f72"
+    },
+    {
+      "path": "experiments/状态.md",
+      "before_sha256": "ce06378ab226efb4a65980f7c802f8aae57150f4b5f2acf5bf40e230e55201ed",
+      "after_sha256": "03f9af0026a2df5b74b8f135fecb02f29f90b677399694b1bc1a941c0518fead"
+    },
+    {
+      "path": "experiments/failures.md",
+      "before_sha256": "4a852759ba86edb33ba969158c1f46456103ae4bfdf11bd326208cc05518a9d1",
+      "after_sha256": "cb5a7496c66803d1ea2bc354acf90a27d46f91f3da2d197287a522d47cc97449"
+    },
+    {
+      "path": "materials/README.md",
+      "before_sha256": "fffb6f222fc5b6dccf6b9fe2a5fbd4378755dadcb41d8a5d875d9dc1413a4e14",
+      "after_sha256": "55f8b47a272fcf8ee437a2c0c12ad0be4fe006cfff3321b41cf6c90a65bccb3b"
+    },
+    {
+      "path": "materials/学习/01_老师指南逐项落实与验收.md",
+      "before_sha256": "5ba77e9047059a5998528abafa9996d876ecc719333fc3f4e65cd414e17ebe7c",
+      "after_sha256": "c1d290fe2667a7c0513a144721da76b221b029d48e043093699320f37be68e46"
+    },
+    {
+      "path": "materials/学习/02_零基础学习路线.md",
+      "before_sha256": "0163de4aaadbfee5c62e2d839bb7ad2e3a62df1140a27b921df044877387594a",
+      "after_sha256": "fb3a99af037c9a992903f86e4da531effbc910d1596c146076d11235a9a62d45"
+    },
+    {
+      "path": "materials/调研/来源/研究进度.md",
+      "before_sha256": "7b46eafcf95fa6f5dd3d269bed720c98c0d3fa4803b06561eab4e635a7151611",
+      "after_sha256": "97e020700c6d051b0b59c87b814a10dd1bbabbdde65a53422ccc5c3e594c27aa"
+    },
+    {
+      "path": "src/repos/README.md",
+      "before_sha256": "30fa529394b2231d6feefec01d4274c0b901fce36cbac18e56cd0c1bcfe3c193",
+      "after_sha256": "aca72974b45b8592acfe5cf43c1efd13b3e1397c99a73e822632c0f931f6fff1"
+    },
+    {
+      "path": "materials/学习/06_代码复现与社区经验.md",
+      "before_sha256": "bd79944118294a29b08d261ab6ad92f2ae5e35d63d4b40d7f0ead0d9f22f60e9",
+      "after_sha256": "a4b724fdb3616ff44627e96eba8eab98532f3808fc2cb23ce4c03ed154df2415"
+    },
+    {
+      "path": "materials/学习/03_关键论文导读与研究判断.md",
+      "before_sha256": "0b56263ac9f6ca6589a233341336a945e8e832fb9f100db469047ce1a3962b14",
+      "after_sha256": "a66064d86f8f49b8f3fae5b5c99e6ad81956c43121b0814b105ad13129cbf280"
+    },
+    {
+      "path": "materials/调研/来源/02_三轮批判复核与方案修正.md",
+      "before_sha256": "a7b251201ceb271fa6acf06a894dc7646b2057f769f90c8e4bec2eb6a91a4b20",
+      "after_sha256": "0d246255872c13fdc9d394aefa627d8988c04d9b8ea0c49d07e7a6f3a91f87e6"
+    },
+    {
+      "path": "materials/调研/来源/03_第二轮补充清单.md",
+      "before_sha256": "71d2a2b588f5f2b1563ba02ca9579ce227838f543749480dd3b3b73372326ffa",
+      "after_sha256": "146559e789a62eedc03e4b519f5805fde82a4d8b4fce88fa82dccb8030f86268"
+    },
+    {
+      "path": "materials/调研/来源/11_新增31份资料验收与定向补充_20260928.md",
+      "before_sha256": "722b8be3079bd1d3c1f8ba8d9d95ec4c7bc9043e0dfdc09d154882d3dd581260",
+      "after_sha256": "4f5116d77b31ba0593c110d5def79a1c3fea7b7b1da9ba9382395dabe4e4c715"
+    },
+    {
+      "path": "materials/调研/来源/04_文献总表.md",
+      "before_sha256": "11f46c28f69899cf0dfa46e98ee39efb93c34d1d3b99d12a4518ff16052055eb",
+      "after_sha256": "7c565a246c2d064b163549947c5a99ed4454d02757e9ae9e880a0d5c892e5989"
+    },
+    {
+      "path": "materials/调研/来源/06_第三轮25篇验收.md",
+      "before_sha256": "02ae5e1b858db658c4e2f1f27228aa27a0c961cd3a0fcf2ddd6f695339e08e06",
+      "after_sha256": "c41ad68f4b32d3d24dfab5637022471cef64bea9b49095184d23d8d25bfb4bc4"
+    },
+    {
+      "path": "experiments/results/DE自适应评测预算复验/REPORT_ZH.md",
+      "before_sha256": "e9846a03502a567a82e9c56bdefb0b4b1e3a562ea866a11d6bacfbb27c870441",
+      "after_sha256": "8f5f3ddb76ad1d1358a5f8a874e77006e51086e789aacaff8f06e4430f922a30"
+    },
+    {
+      "path": "experiments/results/FSSP固定扰动ILS/实验报告.md",
+      "before_sha256": "e488c41fd9fe83ccd861e92d0035a53abb2e19e357e052809d13d7af289d63de",
+      "after_sha256": "bbb99cfb76d8244730bffb1f144959621414458f9232b19fd70bbcfd1bbc240b"
+    },
+    {
+      "path": "experiments/results/差分进化参数搜索/实验报告.md",
+      "before_sha256": "cde5c9421915a8b33a25f32c0166205ca009d074873c34d0bd11b280b424875b",
+      "after_sha256": "0f58294f5f0e4c7dbf78e90673c3c1a393b1bc57bd7c923dca56b085a22fb902"
+    },
+    {
+      "path": "experiments/sources.json",
+      "before_sha256": "cd6cf01ae238e528ffa6e695a376cb3b5904c30204939ef7b552494791657b67",
+      "after_sha256": "931ec199c6a24f4a66fd383c31cb33760f6a4a4125ad2463bb7d71c541df87f9"
+    },
+    {
+      "path": "experiments/reports/原132槽研究_P1中文阶段报告_20261006.md",
+      "before_sha256": "e189e85666b70923c7921c0f24fe9797a663934e06a5a706ff986e0495df47c7",
+      "after_sha256": "6345529345f2671e967683f68645f5c997ed89c46b28a80be9ebd22fb5cb352c"
+    },
+    {
+      "path": "experiments/reports/ee130净空感知重规划1m_仅模型安全_中文报告_20261008.md",
+      "before_sha256": "edce9a8d0c38bf84d3def7e391abb5a9aee6a08fe8f4011534c7b53a037d39f8",
+      "after_sha256": "4568cc8a99a0f49ff3c560a232576d5a1093e91478ac834ca992a8ba925689a3"
+    },
+    {
+      "path": "literature/README.md",
+      "before_sha256": "65c0eba5c70f4b9c8de7e2aec1de3aea64f48407103e158cd3866ea713fd8354",
+      "after_sha256": "2706bdb3b0ca8f286264d4aade4a0f8f39e116ec8ef96e1ce45ec34e90302a17"
+    },
+    {
+      "path": "literature/笔记/01_大模型自动算法设计/主题综述.md",
+      "before_sha256": "4bde37c444cb6c02df3884ac7e9522573f4ccb40d784b1aac78bff8fcc22eaba",
+      "after_sha256": "a7e82ac9ced7df7bd7a2330a52bba373cded5719e129bc047d29990ed5913688"
+    },
+    {
+      "path": "literature/笔记/02_算法库生成与推荐/主题综述.md",
+      "before_sha256": "5ad957eaa2a471a6d69b0a34d739409708d180e514ff6de83df51c1bbc988641",
+      "after_sha256": "ac9005707ce53564d9c260d7a2e10072c74a9b3705be433c1d6f3a740d4c8bf5"
+    },
+    {
+      "path": "literature/笔记/03_代理自改进与算法发现/主题综述.md",
+      "before_sha256": "f14f992a4b35c9f2b65384582cccfb453bdb50e39f7d77b0ca1610344292399a",
+      "after_sha256": "2572d5c1714be30eeb7aa650c1b4704ad898a105a732cb7b245197b6d6e00506"
+    },
+    {
+      "path": "literature/笔记/04_算法选择与动态配置/主题综述.md",
+      "before_sha256": "5d8c0d26190f559af547b741b0943656e0fcc44b86f5f189319ab27efe637e3b",
+      "after_sha256": "c27a618a38a3d644c62a62015e9540b3baea7316a2e9f377e1f4d1df31520125"
+    },
+    {
+      "path": "literature/笔记/05_Jev校准与拒判/主题综述.md",
+      "before_sha256": "78a6f5cfd619c64a8da5b5574ffaa8bef444fd3b078fb8ad874b40830b485e62",
+      "after_sha256": "bbcdce9a083b631b65d4c74202c87beade89d4ee29ff5f631f6beab3e9cf4c9c"
+    },
+    {
+      "path": "literature/笔记/06_预算分配与反馈学习/主题综述.md",
+      "before_sha256": "ba662d96b5143f27ee8ff352143f94df79af99960281949f18ed910c73d40178",
+      "after_sha256": "9b52b4fd79f3d51d625bb9fcb42c483675d34dffbfe14ef3677be87b682753f9"
+    },
+    {
+      "path": "literature/笔记/07_实例共演化与泛化/主题综述.md",
+      "before_sha256": "a7778fe8c4e7e59989d74145ef388768a065805daafffcf811932aa948d5a963",
+      "after_sha256": "5a1c3de317234309ba2353f4449aa5d1ec22da9ecefe9a4c56ab112bd3151ae1"
+    },
+    {
+      "path": "literature/笔记/08_评测统计与程序验证/主题综述.md",
+      "before_sha256": "a20db375f846272dd1c3bfb43a46b5814616a3dac45460b09f36105b14bea82a",
+      "after_sha256": "314d564c5421d75b2a1d2cd8471a3ab512cda3563f00b4b2d6bea8f867b2bec5"
+    },
+    {
+      "path": "literature/笔记/09_车辆路径与学习式搜索/主题综述.md",
+      "before_sha256": "c80699f8f8fbd99895ff22e0e3e338759dcff433f30fc07b111b1217ca769182",
+      "after_sha256": "a9cfd5fef50c85b232d25eba2b34544a772364c2d4dc40ec01e979998a02583a"
+    },
+    {
+      "path": "literature/笔记/10_路由模型与经典搜索/主题综述.md",
+      "before_sha256": "5334576f1fac8b6b3b87175add08bc5fbef9fbd0c0efaa845e106a175c3ac5c8",
+      "after_sha256": "a915c22901b49fd8abd285813818c40beabe680256cb882d6c15a8e8493305a8"
+    },
+    {
+      "path": "literature/笔记/11_农业作业与覆盖规划/主题综述.md",
+      "before_sha256": "2f18e82d397f7d1e5103f3692b214e7aed9a5ea188d1c43adb950016875d7ae5",
+      "after_sha256": "707ad3fded03eadd5384f984523f49e7a80367142eadab97b732727700b294d2"
+    },
+    {
+      "path": "literature/笔记/12_机器人运动与任务执行/主题综述.md",
+      "before_sha256": "5291bcac12413e9c39f6eaabd94059ddb134322f6cd4c426e43dfa814933e349",
+      "after_sha256": "2e6bb32ab3a2298483884e9afded625265f7c6a20e1b929919194f26c7931e96"
+    },
+    {
+      "path": "literature/笔记/13_进化计算与数学基础/主题综述.md",
+      "before_sha256": "fb307a92af8f6d161a1b694ae8341f31f57943a6f672187e855e99ba26cc0d12",
+      "after_sha256": "d1779665c2f49629a5c872fed95ee05def505f1a512d8fd48bac9ebd59680074"
+    },
+    {
+      "path": "literature/笔记/14_代码模型与微调/主题综述.md",
+      "before_sha256": "2746a030ca8344b3edee0e5bfdeecd4d86dfcce6d48073acadcd9845e2358def",
+      "after_sha256": "1b4c821f778bbddcb629b00d90ed2e9b71161fb31d6fab2f4538c92317c87663"
+    },
+    {
+      "path": "literature/笔记/15_神经架构搜索与强化学习/主题综述.md",
+      "before_sha256": "c9f88639dff8108c4a238dafe79cd2e70942c64025d71f0d7366059150905368",
+      "after_sha256": "e787d3f8a4ad19d0fc1eb565dafac622dcd0cfc81d118a4e8152fc3a81dd3a65"
+    },
+    {
+      "path": "literature/笔记/16_程序合成与运筹建模/主题综述.md",
+      "before_sha256": "24bef1dfa74254af1e964c25c5cd8c8551bb6a4188575c00d5f0922b7d0cbe17",
+      "after_sha256": "9f9e4f778363fab2538c96f689788beb8ca1a7f359b8673f4fcf0e7d7c7541c4"
+    },
+    {
+      "path": "literature/笔记/01_大模型自动算法设计/逐篇笔记/P177.md",
+      "before_sha256": "1eb03b95e6a15dfe526f3c644e3ad28f444603e0d6faa299be6d0999196e2925",
+      "after_sha256": "2b419c030258450d25fb2d73ad0fa8237eeb112f10f8eee9b1d2afc97c59d259"
+    },
+    {
+      "path": "literature/笔记/01_大模型自动算法设计/逐篇笔记/P321.md",
+      "before_sha256": "e5c8cbd573dd9516967280f197ac0074236350e9d671c682fe453d9a4b843487",
+      "after_sha256": "15ea79192a917e2a7dabb30e77b85add03e7cec89f614f00261337c55e64064a"
+    },
+    {
+      "path": "literature/笔记/04_算法选择与动态配置/逐篇笔记/P069.md",
+      "before_sha256": "2296f70391b94e24b48382c0ecb9d6a915aabcd5ec8a362bde44aa4b9aaff5d6",
+      "after_sha256": "727247a4838f9b6c9b657de0c5fff792e06a8b07ce81e22182dc555caa58450f"
+    },
+    {
+      "path": "literature/笔记/05_Jev校准与拒判/逐篇笔记/P116.md",
+      "before_sha256": "e81924822e08bc42206de73b69aca69bdfbb2651a797ffb048b5471deb246c73",
+      "after_sha256": "3d494a6944c7f777e43b74d9716c604e3b026ee2bf1d4e334c4f1177c1870a0d"
+    },
+    {
+      "path": "literature/笔记/06_预算分配与反馈学习/逐篇笔记/P344.md",
+      "before_sha256": "14a38b0bb77b12dc91f652054a203dfd4311c2b6309831663b262286a5969097",
+      "after_sha256": "092d46117c2e33a5afee48868cd01e5800a635c5e82cb8d0c419c4c0f9148808"
+    },
+    {
+      "path": "literature/笔记/10_路由模型与经典搜索/逐篇笔记/P343.md",
+      "before_sha256": "0b164aab2ea1206d23de0b7b479cbd948a90e0c7e2879a95a1074be928d8bf6e",
+      "after_sha256": "6f701828aae533f480bac9bbe488f89a7ea5ccba2ab467cf9e20e5b804cfc715"
+    },
+    {
+      "path": "literature/笔记/10_路由模型与经典搜索/逐篇笔记/P401.md",
+      "before_sha256": "e99ae56f0d957235a3b3acb75983354a595d240ce17b27d1e5368e5685b15c47",
+      "after_sha256": "8105d4e1542dae47315abf85ae7a3a2a6f33245db3c60d160d6a4bd501a1da21"
+    },
+    {
+      "path": "literature/笔记/11_农业作业与覆盖规划/逐篇笔记/P102.md",
+      "before_sha256": "40baa4590dd6c09b3b50f98f706b611d5d3a7c3853ee48ec2abf5f580b742362",
+      "after_sha256": "d01268001c72aa5e3146238aa1d90b02776636514e1e8c52dcac3bcefb4f5b36"
+    },
+    {
+      "path": "literature/笔记/12_机器人运动与任务执行/逐篇笔记/P347.md",
+      "before_sha256": "b2780a5294cc6d840de511015d0b201629fe415360f0a3cb8a347403563ccef9",
+      "after_sha256": "4c8bd1e48d6d967b641ec35438f06c09bfe0252dea25e9f2ec9d6f2919d15a80"
+    },
+    {
+      "path": "literature/笔记/12_机器人运动与任务执行/逐篇笔记/B14.md",
+      "before_sha256": "46c21e680133612648eb820cf6cc98cf5fa53b746812e4ce06346370ae21a31b",
+      "after_sha256": "e06d9248dc37d7e8a62e9d5368dd7a8f6fac1edb6d532f788f0a6e57a0b7692c"
+    },
+    {
+      "path": "literature/笔记/13_进化计算与数学基础/逐篇笔记/P145.md",
+      "before_sha256": "ed1350fba1f6feb471349a830d1b47938575bb9595a3df15af2ce3efd7e2790c",
+      "after_sha256": "9d5deba5b28d5251fcb2a621de04377d42c0c07efa70a0f894ea5804c2746d6f"
+    },
+    {
+      "path": "literature/笔记/14_代码模型与微调/逐篇笔记/P109.md",
+      "before_sha256": "b2817eda7dacdd041df62dd191e86a2444c5b5a7019788d781396821bc9bbfe7",
+      "after_sha256": "a6a02f91bbbecd217d2b45c8f812df5581773772e506128bd7b2e5e382e29a39"
+    },
+    {
+      "path": "literature/笔记/15_神经架构搜索与强化学习/逐篇笔记/P176.md",
+      "before_sha256": "c4c628618f046dfc1bafbc18b71e423591160167f1c25a2b8fc5836178d1d4de",
+      "after_sha256": "ecdfee31f94a5a4707c09ae32f32100396dede788b2c173e6a68bee1377dfad9"
+    },
+    {
+      "path": "literature/笔记/15_神经架构搜索与强化学习/逐篇笔记/P408.md",
+      "before_sha256": "84002c1d16cbdd2481bb8f209768f113deeb26833b88484c89b20a8106de3c34",
+      "after_sha256": "5cd5cd3623d673b6ac9ee61a8e492600e92ff36a00b96c23d768abe938cc79f7"
+    }
+  ],
+  "archive_verifications": [
+    {
+      "source": "experiments/results/124块NL容量精确参照_PREEXEC_20261009.zip",
+      "target": "experiments/results/124块NL容量精确参照_20261009.zip",
+      "bytes": 11085614,
+      "members": 239,
+      "source_sha256": "0135e4fe016e3cc138521c539e19726b3b106fc335dc1362a41a67de0293968e",
+      "target_sha256": "7a7b80367b549521ac5eaf88876139a561ae5c8186b0a1c3a4b8e45419ecb71f"
+    },
+    {
+      "source": "experiments/results/124块NL容量精确参照_RAW_MAIN_未审_20261009.zip",
+      "target": "experiments/results/124块NL容量精确参照_20261009.zip",
+      "bytes": 17626964,
+      "members": 1248,
+      "source_sha256": "55bdaf8cc29d713a97f15d11139acc2e649979900136343406ef9f0e3a5b7ba0",
+      "target_sha256": "7a7b80367b549521ac5eaf88876139a561ae5c8186b0a1c3a4b8e45419ecb71f"
+    },
+    {
+      "source": "experiments/results/124块NL容量精确参照_RAW_VERIFICATION_未审_20261009.zip",
+      "target": "experiments/results/124块NL容量精确参照_20261009.zip",
+      "bytes": 24268799,
+      "members": 2259,
+      "source_sha256": "738c6905a8603111bef683ead5a269b20d88a0ab966b2801f87ff8b149241457",
+      "target_sha256": "7a7b80367b549521ac5eaf88876139a561ae5c8186b0a1c3a4b8e45419ecb71f"
+    },
+    {
+      "source": "experiments/results/124块NL扩展验证_输入RAW_MAIN_20261009.zip",
+      "target": "experiments/results/124块NL扩展验证_输入阶段_20261009.zip",
+      "bytes": 9727047,
+      "members": 2711,
+      "source_sha256": "fbf239d3e57ff38d6f20818370d61d6f3f1c7f07363e0bb7e350189d275d8f06",
+      "target_sha256": "163618b1280131105a1de43dfe4825886baaa716810e970a16c9dde58140c987"
+    },
+    {
+      "source": "experiments/results/124块NL扩展验证_输入RAW_VERIFICATION_20261009.zip",
+      "target": "experiments/results/124块NL扩展验证_输入阶段_20261009.zip",
+      "bytes": 11400133,
+      "members": 3347,
+      "source_sha256": "35a9ea0c0e52aeb9e60b9c9fb85f59d9fae49a027034d77b61fa471947b78b6e",
+      "target_sha256": "163618b1280131105a1de43dfe4825886baaa716810e970a16c9dde58140c987"
+    },
+    {
+      "source": "experiments/results/124块NL扩展验证_输入阶段_PREEXEC_20261009.zip",
+      "target": "experiments/results/124块NL扩展验证_输入阶段_20261009.zip",
+      "bytes": 1648601,
+      "members": 831,
+      "source_sha256": "233abcdc0d0e0a371fa5b1a05e4bc6747530af81ddb829466a5ec94d8d7d3675",
+      "target_sha256": "163618b1280131105a1de43dfe4825886baaa716810e970a16c9dde58140c987"
+    },
+    {
+      "source": "experiments/results/CVRP配对需求变化_完整实验与独审_20261006.zip",
+      "target": "experiments/results/四路实验_CVRP搜索预算_源码冻结原始结果成本_20261007.zip",
+      "bytes": 1203527,
+      "members": 138,
+      "source_sha256": "11edf911bfa2aaf75bfb1154e14d65bf4b3d35ba816aee77aa806baa1c10cfee",
+      "target_sha256": "61de08dc6c506ed4ee5a8edd8411f1621d8122e76ca449cec03cdba75bcc4d0e"
+    },
+    {
+      "source": "experiments/results/P102有限异构车具机制复验/P102_报告源码数据与独立审计_20261006.zip",
+      "target": "experiments/results/四路实验_P102容量空间_源码冻结原始结果成本_20261007.zip",
+      "bytes": 2872012,
+      "members": 47,
+      "source_sha256": "7435b47635d42def934080a36c657bd16bdd61802251db7e1f4134eb043cb88d",
+      "target_sha256": "953fc8cdb6141073e8e21090d1557e47a1b5d726197400c0800445ea30bf64fd"
+    },
+    {
+      "source": "experiments/results/public-handoff-minimal.zip",
+      "target": "experiments/results/旧阶段两候选_完整结果与证据_20261008.zip",
+      "bytes": 19539,
+      "members": 14,
+      "source_sha256": "a55a58e7dc2ed087b8410134824be33db00e0b0e12ab5c67624b0ce4b8b896eb",
+      "target_sha256": "8efae5321256b2599cea6aa500f84b70c16948bf56bd6057cdb54327c0415b0b"
+    },
+    {
+      "source": "experiments/results/公共固定分组排序诊断_独立审计证据_20261008.zip",
+      "target": "experiments/results/公共固定分组排序诊断_20261008.zip",
+      "bytes": 30367,
+      "members": 8,
+      "source_sha256": "98d06de3d9eb1ffe1ea2d7dfd2950d8f167cb699213ea53cba2b6cdcdf3b4afe",
+      "target_sha256": "6a5c0a6dbeb437d490d38d29a826f8451c2f224302921848a8beebf18a095d03"
+    },
+    {
+      "source": "experiments/results/公共大X实例迁移_20261009.zip",
+      "target": "experiments/results/公共大X固定5秒预算_20261009.zip",
+      "bytes": 2257839,
+      "members": 271,
+      "source_sha256": "2b5be01f37646ffcdd35ad69f38c26df14618f82c7751659435a9122fc702e75",
+      "target_sha256": "ed00125d88d083a0a25c9fd473aea19f1f110c84a90444ed81dc13fefb34a17f"
+    },
+    {
+      "source": "experiments/results/公共容量面板_准备过程v1_未求解_20261008.zip",
+      "target": "experiments/results/公共容量16例_r1_未观察到收益_20261008.zip",
+      "bytes": 112661,
+      "members": 80,
+      "source_sha256": "4ba60edf0d8835a9290d19baae77bfd549fd554f4292df2f0295ececc77883d2",
+      "target_sha256": "1e4bbef21d166f814e3303f3309d9c35edf4bb393f3333bbe16750e349a4ca8f"
+    },
+    {
+      "source": "experiments/results/公共算子顺序诊断_TSR_独立审计证据_20261008.zip",
+      "target": "experiments/results/公共算子顺序诊断_TSR_20261008.zip",
+      "bytes": 46463,
+      "members": 18,
+      "source_sha256": "90e1b347c15e07124e53859e9f6b9ee237be7fa3bd241a982c0e8db3bb91d5ae",
+      "target_sha256": "97a841ce41afd0e2ba429765ca49b92ffd063e970d6ee6a902981ba46d6e955a"
+    },
+    {
+      "source": "experiments/results/公共跨组算子消融_独立审计证据_20261008.zip",
+      "target": "experiments/results/公共跨组算子消融_20261008.zip",
+      "bytes": 58845,
+      "members": 19,
+      "source_sha256": "065c1d91c7b7ef63cfe6607e05273e0e2314ce06db827ee8b448c69e99d66ca5",
+      "target_sha256": "4723cbd46e870dd0a4c9e5b9334a92263c35a21dd109407498af5465c60952b3"
+    },
+    {
+      "source": "experiments/results/公共路线强基线_r1_20261009.zip",
+      "target": "experiments/results/公共路线强基线_完整依赖_20261009.zip",
+      "bytes": 45735218,
+      "members": 274,
+      "source_sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067",
+      "target_sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067"
+    },
+    {
+      "source": "experiments/results/原132_INIT_ONLY_禁用候选绑定_待父核验_20261006.zip",
+      "target": "experiments/results/原132_INIT_ONLY_唯一真实恢复_20261006.zip",
+      "bytes": 45184,
+      "members": 23,
+      "source_sha256": "afe0408054d89d7981c04939ff0ee852b4b182a19b436054d757bc4dd966fc92",
+      "target_sha256": "2b42199050df462751e25caa8e956f8782d46172847b2dfa713948b729f56342"
+    },
+    {
+      "source": "experiments/results/原132停点_只读恢复诊断与未执行说明_20261006.zip",
+      "target": "experiments/results/原132_P2_未验收离线恢复候选_r2_20261006.zip",
+      "bytes": 13955,
+      "members": 9,
+      "source_sha256": "2afc223f899a425fcbb5398da281ef10b3ea96d7b2ea22c136cffec11780ef33",
+      "target_sha256": "0b8eac652f1d14290ccabf832ea3889141199cd0f64924c56bb7df9c82ba36d1"
+    },
+    {
+      "source": "experiments/results/原132槽研究_P2已绑定禁用输入_可移植预备包_20261006.zip",
+      "target": "experiments/reports/GLM53独立消融_实验记录源码固定_不含原生CLI_20261007.zip",
+      "bytes": 1944110,
+      "members": 473,
+      "source_sha256": "b48fcbf84aab8def4f676d3b12873926683d116c309ccdd3efb5116726a13760",
+      "target_sha256": "61e788e8a87633097dbfccab1057d59f8b2e812658e354b4e41f7f9c00c9c5df"
+    },
+    {
+      "source": "experiments/results/契约验证envr1_未审_原始结果_20261008.zip",
+      "target": "experiments/results/契约验证envr1_20261008.zip",
+      "bytes": 422642,
+      "members": 215,
+      "source_sha256": "0065c06c481493916057075611864ca451f86c153f3cf73bf018dde2d05fccd1",
+      "target_sha256": "d29818d65d5d38d1453493963c82d67a25f1bc6712691cf6beca80626538580d"
+    },
+    {
+      "source": "experiments/results/完整距离前沿支持性诊断_PREEXEC_20261009.zip",
+      "target": "experiments/results/完整距离前沿支持性诊断_20261009.zip",
+      "bytes": 23833920,
+      "members": 164,
+      "source_sha256": "432568b3dc7023af53b5fcc28bc8b31fbfd9b75ea99a48e3b2778c2a79d79489",
+      "target_sha256": "c07f55360d207170c800307d0b378b52e6f5feddbf321369abb6a40f11731947"
+    },
+    {
+      "source": "experiments/results/完整距离前沿支持性诊断_RAW_MAIN_未审_20261009.zip",
+      "target": "experiments/results/完整距离前沿支持性诊断_20261009.zip",
+      "bytes": 23877587,
+      "members": 231,
+      "source_sha256": "4722dce8ea8ac64d6fe59b396a95dbaef554db4dde80c33c88973585295593c2",
+      "target_sha256": "c07f55360d207170c800307d0b378b52e6f5feddbf321369abb6a40f11731947"
+    },
+    {
+      "source": "experiments/results/完整距离前沿支持性诊断_RAW_VERIFICATION_未审_20261009.zip",
+      "target": "experiments/results/完整距离前沿支持性诊断_20261009.zip",
+      "bytes": 23924701,
+      "members": 296,
+      "source_sha256": "8637bd48d2f506973ae8dc5b23fd59eab591cb826290435b351e809275ac1c61",
+      "target_sha256": "c07f55360d207170c800307d0b378b52e6f5feddbf321369abb6a40f11731947"
+    },
+    {
+      "source": "experiments/results/跨地块完整距离前沿_PREEXEC_20261009.zip",
+      "target": "experiments/results/跨地块完整距离前沿_20261009.zip",
+      "bytes": 13068391,
+      "members": 196,
+      "source_sha256": "a6a016dcb0bde3f78ca6520cc9f125dbfe9b431e64369844c3ca603cc8f44dc7",
+      "target_sha256": "a6942279323fa38b743577653b6212893f9a33e585f5c2c9ed483ae9baf0b5d2"
+    },
+    {
+      "source": "experiments/results/跨地块完整距离前沿_RAW_MAIN_未审_20261009.zip",
+      "target": "experiments/results/跨地块完整距离前沿_20261009.zip",
+      "bytes": 18361558,
+      "members": 276,
+      "source_sha256": "600bcac8bc5ecc12bff7f2f079580392d7815ca69e8e14572a5598bc5a237e17",
+      "target_sha256": "a6942279323fa38b743577653b6212893f9a33e585f5c2c9ed483ae9baf0b5d2"
+    },
+    {
+      "source": "experiments/results/跨地块完整距离前沿_RAW_VERIFICATION_未审_20261009.zip",
+      "target": "experiments/results/跨地块完整距离前沿_20261009.zip",
+      "bytes": 23656882,
+      "members": 352,
+      "source_sha256": "faeb6042348b602c16573e0333c2ce579fc015586d5accb022cd8a5e4f0c9ba0",
+      "target_sha256": "a6942279323fa38b743577653b6212893f9a33e585f5c2c9ed483ae9baf0b5d2"
+    },
+    {
+      "source": "experiments/results/跨地块容量Q5精确对照_PREEXEC_20261009.zip",
+      "target": "experiments/results/跨地块容量Q5精确对照_20261009.zip",
+      "bytes": 6831471,
+      "members": 417,
+      "source_sha256": "295490c871bec358c0cf1b889d4b636578fbbbad2b8935c6a2a699a33145c71b",
+      "target_sha256": "23142f498d31bd1a247d906a82ea6a167afee362b99eac0f129b37a5b4603fbb"
+    },
+    {
+      "source": "experiments/results/跨地块容量Q5精确对照_RAW_MAIN_未审_20261009.zip",
+      "target": "experiments/results/跨地块容量Q5精确对照_20261009.zip",
+      "bytes": 7485284,
+      "members": 531,
+      "source_sha256": "e511a868e67ab549804a0cb3cd28d2709b8c50b299b9c56d4f3ff683923b703b",
+      "target_sha256": "23142f498d31bd1a247d906a82ea6a167afee362b99eac0f129b37a5b4603fbb"
+    },
+    {
+      "source": "experiments/results/跨地块容量Q5精确对照_RAW_VERIFICATION_未审_20261009.zip",
+      "target": "experiments/results/跨地块容量Q5精确对照_20261009.zip",
+      "bytes": 8145610,
+      "members": 643,
+      "source_sha256": "b3a73f517455cff4c0111bb3c789748f6e153ec87af11a243857bc3fd185cc82",
+      "target_sha256": "23142f498d31bd1a247d906a82ea6a167afee362b99eac0f129b37a5b4603fbb"
+    },
+    {
+      "source": "experiments/results/跨地块距离代理精确验证_RAW_MAIN_未审_20261009.zip",
+      "target": "experiments/results/跨地块距离代理精确验证_20261009.zip",
+      "bytes": 2450674,
+      "members": 1698,
+      "source_sha256": "32cb4a2e35543dfdd59d889d2f0aa8281f50c837172ec07a839bb8bfebebb15c",
+      "target_sha256": "c2ad0a293255abb8a4f8345704403373b5154a94963cb72862cbd262bd1a0d37"
+    },
+    {
+      "source": "experiments/results/跨地块距离代理精确验证_RAW_VERIFICATION_未审_20261009.zip",
+      "target": "experiments/results/跨地块距离代理精确验证_20261009.zip",
+      "bytes": 3595600,
+      "members": 1797,
+      "source_sha256": "68485b972ad48dd4fb40b9475598558b119413d91854e3525bd349ce791584bd",
+      "target_sha256": "c2ad0a293255abb8a4f8345704403373b5154a94963cb72862cbd262bd1a0d37"
+    },
+    {
+      "source": "experiments/results/跨地块距离代理精确验证_未执行_PREEXEC_20261009.zip",
+      "target": "experiments/results/跨地块距离代理精确验证_20261009.zip",
+      "bytes": 1344242,
+      "members": 1378,
+      "source_sha256": "1aab8f44c4f000c8bb70623cad813300a80ba725e7b9edc8902d394dda163a9c",
+      "target_sha256": "c2ad0a293255abb8a4f8345704403373b5154a94963cb72862cbd262bd1a0d37"
+    },
+    {
+      "source": "experiments/results/跨地块路线均衡权衡_PREEXEC_20261009.zip",
+      "target": "experiments/results/跨地块路线均衡权衡_20261009.zip",
+      "bytes": 6255241,
+      "members": 311,
+      "source_sha256": "f784a4733c6d999de7301727a1764d35942030f54309cf4dc8bee6fed32b6a36",
+      "target_sha256": "16e7e0a5382bd2560aaab2dfc31b69d9c207c0c2589ed85f00e69af121799cc8"
+    },
+    {
+      "source": "experiments/results/跨地块路线均衡权衡_RAW_MAIN_未审_20261009.zip",
+      "target": "experiments/results/跨地块路线均衡权衡_20261009.zip",
+      "bytes": 6316856,
+      "members": 427,
+      "source_sha256": "cd2b8ebe5843f2ec253ea543b7e45faf2202089ebcee09cf6b55dde867c0e1ee",
+      "target_sha256": "16e7e0a5382bd2560aaab2dfc31b69d9c207c0c2589ed85f00e69af121799cc8"
+    },
+    {
+      "source": "experiments/results/跨地块路线均衡权衡_RAW_VERIFICATION_未审_20261009.zip",
+      "target": "experiments/results/跨地块路线均衡权衡_20261009.zip",
+      "bytes": 6382955,
+      "members": 539,
+      "source_sha256": "6c8ee089353c661d6629ab7d71b359b6823e0053b1c6d84ba2b77745e44e8e37",
+      "target_sha256": "16e7e0a5382bd2560aaab2dfc31b69d9c207c0c2589ed85f00e69af121799cc8"
+    },
+    {
+      "source": "experiments/results/转向状态路径搜索_求解完成与汇总恢复_20261006.zip",
+      "target": "experiments/results/朝向搜索批量计时_完整实验与独立审计_20261006.zip",
+      "bytes": 148536,
+      "members": 41,
+      "source_sha256": "9443cd5ff23504fff98d0c48a88222e4178cd93f03a5d28fceedbb23131738d2",
+      "target_sha256": "e1815fc5aaffb00a05153dc90137563ef7a7bb959990e7002188fb90676c4294"
+    }
+  ],
+  "combined_archives": [
+    {
+      "target": "experiments/results/GLM53独立36任务消融_20261007.zip",
+      "sha256": "2370881625c74b20ffc058b06b9ab7fa2841507bcbdd81eb8f80462999765570",
+      "bytes": 90973318,
+      "parts": [
+        "experiments/reports/GLM53独立36任务消融_20261007.zip.part01",
+        "experiments/reports/GLM53独立36任务消融_20261007.zip.part02",
+        "experiments/reports/GLM53独立36任务消融_20261007.zip.part03"
+      ]
+    },
+    {
+      "target": "experiments/results/公共路线强基线_完整依赖_20261009.zip",
+      "sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067",
+      "bytes": 45735218,
+      "parts": [
+        "experiments/results/public_route_strong_baseline_20261009_r1_FINAL_REVIEWED.zip.part01",
+        "experiments/results/public_route_strong_baseline_20261009_r1_FINAL_REVIEWED.zip.part02",
+        "experiments/results/public_route_strong_baseline_20261009_r1_FINAL_REVIEWED.zip.part03"
+      ]
+    }
+  ],
+  "summary": {
+    "retired_top_level_items": 90,
+    "retired_files": 541,
+    "retired_bytes": 787340776,
+    "verified_archive_members": 47836,
+    "unique_manifests_kept": 21
+  },
+  "supplement_consolidation": {
+    "source_archives": 13,
+    "mapped_members": 20733,
+    "unique_files_preserved": 952,
+    "proof": "experiments/provenance/supplement_locations.json"
+  },
+  "report_locations": "experiments/provenance/report_locations.json",
+  "review_consolidation": {
+    "source_archives": 9,
+    "mapped_members": 5582,
+    "unique_files_preserved": 129,
+    "proof": "experiments/provenance/review_locations.json"
+  },
+  "extracted_report_assets": [
+    {
+      "path": "experiments/results/FSSP固定扰动ILS/排程示例.png",
+      "archive": "experiments/results/FSSP固定扰动ILS/FSSP固定扰动ILS实验.zip",
+      "member": "independent_fssp_ils_20261006/figures/schedule_example.png",
+      "sha256": "de89cf2380b36e66661c9cf7030ba1f53e8155289bbf49668415acf93359af18"
+    },
+    {
+      "path": "experiments/results/差分进化参数搜索/收敛曲线.png",
+      "archive": "experiments/results/差分进化参数搜索/independent_de_hpo_20261006_report_code.zip",
+      "member": "independent_de_hpo_20261006/figures/02_convergence.png",
+      "sha256": "7c4c4e3ed1b04e0c106842c04edd7be45c904831c45134a035452fd6f38329a6"
+    },
+    {
+      "path": "experiments/results/差分进化参数搜索/搜索配置比较.png",
+      "archive": "experiments/results/差分进化参数搜索/independent_de_hpo_20261006_report_code.zip",
+      "member": "independent_de_hpo_20261006/figures/03_all_search_configs.png",
+      "sha256": "b6a603710bd27bc766a1c7f0070d147c5ada421ee322fbded44e2f4ce3e5fa27"
+    },
+    {
+      "path": "experiments/results/组件/vehicle_routing/local_search_v1/protocol.json",
+      "archive": "experiments/results/URP_实验项目.zip",
+      "member": "URP/experiments/vehicle_routing/local_search_v1/protocol.json",
+      "sha256": "05f71a551a515f37fa7c1ccb9d24506241916805398e4869adb1c518c889dde8"
+    },
+    {
+      "path": "experiments/results/组件/vehicle_routing/local_search_v2/protocol.json",
+      "archive": "experiments/results/URP_实验项目.zip",
+      "member": "URP/experiments/vehicle_routing/local_search_v2/protocol.json",
+      "sha256": "4de48ca3cc486e04a5df03d9612cf7bfde914b7ac6c0e111c84c54032880b36f"
+    },
+    {
+      "path": "experiments/reports/assets/装箱父代/FINAL_P1_BOUNDARY_EVIDENCE.json",
+      "archive": "experiments/results/原132槽研究_P1阶段完整可审交付_20261006.zip",
+      "member": "workspace/audit_original132_phase1_terminal_independent_20261006/FINAL_P1_BOUNDARY_EVIDENCE.json",
+      "sha256": "cb85e56d61f90dbf74e1e10df87f74b22275982921849a9c294f8d1e07718a40"
+    },
+    {
+      "path": "experiments/reports/assets/装箱父代/P1_INDEPENDENT_REVIEWER_ACCEPTANCE.json",
+      "archive": "experiments/results/原132槽研究_P1阶段完整可审交付_20261006.zip",
+      "member": "workspace/audit_original132_phase1_terminal_independent_20261006/P1_INDEPENDENT_REVIEWER_ACCEPTANCE.json",
+      "sha256": "db37f0c5f5a6bddd08ea033983554e6610db170e0bdfa6a7737c41b7d56bddff"
+    },
+    {
+      "path": "experiments/reports/assets/装箱父代/TERMINAL_DELIVERY.json",
+      "archive": "experiments/results/原132槽研究_P1阶段完整可审交付_20261006.zip",
+      "member": "workspace/original132_phase1_coordination_20261006/TERMINAL_DELIVERY.json",
+      "sha256": "915180c59454ad330e4cd96e78eeb381fdb7c20fa66fbd5ddf1927aaed7a1c3d"
+    },
+    {
+      "path": "experiments/reports/assets/装箱父代/BASE_TERMINAL_AUDIT.json",
+      "archive": "experiments/results/原132槽研究_P1阶段完整可审交付_20261006.zip",
+      "member": "workspace/original132_phase1_evaluation_ready_20261006/BASE_TERMINAL_AUDIT.json",
+      "sha256": "5bd03441f306580f198e89c361d52966b0449306492450bea7e3c312a2f5bf33"
+    },
+    {
+      "path": "experiments/reports/assets/装箱父代/STRONG_TERMINAL_AUDIT.json",
+      "archive": "experiments/results/原132槽研究_P1阶段完整可审交付_20261006.zip",
+      "member": "workspace/original132_phase1_evaluation_ready_20261006/STRONG_TERMINAL_AUDIT.json",
+      "sha256": "8549ebbbd773d1c83146dc5a789bc181e4f462f31b19d65152681020c96f9689"
+    },
+    {
+      "path": "experiments/reports/assets/装箱父代/TEST_SOURCE_BINDING.log",
+      "archive": "experiments/results/原132槽研究_P1阶段完整可审交付_20261006.zip",
+      "member": "workspace/original132_phase1_evaluation_ready_20261006/TEST_SOURCE_BINDING.log",
+      "sha256": "b107c4f296afe5e8144f21a4b329dd5b44bffd2ecfb96edd9c5b5d5e46a748fa"
+    },
+    {
+      "path": "experiments/reports/assets/装箱父代/audit_source_binding.py",
+      "archive": "experiments/results/原132槽研究_P1阶段完整可审交付_20261006.zip",
+      "member": "workspace/original132_phase1_evaluation_ready_20261006/audit_source_binding.py",
+      "sha256": "c26eb06b65376c0ec8b45869c6f569ad3659a6bd376452cde166ea9137729699"
+    },
+    {
+      "path": "experiments/reports/assets/装箱父代/run.receipt.json",
+      "archive": "experiments/results/原132槽研究_P1阶段完整可审交付_20261006.zip",
+      "member": "workspace/original132_phase1_forward_accounting_20261006/run.receipt.json",
+      "sha256": "3eec01f09d2bd3abc16b671f5a59ea2bd60a76761563a46ccd36fea81be5ce32"
+    },
+    {
+      "path": "experiments/reports/assets/装箱父代/report-6eab5ab8c5879c88a4348bd2e70acfa8ddde932352af43796cc302413e2ba357.json",
+      "archive": "experiments/results/原132槽研究_P1阶段完整可审交付_20261006.zip",
+      "member": "workspace/urp132_20261005_b01_phase1_numerical_state/report-6eab5ab8c5879c88a4348bd2e70acfa8ddde932352af43796cc302413e2ba357.json",
+      "sha256": "021b823f06b966de761714d7470d169b6947b65914c0b1dc3fe193aea4abbfe7"
+    },
+    {
+      "path": "experiments/reports/assets/装箱父代/scheduler-ledger-01beb081fc2f939a551567107241f15978f369ed336175d4e90046dac48438e7.json",
+      "archive": "experiments/results/原132槽研究_P1阶段完整可审交付_20261006.zip",
+      "member": "workspace/urp132_20261005_b01_phase1_numerical_state/scheduler-ledger-01beb081fc2f939a551567107241f15978f369ed336175d4e90046dac48438e7.json",
+      "sha256": "fe1b8365506f0ae0403d3411655066f6325588ed7137746a0a3e52389942a22f"
+    },
+    {
+      "path": "experiments/reports/assets/净空重规划/all_12_instances.png",
+      "archive": "experiments/results/ee130净空感知重规划1m_仅模型安全_20261008.zip",
+      "member": "ee130_clearance_aware_routing_20261008/reports/all_12_instances.png",
+      "sha256": "3f69eec8640d08ae6620cf4f65b33f22ad013b96bd14add4bd8e9d9d8f60343e"
+    },
+    {
+      "path": "experiments/reports/assets/净空重规划/all_8_safe_routes.png",
+      "archive": "experiments/results/ee130净空感知重规划1m_仅模型安全_20261008.zip",
+      "member": "ee130_clearance_aware_routing_20261008/reports/all_8_safe_routes.png",
+      "sha256": "b8f1b7dbd65d5a89b1fde57a67b56834e9c769359613e001004c1afd8018f84e"
+    }
+  ],
+  "verification": "experiments/provenance/verification.json",
+  "created_current_reports": [
+    "experiments/reports/README.md",
+    "experiments/reports/装箱演化与新数据验证.md",
+    "experiments/reports/模型推理档位对照.md",
+    "experiments/reports/生成契约检查.md"
+  ],
+  "literature_review": "experiments/provenance/literature_review.json",
+  "literature_consolidation": {
+    "record": "literature/资料/来源合并.json",
+    "verification": "literature/资料/核验.json",
+    "trash": "/home/peakpeng/.local/share/Trash/files/URP文献整理_20261010_144743"
+  },
+  "workspace_organization": "experiments/provenance/整理.json"
+}

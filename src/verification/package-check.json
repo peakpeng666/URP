@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "path": "/home/peakpeng/.cache/urp-next-phase/frontend-delivery.zip",
+  "bytes": 25668584,
+  "sha256": "2a17caf53cd7dd2df4e5beac0a6a06dbebe944ed1ea26a1071656f7a008918e4",
+  "checksum_path": "/home/peakpeng/.cache/urp-next-phase/frontend-delivery.zip.sha256",
+  "source_files": 140,
+  "original_input_included": true,
+  "generated_data_included": false
+}

@@ -1,0 +1,68 @@
+{
+  "schema": "urp-release-validation-v1",
+  "version": "0.1.0rc2",
+  "validated_utc": "2026-10-06T04:50:03.596625+00:00",
+  "python": "CPython 3.12.14",
+  "platform": "Linux x86_64",
+  "unit_tests": {
+    "passed": 51,
+    "failed": 0,
+    "historical_data_required": false
+  },
+  "smoke_modules": 3,
+  "full_replay_comparison": {
+    "passed": true,
+    "parent_result_files_byte_identical": 4,
+    "cvrp_decision_rows_identical": 240,
+    "turn_complete_witnesses_identical": 36,
+    "crc_excluded_timing_keys": [
+      "calibration_time",
+      "inference_time",
+      "mean_new_feature_and_inference_cpu_seconds",
+      "new_analysis_cpu_seconds_before_write",
+      "new_analysis_wall_seconds_before_write",
+      "new_calibration_prediction_and_gating_cpu_seconds",
+      "new_feature_extraction_cpu_seconds_once_per_instance",
+      "new_feature_extraction_wall_seconds_once_per_instance",
+      "new_preflight_cpu_seconds",
+      "new_test_prediction_cpu_seconds",
+      "new_training_cpu_seconds_8_models",
+      "new_training_wall_seconds_8_models",
+      "training_time"
+    ],
+    "crc_excluded_csv_columns": [
+      "feature_cpu_seconds",
+      "inference_cpu_seconds"
+    ],
+    "crc_excluded_environment_metadata": [
+      "summary.json:environment"
+    ],
+    "turn_excluded_timing_keys": [
+      "cpu_s",
+      "preprocess_wall_s",
+      "wall_s"
+    ],
+    "timing_equality_not_claimed": true
+  },
+  "original_files_unchanged": {
+    "passed": true,
+    "files_verified": 289,
+    "changed_files": [],
+    "scope": "all existing non-pycache files in three frozen experiment directories"
+  },
+  "external_publication": false,
+  "new_model_calls": 0,
+  "new_training_runs": 0,
+  "new_historical_cvrp_solver_runs": 0,
+  "candidate_code_executions": 0,
+  "independent_review": {
+    "rc1_baseline": "Independent review and pre-publication review verified the mathematical migration and full replay; pre-publication review identified a package-writer race/symlink defect.",
+    "rc2_revision": "Package writer repaired; ten new regression tests pass. Immutable rc2 ZIP is submitted separately for independent recheck."
+  },
+  "evidence_sha256": {
+    "rc2_unit_tests.txt": "c6393b68b086cfe1d80ae55eb9bf46982314c13e7cffe2ccf3c589c24c434fec",
+    "rc2_smoke.json": "2f868eeb5ba8d71e6a780af7d0cb6c4743900b08cec38f454e644d43d9f0a09d",
+    "rc2_full_comparison.json": "ea51ccec3ecde0bd0b88e3191d2697c32149def23b63d5bb346b4c3ef45507a2",
+    "rc2_originals_after.json": "175b65f91c10195d7552a84ab4537eed056989370b6f363038ad0eba5b63de85"
+  }
+}

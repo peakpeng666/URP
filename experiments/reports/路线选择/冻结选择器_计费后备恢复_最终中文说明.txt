@@ -1,0 +1,23 @@
+冻结选择器计费失败恢复实验：最终交付包
+
+结果摘要
+- 48个全新独立几何，每个两种时间窗，共96问题；统计单元为48个几何。
+- 选择器250ms首阶段成功81/96，15次计费PCI250后备救回14例，最终95/96。
+- 固定PCI500同为95/96，且同在s009_w020失败；固定SAV500为73/96。
+- 对PCI的95个共同成功问题，选择器逐问题平均距离更长1.089614%；48几何等权更长1.133860%。不是全面胜出，也不是覆盖超过PCI。
+- 选择器含特征/预测实际CPU27.607745秒，固定PCI48.604296秒。相同的是每策略名义最坏搜索上限500ms；实际搜索、CPU及端到端时间不相同。成功后停止，剩余预算不强行用满。
+- 完整实验进程CPU116.833秒、wall116.892秒，实验硬CPU上限180秒；独立审计完整CPU1.322秒、wall1.324秒，另计。外层打包CPU也单列，见delivery_receipt.json和packaging_shell_time.txt，不冒充实验用时。
+
+独立复审39项通过：源训练成员/缩放/标签、96预测、坐标及种子不重叠、96可行witness、263成功返回、覆盖率、条件距离、几何簇区间和CPU账均一致。原实验目录和原ZIP未改。
+
+解释边界
+这是一批有witness构造偏置的合成shift；几何和时间窗同时变化，单次wall截止运行。无解返回不代表数学不可行。32个原始ROUTING_FAIL被旧封装写成UNKNOWN，另8个TIMEOUT，40个实际求解失败完整保留。未重跑历史r101，不能说该具体旧失败已修复。条件距离均明确分母，不能掩盖失败。没有SOTA、显著性或普适泛化结论。
+
+包内结构
+1. original_experiment/selector_budgeted_recovery_20261007.zip：经过审计的原ZIP原字节，SHA256保持0836266d63ca7fc7842b22e380dc65170cfbf5703ef070660f0d31b0ee8433bb。
+2. final_experiment_receipts/：原实验进程退出后完成的shell_time.txt、stdout.log、stderr.log，补齐原ZIP缺少的三份最终记录。
+3. independent_audit/：独立复审报告、JSON、哈希证据、完整审计CPU记录、日志和审计源码。
+4. manifest.json：每个交付条目的字节数与SHA256；完整性清单不自我包含。
+5. packaging/package_final.py、packaging/resources_before_archive.json：外层打包的可追溯源码与计量范围。打包结束后的精确CPU/完整ZIP SHA256和CRC结果是外部sidecar，避免自引用。
+
+只打包相关源码、数据、结果与审计资料，无缓存、密钥或无关文件；没有求解器调用、API调用、上传或公开发布。

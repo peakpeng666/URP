@@ -1,0 +1,46 @@
+静态邻域诊断（探索性，未重跑原搜索）
+
+结论
+不建议立即增加 relocate 或 intra-route 2-opt：RR2 的60个最终解在这两个邻域均无严格下降邻居。跨路线原位单客户 swap 有少量可核验证据，适合一个小型计费消融，但信号非常有限：新6例 RR2 strict 只有1/24可下降，neutral为4/24，且全部来自 P-n50-k10。其余五例RR2均无上述三类严格下降邻居。此发现不是改善搜索表现的因果证据，不能称HGS复现或新算法突破。
+
+范围与结果
+读取原controls的24个最终BEST，以及neutral_validation的96个最终BEST，共120个；未扫描中间checkpoint、未迭代下降、未运行原solver、未修改原包。neutral的current可能不同；这里只检查其保存的best，不对current作结论。静态操作只生成候选以验证，不将其反馈给搜索。
+- controls：24/24最终解在三种被扫描邻域均无严格下降。
+- 新6例 RR2 strict：swap 1/24；relocate 0/24；2-opt 0/24。
+- 新6例 RR2 neutral：swap 4/24；relocate 0/24；2-opt 0/24。
+- 新6例 cheapest strict：swap 9/24；relocate 3/24；2-opt 1/24。
+- 新6例 cheapest neutral：swap 7/24；relocate 2/24；2-opt 2/24。
+- 总计：swap 21/120；relocate 5/120；2-opt 3/120。所有21个最佳swap见证均跨路线。
+
+可审计具体见证
+P-n50-k10，RR2 strict，seed202610085209：原成本753，交换第一路线客户8与第四路线客户26的原位位置，成本749，严格下降4。新载荷为[94,99,89,92,97,99,94,100,95,92]，容量100、10条路线，所有49客户恰好一次。原路线与完整候选保存在TRAJECTORY_CHECKS.json。这里不声称参考最优值或gap改善，也未读取参考解。
+
+实际solver检查
+controls/source/official_solver.py与neutral_validation/source/official_solver.py中的run_one均调用随机destroy和cheapest/regret2 repair。初始化是savings、FFD及有界容量分区后插入。neutral版本只额外改变等成本候选接受及current/best维护。被导入legacy/experiment.py中也没有显式relocate、swap、2-opt、2-opt*局部搜索。随机destroy-repair可能间接实现某些类似改动，但不能据此保证局部最优。
+因此缺少显式经典邻域过程，不等于其最终解仍有这些邻域的改进。静态扫描发现多数组合已经对这三个基础邻域局部最优，这是限制后续主张的重要负结果。未扫描2-opt*、链交换或SWAP*，不对它们作局部最优声明。
+
+扫描定义
+relocate：移除一个客户，遍历同路线及其他路线所有插入位置；fleet余量允许时加一个空目标路线；排除精确原位不变；容量超限不计算delta。
+swap：任意两个客户原位交换，含同路线与跨路线；每个无序客户对一次；容量超限不计算delta。
+2-opt：同路线连续客户段反转，段长至少2；剔除整条路线反转（对称整数距离下必为零）。没有任何地理近邻裁剪。
+完整枚举是针对上述明确定义；等价移动可重复，实际计算仍计费。没有利用参考成本早停。
+
+费用与独立检查
+总候选275715，其中容量不可行163460，可行delta112255。
+relocate：候选182720，拒绝121985，delta60735，负delta7。
+swap：候选80376，拒绝41475，delta38901，负delta54。
+2-opt：候选12619，拒绝0，delta12619，负delta3。
+局部delta边查找718718；另记矩阵距离计算174024；独立全路线重算边4822862；独立解检查112375（120原解＋112255可行候选）。每个可行候选都重算整解目标值并检验成本差与局部delta完全一致，客户覆盖、容量、fleet同时全部通过。
+距离由原坐标独立以整数isqrt和精确半单位比较重建TSPLIB EUC_2D nint，不导入原checker/solver，也不读取已生成距离矩阵。由于输入都是整数坐标，可精确计算，不依赖三角不等式。
+扫描主程序2.319238468 CPU秒、2.326591139 wall秒；包含读取、枚举、容量检查、全部候选独立验证和写CSV/见证结果。SUMMARY与输入hash最终序列化、启动解释器及本说明准备不含在该程序计时内。主进程设置29秒soft/30秒hard CPU和59秒alarm，明确在30CPU/60wall限制内。未安装、未调用模型API、未上传。
+
+证据文件
+scan.py：完整stdlib独立扫描器。
+ALL_DELTAS.csv：每个候选一行（包括容量拒绝），有局部delta与整解重算差。行号按父包原JSONL顺序映射。
+TRAJECTORY_CHECKS.json：120原解、每邻域计数、最佳严格下降见证及独立合法性检查。
+SUMMARY.json：范围、汇总与资源。
+INPUT_SHA256.json：扫描器读取的所有文件的精确SHA256。
+SOURCE_INSPECTION.txt：原solver相关代码带行号摘录。
+LITERATURE_EVIDENCE.json：作者论文与版本固定作者仓库证据定位。
+PROPOSED_PREREGISTRATION_ZH.txt：尚未执行的单一后续消融建议。
+SHA256SUMS.txt：本目录封存校验。

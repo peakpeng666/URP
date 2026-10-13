@@ -1,0 +1,15 @@
+# Local environments and caches only; experiment evidence remains visible.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+.venv-*/
+venv/
+.env
+.env.*
+!.env.example
+Thumbs.db
+.DS_Store
+~$*.docx

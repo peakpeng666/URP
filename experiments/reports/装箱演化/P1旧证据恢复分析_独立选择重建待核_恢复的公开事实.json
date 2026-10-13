@@ -1,0 +1,842 @@
+{
+  "schema": "P2-existing-P1-public-evidence-recovery-v1",
+  "status": "SEVEN_EXISTING_PUBLIC_RESULTS_FOUND_AND_MATCHED",
+  "P1_archive": {
+    "drive_id": "1SYo9awdPdO9uVQBY6I18Llp0v4B7LFSO",
+    "url": "https://drive.google.com/file/d/1SYo9awdPdO9uVQBY6I18Llp0v4B7LFSO/view",
+    "sha256": "aa14a4a33993850df91c2195b247ae5d29b9cb9d9d1ac845f913ce3b33b6178c",
+    "bytes": 5368638,
+    "whole_archive_extracted": false
+  },
+  "comparability": {
+    "same_public_design_file_sha256": "5358c41aa758e1d399d29157f8cbdc5fb422f4c8acd56b2cb95c41af3f1750ca",
+    "same_public_panel": {
+      "instances": [
+        {
+          "L1": 2012,
+          "capacity": 100,
+          "input_sha256": "7ee4bea56fff392c06310e94ac6ee83556cd925a710a9bd31e616af5f6464143",
+          "instance_index": 0,
+          "n": 5000
+        },
+        {
+          "L1": 1983,
+          "capacity": 100,
+          "input_sha256": "0078ff21b0daa80234e95ec7104b18305004279c4d17e6ad80fbe87fa491bb8e",
+          "instance_index": 1,
+          "n": 5000
+        },
+        {
+          "L1": 1978,
+          "capacity": 100,
+          "input_sha256": "d8c8360e6423c93fdd0c9e3b1d209e182b6df35edd0bf79d0a7c4105b1169ab7",
+          "instance_index": 2,
+          "n": 5000
+        },
+        {
+          "L1": 1986,
+          "capacity": 100,
+          "input_sha256": "3b13c3fc900a6b578ccbbcf0f0a1731b5f343cd5a4ff5023cee4c4086633e53c",
+          "instance_index": 3,
+          "n": 5000
+        },
+        {
+          "L1": 1980,
+          "capacity": 100,
+          "input_sha256": "34aba6d5c32222a3af1f36f60b5e21faf92f53f98964ab16aabf4b6129001de8",
+          "instance_index": 4,
+          "n": 5000
+        }
+      ],
+      "kind": "registered_source_study"
+    },
+    "same_runtime_freeze_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+    "same_checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+    "same_intake_sha256": "8c7ee47891a277272af466d54ca24999364b735a80ad9aaa5e3270323f07270a",
+    "same_host_runner_sha256": "25e9f57d21b46cad959df3b5712c8812c822effde2b9b5568eb9e7ca3cc1f578",
+    "schema_field_mapping": {
+      "P1_kind": "externally_verified",
+      "P1_registry_mode": "registered_source_study",
+      "P2_kind": "registered_source_study",
+      "interpretation": "Receipt wrapper labels differ; actual registry mode, input, source, runtime and checker bindings match."
+    },
+    "bin_choice_tie_rule": "Stable first argmax among feasible bins; frozen runtime runner.py lines441-444,575-601",
+    "fitness_definition": "Exact mean of five Fraction(L1,used_bins), maximize; reconstructed from saved bins and equals each frozen parent fitness.",
+    "new_evaluations": 0
+  },
+  "P1_target_results": [
+    {
+      "slot_id": "b01_EOH_TC_g1_e1_03",
+      "claim_id": "7976fcb39c988403bf5a6e79e4aec822e4b3fed9d4528ce1ad5899336aea4ed4",
+      "source_sha256": "29263d1b755923995ba791642febf4d95bee59940bacb8ba912a3cf6cd3a4e3a",
+      "pair_sha256": "1fc14d088106210dcf8475fe0845caf6404fdc8dd0159522af1763fc3fdaf0b1",
+      "code_identity": "a1648860c28b9038bbe0e547344ba306f3c342078eed3513a4fe36c506520182",
+      "joint_identity": "2b7e125326c1e3dd51009f50b443401e1aee0e511929daf1e30cd1b38d5411a6",
+      "fitness": {
+        "numerator": 143417757158281,
+        "denominator": 148986947580380,
+        "decimal": 0.9626196085459475
+      },
+      "used_bins": [
+        2093,
+        2058,
+        2056,
+        2063,
+        2055
+      ],
+      "total_used_bins": 10325,
+      "cases": [
+        {
+          "instance_index": 0,
+          "input_sha256": "7ee4bea56fff392c06310e94ac6ee83556cd925a710a9bd31e616af5f6464143",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 2012,
+          "used_bins": 2093,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "0f9e9a212c4bf009f4eca0f8324e83b57eace16dada6c20b1e27999c9e91453b"
+        },
+        {
+          "instance_index": 1,
+          "input_sha256": "0078ff21b0daa80234e95ec7104b18305004279c4d17e6ad80fbe87fa491bb8e",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1983,
+          "used_bins": 2058,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "cb55d3b72f4db7e08428e4d72df7a1576ac41f8f86af7ae8713ca5d342b6c897"
+        },
+        {
+          "instance_index": 2,
+          "input_sha256": "d8c8360e6423c93fdd0c9e3b1d209e182b6df35edd0bf79d0a7c4105b1169ab7",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1978,
+          "used_bins": 2056,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "f2bbed8b81b987401ac09aa0f240ef59d370ae10e8128763235bafd58c39743b"
+        },
+        {
+          "instance_index": 3,
+          "input_sha256": "3b13c3fc900a6b578ccbbcf0f0a1731b5f343cd5a4ff5023cee4c4086633e53c",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1986,
+          "used_bins": 2063,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "a668824b9d384e3638181afc8e77a6c39e0cea22e6667b6a9950c5d94ecb163e"
+        },
+        {
+          "instance_index": 4,
+          "input_sha256": "34aba6d5c32222a3af1f36f60b5e21faf92f53f98964ab16aabf4b6129001de8",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1980,
+          "used_bins": 2055,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "95cc69e79cea41103d68e64fe460e8fe342aa412ec8645a698c593dabd702ff2"
+        }
+      ],
+      "P1_zip_member": "workspace/urp132_20261005_b01_phase1_numerical_state/results/7976fcb39c988403bf5a6e79e4aec822e4b3fed9d4528ce1ad5899336aea4ed4.json",
+      "P1_result_sha256": "1bc1ddf9d53e91c6b744891af4b112af3dd2691effb05f60daaffecc2b3c93ae",
+      "source_and_input_runtime_bindings_matched": true
+    },
+    {
+      "slot_id": "b01_EOH_TC_g1_e1_05",
+      "claim_id": "f0d6eb7415af58bad71f7d9ad8a0c8326a100a350728ad245f3e25403b12dd0f",
+      "source_sha256": "226f64567bac28be639c4192b1ef5229337e1d0d73d316aee4ba08ee87bf203b",
+      "pair_sha256": "358739d5b234ca999b153c467400bfd5bfee5f0350a53a1406531c08af79077d",
+      "code_identity": "8d0b0cf0d0451a23cda33a6fe65474b394588f9f12c592e1b0601b7ef0242ee5",
+      "joint_identity": "8e14d5baf35f2ed599079bd42fb6bbd73436a4e50ced91edcd6c361215facf80",
+      "fitness": {
+        "numerator": 7923277263,
+        "denominator": 8167108600,
+        "decimal": 0.9701447171891409
+      },
+      "used_bins": [
+        2080,
+        2036,
+        2044,
+        2044,
+        2041
+      ],
+      "total_used_bins": 10245,
+      "cases": [
+        {
+          "instance_index": 0,
+          "input_sha256": "7ee4bea56fff392c06310e94ac6ee83556cd925a710a9bd31e616af5f6464143",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 2012,
+          "used_bins": 2080,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "8a4ed2a1e28d90e1141a206bfd096c2ddc9a36aa146b65a0957a886925a2a7ab"
+        },
+        {
+          "instance_index": 1,
+          "input_sha256": "0078ff21b0daa80234e95ec7104b18305004279c4d17e6ad80fbe87fa491bb8e",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1983,
+          "used_bins": 2036,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "76ee466e00d2e0d187763b2dea478d7e05cf56079a71889a24f7e337e0b764f5"
+        },
+        {
+          "instance_index": 2,
+          "input_sha256": "d8c8360e6423c93fdd0c9e3b1d209e182b6df35edd0bf79d0a7c4105b1169ab7",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1978,
+          "used_bins": 2044,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "95281de3c9438759dad26a2629f9c134e250e9d66bfb06aea93a1fecba23b6ff"
+        },
+        {
+          "instance_index": 3,
+          "input_sha256": "3b13c3fc900a6b578ccbbcf0f0a1731b5f343cd5a4ff5023cee4c4086633e53c",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1986,
+          "used_bins": 2044,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "897b10544a18aedfe3e700a1af510cc7acb7bb59195a5da2c22bc0248e779f19"
+        },
+        {
+          "instance_index": 4,
+          "input_sha256": "34aba6d5c32222a3af1f36f60b5e21faf92f53f98964ab16aabf4b6129001de8",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1980,
+          "used_bins": 2041,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "cad7906d4ecf70f7a4bfd50f0c4742c955a1ba8ed84ef5e97f9d9f325643e7db"
+        }
+      ],
+      "P1_zip_member": "workspace/urp132_20261005_b01_phase1_numerical_state/results/f0d6eb7415af58bad71f7d9ad8a0c8326a100a350728ad245f3e25403b12dd0f.json",
+      "P1_result_sha256": "a71c9f30b74aa28ea850aceefc9cadf15468095eb2f9de3cc49b6f4b41c597a4",
+      "source_and_input_runtime_bindings_matched": true
+    },
+    {
+      "slot_id": "b01_EOH_TC_g1_e2_05",
+      "claim_id": "59201af55db3167338a53720704274754f067ed87305c2e784d4bf230fe13c10",
+      "source_sha256": "35c784b173e89e66c3c03a8bf880ee867841cf8a17ca4371e881cf09447715d1",
+      "pair_sha256": "f9b4de281efdc3fa6abdd8897c8d736aabafea54357ace6533e1aac649a41afa",
+      "code_identity": "e23d3100a0484be8333110918633b333610a1044b8423184b7084601fb0449ee",
+      "joint_identity": "3e12a61015eb16164d389b8c4f8d2a69d5b6c7069d05fe81574308951d9b0952",
+      "fitness": {
+        "numerator": 8598892127022737,
+        "denominator": 8822924076332964,
+        "decimal": 0.9746079703993848
+      },
+      "used_bins": [
+        2067,
+        2033,
+        2027,
+        2039,
+        2032
+      ],
+      "total_used_bins": 10198,
+      "cases": [
+        {
+          "instance_index": 0,
+          "input_sha256": "7ee4bea56fff392c06310e94ac6ee83556cd925a710a9bd31e616af5f6464143",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 2012,
+          "used_bins": 2067,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "9858a4b569c9b8b9fca456dbea009227d66f9c33f44efe6da73c9151dc096b9b"
+        },
+        {
+          "instance_index": 1,
+          "input_sha256": "0078ff21b0daa80234e95ec7104b18305004279c4d17e6ad80fbe87fa491bb8e",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1983,
+          "used_bins": 2033,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "bed2868556a0e1b3f65a219a837e8490ec541c2498810de67b27c50678dee3ae"
+        },
+        {
+          "instance_index": 2,
+          "input_sha256": "d8c8360e6423c93fdd0c9e3b1d209e182b6df35edd0bf79d0a7c4105b1169ab7",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1978,
+          "used_bins": 2027,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "11ec15fcfba765790d563d9caad72449cd92324a0cb803e2503c15454bcb58b7"
+        },
+        {
+          "instance_index": 3,
+          "input_sha256": "3b13c3fc900a6b578ccbbcf0f0a1731b5f343cd5a4ff5023cee4c4086633e53c",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1986,
+          "used_bins": 2039,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "c763152ae21354b531d4af2c8a76e5bf53ebb41326c3084d28d45892a8be5df3"
+        },
+        {
+          "instance_index": 4,
+          "input_sha256": "34aba6d5c32222a3af1f36f60b5e21faf92f53f98964ab16aabf4b6129001de8",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1980,
+          "used_bins": 2032,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "5fe746b8b3f2b79b334ca478e8ff081b772b2e3f8f5148e1048c94ae63a0836b"
+        }
+      ],
+      "P1_zip_member": "workspace/urp132_20261005_b01_phase1_numerical_state/results/59201af55db3167338a53720704274754f067ed87305c2e784d4bf230fe13c10.json",
+      "P1_result_sha256": "53c1a5ed901bf9fa1efeb0d2a216c104f50ea061a5ba5d3047e9a1a59dae4691",
+      "source_and_input_runtime_bindings_matched": true
+    },
+    {
+      "slot_id": "b01_EOH_TC_g1_m1_03",
+      "claim_id": "7184fd9c2c77b97acd524e88490fa82a8161ee72da170d8670061545f3ff107b",
+      "source_sha256": "d848364e3c3a97621fcb64f122dcb2b9e77a34230c5517439a9c8b64adc0f3e5",
+      "pair_sha256": "7b9b5990793de293f6e0f94c5f4f7345e4ae13a281836b43c97c67fac616bfcc",
+      "code_identity": "32af666c6e5f44f2fbe4c8ba0e6ba2299a84f3f86ab8f601144acd541d787236",
+      "joint_identity": "ebc243ae8e9152c7de03817ceed8d2704706ea14dd1d2fa03c83f00ca571542a",
+      "fitness": {
+        "numerator": 39947558289907,
+        "denominator": 40216818698175,
+        "decimal": 0.9933047810099356
+      },
+      "used_bins": [
+        2026,
+        1997,
+        1995,
+        1995,
+        1993
+      ],
+      "total_used_bins": 10006,
+      "cases": [
+        {
+          "instance_index": 0,
+          "input_sha256": "7ee4bea56fff392c06310e94ac6ee83556cd925a710a9bd31e616af5f6464143",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 2012,
+          "used_bins": 2026,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "f8ddd85820e24102126884369427fe0356facd2f00b74006421d2316d5cb8d3e"
+        },
+        {
+          "instance_index": 1,
+          "input_sha256": "0078ff21b0daa80234e95ec7104b18305004279c4d17e6ad80fbe87fa491bb8e",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1983,
+          "used_bins": 1997,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "066a4fb893c2670e84bfc8857cf2a578654cd36720098e4ad0652ea6b0db4661"
+        },
+        {
+          "instance_index": 2,
+          "input_sha256": "d8c8360e6423c93fdd0c9e3b1d209e182b6df35edd0bf79d0a7c4105b1169ab7",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1978,
+          "used_bins": 1995,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "aaac46f2cf7d2ec3da776c2b39c9e536387dde9adb033a17288a47882b030c49"
+        },
+        {
+          "instance_index": 3,
+          "input_sha256": "3b13c3fc900a6b578ccbbcf0f0a1731b5f343cd5a4ff5023cee4c4086633e53c",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1986,
+          "used_bins": 1995,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "d829309b4e22dc19f9397f2d762e5d4152962a3921e29647cd5d0c748a4adb28"
+        },
+        {
+          "instance_index": 4,
+          "input_sha256": "34aba6d5c32222a3af1f36f60b5e21faf92f53f98964ab16aabf4b6129001de8",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1980,
+          "used_bins": 1993,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "b461fba2f02921640e26009f28aded0935d8ca7e4e4a55f1b635df42130ad1de"
+        }
+      ],
+      "P1_zip_member": "workspace/urp132_20261005_b01_phase1_numerical_state/results/7184fd9c2c77b97acd524e88490fa82a8161ee72da170d8670061545f3ff107b.json",
+      "P1_result_sha256": "812991894dfbe192c93848953d3fb136b655195cf6451005ba8a8f439d6b0b95",
+      "source_and_input_runtime_bindings_matched": true
+    },
+    {
+      "slot_id": "b01_EOH_TC_g1_m1_06",
+      "claim_id": "a0d09081abd85c3b2a0deaac419dbd7e5dc0088e095d28d1562e7233d187010b",
+      "source_sha256": "f45b02107cc0c555c6a0c24cc2b230a9f4bafcccc3b6728d16b1d5f61af4ea8c",
+      "pair_sha256": "2d80e4a742edabfb205681aff4db6d2fdf2141b31cdc03efbc94351e01272941",
+      "code_identity": "00ab82bbee8fd66a06ff20e257bb528bf7d7321f943a1b90ccf78db999dfcb2a",
+      "joint_identity": "e60ce9a3d7dea27efe812a3fa0d70b2ead2d94b0688aec1400c6e91092c6f6d6",
+      "fitness": {
+        "numerator": 2193299224571,
+        "denominator": 2278258380200,
+        "decimal": 0.9627087268207297
+      },
+      "used_bins": [
+        2090,
+        2056,
+        2059,
+        2060,
+        2059
+      ],
+      "total_used_bins": 10324,
+      "cases": [
+        {
+          "instance_index": 0,
+          "input_sha256": "7ee4bea56fff392c06310e94ac6ee83556cd925a710a9bd31e616af5f6464143",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 2012,
+          "used_bins": 2090,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "2b38ca589296c5bebe4e7bf714d4b34e32ed8d3cbe0ac68bf8c0352c0ed32334"
+        },
+        {
+          "instance_index": 1,
+          "input_sha256": "0078ff21b0daa80234e95ec7104b18305004279c4d17e6ad80fbe87fa491bb8e",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1983,
+          "used_bins": 2056,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "94cf21db24698ec9580339caf7c1a313a6f18c365ba501dc50a9be5451406a9b"
+        },
+        {
+          "instance_index": 2,
+          "input_sha256": "d8c8360e6423c93fdd0c9e3b1d209e182b6df35edd0bf79d0a7c4105b1169ab7",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1978,
+          "used_bins": 2059,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "054f15a65da0ee426add414837b33c4cb77dc0a1da0fc58a99e43f8821c5f8a9"
+        },
+        {
+          "instance_index": 3,
+          "input_sha256": "3b13c3fc900a6b578ccbbcf0f0a1731b5f343cd5a4ff5023cee4c4086633e53c",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1986,
+          "used_bins": 2060,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "3638a8f461273170f05fb61c701913f70cf136b3d3f9eef2583829c3db7d2892"
+        },
+        {
+          "instance_index": 4,
+          "input_sha256": "34aba6d5c32222a3af1f36f60b5e21faf92f53f98964ab16aabf4b6129001de8",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1980,
+          "used_bins": 2059,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "81d947ee99b980fb93eb6f45bc843981e88ac54fef3a10585f96dc8987413be9"
+        }
+      ],
+      "P1_zip_member": "workspace/urp132_20261005_b01_phase1_numerical_state/results/a0d09081abd85c3b2a0deaac419dbd7e5dc0088e095d28d1562e7233d187010b.json",
+      "P1_result_sha256": "d37aad3c3010c08ddd93804dd0f343002df9d52f6ab7793899d36e0b5bad59ac",
+      "source_and_input_runtime_bindings_matched": true
+    },
+    {
+      "slot_id": "b01_EOH_TC_g1_m2_06",
+      "claim_id": "5b1cc7de8c4a720e9bfb527573c67faed740c9bdfda87be15d8179c190733903",
+      "source_sha256": "b9d1b4420fd8b0b991970fa91940e350994ce9b6a2e231416c359361019375e4",
+      "pair_sha256": "2661cf299cc4eb81e1a413b0b91c184fda95de1609d90cfcbbf30e8d3da06e3c",
+      "code_identity": "50e3b053e8148f767a2df99f7ddf0b2c7e2109e1f5287eadd98bf2c60eeaa9fa",
+      "joint_identity": "5d8000c8fb5f90b3711cb4984793d915857b727cc078fdd0954d4cbaa60e6542",
+      "fitness": {
+        "numerator": 119725650770421,
+        "denominator": 124182010768970,
+        "decimal": 0.9641142869973359
+      },
+      "used_bins": [
+        2090,
+        2055,
+        2053,
+        2060,
+        2051
+      ],
+      "total_used_bins": 10309,
+      "cases": [
+        {
+          "instance_index": 0,
+          "input_sha256": "7ee4bea56fff392c06310e94ac6ee83556cd925a710a9bd31e616af5f6464143",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 2012,
+          "used_bins": 2090,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "3278f35215e8d46f46254636f852dbaf8eb0c9a3a8fac0abf0a4ce505dddd22a"
+        },
+        {
+          "instance_index": 1,
+          "input_sha256": "0078ff21b0daa80234e95ec7104b18305004279c4d17e6ad80fbe87fa491bb8e",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1983,
+          "used_bins": 2055,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "4363a024ca97c9488a5d73701b902b33cc2dee8bef605cad4a649c6a145f598e"
+        },
+        {
+          "instance_index": 2,
+          "input_sha256": "d8c8360e6423c93fdd0c9e3b1d209e182b6df35edd0bf79d0a7c4105b1169ab7",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1978,
+          "used_bins": 2053,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "e6e5077068db2fda9a24df5e38a2e951db26931d50ca545913cfb681829cc0a0"
+        },
+        {
+          "instance_index": 3,
+          "input_sha256": "3b13c3fc900a6b578ccbbcf0f0a1731b5f343cd5a4ff5023cee4c4086633e53c",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1986,
+          "used_bins": 2060,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "f126928631b696cd38d48b08191b62fe41e5d45cb13bce36b163cd5b193c5d36"
+        },
+        {
+          "instance_index": 4,
+          "input_sha256": "34aba6d5c32222a3af1f36f60b5e21faf92f53f98964ab16aabf4b6129001de8",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1980,
+          "used_bins": 2051,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "aa0896995c6178ec10c5ba4fa8d62798834d9fcbe9080d499d24681c29c0b15e"
+        }
+      ],
+      "P1_zip_member": "workspace/urp132_20261005_b01_phase1_numerical_state/results/5b1cc7de8c4a720e9bfb527573c67faed740c9bdfda87be15d8179c190733903.json",
+      "P1_result_sha256": "6973bce642f9bde9675c558f0b4628499091dd83feea2c96f3e56cbaa4fe2ada",
+      "source_and_input_runtime_bindings_matched": true
+    },
+    {
+      "slot_id": "b01_IID_TC_g1_m2_04",
+      "claim_id": "a2a4fb362827f5f70a314db72922b501c3365cf0f789eb135941ae0ecb72d42b",
+      "source_sha256": "415dca074dca8fd1a15360bd37384671e5997cd4bc1281981ca49f435cfcd64e",
+      "pair_sha256": "4d3b58bdbd6ef53e8f2e60568b551607f3ac40c19a1a3ca79003c68f4de7a9ed",
+      "code_identity": "1f6cd0c2b7cfe40e68329d27e437658005f719cbcd78cc974f406bd725931ffd",
+      "joint_identity": "949e692e38561da79cc24a744e78082011dc6b7e2df662a2b559ecd780208790",
+      "fitness": {
+        "numerator": 561169740881,
+        "denominator": 566701510740,
+        "decimal": 0.990238653410723
+      },
+      "used_bins": [
+        2032,
+        1997,
+        1997,
+        2007,
+        2004
+      ],
+      "total_used_bins": 10037,
+      "cases": [
+        {
+          "instance_index": 0,
+          "input_sha256": "7ee4bea56fff392c06310e94ac6ee83556cd925a710a9bd31e616af5f6464143",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 2012,
+          "used_bins": 2032,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "0a9808403cba3b5947f28e34d59009fb3a1cb9279c21cbb6ebef4f92d81f58a1"
+        },
+        {
+          "instance_index": 1,
+          "input_sha256": "0078ff21b0daa80234e95ec7104b18305004279c4d17e6ad80fbe87fa491bb8e",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1983,
+          "used_bins": 1997,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "7de2d0178ecd351ca13440bc15374332d510470aeaf1b65b0077633cb194ff9f"
+        },
+        {
+          "instance_index": 2,
+          "input_sha256": "d8c8360e6423c93fdd0c9e3b1d209e182b6df35edd0bf79d0a7c4105b1169ab7",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1978,
+          "used_bins": 1997,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "3cc60a07480bd8dbd4247def06996aa22c0386564e9cd67dd8365bb0e7e36591"
+        },
+        {
+          "instance_index": 3,
+          "input_sha256": "3b13c3fc900a6b578ccbbcf0f0a1731b5f343cd5a4ff5023cee4c4086633e53c",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1986,
+          "used_bins": 2007,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "ac0933c5e54368e232b8ec70dd3acd0e1aa8170b5a112eaa0f55210a12574714"
+        },
+        {
+          "instance_index": 4,
+          "input_sha256": "34aba6d5c32222a3af1f36f60b5e21faf92f53f98964ab16aabf4b6129001de8",
+          "n": 5000,
+          "capacity": 100,
+          "L1": 1980,
+          "used_bins": 2004,
+          "checker_status": "passed",
+          "checker_sha256": "c63b3dbd84be98494838aa023c313d91d3678e66a22ecd21bb7080a38ed718e8",
+          "runtime_sha256": "7903fec4a38568000f7dc8901e49cfff6f246529129aacab2c94c179b1d1aeb8",
+          "assignment_sha256": "3590a399fbb90c62d745843fcc3ed0f8edfd076751b26d9be27cfd6e6195a6f3"
+        }
+      ],
+      "P1_zip_member": "workspace/urp132_20261005_b01_phase1_numerical_state/results/a2a4fb362827f5f70a314db72922b501c3365cf0f789eb135941ae0ecb72d42b.json",
+      "P1_result_sha256": "e51a1d15fdefd0076c20c18fef0e9a7fd071c00492681954f028b92c4488aeb9",
+      "source_and_input_runtime_bindings_matched": true
+    }
+  ],
+  "P2_best": {
+    "slot_id": "b01_EOH_TC_g2_m3_04",
+    "fitness": {
+      "numerator": 553433026291573,
+      "denominator": 557161270697850,
+      "decimal": 0.9933085004246485
+    },
+    "used_bins": [
+      2028,
+      1997,
+      1995,
+      1994,
+      1992
+    ],
+    "total_used_bins": 10006,
+    "direct_parent_id": "b01_EOH_TC_g1_e1_05"
+  },
+  "comparison_against_best_of_six_EOH_parents": {
+    "parent_slot_id": "b01_EOH_TC_g1_m1_03",
+    "parent_fitness": {
+      "numerator": 39947558289907,
+      "denominator": 40216818698175,
+      "decimal": 0.9933047810099356
+    },
+    "parent_used_bins": [
+      2026,
+      1997,
+      1995,
+      1995,
+      1993
+    ],
+    "parent_total_used_bins": 10006,
+    "fitness_delta_offspring_minus_parent": {
+      "numerator": 2095049092403,
+      "denominator": 563273862725751450,
+      "decimal": 3.7194147128801607e-06
+    },
+    "per_case_bins_offspring_minus_parent": [
+      2,
+      0,
+      0,
+      -1,
+      -1
+    ],
+    "total_bins_offspring_minus_parent": 0,
+    "offspring_less_equal_more_bins_case_counts": {
+      "less": 2,
+      "equal": 2,
+      "more": 1
+    }
+  },
+  "comparison_against_direct_parent": {
+    "parent_slot_id": "b01_EOH_TC_g1_e1_05",
+    "parent_fitness": {
+      "numerator": 7923277263,
+      "denominator": 8167108600,
+      "decimal": 0.9701447171891409
+    },
+    "parent_used_bins": [
+      2080,
+      2036,
+      2044,
+      2044,
+      2041
+    ],
+    "parent_total_used_bins": 10245,
+    "fitness_delta_offspring_minus_parent": {
+      "numerator": 60231086060267947339,
+      "denominator": 2600226631716193563720,
+      "decimal": 0.023163783235507596
+    },
+    "total_bins_offspring_minus_parent": -239
+  },
+  "historical_IID_retained_candidate": {
+    "slot_id": "b01_IID_TC_g1_m2_04",
+    "fitness": {
+      "numerator": 561169740881,
+      "denominator": 566701510740,
+      "decimal": 0.990238653410723
+    },
+    "used_bins": [
+      2032,
+      1997,
+      1997,
+      2007,
+      2004
+    ],
+    "total_used_bins": 10037,
+    "snapshot_sha256": "13ceffe91b54ce1dd1bad2c3b606d0c712d2cdbb771a7e2b011a192c6fb449b3",
+    "is_above_P2_newborn_IID_best": true,
+    "P2_newborn_best_id": "b01_IID_TC_g2_m2_01",
+    "P2_newborn_best_fitness": {
+      "numerator": 633527990782627,
+      "denominator": 654498805217950,
+      "decimal": 0.9679589721659771
+    }
+  },
+  "comparison_P2_EOH_best_to_historical_IID_retained": {
+    "fitness_delta": {
+      "numerator": 16179038330885933687,
+      "denominator": 5270307692042892489900,
+      "decimal": 0.0030698470139253987
+    },
+    "total_bins_EOH_minus_IID": -31
+  },
+  "selection_rule_evidence": {
+    "runner_sha256": "a2b2b419f58033f5540abe9465489b2a0200cc0082da1b4bd7f4f18346d07961",
+    "runner_lines": [
+      [
+        71,
+        73
+      ],
+      [
+        80,
+        90
+      ],
+      [
+        305,
+        307
+      ]
+    ],
+    "core_sha256": "6aff2378ba51203da41c07eb85051568c384024634629400cefe6ba8f4bb4465",
+    "core_lines": [
+      [
+        182,
+        194
+      ]
+    ],
+    "excerpt_file": "SELECTION_RULE_EXCERPTS.txt",
+    "EOH_pool": "previous survivors plus current eligible offspring",
+    "EOH_capacity": 6,
+    "IID_pool": "all eligible candidates in that arm archive",
+    "IID_capacity": 1,
+    "rank": "exact Fraction descending, original tie_priority, id",
+    "deduplication": "joint_identity; retain earliest order",
+    "final_rule": "first phase2 survivor per arm; this analysis does not create or commit that selection"
+  },
+  "joint_identity_checks": {
+    "P2_best_EOH_different_from_all_six_old_EOH": true,
+    "historical_IID_joint_not_repeated_among_P2_IID": true
+  },
+  "selection_warning": "P2-only newborn best is not automatically the original frozen final survivor. EOH retains prior survivors in its pool; IID ranks eligible archive. No final selection transaction is executed by this recovery.",
+  "boundaries": {
+    "heldout_instance_or_score_reads": 0,
+    "protocol_draft_member_reads": 0,
+    "new_model_calls": 0,
+    "parent_or_candidate_executions": 0,
+    "archived_scripts_executed": 0,
+    "old_reports_modified": false,
+    "original_model_feedback": false,
+    "source_search": "Targeted known local P2 parent metadata, frozen audit64k snapshot, known P1 archive from existing handoff index. No unbounded search."
+  },
+  "pre_whitelist_non_target_result_member": "workspace/urp132_20261005_b01_phase1_numerical_state/results/0327d563176c8323503becb6f066ed9c33a1d90c1818dbb9f7294d76c1855930.json",
+  "scope_log": "Before the final seven-target whitelist was clarified, P1 public panel/plan/rows and one non-target P1 result were read for structure. The plan identifies phase1 and heldout_this_run=0; no heldout data was opened. After clarification, only seven target result members were opened.",
+  "old_sealed_zip_hashes": {
+    "p2_full_public_interpretation_20261007.zip": "09c8b665dd14504c8095e4fb7a1940f5608743087d21a2a50bab875d006dedd6",
+    "p2_parent_comparison_appendix_20261007.zip": "f68faf751ad2a5a3b6113ae4449268b6bf99f20cc5314f29ce6c28f012c7468b"
+  },
+  "opened_P1_member_names": [
+    "workspace/URP/experiments/online_bin_packing/paper_scale_dag_evaluator_v1/data/design_5000.json",
+    "workspace/urp132_20261005_b01_phase1_numerical_state/panel.json",
+    "workspace/urp132_20261005_b01_phase1_numerical_state/plan.json",
+    "workspace/urp132_20261005_b01_phase1_numerical_state/rows.json",
+    "workspace/urp132_20261005_b01_phase1_numerical_state/results/7976fcb39c988403bf5a6e79e4aec822e4b3fed9d4528ce1ad5899336aea4ed4.json",
+    "workspace/urp132_20261005_b01_phase1_numerical_state/results/f0d6eb7415af58bad71f7d9ad8a0c8326a100a350728ad245f3e25403b12dd0f.json",
+    "workspace/urp132_20261005_b01_phase1_numerical_state/results/59201af55db3167338a53720704274754f067ed87305c2e784d4bf230fe13c10.json",
+    "workspace/urp132_20261005_b01_phase1_numerical_state/results/7184fd9c2c77b97acd524e88490fa82a8161ee72da170d8670061545f3ff107b.json",
+    "workspace/urp132_20261005_b01_phase1_numerical_state/results/a0d09081abd85c3b2a0deaac419dbd7e5dc0088e095d28d1562e7233d187010b.json",
+    "workspace/urp132_20261005_b01_phase1_numerical_state/results/5b1cc7de8c4a720e9bfb527573c67faed740c9bdfda87be15d8179c190733903.json",
+    "workspace/urp132_20261005_b01_phase1_numerical_state/results/a2a4fb362827f5f70a314db72922b501c3365cf0f789eb135941ae0ecb72d42b.json"
+  ]
+}

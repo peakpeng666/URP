@@ -1,0 +1,16 @@
+容量界固定顺序缓存：单候选固定面板技术重执行technical_r1
+
+原阶段因Python 3.12 line追踪仪器重复计数而在计时前失败，原始失败包保留。本阶段仅改用call事件及计时前功能门控；同候选、同输入、同预算，不是新增独立样本。
+
+自动化自审：PASS；外部独审另存。原newbound与单一cached变体，不含快速gate，不调用模型，不修改旧冻结材料。
+
+数学：固定order允许一次预计算后缀sum、最小正数与负数域标志；每次放置同时减少总剩余容量与剩余需求相同的整数需求，故slack不变，回溯同理。空列表、全零、负slack、负数域报错顺序、原guard三元组保持。浮点及自定义数值对象不在等价声明内。详见EQUIVALENCE_PROOF.txt。
+
+功能：初始化 {'SUCCESS': 41, 'INITFAIL': 7}，两臂48/48输出及完整非时间诊断一致；直接分区 {'SUCCESS': 41, 'NODE_LIMIT': 7}，精确assignment/node/prune trace哈希一致。7140预定小状态全部guard三元组一致、可行误剪0、后缀统计和slack转移差异0；6个负数域控制一致。初始化扫描会计 {'nodes': 2615, 'prunes': 1072, 'original_waste_checks': 2598, 'cached_waste_checks': 2598, 'original_residual_checks': 27267, 'cached_residual_checks': 27267, 'original_remaining_materialized_items': 25155, 'cached_prune_remaining_materialized_items': 8025, 'cached_setup_ordered_items': 662, 'cached_setup_suffix_iterations': 662, 'original_remaining_negative_test_items': 25155, 'original_remaining_sum_items': 25155, 'original_positive_filter_items': 25155, 'original_min_positive_items': 25155, 'original_slack_residual_sum_items': 27267, 'cached_initial_slack_residual_sum_items': 213}。这些计数只能说明重复工作减少，不能当作加速。高slack族初始化常由前置算法完成，直接分区机制计数不能替代初始化收益。
+
+计时：5轮×每臂整板48×8调用，共3840计时调用；预定96热身；主单位为384次完整初始化整板CPU和wall，单例仅次级wall。setup/cache建设、失败路径、matrix、内部checker、output_for均计时；Python循环、Budget快照、结果缓冲、GC和单次wall读取包含在整板；外部验证/hash/序列化/落盘排除。
+CPU cached/original比：0.9701565751359676。
+wall cached/original比：0.9696373743090945。
+process_time_ns实际约4ms量化，有效量化=max(4ms,固定探针正跳变中位数)=4.000ms；使用与前阶段相同保守阈值。不因阈值未过增加轮次或剔除轮次。即使通过也仅是描述性整板估计，不声称精确单调用CPU或统计显著。
+
+限制：仍是固定48个人工结构，8次与5轮是技术重复，不是更多科学样本；无随机外部分布泛化证据。候选仅一个；不改变节点预算、分支顺序、失败回退或输出，不进行baseline速度比较。没有局部搜索阶段或整体算法质量提升声明。所有原始读数保留，无重跑、选择轮次、选择子集或隐藏失败。

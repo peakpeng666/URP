@@ -1,0 +1,48 @@
+旧阶段模型生成与候选评测失败契约审计
+2026年10月8日
+
+结论
+有真实、可定位的提示词与评测器契约缺口。两臂提示词要求 Python source，但未说明评测语言是有限 Python 子集、np 是预绑定的受限接口、仅部分调用/类型运算可用。W2 至少有三类普通 Python/NumPy 写法不被该语言接受。该结果说明生成接口需要改善，不能证明 W2 算法无效，也不能证明提示修订后一定能通过或提高装箱成绩。
+
+1 审计边界及证据强度
+只读检查指定四组目录的相关公开提示、manifest、结果、候选文本，以及 RUNTIME_BINDINGS.json 直接绑定的六个 runtime 文件。未运行、import、compile 或 AST 解析任何候选；未调用外部模型；未读取隐藏思考内容、凭据或确认集；未修改历史文件。新离线契约测试仅是 JSON 数据与预期，本次未执行。
+EVIDENCE_INDEX.json 给出所有使用证据的完整路径、大小和 SHA256；AUDIT_VERIFICATION.json 保存本次字节、哈希及整数派生核对。以下用 baseline、archive、old_eval、prepared_eval、runtime 简称该索引的 roots。
+
+W/M 本地提示字节数为1540/1595，SHA256 分别 c37ef60e5ee256cde27c2f1adf82ff419a5a942af73c11448f7c9c76010e7195、64a047e61ac3360fc45209dbbdf98dffa9e1e994b9bed2e9d65c69944fed8b9a，与历史 archive/manifest.json 第27–45行及对应 slot result 的 prompt_sha256 一致。但归档缺少当时 inputs/W.txt、inputs/M.txt、完整公开 request config 及 collector 源码。因此可核查“与历史 manifest 相同的提示内容”，不能宣称独立恢复了实际线上传输报文的全部内容或包装消息。旧 baseline/PROMPT_MANIFEST.json 的 not_transmitted 是准备时状态，不应覆盖稍后的生成记录。
+
+六个被检查 runtime 文件均匹配 old_eval/RUNTIME_BINDINGS.json 的冻结哈希；W1/W2 候选均与登记 raw byte span 完全相同。后来的候选提取没有源码语义修复。W1历史collector记2598字节而保存文本2599字节，原报告已保留差异；本次不猜测原因。
+
+2 明确存在的契约缺口
+(1) 有限语言未告知。
+baseline/PROMPT_W_DRAFT.txt 与 PROMPT_M_DRAFT.txt 第1行写明 score(item, bins)、最终有限 ndarray、禁 imports/外部调用/工具/跨调用状态及16384字节；第9–22行给出使用 np 的父代。整份提示仅23行，没有语法白名单、API签名表或拒绝规则。
+实际 runtime/admission.py 第129–185行仅接受有限语句；第283–309行仅接受 len(vector) 与直接白名单 np 调用，range 仅在受限 for 中；第407–419行要求唯一、无装饰器、无注解、精确参数的 score 函数。普通 Python 的 helper、float(...) 等不是这个语言。
+
+(2) np 预绑定及类型约束未明确。
+runtime/worker.py 第113行明确 __builtins__={}，np=build_facade(np)，另提供len/range。不是完整 NumPy 模块。提示中父代暗示 np 可用，但没有把预绑定、可调用API及dtype token与普通NumPy的区别说清楚。runtime/policy.py 第16行、facade.py 第164–183行要求 np.int64 item、只读int64 bins，最终必须是精确 ndarray、int32/int64/float64、一维、同长度且有限。提示给出了最终dtype/长度/有限性，未给输入dtype/只读性，也未给受限中间类型体系。
+
+(3) W2 的三类文本不兼容。
+a. old_eval/sources/W2.py 第14行 s = float(item)：admission.py 第287–291行不允许 float 命名调用。
+b. 第17–20行 nested def cost，以及第23行 cost(r)/cost(g)：第129–185行没有嵌套函数语句，第287–294行也不允许自定义函数调用。
+c. 第29行 0.015 * (r >= 99.5)：admission.py 第48–51行 NUM 不含 mask；第201–214行的普通数值运算调用第105–107行 _numeric。因此布尔mask直接乘浮点数也不在有限语言内。仅删掉float或内联helper并不足以满足已知全部限制。
+第13行 np.asarray(bins, dtype=np.float64) 则在 manifest.py 第20–21行与 admission.py 第304–317行允许范围内，不应把这行误报为错误。np.float64 在这里是dtype token，并不表示 np.float64(item) 可调用。
+
+证据限度：payload_old_partial_W2_admission.json 的 admission.kind=static、admitted=false、failure_class=static_rejection；steps=0、score_call_cpu_ns=0。candidate_execution_started=true指已经启动准入工作流程，不证明调用了score。runtime/worker.py 第103–105行捕获AdmissionError时没有保存消息或行号。以上是独立的文本规则对照，不是运行时首条错误诊断，更不是修复后验证。所有旧成绩原样保留。
+
+3 输出格式也有阶段边界
+历史 W1/W2 result 均为 invalid_public_text，原因是公共文本不能当作裸Python解析；原公共回复含说明文字加一个python代码块，W1 fence在第13/34行，W2在第20/52行。旧提示要求“as Python source”，但没有明确“仅源码、无解释、无围栏”。这是可减少的输出格式歧义，不能据此断言旧collector存在实现错误，因为其源码未归档。
+后来 prepared_eval/RULES.json 第21–29行与 old_eval/CANDIDATES.json 允许固定单围栏字节提取。该提取使两份源码可被单独研究，但不追溯抹去原collector的format failure；旧阶段本来未完成八槽，不应改写成完整成功实验。本次审计也未运行提取器，只核对已登记的byte span。
+
+4 四类失败必须分开报告
+算法表现：W1准入、toy、四条W训练流保存的checker均通过。四流箱数410/401/411/411，父代409/400/411/414，因此候选−父代为+1/+1/0/−3，合计1633比1634少1。主目标是每流F的精确均值，不是合计箱数；候选F=65919007/67572510，父代F=18093833783/18558129600，差167326221217/305114208753600，约0.0005484052，即0.0548405个百分点。比BF合计少38箱并不替代与固定父代的比较。可说“训练上的微小混合方向改善”，不可说W1算法失效或稳定优于父代。
+语法不支持：W2发生static_rejection，后续toy与四流均not_run_ineligible。不存在W2装箱成绩，不能记作零箱、无限箱、算法输给父代，除非新实验事前另定义端到端失败效用。
+传输/生成未完成：M1/M2在约900.0645/900.0640秒被本地超时终止，returncode=-9，没有公共候选。分别保存infrastructure_unknown。无法证明是模型算法能力不足、网络慢、推理过长或output token不足；远端是否完成及真实用量未知。W1/W2有正常stop且601–807秒完成，也不能据此推断M必然更慢。64000为已配置限额，provider接受上限未知；改变时间或token限额不能保证解决问题。
+统计证据不足：八计划槽仅尝试四槽，W1/M1/M2/W2；M臂没有可评分候选，另四槽未尝试。一份W候选、四条已用于训练提示的流、两负一平一正，不能推出W/M优劣、总体效能或独立泛化。prepared_eval仍PREPARED_LOCKED_NO_CANDIDATE_EXECUTION；其目录不存在本批八候选成绩，不能把准备状态当实验完成。
+
+5 对算法设计只能提出待检验的假设
+W1同时改动指数衰减、数值保护与scavenging bonus，不能由四个最终箱数归因哪一项有利。若研究这些机制，另立等预算、预先固定消融，不能在旧流上试到好看才留一项。
+W2公开源码将“未来可用项目数”固定为500，并用连续Weibull CDF近似已round/clip的离散流；它也没有可见的步数输入。这可作为后续数学建模假设，不是已证实的效果失败。固定分布先验常数没有读取真实未来items或runtime family label，不应误报为信息泄漏。当前最小动作是解决生成契约，而不是根据未运行的算法调参。
+
+6 下一阶段最小修正
+先在全新阶段冻结同一生成契约附录，明确受限语言、np预绑定、输入/输出类型、允许API签名、禁止helper/casts/方法/原地写入/布尔数值运算，以及原始输出格式。两臂逐字相同附录，原父代、训练条件差异及目标不变。MINIMAL_GENERATOR_CONTRACT_DRAFT.txt 给出可审阅的保守子集草案；它不是已发送或已冻结的新prompt，也不改变当前在途阶段。
+用独立手写微型例子先验收接口，正例保证有可表达解，负例保证边界清楚，所有测试必须在已授权受限子进程执行，不在host解析候选。OFFLINE_CONTRACT_TEST_DRAFT.json 只保存样例和预期，当前test_runs=0。若将来实施安全诊断，可另冻结固定枚举reason code/行号，避免现在为取详细错误而重跑W2。
+不扩展旧runtime来迁就旧候选，不修补旧候选并并回成绩，不把本次发现当成已证明的prompt改进效果。下一阶段公平锁定方案见NEXT_PHASE_PREREGISTRATION_DRAFT.txt。

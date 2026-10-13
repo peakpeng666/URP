@@ -1,0 +1,19 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-chip);
+  background: var(--panel);
+  color: var(--ink-3);
+  vertical-align: middle;
+}
+
+.btn:hover {
+  border-color: var(--bf);
+  color: var(--bf);
+  background: var(--bf-wash);
+}

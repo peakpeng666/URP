@@ -1,0 +1,37 @@
+{
+  "evidence": {
+    "audit": {
+      "file_sha256": "5bd03441f306580f198e89c361d52966b0449306492450bea7e3c312a2f5bf33",
+      "path": "/workspace/scratch/27470b7a9f17/original132_phase1_evaluation_ready_20261006/BASE_TERMINAL_AUDIT.json"
+    },
+    "generation_readback": {
+      "file_sha256": "6b9dfaa0f8b5123d14979dd1006170d66a3657412baabd44981955c83072ab31",
+      "path": "/workspace/scratch/27470b7a9f17/original132_phase1_authenticated_readback_20261006/readback.receipt.json"
+    },
+    "ledger": {
+      "file_sha256": "fe1b8365506f0ae0403d3411655066f6325588ed7137746a0a3e52389942a22f",
+      "path": "/workspace/scratch/27470b7a9f17/urp132_20261005_b01_phase1_numerical_state/scheduler-ledger-01beb081fc2f939a551567107241f15978f369ed336175d4e90046dac48438e7.json"
+    },
+    "packet": {
+      "file_sha256": "c4a321ab9d6dc7497cfb1634db30ce0cea3eb123a9570a13628aeb5938200450",
+      "path": "/workspace/scratch/27470b7a9f17/urp132_20261005_b01_phase1_numerical_state/scheduler-input-01beb081fc2f939a551567107241f15978f369ed336175d4e90046dac48438e7.json"
+    },
+    "producer_fence": {
+      "file_sha256": "b4e89d5c0a118b76ff45550c95886f469ae9484bb8e31e1af16c2a842c6238bc",
+      "path": "/workspace/scratch/27470b7a9f17/original132_phase1_authenticated_readback_20261006/producer-fence-status.stdout.json"
+    },
+    "report": {
+      "file_sha256": "021b823f06b966de761714d7470d169b6947b65914c0b1dc3fe193aea4abbfe7",
+      "path": "/workspace/scratch/27470b7a9f17/urp132_20261005_b01_phase1_numerical_state/report-6eab5ab8c5879c88a4348bd2e70acfa8ddde932352af43796cc302413e2ba357.json"
+    },
+    "reviewer": {
+      "file_sha256": "db37f0c5f5a6bddd08ea033983554e6610db170e0bdfa6a7737c41b7d56bddff",
+      "path": "/workspace/scratch/27470b7a9f17/audit_original132_phase1_terminal_independent_20261006/P1_INDEPENDENT_REVIEWER_ACCEPTANCE.json"
+    }
+  },
+  "phase1_freeze_sha256": "1e3e0bf30681e13c80747bdc406a05b34190623bab43467b91be6a0aea7ac45e",
+  "phase1_lineage_sha256": "ad18683fa4afe67c8b1722be6058c94a1bd4bb5fecf83490a03851b6452b1c76",
+  "schema": "phase2-parent-boundary-v1",
+  "scientific_run_id": "urp132_20261005_b01",
+  "status": "FINAL_P1_INDEPENDENTLY_ACCEPTED"
+}

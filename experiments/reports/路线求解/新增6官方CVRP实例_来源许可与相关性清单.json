@@ -1,0 +1,945 @@
+{
+  "schema": "new-official-cvrp-validation-set-v1",
+  "created_utc": "2026-10-08T00:45:40.337637+00:00",
+  "package_date_label": "20261008",
+  "source_catalog_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/instances",
+  "source_catalog_snapshot": {
+    "url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/instances",
+    "copied_official_snapshot_retrieved_utc": "2026-10-07T23:51:19.311479+00:00",
+    "web_reopened_utc": "2026-10-08T00:42:43.780256+00:00",
+    "sha256": "f33f34c08edf642a442fe46fa550b8e39b32bba0a1f1245c3a45f87da71a47f9",
+    "size_bytes": 1953834,
+    "note": "Reuses the same official snapshot as existing approved package; fresh web read confirms current catalog. No immutable upstream commit exposed."
+  },
+  "selection_rule_freeze": {
+    "path": "audit/00_selection_rule_and_candidate_catalog.json",
+    "size_bytes": 20626,
+    "sha256": "49012565fc3fb9ec38a92f0b63d6be2a0ccc96dd30a4a7d95d7adcaa669025ed"
+  },
+  "fixed_selection_freeze": {
+    "path": "audit/01_fixed_selection.json",
+    "size_bytes": 12329,
+    "sha256": "06783cf1085234984c144c47d60df799039c6fbaf93234b45834344d794940f1"
+  },
+  "selection_frozen_utc": "2026-10-08T00:44:11.211441+00:00",
+  "ordered_candidates_and_exclusions": [
+    {
+      "name": "A-n32-k5",
+      "decision": "excluded",
+      "reason": "old_exploration_instance"
+    },
+    {
+      "name": "A-n33-k5",
+      "decision": "selected",
+      "reason": "next_available_distinct_geometry_in_frozen_order",
+      "geometry_sha256": "08aec4dfcb382d886bf680451e3a2e7b32054f76387bb971101bc4d16918d86e",
+      "raw_vrp_sha256": "35712de0054a0fbfd609d5cdb4ec638c39f7c181b6e39e3c8bf6f8e359b78aef"
+    },
+    {
+      "name": "A-n33-k6",
+      "decision": "selected",
+      "reason": "next_available_distinct_geometry_in_frozen_order",
+      "geometry_sha256": "2f32737896a3ac04b2a4e6dc5ce7793f48aaac965c9a8bfaf8894ddeb83d4e29",
+      "raw_vrp_sha256": "4d01ebe9842743ee0c66f14ecb86ab9c84d3198b3280d0dbcc8a8d9a69f1592f"
+    },
+    {
+      "name": "A-n34-k5",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n36-k5",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n37-k5",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n37-k6",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n38-k5",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n39-k5",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n39-k6",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n44-k6",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n45-k6",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n45-k7",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n46-k7",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "A-n48-k7",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "B-n31-k5",
+      "decision": "excluded",
+      "reason": "old_exploration_instance"
+    },
+    {
+      "name": "B-n34-k5",
+      "decision": "selected",
+      "reason": "next_available_distinct_geometry_in_frozen_order",
+      "geometry_sha256": "641482c8a1132a564ff183658911569622380e9be68c7c8cf6f601b5a18a21cc",
+      "raw_vrp_sha256": "e4dee2fb80782ea7d922a890715d85ac8488f089d72d3ceb6b744e82ccd407ac"
+    },
+    {
+      "name": "B-n35-k5",
+      "decision": "selected",
+      "reason": "next_available_distinct_geometry_in_frozen_order",
+      "geometry_sha256": "2df85cc6dfe0c56fd6cbbc055d88f62ab144ac3b5b66cdf045276e824a594cf5",
+      "raw_vrp_sha256": "d5047a1b09c3b55127fe2954c01412b847b2f436e7c4eae3d4e932dc3374c765"
+    },
+    {
+      "name": "B-n38-k6",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "B-n39-k5",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "B-n41-k6",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "B-n43-k6",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "B-n44-k7",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "B-n45-k5",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "B-n45-k6",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "B-n50-k7",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "B-n50-k8",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "B-n51-k7",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "P-n40-k5",
+      "decision": "excluded",
+      "reason": "old_exploration_instance"
+    },
+    {
+      "name": "P-n45-k5",
+      "decision": "selected",
+      "reason": "next_available_distinct_geometry_in_frozen_order",
+      "geometry_sha256": "a3fa4e8491b8d1f4c41b49635f09781bed224040645361f983c248cdfe31a311",
+      "raw_vrp_sha256": "35a678e55fc5a0b9371a76d77a59d698da4df2c625ef6928ac0eac96912b15ca"
+    },
+    {
+      "name": "P-n50-k10",
+      "decision": "selected",
+      "reason": "next_available_distinct_geometry_in_frozen_order",
+      "geometry_sha256": "5f277eb44094070bc917d46bbf3af8c65d8e65df37c218732f09eb62e4ab833e",
+      "raw_vrp_sha256": "4f11c9fdc78fb16223e035fc91aac8f43a7af111b65535c02bef2ce0d9e2b410"
+    },
+    {
+      "name": "P-n50-k7",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "P-n50-k8",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    },
+    {
+      "name": "P-n51-k10",
+      "decision": "not_inspected",
+      "reason": "family_quota_already_filled_by_earlier_candidates"
+    }
+  ],
+  "distinct_new_geometry_count": 6,
+  "shortfall_by_family": {
+    "A": 0,
+    "B": 0,
+    "P": 0
+  },
+  "old_exploration_instances_excluded": [
+    "A-n32-k5",
+    "B-n31-k5",
+    "P-n40-k5"
+  ],
+  "instances": [
+    {
+      "name": "A-n33-k5",
+      "family": "A",
+      "dimension": 33,
+      "customers": 32,
+      "reported_K": 5,
+      "capacity": 100,
+      "total_demand": 446,
+      "capacity_lower_bound_routes": 5,
+      "local_protocol": {
+        "route_constraint": "K_used <= reported_K",
+        "max_vehicles": 5,
+        "routes_nonempty": true,
+        "official_upper_bound_relation_explicitly_specified": null,
+        "semantic_boundary": "Official table |K| and COMMENT No of trucks report K, but retrieved raw files do not explicitly define exact-K versus upper-bound semantics; this is a separately declared local protocol. Do not assume all instances use K=5.",
+        "exact_K_equivalent_here_by_capacity_lower_bound": true
+      },
+      "raw_instance": {
+        "path": "raw/A-n33-k5.vrp",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/5",
+        "request_started_utc": "2026-10-08T00:43:32.815852+00:00",
+        "method": "GET",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/5",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "737",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:43:21 GMT",
+          "Last-Modified": "Sat, 15 Aug 2020 22:48:33 GMT",
+          "Content-Disposition": "attachment; filename=A-n33-k5.vrp",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:43:38.249880+00:00",
+        "sha256": "35712de0054a0fbfd609d5cdb4ec638c39f7c181b6e39e3c8bf6f8e359b78aef",
+        "size_bytes": 737,
+        "network_wall_seconds": 5.434139637000044
+      },
+      "raw_reference_solution": {
+        "path": "references/A-n33-k5.sol",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/5",
+        "request_started_utc": "2026-10-08T00:45:19.368318+00:00",
+        "selection_freeze_sha256": "06783cf1085234984c144c47d60df799039c6fbaf93234b45834344d794940f1",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/5",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "146",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:45:06 GMT",
+          "Last-Modified": "Sun, 16 Aug 2020 00:42:29 GMT",
+          "Content-Disposition": "attachment; filename=A-n33-k5.sol",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:45:22.992442+00:00",
+        "sha256": "d8045df85ee1f1cee362f884ea0c52f0a5f6c3e3dcd06bcc644a0da79974e43b",
+        "size_bytes": 146,
+        "network_wall_seconds": 3.624096337996889
+      },
+      "official_table": {
+        "name": "A-n33-k5",
+        "customers": 32,
+        "reported_K": 5,
+        "capacity": 100,
+        "UB": 661,
+        "Opt": "yes"
+      },
+      "official_table_evidence": {
+        "path": "sources/A-n33-k5.official_table_row.html",
+        "size_bytes": 2537,
+        "sha256": "9d01d34c77176a98f89cd58cf1c08de1c175f65314d5daf1a14ffc95a4be206b"
+      },
+      "geometry_sha256": "08aec4dfcb382d886bf680451e3a2e7b32054f76387bb971101bc4d16918d86e",
+      "solver_input": {
+        "path": "solver_inputs/A-n33-k5.instance.json",
+        "size_bytes": 13383,
+        "sha256": "6ba8cfc798a5c1daeab3d9bebfe85f2ea1190787b0346b5667b26ded4926d16d"
+      },
+      "reference_answer": {
+        "path": "references/A-n33-k5.reference_solution.json",
+        "size_bytes": 1087,
+        "sha256": "e9668e6bd0cff1f73469d43a751edac0de5dafd312f42c80ea5f50deadbd7672"
+      },
+      "reference_feasibility_checked": true,
+      "optimality_independently_proved": false
+    },
+    {
+      "name": "A-n33-k6",
+      "family": "A",
+      "dimension": 33,
+      "customers": 32,
+      "reported_K": 6,
+      "capacity": 100,
+      "total_demand": 541,
+      "capacity_lower_bound_routes": 6,
+      "local_protocol": {
+        "route_constraint": "K_used <= reported_K",
+        "max_vehicles": 6,
+        "routes_nonempty": true,
+        "official_upper_bound_relation_explicitly_specified": null,
+        "semantic_boundary": "Official table |K| and COMMENT No of trucks report K, but retrieved raw files do not explicitly define exact-K versus upper-bound semantics; this is a separately declared local protocol. Do not assume all instances use K=5.",
+        "exact_K_equivalent_here_by_capacity_lower_bound": true
+      },
+      "raw_instance": {
+        "path": "raw/A-n33-k6.vrp",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/7",
+        "request_started_utc": "2026-10-08T00:43:40.979634+00:00",
+        "method": "GET",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/7",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "742",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:43:27 GMT",
+          "Last-Modified": "Sat, 15 Aug 2020 22:48:33 GMT",
+          "Content-Disposition": "attachment; filename=A-n33-k6.vrp",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:43:44.420399+00:00",
+        "sha256": "4d01ebe9842743ee0c66f14ecb86ab9c84d3198b3280d0dbcc8a8d9a69f1592f",
+        "size_bytes": 742,
+        "network_wall_seconds": 3.440789582004072
+      },
+      "raw_reference_solution": {
+        "path": "references/A-n33-k6.sol",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/7",
+        "request_started_utc": "2026-10-08T00:45:22.992750+00:00",
+        "selection_freeze_sha256": "06783cf1085234984c144c47d60df799039c6fbaf93234b45834344d794940f1",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/7",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "156",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:45:09 GMT",
+          "Last-Modified": "Sun, 16 Aug 2020 00:42:29 GMT",
+          "Content-Disposition": "attachment; filename=A-n33-k6.sol",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:45:26.770439+00:00",
+        "sha256": "a5395d65af5807fb05606f0abfd6a2a7ad6d98ef52e1fa4d9780667a09e2c649",
+        "size_bytes": 156,
+        "network_wall_seconds": 3.7776860680023674
+      },
+      "official_table": {
+        "name": "A-n33-k6",
+        "customers": 32,
+        "reported_K": 6,
+        "capacity": 100,
+        "UB": 742,
+        "Opt": "yes"
+      },
+      "official_table_evidence": {
+        "path": "sources/A-n33-k6.official_table_row.html",
+        "size_bytes": 2537,
+        "sha256": "79af777b1dc2d271ec10c3bb271bbad29c58285daf7f74638fa8dd57120886f3"
+      },
+      "geometry_sha256": "2f32737896a3ac04b2a4e6dc5ce7793f48aaac965c9a8bfaf8894ddeb83d4e29",
+      "solver_input": {
+        "path": "solver_inputs/A-n33-k6.instance.json",
+        "size_bytes": 13372,
+        "sha256": "a18429bf238d63f01ada86718850b75722fc3ec7a9156be9fafb5e9fbaf2a1d2"
+      },
+      "reference_answer": {
+        "path": "references/A-n33-k6.reference_solution.json",
+        "size_bytes": 1115,
+        "sha256": "abb44eff4ce6c70caeca93967abec1d761c6d76b0b701d6ac78f5e96582505a2"
+      },
+      "reference_feasibility_checked": true,
+      "optimality_independently_proved": false
+    },
+    {
+      "name": "B-n34-k5",
+      "family": "B",
+      "dimension": 34,
+      "customers": 33,
+      "reported_K": 5,
+      "capacity": 100,
+      "total_demand": 457,
+      "capacity_lower_bound_routes": 5,
+      "local_protocol": {
+        "route_constraint": "K_used <= reported_K",
+        "max_vehicles": 5,
+        "routes_nonempty": true,
+        "official_upper_bound_relation_explicitly_specified": null,
+        "semantic_boundary": "Official table |K| and COMMENT No of trucks report K, but retrieved raw files do not explicitly define exact-K versus upper-bound semantics; this is a separately declared local protocol. Do not assume all instances use K=5.",
+        "exact_K_equivalent_here_by_capacity_lower_bound": true
+      },
+      "raw_instance": {
+        "path": "raw/B-n34-k5.vrp",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/32",
+        "request_started_utc": "2026-10-08T00:43:46.825162+00:00",
+        "method": "GET",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/32",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "744",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:43:33 GMT",
+          "Last-Modified": "Sat, 15 Aug 2020 22:48:16 GMT",
+          "Content-Disposition": "attachment; filename=B-n34-k5.vrp",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:43:49.974866+00:00",
+        "sha256": "e4dee2fb80782ea7d922a890715d85ac8488f089d72d3ceb6b744e82ccd407ac",
+        "size_bytes": 744,
+        "network_wall_seconds": 3.149735729006352
+      },
+      "raw_reference_solution": {
+        "path": "references/B-n34-k5.sol",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/32",
+        "request_started_utc": "2026-10-08T00:45:26.771048+00:00",
+        "selection_freeze_sha256": "06783cf1085234984c144c47d60df799039c6fbaf93234b45834344d794940f1",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/32",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "149",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:45:13 GMT",
+          "Last-Modified": "Sun, 16 Aug 2020 00:42:29 GMT",
+          "Content-Disposition": "attachment; filename=B-n34-k5.sol",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:45:30.132388+00:00",
+        "sha256": "08a7b3ee54aac0f6e8b9bf63d0a7afd94443fd7770861823017c9087487ad17c",
+        "size_bytes": 149,
+        "network_wall_seconds": 3.361296339004184
+      },
+      "official_table": {
+        "name": "B-n34-k5",
+        "customers": 33,
+        "reported_K": 5,
+        "capacity": 100,
+        "UB": 788,
+        "Opt": "yes"
+      },
+      "official_table_evidence": {
+        "path": "sources/B-n34-k5.official_table_row.html",
+        "size_bytes": 2540,
+        "sha256": "8726ecace48f12e48b28d33206277934da8644e8c13c95f62d6f62e5dacde053"
+      },
+      "geometry_sha256": "641482c8a1132a564ff183658911569622380e9be68c7c8cf6f601b5a18a21cc",
+      "solver_input": {
+        "path": "solver_inputs/B-n34-k5.instance.json",
+        "size_bytes": 13920,
+        "sha256": "ff9a54a800fd8c77066fac7e554f1662dadbf3f3aab32775494edeb49fbb6875"
+      },
+      "reference_answer": {
+        "path": "references/B-n34-k5.reference_solution.json",
+        "size_bytes": 1099,
+        "sha256": "818995981079b162d667465ba13cb52f751b281a026277fcae0b6bd4379969ca"
+      },
+      "reference_feasibility_checked": true,
+      "optimality_independently_proved": false
+    },
+    {
+      "name": "B-n35-k5",
+      "family": "B",
+      "dimension": 35,
+      "customers": 34,
+      "reported_K": 5,
+      "capacity": 100,
+      "total_demand": 437,
+      "capacity_lower_bound_routes": 5,
+      "local_protocol": {
+        "route_constraint": "K_used <= reported_K",
+        "max_vehicles": 5,
+        "routes_nonempty": true,
+        "official_upper_bound_relation_explicitly_specified": null,
+        "semantic_boundary": "Official table |K| and COMMENT No of trucks report K, but retrieved raw files do not explicitly define exact-K versus upper-bound semantics; this is a separately declared local protocol. Do not assume all instances use K=5.",
+        "exact_K_equivalent_here_by_capacity_lower_bound": true
+      },
+      "raw_instance": {
+        "path": "raw/B-n35-k5.vrp",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/33",
+        "request_started_utc": "2026-10-08T00:43:53.004755+00:00",
+        "method": "GET",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/33",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "775",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:43:38 GMT",
+          "Last-Modified": "Sat, 15 Aug 2020 22:48:15 GMT",
+          "Content-Disposition": "attachment; filename=B-n35-k5.vrp",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:43:55.665645+00:00",
+        "sha256": "d5047a1b09c3b55127fe2954c01412b847b2f436e7c4eae3d4e932dc3374c765",
+        "size_bytes": 775,
+        "network_wall_seconds": 2.6609166400012327
+      },
+      "raw_reference_solution": {
+        "path": "references/B-n35-k5.sol",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/33",
+        "request_started_utc": "2026-10-08T00:45:30.132765+00:00",
+        "selection_freeze_sha256": "06783cf1085234984c144c47d60df799039c6fbaf93234b45834344d794940f1",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/33",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "152",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:45:17 GMT",
+          "Last-Modified": "Sun, 16 Aug 2020 00:42:29 GMT",
+          "Content-Disposition": "attachment; filename=B-n35-k5.sol",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:45:34.677064+00:00",
+        "sha256": "542e9b721fa3c9684726e2e084755fc9c3cc9bfc1eda27c0ee32d0fa5a1f1ca1",
+        "size_bytes": 152,
+        "network_wall_seconds": 4.544319887005258
+      },
+      "official_table": {
+        "name": "B-n35-k5",
+        "customers": 34,
+        "reported_K": 5,
+        "capacity": 100,
+        "UB": 955,
+        "Opt": "yes"
+      },
+      "official_table_evidence": {
+        "path": "sources/B-n35-k5.official_table_row.html",
+        "size_bytes": 2540,
+        "sha256": "0a89fbf31adf96dcc73c5623ca3a8b15fec1b3b73948ab9a0ffd423f96a5d3ec"
+      },
+      "geometry_sha256": "2df85cc6dfe0c56fd6cbbc055d88f62ab144ac3b5b66cdf045276e824a594cf5",
+      "solver_input": {
+        "path": "solver_inputs/B-n35-k5.instance.json",
+        "size_bytes": 14825,
+        "sha256": "5d59c01ce30e7a39ede603313503557a4b242ccaa9a31a3c77936e0d5331621a"
+      },
+      "reference_answer": {
+        "path": "references/B-n35-k5.reference_solution.json",
+        "size_bytes": 1109,
+        "sha256": "a622b863d86481901a83c2f47d71435596b451fa5917964e97cc27d7cab79683"
+      },
+      "reference_feasibility_checked": true,
+      "optimality_independently_proved": false
+    },
+    {
+      "name": "P-n45-k5",
+      "family": "P",
+      "dimension": 45,
+      "customers": 44,
+      "reported_K": 5,
+      "capacity": 150,
+      "total_demand": 692,
+      "capacity_lower_bound_routes": 5,
+      "local_protocol": {
+        "route_constraint": "K_used <= reported_K",
+        "max_vehicles": 5,
+        "routes_nonempty": true,
+        "official_upper_bound_relation_explicitly_specified": null,
+        "semantic_boundary": "Official table |K| and COMMENT No of trucks report K, but retrieved raw files do not explicitly define exact-K versus upper-bound semantics; this is a separately declared local protocol. Do not assume all instances use K=5.",
+        "exact_K_equivalent_here_by_capacity_lower_bound": true
+      },
+      "raw_instance": {
+        "path": "raw/P-n45-k5.vrp",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/83",
+        "request_started_utc": "2026-10-08T00:43:58.191848+00:00",
+        "method": "GET",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/83",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "844",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:43:45 GMT",
+          "Last-Modified": "Sat, 15 Aug 2020 22:47:32 GMT",
+          "Content-Disposition": "attachment; filename=P-n45-k5.vrp",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:44:02.052076+00:00",
+        "sha256": "35a678e55fc5a0b9371a76d77a59d698da4df2c625ef6928ac0eac96912b15ca",
+        "size_bytes": 844,
+        "network_wall_seconds": 3.8602777360065375
+      },
+      "raw_reference_solution": {
+        "path": "references/P-n45-k5.sol",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/83",
+        "request_started_utc": "2026-10-08T00:45:34.677492+00:00",
+        "selection_freeze_sha256": "06783cf1085234984c144c47d60df799039c6fbaf93234b45834344d794940f1",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/83",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "187",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:45:20 GMT",
+          "Last-Modified": "Sun, 16 Aug 2020 00:42:29 GMT",
+          "Content-Disposition": "attachment; filename=P-n45-k5.sol",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:45:37.312875+00:00",
+        "sha256": "68cb1a6de37fc312e1b4ab0c2a704ce0b5331ef2aea9d1e72c8deab11400b804",
+        "size_bytes": 187,
+        "network_wall_seconds": 2.6353563650045544
+      },
+      "official_table": {
+        "name": "P-n45-k5",
+        "customers": 44,
+        "reported_K": 5,
+        "capacity": 150,
+        "UB": 510,
+        "Opt": "yes"
+      },
+      "official_table_evidence": {
+        "path": "sources/P-n45-k5.official_table_row.html",
+        "size_bytes": 2541,
+        "sha256": "ddbab62b67cc082b1c39e4e944ae37ffb74b53af83cd1c967ca2cb2b59a3e48f"
+      },
+      "geometry_sha256": "a3fa4e8491b8d1f4c41b49635f09781bed224040645361f983c248cdfe31a311",
+      "solver_input": {
+        "path": "solver_inputs/P-n45-k5.instance.json",
+        "size_bytes": 23377,
+        "sha256": "4fab11acda789ad1ab99540513a2c0816c221cb1087ca73dae834ba857b2cf7f"
+      },
+      "reference_answer": {
+        "path": "references/P-n45-k5.reference_solution.json",
+        "size_bytes": 1210,
+        "sha256": "1c21ad5f7005ce665cb69d97b7155972c2cc66319cb4c134d0c8c238d9489a33"
+      },
+      "reference_feasibility_checked": true,
+      "optimality_independently_proved": false
+    },
+    {
+      "name": "P-n50-k10",
+      "family": "P",
+      "dimension": 50,
+      "customers": 49,
+      "reported_K": 10,
+      "capacity": 100,
+      "total_demand": 951,
+      "capacity_lower_bound_routes": 10,
+      "local_protocol": {
+        "route_constraint": "K_used <= reported_K",
+        "max_vehicles": 10,
+        "routes_nonempty": true,
+        "official_upper_bound_relation_explicitly_specified": null,
+        "semantic_boundary": "Official table |K| and COMMENT No of trucks report K, but retrieved raw files do not explicitly define exact-K versus upper-bound semantics; this is a separately declared local protocol. Do not assume all instances use K=5.",
+        "exact_K_equivalent_here_by_capacity_lower_bound": true
+      },
+      "raw_instance": {
+        "path": "raw/P-n50-k10.vrp",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/86",
+        "request_started_utc": "2026-10-08T00:44:05.335387+00:00",
+        "method": "GET",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/instance/86",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "934",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:43:51 GMT",
+          "Last-Modified": "Sat, 15 Aug 2020 22:47:31 GMT",
+          "Content-Disposition": "attachment; filename=P-n50-k10.vrp",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:44:08.685459+00:00",
+        "sha256": "4f11c9fdc78fb16223e035fc91aac8f43a7af111b65535c02bef2ce0d9e2b410",
+        "size_bytes": 934,
+        "network_wall_seconds": 3.350097350004944
+      },
+      "raw_reference_solution": {
+        "path": "references/P-n50-k10.sol",
+        "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/86",
+        "request_started_utc": "2026-10-08T00:45:37.313427+00:00",
+        "selection_freeze_sha256": "06783cf1085234984c144c47d60df799039c6fbaf93234b45834344d794940f1",
+        "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/86",
+        "status": 200,
+        "headers": {
+          "Server": "nginx/1.28.0",
+          "Content-Type": "text/plain; charset=UTF-8",
+          "Content-Length": "248",
+          "Connection": "close",
+          "Cache-Control": "public",
+          "Date": "Thu, 08 Oct 2026 00:45:23 GMT",
+          "Last-Modified": "Sun, 16 Aug 2020 00:42:29 GMT",
+          "Content-Disposition": "attachment; filename=P-n50-k10.sol",
+          "Accept-Ranges": "bytes"
+        },
+        "retrieved_utc": "2026-10-08T00:45:40.275412+00:00",
+        "sha256": "87269cfa6a75575f030481812f975244f1b9ee536e2ffba9428f5b46b85df225",
+        "size_bytes": 248,
+        "network_wall_seconds": 2.9619578620040556
+      },
+      "official_table": {
+        "name": "P-n50-k10",
+        "customers": 49,
+        "reported_K": 10,
+        "capacity": 100,
+        "UB": 696,
+        "Opt": "yes"
+      },
+      "official_table_evidence": {
+        "path": "sources/P-n50-k10.official_table_row.html",
+        "size_bytes": 2543,
+        "sha256": "1e4631ad15bc1bc7073a14f8bfa28badfc8b62ba2c91cd3f435ce48a9b6935fc"
+      },
+      "geometry_sha256": "5f277eb44094070bc917d46bbf3af8c65d8e65df37c218732f09eb62e4ab833e",
+      "solver_input": {
+        "path": "solver_inputs/P-n50-k10.instance.json",
+        "size_bytes": 28384,
+        "sha256": "de211365f28def576e1093470f6d29c6f2155cbc659d039d6780417b3cc0b7a0"
+      },
+      "reference_answer": {
+        "path": "references/P-n50-k10.reference_solution.json",
+        "size_bytes": 1399,
+        "sha256": "ac12f01d485e39823c720d2e82d5170d7bb30aaca56b723edc53e6d2e1394741"
+      },
+      "reference_feasibility_checked": true,
+      "optimality_independently_proved": false
+    }
+  ],
+  "source_version_or_commit": null,
+  "version_note": "Official HTTP byte snapshots identified by SHA256; no immutable upstream commit exposed.",
+  "reused_parser": {
+    "copy": {
+      "path": "reused_approved_prepare_data.py",
+      "size_bytes": 15523,
+      "sha256": "88b889ebbc6b5d00f1e95cedd8341f11e768d2233463c04931970f3799da8b6c"
+    },
+    "original_source_path": "/workspace/shared/official_cvrp_benchmarks_20261008/prepare_data.py",
+    "original_source_sha256": "88b889ebbc6b5d00f1e95cedd8341f11e768d2233463c04931970f3799da8b6c",
+    "functions_reused": [
+      "parse_instance",
+      "parse_solution",
+      "exact_nint_distance"
+    ],
+    "original_files_modified": false,
+    "original_main_executed": false
+  },
+  "reused_authority_source_snapshots": [
+    {
+      "path": "sources/cvrplib_terms.html",
+      "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/register/terms",
+      "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/register/terms",
+      "retrieved_utc": "2026-10-07T23:51:45.064192+00:00",
+      "status": 200,
+      "size_bytes": 20427,
+      "sha256": "42897793fcd57994d6976b1c34f99106818d03d2505b1fe7c9cab1b0fc5ac4fa",
+      "headers": {
+        "Server": "nginx/1.28.0",
+        "Content-Type": "text/html; charset=UTF-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "close",
+        "Cache-Control": "max-age=0, must-revalidate, private",
+        "Date": "Wed, 07 Oct 2026 23:51:28 GMT",
+        "Expires": "Wed, 07 Oct 2026 23:51:28 GMT"
+      },
+      "version_commit": null
+    },
+    {
+      "path": "sources/cvrplib_about.html",
+      "requested_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/about",
+      "final_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/about",
+      "retrieved_utc": "2026-10-07T23:52:03.833257+00:00",
+      "status": 200,
+      "size_bytes": 18470,
+      "sha256": "0ea0d0bf504c4b81d306a53aa5410af50616f83a98f570ac4f6ef6c0827d663c",
+      "headers": {
+        "Server": "nginx/1.28.0",
+        "Content-Type": "text/html; charset=UTF-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "close",
+        "Cache-Control": "max-age=0, must-revalidate, private",
+        "Date": "Wed, 07 Oct 2026 23:51:46 GMT",
+        "Expires": "Wed, 07 Oct 2026 23:51:46 GMT"
+      },
+      "version_commit": null
+    },
+    {
+      "path": "sources/tsplib_home.html",
+      "requested_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/",
+      "final_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/",
+      "retrieved_utc": "2026-10-07T23:51:40.060410+00:00",
+      "status": 200,
+      "size_bytes": 5786,
+      "sha256": "117c322b88f33a067bb4a499f8daa126f59c9016cfef106e2db1b6a3a631d914",
+      "headers": {
+        "Accept-Ranges": "bytes",
+        "Alt-Svc": "h3=\":443\"; ma=2592000",
+        "Content-Length": "5786",
+        "Content-Type": "text/html; charset=utf-8",
+        "Etag": "\"tjcgtq4gq\"",
+        "Last-Modified": "Thu, 06 Aug 2026 10:51:26 GMT",
+        "Server": "Caddy",
+        "X-Content-Type-Options": "nosniff",
+        "Date": "Wed, 07 Oct 2026 23:51:39 GMT",
+        "Connection": "close"
+      },
+      "version_commit": null
+    },
+    {
+      "path": "sources/tsplib_faq.html",
+      "requested_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/TSPFAQ.html",
+      "final_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/TSPFAQ.html",
+      "retrieved_utc": "2026-10-07T23:51:54.636296+00:00",
+      "status": 200,
+      "size_bytes": 6195,
+      "sha256": "807497c11eb6ea5b1759fd07e557548a96a3b0eeafcf53b09ae23d20c435e470",
+      "headers": {
+        "Accept-Ranges": "bytes",
+        "Alt-Svc": "h3=\":443\"; ma=2592000",
+        "Content-Length": "6195",
+        "Content-Type": "text/html; charset=utf-8",
+        "Etag": "\"tjjwre4s3\"",
+        "Last-Modified": "Mon, 10 Aug 2026 11:18:50 GMT",
+        "Server": "Caddy",
+        "X-Content-Type-Options": "nosniff",
+        "Date": "Wed, 07 Oct 2026 23:51:54 GMT",
+        "Connection": "close"
+      },
+      "version_commit": null
+    },
+    {
+      "path": "sources/tsplib95.pdf",
+      "requested_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/tsp95.pdf",
+      "final_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/tsp95.pdf",
+      "retrieved_utc": "2026-10-07T23:51:59.534691+00:00",
+      "status": 200,
+      "size_bytes": 137370,
+      "sha256": "4a3c4dd2074301c6aaa31eea1a817fe7edf004f4b805d4f56bb1ce68ed3639d3",
+      "headers": {
+        "Accept-Ranges": "bytes",
+        "Alt-Svc": "h3=\":443\"; ma=2592000",
+        "Content-Length": "137370",
+        "Content-Type": "application/pdf",
+        "Etag": "\"pyndtk2xzu\"",
+        "Last-Modified": "Mon, 30 Sep 2019 14:05:44 GMT",
+        "Server": "Caddy",
+        "X-Content-Type-Options": "nosniff",
+        "Date": "Wed, 07 Oct 2026 23:51:59 GMT",
+        "Connection": "close"
+      },
+      "version_commit": null
+    }
+  ],
+  "distance_definition": "d_ij=floor(sqrt((x_i-x_j)^2+(y_i-y_j)^2)+0.5); round each edge before summing, never Python round or continuous total",
+  "distance_authority": {
+    "url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/tsp95.pdf",
+    "section": "2.1 printed p.6 PDF index 5",
+    "nint_faq_url": "https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/tsp/TSPFAQ.html"
+  },
+  "duplicate_coordinate_policy": "preserve every customer and its demand; geometry dedup compares multisets and does not merge customers",
+  "triangle_inequality_assumed": false,
+  "license": {
+    "terms_url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/register/terms",
+    "terms_updated": "December 2025",
+    "research_use": "CVRPLIB Terms section 6 says instances and datasets are provided for research use.",
+    "public_redistribution_rights": "not established; dataset-specific additional terms may apply",
+    "spdx_data_license": null,
+    "code_license_does_not_license_data": true,
+    "intended_storage": "private research package only; parent review required before authorized private Drive upload"
+  },
+  "information_firewall": {
+    "solver_inputs_directory": "solver_inputs/",
+    "reference_answers_directory": "references/",
+    "raw_vrp_contains_reference_cost_in_COMMENT": true,
+    "raw_and_source_files_for_audit_only": "Never expose raw .vrp, official rows, manifest or references to algorithm/model prompts; solver consumes only solver_inputs/*.instance.json.",
+    "selected_without_reference_routes_cost_gap_or_neutral_results": true,
+    "algorithm_selection_or_execution_performed": false,
+    "later_fixed_method_needs_new_preregistration": true
+  },
+  "no_software_installed": true,
+  "no_downloaded_code_executed": true,
+  "no_solver_or_model_run": true,
+  "no_external_upload": true,
+  "coordinate_overlap_audit": {
+    "path": "audit/geometry_overlap.json",
+    "size_bytes": 45410,
+    "sha256": "67dd2fd3cc3e0cdd4dda242f35086e224420fe63f7df5f737e09adb1749d9f33"
+  },
+  "statistical_dependence_boundary": {
+    "different_official_instance_count": 6,
+    "different_complete_depot_plus_customer_multiset_count": 6,
+    "statistical_independence_not_claimed": true,
+    "important_overlap": {
+      "old": "P-n40-k5",
+      "new": "P-n45-k5",
+      "same_depot": true,
+      "shared_customer_coordinate_multiset_count": 39,
+      "old_customer_count": 39,
+      "new_customer_count": 44,
+      "old_is_customer_submultiset_of_new": true,
+      "shared_fraction_of_new": 0.8863636363636364
+    },
+    "selection_unchanged_after_descriptive_audit": true,
+    "reporting_rule": "Do not count repeated seeds or correlated geometries as independent samples; low coordinate overlap alone is not proof of independence."
+  },
+  "resource_accounting": {
+    "path": "audit/resource_accounting.json",
+    "size_bytes": 1648,
+    "sha256": "8cbb0086e0f4f201fe9a01595eb3174b43fdd8effed657c03e3f156f685b3887"
+  },
+  "source_visibility_boundary": "Official catalog includes UB/Opt metadata and raw .vrp COMMENT includes reference values. Those fields were not used as selection factors; this is rule-frozen selection, not a claim that the preparer never saw public costs.",
+  "finalized_utc": "2026-10-08T00:48:40.936867+00:00"
+}

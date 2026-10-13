@@ -1,0 +1,125 @@
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  padding: var(--s4);
+  min-width: 0;
+}
+
+.panelHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin-bottom: var(--s3);
+}
+
+.panelHeadMain {
+  min-width: 0;
+}
+
+.panelTitle {
+  font-size: var(--fs-16);
+  font-weight: 600;
+}
+
+.panelSub {
+  margin-top: 3px;
+  font-size: var(--fs-13);
+  color: var(--ink-3);
+  line-height: 1.55;
+}
+
+.panelAside {
+  flex-shrink: 0;
+}
+
+.spinner {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s5);
+  color: var(--ink-3);
+  font-size: var(--fs-13);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong);
+  border-top-color: var(--bf);
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error {
+  display: flex;
+  gap: var(--s3);
+  padding: var(--s4);
+  background: var(--fail-wash);
+  border: 1px solid color-mix(in srgb, var(--fail) 24%, transparent);
+  border-radius: var(--r-panel);
+}
+
+.errorIcon {
+  color: var(--fail);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.errorBody {
+  display: grid;
+  gap: 6px;
+}
+
+.errorTitle {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.errorDetail {
+  font-size: var(--fs-13);
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+.retry {
+  justify-self: start;
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-control);
+  background: var(--panel);
+  color: var(--ink);
+  font-size: var(--fs-13);
+}
+
+.retry:hover {
+  background: var(--inset);
+}
+
+.empty {
+  padding: var(--s5);
+  text-align: center;
+  color: var(--ink-3);
+  display: grid;
+  gap: 4px;
+}
+
+.emptyTitle {
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.emptyDetail {
+  font-size: var(--fs-13);
+}

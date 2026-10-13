@@ -1,0 +1,69 @@
+{
+  "utc": "2026-10-09T01:58:08.309905+00:00",
+  "comparison": "New5s versus previously observed historical1s, cross-period descriptive only",
+  "planned_tasks": 12,
+  "planned_calls_each_budget": 36,
+  "historical1s_valid_calls": 36,
+  "new5s_valid_calls": 36,
+  "historical1s_complete_tasks": 12,
+  "new5s_complete_tasks": 12,
+  "paired_complete_tasks": 12,
+  "historical1s_all12_mean_reference_gap_percent": 2.6483161483549815,
+  "new5s_all12_mean_reference_gap_percent": 1.273383409349262,
+  "all12_new5s_minus_historical1s_gap_pp": -1.3749327390057196,
+  "all12_historical1s_minus_new5s_reduction_pp": 1.3749327390057196,
+  "available_paired_complete_task_mean_delta_pp": -1.3749327390057196,
+  "available_paired_complete_task_denominator": 12,
+  "paired_seed_outcomes": {
+    "IMPROVED": 36,
+    "EQUAL": 0,
+    "WORSE": 0,
+    "UNAVAILABLE": 0
+  },
+  "reference_equality_counts": {
+    "historical1s": 0,
+    "new5s": 5
+  },
+  "below_reference_counts": {
+    "historical1s": 0,
+    "new5s": 0
+  },
+  "no_monotonicity_assumption": true,
+  "no_causal_budget_only_claim": true,
+  "no_equal_compute_or_speed_claim": true,
+  "optimizer_rerun": false,
+  "bands": [
+    {
+      "band": 1,
+      "planned_tasks": 3,
+      "paired_complete_tasks": 3,
+      "historical1s_mean_gap_percent": 1.0493935799140077,
+      "new5s_mean_gap_percent": 0.09524274894063733,
+      "new_minus_historical_gap_pp": -0.9541508309733704
+    },
+    {
+      "band": 2,
+      "planned_tasks": 3,
+      "paired_complete_tasks": 3,
+      "historical1s_mean_gap_percent": 3.092086138873374,
+      "new5s_mean_gap_percent": 1.3315893247308994,
+      "new_minus_historical_gap_pp": -1.7604968141424744
+    },
+    {
+      "band": 3,
+      "planned_tasks": 3,
+      "paired_complete_tasks": 3,
+      "historical1s_mean_gap_percent": 3.284295496149682,
+      "new5s_mean_gap_percent": 1.807514054162418,
+      "new_minus_historical_gap_pp": -1.4767814419872642
+    },
+    {
+      "band": 4,
+      "planned_tasks": 3,
+      "paired_complete_tasks": 3,
+      "historical1s_mean_gap_percent": 3.167489378482863,
+      "new5s_mean_gap_percent": 1.8591875095630939,
+      "new_minus_historical_gap_pp": -1.3083018689197694
+    }
+  ]
+}

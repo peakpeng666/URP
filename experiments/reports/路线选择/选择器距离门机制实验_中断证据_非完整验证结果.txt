@@ -1,0 +1,23 @@
+距离门机制实验v1：中断交付报告
+
+结论：没有完整测试结论；实验不补跑。
+已完成347/576求解请求，已开始348。C校准192槽完整，E测试仅155/384槽完成。1槽已开始后中断，228槽尚未开始。
+全部已完成结果、失败、计划未执行项均保留。E计划分母仍为64题×3重复、16独立基础geometry。不得把已完成的测试前缀当完整新验证。
+
+校准按预注册选择r=1.0，margin仍0.01；选中候选C96/96观测成功，零额外失败，3题变体/2基础组采用非PCI，等组质量改善约0.201%。此数是择优校准分数，不能当测试收益。
+原固定预测、所有GC候选、请求顺序均先封存；C阈值与E最终决策再次锁定后才有任何E求解。
+
+中断：child Python收到SIGKILL，bash退出码137；实测wall118.965秒，user87.623秒+system23.635秒=CPU111.258秒，未显示触及180CPU硬限。具体原因未知。
+请求前RSS从约57MiB升至约2157MiB，存在明显内存累积；没有可读cgroup/OOM事件，不能归因OOM。墙钟接近120秒也不足以归因工具超时。launcher只设置yield_time_ms=1000并获得session88129，未设置且接口未暴露timeout参数；shell存活并完成after_exit。
+
+计账纠正：after_exit原脚本将exit137的未启动项误标NOT_RUN_BUDGET。原文件与冻结代码保持不动，runtime/termination_classification_erratum.json说明原因；正确账本为request_terminal_ledger_corrected.json和not_completed_corrected.json，使用INTERRUPTED/NOT_STARTED，原因unknown。
+科学冻结哈希复核零修改；未补抽、未改阈值、未重试、未执行剩余请求。
+
+数据入口：protocol/requests.json列576槽；raw/results.jsonl列347实际结果；raw/events.jsonl列348次开始；reports/observed_failures_before_interruption.json列全部已观察失败；reports/incomplete_test_policy_accounting.json按192计划观测保留每政策的缺失/中断状态，质量统计停止输出。
+实际主运行资源以runtime/shell_time.txt和shell_exit_receipt.json为准。postrun仅分析旧输出，不含求解，成本另计。独立审计也另计。
+这条机制实验独立于LLM BPP链；未读LLM heldout、未调用API、未上传。
+
+独审要求补充的机制支持限制（只核对封存决策，未用新测试成本）：
+1. 锁定GC在E只对6个题变体、3个独立基础组采用非PCI，低于预注册至少4组的支持门槛。因此即使补全测试，也不能达到这版预注册的继续研究正信号条件；本轮不补跑。
+2. G0和GW在全部96题都选择PCI，去窗宽门控恢复采用为0题、0组。本轮不能检验“移除窗宽项能恢复有益建议”。w20的2/3单维距离证明仍成立，但剩余七维也足以挡住建议；不能把结构证明等同于已找到有效门控修复。
+完整封存预测计数见reports/sealed_prediction_limits.json。

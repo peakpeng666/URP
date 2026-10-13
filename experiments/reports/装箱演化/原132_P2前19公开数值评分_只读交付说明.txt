@@ -1,0 +1,7 @@
+这是两个append已正常退出后、持有原独占锁复制的1–19交付快照。不可将快照当新评分目录；不要在快照中启用/运行append。准备阶段RUNBOOK/PREPARATION_REPORT的disabled和零计数是历史状态；本次实际完成状态以SUMMARY、55pack原回执和两个pass为准。保存的EXECUTION_SWITCH记录当时已获批启用，不构成再次执行授权。
+
+离线只读复核入口：python -B verify_delivery_snapshot.py
+该入口仅核验文件SHA和精确fitness算术，不启动候选、模型或数值worker。
+完整原科学数据/worker源码/精确依赖清单、R1公开答案与prompt元数据、逐slot/pack claim和原始数值回执均随包保留。
+原实时状态仍由根管理，后续追加只能回唯一原目录；这份前缀快照不再更新。
+不含未保存的provider原始HTTP/私有推理/完整assignment数组。原checker已实时核验，原backend仅保存assignment SHA等验收证据，未伪造额外原始流。

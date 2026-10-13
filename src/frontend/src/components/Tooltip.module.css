@@ -1,0 +1,22 @@
+.tip {
+  position: fixed;
+  z-index: 70;
+  max-width: 280px;
+  padding: 8px 10px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: var(--r-control);
+  font-size: var(--fs-12);
+  line-height: 1.5;
+  pointer-events: none;
+  box-shadow: var(--shadow-pop);
+}
+
+.tip :global(.k) {
+  color: #c6ccd2;
+}
+
+.tip :global(.v) {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}

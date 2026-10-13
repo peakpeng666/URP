@@ -1,0 +1,44 @@
+Generator contract for the next independently frozen phase
+Version 1 after the 2026-10-08 environment-bound technical validation
+PROPOSED PROMPT APPENDIX. NOT SENT TO A MODEL. DOES NOT AMEND ANY EXISTING FROZEN W/M PROMPT.
+
+Use the same appendix, fixed parent and execution rules for every arm. The training-condition description and its assigned feedback rows may differ only as preregistered.
+
+Task
+Return one mutation of the supplied fixed parent for online bin packing with capacity 100. Implement exactly def score(item, bins):. Use only the current item and the feasible residual capacities in their supplied original-index order, including empty bins. Do not use future items, runtime family labels, persistent cross-call state, external calls or tools. Optimize the preregistered exact mean of L1 / used_bins over the assigned training streams. No candidate feedback or measured improvement is available.
+
+Source format
+Return only UTF-8 Python source, no Markdown fences and no explanatory prose, at most 16384 bytes. Comments are allowed. There must be exactly one top-level score function, with exactly the arguments item and bins, no decorators, annotations or default arguments. Do not define helper functions, nested functions, classes, lambdas, imports, or module-level statements/docstrings. The defensive extractor can accept a single recognized Python code block, but that is not the requested output format.
+
+Execution environment
+This evaluator implements a finite numeric subset of Python, not arbitrary Python or all of NumPy. np is already bound to a restricted numeric façade. Do not import numpy. item is an int64 scalar; bins is a read-only one-dimensional int64 ndarray. Return an exact one-dimensional ndarray of the same length, with dtype int32, int64 or float64 and finite final values. Returning a Python scalar, a boolean vector, the wrong number of scores, infinity or NaN is invalid. The first maximum score in the supplied original order wins, including ties.
+
+Use this conservative source style
+Use straight-line local assignments and a final return. Keep local names ASCII, beginning with a letter and containing only letters, digits and single underscores. Do not rebind item, bins, np, score, len or range. Do not mutate arrays, write through subscripts or use vector augmented assignment such as +=. Avoid loops and indexing in this conservative generation request, even though the full evaluator admits certain bounded forms.
+
+Use numeric arithmetic and direct listed np calls only. Numeric operations include +, -, *, / and integer-literal powers from -8 to 8. Fractional powers such as x ** 0.5 are rejected; use np.sqrt(x). Constants must be finite, integer magnitude at most 1000000 or float magnitude at most 1e100, with at most 32 characters per numeric token. The evaluator also limits the AST to 4096 nodes and depth 64.
+
+For this generation request, keep to the following small API surface, with the exact positional signatures below:
+- np.exp(x), np.sqrt(x), np.log(x): one numeric scalar or vector, no keywords
+- np.where(condition, yes, no): three positional arguments; condition is a boolean scalar or mask, yes/no are numeric, and at least one argument is a vector
+- np.asarray(bins, dtype=np.float64): one vector and this exact dtype token
+- np.zeros_like(bins): one vector, no keywords
+
+Other APIs exist in the full frozen evaluator, but are outside this conservative request. The list above preserves the exp/sqrt/where calls used by the fixed parent. The input domain and finite-final requirement still constrain every formula.
+
+Boolean masks and conversions
+Do not multiply a boolean mask directly by a number. Use np.where(mask, 1.0, 0.0), or put the desired numeric branches directly inside np.where. Do not use float(item), int(...), np.float64(item), ndarray methods such as .astype(), callable aliases or custom helper calls. np.float64 is only an approved dtype token where the signature explicitly allows it. Numeric conversion of bins can use np.asarray(bins, dtype=np.float64); scalar expressions can use ordinary floating-point arithmetic without a cast.
+
+Numerical safety
+np.exp can overflow and np.log can produce a nonfinite intermediate. Intermediate nonfinites may be handled by the program under the existing bounded arithmetic-event policy; all final values must still be finite. Prefer formulas that are finite throughout the entire feasible input domain. A source can pass static admission yet fail the final shape or numeric checks. No source or output is automatically repaired.
+
+Minimal validated source example
+This is an interface example, not a claim of a new or improved algorithm. Its exact source bytes are supplied separately in VALIDATED_MINIMAL_EXAMPLE.py. For item 40 and bins [40, 60, 100], it produced [-40, -60, -100], selecting index 0.
+
+def score(item, bins):
+    return -bins
+
+A separate, exact tested np-binding example is in VALIDATED_NUMPY_EXAMPLE.py. It uses np.where(bins == item, 1.0, 0.0) without imports and produced [1.0, 0.0, 0.0] on the same input.
+
+Evidence and limits
+The 28 preregistered handwritten fixtures matched their expected outcomes in a newly bound current environment: 2 accepted and 4 rejected format examples; 9 admitted and 13 statically rejected source examples; of the 9 admitted examples, 7 produced valid final scores and 2 correctly failed numerical contracts. Each source was admitted once and received at most one frozen placement input. No full packing benchmark or extra toy was run. These tests validate those concrete cases; they are not an exhaustive language implementation audit, a complete security proof, evidence of higher model compliance, or an algorithm-performance result. In particular, np.exp was tested for the expected overflow failure, not across all finite inputs, and general parameter combinations remain untested.

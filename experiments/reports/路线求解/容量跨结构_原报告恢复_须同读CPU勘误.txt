@@ -1,0 +1,56 @@
+容量必要界：独立跨结构探索实验（2026-10-08）
+
+设计与独立性
+先保存生成协议和固定seed，再生成并冻结全部输入、源码和调用次序，之后一次性运行全部432次调用。48例为4族×4个车数×3个容量，每例一个独立需求多重集；按(K,Q,排序需求)与按需求/Q有理数归一化后的签名均48个独特结构，且与旧24例均零重叠。没有性能筛样、预算追增、择优报告或主实验重跑。冻结时间是本地自记录，并非第三方预注册。
+四族各12例：异质三元组、异质四元组、全局均匀有界组成、必不触发高松弛对照。K=4/7/10/13；三元族Q=37/61/89，四元族Q=41/67/97，全局组成Q=43/71/101，对照Q=47/73/103。三元/四元/对照由可行分组生成；全局组成仅条件于总需求及单客户界，未条件于可行性。全部正松弛。完整需求列表、seed和结构hash见freeze/MATRIX.json。
+三臂沿用旧版源码且字节不变：baseline容量DFS、仅满载剪枝full-tight、正松弛必要界new-bound。每输入三臂共享需求、几何、遍历次序与预算。预定端点：直接容量分区256节点、直接分区4096节点、完整初始化256节点。完整初始化包含savings→单次FFD→必要时容量DFS；直接分区端点无视前两步，仅用于隔离剪枝效果。节点包含root、完成及被剪枝状态。
+
+主要结果
+partition_256：baseline/full-tight/new-bound成功数 31/31/41（各48例）；节点总数 5601/5601/3303；新界新增成功10，丢失成功0；新界节点减少/增加/相等=17/0/31。
+  三臂状态：capacity_solver={'SUCCESS': 31, 'NODE_LIMIT': 17}；pruned_solver={'SUCCESS': 31, 'NODE_LIMIT': 17}；waste_solver={'SUCCESS': 41, 'NODE_LIMIT': 7}
+  bounded_global_composition：成功4/4/7（各12例）；节点2419/2419/1572；新剪枝650。
+  heterogeneous_quads：成功10/10/11（各12例）；节点838/838/644；新剪枝143。
+  heterogeneous_triples：成功5/5/11（各12例）；节点2026/2026/769；新剪枝279。
+  nontrigger_high_slack：成功12/12/12（各12例）；节点318/318/318；新剪枝0。
+  新增成功结构：S04-heterogeneous_triples-K7-Q37, S05-heterogeneous_triples-K7-Q61, S06-heterogeneous_triples-K7-Q89, S08-heterogeneous_triples-K10-Q61, S10-heterogeneous_triples-K13-Q37, S12-heterogeneous_triples-K13-Q89, S24-heterogeneous_quads-K13-Q97, S28-bounded_global_composition-K7-Q43, S31-bounded_global_composition-K10-Q43, S32-bounded_global_composition-K10-Q71
+partition_4096：baseline/full-tight/new-bound成功数 32/32/44（各48例）；节点总数 67070/67070/22922；新界新增成功12，丢失成功0；新界节点减少/增加/相等=20/0/28。
+  三臂状态：capacity_solver={'SUCCESS': 32, 'NODE_LIMIT': 16}；pruned_solver={'SUCCESS': 32, 'NODE_LIMIT': 16}；waste_solver={'SUCCESS': 44, 'NODE_LIMIT': 4}
+  bounded_global_composition：成功4/4/10（各12例）；节点33139/33139/13511；新剪枝7012。
+  heterogeneous_quads：成功10/10/11（各12例）；节点8518/8518/4484；新剪枝2560。
+  heterogeneous_triples：成功6/6/11（各12例）；节点25095/25095/4609；新剪枝3058。
+  nontrigger_high_slack：成功12/12/12（各12例）；节点318/318/318；新剪枝0。
+  新增成功结构：S05-heterogeneous_triples-K7-Q61, S06-heterogeneous_triples-K7-Q89, S08-heterogeneous_triples-K10-Q61, S10-heterogeneous_triples-K13-Q37, S12-heterogeneous_triples-K13-Q89, S24-heterogeneous_quads-K13-Q97, S28-bounded_global_composition-K7-Q43, S30-bounded_global_composition-K7-Q101, S31-bounded_global_composition-K10-Q43, S32-bounded_global_composition-K10-Q71, S34-bounded_global_composition-K13-Q43, S35-bounded_global_composition-K13-Q71
+initialize_256：baseline/full-tight/new-bound成功数 31/31/41（各48例）；节点总数 4913/4913/2615；新界新增成功10，丢失成功0；新界节点减少/增加/相等=17/0/31。
+  三臂状态：capacity_solver={'SUCCESS': 31, 'INITFAIL': 17}；pruned_solver={'SUCCESS': 31, 'INITFAIL': 17}；waste_solver={'SUCCESS': 41, 'INITFAIL': 7}
+  bounded_global_composition：成功4/4/7（各12例）；节点2419/2419/1572；新剪枝650。
+  heterogeneous_quads：成功10/10/11（各12例）；节点512/512/318；新剪枝143。
+  heterogeneous_triples：成功5/5/11（各12例）；节点1982/1982/725；新剪枝279。
+  nontrigger_high_slack：成功12/12/12（各12例）；节点0/0/0；新剪枝0。
+  新增成功结构：S04-heterogeneous_triples-K7-Q37, S05-heterogeneous_triples-K7-Q61, S06-heterogeneous_triples-K7-Q89, S08-heterogeneous_triples-K10-Q61, S10-heterogeneous_triples-K13-Q37, S12-heterogeneous_triples-K13-Q89, S24-heterogeneous_quads-K13-Q97, S28-bounded_global_composition-K7-Q43, S31-bounded_global_composition-K10-Q43, S32-bounded_global_composition-K10-Q71
+
+正确性与解释
+全局正松弛在每个部分分区保持不变，因此full-tight不触发；本次实测baseline与full-tight逐例状态、分组/路线输出及节点完全相同。高松弛对照用U≥K(m−1)预先证明绝不触发，不是观察结果后挑选的阴性样本。
+独立校验通过：314份成功输出的客户覆盖、车辆上限、容量和（若有路线）欧氏距离重算；36份独立可行见证；14774个剪枝现场的分配状态、剩余容量与W>U核验。节点限额失败不等于不可行；只有完整搜索耗尽或精确oracle能支持不可行。
+小规模独立oracle：40346个非负状态，用客户子集分配的精确真值检查必要界，无可行状态被误剪；2268个完整小分区三臂均与真值一致。另对预定全部n≤16的12个主实例使用最小箱数子集DP精确核验，与可判定的求解器输出一致。负需求/负余量作为非法输入拒绝。详细原始证据见raw/toy_states.jsonl、raw/toy_partition.jsonl与reports/ORACLE.json。
+数学证明：完成后全部K箱总空闲必须等于U=sum(residual)−sum(remaining)。剩余最小正需求为m时，每个0<r<m的箱子余量都不可再消耗，因此必留空闲W=sum(r:0<r<m)。W>U推出不可补全；反向不成立。该必要性与任何经验收益无关。证明副本见PROOF.txt。
+
+成本与限制
+partition_256三臂测量CPU总秒：0.015809/0.009028/0.024096；分区CPU总秒：0.015809/0.009028/0.024096。
+partition_4096三臂测量CPU总秒：0.056041/0.082437/0.119740；分区CPU总秒：0.056041/0.082437/0.119740。
+initialize_256三臂测量CPU总秒：0.060842/0.067396/0.096920；分区CPU总秒：0.003988/0.006043/0.025449。
+主实验子进程累计CPU=25.360937秒，父进程CPU=0.668839秒，wall=24.737833秒，子进程峰值RSS=30520KiB。oracle CPU=0.964459秒；审计CPU=0.457066秒。串行；每调用硬限1CPU秒、2wall秒、256MiB；主全局wall1000秒，累计子CPU450秒提前停止；oracle45CPU/90wall，审计60CPU/90wall，任务总限600CPU/1200wall/1GiB。没有超预算加跑。
+只有单次计时且调用很短，包含Python运行时噪声及记录剪枝现场成本；不能用本表声称稳定CPU加速。等节点不等CPU成本。4096是跑前冻结的第二预算，不是看256结果后追加。
+这是48个独特的人工构造结构，并非48个真实分布独立抽样；族内共享生成器、K/Q设计，不能当作总体统计推断。具有可行见证的生成族天然排除了不可行结构；全局组成族补充了不按可行性过滤的样本，但仍是人工分布。三个端点共享输入，不能把432次调用算作432个独立结构。未做真实官方CVRP性能验证、后续局部搜索、外部模型调用或任何付费服务，也不据此替换正式实验求解器。
+收益的范围必须按端点、预算和结构逐项阅读，不能复用旧N27/Q91结论或笼统声称跨所有结构泛化。新界是否提升找到可行解的比例、是否减少节点、是否增加CPU，是三个不同问题。
+
+复现与审计
+保留旧目录所有文件字节不改，源文件hash核验见provenance与reports/AUDIT.json。全部新文件集中于本目录。freeze/PRE_RUN_FREEZE.json锁定源代码、输入、见证、协议和计划；raw/STARTED.json在任何主调用前记录freeze哈希；逐调用stdout/stderr和结果JSONL保留完整证据。
+重算汇总及状态/输出审计：将本目录复制到新的空目录，保留freeze、input、witness、source、provenance、raw和reports/PROOF.txt、reports/ORACLE.json，删除新目录中其它派生reports文件，再运行python -B source/analyze.py以及source/report.py。文件使用排他创建，避免覆盖原始结果。完整重现主实验则另建新副本，保留冻结材料但清空raw及派生reports，依次运行source/oracle.py、source/run.py、source/analyze.py、source/report.py；这属于复现，不能混入本次首跑统计。源码中的旧目录校验在本环境可直接核验。
+最终SHA256SUMS.txt用于包内完整性核查；独立来源事实和归一化结构定义均有明确记录。
+
+补充核查与计时质量
+48例的纯需求多重集也全部不同，除去K/Q后没有重复。432次调用硬超时0次，程序错误/额外预算失败0次；完整初始化的17/17/7次失败全部源于容量DFS节点限额。
+每臂完整初始化均有24例进入容量DFS；对照12例均在前置构造阶段完成。
+CPU计时存在大量零读数：{'initialize_256': {'calls': 144, 'zero_measured_cpu': 89, 'wall_sum': 0.2212379310367396}, 'partition_256': {'calls': 144, 'zero_measured_cpu': 131, 'wall_sum': 0.04876131708442699}, 'partition_4096': {'calls': 144, 'zero_measured_cpu': 104, 'wall_sum': 0.27485497992893215}}。这些零表示短调用的计时分辨/调度限制，不表示零成本；虽然节点减少，新界CPU合计读数高于baseline，不能宣称速度提升。逐调用wall与原始CPU均保留。
+METRICS.csv中的delta_evaluations列因分析字段名不匹配而为空；原始budget.deltas完整保留，正确提取值及逐调用wall在ADDITIONAL_METRICS.csv。该报告修正只处理已有证据，未改冻结代码或重跑求解器。
+这里的独立校验指与求解器分离的重算代码和精确oracle逻辑，不代表另一人员/代理已完成外部复核。source/supplement.py为跑后新增分析代码，不属于跑前冻结清单。

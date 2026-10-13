@@ -1,0 +1,34 @@
+容量初始化尺度试验：单次冻结，36新输入×两臂＝72调用。
+仅初始化，不运行局部搜索；K为最多车辆数；Q=9；每臂delta上限100000，原DFS上限256已入节点（根与完成节点计入）。
+每规模每族4个独立uniform新几何，客户及仓库坐标均在[0,100]独立生成。两臂同输入，无筛选、oracle或见证热启动。
+tight为已见失败机制的规模重复，不是全新机制；feasible_random来自1..3三项组（容量至多9）并打乱标签；loose全1。所有36例事后见证核验可行。
+原继承源码全部字节相同，无n/K修正；现成参数化由9/27/54玩具验证。
+
+n=9 tight fixed_solver: 成功1/4，INITFAIL 3/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 1, 'ffd_capacity_construction_failed': 3}
+n=9 tight capacity_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用3，节点[59, 59, 59]，结局{'FOUND': 3}；终止{'initialization_complete': 4}
+n=9 feasible_random fixed_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=9 feasible_random capacity_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=9 loose fixed_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=9 loose capacity_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=27 tight fixed_solver: 成功0/4，INITFAIL 4/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'ffd_capacity_construction_failed': 4}
+n=27 tight capacity_solver: 成功0/4，INITFAIL 4/4，budget 0，错误0；DFS调用4，节点[256, 256, 256, 256]，结局{'NODE_LIMIT': 4}；终止{'capacity_partition_construction_failed': 4}
+n=27 feasible_random fixed_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=27 feasible_random capacity_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=27 loose fixed_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=27 loose capacity_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=54 tight fixed_solver: 成功0/4，INITFAIL 4/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'ffd_capacity_construction_failed': 4}
+n=54 tight capacity_solver: 成功0/4，INITFAIL 4/4，budget 0，错误0；DFS调用4，节点[256, 256, 256, 256]，结局{'NODE_LIMIT': 4}；终止{'capacity_partition_construction_failed': 4}
+n=54 feasible_random fixed_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=54 feasible_random capacity_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=54 loose fixed_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+n=54 loose capacity_solver: 成功4/4，INITFAIL 0/4，budget 0，错误0；DFS调用0，节点[]，结局{}；终止{'initialization_complete': 4}
+
+独立客户覆盖/容量/K/成本检查：成功输出均通过；失败不输出解。主进程CPU 0.161972s，wall 0.163535s，退出0，硬限CPU30/wall60s。
+DFS节点限额失败不是数学不可行；所有全成功描述只限该36输入及相应分组。每格仅4个几何，不可作可扩展或现实农业分布结论。不同n需求/几何实例并非相同实例放大配对。
+初始化delta之外，DFS节点是额外有界工作，分别报告CPU/wall；初始化成本不作搜索质量胜负。未执行后续搜索或oracle。
+原算法成功的配对：输出与delta严格相同。所有结果逐行fsync，结束hash封存后才读取独立见证。
+准备/玩具/分析/包装资源另列receipts，主跑仅一次，不盲重试。未调用模型/API、安装或上传；token费用未知。冻结/时间戳为本地证据，非第三方可信时间戳。
+
+补充审计：准备阶段原命令因/usr/bin/time缺失未启动；随后准备脚本错误地将新同名入口纳入继承源码一致性断言，准备退出1。生成的36输入全部保留，未运行solver、未重抽样；finish_prepare.py只限定继承来源列表并完成冻结。原失败源码、stderr和CPU receipt均保留。两次准备故障均发生在唯一主跑之前。
+总计原25/36成功，新28/36成功；53个成功输出均独立合法。规模增至27/54的这组tight输入暴露256节点后备上限，不能把先前n9救活外推为可扩展。
+打包阶段的CPU/退出receipt位于包旁capacity_fallback_scaling_20261008_packaging_receipt.json，避免打包时自我修改所收录日志。

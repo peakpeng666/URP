@@ -1,0 +1,58 @@
+官方CVRP等成本非等价状态中性接受开关：事后探索
+
+48轨迹合法 48/48；96检查点合法 96/96、达到预算 96/96。
+strict对原24轨迹非计时逐字段bitwise回归：24/24；40k/160k检查点也必须逐字节一致。
+唯一主跑退出码 0，wait4实际CPU 5.934455s、wall 5.959787s；硬限60CPU/90wall。
+这是复用已看过的3个官方实例与原4个seed的事后探索，不是新独立样本或heldout。seed不是实例。未预设收益。
+仅改变等整数成本且ID-canonical不同的接受规则；canonical去车辆标签和整路反向，保留真实ID；best仅严格改善更新。初始化、repair、160k计账均不变。
+所有mean/min/worst均在每实例/方法/开关的原4seed全分母上报告。
+
+A-n32-k5 | 40000 | cheapest | strict | legal 4/4 reached 4/4 | mean/min/worst cost 827.75/827/829 | mean/min/worst gap 5.5804/5.4847/5.7398% | neutral proposed/accepted/noop/strict-improved 7/0/98/12
+A-n32-k5 | 40000 | cheapest | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 827.75/827/829 | mean/min/worst gap 5.5804/5.4847/5.7398% | neutral proposed/accepted/noop/strict-improved 3/3/102/12
+A-n32-k5 | 40000 | regret2 | strict | legal 4/4 reached 4/4 | mean/min/worst cost 827/827/827 | mean/min/worst gap 5.4847/5.4847/5.4847% | neutral proposed/accepted/noop/strict-improved 8/0/202/16
+A-n32-k5 | 40000 | regret2 | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 827/827/827 | mean/min/worst gap 5.4847/5.4847/5.4847% | neutral proposed/accepted/noop/strict-improved 10/10/200/16
+A-n32-k5 | 160000 | cheapest | strict | legal 4/4 reached 4/4 | mean/min/worst cost 827/827/827 | mean/min/worst gap 5.4847/5.4847/5.4847% | neutral proposed/accepted/noop/strict-improved 42/0/473/15
+A-n32-k5 | 160000 | cheapest | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 827/827/827 | mean/min/worst gap 5.4847/5.4847/5.4847% | neutral proposed/accepted/noop/strict-improved 40/40/476/15
+A-n32-k5 | 160000 | regret2 | strict | legal 4/4 reached 4/4 | mean/min/worst cost 827/827/827 | mean/min/worst gap 5.4847/5.4847/5.4847% | neutral proposed/accepted/noop/strict-improved 40/0/873/16
+A-n32-k5 | 160000 | regret2 | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 827/827/827 | mean/min/worst gap 5.4847/5.4847/5.4847% | neutral proposed/accepted/noop/strict-improved 60/60/851/16
+B-n31-k5 | 40000 | cheapest | strict | legal 4/4 reached 4/4 | mean/min/worst cost 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | neutral proposed/accepted/noop/strict-improved 66/0/127/5
+B-n31-k5 | 40000 | cheapest | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | neutral proposed/accepted/noop/strict-improved 57/57/143/5
+B-n31-k5 | 40000 | regret2 | strict | legal 4/4 reached 4/4 | mean/min/worst cost 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | neutral proposed/accepted/noop/strict-improved 83/0/152/5
+B-n31-k5 | 40000 | regret2 | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | neutral proposed/accepted/noop/strict-improved 97/97/138/5
+B-n31-k5 | 160000 | cheapest | strict | legal 4/4 reached 4/4 | mean/min/worst cost 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | neutral proposed/accepted/noop/strict-improved 317/0/492/5
+B-n31-k5 | 160000 | cheapest | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | neutral proposed/accepted/noop/strict-improved 342/342/477/5
+B-n31-k5 | 160000 | regret2 | strict | legal 4/4 reached 4/4 | mean/min/worst cost 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | neutral proposed/accepted/noop/strict-improved 349/0/620/5
+B-n31-k5 | 160000 | regret2 | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 675/675/675 | mean/min/worst gap 0.4464/0.4464/0.4464% | neutral proposed/accepted/noop/strict-improved 431/431/541/5
+P-n40-k5 | 40000 | cheapest | strict | legal 4/4 reached 4/4 | mean/min/worst cost 508.75/507/512 | mean/min/worst gap 11.0808/10.6987/11.7904% | neutral proposed/accepted/noop/strict-improved 1/0/53/7
+P-n40-k5 | 40000 | cheapest | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 508.75/507/512 | mean/min/worst gap 11.0808/10.6987/11.7904% | neutral proposed/accepted/noop/strict-improved 1/1/53/7
+P-n40-k5 | 40000 | regret2 | strict | legal 4/4 reached 4/4 | mean/min/worst cost 506/503/507 | mean/min/worst gap 10.4803/9.8253/10.6987% | neutral proposed/accepted/noop/strict-improved 15/0/116/8
+P-n40-k5 | 40000 | regret2 | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 503.25/496/507 | mean/min/worst gap 9.8799/8.2969/10.6987% | neutral proposed/accepted/noop/strict-improved 6/6/111/11
+P-n40-k5 | 160000 | cheapest | strict | legal 4/4 reached 4/4 | mean/min/worst cost 504.25/500/507 | mean/min/worst gap 10.0983/9.1703/10.6987% | neutral proposed/accepted/noop/strict-improved 6/0/273/13
+P-n40-k5 | 160000 | cheapest | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 504.25/500/507 | mean/min/worst gap 10.0983/9.1703/10.6987% | neutral proposed/accepted/noop/strict-improved 9/9/266/13
+P-n40-k5 | 160000 | regret2 | strict | legal 4/4 reached 4/4 | mean/min/worst cost 503.25/503/504 | mean/min/worst gap 9.8799/9.8253/10.0437% | neutral proposed/accepted/noop/strict-improved 38/0/514/14
+P-n40-k5 | 160000 | regret2 | neutral | legal 4/4 reached 4/4 | mean/min/worst cost 485.25/458/503 | mean/min/worst gap 5.9498/0.0000/9.8253% | neutral proposed/accepted/noop/strict-improved 14/14/483/25
+
+配对结果（相同实例/方法/seed，neutral best - strict best；负为改善）：
+A-n32-k5 | 40000 | cheapest | improved/worsened/same/missing 0/0/4/0 | mean cost difference 0
+A-n32-k5 | 40000 | regret2 | improved/worsened/same/missing 0/0/4/0 | mean cost difference 0
+A-n32-k5 | 160000 | cheapest | improved/worsened/same/missing 0/0/4/0 | mean cost difference 0
+A-n32-k5 | 160000 | regret2 | improved/worsened/same/missing 0/0/4/0 | mean cost difference 0
+B-n31-k5 | 40000 | cheapest | improved/worsened/same/missing 0/0/4/0 | mean cost difference 0
+B-n31-k5 | 40000 | regret2 | improved/worsened/same/missing 0/0/4/0 | mean cost difference 0
+B-n31-k5 | 160000 | cheapest | improved/worsened/same/missing 0/0/4/0 | mean cost difference 0
+B-n31-k5 | 160000 | regret2 | improved/worsened/same/missing 0/0/4/0 | mean cost difference 0
+P-n40-k5 | 40000 | cheapest | improved/worsened/same/missing 0/0/4/0 | mean cost difference 0
+P-n40-k5 | 40000 | regret2 | improved/worsened/same/missing 1/0/3/0 | mean cost difference -2.75
+P-n40-k5 | 160000 | cheapest | improved/worsened/same/missing 0/0/4/0 | mean cost difference 0
+P-n40-k5 | 160000 | regret2 | improved/worsened/same/missing 3/0/1/0 | mean cost difference -18
+
+计账与机制：
+strict：24轨迹计费delta=3840000，solver CPU合计=2.835359s，mean=0.118140s；矩阵pair=28680，完整目标edge=214879；counts={'equal_cost_candidates': 4037, 'neutral_proposals': 792, 'neutral_accepted': 0, 'canonical_noops': 3245, 'strict_improvements': 68}。
+neutral：24轨迹计费delta=3840000，solver CPU合计=2.815713s，mean=0.117321s；矩阵pair=28680，完整目标edge=213001；counts={'equal_cost_candidates': 3990, 'neutral_proposals': 896, 'neutral_accepted': 896, 'canonical_noops': 3094, 'strict_improvements': 79}。
+同delta不等于同CPU。本次计时包含新仪表与canonical成本，是单次描述性耗时，非专用运行时基准。
+坐标路径、load multiset及坐标路径+载荷签名的变化分类只用于后处理解释，不改变ID接受规则、不调参。坐标相同不意味着同一状态，特别是不同需求客户的分车。
+所有候选、current、best、输出均以独立整数逐边checker复核；不完整repair不提交候选；预算截断保留合法best。
+无tabu、退火、重启、pilot、补跑、换seed、换实例、oracle、API、安装、购买或上传。
+主进程文件读取allowlist阻断reference/regression；全部48条输出flush/fsync/hash封存后分析阶段才读取原参考值。
+strict复现只证明实现兼容；neutral结果不能外推更多实例、不能作显著性或SOTA结论。
+低于官方值异常=0；独立审计交父任务另行执行。

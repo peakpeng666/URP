@@ -1,0 +1,275 @@
+.page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--s4) var(--s5) 0;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  padding-bottom: var(--s3);
+}
+
+.headTop {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  min-width: 0;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  color: var(--ink-2);
+  text-decoration: none;
+  font-size: var(--fs-13);
+  white-space: nowrap;
+}
+
+.back:hover {
+  background: var(--inset);
+  color: var(--ink);
+}
+
+.titleWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--fs-18);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.instanceId {
+  font-size: var(--fs-12);
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headControls {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  flex-wrap: wrap;
+}
+
+.viewToggle {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+  overflow: hidden;
+}
+
+.viewToggle button {
+  padding: 6px 12px;
+  border: none;
+  background: var(--panel);
+  color: var(--ink-2);
+  font-size: var(--fs-13);
+}
+
+.viewToggle button[data-active] {
+  background: var(--hind);
+  color: #fff;
+}
+
+.viewToggle button:not([data-active]):hover {
+  background: var(--inset);
+}
+
+/* layout: stage + explain, with timeline spanning both */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 420px;
+  grid-template-areas:
+    'stage explain'
+    'timeline timeline';
+  gap: var(--s4);
+  align-items: start;
+}
+
+.layout > * {
+  min-width: 0;
+}
+
+.stage {
+  grid-area: stage;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  padding: var(--s4);
+}
+
+.stageH2 {
+  font-size: var(--fs-13);
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: var(--s2);
+}
+
+.nearWrap,
+.curveWrap {
+  border-top: 1px solid var(--line);
+  padding-top: var(--s3);
+}
+
+.explain {
+  grid-area: explain;
+  position: sticky;
+  top: calc(var(--topbar-h) + var(--s3));
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--topbar-h) - var(--s5));
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+  background: var(--inset);
+  flex-shrink: 0;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 6px;
+  border: none;
+  background: transparent;
+  color: var(--ink-3);
+  font-size: var(--fs-13);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+}
+
+.tab[data-active] {
+  color: var(--ink);
+  font-weight: 600;
+  background: var(--panel);
+  border-bottom-color: var(--ink);
+}
+
+.tab:not([data-active]):hover {
+  color: var(--ink);
+}
+
+.tabBody {
+  padding: var(--s4);
+  overflow-y: auto;
+}
+
+.timelineBar {
+  grid-area: timeline;
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--r-panel);
+  padding: var(--s3) var(--s4);
+  margin-bottom: var(--s4);
+  box-shadow: 0 -4px 16px rgba(27, 33, 38, 0.05);
+}
+
+.kbd {
+  margin-top: var(--s2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-11);
+  color: var(--ink-4);
+}
+
+.gate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  padding: var(--s3) 0;
+  font-size: var(--fs-13);
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+.gateBtns {
+  display: flex;
+  gap: var(--s2);
+  flex-wrap: wrap;
+}
+
+.gatePrimary {
+  padding: 7px 14px;
+  border: 1px solid var(--ink);
+  border-radius: var(--r-control);
+  background: var(--ink);
+  color: #fff;
+  font-size: var(--fs-13);
+}
+
+.gateGhost {
+  padding: 7px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-control);
+  background: var(--panel);
+  color: var(--ink);
+  font-size: var(--fs-13);
+}
+
+@media (max-width: 1080px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'stage'
+      'explain'
+      'timeline';
+  }
+  .explain {
+    position: static;
+    max-height: none;
+  }
+  .timelineBar {
+    position: sticky;
+  }
+}
+
+@media (max-width: 1080px) and (max-height: 600px) {
+  .layout {
+    grid-template-areas: 'timeline' 'stage' 'explain';
+  }
+  .timelineBar {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .page {
+    padding: var(--s3) var(--s3) 0;
+  }
+  .tabBody {
+    padding: var(--s3);
+  }
+  .timelineBar {
+    bottom: calc(var(--bottomnav-h) + env(safe-area-inset-bottom, 0px));
+    margin-bottom: var(--s3);
+  }
+}
