@@ -1,5 +1,5 @@
 {
-  "schema": "urp-vnd-original-verification-manifest-v2",
+  "schema": "urp-vnd-original-verification-manifest-v3",
   "scope": "repository-relative; excludes this manifest itself",
   "files": [
     {
@@ -34,15 +34,15 @@
     },
     {
       "path": "audits/cvrplib/vnd_original/当前核验.md",
-      "bytes": 976,
-      "sha256": "9b3f81f7c544abdad2571ac3fefb15ad0185dc5abecaa4abea4a982b64626803",
-      "git_blob_sha": "e3acd778dd11a6d6392b1ecff5e7ec95b8639ea6"
+      "bytes": 1099,
+      "sha256": "e457b883d531cb32795930cceced00b0a684d5ab247ed4b54467ea94f271090d",
+      "git_blob_sha": "06d534c94e62780200763479191911b45b4648e8"
     },
     {
       "path": "audits/cvrplib/vnd_original/来源核验说明.md",
-      "bytes": 862,
-      "sha256": "36de66a41d1360b6424cbc6b50e2217ed21c7fc8be914dddd80bb40736c0942f",
-      "git_blob_sha": "0c7f4c345045f51f204f1a7ea401b979482222cb"
+      "bytes": 1059,
+      "sha256": "cc07f396e13b073270190f2555030d17bc438385373d8ec6e7935c6341ed87c0",
+      "git_blob_sha": "aa5cbdef09ec0e2c81783088c1547b4942b22342"
     },
     {
       "path": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
@@ -50,5 +50,6 @@
       "sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
       "git_blob_sha": "057f3ce874442875f35cf23cdf56549af9ca0d32"
     }
-  ]
+  ],
+  "prior_manifest_in_fixed_git_history": "https://github.com/peakpeng666/URP/blob/ab3a6f4caee7fd961437000fb73c41286f394fd2/audits/cvrplib/vnd_original/MANIFEST.json"
 }
