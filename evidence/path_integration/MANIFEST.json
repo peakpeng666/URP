@@ -1,19 +1,33 @@
 {
   "schema": "urp-path-integration-delivery-v1",
   "base_commit": "418fffe99eccb6487f2497d29d36d0e0913548f6",
+  "code_and_test_evidence_commit": "ad80a208e567abd57d6a2c5f99978a88f13abc7a",
+  "update_scope": "research_documents_and_delivery_manifest_only; no new tests or experiments",
   "scope": "incremental_overlay_not_full_repository",
   "files": [
     {
+      "path": "docs/中期系统交付与研究对齐.md",
+      "bytes": 20329,
+      "sha256": "fac468125588a2143526c80da7d49000b30a70298f092f0355558358d73ded09",
+      "git_blob_sha": "2c911bd75fefbeb10f5eaff1251a8e1c17f8313d"
+    },
+    {
       "path": "docs/路径研究与仿真方案.md",
-      "bytes": 17964,
-      "sha256": "1d87475c86ae9eb78f90ba2cc2349af3fad1dace8021af791a04375cc00cefee",
-      "git_blob_sha": "4c121708bcc07dbfcd60157c5d489826504186e1"
+      "bytes": 20572,
+      "sha256": "b65fbd92a751e6e52d65fef25ee62d9f6f7e809d2d17ede82025d418f1f8135c",
+      "git_blob_sha": "25a4aa18176fbe3147b84f4ecb9e59c80d5091a8"
+    },
+    {
+      "path": "docs/路径研究全景与证据.md",
+      "bytes": 64272,
+      "sha256": "6c3733f02db6ffd7362c6bf1f02fbecde92d29ae97f90d7be676c6cef9d89f7e",
+      "git_blob_sha": "bb3ec7931b1feef34ae832b3f1cab83865448b64"
     },
     {
       "path": "evidence/path_integration/README.md",
-      "bytes": 1247,
-      "sha256": "aaace5029d54bdcdc2197960abf614d9ac778d57708988a880b0ce58e7c3ec39",
-      "git_blob_sha": "73c5fd4a19d9918e85fdb03beb4a5ac7e4f41ead"
+      "bytes": 1700,
+      "sha256": "bc96ad0fb7e1e604ff9d1c5a2f63524e9523132c18294b5e0b718a01882035ca",
+      "git_blob_sha": "416128120877f488b552a6b23c87018467375c8f"
     },
     {
       "path": "evidence/path_integration/root_backend_tests.log",
@@ -266,11 +280,12 @@
       "bytes": 8186,
       "sha256": "ed273d1bd2814765a7813b7018ba372c687a2d30bd807401fbd50e83d6c71451",
       "git_blob_sha": "f51dd85861260d103c3e4f06aaa77d737a1a0fc5"
+    },
+    {
+      "path": "下一阶段.md",
+      "bytes": 9259,
+      "sha256": "e816a1ca094242ac69683718464292b3ff72187d6b3b12265667b4f76d8b271b",
+      "git_blob_sha": "7f5c42662a41960e07b56f08690c224d09945112"
     }
-  ],
-  "runtime_executed": false,
-  "backend_tests_passed": 71,
-  "robotics_pure_tests_passed": 29,
-  "upstream_simulators": "static_research_only",
-  "formal_experiment_started": false
+  ]
 }
