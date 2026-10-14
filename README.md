@@ -23,4 +23,4 @@ bash src/start.sh backend
 bash src/start.sh frontend
 ```
 
-前端为BPP静态结果面板，后端提供实验记录API；两者待接通。已有检查记录见[src/checks.json](src/checks.json)。
+前端为BPP静态结果面板，后端提供实验记录API；两者待接通。[src/checks.json](src/checks.json)保存2026年10月10日的253项历史PASS；当前目录与环境尚未重新验收，不代表本轮测试或构建通过。

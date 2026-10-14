@@ -2,7 +2,10 @@
 
 `supervise.py`提供Linux独立进程中的子进程监督、超时清理、`wait4`资源统计和退出记录，供研究执行器集成。
 
+以下命令从URP根目录进入本组件后执行；此处列出命令不表示本轮已执行。
+
 ```sh
+cd src/research/execution
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
