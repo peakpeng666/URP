@@ -1,0 +1,36 @@
+{
+  "cases": 53,
+  "customers_min": 18,
+  "customers_max": 523,
+  "unique_coordinate_demand_bases": 51,
+  "duplicate_base_groups": [
+    [
+      "E-n51-k5",
+      "P-n51-k10"
+    ],
+    [
+      "E-n76-k7",
+      "P-n76-k4"
+    ]
+  ],
+  "reference_base_valid": 53,
+  "contract_validated": 53,
+  "historical_small16": [
+    "A-n37-k5",
+    "A-n39-k5",
+    "A-n46-k7",
+    "A-n48-k7",
+    "A-n61-k9",
+    "A-n69-k9",
+    "B-n39-k5",
+    "B-n41-k6",
+    "B-n45-k5",
+    "B-n50-k7",
+    "B-n63-k10",
+    "B-n68-k9",
+    "P-n19-k2",
+    "P-n22-k2",
+    "P-n55-k7",
+    "P-n70-k10"
+  ]
+}

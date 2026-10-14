@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-14",
+  "files": [
+    {
+      "path": "下一阶段.md",
+      "drive_id": "13dyFAiYaQpY2g4KQJZ2rHB6o92WRG4VM",
+      "before_sha256": "5e86bcd890b43b13a05222406a8c02cee70c994e7199194f21e71c9304e38799",
+      "after_sha256": "18d0fb8f4abf723de7ac9280830e1d10fff9605f4427942df95f687d217e437e",
+      "before_size": 7347,
+      "after_size": 7528,
+      "drive_text_readback": "matched"
+    },
+    {
+      "path": "literature/综合分析.md",
+      "drive_id": "19uGFVde_bx2Y4gZECJZ1h5mkofmoUqEd",
+      "before_sha256": "ff0ec3b59230c0a7ce80addc327e58839bab72b81790670f045ae6060de28d5f",
+      "after_sha256": "ae00337b2b00c8dac44de35e0ad8ff03951b5748bb906f17efbe23a08ba5989d",
+      "before_size": 9148,
+      "after_size": 9901,
+      "drive_text_readback": "matched"
+    },
+    {
+      "path": "experiments/状态.md",
+      "drive_id": "1zGroCoQVVzuuLDrYw-2cKkY5bNFWtV3Y",
+      "before_sha256": "be1d64a3935647054bc552b9999866d5a2e8bfb8089361eb96169b9446e7a32e",
+      "after_sha256": "95c5a3afc10666f749ccf202da862b1365b5c16ac98a3878353077dd3257024a",
+      "before_size": 4559,
+      "after_size": 4860,
+      "drive_text_readback": "matched"
+    },
+    {
+      "path": "README.md",
+      "drive_id": "1cTOYNXi_vJyj0U_FDs42zf2KydNzr06E",
+      "before_sha256": "e516a30969b40690b9ff8506a7ca16930d90a092dcd2e87a09d060dc1480f41a",
+      "after_sha256": "21bb358398c0fd2a024ef2fe19c6ee028e4ce09817a3eecab98a1fcba72a68b4",
+      "before_size": 1416,
+      "after_size": 1518,
+      "drive_text_readback": "matched"
+    },
+    {
+      "path": "src/research/generator/README.md",
+      "drive_id": "1KjXi3fNWyIY_4Zw1PG0FPgnAulu2JXq2",
+      "before_sha256": "fa159f9f1ad82e94a64a04d574ba340cb56052d7b10572d586a269e564ed385b",
+      "after_sha256": "e8e1210e48074d5ff2b43bbfd903d4429406ff92545086e3a63291f5c997d054",
+      "before_size": 949,
+      "after_size": 1076,
+      "drive_text_readback": "matched"
+    },
+    {
+      "path": "src/research/execution/README.md",
+      "drive_id": "1FhYHHqOGin3YeAjQXrb07l7Fe4rhDPDk",
+      "before_sha256": "a30e8481cc18064159173f7b5f9de98fda36912db349dec22693a621a6b4be89",
+      "after_sha256": "c8d9ae85e9f8d4e9a91fd01b2722c612e2152230c40e69b85342a54772ec95f2",
+      "before_size": 561,
+      "after_size": 688,
+      "drive_text_readback": "matched"
+    },
+    {
+      "path": "src/backend/README.md",
+      "drive_id": "1O5ezkqFA4ZxXp1VK-wtAYIGmoEJIgC34",
+      "before_sha256": "35ee5f31aea3d5f90521a11ab3d495df3d7ef8c1002e0b22128ee36b21708320",
+      "after_sha256": "01f021668e38054956a4856d662b69bca11cc149a5f42b419bd689ad05355694",
+      "before_size": 1103,
+      "after_size": 1237,
+      "drive_text_readback": "matched"
+    }
+  ],
+  "github_candidate_commit": "f110f039854f7314e36632ce7d3ee977cd0de0fc",
+  "github_main_updated": false,
+  "tests_run": false
+}

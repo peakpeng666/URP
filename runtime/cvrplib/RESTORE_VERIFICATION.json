@@ -1,0 +1,8 @@
+{
+  "schema": "urp-wheel-restore-check-v1",
+  "success": true,
+  "wheel_count": 14,
+  "method": "Ran restore_wheels.py using freshly downloaded hash-pinned original r1 ZIP into an empty directory; compared every produced wheel byte-for-byte to sealed delivery. No installation or optimization run.",
+  "canonical_default_destination": "runtime/cvrplib/wheels",
+  "archive_sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067"
+}

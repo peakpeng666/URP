@@ -1,0 +1,6 @@
+test_real_main_supervisor_failure_keeps_exit_record (test_supervise.SupervisorLifecycleTests.test_real_main_supervisor_failure_keeps_exit_record) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.220s
+
+OK

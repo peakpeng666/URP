@@ -1,0 +1,42 @@
+[
+  {
+    "path": "MANIFEST.json",
+    "bytes": 635,
+    "sha256": "e187be14d4f36c62e37b6af63d82548b2f9f384c0d5fb8fe93dd70c8361ee827"
+  },
+  {
+    "path": "README.md",
+    "bytes": 1803,
+    "sha256": "87512e74de350eea04b854f1c67a455560f43358454f6440c49c4335524c7dbc"
+  },
+  {
+    "path": "root_verification.json",
+    "bytes": 3400,
+    "sha256": "f90071a22254fa3a8ea58988c5b86f6c680ab51e7aa003ea718f93f43643f702"
+  },
+  {
+    "path": "verification.log",
+    "bytes": 82,
+    "sha256": "01250858c3c2b834b9793fb19bd59f1771735c1524a766e8e50da66f812460d0"
+  },
+  {
+    "path": "verify_vnd_original.py",
+    "bytes": 2714,
+    "sha256": "740658cd402c47f301ded38ab1d4d90b25425944ec71b2ef6c9c357e841c3b63"
+  },
+  {
+    "path": "vnd_original_verification.json",
+    "bytes": 7966,
+    "sha256": "072e97eb263699b07cc8486b9672370743196ce3fcf48925de4c0a2f1ea4b662"
+  },
+  {
+    "path": "公共新16例算子顺序迁移.zip",
+    "bytes": 1296035,
+    "sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca"
+  },
+  {
+    "path": "来源核验说明.md",
+    "bytes": 862,
+    "sha256": "36de66a41d1360b6424cbc6b50e2217ed21c7fc8be914dddd80bb40736c0942f"
+  }
+]

@@ -19,3 +19,7 @@ python3 scripts/test.py
 | `configs/` | 输入清单、哈希和依赖 |
 
 完整结果在[experiments](../../experiments/README.md)。既有实验输入使用`../../data/research`，新运行输出使用`../../experiments/runs/<run_id>`。多问题生成循环是下一步工作，见[下一阶段](../../下一阶段.md)。
+
+## 独立 CVRPLIB 入口
+
+真实 CVRPLIB 输入、统一端到端预算、恢复的经典基线及 PyVRP 0.14.0 ILS 位于 `src/urp_research/cvrplib/`。使用 `python3 scripts/cvrplib.py --help`，统一状态与证据见 [CVRPLIB当前入口](../../experiments/CVRPLIB入口.md)，命令详见 [验收和复现说明](docs/CVRPLIB_READINESS.md)。这不改变历史合成 CRC 回放，也不代表已完成正式 53 例多种子实验。

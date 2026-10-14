@@ -1,0 +1,98 @@
+[
+  {
+    "instance_id": "A-n37-k5",
+    "selection_slot": 1,
+    "K": 5,
+    "eligible": true
+  },
+  {
+    "instance_id": "A-n39-k5",
+    "selection_slot": 2,
+    "K": 5,
+    "eligible": true
+  },
+  {
+    "instance_id": "A-n46-k7",
+    "selection_slot": 3,
+    "K": 7,
+    "eligible": true
+  },
+  {
+    "instance_id": "A-n48-k7",
+    "selection_slot": 4,
+    "K": 7,
+    "eligible": true
+  },
+  {
+    "instance_id": "A-n61-k9",
+    "selection_slot": 5,
+    "K": 9,
+    "eligible": true
+  },
+  {
+    "instance_id": "A-n69-k9",
+    "selection_slot": 6,
+    "K": 9,
+    "eligible": true
+  },
+  {
+    "instance_id": "B-n39-k5",
+    "selection_slot": 7,
+    "K": 5,
+    "eligible": true
+  },
+  {
+    "instance_id": "B-n41-k6",
+    "selection_slot": 8,
+    "K": 6,
+    "eligible": true
+  },
+  {
+    "instance_id": "B-n45-k5",
+    "selection_slot": 9,
+    "K": 5,
+    "eligible": true
+  },
+  {
+    "instance_id": "B-n50-k7",
+    "selection_slot": 10,
+    "K": 7,
+    "eligible": true
+  },
+  {
+    "instance_id": "B-n63-k10",
+    "selection_slot": 11,
+    "K": 10,
+    "eligible": true
+  },
+  {
+    "instance_id": "B-n68-k9",
+    "selection_slot": 12,
+    "K": 9,
+    "eligible": true
+  },
+  {
+    "instance_id": "P-n19-k2",
+    "selection_slot": 13,
+    "K": 2,
+    "eligible": true
+  },
+  {
+    "instance_id": "P-n22-k2",
+    "selection_slot": 14,
+    "K": 2,
+    "eligible": true
+  },
+  {
+    "instance_id": "P-n55-k7",
+    "selection_slot": 15,
+    "K": 7,
+    "eligible": true
+  },
+  {
+    "instance_id": "P-n70-k10",
+    "selection_slot": 16,
+    "K": 10,
+    "eligible": true
+  }
+]

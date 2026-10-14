@@ -1,0 +1,145 @@
+{
+  "schema": "urp-cvrplib-result-v1",
+  "purpose": "acceptance_only",
+  "status": "OK",
+  "algorithm": "savings",
+  "seed": 0,
+  "budget_seconds": 5,
+  "payload_sha256": "bcc6c23cf7305c6cb8d8adfbf0de36f7bdbc15d9e93ded1134e622e636bc6472",
+  "start_monotonic_ns": 4134168580359,
+  "deadline_monotonic_ns": 4139168580359,
+  "cpu_seconds": 0.07933,
+  "cpu_scope": "worker process including interpreter/import/model/initialization/search; wait4 RUSAGE, not solver loop",
+  "descendant_cpu_seconds": 0,
+  "budget_scope": "wall from before request serialization/process launch through checkpoint receipt; checker and cleanup excluded",
+  "maxrss_KiB": 17664,
+  "process_wall_seconds": 0.080159823,
+  "cleanup_wall_seconds": 0.000123453,
+  "checker_wall_seconds": 0.000318724,
+  "checker_cpu_seconds": 0.00031876499999999863,
+  "exitcode": 0,
+  "reaped": true,
+  "exited_before_cleanup": true,
+  "supervision_scope": "Linux serial; process-group descendants reaped; reviewed worker prohibits Python process creation; not a hostile native-code sandbox",
+  "reaped_descendants": [],
+  "feasible": true,
+  "cost": 29,
+  "routes": [
+    [
+      0,
+      1,
+      2,
+      0
+    ],
+    [
+      0,
+      3,
+      5,
+      4,
+      0
+    ]
+  ],
+  "incumbent_emitted_ns": 4134238684887,
+  "incumbent_received_ns": 4134238759608,
+  "events": [
+    {
+      "event": "phase",
+      "emitted_ns": 4134238466652,
+      "name": "imports_complete",
+      "cpu_seconds": 0.066869744,
+      "cpu_affinity": [
+        0
+      ],
+      "received_ns": 4134238640044
+    },
+    {
+      "event": "phase",
+      "emitted_ns": 4134238573963,
+      "name": "model_complete",
+      "cpu_seconds": 0.066869744,
+      "received_ns": 4134238640044
+    },
+    {
+      "event": "phase",
+      "emitted_ns": 4134238670884,
+      "name": "initialization_complete",
+      "cpu_seconds": 0.066869744,
+      "received_ns": 4134238759608
+    },
+    {
+      "event": "incumbent",
+      "emitted_ns": 4134238684887,
+      "routes": [
+        [
+          0,
+          1,
+          2,
+          0
+        ],
+        [
+          0,
+          3,
+          5,
+          4,
+          0
+        ]
+      ],
+      "cost": 29,
+      "cpu_seconds": 0.066869744,
+      "received_ns": 4134238759608
+    },
+    {
+      "event": "done",
+      "emitted_ns": 4134238694679,
+      "termination": "construction_complete",
+      "cpu_seconds": 0.066869744,
+      "received_ns": 4134238759608
+    }
+  ],
+  "late_events_rejected": [],
+  "malformed_events": [],
+  "checkpoint_checks": [
+    {
+      "valid": true,
+      "feasible": true,
+      "errors": [],
+      "metric": "per_edge_Decimal80_sqrt_ROUND_HALF_UP",
+      "precision": 80,
+      "cost": 29,
+      "reported_cost_checked": true,
+      "reported_cost_matches": true,
+      "route_costs": [
+        10,
+        19
+      ],
+      "loads": [
+        2,
+        3
+      ],
+      "slot_count": 2,
+      "nonempty_routes": 2,
+      "missing_customers": [],
+      "duplicate_customers": [],
+      "n_customers": 5,
+      "capacity": 3,
+      "K": 2
+    }
+  ],
+  "worker_error": null,
+  "raw_stdout": "{\"event\":\"phase\",\"emitted_ns\":4134238466652,\"name\":\"imports_complete\",\"cpu_seconds\":0.066869744,\"cpu_affinity\":[0]}\n{\"event\":\"phase\",\"emitted_ns\":4134238573963,\"name\":\"model_complete\",\"cpu_seconds\":0.066869744}\n{\"event\":\"phase\",\"emitted_ns\":4134238670884,\"name\":\"initialization_complete\",\"cpu_seconds\":0.066869744}\n{\"event\":\"incumbent\",\"emitted_ns\":4134238684887,\"routes\":[[0,1,2,0],[0,3,5,4,0]],\"cost\":29,\"cpu_seconds\":0.066869744}\n{\"event\":\"done\",\"emitted_ns\":4134238694679,\"termination\":\"construction_complete\",\"cpu_seconds\":0.066869744}\n",
+  "raw_stderr": "",
+  "environment": {
+    "python": "/workspace/shared/urp_readiness/staging/venv/bin/python",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "BLIS_NUM_THREADS": "1"
+    }
+  },
+  "finished_utc": "2026-10-14T08:51:51.312252+00:00"
+}

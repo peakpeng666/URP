@@ -1,0 +1,16 @@
+{
+  "key": {
+    "instance_sha256": "ffce851458f3ccd4fb790403e91bb4ad6e495c37704a68f8563b995e97e38892",
+    "algorithm": "T",
+    "seed": 0,
+    "budget_seconds": 1.0,
+    "contract": {
+      "id": "historical-small16-at-most-K",
+      "K": 2,
+      "fixed_cost": 0
+    },
+    "solver_source_sha256": "32b7deaacb6f6bef2b7943214217aa47e557b804e36a5ab6be3b93f9bc53b09f"
+  },
+  "output": "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-T",
+  "claimed_utc": "2026-10-14T08:51:56.986892+00:00"
+}

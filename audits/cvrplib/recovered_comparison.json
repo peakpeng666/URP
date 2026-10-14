@@ -1,0 +1,358 @@
+{
+  "case_count": 53,
+  "mismatches": [],
+  "directed_matrix_cells": 1350504,
+  "checks": [
+    {
+      "case_id": "A-n32-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 1024,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n33-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 1089,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n33-k6",
+      "mismatches": [],
+      "directed_matrix_cells": 1089,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n36-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 1296,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n37-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 1369,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n39-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 1521,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n46-k7",
+      "mismatches": [],
+      "directed_matrix_cells": 2116,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n48-k7",
+      "mismatches": [],
+      "directed_matrix_cells": 2304,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n53-k7",
+      "mismatches": [],
+      "directed_matrix_cells": 2809,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n61-k9",
+      "mismatches": [],
+      "directed_matrix_cells": 3721,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n65-k9",
+      "mismatches": [],
+      "directed_matrix_cells": 4225,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n69-k9",
+      "mismatches": [],
+      "directed_matrix_cells": 4761,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "A-n80-k10",
+      "mismatches": [],
+      "directed_matrix_cells": 6400,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n31-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 961,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n34-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 1156,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n35-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 1225,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n38-k6",
+      "mismatches": [],
+      "directed_matrix_cells": 1444,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n39-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 1521,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n41-k6",
+      "mismatches": [],
+      "directed_matrix_cells": 1681,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n45-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 2025,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n50-k7",
+      "mismatches": [],
+      "directed_matrix_cells": 2500,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n51-k7",
+      "mismatches": [],
+      "directed_matrix_cells": 2601,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n63-k10",
+      "mismatches": [],
+      "directed_matrix_cells": 3969,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n66-k9",
+      "mismatches": [],
+      "directed_matrix_cells": 4356,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n68-k9",
+      "mismatches": [],
+      "directed_matrix_cells": 4624,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "B-n78-k10",
+      "mismatches": [],
+      "directed_matrix_cells": 6084,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "E-n51-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 2601,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "E-n76-k7",
+      "mismatches": [],
+      "directed_matrix_cells": 5776,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "F-n45-k4",
+      "mismatches": [],
+      "directed_matrix_cells": 2025,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "F-n72-k4",
+      "mismatches": [],
+      "directed_matrix_cells": 5184,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n19-k2",
+      "mismatches": [],
+      "directed_matrix_cells": 361,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n22-k2",
+      "mismatches": [],
+      "directed_matrix_cells": 484,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n23-k8",
+      "mismatches": [],
+      "directed_matrix_cells": 529,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n40-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 1600,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n45-k5",
+      "mismatches": [],
+      "directed_matrix_cells": 2025,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n50-k10",
+      "mismatches": [],
+      "directed_matrix_cells": 2500,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n51-k10",
+      "mismatches": [],
+      "directed_matrix_cells": 2601,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n55-k7",
+      "mismatches": [],
+      "directed_matrix_cells": 3025,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n65-k10",
+      "mismatches": [],
+      "directed_matrix_cells": 4225,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n70-k10",
+      "mismatches": [],
+      "directed_matrix_cells": 4900,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "P-n76-k4",
+      "mismatches": [],
+      "directed_matrix_cells": 5776,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n101-k25",
+      "mismatches": [],
+      "directed_matrix_cells": 10201,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n106-k14",
+      "mismatches": [],
+      "directed_matrix_cells": 11236,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n110-k13",
+      "mismatches": [],
+      "directed_matrix_cells": 12100,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n204-k19",
+      "mismatches": [],
+      "directed_matrix_cells": 41616,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n209-k16",
+      "mismatches": [],
+      "directed_matrix_cells": 43681,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n214-k11",
+      "mismatches": [],
+      "directed_matrix_cells": 45796,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n303-k21",
+      "mismatches": [],
+      "directed_matrix_cells": 91809,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n308-k13",
+      "mismatches": [],
+      "directed_matrix_cells": 94864,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n313-k71",
+      "mismatches": [],
+      "directed_matrix_cells": 97969,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n502-k39",
+      "mismatches": [],
+      "directed_matrix_cells": 252004,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n513-k21",
+      "mismatches": [],
+      "directed_matrix_cells": 263169,
+      "recovered_checker_valid": true
+    },
+    {
+      "case_id": "X-n524-k153",
+      "mismatches": [],
+      "directed_matrix_cells": 274576,
+      "recovered_checker_valid": true
+    }
+  ],
+  "additional_reference_checks": [
+    {
+      "file": "B-n35-k5.sol",
+      "sha256": "542e9b721fa3c9684726e2e084755fc9c3cc9bfc1eda27c0ee32d0fa5a1f1ca1",
+      "match": true
+    },
+    {
+      "file": "A-n33-k5.sol",
+      "sha256": "d8045df85ee1f1cee362f884ea0c52f0a5f6c3e3dcd06bcc644a0da79974e43b",
+      "match": true
+    },
+    {
+      "file": "P-n50-k10.sol",
+      "sha256": "87269cfa6a75575f030481812f975244f1b9ee536e2ffba9428f5b46b85df225",
+      "match": true
+    },
+    {
+      "file": "P-n45-k5.sol",
+      "sha256": "68cb1a6de37fc312e1b4ab0c2a704ce0b5331ef2aea9d1e72c8deab11400b804",
+      "match": true
+    },
+    {
+      "file": "A-n33-k6.sol",
+      "sha256": "a5395d65af5807fb05606f0abfd6a2a7ad6d98ef52e1fa4d9780667a09e2c649",
+      "match": true
+    },
+    {
+      "file": "B-n34-k5.sol",
+      "sha256": "08a7b3ee54aac0f6e8b9bf63d0a7afd94443fd7770861823017c9087487ad17c",
+      "match": true
+    }
+  ],
+  "fingerprint_note": "Recovered includes D4/translation/uniform-scaling invariance; independent audit uses exact coordinate-demand bases. Hash strings intentionally differ but full dataset duplicate partition matches. Scaling-equivalence is a leakage-screen heuristic, not identical rounded objective claim."
+}

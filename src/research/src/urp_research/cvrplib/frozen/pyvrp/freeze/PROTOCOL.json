@@ -1,0 +1,106 @@
+{
+  "id": "public_route_strong_baseline_20261009_r1",
+  "created_utc": "2026-10-09T00:02:24.142901+00:00",
+  "local_date_label": "2026-10-09 (label requested by parent based on user local date; environment timezone UTC)",
+  "utc_date": "2026-10-09",
+  "stage": "supplementary_quality_benchmark_not_strict_blind_not_confirmatory",
+  "parent_experiment": "/workspace/shared/public_route_strong_baseline_20261009",
+  "selection": "Unchanged 16 frozen A6/B6/P4 transfer tasks in original selection-slot order; no replacement, enlargement or tuning on this panel.",
+  "baseline": {
+    "package": "pyvrp",
+    "version": "0.14.0",
+    "algorithm": "Iterated local search (ILS), not historical HGS",
+    "upstream_release": "https://github.com/PyVRP/PyVRP/releases/tag/v0.14.0",
+    "settings": "Default SolveParams(); seed explicitly fixed per call; collect_stats=True; display=False; no parameter tuning, no warm start, no reference target, no fleet minimisation."
+  },
+  "task_semantics": {
+    "customers": "Every non-depot input node mandatory, served once; no optional clients, shipments, time windows, pickups or reloads.",
+    "fleet": "One vehicle type: num_available=K_ref, capacity=Q, start/end same depot0; at most K_ref nonempty routes.",
+    "metric": "Closed-depot sum of all edge integers floor(hypot(dx,dy)+0.5), exact same EUC_2D rounding as historical study. No scaling.",
+    "objective": "Fixed vehicle cost=0; unit distance cost=1; unit duration and overtime cost=0; all duration entries=0; prize=0; no route-count lexicographic objective.",
+    "route_output": "Save native activity types/indices and mapped routes. Each CLIENT Activity.idx is resolved by data.client(idx).location and an explicit location-to-input-node map; use is_client/is_depot, never numeric activity tags. Routes include depot endpoints. No extra forced nonempty routes."
+  },
+  "schedule": {
+    "instances": 16,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "calls": 48,
+    "order": "original selection_slot 1..16, each seeds 0,1,2; sequential fresh worker process, never concurrent",
+    "initial_solution": "None; upstream internal random initial solution and local search per independent call; no user-produced or reference warm start."
+  },
+  "budget": {
+    "search_stop": "MaxRuntime(1.0), timing starts on first stop callback in main ILS loop; initialization/model construction/imports excluded by upstream semantics. Not a one-second hard end-to-end limit.",
+    "child_hard_cpu_seconds": 5,
+    "child_external_wall_seconds": 10,
+    "child_AS_MiB": 1024,
+    "supervisor_cpu_seconds": 20,
+    "supervisor_external_wall_seconds": 600,
+    "max_concurrent_children": 1,
+    "audit_only": "Record model/solve/process wall and CPU/runtime/iterations; do not compare these with historical TSR or claim equal compute.",
+    "reproducibility": "Wall-time stop means same seed does not guarantee bitwise repeatability; freeze software/wheel hashes and retain the one realized run.",
+    "combined_AS_bound_scope": "Supervisor soft512/hard1024MiB plus at most one worker soft/hard1024MiB: current soft-limit sum1536MiB; theoretical hard-limit sum2048MiB. Does not include outer launcher/archive or unrelated services. Address-space bounds are not actual RSS usage; actual maxrss is separately audited.",
+    "supervisor_AS_soft_MiB": 512,
+    "supervisor_AS_hard_MiB": 1024,
+    "combined_current_soft_AS_MiB": 1536,
+    "combined_hard_AS_MiB": 2048,
+    "sum_configured_CPU_limits_seconds": 260,
+    "configured_CPU_limit_scope": "260 seconds is the sum of configured RLIMIT_CPU values for supervisor plus 48 optimizer workers only. Preparation, installation, outer launcher packaging, archive uploads/downloads and postprocessing are outside this search/control resource bound.",
+    "CPU_enforcement_granularity": "Configured RLIMIT_CPU hard values do not assert exact elapsed CPU cutoffs. Kernel accounting/scheduling granularity can cause observed CPU to exceed configured limits (demonstrated by synthetic failure fixture). Report actual CPU separately; 260s is not a mathematically strict realized end-to-end bound."
+  },
+  "primary": {
+    "per_instance": "Mean of exactly 3 independently validated seed costs; subtract from historical TSR via 100*(TSRcost-meanPyVRPcost)/referenceCost; positive means historical TSR has higher cost.",
+    "aggregate": "Arithmetic mean of 16 per-instance differences, equal instance weighting. Also mean reference gap for each method.",
+    "missing": "If any seed missing/failed/invalid, that task 3-seed primary is unavailable. If any task unavailable, all16 primary aggregate is null. Explicit available-complete-task descriptive denominator, plus raw seed denominator."
+  },
+  "secondary": "All 48 seed rows, each task min/max/range/sample SD and mean; best-of-3 only supplementary and labeled three-run selection; integer TSR vs sum(seedCosts)/3 win/tie/loss with exact integer cross multiplication; optional percentage excess over baseline mean clearly separate denominator. No favorable seed selection in primary.",
+  "failure_policy": "Within each separately frozen revision: Exclusive STARTED guard; one attempt per scheduled call; retain stdout/stderr/timeouts/malformed/infeasible rows, no delete/retry/replacement; continue independent later slots unless supervisor fatal, mark never-started slots unavailable; archive incomplete raw immediately before diagnosis. Child always killed/reaped in finally; unique external launcher kills the entire supervisor process group after termination/timeout before raw packaging. Worker env is an explicit non-secret whitelist, omits PYTHONPATH/HOME overrides and optimization, and requires assertions enabled.",
+  "reference_isolation": "Solver worker receives only coordinates, demands, capacity, K and seed/runtime via stdin. Import dependencies first then audit-hook deny open/socket/subprocess operations during model/solve; no file paths, IDs, reference routes/costs or historical routes/costs in payload. Historical/reference files available only to read-only endpoint evaluation after RAW_UNREVIEWED remote byte readback. Researchers know historic outcomes: not blind.",
+  "independent_validation": "Standalone separately authored stdlib Decimal80 ROUND_HALF_UP parser/validator, original .vrp versus copied normalized input all-pair integer matrix check, required coverage once, legal indices/depot endpoints, capacity, <=K nonempty, route cost versus solver cost; verify historical TSR routes and reference feasibility/cost without optimization.",
+  "gates": [
+    "installation authorization and exact wheel/hash dependency capture",
+    "r0 failed RAW actual private readback verified; r1 actual limited supervisor -> same production Popen -> venv worker synthetic success, wall-timeout and CPU-limit fixtures pass",
+    "invented-fixture model/adapter/validator/resource-limit tests PASS",
+    "independent source/protocol/input review PASS",
+    "all source/input/schedule/protocol/environment freeze hashes",
+    "parent approval of final plan and PREEXEC owner-only Drive upload with SHA and actual byte-identical download receipt",
+    "single formal execution",
+    "raw immediate owner-only archive/readback before endpoint scoring",
+    "independent saved-route/history/provenance/report audit without solver rerun",
+    "final private archive"
+  ],
+  "limitations": [
+    "Mature public package chosen by capability/availability before formal outputs; no assumption it must beat TSR.",
+    "Quality comparison only, different search algorithms/initialization/stopping rules/compute budgets.",
+    "Public references are feasible comparison values, not optimality proofs established here.",
+    "No significance, universal superiority or SOTA claims; selected 16 task panel only.",
+    "No new data generalization test: these tasks were already analyzed in historic TSR study.",
+    "Timed search realizations hardware/load dependent; public source benchmarks do not establish this panel outcome.",
+    "The Python audit hook records/blocks Python-level IO events after imports. It is not an OS/native-code syscall sandbox or proof of zero native IO; algorithm payload and reviewed adapter isolate reference/history data.",
+    "r0 failed technical execution is retained as 48 process attempts, 0 actual solves; r1 is a separately frozen technical retry, not an undisclosed replacement. Supervisor hard AS limit increased from512 to1024MiB only to permit inherited worker1024MiB budget; soft supervisor limit remains512MiB."
+  ],
+  "prohibited": [
+    "formal public solve before gate",
+    "panel tuning",
+    "rerunning any formal call",
+    "reference/TSR warm-start",
+    "new model/API calls",
+    "credentials or unrelated files",
+    "paid services or security changes",
+    "modifying original directory",
+    "public sharing"
+  ],
+  "technical_revision": {
+    "kind": "r1 resource-inheritance repair, new run kept separate from failed r0",
+    "prior_failed_run": "/workspace/shared/public_route_strong_baseline_20261009",
+    "prior_process_attempts": 48,
+    "prior_actual_public_optimizer_calls": 0,
+    "prior_result": "All processes raised ValueError while attempting to raise inherited address-space hard limit, before payload read/PyVRP import/model/solve. No quality results.",
+    "preservation": "r0 source/raw/archives remain unchanged; failure remains in final main status report.",
+    "scientific_parameters_unchanged": true,
+    "changes": "Supervisor RLIMIT_AS soft512/hard1024MiB instead of both512; worker remains soft/hard1024. Shared launch helper and synthetic real-limited-supervisor integration faults cover startup/timeout/CPU failure. Record actual resource limits and usage.",
+    "retry_disclosure": "No repeated attempts within r0 or r1; r1 is an explicitly disclosed, independently re-frozen technical retry after r0 launched no optimizer calls."
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+  "archive_bytes": 1296035,
+  "verified_members": [
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/engine.py",
+      "member": "public_route_order_transfer_20261008/source/engine.py",
+      "sha256": "6808bb1af9e644e9260ebc77c7f0c1ebae4b907528dcbd0f8a50468bafd5a1c8",
+      "bytes": 4507,
+      "match": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/capacity_solver.py",
+      "member": "public_route_order_transfer_20261008/source/capacity_solver.py",
+      "sha256": "ce5a253f043b1bb8689c7a870b89b33649002f7ca0c10935ec41490070016a49",
+      "bytes": 12026,
+      "match": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/audit.py",
+      "member": "public_route_order_transfer_20261008/source/audit.py",
+      "sha256": "ff5286ea531fa7fdd9037a7988f3b819f432d4f2fa963fef1a076383caacb386",
+      "bytes": 4278,
+      "match": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/experiment.py",
+      "member": "public_route_order_transfer_20261008/source/legacy/experiment.py",
+      "sha256": "137ba7a6f9a8c2e1ebc39987fd64801cd78094df2171eb6b7a1c80af15bc33e7",
+      "bytes": 16378,
+      "match": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/__init__.py",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "match": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/baselines.py",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/baselines.py",
+      "sha256": "3d2ec0cf5c2c67d23e0522751d8727fde99f96ed5eada484f0fd4f7fc63961c2",
+      "bytes": 4432,
+      "match": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/budget.py",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/budget.py",
+      "sha256": "d4d9fe340fbd868ad20f75b87ad1c0f5990dcd07a12063c0ff432ee9b40c7c34",
+      "bytes": 936,
+      "match": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/checker.py",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/checker.py",
+      "sha256": "2d3066fc3485d83806035c6f079425a7d6fdb0ad34fdf1c246c4c75348be0187",
+      "bytes": 4135,
+      "match": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/generate.py",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/generate.py",
+      "sha256": "f21d14948b38160458a8045e23e23c80d2707e7b1db669dc5c92c4ab28728642",
+      "bytes": 4215,
+      "match": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/instance.py",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/instance.py",
+      "sha256": "90ba6448a3053f4b9e715f08ea753d4457a285856db632c2f2898717ee032deb",
+      "bytes": 5009,
+      "match": true
+    }
+  ],
+  "verified_count": 10,
+  "source_changed": false
+}

@@ -1,0 +1,39 @@
+{
+  "accessed_utc": "2026-10-08T22:56:04.913461+00:00",
+  "sources": [
+    {
+      "purpose": "Release and algorithm version",
+      "url": "https://github.com/PyVRP/PyVRP/releases/tag/v0.14.0"
+    },
+    {
+      "purpose": "Install from official package registry",
+      "url": "https://pyvrp.readthedocs.io/en/stable/setup/installation.html"
+    },
+    {
+      "purpose": "Pinned upstream model API",
+      "url": "https://raw.githubusercontent.com/PyVRP/PyVRP/v0.14.0/pyvrp/Model.py"
+    },
+    {
+      "purpose": "Pinned solve initialization and default params",
+      "url": "https://raw.githubusercontent.com/PyVRP/PyVRP/v0.14.0/pyvrp/solve.py"
+    },
+    {
+      "purpose": "Pinned timer semantics",
+      "url": "https://raw.githubusercontent.com/PyVRP/PyVRP/v0.14.0/pyvrp/stop/MaxRuntime.py"
+    },
+    {
+      "purpose": "Pinned route activity implementation",
+      "url": "https://raw.githubusercontent.com/PyVRP/PyVRP/v0.14.0/pyvrp/cpp/Route.cpp"
+    },
+    {
+      "purpose": "Pinned statistics serialization fields",
+      "url": "https://raw.githubusercontent.com/PyVRP/PyVRP/v0.14.0/pyvrp/Statistics.py"
+    },
+    {
+      "purpose": "Pinned result objective semantics",
+      "url": "https://raw.githubusercontent.com/PyVRP/PyVRP/v0.14.0/pyvrp/Result.py"
+    }
+  ],
+  "selection_reason": "Specialized maintained open-source CVRP-capable solver, official binary package for current Python/Linux, explicit num_available upper bound and integer distance objective. Selection was made before new benchmark outputs, not on a result comparison.",
+  "caveat": "pyvrp.org development pages can be 1.0.0a0. Adapter uses v0.14.0 pinned GitHub source and versioned/stable docs only."
+}

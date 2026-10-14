@@ -1,0 +1,64 @@
+{
+  "result_sha256": "57667e7f7ba45b3413b4e6bc938e1688f4e30ded74fdd8c132b0587786ff0b0a",
+  "contract": {
+    "id": "historical-small16-at-most-K",
+    "K": 2,
+    "fixed_cost": 0
+  },
+  "candidate_check": {
+    "valid": true,
+    "feasible": true,
+    "errors": [],
+    "metric": "per_edge_Decimal80_sqrt_ROUND_HALF_UP",
+    "precision": 80,
+    "cost": 237,
+    "reported_cost_checked": true,
+    "reported_cost_matches": true,
+    "route_costs": [
+      95,
+      142
+    ],
+    "loads": [
+      152,
+      158
+    ],
+    "slot_count": 2,
+    "nonempty_routes": 2,
+    "missing_customers": [],
+    "duplicate_customers": [],
+    "n_customers": 18,
+    "capacity": 160,
+    "K": 2
+  },
+  "reference_check": {
+    "valid": true,
+    "feasible": true,
+    "errors": [],
+    "metric": "per_edge_Decimal80_sqrt_ROUND_HALF_UP",
+    "precision": 80,
+    "cost": 212,
+    "reported_cost_checked": true,
+    "reported_cost_matches": true,
+    "route_costs": [
+      114,
+      98
+    ],
+    "loads": [
+      153,
+      157
+    ],
+    "slot_count": 2,
+    "nonempty_routes": 2,
+    "missing_customers": [],
+    "duplicate_customers": [],
+    "n_customers": 18,
+    "capacity": 160,
+    "K": 2
+  },
+  "reference_label": "historical_feasible_reference",
+  "optimality_proved_here": false,
+  "eligible_for_gap": true,
+  "gap_percent": 11.79245283018868,
+  "gap_exact": "625/53",
+  "reference_review_required": false
+}

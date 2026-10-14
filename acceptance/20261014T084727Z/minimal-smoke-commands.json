@@ -1,0 +1,230 @@
+[
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "run-one",
+      "--instance",
+      "/workspace/shared/urp_readiness/deliver/data/benchmarks/CVRPLIB/instances/P-n19-k2.vrp",
+      "--algorithm",
+      "savings",
+      "--seed",
+      "0",
+      "--budget",
+      "1",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-savings",
+      "--run-registry",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/registry"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"case_id\": \"P-n19-k2\", \"status\": \"OK\", \"algorithm\": \"savings\", \"seed\": 0, \"cost\": 237, \"process_wall_seconds\": 0.090377259}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "score",
+      "--repo",
+      "/workspace/shared/urp_readiness/deliver",
+      "--result",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-savings/result.json",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-savings/evaluation.json"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"eligible_for_gap\": true, \"gap_percent\": 11.79245283018868}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "run-one",
+      "--instance",
+      "/workspace/shared/urp_readiness/deliver/data/benchmarks/CVRPLIB/instances/P-n19-k2.vrp",
+      "--algorithm",
+      "T",
+      "--seed",
+      "0",
+      "--budget",
+      "1",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-T",
+      "--run-registry",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/registry"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"case_id\": \"P-n19-k2\", \"status\": \"OK\", \"algorithm\": \"T\", \"seed\": 0, \"cost\": 237, \"process_wall_seconds\": 0.085009223}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "score",
+      "--repo",
+      "/workspace/shared/urp_readiness/deliver",
+      "--result",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-T/result.json",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-T/evaluation.json"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"eligible_for_gap\": true, \"gap_percent\": 11.79245283018868}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "run-one",
+      "--instance",
+      "/workspace/shared/urp_readiness/deliver/data/benchmarks/CVRPLIB/instances/P-n19-k2.vrp",
+      "--algorithm",
+      "TRS",
+      "--seed",
+      "0",
+      "--budget",
+      "1",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-TRS",
+      "--run-registry",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/registry"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"case_id\": \"P-n19-k2\", \"status\": \"OK\", \"algorithm\": \"TRS\", \"seed\": 0, \"cost\": 237, \"process_wall_seconds\": 0.18333671}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "score",
+      "--repo",
+      "/workspace/shared/urp_readiness/deliver",
+      "--result",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-TRS/result.json",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-TRS/evaluation.json"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"eligible_for_gap\": true, \"gap_percent\": 11.79245283018868}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "run-one",
+      "--instance",
+      "/workspace/shared/urp_readiness/deliver/data/benchmarks/CVRPLIB/instances/P-n19-k2.vrp",
+      "--algorithm",
+      "TSR",
+      "--seed",
+      "0",
+      "--budget",
+      "1",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-TSR",
+      "--run-registry",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/registry"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"case_id\": \"P-n19-k2\", \"status\": \"OK\", \"algorithm\": \"TSR\", \"seed\": 0, \"cost\": 237, \"process_wall_seconds\": 0.136362899}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "score",
+      "--repo",
+      "/workspace/shared/urp_readiness/deliver",
+      "--result",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-TSR/result.json",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-P-n19-k2-TSR/evaluation.json"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"eligible_for_gap\": true, \"gap_percent\": 11.79245283018868}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "run-one",
+      "--instance",
+      "/workspace/shared/urp_readiness/deliver/data/benchmarks/CVRPLIB/instances/A-n32-k5.vrp",
+      "--algorithm",
+      "pyvrp",
+      "--seed",
+      "0",
+      "--budget",
+      "1",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-A-n32-k5-pyvrp",
+      "--run-registry",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/registry"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"case_id\": \"A-n32-k5\", \"status\": \"TIMEOUT_WITH_FEASIBLE_INCUMBENT\", \"algorithm\": \"pyvrp\", \"seed\": 0, \"cost\": 784, \"process_wall_seconds\": 1.002763297}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "score",
+      "--repo",
+      "/workspace/shared/urp_readiness/deliver",
+      "--result",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-A-n32-k5-pyvrp/result.json",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-A-n32-k5-pyvrp/evaluation.json"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"eligible_for_gap\": true, \"gap_percent\": 0.0}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "run-one",
+      "--instance",
+      "/workspace/shared/urp_readiness/deliver/data/benchmarks/CVRPLIB/instances/X-n101-k25.vrp",
+      "--algorithm",
+      "pyvrp",
+      "--seed",
+      "0",
+      "--budget",
+      "5",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-X-n101-k25-pyvrp",
+      "--run-registry",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/registry"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"case_id\": \"X-n101-k25\", \"status\": \"TIMEOUT_WITH_FEASIBLE_INCUMBENT\", \"algorithm\": \"pyvrp\", \"seed\": 0, \"cost\": 27597, \"process_wall_seconds\": 5.009599646}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/workspace/shared/urp_readiness/staging/venv/bin/python",
+      "/workspace/shared/urp_readiness/deliver/src/research/scripts/cvrplib.py",
+      "score",
+      "--repo",
+      "/workspace/shared/urp_readiness/deliver",
+      "--result",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-X-n101-k25-pyvrp/result.json",
+      "--output",
+      "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-X-n101-k25-pyvrp/evaluation.json"
+    ],
+    "exitcode": 0,
+    "stdout": "{\"eligible_for_gap\": true, \"gap_percent\": 0.02174622159399804}\n",
+    "stderr": ""
+  }
+]

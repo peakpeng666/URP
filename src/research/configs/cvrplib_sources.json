@@ -1,0 +1,134 @@
+{
+  "schema": "urp-cvrplib-recovery-v1",
+  "base_commit": "f110f039854f7314e36632ce7d3ee977cd0de0fc",
+  "files": [
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/engine.py",
+      "archive": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "member": "public_route_order_transfer_20261008/source/engine.py",
+      "sha256": "6808bb1af9e644e9260ebc77c7f0c1ebae4b907528dcbd0f8a50468bafd5a1c8",
+      "bytes": 4507
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/capacity_solver.py",
+      "archive": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "member": "public_route_order_transfer_20261008/source/capacity_solver.py",
+      "sha256": "ce5a253f043b1bb8689c7a870b89b33649002f7ca0c10935ec41490070016a49",
+      "bytes": 12026
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/audit.py",
+      "archive": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "member": "public_route_order_transfer_20261008/source/audit.py",
+      "sha256": "ff5286ea531fa7fdd9037a7988f3b819f432d4f2fa963fef1a076383caacb386",
+      "bytes": 4278
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/experiment.py",
+      "archive": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "member": "public_route_order_transfer_20261008/source/legacy/experiment.py",
+      "sha256": "137ba7a6f9a8c2e1ebc39987fd64801cd78094df2171eb6b7a1c80af15bc33e7",
+      "bytes": 16378
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/__init__.py",
+      "archive": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/baselines.py",
+      "archive": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/baselines.py",
+      "sha256": "3d2ec0cf5c2c67d23e0522751d8727fde99f96ed5eada484f0fd4f7fc63961c2",
+      "bytes": 4432
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/budget.py",
+      "archive": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/budget.py",
+      "sha256": "d4d9fe340fbd868ad20f75b87ad1c0f5990dcd07a12063c0ff432ee9b40c7c34",
+      "bytes": 936
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/checker.py",
+      "archive": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/checker.py",
+      "sha256": "2d3066fc3485d83806035c6f079425a7d6fdb0ad34fdf1c246c4c75348be0187",
+      "bytes": 4135
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/generate.py",
+      "archive": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/generate.py",
+      "sha256": "f21d14948b38160458a8045e23e23c80d2707e7b1db669dc5c92c4ab28728642",
+      "bytes": 4215
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/instance.py",
+      "archive": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "archive_sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "member": "public_route_order_transfer_20261008/source/legacy/vendor/urp_cvrp/instance.py",
+      "sha256": "90ba6448a3053f4b9e715f08ea753d4457a285856db632c2f2898717ee032deb",
+      "bytes": 5009
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/pyvrp/worker.py",
+      "archive": "experiments/results/路线求解/公共路线强基线.zip",
+      "archive_sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067",
+      "member": "public_route_strong_baseline_20261009_r1/source/worker.py",
+      "sha256": "56f79576cf5984b36ed805506f362e4bfecb8ca2957a2a2301156be4d2a8a093",
+      "bytes": 7430
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/pyvrp/independent_review/independent_validator.py",
+      "archive": "experiments/results/路线求解/公共路线强基线.zip",
+      "archive_sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067",
+      "member": "public_route_strong_baseline_20261009_r1/independent_review/independent_validator.py",
+      "sha256": "06885445905c8fe9ef5adcd92423b5be5cc6a152c2d0a862c308dd5a4c916d07",
+      "bytes": 8471
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/pyvrp/independent_review/audit_inputs.py",
+      "archive": "experiments/results/路线求解/公共路线强基线.zip",
+      "archive_sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067",
+      "member": "public_route_strong_baseline_20261009_r1/independent_review/audit_inputs.py",
+      "sha256": "bc597239ed8a70049389594262fd5fd13eb13f2566f7d37ec4b89564f5856a28",
+      "bytes": 9220
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/pyvrp/freeze/TASKS.json",
+      "archive": "experiments/results/路线求解/公共路线强基线.zip",
+      "archive_sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067",
+      "member": "public_route_strong_baseline_20261009_r1/freeze/TASKS.json",
+      "sha256": "da287cfafa7024606eab8a4e02948b7144dc72163861a7164cfca9980f341753",
+      "bytes": 1582
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/pyvrp/freeze/PROTOCOL.json",
+      "archive": "experiments/results/路线求解/公共路线强基线.zip",
+      "archive_sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067",
+      "member": "public_route_strong_baseline_20261009_r1/freeze/PROTOCOL.json",
+      "sha256": "1edcefb61e7a71cebd68f66d5c29d5fd3bb3d8783040b7a2ae5f2b4d60786648",
+      "bytes": 9904
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/pyvrp/environment/requirements.lock",
+      "archive": "experiments/results/路线求解/公共路线强基线.zip",
+      "archive_sha256": "50f01f3c345e12add88bdcfa76189e2f8ef83fde4fd5675d60c41bbf8275d067",
+      "member": "public_route_strong_baseline_20261009_r1/environment/requirements.lock",
+      "sha256": "73b2360ea805359df003b1bf93abc4a2856270e77058f617feac425438282777",
+      "bytes": 1336
+    }
+  ]
+}

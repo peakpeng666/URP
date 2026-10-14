@@ -1,0 +1,20 @@
+test_backdated_result_delivered_after_deadline_is_not_accepted (test_adversarial_review.AdversarialReview.test_backdated_result_delivered_after_deadline_is_not_accepted) ... ok
+test_error_missing_error_type_is_recorded_not_supervisor_crash (test_adversarial_review.AdversarialReview.test_error_missing_error_type_is_recorded_not_supervisor_crash) ... ok
+test_future_timestamp_is_rejected_even_if_received_in_time (test_adversarial_review.AdversarialReview.test_future_timestamp_is_rejected_even_if_received_in_time) ... ok
+test_invalid_checkpoint_invalidates_run_under_strict_integrity_policy (test_adversarial_review.AdversarialReview.test_invalid_checkpoint_invalidates_run_under_strict_integrity_policy) ... ok
+test_late_event_does_not_hide_real_crash (test_adversarial_review.AdversarialReview.test_late_event_does_not_hide_real_crash) ... ok
+test_no_incumbent_done_is_not_mathematical_infeasibility (test_adversarial_review.AdversarialReview.test_no_incumbent_done_is_not_mathematical_infeasibility) ... ok
+test_partial_json_never_becomes_incumbent (test_adversarial_review.AdversarialReview.test_partial_json_never_becomes_incumbent) ... ok
+test_reference_identifiers_and_manifests_cannot_enter_payload (test_adversarial_review.AdversarialReview.test_reference_identifiers_and_manifests_cannot_enter_payload) ... ok
+test_self_sigkill_after_done_is_not_success (test_adversarial_review.AdversarialReview.test_self_sigkill_after_done_is_not_success) ... ok
+test_valid_checkpoint_then_crash_stays_failure (test_adversarial_review.AdversarialReview.test_valid_checkpoint_then_crash_stays_failure) ... ok
+test_saved_late_result_cannot_gain_gap (test_adversarial_review.SavedScoreReview.test_saved_late_result_cannot_gain_gap) ... ok
+test_saved_no_event_cannot_gain_gap (test_adversarial_review.SavedScoreReview.test_saved_no_event_cannot_gain_gap) ... ok
+test_saved_wrong_instance_cannot_gain_gap (test_adversarial_review.SavedScoreReview.test_saved_wrong_instance_cannot_gain_gap) ... ok
+test_saved_wrong_payload_cannot_gain_gap (test_adversarial_review.SavedScoreReview.test_saved_wrong_payload_cannot_gain_gap) ... ok
+test_valid_saved_evidence_is_eligible (test_adversarial_review.SavedScoreReview.test_valid_saved_evidence_is_eligible) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 2.803s
+
+OK

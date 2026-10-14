@@ -1,0 +1,57 @@
+{
+  "schema": "urp-cvrplib-result-v1",
+  "purpose": "acceptance_only",
+  "status": "TIMEOUT_NO_SOLUTION",
+  "algorithm": "TSR",
+  "seed": 0,
+  "budget_seconds": 0.2,
+  "payload_sha256": "c6c44e2531c4ef76583583a283d65381ab2a1e6a7273361396c82361e46a16c6",
+  "start_monotonic_ns": 4448869235469,
+  "deadline_monotonic_ns": 4449069235469,
+  "cpu_seconds": 0.021283999999999997,
+  "cpu_scope": "worker process including interpreter/import/model/initialization/search; wait4 RUSAGE, not solver loop",
+  "descendant_cpu_seconds": 0.000518,
+  "budget_scope": "wall from before request serialization/process launch through checkpoint receipt; checker and cleanup excluded",
+  "maxrss_KiB": 23152,
+  "process_wall_seconds": 0.201480645,
+  "cleanup_wall_seconds": 0.000520954,
+  "checker_wall_seconds": 7.5849e-05,
+  "checker_cpu_seconds": 7.544500000000731e-05,
+  "exitcode": -9,
+  "reaped": true,
+  "exited_before_cleanup": false,
+  "supervision_scope": "Linux serial; process-group descendants reaped; reviewed worker prohibits Python process creation; not a hostile native-code sandbox",
+  "reaped_descendants": [
+    {
+      "pid": 10,
+      "exitcode": -9,
+      "cpu_seconds": 0.000518
+    }
+  ],
+  "feasible": false,
+  "cost": null,
+  "routes": null,
+  "incumbent_emitted_ns": null,
+  "incumbent_received_ns": null,
+  "events": [],
+  "late_events_rejected": [],
+  "malformed_events": [],
+  "checkpoint_checks": [],
+  "worker_error": null,
+  "raw_stdout": "",
+  "raw_stderr": "10\n",
+  "environment": {
+    "python": "/workspace/shared/urp_readiness/staging/venv/bin/python",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "BLIS_NUM_THREADS": "1"
+    }
+  },
+  "finished_utc": "2026-10-14T08:57:06.133993+00:00"
+}

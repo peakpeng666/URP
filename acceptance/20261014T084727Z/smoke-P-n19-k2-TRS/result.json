@@ -1,0 +1,188 @@
+{
+  "schema": "urp-cvrplib-result-v1",
+  "purpose": "acceptance_only",
+  "status": "OK",
+  "algorithm": "TRS",
+  "seed": 0,
+  "budget_seconds": 1.0,
+  "payload_sha256": "e7de98ac17d1d8487cb1d5938b5d93e43d4fbf2f05fb23f8e4782981ad6db64f",
+  "start_monotonic_ns": 4140354541760,
+  "deadline_monotonic_ns": 4141354541760,
+  "cpu_seconds": 0.18045599999999998,
+  "cpu_scope": "worker process including interpreter/import/model/initialization/search; wait4 RUSAGE, not solver loop",
+  "descendant_cpu_seconds": 0,
+  "budget_scope": "wall from before request serialization/process launch through checkpoint receipt; checker and cleanup excluded",
+  "maxrss_KiB": 17152,
+  "process_wall_seconds": 0.18333671,
+  "cleanup_wall_seconds": 0.000275503,
+  "checker_wall_seconds": 0.000448479,
+  "checker_cpu_seconds": 0.0004478559999999965,
+  "exitcode": 0,
+  "reaped": true,
+  "exited_before_cleanup": true,
+  "supervision_scope": "Linux serial; process-group descendants reaped; reviewed worker prohibits Python process creation; not a hostile native-code sandbox",
+  "reaped_descendants": [],
+  "feasible": true,
+  "cost": 237,
+  "routes": [
+    [
+      0,
+      4,
+      10,
+      1,
+      6,
+      2,
+      7,
+      5,
+      18,
+      0
+    ],
+    [
+      0,
+      11,
+      14,
+      12,
+      3,
+      17,
+      16,
+      8,
+      9,
+      15,
+      13,
+      0
+    ]
+  ],
+  "incumbent_emitted_ns": 4140519028626,
+  "incumbent_received_ns": 4140519047695,
+  "events": [
+    {
+      "event": "phase",
+      "emitted_ns": 4140518306581,
+      "name": "imports_complete",
+      "cpu_seconds": 0.162528248,
+      "cpu_affinity": [
+        0
+      ],
+      "received_ns": 4140518406827
+    },
+    {
+      "event": "phase",
+      "emitted_ns": 4140518740961,
+      "name": "model_complete",
+      "cpu_seconds": 0.163236801,
+      "received_ns": 4140518776538
+    },
+    {
+      "event": "phase",
+      "emitted_ns": 4140518985097,
+      "name": "initialization_complete",
+      "cpu_seconds": 0.163481732,
+      "received_ns": 4140519002213
+    },
+    {
+      "event": "incumbent",
+      "emitted_ns": 4140519028626,
+      "routes": [
+        [
+          0,
+          4,
+          10,
+          1,
+          6,
+          2,
+          7,
+          5,
+          18,
+          0
+        ],
+        [
+          0,
+          11,
+          14,
+          12,
+          3,
+          17,
+          16,
+          8,
+          9,
+          15,
+          13,
+          0
+        ]
+      ],
+      "cost": 237,
+      "cpu_seconds": 0.163667368,
+      "received_ns": 4140519047695
+    },
+    {
+      "event": "done",
+      "emitted_ns": 4140519217872,
+      "termination": "local_optimum",
+      "attempted": 331,
+      "accepted": 0,
+      "cpu_seconds": 0.163688022,
+      "received_ns": 4140519232583
+    }
+  ],
+  "late_events_rejected": [],
+  "malformed_events": [],
+  "checkpoint_checks": [
+    {
+      "valid": true,
+      "feasible": true,
+      "errors": [],
+      "metric": "per_edge_Decimal80_sqrt_ROUND_HALF_UP",
+      "precision": 80,
+      "cost": 237,
+      "reported_cost_checked": true,
+      "reported_cost_matches": true,
+      "route_costs": [
+        95,
+        142
+      ],
+      "loads": [
+        152,
+        158
+      ],
+      "slot_count": 2,
+      "nonempty_routes": 2,
+      "missing_customers": [],
+      "duplicate_customers": [],
+      "n_customers": 18,
+      "capacity": 160,
+      "K": 2
+    }
+  ],
+  "worker_error": null,
+  "raw_stdout": "{\"event\":\"phase\",\"emitted_ns\":4140518306581,\"name\":\"imports_complete\",\"cpu_seconds\":0.162528248,\"cpu_affinity\":[0]}\n{\"event\":\"phase\",\"emitted_ns\":4140518740961,\"name\":\"model_complete\",\"cpu_seconds\":0.163236801}\n{\"event\":\"phase\",\"emitted_ns\":4140518985097,\"name\":\"initialization_complete\",\"cpu_seconds\":0.163481732}\n{\"event\":\"incumbent\",\"emitted_ns\":4140519028626,\"routes\":[[0,4,10,1,6,2,7,5,18,0],[0,11,14,12,3,17,16,8,9,15,13,0]],\"cost\":237,\"cpu_seconds\":0.163667368}\n{\"event\":\"done\",\"emitted_ns\":4140519217872,\"termination\":\"local_optimum\",\"attempted\":331,\"accepted\":0,\"cpu_seconds\":0.163688022}\n",
+  "raw_stderr": "",
+  "environment": {
+    "python": "/workspace/shared/urp_readiness/staging/venv/bin/python",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "BLIS_NUM_THREADS": "1"
+    }
+  },
+  "finished_utc": "2026-10-14T08:51:57.604815+00:00",
+  "run_key": "80e51c12721003c937e2f986b83e97dc0b3c6767504e9e34461313c4dba2fddb",
+  "run_id": "smoke-P-n19-k2-TRS",
+  "case_id": "P-n19-k2",
+  "contract": {
+    "id": "historical-small16-at-most-K",
+    "K": 2,
+    "fixed_cost": 0
+  },
+  "instance_sha256": "ffce851458f3ccd4fb790403e91bb4ad6e495c37704a68f8563b995e97e38892",
+  "case_manifest_sha256": "84aef977eae1112dfdd8f5c280cbd6f45bb66b2b325335e5257cce1fb8ebf5df",
+  "parse_setup_wall_seconds": 0.007592234000185272,
+  "full_wall_seconds": 0.19527881700014404,
+  "gap": null,
+  "gap_note": "reference evaluation is a separate post-run operation",
+  "solver_source_sha256": "32b7deaacb6f6bef2b7943214217aa47e557b804e36a5ab6be3b93f9bc53b09f"
+}

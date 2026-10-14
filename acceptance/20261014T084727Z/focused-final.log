@@ -1,0 +1,31 @@
+test_base_capacity_translation_rotation_scale_and_permutation (test_cvrplib.InputContract.test_base_capacity_translation_rotation_scale_and_permutation) ... ok
+test_denominators_include_failures_and_unstarted (test_cvrplib.InputContract.test_denominators_include_failures_and_unstarted) ... ok
+test_fleet_standard_x_and_capped_x_are_separate (test_cvrplib.InputContract.test_fleet_standard_x_and_capped_x_are_separate) ... ok
+test_independent_feasibility_and_exact_cost (test_cvrplib.InputContract.test_independent_feasibility_and_exact_cost) ... ok
+test_parser_node_ids_and_depot_mapping (test_cvrplib.InputContract.test_parser_node_ids_and_depot_mapping) ... ok
+test_reference_and_bad_payload_blocked (test_cvrplib.InputContract.test_reference_and_bad_payload_blocked) ... ok
+test_reject_malformed_vrp (test_cvrplib.InputContract.test_reject_malformed_vrp) ... ok
+test_round_edges_not_total_or_bankers (test_cvrplib.InputContract.test_round_edges_not_total_or_bankers) ... ok
+test_sol_format (test_cvrplib.InputContract.test_sol_format) ... ok
+test_source_files_equal_archived_hashes (test_cvrplib.InputContract.test_source_files_equal_archived_hashes) ... ok
+test_crash_is_retained (test_cvrplib.RealProcesses.test_crash_is_retained) ... ok
+test_descendant_killed_and_reaped (test_cvrplib.RealProcesses.test_descendant_killed_and_reaped) ... ok
+test_feasible_checkpoint_survives_hard_timeout (test_cvrplib.RealProcesses.test_feasible_checkpoint_survives_hard_timeout) ... ok
+test_inherited_low_memory_limit_does_not_attempt_raise (test_cvrplib.RealProcesses.test_inherited_low_memory_limit_does_not_attempt_raise) ... ok
+test_initialization_uses_budget (test_cvrplib.RealProcesses.test_initialization_uses_budget) ... ok
+test_late_timestamp_never_accepted (test_cvrplib.RealProcesses.test_late_timestamp_never_accepted) ... ok
+test_malformed_output_recorded (test_cvrplib.RealProcesses.test_malformed_output_recorded) ... ok
+test_vnd_moves_equal_archived_engine (test_cvrplib.RealProcesses.test_vnd_moves_equal_archived_engine) ... ok
+test_worker_not_reading_large_stdin_cannot_block_deadline (test_cvrplib.RealProcesses.test_worker_not_reading_large_stdin_cannot_block_deadline) ... ok
+test_wrong_cost_rejected (test_cvrplib.RealProcesses.test_wrong_cost_rejected) ... ok
+test_duplicate_run_key_across_outputs_and_threads (test_cvrplib_readiness.AtomicClaims.test_duplicate_run_key_across_outputs_and_threads) ... ok
+test_missing_error_type_is_api_error (test_cvrplib_readiness.ExtraWorkerFailures.test_missing_error_type_is_api_error) ... ok
+test_memory_error_is_resource_limit (test_cvrplib_readiness.ExtraWorkerFailures.test_memory_error_is_resource_limit) ... ok
+test_empty_success_is_no_solution_not_proof (test_cvrplib_readiness.ExtraWorkerFailures.test_empty_success_is_no_solution_not_proof) ... ok
+test_invalid_routes_not_problem_infeasibility (test_cvrplib_readiness.ExtraWorkerFailures.test_invalid_routes_not_problem_infeasibility) ... ok
+test_actual_memory_allocation_failure (test_cvrplib_readiness.ExtraWorkerFailures.test_actual_memory_allocation_failure) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 1.511s
+
+OK

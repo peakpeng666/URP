@@ -35,10 +35,14 @@ def main(argv=None):
             item.add_argument("--output", type=Path, required=True, help="New output directory; never reuse frozen results")
     from .nas_fidelity import cli as nas_cli
     nas_cli.configure(sub.add_parser("nas", help="Optional NAS frozen-evidence recovery and recheck"))
+    from .cvrplib import cli as cvrplib_cli
+    cvrplib_cli.configure(sub.add_parser("cvrplib", help="Verified CVRPLIB inputs and isolated single-case acceptance"))
     args = parser.parse_args(argv)
     if not __debug__:
         parser.error("Python -O/-OO is unsupported: inherited research checks require assertions")
     try:
+        if args.command == "cvrplib":
+            return cvrplib_cli.run(args)
         if args.command == "nas":
             return nas_cli.run(args)
         if args.command == "smoke":

@@ -1,0 +1,37 @@
+[
+  {
+    "file": "acceptance/20261014T084727Z/smoke-A-n32-k5-pyvrp/result.json",
+    "all_scoring_fields_match": true,
+    "eligible_for_gap": true
+  },
+  {
+    "file": "acceptance/20261014T084727Z/smoke-P-n19-k2-T/result.json",
+    "all_scoring_fields_match": true,
+    "eligible_for_gap": true
+  },
+  {
+    "file": "acceptance/20261014T084727Z/smoke-P-n19-k2-TRS/result.json",
+    "all_scoring_fields_match": true,
+    "eligible_for_gap": true
+  },
+  {
+    "file": "acceptance/20261014T084727Z/smoke-P-n19-k2-TSR/result.json",
+    "all_scoring_fields_match": true,
+    "eligible_for_gap": true
+  },
+  {
+    "file": "acceptance/20261014T084727Z/smoke-P-n19-k2-savings/result.json",
+    "all_scoring_fields_match": true,
+    "eligible_for_gap": true
+  },
+  {
+    "file": "acceptance/20261014T084727Z/smoke-P-pyvrp/result.json",
+    "all_scoring_fields_match": true,
+    "eligible_for_gap": true
+  },
+  {
+    "file": "acceptance/20261014T084727Z/smoke-X-n101-k25-pyvrp/result.json",
+    "all_scoring_fields_match": true,
+    "eligible_for_gap": true
+  }
+]

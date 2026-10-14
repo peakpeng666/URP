@@ -1,0 +1,7 @@
+{
+  "archive_sha256": "a8ba21372366e984641f36ffc0eb0b1ae7e4e3ab48de90ef82c51e284bdf9a59",
+  "member_checks_passed": 106,
+  "patch_sha256": "7922e7977ebe272270bf85edcac7de783a8177f0a1e117a0886c71cfd8fea0e6",
+  "base_commit": "f110f039854f7314e36632ce7d3ee977cd0de0fc",
+  "state": "STOPPED_BY_PARENT_HANDOFF_ONLY_NOT_FROZEN"
+}

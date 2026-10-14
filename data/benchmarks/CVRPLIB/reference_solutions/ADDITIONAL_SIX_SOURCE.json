@@ -1,0 +1,78 @@
+{
+  "status": "raw_source_retrieved_pending_independent_validation",
+  "official_table": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/instances/1",
+  "files": [
+    {
+      "case_id": "A-n33-k5",
+      "file": "A-n33-k5.sol",
+      "url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/5",
+      "retrieved_at_utc": "2026-10-14T07:10:40Z",
+      "size": 146,
+      "sha256": "d8045df85ee1f1cee362f884ea0c52f0a5f6c3e3dcd06bcc644a0da79974e43b",
+      "official_table_cost": 661,
+      "official_table_opt": "yes",
+      "independent_route_validation": "not_run",
+      "eligible_for_gap": false
+    },
+    {
+      "case_id": "A-n33-k6",
+      "file": "A-n33-k6.sol",
+      "url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/7",
+      "retrieved_at_utc": "2026-10-14T07:10:40Z",
+      "size": 156,
+      "sha256": "a5395d65af5807fb05606f0abfd6a2a7ad6d98ef52e1fa4d9780667a09e2c649",
+      "official_table_cost": 742,
+      "official_table_opt": "yes",
+      "independent_route_validation": "not_run",
+      "eligible_for_gap": false
+    },
+    {
+      "case_id": "B-n34-k5",
+      "file": "B-n34-k5.sol",
+      "url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/32",
+      "retrieved_at_utc": "2026-10-14T07:10:40Z",
+      "size": 149,
+      "sha256": "08a7b3ee54aac0f6e8b9bf63d0a7afd94443fd7770861823017c9087487ad17c",
+      "official_table_cost": 788,
+      "official_table_opt": "yes",
+      "independent_route_validation": "not_run",
+      "eligible_for_gap": false
+    },
+    {
+      "case_id": "B-n35-k5",
+      "file": "B-n35-k5.sol",
+      "url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/33",
+      "retrieved_at_utc": "2026-10-14T07:10:40Z",
+      "size": 152,
+      "sha256": "542e9b721fa3c9684726e2e084755fc9c3cc9bfc1eda27c0ee32d0fa5a1f1ca1",
+      "official_table_cost": 955,
+      "official_table_opt": "yes",
+      "independent_route_validation": "not_run",
+      "eligible_for_gap": false
+    },
+    {
+      "case_id": "P-n45-k5",
+      "file": "P-n45-k5.sol",
+      "url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/83",
+      "retrieved_at_utc": "2026-10-14T07:10:40Z",
+      "size": 187,
+      "sha256": "68cb1a6de37fc312e1b4ab0c2a704ce0b5331ef2aea9d1e72c8deab11400b804",
+      "official_table_cost": 510,
+      "official_table_opt": "yes",
+      "independent_route_validation": "not_run",
+      "eligible_for_gap": false
+    },
+    {
+      "case_id": "P-n50-k10",
+      "file": "P-n50-k10.sol",
+      "url": "https://galgos.inf.puc-rio.br/cvrplib/index.php/en/download/bks/86",
+      "retrieved_at_utc": "2026-10-14T07:10:40Z",
+      "size": 248,
+      "sha256": "87269cfa6a75575f030481812f975244f1b9ee536e2ffba9428f5b46b85df225",
+      "official_table_cost": 696,
+      "official_table_opt": "yes",
+      "independent_route_validation": "not_run",
+      "eligible_for_gap": false
+    }
+  ]
+}

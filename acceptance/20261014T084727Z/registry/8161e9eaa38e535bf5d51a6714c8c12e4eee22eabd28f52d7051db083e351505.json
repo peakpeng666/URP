@@ -1,0 +1,16 @@
+{
+  "key": {
+    "instance_sha256": "2ebedd0631c4c56c08ba3b1476ac874a7d54cc448bd3795de534f43b2c099ce2",
+    "algorithm": "pyvrp",
+    "seed": 0,
+    "budget_seconds": 1.0,
+    "contract": {
+      "id": "classic-fixed-K-equivalent-cap",
+      "K": 5,
+      "fixed_cost": 0
+    },
+    "solver_source_sha256": "32b7deaacb6f6bef2b7943214217aa47e557b804e36a5ab6be3b93f9bc53b09f"
+  },
+  "output": "/workspace/shared/urp_readiness/deliver/acceptance/20261014T084727Z/smoke-A-n32-k5-pyvrp",
+  "claimed_utc": "2026-10-14T08:51:58.318089+00:00"
+}

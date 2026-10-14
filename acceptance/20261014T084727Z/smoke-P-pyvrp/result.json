@@ -1,0 +1,239 @@
+{
+  "schema": "urp-cvrplib-result-v1",
+  "purpose": "acceptance_only",
+  "status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+  "algorithm": "pyvrp",
+  "seed": 0,
+  "budget_seconds": 1.0,
+  "payload_sha256": "f93c6799a813cc4ed3deeb486c36470dee1f5316861392ecff0c5994b16de76d",
+  "start_monotonic_ns": 4039381909589,
+  "deadline_monotonic_ns": 4040381909589,
+  "cpu_seconds": 1.002558,
+  "cpu_scope": "worker process including interpreter/import/model/initialization/search; wait4 RUSAGE, not solver loop",
+  "descendant_cpu_seconds": 0,
+  "budget_scope": "wall from before request serialization/process launch through checkpoint receipt; checker and cleanup excluded",
+  "maxrss_KiB": 36848,
+  "process_wall_seconds": 1.003335775,
+  "cleanup_wall_seconds": 0.002968135,
+  "checker_wall_seconds": 0.000921776,
+  "checker_cpu_seconds": 0.0009218079999999962,
+  "exitcode": -9,
+  "reaped": true,
+  "exited_before_cleanup": false,
+  "supervision_scope": "Linux serial; process-group descendants reaped; reviewed worker prohibits Python process creation; not a hostile native-code sandbox",
+  "reaped_descendants": [],
+  "feasible": true,
+  "cost": 212,
+  "routes": [
+    [
+      0,
+      1,
+      10,
+      2,
+      7,
+      9,
+      15,
+      13,
+      5,
+      18,
+      0
+    ],
+    [
+      0,
+      6,
+      8,
+      16,
+      17,
+      3,
+      12,
+      14,
+      11,
+      4,
+      0
+    ]
+  ],
+  "incumbent_emitted_ns": 4039559595818,
+  "incumbent_received_ns": 4039559698487,
+  "events": [
+    {
+      "event": "phase",
+      "emitted_ns": 4039548526422,
+      "name": "imports_complete",
+      "cpu_seconds": 0.166014066,
+      "cpu_affinity": [
+        0
+      ],
+      "received_ns": 4039548701012
+    },
+    {
+      "event": "phase",
+      "emitted_ns": 4039550632032,
+      "name": "model_complete",
+      "cpu_seconds": 0.166014066,
+      "received_ns": 4039550709909
+    },
+    {
+      "event": "phase",
+      "emitted_ns": 4039551662849,
+      "name": "initialization_complete",
+      "cpu_seconds": 0.166014066,
+      "received_ns": 4039551722426
+    },
+    {
+      "event": "incumbent",
+      "emitted_ns": 4039552267373,
+      "routes": [
+        [
+          0,
+          10,
+          3,
+          17,
+          16,
+          8,
+          9,
+          15,
+          13,
+          5,
+          18,
+          0
+        ],
+        [
+          0,
+          1,
+          4,
+          11,
+          14,
+          12,
+          2,
+          7,
+          6,
+          0
+        ]
+      ],
+      "cost": 222,
+      "cpu_seconds": 0.169675065,
+      "received_ns": 4039552327834
+    },
+    {
+      "event": "incumbent",
+      "emitted_ns": 4039559595818,
+      "routes": [
+        [
+          0,
+          1,
+          10,
+          2,
+          7,
+          9,
+          15,
+          13,
+          5,
+          18,
+          0
+        ],
+        [
+          0,
+          6,
+          8,
+          16,
+          17,
+          3,
+          12,
+          14,
+          11,
+          4,
+          0
+        ]
+      ],
+      "cost": 212,
+      "cpu_seconds": 0.173646387,
+      "received_ns": 4039559698487
+    }
+  ],
+  "late_events_rejected": [],
+  "malformed_events": [],
+  "checkpoint_checks": [
+    {
+      "valid": true,
+      "feasible": true,
+      "errors": [],
+      "metric": "per_edge_Decimal80_sqrt_ROUND_HALF_UP",
+      "precision": 80,
+      "cost": 222,
+      "reported_cost_checked": true,
+      "reported_cost_matches": true,
+      "route_costs": [
+        122,
+        100
+      ],
+      "loads": [
+        160,
+        150
+      ],
+      "slot_count": 2,
+      "nonempty_routes": 2,
+      "missing_customers": [],
+      "duplicate_customers": [],
+      "n_customers": 18,
+      "capacity": 160,
+      "K": 2
+    },
+    {
+      "valid": true,
+      "feasible": true,
+      "errors": [],
+      "metric": "per_edge_Decimal80_sqrt_ROUND_HALF_UP",
+      "precision": 80,
+      "cost": 212,
+      "reported_cost_checked": true,
+      "reported_cost_matches": true,
+      "route_costs": [
+        98,
+        114
+      ],
+      "loads": [
+        157,
+        153
+      ],
+      "slot_count": 2,
+      "nonempty_routes": 2,
+      "missing_customers": [],
+      "duplicate_customers": [],
+      "n_customers": 18,
+      "capacity": 160,
+      "K": 2
+    }
+  ],
+  "worker_error": null,
+  "raw_stdout": "{\"event\":\"phase\",\"emitted_ns\":4039548526422,\"name\":\"imports_complete\",\"cpu_seconds\":0.166014066,\"cpu_affinity\":[0]}\n{\"event\":\"phase\",\"emitted_ns\":4039550632032,\"name\":\"model_complete\",\"cpu_seconds\":0.166014066}\n{\"event\":\"phase\",\"emitted_ns\":4039551662849,\"name\":\"initialization_complete\",\"cpu_seconds\":0.166014066}\n{\"event\":\"incumbent\",\"emitted_ns\":4039552267373,\"routes\":[[0,10,3,17,16,8,9,15,13,5,18,0],[0,1,4,11,14,12,2,7,6,0]],\"cost\":222,\"cpu_seconds\":0.169675065}\n{\"event\":\"incumbent\",\"emitted_ns\":4039559595818,\"routes\":[[0,1,10,2,7,9,15,13,5,18,0],[0,6,8,16,17,3,12,14,11,4,0]],\"cost\":212,\"cpu_seconds\":0.173646387}\n",
+  "raw_stderr": "",
+  "environment": {
+    "python": "/workspace/shared/urp_readiness/staging/venv/bin/python",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "BLIS_NUM_THREADS": "1"
+    }
+  },
+  "finished_utc": "2026-10-14T08:50:17.454623+00:00",
+  "run_key": "5450cc07de4240f68f025cfd4b443a36c73746115d529bd42fbee99c8bdd3765",
+  "run_id": "smoke-P-pyvrp",
+  "case_id": "P-n19-k2",
+  "contract": {
+    "id": "historical-small16-at-most-K",
+    "K": 2,
+    "fixed_cost": 0
+  },
+  "instance_sha256": "ffce851458f3ccd4fb790403e91bb4ad6e495c37704a68f8563b995e97e38892",
+  "case_manifest_sha256": "84aef977eae1112dfdd8f5c280cbd6f45bb66b2b325335e5257cce1fb8ebf5df",
+  "parse_setup_wall_seconds": 0.007939263000025676,
+  "full_wall_seconds": 1.018081565999637,
+  "gap": null,
+  "gap_note": "reference evaluation is a separate post-run operation",
+  "solver_source_sha256": "32b7deaacb6f6bef2b7943214217aa47e557b804e36a5ab6be3b93f9bc53b09f"
+}

@@ -1,0 +1,138 @@
+{
+  "schema": "urp-cvrplib-result-v1",
+  "purpose": "acceptance_only",
+  "status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+  "algorithm": "pyvrp",
+  "seed": 0,
+  "budget_seconds": 5,
+  "payload_sha256": "ad52f6787f7b8d437a844d8027490a92e9bbde382ec82d023b47fbfb9132d90c",
+  "start_monotonic_ns": 4134484819904,
+  "deadline_monotonic_ns": 4139484819904,
+  "cpu_seconds": 5.001488,
+  "cpu_scope": "worker process including interpreter/import/model/initialization/search; wait4 RUSAGE, not solver loop",
+  "descendant_cpu_seconds": 0,
+  "budget_scope": "wall from before request serialization/process launch through checkpoint receipt; checker and cleanup excluded",
+  "maxrss_KiB": 36980,
+  "process_wall_seconds": 5.002943272,
+  "cleanup_wall_seconds": 0.002026104,
+  "checker_wall_seconds": 0.000602889,
+  "checker_cpu_seconds": 0.000603205999999995,
+  "exitcode": -9,
+  "reaped": true,
+  "exited_before_cleanup": false,
+  "supervision_scope": "Linux serial; process-group descendants reaped; reviewed worker prohibits Python process creation; not a hostile native-code sandbox",
+  "reaped_descendants": [],
+  "feasible": true,
+  "cost": 28,
+  "routes": [
+    [
+      0,
+      3,
+      1,
+      0
+    ],
+    [
+      0,
+      5,
+      4,
+      2,
+      0
+    ]
+  ],
+  "incumbent_emitted_ns": 4134630601154,
+  "incumbent_received_ns": 4134630678041,
+  "events": [
+    {
+      "event": "phase",
+      "emitted_ns": 4134628863215,
+      "name": "imports_complete",
+      "cpu_seconds": 0.142961023,
+      "cpu_affinity": [
+        0
+      ],
+      "received_ns": 4134629031764
+    },
+    {
+      "event": "phase",
+      "emitted_ns": 4134629740795,
+      "name": "model_complete",
+      "cpu_seconds": 0.142961023,
+      "received_ns": 4134629809437
+    },
+    {
+      "event": "phase",
+      "emitted_ns": 4134630375052,
+      "name": "initialization_complete",
+      "cpu_seconds": 0.142961023,
+      "received_ns": 4134630435006
+    },
+    {
+      "event": "incumbent",
+      "emitted_ns": 4134630601154,
+      "routes": [
+        [
+          0,
+          3,
+          1,
+          0
+        ],
+        [
+          0,
+          5,
+          4,
+          2,
+          0
+        ]
+      ],
+      "cost": 28,
+      "cpu_seconds": 0.142961023,
+      "received_ns": 4134630678041
+    }
+  ],
+  "late_events_rejected": [],
+  "malformed_events": [],
+  "checkpoint_checks": [
+    {
+      "valid": true,
+      "feasible": true,
+      "errors": [],
+      "metric": "per_edge_Decimal80_sqrt_ROUND_HALF_UP",
+      "precision": 80,
+      "cost": 28,
+      "reported_cost_checked": true,
+      "reported_cost_matches": true,
+      "route_costs": [
+        10,
+        18
+      ],
+      "loads": [
+        2,
+        3
+      ],
+      "slot_count": 2,
+      "nonempty_routes": 2,
+      "missing_customers": [],
+      "duplicate_customers": [],
+      "n_customers": 5,
+      "capacity": 3,
+      "K": 2
+    }
+  ],
+  "worker_error": null,
+  "raw_stdout": "{\"event\":\"phase\",\"emitted_ns\":4134628863215,\"name\":\"imports_complete\",\"cpu_seconds\":0.142961023,\"cpu_affinity\":[0]}\n{\"event\":\"phase\",\"emitted_ns\":4134629740795,\"name\":\"model_complete\",\"cpu_seconds\":0.142961023}\n{\"event\":\"phase\",\"emitted_ns\":4134630375052,\"name\":\"initialization_complete\",\"cpu_seconds\":0.142961023}\n{\"event\":\"incumbent\",\"emitted_ns\":4134630601154,\"routes\":[[0,3,1,0],[0,5,4,2,0]],\"cost\":28,\"cpu_seconds\":0.142961023}\n{\"event\":\"deadline\",\"emitted_ns\":4139484970708,\"cpu_seconds\":4.998331436}\n",
+  "raw_stderr": "",
+  "environment": {
+    "python": "/workspace/shared/urp_readiness/staging/venv/bin/python",
+    "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "threads": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "NUMEXPR_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1",
+      "BLIS_NUM_THREADS": "1"
+    }
+  },
+  "finished_utc": "2026-10-14T08:51:56.551619+00:00"
+}

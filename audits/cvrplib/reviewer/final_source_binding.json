@@ -1,0 +1,115 @@
+{
+  "created_utc": "2026-10-14T08:57:01.791143+00:00",
+  "reviewer_test_count": 15,
+  "reviewer_result": "PASS",
+  "all_match_smoke_source": true,
+  "files": [
+    {
+      "path": "src/research/src/urp_research/cvrplib/__init__.py",
+      "sha256": "4ffe0ce5c3dfa533e113086d868db2a9be8ee0eba7148b847c2b908ed4127391",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/audit.py",
+      "sha256": "a67d1937a59a87372d1387ef528eaaf61f845decb3d6e4fb4a8923ae9acf9395",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/cli.py",
+      "sha256": "98a36bddef5a860fa7b228156ac2518015b2e90e19259ee672863e1edd657f54",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/evaluate.py",
+      "sha256": "e3e9609869448a33828fb21533fbd33b4c7b2a2601dfe54035c9658064dfda11",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/pyvrp/independent_review/audit_inputs.py",
+      "sha256": "bc597239ed8a70049389594262fd5fd13eb13f2566f7d37ec4b89564f5856a28",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/pyvrp/independent_review/independent_validator.py",
+      "sha256": "06885445905c8fe9ef5adcd92423b5be5cc6a152c2d0a862c308dd5a4c916d07",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/pyvrp/worker.py",
+      "sha256": "56f79576cf5984b36ed805506f362e4bfecb8ca2957a2a2301156be4d2a8a093",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/audit.py",
+      "sha256": "ff5286ea531fa7fdd9037a7988f3b819f432d4f2fa963fef1a076383caacb386",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/capacity_solver.py",
+      "sha256": "ce5a253f043b1bb8689c7a870b89b33649002f7ca0c10935ec41490070016a49",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/engine.py",
+      "sha256": "6808bb1af9e644e9260ebc77c7f0c1ebae4b907528dcbd0f8a50468bafd5a1c8",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/experiment.py",
+      "sha256": "137ba7a6f9a8c2e1ebc39987fd64801cd78094df2171eb6b7a1c80af15bc33e7",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/baselines.py",
+      "sha256": "3d2ec0cf5c2c67d23e0522751d8727fde99f96ed5eada484f0fd4f7fc63961c2",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/budget.py",
+      "sha256": "d4d9fe340fbd868ad20f75b87ad1c0f5990dcd07a12063c0ff432ee9b40c7c34",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/checker.py",
+      "sha256": "2d3066fc3485d83806035c6f079425a7d6fdb0ad34fdf1c246c4c75348be0187",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/generate.py",
+      "sha256": "f21d14948b38160458a8045e23e23c80d2707e7b1db669dc5c92c4ab28728642",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/frozen/vnd/legacy/vendor/urp_cvrp/instance.py",
+      "sha256": "90ba6448a3053f4b9e715f08ea753d4457a285856db632c2f2898717ee032deb",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/io.py",
+      "sha256": "c7f44731d7955ee920e72086fe31b31500fea881eb961379558db060c8fa129d",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/runner.py",
+      "sha256": "c98be3387b4187088f57d1112d35e3ee6fdf72480fcad77e0a4572ab7fe4a735",
+      "matches_acceptance_source": true
+    },
+    {
+      "path": "src/research/src/urp_research/cvrplib/worker.py",
+      "sha256": "a91187524200d86132c088afbc4dce496e8ad32887f6a7014d63cb59c6337adb",
+      "matches_acceptance_source": true
+    }
+  ],
+  "fixture_revision_utc": "2026-10-14T09:01:26.756309+00:00",
+  "reviewer_log": "audits/cvrplib/reviewer/adversarial_fixture_v2.log",
+  "test_revision_files": {
+    "audits/cvrplib/reviewer/test_adversarial_review.py": "64eeb4de38de10798444dfc8962ad9100b7919e3cf17bc846d8dd9b808567c27",
+    "src/research/tests/test_cvrplib.py": "dd0e3a0809c3f8d0fa7c1502eb2a88a1eac28373f264eb80ecb50fa84f85fd28",
+    "audits/cvrplib/reviewer/adversarial_fixture_v2.log": "fd011d6db30be67948342ec113d4ac23a6584198fea3f83859ef034db2dbd896"
+  }
+}

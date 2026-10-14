@@ -1,0 +1,54 @@
+{
+  "schema": "urp-vnd-original-verification-manifest-v2",
+  "scope": "repository-relative; excludes this manifest itself",
+  "files": [
+    {
+      "path": "audits/cvrplib/vnd_original/README.md",
+      "bytes": 1803,
+      "sha256": "87512e74de350eea04b854f1c67a455560f43358454f6440c49c4335524c7dbc",
+      "git_blob_sha": "09d7bea7e60caebaf53a92b98caee219ea48d312"
+    },
+    {
+      "path": "audits/cvrplib/vnd_original/root_verification.json",
+      "bytes": 3400,
+      "sha256": "f90071a22254fa3a8ea58988c5b86f6c680ab51e7aa003ea718f93f43643f702",
+      "git_blob_sha": "de0ec41a226d0411e8d999414057b947dfda45b3"
+    },
+    {
+      "path": "audits/cvrplib/vnd_original/verification.log",
+      "bytes": 82,
+      "sha256": "01250858c3c2b834b9793fb19bd59f1771735c1524a766e8e50da66f812460d0",
+      "git_blob_sha": "ef81f4ea43d28e4024f18923d5b7b6296a112f5f"
+    },
+    {
+      "path": "audits/cvrplib/vnd_original/verify_vnd_original.py",
+      "bytes": 2714,
+      "sha256": "740658cd402c47f301ded38ab1d4d90b25425944ec71b2ef6c9c357e841c3b63",
+      "git_blob_sha": "7d02685aad0134c408fe1b3f50d8d1642331d5a6"
+    },
+    {
+      "path": "audits/cvrplib/vnd_original/vnd_original_verification.json",
+      "bytes": 7966,
+      "sha256": "072e97eb263699b07cc8486b9672370743196ce3fcf48925de4c0a2f1ea4b662",
+      "git_blob_sha": "4e3cf5f43d1101b09f5e1c35a937deaea610e4ed"
+    },
+    {
+      "path": "audits/cvrplib/vnd_original/当前核验.md",
+      "bytes": 976,
+      "sha256": "9b3f81f7c544abdad2571ac3fefb15ad0185dc5abecaa4abea4a982b64626803",
+      "git_blob_sha": "e3acd778dd11a6d6392b1ecff5e7ec95b8639ea6"
+    },
+    {
+      "path": "audits/cvrplib/vnd_original/来源核验说明.md",
+      "bytes": 862,
+      "sha256": "36de66a41d1360b6424cbc6b50e2217ed21c7fc8be914dddd80bb40736c0942f",
+      "git_blob_sha": "0c7f4c345045f51f204f1a7ea401b979482222cb"
+    },
+    {
+      "path": "experiments/results/路线求解/公共新16例算子顺序迁移.zip",
+      "bytes": 1296035,
+      "sha256": "4ac6eca8206577329f074d8aa57274202ce591681f9daeb939671ff8c302dbca",
+      "git_blob_sha": "057f3ce874442875f35cf23cdf56549af9ca0d32"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+fixture savings 1 OK 29
+fixture T 1 OK 29
+fixture TRS 1 OK 29
+fixture TSR 1 OK 29
+fixture pyvrp 1 TIMEOUT_WITH_FEASIBLE_INCUMBENT 28
+fixture savings 5 OK 29
+fixture T 5 OK 29
+fixture TRS 5 OK 29
+fixture TSR 5 OK 29
+fixture pyvrp 5 TIMEOUT_WITH_FEASIBLE_INCUMBENT 28
+{"case_id": "P-n19-k2", "status": "OK", "algorithm": "savings", "seed": 0, "cost": 237, "process_wall_seconds": 0.090377259}
+
+{"case_id": "P-n19-k2", "status": "OK", "algorithm": "T", "seed": 0, "cost": 237, "process_wall_seconds": 0.085009223}
+
+{"case_id": "P-n19-k2", "status": "OK", "algorithm": "TRS", "seed": 0, "cost": 237, "process_wall_seconds": 0.18333671}
+
+{"case_id": "P-n19-k2", "status": "OK", "algorithm": "TSR", "seed": 0, "cost": 237, "process_wall_seconds": 0.136362899}
+
+{"case_id": "A-n32-k5", "status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT", "algorithm": "pyvrp", "seed": 0, "cost": 784, "process_wall_seconds": 1.002763297}
+
+{"case_id": "X-n101-k25", "status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT", "algorithm": "pyvrp", "seed": 0, "cost": 27597, "process_wall_seconds": 5.009599646}
+
