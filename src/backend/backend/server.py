@@ -7,6 +7,7 @@ from urllib.parse import urlparse, parse_qs, unquote, quote
 from .store import Store, StoreError, safe_path
 from .routes import RouteReader
 from .route_comparison import compare_routes
+from .route_scene import route_scene
 
 def make_server(store: Store, import_root: Path, port=4180):
     import_root=Path(import_root).resolve()
@@ -21,6 +22,16 @@ def make_server(store: Store, import_root: Path, port=4180):
                 u=urlparse(self.path);parts=[unquote(p) for p in u.path.split('/') if p];query=parse_qs(u.query)
                 revision=int(query['revision'][0]) if 'revision' in query else None
                 if revision is not None and revision < 1:raise StoreError('invalid_revision','版本必须为正整数。')
+                scene_path=(len(parts)==7 and parts[:3]==['api','v1','experiments']
+                            and parts[4]=='runs' and parts[6]=='route-scene')
+                if scene_path and method!='GET':
+                    raise StoreError('read_only_routes','路线场景仅支持GET；不能启动仿真或导航。',405)
+                if scene_path:
+                    scene_query=parse_qs(u.query,keep_blank_values=True)
+                    if (set(scene_query)-{'revision'} or len(scene_query.get('revision',[]))>1
+                            or scene_query.get('revision')==['']):
+                        raise StoreError('invalid_scene_query','路线场景仅接受一个revision参数；不能覆盖物理单位或推荐状态。')
+                    return self.json(route_scene(store,parts[3],parts[5],revision))
                 if len(parts)>=4 and parts[:2]==['api','experiments'] and parts[3] in {'runs','instances'} and method!='GET':
                     raise StoreError('read_only_routes','路线数据接口仅支持GET；不能运行求解。',405)
                 if parts==['api','route-comparison'] and method!='GET':

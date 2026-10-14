@@ -12,6 +12,8 @@ python3 -m backend --db ../../data/backend/research.sqlite3 serve --import-root 
 
 [API与数据口径](api.md) · [路线格式](docs/) · [源码来源](config/sources.json)。研究执行由`src/research`承担。
 
+新增只读 [Route-scene v1 契约](docs/ROUTE_SCENE_API.md)：为二维展示导出原始访问顺序折线、明确单位和不可变来源；不宣称物理导航就绪或产生推荐结果。
+
 ```sh
 python3 -m unittest discover -s tests -p 'test_*.py'
 RESEARCH_CONSOLE_PACKAGE_ROOT=packages python3 -m unittest discover -s tests -p integration_backend.py

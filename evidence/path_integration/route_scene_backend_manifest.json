@@ -1,0 +1,79 @@
+{
+  "base_commit": "418fffe99eccb6487f2497d29d36d0e0913548f6",
+  "scope": "read-only route-scene export; no frontend, solver or remote repository changes",
+  "changed_files": [
+    {
+      "path": "src/backend/README.md",
+      "change": "modified",
+      "base_sha256": "01f021668e38054956a4856d662b69bca11cc149a5f42b419bd689ad05355694",
+      "new_sha256": "b69ab489db7cc91224a36dc202fc5282db4d53437cd2a56d913c516f6309af17"
+    },
+    {
+      "path": "src/backend/backend/route_scene.py",
+      "change": "added",
+      "base_sha256": null,
+      "new_sha256": "1c26039fdcc6b20e7469f3cfa43fa1fe02696e494d38355d366caefef19adeda"
+    },
+    {
+      "path": "src/backend/backend/server.py",
+      "change": "modified",
+      "base_sha256": "3c9901583c8885da6eec0ef044da573357d2bc5089c3dd01204bbe6b7be5cfb6",
+      "new_sha256": "986e6e561cffade07547587d24c459f7978411cf43329dda3cfcb9ec916c64ac"
+    },
+    {
+      "path": "src/backend/docs/ROUTE_SCENE_API.md",
+      "change": "added",
+      "base_sha256": null,
+      "new_sha256": "a12bc2407020694b9f725a53da623061d16f22a888679ff54f4919c08e6c97e4"
+    },
+    {
+      "path": "src/backend/docs/route_scene_v1.schema.json",
+      "change": "added",
+      "base_sha256": null,
+      "new_sha256": "4c06818511232525e2f9978dcc3b60e0c426d3da043440619b166485c9b253b9"
+    },
+    {
+      "path": "src/backend/tests/fixtures/route_scene_v1.json",
+      "change": "added",
+      "base_sha256": null,
+      "new_sha256": "776441fb47de5040790bd3cec4e6667a816341b06c74a6760fc00ea7866b4e4b"
+    },
+    {
+      "path": "src/backend/tests/integration_route_scene.py",
+      "change": "added",
+      "base_sha256": null,
+      "new_sha256": "3cc318bebeb80639f9d5a4f8e6d316ce5e25dd2cef7c18232a7ff65aaf880674"
+    },
+    {
+      "path": "src/backend/tests/test_route_scene.py",
+      "change": "added",
+      "base_sha256": null,
+      "new_sha256": "72d8cd0ecf0d80b387731843cc7000cfdc7f0a13ef21a43dcd5f549bbd677fa6"
+    }
+  ],
+  "unit_tests": {
+    "status": "PASS",
+    "count": 71,
+    "existing_tests": 56,
+    "new_tests": 15
+  },
+  "fixture_integration": {
+    "status": "PASS",
+    "count": 1,
+    "report": "route_scene_integration.json"
+  },
+  "compileall": "PASS",
+  "runtime_dependencies_added": [],
+  "integration_test_extra_dependency": "jsonschema (already available in test environment)",
+  "limitations": [
+    "Synthetic contract fixtures only; historical archives not revalidated",
+    "ROS/Gazebo not installed or executed",
+    "No frontend visual QA or deployment"
+  ],
+  "review_remediation": {
+    "recorded_metric_type_guard": "PASS: string, boolean, array, object, oversized integer rejected with HTTP 409; legacy API unchanged",
+    "invalid_candidate_coverage": "PASS: source IDs preserved, invalid status maintained, unverified-coverage limitation explicit",
+    "post_error_precedence": "PASS: documentation states valid-query POST returns 405 before body parsing; malformed revision may return 400 first; neither mutates data; server behavior unchanged"
+  },
+  "patch_sha256": "d76c5c5004644e93704f9c9ed5fdb307485000f3c38abc133c5af3d7debf7061"
+}

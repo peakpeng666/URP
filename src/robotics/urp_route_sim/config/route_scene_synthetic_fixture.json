@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "scene_type": "route_scene",
+  "experiment_id": "fixture",
+  "revision": 1,
+  "experiment_fingerprint": "45269ad3979abe481b6da152ff12dec63ad342cdbc6bbf232520f6ace4c240a9",
+  "run_id": "fixture_possible.distance_first",
+  "instance_id": "fixture_possible",
+  "geometry_kind": "visit_order_polyline",
+  "simulation_ready": false,
+  "frame": {
+    "id": "benchmark_xy",
+    "coordinate_system": "synthetic_cartesian",
+    "axis_order": [
+      "x",
+      "y"
+    ],
+    "is_geographic": false,
+    "is_road_network": false,
+    "physical_frame_id": null,
+    "meters_per_coordinate_unit": null
+  },
+  "units": {
+    "coordinate": "arbitrary_distance_units",
+    "distance": "arbitrary_distance_units",
+    "schedule_time": "arbitrary_time_units",
+    "compute_time": "seconds",
+    "demand": null
+  },
+  "semantics": {
+    "coordinate_system": "synthetic_cartesian",
+    "distance_model": "euclidean",
+    "distance_unit": "arbitrary_distance_units",
+    "is_geographic": false,
+    "is_road_network": false,
+    "load": "cumulative_served_demand; physical onboard load is unknown",
+    "speed": 1,
+    "time_unit": "arbitrary_time_units",
+    "time_window": "inclusive_service_start"
+  },
+  "depot": {
+    "node_id": 0,
+    "x": 0,
+    "y": 0,
+    "demand": 0,
+    "service_duration": 0,
+    "time_window": [
+      0,
+      120
+    ]
+  },
+  "task_nodes": [
+    {
+      "node_id": 1,
+      "x": 1,
+      "y": 0,
+      "demand": 1,
+      "service_duration": 1,
+      "time_window": [
+        0,
+        2
+      ]
+    },
+    {
+      "node_id": 2,
+      "x": 2,
+      "y": 0,
+      "demand": 1,
+      "service_duration": 1,
+      "time_window": [
+        0,
+        10
+      ]
+    }
+  ],
+  "vehicles": [
+    {
+      "vehicle_id": 0,
+      "visit_node_ids": [
+        0,
+        1,
+        2,
+        0
+      ],
+      "polyline": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "metrics": {
+        "distance": 4,
+        "return_time": 6,
+        "cumulative_served_demand": 2
+      },
+      "stops": [
+        {
+          "arrival": 1,
+          "demand": 1,
+          "depart": 2,
+          "lateness": 0,
+          "leg_distance": 1,
+          "load_after": 1,
+          "load_before": 0,
+          "node": 1,
+          "onboard_load": null,
+          "sequence": 1,
+          "service_start": 1,
+          "start": 1,
+          "wait": 0,
+          "window_close": 2,
+          "window_open": 0
+        },
+        {
+          "arrival": 3,
+          "demand": 1,
+          "depart": 4,
+          "lateness": 0,
+          "leg_distance": 1,
+          "load_after": 2,
+          "load_before": 1,
+          "node": 2,
+          "onboard_load": null,
+          "sequence": 2,
+          "service_start": 3,
+          "start": 3,
+          "wait": 0,
+          "window_close": 10,
+          "window_open": 0
+        }
+      ]
+    }
+  ],
+  "metrics": {
+    "total_distance": 4,
+    "full_service_distance": 4,
+    "served_task_count": 2,
+    "task_count": 2,
+    "recorded": {
+      "coverage_shortfall": 0,
+      "cpu_seconds": 0,
+      "full_gap_percent": 0,
+      "full_oracle_objective": 4,
+      "same_served_mask_gap_percent": null,
+      "same_served_mask_optimum": null
+    }
+  },
+  "status": {
+    "execution_status": "completed",
+    "source_status": "complete",
+    "solution_status": "feasible",
+    "full_service_success": true,
+    "has_candidate": true
+  },
+  "unserved_task_ids": [],
+  "recommendation": {
+    "status": "not_available",
+    "selected_run_id": null,
+    "evidence": null,
+    "reason": "No linked recommendation evidence is exported by route-scene v1; displaying a selected run or descriptive shortest result is not a learned recommendation."
+  },
+  "provenance": {
+    "run": {
+      "artifact_id": "routes-jsonl",
+      "input_artifact_id": "inputs-json",
+      "input_file_sha256": "3a49c8a387885e1ea32e4e3c88dd8e5735e05084e90c78a8b82122cb84619461",
+      "input_locator": "/0",
+      "instance_hash_source": "derived: SHA256 of canonical UTF-8 JSON (sorted keys, compact separators, ensure_ascii=False)",
+      "instance_sha256": "045ef3230b65b5bfcd9a0fc36473bd03faec08a6d1d043d0e9b497cafac40649",
+      "locator": "line 1",
+      "run_hash_source": "derived: exact routes.jsonl line bytes excluding newline",
+      "run_id_source": "derived: instance + dot + method; source archive has no run ID",
+      "run_sha256": "5f079def48f49a043570fba4aa5b910bec099d1d3602176a0c62468a5684cc2e",
+      "source_run_id": null,
+      "spec_id": "SYNTHETIC_CONTRACT_FIXTURE",
+      "spec_sha256": "ab467a7563d5f8e889202b2c3c46ddeffd8ff647a0bba5d030c8714a5fd582e8"
+    },
+    "input": {
+      "artifact_id": "inputs-json",
+      "input_file_sha256": "3a49c8a387885e1ea32e4e3c88dd8e5735e05084e90c78a8b82122cb84619461",
+      "instance_hash_source": "derived: SHA256 of canonical UTF-8 JSON (sorted keys, compact separators, ensure_ascii=False)",
+      "instance_sha256": "045ef3230b65b5bfcd9a0fc36473bd03faec08a6d1d043d0e9b497cafac40649",
+      "locator": "/0"
+    },
+    "index_artifact": {
+      "id": "route-index-json",
+      "sha256": "b3090f59fa58e96e55ff54f60243e67411b6af4afc4a22d4298bd1f62ec24be6",
+      "url": "/api/experiments/fixture/artifacts/route-index-json?revision=1"
+    },
+    "source_run_url": "/api/experiments/fixture/runs/fixture_possible.distance_first?revision=1"
+  },
+  "limitations": [
+    "Visit-order straight segments only; not obstacle-aware, drivable or road-network geometry.",
+    "Benchmark XY and schedule units are not meters, seconds of physical motion, or a ROS map frame.",
+    "No physical map, metric transform, robot footprint, kinematic or collision validation is supplied.",
+    "Only available normalized vehicle geometry is exported; malformed source routes may be absent.",
+    "Stops are checker schedules, not observed robot telemetry; onboard load remains unknown.",
+    "Missing metrics remain null; recorded metrics retain their original scopes and names.",
+    "Feasibility and recorded oracle values do not add an optimality proof or recommendation evidence."
+  ]
+}

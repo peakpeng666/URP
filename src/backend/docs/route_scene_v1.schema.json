@@ -1,0 +1,582 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "URP route-scene v1 (nonmetric visit-order visualization)",
+  "description": "Strict JSON only. NaN and Infinity are not valid JSON and MUST be rejected by parsing/serialization; Python backend uses allow_nan=False. No physical transform is supplied in v1.",
+  "x-json-policy": {
+    "allow_nonfinite": false
+  },
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "scene_type": {
+      "const": "route_scene"
+    },
+    "experiment_id": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "experiment_fingerprint": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "instance_id": {
+      "type": "string"
+    },
+    "geometry_kind": {
+      "const": "visit_order_polyline"
+    },
+    "simulation_ready": {
+      "const": false
+    },
+    "frame": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "const": "benchmark_xy"
+        },
+        "coordinate_system": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "axis_order": {
+          "const": [
+            "x",
+            "y"
+          ]
+        },
+        "is_geographic": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "is_road_network": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "physical_frame_id": {
+          "type": "null"
+        },
+        "meters_per_coordinate_unit": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "id",
+        "coordinate_system",
+        "axis_order",
+        "is_geographic",
+        "is_road_network",
+        "physical_frame_id",
+        "meters_per_coordinate_unit"
+      ],
+      "additionalProperties": false
+    },
+    "units": {
+      "type": "object",
+      "properties": {
+        "coordinate": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "distance": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "schedule_time": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "compute_time": {
+          "enum": [
+            "seconds",
+            null
+          ]
+        },
+        "demand": {
+          "type": "null"
+        }
+      },
+      "required": [
+        "coordinate",
+        "distance",
+        "schedule_time",
+        "compute_time",
+        "demand"
+      ],
+      "additionalProperties": false
+    },
+    "semantics": {
+      "type": "object",
+      "description": "Unchanged source semantics, including distance/time units and load interpretation."
+    },
+    "depot": {
+      "$ref": "#/$defs/node"
+    },
+    "task_nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "vehicles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "vehicle_id": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "visit_node_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 2
+          },
+          "polyline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/xy"
+            },
+            "minItems": 2
+          },
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "distance": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "return_time": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "cumulative_served_demand": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "distance",
+              "return_time",
+              "cumulative_served_demand"
+            ],
+            "additionalProperties": false
+          },
+          "stops": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Unchanged available normalized checker stop fields; variable by source format."
+            }
+          }
+        },
+        "required": [
+          "vehicle_id",
+          "visit_node_ids",
+          "polyline",
+          "metrics",
+          "stops"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "total_distance": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "full_service_distance": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "served_task_count": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "task_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recorded": {
+          "type": "object",
+          "properties": {
+            "bks_gap_percent": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "coverage_shortfall": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "cpu_seconds": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "full_gap_original_percent": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "full_gap_percent": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "full_oracle_objective": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "full_service_distance": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "model_cpu_s": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "model_wall_s": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "objective_integer": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "original_distance": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "same_served_mask_gap_percent": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "same_served_mask_optimum": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "solve_cpu_s": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "solve_wall_s": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "total_cpu_s": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "total_wall_s": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "vehicles_used": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "total_distance",
+        "full_service_distance",
+        "served_task_count",
+        "task_count",
+        "recorded"
+      ],
+      "additionalProperties": false
+    },
+    "status": {
+      "type": "object",
+      "properties": {
+        "execution_status": {
+          "type": "string"
+        },
+        "source_status": {
+          "type": "string"
+        },
+        "solution_status": {
+          "enum": [
+            "feasible",
+            "partial",
+            "infeasible",
+            "invalid",
+            "unknown",
+            "no_solution"
+          ]
+        },
+        "full_service_success": {
+          "type": "boolean"
+        },
+        "has_candidate": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "execution_status",
+        "source_status",
+        "solution_status",
+        "full_service_success",
+        "has_candidate"
+      ],
+      "additionalProperties": false
+    },
+    "unserved_task_ids": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      ]
+    },
+    "recommendation": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "const": "not_available"
+        },
+        "selected_run_id": {
+          "type": "null"
+        },
+        "evidence": {
+          "type": "null"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "selected_run_id",
+        "evidence",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "run": {
+          "$ref": "#/$defs/source_provenance"
+        },
+        "input": {
+          "type": "object"
+        },
+        "index_artifact": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "sha256",
+            "url"
+          ],
+          "additionalProperties": false
+        },
+        "source_run_url": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "run",
+        "input",
+        "index_artifact",
+        "source_run_url"
+      ],
+      "additionalProperties": false
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "scene_type",
+    "experiment_id",
+    "revision",
+    "experiment_fingerprint",
+    "run_id",
+    "instance_id",
+    "geometry_kind",
+    "simulation_ready",
+    "frame",
+    "units",
+    "semantics",
+    "depot",
+    "task_nodes",
+    "vehicles",
+    "metrics",
+    "status",
+    "unserved_task_ids",
+    "recommendation",
+    "provenance",
+    "limitations"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "node": {
+      "type": "object",
+      "properties": {
+        "node_id": {
+          "type": "integer"
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "demand": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "service_duration": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "time_window": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          ]
+        }
+      },
+      "required": [
+        "node_id",
+        "x",
+        "y",
+        "demand",
+        "service_duration",
+        "time_window"
+      ],
+      "additionalProperties": false
+    },
+    "xy": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "source_provenance": {
+      "type": "object",
+      "properties": {
+        "run_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "artifact_id": {
+          "type": "string"
+        },
+        "locator": {
+          "type": "string"
+        }
+      },
+      "required": [],
+      "additionalProperties": true
+    }
+  }
+}

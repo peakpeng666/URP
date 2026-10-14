@@ -1,0 +1,34 @@
+test_corridor_guard (test_core.ControlTests.test_corridor_guard) ... ok
+test_ideal_kinematic_model_converges_not_physics_evidence (test_core.ControlTests.test_ideal_kinematic_model_converges_not_physics_evidence) ... ok
+test_invalid_pose_rejected (test_core.ControlTests.test_invalid_pose_rejected) ... ok
+test_limits_and_rotate_before_drive (test_core.ControlTests.test_limits_and_rotate_before_drive) ... ok
+test_quaternion_validation (test_core.ControlTests.test_quaternion_validation) ... ok
+test_zero_command_on_arrival (test_core.ControlTests.test_zero_command_on_arrival) ... ok
+test_bad_calibrations_rejected (test_core.SceneTests.test_bad_calibrations_rejected) ... ok
+test_duplicate_nodes_rejected (test_core.SceneTests.test_duplicate_nodes_rejected) ... ok
+test_empty_vehicle_list_valid_display (test_core.SceneTests.test_empty_vehicle_list_valid_display) ... ok
+test_explicit_calibration_rotation_scale_translation (test_core.SceneTests.test_explicit_calibration_rotation_scale_translation) ... ok
+test_fake_metric_scene_rejected (test_core.SceneTests.test_fake_metric_scene_rejected) ... ok
+test_fake_simulation_readiness_rejected (test_core.SceneTests.test_fake_simulation_readiness_rejected) ... ok
+test_fixture_preserves_nonmetric_frame_and_visits (test_core.SceneTests.test_fixture_preserves_nonmetric_frame_and_visits) ... ok
+test_geographic_and_axis_swap_rejected (test_core.SceneTests.test_geographic_and_axis_swap_rejected) ... ok
+test_implicit_physical_mapping_rejected (test_core.SceneTests.test_implicit_physical_mapping_rejected) ... ok
+test_malformed_schema_rejected (test_core.SceneTests.test_malformed_schema_rejected) ... ok
+test_mismatched_polyline_rejected (test_core.SceneTests.test_mismatched_polyline_rejected) ... ok
+test_nonfinite_and_boolean_coordinates_rejected (test_core.SceneTests.test_nonfinite_and_boolean_coordinates_rejected) ... ok
+test_physical_mode_rejects_arbitrary_units (test_core.SceneTests.test_physical_mode_rejects_arbitrary_units) ... ok
+test_repeated_visits_are_preserved (test_core.SceneTests.test_repeated_visits_are_preserved) ... ok
+test_strict_json_rejects_nan (test_core.SceneTests.test_strict_json_rejects_nan) ... ok
+test_unknown_visits_rejected (test_core.SceneTests.test_unknown_visits_rejected) ... ok
+test_unserved_depot_rejected (test_core.SceneTests.test_unserved_depot_rejected) ... ok
+test_fortress_bridge_has_single_command_direction (test_core.StaticIntegrationTests.test_fortress_bridge_has_single_command_direction) ... ok
+test_independent_ground_truth_plugin (test_core.StaticIntegrationTests.test_independent_ground_truth_plugin) ... ok
+test_package_xml (test_core.StaticIntegrationTests.test_package_xml) ... ok
+test_robot_topic_and_frame_isolation (test_core.StaticIntegrationTests.test_robot_topic_and_frame_isolation) ... ok
+test_route_publisher_cannot_command_robot (test_core.StaticIntegrationTests.test_route_publisher_cannot_command_robot) ... ok
+test_world_contains_no_external_assets (test_core.StaticIntegrationTests.test_world_contains_no_external_assets) ... ok
+
+----------------------------------------------------------------------
+Ran 29 tests in 0.006s
+
+OK

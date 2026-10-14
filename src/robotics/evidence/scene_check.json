@@ -1,0 +1,9 @@
+{
+  "valid": true,
+  "frame": "benchmark_xy",
+  "metric_display": false,
+  "point_count": 3,
+  "vehicle_count": 1,
+  "simulation_ready": false,
+  "label": "BENCHMARK DIAGRAM; arbitrary units, NOT metres / navigation"
+}

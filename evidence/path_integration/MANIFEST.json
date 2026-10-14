@@ -1,0 +1,276 @@
+{
+  "schema": "urp-path-integration-delivery-v1",
+  "base_commit": "418fffe99eccb6487f2497d29d36d0e0913548f6",
+  "scope": "incremental_overlay_not_full_repository",
+  "files": [
+    {
+      "path": "docs/路径研究与仿真方案.md",
+      "bytes": 17964,
+      "sha256": "1d87475c86ae9eb78f90ba2cc2349af3fad1dace8021af791a04375cc00cefee",
+      "git_blob_sha": "4c121708bcc07dbfcd60157c5d489826504186e1"
+    },
+    {
+      "path": "evidence/path_integration/README.md",
+      "bytes": 1247,
+      "sha256": "aaace5029d54bdcdc2197960abf614d9ac778d57708988a880b0ce58e7c3ec39",
+      "git_blob_sha": "73c5fd4a19d9918e85fdb03beb4a5ac7e4f41ead"
+    },
+    {
+      "path": "evidence/path_integration/root_backend_tests.log",
+      "bytes": 9663,
+      "sha256": "db689a0adf50c38cfbc7d64511d2c2f73d5fdf8689bdff4479c1a8ea564682f9",
+      "git_blob_sha": "3bbd552617d183703b7a12a540a2115c705eaa47"
+    },
+    {
+      "path": "evidence/path_integration/route_scene_backend.patch",
+      "bytes": 68702,
+      "sha256": "d76c5c5004644e93704f9c9ed5fdb307485000f3c38abc133c5af3d7debf7061",
+      "git_blob_sha": "0d139ae37d93bb96882539a01ed4bd4a437bfc18"
+    },
+    {
+      "path": "evidence/path_integration/route_scene_backend_manifest.json",
+      "bytes": 3108,
+      "sha256": "cd08412994287e4facb4337c456123d7e03c571542f2d1db494a5f4fcf0c0057",
+      "git_blob_sha": "728ebba360dd6d72c8a16d7e3176f171ade51184"
+    },
+    {
+      "path": "evidence/path_integration/route_scene_integration.json",
+      "bytes": 738,
+      "sha256": "8ccda7c0dad3183934f4d02c88bc5cad9a053076fc985753dcb49cb143b9b97a",
+      "git_blob_sha": "036bd3bcbea61b46700eccb328f6c19515ef64eb"
+    },
+    {
+      "path": "evidence/path_integration/route_scene_unit_tests.log",
+      "bytes": 170,
+      "sha256": "09319ad5bb7be82af18aec9f37ec2cc7ef4a3ee4e3a0941c115ed4420685ec83",
+      "git_blob_sha": "4ca4c3c8361fb7acbb27fb191f00239a3edc1e48"
+    },
+    {
+      "path": "src/backend/README.md",
+      "bytes": 1435,
+      "sha256": "b69ab489db7cc91224a36dc202fc5282db4d53437cd2a56d913c516f6309af17",
+      "git_blob_sha": "7ffa98133d36f8c6f8a6960754dcf5e3b834e76c"
+    },
+    {
+      "path": "src/backend/backend/route_scene.py",
+      "bytes": 7949,
+      "sha256": "1c26039fdcc6b20e7469f3cfa43fa1fe02696e494d38355d366caefef19adeda",
+      "git_blob_sha": "cd8f9ae3aed5c401f0c8628c9f85335262fd8ad2"
+    },
+    {
+      "path": "src/backend/backend/server.py",
+      "bytes": 6341,
+      "sha256": "986e6e561cffade07547587d24c459f7978411cf43329dda3cfcb9ec916c64ac",
+      "git_blob_sha": "e0c014cea6793dce0726ae61f28f952505b6d325"
+    },
+    {
+      "path": "src/backend/docs/ROUTE_SCENE_API.md",
+      "bytes": 14515,
+      "sha256": "a12bc2407020694b9f725a53da623061d16f22a888679ff54f4919c08e6c97e4",
+      "git_blob_sha": "0bf1260c21593c5e0b46d9a54236639928c30e27"
+    },
+    {
+      "path": "src/backend/docs/route_scene_v1.schema.json",
+      "bytes": 12465,
+      "sha256": "4c06818511232525e2f9978dcc3b60e0c426d3da043440619b166485c9b253b9",
+      "git_blob_sha": "f8b8e43250a8e3a924e79e12efc11966f2e85182"
+    },
+    {
+      "path": "src/backend/tests/fixtures/route_scene_v1.json",
+      "bytes": 6343,
+      "sha256": "776441fb47de5040790bd3cec4e6667a816341b06c74a6760fc00ea7866b4e4b",
+      "git_blob_sha": "8a19a1fc92ea8536aea59db3bca21947e73f4ce6"
+    },
+    {
+      "path": "src/backend/tests/integration_route_scene.py",
+      "bytes": 7405,
+      "sha256": "3cc318bebeb80639f9d5a4f8e6d316ce5e25dd2cef7c18232a7ff65aaf880674",
+      "git_blob_sha": "6e98812b0624174a308a2f21f2e2beee9f0ae0af"
+    },
+    {
+      "path": "src/backend/tests/test_route_scene.py",
+      "bytes": 15602,
+      "sha256": "72d8cd0ecf0d80b387731843cc7000cfdc7f0a13ef21a43dcd5f549bbd677fa6",
+      "git_blob_sha": "48e446f596c6ad1638388e0b22bd38cdb89f6dde"
+    },
+    {
+      "path": "src/robotics/README.md",
+      "bytes": 9048,
+      "sha256": "85187d5512eaee635a3bf3327e940a956d13a16e718ce15bd5aa7dd51cf30a4e",
+      "git_blob_sha": "5d8749dcaee7fda83bdca80a2d78f89df0ff7216"
+    },
+    {
+      "path": "src/robotics/docs/ACCEPTANCE.md",
+      "bytes": 3896,
+      "sha256": "db39347c7877f55545cbab13b0f279d847b0ae29b3ddfabaac20dfc633068537",
+      "git_blob_sha": "b14aa171e179d621840c3c7779dc9819e2f2d85b"
+    },
+    {
+      "path": "src/robotics/docs/INTEGRATION_ROADMAP.md",
+      "bytes": 7656,
+      "sha256": "4bf6c3fe4a786c4dbf88f4f4ba7718772630589b6137c2c29468c88ef0e1994e",
+      "git_blob_sha": "5c42072e85a3eecfb7ce295fc855c3b84b932697"
+    },
+    {
+      "path": "src/robotics/docs/OFFICIAL_SOURCES.md",
+      "bytes": 1906,
+      "sha256": "3736ad79c5e9a1757a76d5f5c0d8a75653e2fc0fefd063844411c9d5ae331b8e",
+      "git_blob_sha": "669e0bcfb1ff38a46eac228fbc4f08062b33adf1"
+    },
+    {
+      "path": "src/robotics/evidence/SHA256SUMS.json",
+      "bytes": 2904,
+      "sha256": "0d7b0e3c0694c33e743c7853efab9c5cfefcf6c0b90137c17de8c740516aa2a1",
+      "git_blob_sha": "6adfaf36eecabd27f4536ec8c86ee79f3721f6de"
+    },
+    {
+      "path": "src/robotics/evidence/preflight_current_cloud/preflight.json",
+      "bytes": 126,
+      "sha256": "443a3050405ac653be0ff926557f590e1d3a930558746e6b03671b5873da6989",
+      "git_blob_sha": "0e4e96bb8bb8a8fe059575e4a904e11ba1879ad4"
+    },
+    {
+      "path": "src/robotics/evidence/root_unit_tests.log",
+      "bytes": 3153,
+      "sha256": "5e42e7b4b79f34d72627b1eae26d2b1f08e5f4d7c63cadfde7a85d162b914c3f",
+      "git_blob_sha": "ee8b4f882cd19388ea7a78e27dab570f206d10cf"
+    },
+    {
+      "path": "src/robotics/evidence/scene_check.json",
+      "bytes": 219,
+      "sha256": "3544ec76062efd08386e7d0b2735ad27f0da5a252479ad4f2d6ac89b549d5a6d",
+      "git_blob_sha": "74b64aef0ab3a33e738d088f7068f828bcdf7009"
+    },
+    {
+      "path": "src/robotics/evidence/unit_tests.log",
+      "bytes": 3153,
+      "sha256": "5e42e7b4b79f34d72627b1eae26d2b1f08e5f4d7c63cadfde7a85d162b914c3f",
+      "git_blob_sha": "ee8b4f882cd19388ea7a78e27dab570f206d10cf"
+    },
+    {
+      "path": "src/robotics/evidence/validation_status.json",
+      "bytes": 905,
+      "sha256": "f5282c1d8119e5785a2ca1b074fb15dc63e44cc3a285c44f5cc020301a25409d",
+      "git_blob_sha": "b537569bc71c9c958648201fb7a683de5702f7dd"
+    },
+    {
+      "path": "src/robotics/scripts/check_scene.py",
+      "bytes": 969,
+      "sha256": "ce11ef1ecb0f63e6723dbb0950a04025d9fdbd23183ddfe01109818a16eb6c4f",
+      "git_blob_sha": "8b50e4ba5bbb3bcd9f5bed10befeda71903259cc"
+    },
+    {
+      "path": "src/robotics/scripts/run_smoke.sh",
+      "bytes": 2529,
+      "sha256": "68718c2dc7bdff9bd092ffe34b87eb2f50f36d59d81f84e8500c6fddb7c8aa24",
+      "git_blob_sha": "d8496059ac2c9e5bd847046461f1e7f8b97d1963"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/config/bridge_fortress.yaml",
+      "bytes": 1108,
+      "sha256": "0f069cc3a2effc7a45335ffc6d0dbe8be8334f150f173c1f29f7f9884054a55a",
+      "git_blob_sha": "b0b2bae677769a0c9ddc1a6fc686ad7f8a09f782"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/config/route_scene_synthetic_fixture.json",
+      "bytes": 6214,
+      "sha256": "5eabb671ed2402e5922bb27838f4600d31a28cce21d517b3671e8aa54ab591f4",
+      "git_blob_sha": "69168d87707a0e3ff4a62fe27c93896347671afd"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/config/route_view.rviz",
+      "bytes": 693,
+      "sha256": "52ba8b2d5ed156c4f7572aba95a2eb5816f8835c39839992adf59e6243e302bd",
+      "git_blob_sha": "184461b41a3b794f6a716e218dc967cd7ce273cc"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/config/synthetic_view.rviz",
+      "bytes": 971,
+      "sha256": "9c761df36cb84f4e4ff6f00744514a2b280b2b885407f3867e1076fe7dbc3129",
+      "git_blob_sha": "473ea32672c19162d24cd5716db28505663b4b53"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/launch/route_view.launch.py",
+      "bytes": 1175,
+      "sha256": "4c7f059bc7247379b509577d0e9bd7329148981e2a0337490451c9b7b53abfb3",
+      "git_blob_sha": "e7b933118bb5543832fe5385e690b904be2877f5"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/launch/synthetic_fortress.launch.py",
+      "bytes": 1639,
+      "sha256": "1465adcb79d608a5c35fb680b35984302546b47585e44f67e15f55c3ba0fa2cf",
+      "git_blob_sha": "1ff6a160ff9d04b3c5656960825217296f5b28e3"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/package.xml",
+      "bytes": 894,
+      "sha256": "4bd99033d92d220d475c2f956773586305a2f2f408437ff60f98ff365d723161",
+      "git_blob_sha": "74bd166805e05c3d3e0f1d52df1ad014b60c2387"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/resource/urp_route_sim",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/setup.cfg",
+      "bytes": 95,
+      "sha256": "87ed7ae8617a24e9c3b65b3348c921ef20678f512bad303d52e78464928aa0d4",
+      "git_blob_sha": "fba37524474a6bbda13007e31d2e15b4aac2d9b6"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/setup.py",
+      "bytes": 794,
+      "sha256": "58fd2b36313150f3f1d21f5c260200df2ddbb9272a52c77476ee6963c9306318",
+      "git_blob_sha": "3e7b6869a01ca69aa4470b34851fbbe4cc8c09d0"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/test/test_core.py",
+      "bytes": 9435,
+      "sha256": "20588ad2dd6b7705d10781daa8481e2cb369e7b606ed15084b1b565b2a14f27b",
+      "git_blob_sha": "6d7855b6d2c326a8e4f778c4d0e69d717fdb9371"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/urp_route_sim/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/urp_route_sim/control_core.py",
+      "bytes": 1163,
+      "sha256": "4505cdfcb6605a3f8091bd80be6cdac3665aaeaf2a4bc7041eb933d7e34237f9",
+      "git_blob_sha": "83f67024dcb8b768c8ff27240d43f365ef52af0b"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/urp_route_sim/route_markers.py",
+      "bytes": 3351,
+      "sha256": "1b0d78d06e8ba87a06ee4e7c287d2c80ae0ca27c13ade05aada5673554ef1122",
+      "git_blob_sha": "a2023616bc9e860f7452ab4cfe3cb3db5e9a1042"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/urp_route_sim/scene_core.py",
+      "bytes": 7629,
+      "sha256": "069b448f2d4a0ccc53303455e593fda920529fbc9cadfdcec977323589c21777",
+      "git_blob_sha": "fc12aa6198244d56f9ad2e325634e8d1786ae916"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/urp_route_sim/synthetic_smoke.py",
+      "bytes": 9853,
+      "sha256": "c09a8ec47273f6e15aa0f63790baa4a36d5de3448b57b080eabed8935faf24a7",
+      "git_blob_sha": "76be8e8dfdbf466ed12b20b55253397981ef9d41"
+    },
+    {
+      "path": "src/robotics/urp_route_sim/worlds/synthetic_greenhouse.sdf",
+      "bytes": 8186,
+      "sha256": "ed273d1bd2814765a7813b7018ba372c687a2d30bd807401fbd50e83d6c71451",
+      "git_blob_sha": "f51dd85861260d103c3e4f06aaa77d737a1a0fc5"
+    }
+  ],
+  "runtime_executed": false,
+  "backend_tests_passed": 71,
+  "robotics_pure_tests_passed": 29,
+  "upstream_simulators": "static_research_only",
+  "formal_experiment_started": false
+}

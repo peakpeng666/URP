@@ -1,0 +1,27 @@
+{
+  "checked_at_utc": "2026-10-14T14:26:27.642476+00:00",
+  "python": "3.12.14",
+  "scope": "optional_disposable_adapter_smoke_fixture_not_primary_simulator",
+  "unit_tests": {
+    "passed": 29,
+    "failed": 0,
+    "command": "PYTHONPATH=urp_route_sim python3 -m unittest discover -s urp_route_sim/test -v"
+  },
+  "python_compileall": "passed",
+  "shell_syntax": "passed",
+  "sdf_xml_parse": "passed_in_unit_tests",
+  "ros_nodes": "not_executed",
+  "rviz_gui": "not_executed",
+  "gazebo_plugin_load": "not_executed",
+  "gazebo_physics": "not_executed",
+  "ros_gazebo_bridge": "not_executed",
+  "closed_loop_runtime": "not_executed",
+  "blocker": "ROS 2 Humble absent on current dot cloud. User deferred additional environments.",
+  "not_claimed": [
+    "real_robot_selection",
+    "main_simulator_selection",
+    "no_collision_proof",
+    "benchmark_navigation",
+    "universal_planner_validation"
+  ]
+}
