@@ -143,7 +143,7 @@ def validate_payload(payload):
     b = payload["budget_seconds"]
     if type(b) not in (int, float) or not math.isfinite(b) or not 0 < b <= 60:
         raise ValueError("budget outside (0,60]")
-    if payload["algorithm"] not in {"savings", "T", "TRS", "TSR", "pyvrp"}:
+    if payload["algorithm"] not in {"savings", "T", "TRS", "TSR", "pyvrp", "ortools", "nearest_neighbor", "seeded_sweep", "savings_vnd", "multistart_vnd", "random_cheapest", "random_regret2", "worst_cheapest", "worst_regret2", "ga_random_keys", "pso_random_keys", "de_random_keys"}:
         raise ValueError("unknown algorithm")
 
 

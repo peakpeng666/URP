@@ -1,0 +1,854 @@
+{
+  "checked": 106,
+  "passed": 106,
+  "files": [
+    {
+      "case_id": "A-n32-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n32-k5.vrp",
+      "sha256": "2ebedd0631c4c56c08ba3b1476ac874a7d54cc448bd3795de534f43b2c099ce2",
+      "expected": "2ebedd0631c4c56c08ba3b1476ac874a7d54cc448bd3795de534f43b2c099ce2",
+      "pass": true
+    },
+    {
+      "case_id": "A-n32-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n32-k5.sol",
+      "sha256": "a23da588e19d97533c94fb574ed42edfade007465d7448e4840885b0888404ca",
+      "expected": "a23da588e19d97533c94fb574ed42edfade007465d7448e4840885b0888404ca",
+      "pass": true
+    },
+    {
+      "case_id": "A-n33-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n33-k5.vrp",
+      "sha256": "35712de0054a0fbfd609d5cdb4ec638c39f7c181b6e39e3c8bf6f8e359b78aef",
+      "expected": "35712de0054a0fbfd609d5cdb4ec638c39f7c181b6e39e3c8bf6f8e359b78aef",
+      "pass": true
+    },
+    {
+      "case_id": "A-n33-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n33-k5.sol",
+      "sha256": "d8045df85ee1f1cee362f884ea0c52f0a5f6c3e3dcd06bcc644a0da79974e43b",
+      "expected": "d8045df85ee1f1cee362f884ea0c52f0a5f6c3e3dcd06bcc644a0da79974e43b",
+      "pass": true
+    },
+    {
+      "case_id": "A-n33-k6",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n33-k6.vrp",
+      "sha256": "4d01ebe9842743ee0c66f14ecb86ab9c84d3198b3280d0dbcc8a8d9a69f1592f",
+      "expected": "4d01ebe9842743ee0c66f14ecb86ab9c84d3198b3280d0dbcc8a8d9a69f1592f",
+      "pass": true
+    },
+    {
+      "case_id": "A-n33-k6",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n33-k6.sol",
+      "sha256": "a5395d65af5807fb05606f0abfd6a2a7ad6d98ef52e1fa4d9780667a09e2c649",
+      "expected": "a5395d65af5807fb05606f0abfd6a2a7ad6d98ef52e1fa4d9780667a09e2c649",
+      "pass": true
+    },
+    {
+      "case_id": "A-n36-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n36-k5.vrp",
+      "sha256": "794360562d60d66a358eaf57721432b43318abba710f3c55f3240aef18e69b03",
+      "expected": "794360562d60d66a358eaf57721432b43318abba710f3c55f3240aef18e69b03",
+      "pass": true
+    },
+    {
+      "case_id": "A-n36-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n36-k5.sol",
+      "sha256": "68917f8c5bb34b240ab7e234ba9a86f09017a9821cc1e72d9a9fe83a748d7977",
+      "expected": "68917f8c5bb34b240ab7e234ba9a86f09017a9821cc1e72d9a9fe83a748d7977",
+      "pass": true
+    },
+    {
+      "case_id": "A-n37-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n37-k5.vrp",
+      "sha256": "8b3c9c86c6ec147d6699ef1a7e9b33d7d2637c6b8f254922ff3494d56efed3d0",
+      "expected": "8b3c9c86c6ec147d6699ef1a7e9b33d7d2637c6b8f254922ff3494d56efed3d0",
+      "pass": true
+    },
+    {
+      "case_id": "A-n37-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n37-k5.sol",
+      "sha256": "b2141e45f0f7ce786cd1fbdbffff854d1526b045b39dc969c77a8576b0346741",
+      "expected": "b2141e45f0f7ce786cd1fbdbffff854d1526b045b39dc969c77a8576b0346741",
+      "pass": true
+    },
+    {
+      "case_id": "A-n39-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n39-k5.vrp",
+      "sha256": "d3afcea200df090c673805d02d4f3c3fad84f4ebaee26a54edc28b30a72cbac9",
+      "expected": "d3afcea200df090c673805d02d4f3c3fad84f4ebaee26a54edc28b30a72cbac9",
+      "pass": true
+    },
+    {
+      "case_id": "A-n39-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n39-k5.sol",
+      "sha256": "989e4e2de2c78dfd00f3110a0b5941b9109fd8be74b62769d9f710fa0b6589da",
+      "expected": "989e4e2de2c78dfd00f3110a0b5941b9109fd8be74b62769d9f710fa0b6589da",
+      "pass": true
+    },
+    {
+      "case_id": "A-n46-k7",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n46-k7.vrp",
+      "sha256": "843d960f050ed93387dad6ead572f647a631ea90f1dc15879740c98ed7211060",
+      "expected": "843d960f050ed93387dad6ead572f647a631ea90f1dc15879740c98ed7211060",
+      "pass": true
+    },
+    {
+      "case_id": "A-n46-k7",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n46-k7.sol",
+      "sha256": "c644f383642406ee5d939be751bb14a242a1ae5e831d738150fb467e7ef6d8a1",
+      "expected": "c644f383642406ee5d939be751bb14a242a1ae5e831d738150fb467e7ef6d8a1",
+      "pass": true
+    },
+    {
+      "case_id": "A-n48-k7",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n48-k7.vrp",
+      "sha256": "0457ce2d3921efb0e55b248517df2b77c061474fe120b9a07b382cc3a884845c",
+      "expected": "0457ce2d3921efb0e55b248517df2b77c061474fe120b9a07b382cc3a884845c",
+      "pass": true
+    },
+    {
+      "case_id": "A-n48-k7",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n48-k7.sol",
+      "sha256": "661767bf580478067aa5547b84e835f443a0cedf1577eb2359d578e641fa9579",
+      "expected": "661767bf580478067aa5547b84e835f443a0cedf1577eb2359d578e641fa9579",
+      "pass": true
+    },
+    {
+      "case_id": "A-n53-k7",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n53-k7.vrp",
+      "sha256": "7a22295b926b50f54ecca7da21924b942ef60949f7707b071936c7cdf3d9006c",
+      "expected": "7a22295b926b50f54ecca7da21924b942ef60949f7707b071936c7cdf3d9006c",
+      "pass": true
+    },
+    {
+      "case_id": "A-n53-k7",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n53-k7.sol",
+      "sha256": "c6111158c9a57f5d95c31c8e0f0ceeb708d8fdfff4d08842ae7748aac22a0f76",
+      "expected": "c6111158c9a57f5d95c31c8e0f0ceeb708d8fdfff4d08842ae7748aac22a0f76",
+      "pass": true
+    },
+    {
+      "case_id": "A-n61-k9",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n61-k9.vrp",
+      "sha256": "210b68819f2f8b1a525b5415fa3559f3d23b90e119ef79a2f16d638f9ad884ab",
+      "expected": "210b68819f2f8b1a525b5415fa3559f3d23b90e119ef79a2f16d638f9ad884ab",
+      "pass": true
+    },
+    {
+      "case_id": "A-n61-k9",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n61-k9.sol",
+      "sha256": "d00e19a9407b9522ee0a6e893531df80a79fd8e86d2fdddc6dc41f07d70f92f9",
+      "expected": "d00e19a9407b9522ee0a6e893531df80a79fd8e86d2fdddc6dc41f07d70f92f9",
+      "pass": true
+    },
+    {
+      "case_id": "A-n65-k9",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n65-k9.vrp",
+      "sha256": "2f2768011d0dc41fb912ad3d4a8c34678334607bf0263cf4cd20b6c1b4ab4cd6",
+      "expected": "2f2768011d0dc41fb912ad3d4a8c34678334607bf0263cf4cd20b6c1b4ab4cd6",
+      "pass": true
+    },
+    {
+      "case_id": "A-n65-k9",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n65-k9.sol",
+      "sha256": "aa28a75ac5996fb73ee9bf2610130649ad55188b76212a644a4ec83d487ca00e",
+      "expected": "aa28a75ac5996fb73ee9bf2610130649ad55188b76212a644a4ec83d487ca00e",
+      "pass": true
+    },
+    {
+      "case_id": "A-n69-k9",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n69-k9.vrp",
+      "sha256": "7b9bd50d901639c15a9f4ff1cf38ccef7a5bf050697b4e6796ff07bc95920c64",
+      "expected": "7b9bd50d901639c15a9f4ff1cf38ccef7a5bf050697b4e6796ff07bc95920c64",
+      "pass": true
+    },
+    {
+      "case_id": "A-n69-k9",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n69-k9.sol",
+      "sha256": "f97cad8f6c747633e1ea9360db4709b026440692085842d81851d2d0bf4a3678",
+      "expected": "f97cad8f6c747633e1ea9360db4709b026440692085842d81851d2d0bf4a3678",
+      "pass": true
+    },
+    {
+      "case_id": "A-n80-k10",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/A-n80-k10.vrp",
+      "sha256": "f74d5d9f8e24245d94cad53ac20892a70b554aa7559f9dfcd962c8f83a68a410",
+      "expected": "f74d5d9f8e24245d94cad53ac20892a70b554aa7559f9dfcd962c8f83a68a410",
+      "pass": true
+    },
+    {
+      "case_id": "A-n80-k10",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/A-n80-k10.sol",
+      "sha256": "eb6f41c97e197918753b50b3bd8283bc91a5261486e12c8eb9e0fd87acf498d2",
+      "expected": "eb6f41c97e197918753b50b3bd8283bc91a5261486e12c8eb9e0fd87acf498d2",
+      "pass": true
+    },
+    {
+      "case_id": "B-n31-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n31-k5.vrp",
+      "sha256": "4c21caba6dd9c2e62d9e51defe45b9b318a931456e4d6e714c0ebd910447fad9",
+      "expected": "4c21caba6dd9c2e62d9e51defe45b9b318a931456e4d6e714c0ebd910447fad9",
+      "pass": true
+    },
+    {
+      "case_id": "B-n31-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n31-k5.sol",
+      "sha256": "508df4497a714d7627f32f6993ff637a79ea6452235b318539757ff848a077e5",
+      "expected": "508df4497a714d7627f32f6993ff637a79ea6452235b318539757ff848a077e5",
+      "pass": true
+    },
+    {
+      "case_id": "B-n34-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n34-k5.vrp",
+      "sha256": "e4dee2fb80782ea7d922a890715d85ac8488f089d72d3ceb6b744e82ccd407ac",
+      "expected": "e4dee2fb80782ea7d922a890715d85ac8488f089d72d3ceb6b744e82ccd407ac",
+      "pass": true
+    },
+    {
+      "case_id": "B-n34-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n34-k5.sol",
+      "sha256": "08a7b3ee54aac0f6e8b9bf63d0a7afd94443fd7770861823017c9087487ad17c",
+      "expected": "08a7b3ee54aac0f6e8b9bf63d0a7afd94443fd7770861823017c9087487ad17c",
+      "pass": true
+    },
+    {
+      "case_id": "B-n35-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n35-k5.vrp",
+      "sha256": "d5047a1b09c3b55127fe2954c01412b847b2f436e7c4eae3d4e932dc3374c765",
+      "expected": "d5047a1b09c3b55127fe2954c01412b847b2f436e7c4eae3d4e932dc3374c765",
+      "pass": true
+    },
+    {
+      "case_id": "B-n35-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n35-k5.sol",
+      "sha256": "542e9b721fa3c9684726e2e084755fc9c3cc9bfc1eda27c0ee32d0fa5a1f1ca1",
+      "expected": "542e9b721fa3c9684726e2e084755fc9c3cc9bfc1eda27c0ee32d0fa5a1f1ca1",
+      "pass": true
+    },
+    {
+      "case_id": "B-n38-k6",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n38-k6.vrp",
+      "sha256": "89f6b1fa8e877b2ba62a1a49148e74b72a53be1ce37698a6b2bf73d1db375fbf",
+      "expected": "89f6b1fa8e877b2ba62a1a49148e74b72a53be1ce37698a6b2bf73d1db375fbf",
+      "pass": true
+    },
+    {
+      "case_id": "B-n38-k6",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n38-k6.sol",
+      "sha256": "a98d460827987f12d11bad5aa0e3bf56f3e5629d480e71ee3aff47f20b1139cb",
+      "expected": "a98d460827987f12d11bad5aa0e3bf56f3e5629d480e71ee3aff47f20b1139cb",
+      "pass": true
+    },
+    {
+      "case_id": "B-n39-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n39-k5.vrp",
+      "sha256": "7d7fba1dddaeb87906db5f3ba7ac50732dd8f75268ae67af7e25ee6d76cffb35",
+      "expected": "7d7fba1dddaeb87906db5f3ba7ac50732dd8f75268ae67af7e25ee6d76cffb35",
+      "pass": true
+    },
+    {
+      "case_id": "B-n39-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n39-k5.sol",
+      "sha256": "94630ddd1fbeebc6507f400bef0f88acd083ab883ba211a0b993eb1014636e27",
+      "expected": "94630ddd1fbeebc6507f400bef0f88acd083ab883ba211a0b993eb1014636e27",
+      "pass": true
+    },
+    {
+      "case_id": "B-n41-k6",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n41-k6.vrp",
+      "sha256": "4cfd58b86fdb61fecf6a946b3256323016383ea25f9856bd18b4b2cd0b6abce2",
+      "expected": "4cfd58b86fdb61fecf6a946b3256323016383ea25f9856bd18b4b2cd0b6abce2",
+      "pass": true
+    },
+    {
+      "case_id": "B-n41-k6",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n41-k6.sol",
+      "sha256": "70e199fa32dcf98343c92d3ac56a714365daebf99ad2e8f30751b32a32562856",
+      "expected": "70e199fa32dcf98343c92d3ac56a714365daebf99ad2e8f30751b32a32562856",
+      "pass": true
+    },
+    {
+      "case_id": "B-n45-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n45-k5.vrp",
+      "sha256": "0f33ce95389eef121532dc517e49a438df7fcb95825bc1bbf0d96e330396a90a",
+      "expected": "0f33ce95389eef121532dc517e49a438df7fcb95825bc1bbf0d96e330396a90a",
+      "pass": true
+    },
+    {
+      "case_id": "B-n45-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n45-k5.sol",
+      "sha256": "4959aabbc3b174c2f58b56be65b07e87175849b970483ae339b3ce798f7b6121",
+      "expected": "4959aabbc3b174c2f58b56be65b07e87175849b970483ae339b3ce798f7b6121",
+      "pass": true
+    },
+    {
+      "case_id": "B-n50-k7",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n50-k7.vrp",
+      "sha256": "9ee38d8e358a7690dd2ac3959b9787f14de885ae9db35e92f0c2d2f5221078f6",
+      "expected": "9ee38d8e358a7690dd2ac3959b9787f14de885ae9db35e92f0c2d2f5221078f6",
+      "pass": true
+    },
+    {
+      "case_id": "B-n50-k7",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n50-k7.sol",
+      "sha256": "3cab642bd9805d37b09e3ed2a7d2dcfbb0185ce098c46aa1dfaaa56ef306b4f7",
+      "expected": "3cab642bd9805d37b09e3ed2a7d2dcfbb0185ce098c46aa1dfaaa56ef306b4f7",
+      "pass": true
+    },
+    {
+      "case_id": "B-n51-k7",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n51-k7.vrp",
+      "sha256": "2067347938f788f2342b8f44cff98a0f524468fa191849691a1a3629c49a30c1",
+      "expected": "2067347938f788f2342b8f44cff98a0f524468fa191849691a1a3629c49a30c1",
+      "pass": true
+    },
+    {
+      "case_id": "B-n51-k7",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n51-k7.sol",
+      "sha256": "9db09061b9d1e2964cebc23c8916b4b36cd06a7baeab8fbb7c24256d4cada452",
+      "expected": "9db09061b9d1e2964cebc23c8916b4b36cd06a7baeab8fbb7c24256d4cada452",
+      "pass": true
+    },
+    {
+      "case_id": "B-n63-k10",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n63-k10.vrp",
+      "sha256": "333f4871bcb4d3bf87aa936a65ceb63b6300a4b0d64a001ee7eabb538eee8115",
+      "expected": "333f4871bcb4d3bf87aa936a65ceb63b6300a4b0d64a001ee7eabb538eee8115",
+      "pass": true
+    },
+    {
+      "case_id": "B-n63-k10",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n63-k10.sol",
+      "sha256": "3435555a785b77d3da8226a216d5bc40b17f09eb243c2cad10ba8e543adabe73",
+      "expected": "3435555a785b77d3da8226a216d5bc40b17f09eb243c2cad10ba8e543adabe73",
+      "pass": true
+    },
+    {
+      "case_id": "B-n66-k9",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n66-k9.vrp",
+      "sha256": "06420798fb07f2fa7e4a35a3ad03b1ce328d51c5542713b9831bfb49bded3223",
+      "expected": "06420798fb07f2fa7e4a35a3ad03b1ce328d51c5542713b9831bfb49bded3223",
+      "pass": true
+    },
+    {
+      "case_id": "B-n66-k9",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n66-k9.sol",
+      "sha256": "9fe5d318f1c9848e4b01bedd6eb947dbea8876e39ea8d5cd8c9aecd64d0f5aab",
+      "expected": "9fe5d318f1c9848e4b01bedd6eb947dbea8876e39ea8d5cd8c9aecd64d0f5aab",
+      "pass": true
+    },
+    {
+      "case_id": "B-n68-k9",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n68-k9.vrp",
+      "sha256": "e09fb3cbf4ace034fb0347d1a0792c818cc6ffd1e35bc643e9a87bea8657dfa2",
+      "expected": "e09fb3cbf4ace034fb0347d1a0792c818cc6ffd1e35bc643e9a87bea8657dfa2",
+      "pass": true
+    },
+    {
+      "case_id": "B-n68-k9",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n68-k9.sol",
+      "sha256": "94ee7235751125f31f5c55f8f4b0fffeafd0525f6e96eaa7e48cae3b1282d9bb",
+      "expected": "94ee7235751125f31f5c55f8f4b0fffeafd0525f6e96eaa7e48cae3b1282d9bb",
+      "pass": true
+    },
+    {
+      "case_id": "B-n78-k10",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/B-n78-k10.vrp",
+      "sha256": "eb45a07763a5fdf05417d5d55254e68ce88ec5b905c5b001d4c50ed203395ff2",
+      "expected": "eb45a07763a5fdf05417d5d55254e68ce88ec5b905c5b001d4c50ed203395ff2",
+      "pass": true
+    },
+    {
+      "case_id": "B-n78-k10",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/B-n78-k10.sol",
+      "sha256": "bb94bf4d6ae81eb18192510687b665f27bf5c3c09944eedaf7715dce80a4b891",
+      "expected": "bb94bf4d6ae81eb18192510687b665f27bf5c3c09944eedaf7715dce80a4b891",
+      "pass": true
+    },
+    {
+      "case_id": "E-n51-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/E-n51-k5.vrp",
+      "sha256": "e47343ac4259f0b752793be02087e2ffdbcbb62ef65b808d03a6488fec1422bc",
+      "expected": "e47343ac4259f0b752793be02087e2ffdbcbb62ef65b808d03a6488fec1422bc",
+      "pass": true
+    },
+    {
+      "case_id": "E-n51-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/E-n51-k5.sol",
+      "sha256": "61f076693230586439253b1cd45f0e8799f18e5ae53251af50248a726857842e",
+      "expected": "61f076693230586439253b1cd45f0e8799f18e5ae53251af50248a726857842e",
+      "pass": true
+    },
+    {
+      "case_id": "E-n76-k7",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/E-n76-k7.vrp",
+      "sha256": "9daf17f43fc8a05315fcb157bc9aa8b73a38e72ff62bd468d169db74dc8a5f42",
+      "expected": "9daf17f43fc8a05315fcb157bc9aa8b73a38e72ff62bd468d169db74dc8a5f42",
+      "pass": true
+    },
+    {
+      "case_id": "E-n76-k7",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/E-n76-k7.sol",
+      "sha256": "28b70a47de29face1e97bec65844ec8f36bce5778022c19d0c152f85e4713836",
+      "expected": "28b70a47de29face1e97bec65844ec8f36bce5778022c19d0c152f85e4713836",
+      "pass": true
+    },
+    {
+      "case_id": "F-n45-k4",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/F-n45-k4.vrp",
+      "sha256": "c2963fc0b4c92d29e65a967088ab65edf8fbce3611b5e3fbb61ae6f53e5e26a9",
+      "expected": "c2963fc0b4c92d29e65a967088ab65edf8fbce3611b5e3fbb61ae6f53e5e26a9",
+      "pass": true
+    },
+    {
+      "case_id": "F-n45-k4",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/F-n45-k4.sol",
+      "sha256": "890117f162e2d893562a498c8052272116bece525931088da027f640fb9dc9bb",
+      "expected": "890117f162e2d893562a498c8052272116bece525931088da027f640fb9dc9bb",
+      "pass": true
+    },
+    {
+      "case_id": "F-n72-k4",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/F-n72-k4.vrp",
+      "sha256": "f349159bbe0dd7405be5350d195175c601434cf3ab5d29f0349f75ff41bfa95a",
+      "expected": "f349159bbe0dd7405be5350d195175c601434cf3ab5d29f0349f75ff41bfa95a",
+      "pass": true
+    },
+    {
+      "case_id": "F-n72-k4",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/F-n72-k4.sol",
+      "sha256": "03592e344edfeabf81f11a55ef42d1aaeeb82f0ab077eb8f667173d73ef23caa",
+      "expected": "03592e344edfeabf81f11a55ef42d1aaeeb82f0ab077eb8f667173d73ef23caa",
+      "pass": true
+    },
+    {
+      "case_id": "P-n19-k2",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n19-k2.vrp",
+      "sha256": "ffce851458f3ccd4fb790403e91bb4ad6e495c37704a68f8563b995e97e38892",
+      "expected": "ffce851458f3ccd4fb790403e91bb4ad6e495c37704a68f8563b995e97e38892",
+      "pass": true
+    },
+    {
+      "case_id": "P-n19-k2",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n19-k2.sol",
+      "sha256": "a72d1922d245ddc4d4abb6cfb929e8831bd17de4e438875dc97f13088709e45b",
+      "expected": "a72d1922d245ddc4d4abb6cfb929e8831bd17de4e438875dc97f13088709e45b",
+      "pass": true
+    },
+    {
+      "case_id": "P-n22-k2",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n22-k2.vrp",
+      "sha256": "bef647fd53eb85de8d555650f07c9c6dda4830bfddcedf6aedbc128ff622272e",
+      "expected": "bef647fd53eb85de8d555650f07c9c6dda4830bfddcedf6aedbc128ff622272e",
+      "pass": true
+    },
+    {
+      "case_id": "P-n22-k2",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n22-k2.sol",
+      "sha256": "e65416054577f6079c6bf54f8e8ee6cf5192f9d839e12a69c2c863fa625d261b",
+      "expected": "e65416054577f6079c6bf54f8e8ee6cf5192f9d839e12a69c2c863fa625d261b",
+      "pass": true
+    },
+    {
+      "case_id": "P-n23-k8",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n23-k8.vrp",
+      "sha256": "ed233a73ad6382eb4669d38a6267f8c9e80daf73e7115f93fdbd279e7243b453",
+      "expected": "ed233a73ad6382eb4669d38a6267f8c9e80daf73e7115f93fdbd279e7243b453",
+      "pass": true
+    },
+    {
+      "case_id": "P-n23-k8",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n23-k8.sol",
+      "sha256": "fafced50e649c7cd693cf041577ea81b938f1ccfc31c0cf049714a0dd84f57e3",
+      "expected": "fafced50e649c7cd693cf041577ea81b938f1ccfc31c0cf049714a0dd84f57e3",
+      "pass": true
+    },
+    {
+      "case_id": "P-n40-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n40-k5.vrp",
+      "sha256": "fe488f065406366c6fed91b371cc4aa6f7cbd704f516239b055382e49db372b0",
+      "expected": "fe488f065406366c6fed91b371cc4aa6f7cbd704f516239b055382e49db372b0",
+      "pass": true
+    },
+    {
+      "case_id": "P-n40-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n40-k5.sol",
+      "sha256": "03e3df8ead29cab9862c1922fe37bf7c1616b37dc8df9ae8fe094ac7b16b9e54",
+      "expected": "03e3df8ead29cab9862c1922fe37bf7c1616b37dc8df9ae8fe094ac7b16b9e54",
+      "pass": true
+    },
+    {
+      "case_id": "P-n45-k5",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n45-k5.vrp",
+      "sha256": "35a678e55fc5a0b9371a76d77a59d698da4df2c625ef6928ac0eac96912b15ca",
+      "expected": "35a678e55fc5a0b9371a76d77a59d698da4df2c625ef6928ac0eac96912b15ca",
+      "pass": true
+    },
+    {
+      "case_id": "P-n45-k5",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n45-k5.sol",
+      "sha256": "68cb1a6de37fc312e1b4ab0c2a704ce0b5331ef2aea9d1e72c8deab11400b804",
+      "expected": "68cb1a6de37fc312e1b4ab0c2a704ce0b5331ef2aea9d1e72c8deab11400b804",
+      "pass": true
+    },
+    {
+      "case_id": "P-n50-k10",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n50-k10.vrp",
+      "sha256": "4f11c9fdc78fb16223e035fc91aac8f43a7af111b65535c02bef2ce0d9e2b410",
+      "expected": "4f11c9fdc78fb16223e035fc91aac8f43a7af111b65535c02bef2ce0d9e2b410",
+      "pass": true
+    },
+    {
+      "case_id": "P-n50-k10",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n50-k10.sol",
+      "sha256": "87269cfa6a75575f030481812f975244f1b9ee536e2ffba9428f5b46b85df225",
+      "expected": "87269cfa6a75575f030481812f975244f1b9ee536e2ffba9428f5b46b85df225",
+      "pass": true
+    },
+    {
+      "case_id": "P-n51-k10",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n51-k10.vrp",
+      "sha256": "79984f78057bad09655c1c5c32ab146231714c2d99bfcdfdafe3203ed70165e9",
+      "expected": "79984f78057bad09655c1c5c32ab146231714c2d99bfcdfdafe3203ed70165e9",
+      "pass": true
+    },
+    {
+      "case_id": "P-n51-k10",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n51-k10.sol",
+      "sha256": "c84e6d0547606508e9253c45960a2aa6c8f3f797b1405d4bc4130de090f1b0f9",
+      "expected": "c84e6d0547606508e9253c45960a2aa6c8f3f797b1405d4bc4130de090f1b0f9",
+      "pass": true
+    },
+    {
+      "case_id": "P-n55-k7",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n55-k7.vrp",
+      "sha256": "7e5c3ce67c9e788fb56e64387c9437c0fb08bdc947d6cd76dac1886e2d36916e",
+      "expected": "7e5c3ce67c9e788fb56e64387c9437c0fb08bdc947d6cd76dac1886e2d36916e",
+      "pass": true
+    },
+    {
+      "case_id": "P-n55-k7",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n55-k7.sol",
+      "sha256": "efb8310d3659d8a43074125ba2f5982aef4965e022596584956c49f39003c3e2",
+      "expected": "efb8310d3659d8a43074125ba2f5982aef4965e022596584956c49f39003c3e2",
+      "pass": true
+    },
+    {
+      "case_id": "P-n65-k10",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n65-k10.vrp",
+      "sha256": "4e89e3c679360e1227980708d64967d97c78a4d3156276d9975037a044e076b6",
+      "expected": "4e89e3c679360e1227980708d64967d97c78a4d3156276d9975037a044e076b6",
+      "pass": true
+    },
+    {
+      "case_id": "P-n65-k10",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n65-k10.sol",
+      "sha256": "e6de31b921b7776ff91c3f15807081e6a3626f86026e3dc60172d48e6468c68a",
+      "expected": "e6de31b921b7776ff91c3f15807081e6a3626f86026e3dc60172d48e6468c68a",
+      "pass": true
+    },
+    {
+      "case_id": "P-n70-k10",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n70-k10.vrp",
+      "sha256": "98ad82036799845d5728d806077adf80f8f3a21e5d11b46d0f23d09b906e6ae0",
+      "expected": "98ad82036799845d5728d806077adf80f8f3a21e5d11b46d0f23d09b906e6ae0",
+      "pass": true
+    },
+    {
+      "case_id": "P-n70-k10",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n70-k10.sol",
+      "sha256": "62c8854b368fa6e4585af589e5d7538c2d78a4715513a7656bfdaf470bb01860",
+      "expected": "62c8854b368fa6e4585af589e5d7538c2d78a4715513a7656bfdaf470bb01860",
+      "pass": true
+    },
+    {
+      "case_id": "P-n76-k4",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/P-n76-k4.vrp",
+      "sha256": "141992bec5fb14d1a21aa377de3b2ee42e20d711996b84368ab722658812909f",
+      "expected": "141992bec5fb14d1a21aa377de3b2ee42e20d711996b84368ab722658812909f",
+      "pass": true
+    },
+    {
+      "case_id": "P-n76-k4",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/P-n76-k4.sol",
+      "sha256": "ae568e3e01f28fb7a6fd81ef1369fc8956a7f6c929f1a0a54833603f4e95a121",
+      "expected": "ae568e3e01f28fb7a6fd81ef1369fc8956a7f6c929f1a0a54833603f4e95a121",
+      "pass": true
+    },
+    {
+      "case_id": "X-n101-k25",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n101-k25.vrp",
+      "sha256": "38ba943084fc5ef2e7e681bfad2c926ec93c5870dbe2d180cc02b08f748113cb",
+      "expected": "38ba943084fc5ef2e7e681bfad2c926ec93c5870dbe2d180cc02b08f748113cb",
+      "pass": true
+    },
+    {
+      "case_id": "X-n101-k25",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n101-k25.sol",
+      "sha256": "fe64a62947aa1c8379bb5a119ccdb774bb963ec50d13e5e00bee878d067e4f1c",
+      "expected": "fe64a62947aa1c8379bb5a119ccdb774bb963ec50d13e5e00bee878d067e4f1c",
+      "pass": true
+    },
+    {
+      "case_id": "X-n106-k14",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n106-k14.vrp",
+      "sha256": "4f45bbc4757f5b1f050c4af504a4f8ecccc52be553a75f375f8083fca7819bdd",
+      "expected": "4f45bbc4757f5b1f050c4af504a4f8ecccc52be553a75f375f8083fca7819bdd",
+      "pass": true
+    },
+    {
+      "case_id": "X-n106-k14",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n106-k14.sol",
+      "sha256": "178b85db350dd82186951983ae3edf8e9a8ca8f57741f0d44c2998682249b3e5",
+      "expected": "178b85db350dd82186951983ae3edf8e9a8ca8f57741f0d44c2998682249b3e5",
+      "pass": true
+    },
+    {
+      "case_id": "X-n110-k13",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n110-k13.vrp",
+      "sha256": "d449de04a65d4803f059bc9cfc7b997df11892ebf6085ab23082b884d879e229",
+      "expected": "d449de04a65d4803f059bc9cfc7b997df11892ebf6085ab23082b884d879e229",
+      "pass": true
+    },
+    {
+      "case_id": "X-n110-k13",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n110-k13.sol",
+      "sha256": "a85e4900e81b57afc1f83c1ef03790bc1d020460dfb39a0f1b356bb575dc5097",
+      "expected": "a85e4900e81b57afc1f83c1ef03790bc1d020460dfb39a0f1b356bb575dc5097",
+      "pass": true
+    },
+    {
+      "case_id": "X-n204-k19",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n204-k19.vrp",
+      "sha256": "5a32c193d08072abfe967a6e7582693d44238f05a4a3814902bf893cd80044db",
+      "expected": "5a32c193d08072abfe967a6e7582693d44238f05a4a3814902bf893cd80044db",
+      "pass": true
+    },
+    {
+      "case_id": "X-n204-k19",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n204-k19.sol",
+      "sha256": "065fdbab7cc93bda761ca65024f64c4c9de534a107eb4885cb23f1a6e28539d2",
+      "expected": "065fdbab7cc93bda761ca65024f64c4c9de534a107eb4885cb23f1a6e28539d2",
+      "pass": true
+    },
+    {
+      "case_id": "X-n209-k16",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n209-k16.vrp",
+      "sha256": "56cc5baa783e30efe91cb22af399e16564b5433de6cd15dbb87289a72d0d024b",
+      "expected": "56cc5baa783e30efe91cb22af399e16564b5433de6cd15dbb87289a72d0d024b",
+      "pass": true
+    },
+    {
+      "case_id": "X-n209-k16",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n209-k16.sol",
+      "sha256": "e7ee80d44fa268b7db60399526a66a1b8b6868ace256276dbf358bee672fd91d",
+      "expected": "e7ee80d44fa268b7db60399526a66a1b8b6868ace256276dbf358bee672fd91d",
+      "pass": true
+    },
+    {
+      "case_id": "X-n214-k11",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n214-k11.vrp",
+      "sha256": "06b7785ed1286046fefdead4f108e92564ab968b21eae82e79509c5e0125ffcf",
+      "expected": "06b7785ed1286046fefdead4f108e92564ab968b21eae82e79509c5e0125ffcf",
+      "pass": true
+    },
+    {
+      "case_id": "X-n214-k11",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n214-k11.sol",
+      "sha256": "bf27854df61c259f6752aff5faaca983c1bd7baefc5cf53bfd95828bef2aeea7",
+      "expected": "bf27854df61c259f6752aff5faaca983c1bd7baefc5cf53bfd95828bef2aeea7",
+      "pass": true
+    },
+    {
+      "case_id": "X-n303-k21",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n303-k21.vrp",
+      "sha256": "8b31998ba5500255b3b2b81bacbe1e5467209439ca8efae9ba099e1190724dfe",
+      "expected": "8b31998ba5500255b3b2b81bacbe1e5467209439ca8efae9ba099e1190724dfe",
+      "pass": true
+    },
+    {
+      "case_id": "X-n303-k21",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n303-k21.sol",
+      "sha256": "16d9b34b3d4d4047034160972b004ecb8e63daa3ba2d7b9207303386598a85e9",
+      "expected": "16d9b34b3d4d4047034160972b004ecb8e63daa3ba2d7b9207303386598a85e9",
+      "pass": true
+    },
+    {
+      "case_id": "X-n308-k13",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n308-k13.vrp",
+      "sha256": "e94414156b38b9281736bf527dc8bba7db33c45b10513034b261b74cf3b060b5",
+      "expected": "e94414156b38b9281736bf527dc8bba7db33c45b10513034b261b74cf3b060b5",
+      "pass": true
+    },
+    {
+      "case_id": "X-n308-k13",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n308-k13.sol",
+      "sha256": "39ed44ed521489979680b8302a6561cca4ea85e06bc630601250de0d361a226b",
+      "expected": "39ed44ed521489979680b8302a6561cca4ea85e06bc630601250de0d361a226b",
+      "pass": true
+    },
+    {
+      "case_id": "X-n313-k71",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n313-k71.vrp",
+      "sha256": "a1aef78c8ea1c91b1145bc617c28e64ad4c09e6d5b9eae9450d0819caeffdc62",
+      "expected": "a1aef78c8ea1c91b1145bc617c28e64ad4c09e6d5b9eae9450d0819caeffdc62",
+      "pass": true
+    },
+    {
+      "case_id": "X-n313-k71",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n313-k71.sol",
+      "sha256": "e2ccab0935f8e6bcd94ed1a9120b696535ffc31ea6acd279e43605b0e39d4772",
+      "expected": "e2ccab0935f8e6bcd94ed1a9120b696535ffc31ea6acd279e43605b0e39d4772",
+      "pass": true
+    },
+    {
+      "case_id": "X-n502-k39",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n502-k39.vrp",
+      "sha256": "091335fafbabacd1354df183013fa7130538bc100265986af000be6b5bc2d165",
+      "expected": "091335fafbabacd1354df183013fa7130538bc100265986af000be6b5bc2d165",
+      "pass": true
+    },
+    {
+      "case_id": "X-n502-k39",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n502-k39.sol",
+      "sha256": "c5551be3e43d2127005f382781e6c43dcadf763bb38ec3210104d0dd9c485c37",
+      "expected": "c5551be3e43d2127005f382781e6c43dcadf763bb38ec3210104d0dd9c485c37",
+      "pass": true
+    },
+    {
+      "case_id": "X-n513-k21",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n513-k21.vrp",
+      "sha256": "235d809f940b9e113f510f305624f095c0db546102f0b65b91bf53e070943696",
+      "expected": "235d809f940b9e113f510f305624f095c0db546102f0b65b91bf53e070943696",
+      "pass": true
+    },
+    {
+      "case_id": "X-n513-k21",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n513-k21.sol",
+      "sha256": "1158ff5066353da0ab6c9dce26490309ec79e10152ba0547d49177d0b4fa4754",
+      "expected": "1158ff5066353da0ab6c9dce26490309ec79e10152ba0547d49177d0b4fa4754",
+      "pass": true
+    },
+    {
+      "case_id": "X-n524-k153",
+      "kind": "instance",
+      "path": "data/benchmarks/CVRPLIB/instances/X-n524-k153.vrp",
+      "sha256": "c7ac96fa3b801f9751ac5a8ffd2cbd6e098d82142d5d7005aaa2b01a8cf001b5",
+      "expected": "c7ac96fa3b801f9751ac5a8ffd2cbd6e098d82142d5d7005aaa2b01a8cf001b5",
+      "pass": true
+    },
+    {
+      "case_id": "X-n524-k153",
+      "kind": "reference",
+      "path": "data/benchmarks/CVRPLIB/reference_solutions/X-n524-k153.sol",
+      "sha256": "7ae30329b0cfde099a22b91297152bc1057b00cf1371a9188fbee52af707b6ab",
+      "expected": "7ae30329b0cfde099a22b91297152bc1057b00cf1371a9188fbee52af707b6ab",
+      "pass": true
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+[
+  {
+    "case_id": "X-n101-k25",
+    "edges": 10201,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":10201,\"internal_max_routes\":35}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n106-k14",
+    "edges": 11236,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":11236,\"internal_max_routes\":19}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n110-k13",
+    "edges": 12100,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":12100,\"internal_max_routes\":18}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n204-k19",
+    "edges": 41616,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":41616,\"internal_max_routes\":24}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n209-k16",
+    "edges": 43681,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":43681,\"internal_max_routes\":21}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n214-k11",
+    "edges": 45796,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":45796,\"internal_max_routes\":15}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n303-k21",
+    "edges": 91809,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":91809,\"internal_max_routes\":26}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n308-k13",
+    "edges": 94864,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":94864,\"internal_max_routes\":17}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n313-k71",
+    "edges": 97969,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":97969,\"internal_max_routes\":91}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n502-k39",
+    "edges": 252004,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":252004,\"internal_max_routes\":46}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n513-k21",
+    "edges": 263169,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":263169,\"internal_max_routes\":25}\n",
+    "ails_stderr": ""
+  },
+  {
+    "case_id": "X-n524-k153",
+    "edges": 274576,
+    "sisr_float_mismatches": [],
+    "ails_returncode": 0,
+    "ails_stdout": "File: evidence/metric-input.vrp\nRounded: true\nlimit: 0.0\nBest: 0.0\nLimitTime: 0.0\nConfig \nstoppingCriterionType: Time\netaMax: 1.000\netaMin: 0.010\ngamma: 30\ndMin: 15\ndMax: 30\nvarphi: 40\nepsilon: 0.010\nperturbation: [Sequential, Concentric]\ninsertionHeuristics: [Distance, Cost]\nlimitKnn: 100\n{\"event\":\"metric_verified\",\"edges\":274576,\"internal_max_routes\":176}\n",
+    "ails_stderr": ""
+  }
+]

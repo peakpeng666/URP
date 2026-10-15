@@ -1,0 +1,31 @@
+{
+  "schema": "urp-cvrplib-ownership-amendment-v1",
+  "canonical_plan_sha256": "a8a4bee5f43c9a186996845f725f5b2fdfa8cad51df6582ea30561513a995ad5",
+  "created_utc": "2026-10-15T12:12:33.334903+00:00",
+  "reason": "Parent verified local zero-start seed2 hold in local task at12:11; cloud serialseed0 and vendor24 completed, transfer seed2 intact to fixed four-core cloud cohort",
+  "machines": {
+    "cloud": {
+      "seeds": [
+        0,
+        2
+      ],
+      "planned": 1802,
+      "resource_cohort": "seed0 serial single-core; seed2 cloud_parallel4_pinned_0_1_2_3, report separately"
+    },
+    "ubuntu-local": {
+      "seeds": [
+        1,
+        3,
+        4
+      ],
+      "planned": 2703,
+      "resource_cohort": "four parallel supervisors, one isolated P core each, no increase in concurrency; existing local seed3,4 continue then queue1,2"
+    }
+  },
+  "pooling": "Report machine-stratified runtime and quality; do not pool timing ranks or claim hardware-controlled comparison",
+  "driver_sha256": "fcc0b1b0fdb278f1a1c6f6ad6d61e31e916728e315ad8973b3d6b185413c922d",
+  "solver_source_sha256": "0d60312417f36be46a69a0e532bdc5efebcbae54964fb3034ae0959e197194ec",
+  "new_attempts_for_completed_keys": false,
+  "revision": 3,
+  "supersedes_assignment_sha256": "3e9d931c73b4c6a3576a64ad2cae77b7f4837b3d57c8520e5d89a1e5daa95588"
+}

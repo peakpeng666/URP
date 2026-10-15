@@ -1,0 +1,17 @@
+{
+  "font": "Noto Sans CJK JP",
+  "glyph_warnings": 0,
+  "visual_review": [
+    "coverage full-size",
+    "distribution full-size",
+    "all 10 figure contact sheet",
+    "CPU range starts at zero after review"
+  ],
+  "main_unique_keys": 4505,
+  "main_attempts": 4509,
+  "main_feasible": 4316,
+  "main_no_solution": 189,
+  "supplementary_unique_keys": 120,
+  "supplementary_feasible": 120,
+  "source_summary_sha256": "dce6eafa7bf156c521f743a605107bace1601a3811330ccd760629214fce2297"
+}

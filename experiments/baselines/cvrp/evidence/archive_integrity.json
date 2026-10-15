@@ -1,0 +1,17 @@
+[
+  {
+    "archive": "cloud-results.tar.xz",
+    "members": 5486,
+    "member_bytes_identical": true
+  },
+  {
+    "archive": "ubuntu-local-seeds3-4-results.tar.xz",
+    "members": 5474,
+    "member_bytes_identical": true
+  },
+  {
+    "archive": "ubuntu-local-seed1-results.tar.xz",
+    "members": 2835,
+    "member_bytes_identical": true
+  }
+]

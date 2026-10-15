@@ -1,0 +1,29 @@
+{
+  "schema": "urp-cvrplib-ownership-amendment-v1",
+  "canonical_plan_sha256": "a8a4bee5f43c9a186996845f725f5b2fdfa8cad51df6582ea30561513a995ad5",
+  "created_utc": "2026-10-15T11:32:08.934687+00:00",
+  "reason": "User requested local computer parallel execution; same4505 planned keys, no score-dependent selection",
+  "machines": {
+    "cloud": {
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "planned": 2703,
+      "resource_cohort": "serial single core; first completed rows predate assignment retain provenance"
+    },
+    "ubuntu-local": {
+      "seeds": [
+        3,
+        4
+      ],
+      "planned": 1802,
+      "resource_cohort": "single-core per worker; fixed bounded concurrency after independent preflight"
+    }
+  },
+  "pooling": "Report machine-stratified runtime and quality; do not pool timing ranks or claim hardware-controlled comparison",
+  "driver_sha256": "0fcd6a113dfe35ff6e1b329cbef5948532b48996deaa0c23131c47cb1e93a732",
+  "solver_source_sha256": "0d60312417f36be46a69a0e532bdc5efebcbae54964fb3034ae0959e197194ec",
+  "new_attempts_for_completed_keys": false
+}

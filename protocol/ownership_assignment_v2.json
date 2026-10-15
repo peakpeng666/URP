@@ -1,0 +1,31 @@
+{
+  "schema": "urp-cvrplib-ownership-amendment-v1",
+  "canonical_plan_sha256": "a8a4bee5f43c9a186996845f725f5b2fdfa8cad51df6582ea30561513a995ad5",
+  "created_utc": "2026-10-15T11:50:26.672379+00:00",
+  "reason": "User-authorized acceleration: local four isolated P cores verified; seeds1,2 wholly unstarted, transfer entire blocks; existingseed0 attempts immutable",
+  "machines": {
+    "cloud": {
+      "seeds": [
+        0
+      ],
+      "planned": 901,
+      "resource_cohort": "serial single core; first completed rows predate assignment retain provenance"
+    },
+    "ubuntu-local": {
+      "seeds": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "planned": 3604,
+      "resource_cohort": "four parallel supervisors, one isolated P core each, no increase in concurrency; existing local seed3,4 continue then queue1,2"
+    }
+  },
+  "pooling": "Report machine-stratified runtime and quality; do not pool timing ranks or claim hardware-controlled comparison",
+  "driver_sha256": "631a3a2a35926aab5c2c24422199c297ba83d629cb17e40ba45d7da16919feda",
+  "solver_source_sha256": "0d60312417f36be46a69a0e532bdc5efebcbae54964fb3034ae0959e197194ec",
+  "new_attempts_for_completed_keys": false,
+  "revision": 2,
+  "supersedes_assignment_sha256": "4c271c11bec9fc4dd430300868a0e1fefc69a42a33b455790491fd7f81c20233"
+}

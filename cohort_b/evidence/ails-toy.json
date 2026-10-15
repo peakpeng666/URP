@@ -1,0 +1,23 @@
+{
+  "algorithm": "ails",
+  "budget_seconds": 2,
+  "seed": 0,
+  "start_ns": 9844485040439,
+  "deadline_ns": 9846485040439,
+  "wall_seconds": 0.201818163,
+  "returncode": 1,
+  "killed_at_cutoff": false,
+  "incumbent": null,
+  "invalid_outputs": [],
+  "events": [
+    {
+      "event": "metric_verified",
+      "edges": 441,
+      "internal_max_routes": 8,
+      "receipt_ns": 9844664174481,
+      "before_deadline": true
+    }
+  ],
+  "stderr": "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 20 out of bounds for length 20\n\tat Improvement.IntraLocalSearch.intraLocalSearch(IntraLocalSearch.java:65)\n\tat Improvement.FeasibilityPhase.intraLocalSearch(FeasibilityPhase.java:402)\n\tat Improvement.FeasibilityPhase.execute(FeasibilityPhase.java:147)\n\tat Improvement.FeasibilityPhase.makeFeasible(FeasibilityPhase.java:115)\n\tat SearchMethod.AILSII.search(AILSII.java:134)\n\tat Adapter.Main.main(Main.java:19)\n",
+  "status": "NO_INCUMBENT"
+}

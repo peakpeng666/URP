@@ -1,0 +1,814 @@
+{
+  "schema": "urp-vendor-cohort-v1",
+  "created_utc": "2026-10-15T11:59:09.485107+00:00",
+  "budget_seconds": 5,
+  "algorithms": [
+    "ails",
+    "sisr"
+  ],
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "case_ids": [
+    "X-n101-k25",
+    "X-n106-k14",
+    "X-n110-k13",
+    "X-n204-k19",
+    "X-n209-k16",
+    "X-n214-k11",
+    "X-n303-k21",
+    "X-n308-k13",
+    "X-n313-k71",
+    "X-n502-k39",
+    "X-n513-k21",
+    "X-n524-k153"
+  ],
+  "schedule": [
+    {
+      "algorithm": "ails",
+      "case_id": "X-n101-k25",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n101-k25",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n106-k14",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n106-k14",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n110-k13",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n110-k13",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n204-k19",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n204-k19",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n209-k16",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n209-k16",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n214-k11",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n214-k11",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n303-k21",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n303-k21",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n308-k13",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n308-k13",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n313-k71",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n313-k71",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n502-k39",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n502-k39",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n513-k21",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n513-k21",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n524-k153",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n524-k153",
+      "seed": 0,
+      "host_id": "cloud"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n101-k25",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n101-k25",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n106-k14",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n106-k14",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n110-k13",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n110-k13",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n204-k19",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n204-k19",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n209-k16",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n209-k16",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n214-k11",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n214-k11",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n303-k21",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n303-k21",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n308-k13",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n308-k13",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n313-k71",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n313-k71",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n502-k39",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n502-k39",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n513-k21",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n513-k21",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n524-k153",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n524-k153",
+      "seed": 1,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n101-k25",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n101-k25",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n106-k14",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n106-k14",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n110-k13",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n110-k13",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n204-k19",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n204-k19",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n209-k16",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n209-k16",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n214-k11",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n214-k11",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n303-k21",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n303-k21",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n308-k13",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n308-k13",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n313-k71",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n313-k71",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n502-k39",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n502-k39",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n513-k21",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n513-k21",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n524-k153",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n524-k153",
+      "seed": 2,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n101-k25",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n101-k25",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n106-k14",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n106-k14",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n110-k13",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n110-k13",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n204-k19",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n204-k19",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n209-k16",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n209-k16",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n214-k11",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n214-k11",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n303-k21",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n303-k21",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n308-k13",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n308-k13",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n313-k71",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n313-k71",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n502-k39",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n502-k39",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n513-k21",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n513-k21",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n524-k153",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n524-k153",
+      "seed": 3,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n101-k25",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n101-k25",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n106-k14",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n106-k14",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n110-k13",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n110-k13",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n204-k19",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n204-k19",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n209-k16",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n209-k16",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n214-k11",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n214-k11",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n303-k21",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n303-k21",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n308-k13",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n308-k13",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n313-k71",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n313-k71",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n502-k39",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n502-k39",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n513-k21",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n513-k21",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "ails",
+      "case_id": "X-n524-k153",
+      "seed": 4,
+      "host_id": "local"
+    },
+    {
+      "algorithm": "sisr",
+      "case_id": "X-n524-k153",
+      "seed": 4,
+      "host_id": "local"
+    }
+  ],
+  "files": {
+    "run_vendor.py": "d038b22439efffdaa871b16746dc1651a854e08d04441af8ec6e75c13de847dc",
+    "run_cohort.py": "bb69aa3305f1ac94655e1ba105c01f5756a01f7caaaba9363ce9bc1b977f8d31",
+    "PREDECLARATION.md": "4dcc3358e610f9eaa02a27b9d181322355d6ea08ca768581f2895669c1c5fbc9",
+    "sisr/cvrp/config.json": "493e877071773afa7996b314a9a7ce51cda34c35cd2633dd9ad22e06a2f6efd0",
+    "sisr/build.sh": "bf3a05c494ce93d02232c012c7421050adea4bff99151981ae30a88aef48a325",
+    "ails/build.sh": "0c72d38aa0b7a843b0ddd6f16e5009d89878aec240d7e5d652dcd49e59e9a57c",
+    "sisr/adapted/src/ProblemInstance.cpp": "79171793abcfe8edf4ea77b4e3574c1e1eeb9b90432a936ed91c1d1068d4db85",
+    "sisr/adapted/src/Solution.hpp": "c862f84343e596accfe2582de4d3030e9049725aa2e62644f9a4410cd7f33f9d",
+    "sisr/adapted/src/Sisrs.cpp": "8812f09fd22b1d605d4064af9bb10b55c5e3b461ad7db20646de03f802e11366",
+    "sisr/adapted/src/Sisrs.hpp": "dc00228bb0b3c3ce08d7f536fac6253159a86e815f8d6caf20e943393464fbf1",
+    "sisr/adapted/src/main.cpp": "758a8b13e5f4e563ec8bbd5d9f7da47a54713f8df174974349f037b0fdfd8fd0",
+    "sisr/adapted/src/ProblemInstance.hpp": "7e18800735d49fa28c14141d3397b78998f63280887914b02ee358a23faddcc2",
+    "sisr/adapted/src/adapter_main.cpp": "e8db7cdb448a519ca3709fdc09187521c7d3ccf919c1e1100c04aed7f7ca3650",
+    "sisr/adapted/src/Solution.cpp": "92929b4fdf40fe4462fb936afb7467675804462bb3b185bf741c70e0d8de791b",
+    "ails/adapted/src/Improvement/FeasibilityPhase.java": "7849d828b770299a1432f2c76ea1399ea3c7252e3fb084fd08d104b27b4262c4",
+    "ails/adapted/src/Improvement/IntraLocalSearch.java": "9217a3c55357bf4399850ab4a08941fddbc79df7a0c5ccdd55a3772a1ff48bd2",
+    "ails/adapted/src/Improvement/CandidateNode.java": "73b9eaad34d2d7f5f86edf4f453371dd93ebd492ee189fb80bd241fb198a5ffc",
+    "ails/adapted/src/Improvement/LocalSearch.java": "311cc0639d0011274587bdf79a502417b00a4a5ec8921fb9bdf2365442b68510",
+    "ails/adapted/src/Perturbation/Sequential.java": "ffd0c5b6d04c90b5d410eb9dbc7d661665353bb3c3ec4d0d1968d1ec4611c672",
+    "ails/adapted/src/Perturbation/PerturbationType.java": "52a3204dfb3ff3255f78be1aa94cd108245b94a7d00794a6dd12649d8b2c9b86",
+    "ails/adapted/src/Perturbation/Perturbation.java": "f447750fbe4daa51563b49f869884e89ae998dc23bdb48ee4bd7863da7690d68",
+    "ails/adapted/src/Perturbation/InsertionHeuristic.java": "0a9acceb9138ff324233196167bf87450ed905014cba950685cfb6e3db15353e",
+    "ails/adapted/src/Perturbation/Concentric.java": "cf8d5267ceeef31397dd307d9933ba3cf8dd803279a1075727fc2b000d837aaf",
+    "ails/adapted/src/Auxiliary/Distance.java": "7b0c30560cb8214a9a68645beb982233b39075f6dc2286d0e6f35a4fd93e42ee",
+    "ails/adapted/src/Auxiliary/Mean.java": "9c16d9c295f63ebfcffccebd442f37fdec569efa8d1bc514194613db38dc5d87",
+    "ails/adapted/src/SearchMethod/StoppingCriterionType.java": "913a0ed33f7cf406d29e88e2d2258336e5262db3c266019704862a56ae463f02",
+    "ails/adapted/src/SearchMethod/ConstructSolution.java": "12c01512abafb8f97a46a0a76b96c2ac381ee8c5536fbd076f998fe8ec426ca4",
+    "ails/adapted/src/SearchMethod/Config.java": "1404383a7ab8710c4bb5d499bcf408a24cf99fb481713a13e573cc2e7226212d",
+    "ails/adapted/src/SearchMethod/InputParameters.java": "75cdd796ade1c57c99f0ea0a3f8baa9c85959d56783cefe1f890c6861b857ef6",
+    "ails/adapted/src/SearchMethod/AILSII.java": "b6dad45f1bbc2af94e4d05b844a03de4865eecc552bf4771e372b8e7e7071948",
+    "ails/adapted/src/Solution/Solution.java": "4d456c899a17359195f3d826fa57b229f1344a4112ee3c41063a9e6bf4c14e93",
+    "ails/adapted/src/Solution/Node.java": "01bb6f1d794ae05ce5bd653f85a5ec5085cda146e9352622009bde7fe02a4295",
+    "ails/adapted/src/Solution/Route.java": "548df77b93745f7ff313012dee226312f91504ff5951bab6570645c499846304",
+    "ails/adapted/src/Adapter/SeededRandom.java": "87a54a4392e533f5bf0461372f46fd8b385e4786ad72e942a30971dd40c641c8",
+    "ails/adapted/src/Adapter/Observer.java": "56fc675c974f16b89e49f1be291cee6a02bf7a6aca42847aa6a6149d6100dbdd",
+    "ails/adapted/src/Adapter/Main.java": "2a65bf88d2abca5126c4239b609f80263a838d8e8959b22f21a396c67c371ddd",
+    "ails/adapted/src/Data/Point.java": "3a7e193ccd3f51e5be092d25f69d6b421943595b43bec759f2b047f5aeb007e2",
+    "ails/adapted/src/Data/File.java": "97b05bd71eda63cdc282d4c6e82a615c5f706d7416cf961ad5d8922bd869f4f2",
+    "ails/adapted/src/Data/Instances.java": "a711e826b4a4464faebfb537bc6b811e0a7dcc2e93d13948708c58aba22e51b1",
+    "ails/adapted/src/Data/Best.java": "df1eb676ee6d19bbdff85f5a57bc5a02aa39a9ea517e80295aab51b8cbd58a53",
+    "ails/adapted/src/Data/EdgeType.java": "a5e70abb7c67bad4a4b1d06461b912ee011450878dd7c6d29a7e0fc79cc400e3",
+    "ails/adapted/src/Data/MaxNumRoutes.java": "6db2408eeaea8c330dbe821916e3664c0f0baf142583ef3c70b9d16e79ac0ce9",
+    "ails/adapted/src/Data/Instance.java": "935836f3d6731610aa48aa54433b689f58bccd0e634774f8cb561aa58b7d29c1",
+    "ails/adapted/src/Data/NodeKnn.java": "d0e0ee1fa2b37a3a5aaadcb38c45bf95b4062e362c8f77b98a9b56edba582211",
+    "ails/adapted/src/Data/InstanceData.java": "9ba682e9d1df0795d7499c71c29bdbeab2c4d9594f2e3039d6027e2812e38de8",
+    "ails/adapted/src/Evaluators/FeasibilityEvaluation.java": "c6ce82307aaf2da627490e1fa04b76f85fea756d8524550f80db54b41c7ecb7d",
+    "ails/adapted/src/Evaluators/CostEvaluation.java": "7f8917774e177b284206e97f3456ebe967be0a0646fcf0041e5b711aaf8b34be",
+    "ails/adapted/src/Evaluators/ExecuteMovement.java": "530750bf85e6129488f7812d844e093623af5d15701dbbfe2e10e8dba5c62873",
+    "ails/adapted/src/Evaluators/MovementType.java": "ff9faba7b121e25ae54251ee43026d223af724dc5a2d9aafab7e38ae89d21e92",
+    "ails/adapted/src/DiversityControl/OmegaAdjustment.java": "5ec08cfc2c4b03a165bc95d7d1e1e4309d2b8667f9bee9d0dd5efac05ba6f8ae",
+    "ails/adapted/src/DiversityControl/DistAdjustment.java": "fbf331912ebe3c3e388216cd5acec518944ed4a34ae3f942ac2acbe7e97939ad",
+    "ails/adapted/src/DiversityControl/AcceptanceCriterion.java": "551b203c453905c68b8e256369a187727fe443dc8881bb21dc595ef410fe5b94",
+    "ails/adapted/src/DiversityControl/IdealDist.java": "0430743094e921331ea0eaaf54f967bf95be7929fe97b80df631dad63f27c741",
+    "sisr/adapted/lib/cxxopts_LICENSE.txt": "8c0250ae3f186285eb9511151a0ab14207ba75ddf99e914cb0c4bb9913b9ff5d",
+    "sisr/adapted/lib/cxxopts.hpp": "a91e8c604033e2e90ff045e930229f8cb91eb00287e7e5f3b0a8e52f1fb1f8b5",
+    "sisr/adapted/lib/json.hpp": "5b4b37308d67f9820b5926486374246054fdd06baae85309b820a8315f23caca",
+    "sisr/adapted/lib/json_LICENSE.txt": "e2561616feb04763511bf907d9c58cdeb5db2bccf03f7c9668437b3819b7df9c"
+  },
+  "comparison": "Matched host allocation: seed0 cloud,1-4 local; separate temporal cohort, same12 unrestricted X only; no all53 ranking",
+  "technical_fix": "AILS varphi=min(40,n); unchanged for all X cases",
+  "reference_access": "none in worker; scoring after saved outputs"
+}

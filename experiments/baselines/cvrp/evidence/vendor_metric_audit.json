@@ -1,0 +1,74 @@
+[
+  {
+    "case_id": "X-n101-k25",
+    "edges": 10201,
+    "maximum_distance": 1265,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n106-k14",
+    "edges": 11236,
+    "maximum_distance": 1318,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n110-k13",
+    "edges": 12100,
+    "maximum_distance": 1278,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n204-k19",
+    "edges": 41616,
+    "maximum_distance": 1348,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n209-k16",
+    "edges": 43681,
+    "maximum_distance": 1385,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n214-k11",
+    "edges": 45796,
+    "maximum_distance": 818,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n303-k21",
+    "edges": 91809,
+    "maximum_distance": 1135,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n308-k13",
+    "edges": 94864,
+    "maximum_distance": 1349,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n313-k71",
+    "edges": 97969,
+    "maximum_distance": 1287,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n502-k39",
+    "edges": 252004,
+    "maximum_distance": 1207,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n513-k21",
+    "edges": 263169,
+    "maximum_distance": 1295,
+    "mismatches": []
+  },
+  {
+    "case_id": "X-n524-k153",
+    "edges": 274576,
+    "maximum_distance": 1371,
+    "mismatches": []
+  }
+]

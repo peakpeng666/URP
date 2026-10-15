@@ -35,7 +35,7 @@ def configure(parser):
     one = sub.add_parser("run-one", help="A single acceptance call; no batch or paid-model entrypoint")
     one.add_argument("--instance", type=Path, required=True)
     one.add_argument("--manifest", type=Path, default=CASES)
-    one.add_argument("--algorithm", choices=["savings", "T", "TRS", "TSR", "pyvrp"], required=True)
+    one.add_argument("--algorithm", choices=['savings', 'T', 'TRS', 'TSR', 'pyvrp', 'ortools', 'nearest_neighbor', 'seeded_sweep', 'savings_vnd', 'multistart_vnd', 'random_cheapest', 'random_regret2', 'worst_cheapest', 'worst_regret2', 'ga_random_keys', 'pso_random_keys', 'de_random_keys'], required=True)
     one.add_argument("--seed", type=int, required=True)
     one.add_argument("--budget", type=float, choices=[1, 5], required=True)
     one.add_argument("--capped-x", action="store_true", help="Separately labelled derived X contract")
