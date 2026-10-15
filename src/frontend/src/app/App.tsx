@@ -1,42 +1,33 @@
 import { lazy, Suspense, useEffect, useRef } from 'react';
-import { ChartColumn, ShieldCheck, Split, Table2, Waypoints } from 'lucide-react';
-import { lastViewHref, useRoute, type Route, type ViewName } from './router';
-import { loadMeta, useAsync } from '../data/api';
+import { LAB_VIEWS, useRoute, type Route } from './router';
+import { explainLoadError, loadMeta, useAsync, type AsyncState } from '../data/api';
+import type { Meta } from '../data/types';
+import { Async } from '../components/ui';
 import { ProvenanceDrawer } from '../components/ProvenanceDrawer';
 import { StatusMark } from '../components/Status';
-import { ForkMark } from '../components/ForkMark';
-import { Overview } from '../views/Overview';
+import { Sidebar } from '../lab/shell/Sidebar';
+import { Page, ViewErrorBoundary } from '../lab/shell/Page';
+import { VIEW_TITLES, rememberLabHref } from '../lab/shell/nav';
+import { Dashboard } from '../lab/views/Dashboard';
+import { Spinner } from '../lab/ui';
 import s from './App.module.css';
 
+const Overview = lazy(() => import('../views/Overview').then((m) => ({ default: m.Overview })));
 const Samples = lazy(() => import('../views/Samples').then((m) => ({ default: m.Samples })));
 const ReplayView = lazy(() => import('../views/ReplayView').then((m) => ({ default: m.ReplayView })));
 const RiskView = lazy(() => import('../views/RiskView').then((m) => ({ default: m.RiskView })));
 const EvidenceView = lazy(() => import('../views/EvidenceView').then((m) => ({ default: m.EvidenceView })));
+const PlanView = lazy(() => import('../lab/views/plan/PlanView').then((m) => ({ default: m.PlanView })));
+const SimView = lazy(() => import('../lab/views/sim/SimView').then((m) => ({ default: m.SimView })));
+const Runs = lazy(() => import('../lab/views/Runs').then((m) => ({ default: m.Runs })));
+const Archive = lazy(() => import('../lab/views/Archive').then((m) => ({ default: m.Archive })));
 
-const NAV: { view: Exclude<ViewName, 'notfound'>; label: string; href: string; icon: typeof ChartColumn }[] = [
-  { view: 'overview', label: '结果', href: '#/', icon: ChartColumn },
-  { view: 'samples', label: '样本', href: '#/samples', icon: Table2 },
-  { view: 'replay', label: '回放', href: '#/replay', icon: Waypoints },
-  { view: 'risk', label: '同前缀风险', href: '#/risk', icon: Split },
-  { view: 'evidence', label: '证据', href: '#/evidence', icon: ShieldCheck },
-];
-
-const TITLES: Record<ViewName, string> = {
-  overview: '结果总览',
-  samples: '样本',
-  replay: '回放',
-  risk: '同前缀风险',
-  evidence: '证据',
-  notfound: '页面不存在',
-};
-
-function ValidationChip() {
-  const meta = useAsync('meta', () => loadMeta());
+function ValidationChip({ meta }: { meta: AsyncState<Meta> }) {
   if (meta.status !== 'ready') {
     return (
       <a className={s.statusChip} href="#/evidence">
         <StatusMark status="pending" />
-        <span>{meta.status === 'error' ? '数据未载入' : '读取核验状态'}</span>
+        <span>{meta.status === 'error' ? explainLoadError(meta.error).title : '读取核验状态'}</span>
       </a>
     );
   }
@@ -51,38 +42,64 @@ function ValidationChip() {
   );
 }
 
-function NavLinks({ route, variant }: { route: Route; variant: 'top' | 'bottom' }) {
+const loading = (
+  <div className={s.viewLoading}>
+    <Spinner /> 正在载入视图…
+  </div>
+);
+
+function LabContent({ route }: { route: Route }) {
   return (
-    <>
-      {NAV.map((item) => {
-        const active = route.view === item.view;
-        const href = item.view === 'replay' || item.view === 'samples'
-          ? active ? route.hash : lastViewHref(item.view)
-          : item.href;
-        const Icon = item.icon;
-        return (
-          <a
-            key={item.view}
-            href={href}
-            className={variant === 'top' ? s.navLink : s.bottomLink}
-            aria-current={active ? 'page' : undefined}
-          >
-            <Icon aria-hidden size={variant === 'top' ? 16 : 20} strokeWidth={1.75} />
-            <span>{item.label}</span>
-          </a>
-        );
-      })}
-    </>
+    <ViewErrorBoundary key={route.view} name={VIEW_TITLES[route.view]}>
+      <Suspense fallback={loading}>
+        {route.view === 'lab' && <Dashboard />}
+        {route.view === 'plan' && <PlanView route={route} />}
+        {route.view === 'sim' && <SimView route={route} />}
+        {route.view === 'runs' && <Runs route={route} />}
+        {route.view === 'archive' && <Archive />}
+      </Suspense>
+    </ViewErrorBoundary>
+  );
+}
+
+/** BPP history views stay as they were; only they are gated on /data/meta.json. */
+function BppContent({ route, meta }: { route: Route; meta: AsyncState<Meta> & { retry: () => void } }) {
+  return (
+    <Page
+      title={`BPP 历史结果 · ${VIEW_TITLES[route.view]}`}
+      subtitle="BPP 前缀安全算法选择实验 · 只读历史导出"
+      actions={<ValidationChip meta={meta} />}
+      flush
+    >
+      <div className={`${s.bpp} ${s.bppType}`}>
+        <ViewErrorBoundary key={route.view} name={VIEW_TITLES[route.view]}>
+          <Async state={meta}>
+            {() => (
+              <Suspense fallback={<div className={s.bppLoading}>正在载入视图…</div>}>
+                {route.view === 'overview' && <Overview />}
+                {route.view === 'samples' && <Samples route={route} />}
+                {route.view === 'replay' && <ReplayView route={route} />}
+                {route.view === 'risk' && <RiskView route={route} />}
+                {route.view === 'evidence' && <EvidenceView route={route} />}
+              </Suspense>
+            )}
+          </Async>
+        </ViewErrorBoundary>
+      </div>
+    </Page>
   );
 }
 
 export function App() {
   const route = useRoute();
+  const isLab = LAB_VIEWS.has(route.view);
+  const isBpp = !isLab && route.view !== 'notfound';
+  const meta = useAsync(isBpp ? 'meta' : null, () => loadMeta());
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    document.title = `${TITLES[route.view]} · BPP 前缀选择科研工作台`;
-  }, [route.view]);
+    document.title = `${VIEW_TITLES[route.view]} · ${isBpp ? 'BPP 历史结果 · ' : ''}URP 科研面板`;
+  }, [route.view, isBpp]);
 
   useEffect(() => {
     if ((route.view === 'replay' && route.id) || route.view === 'samples') {
@@ -92,9 +109,10 @@ export function App() {
         /* storage unavailable: ignore */
       }
     }
-  }, [route.view, route.id, route.hash]);
+    rememberLabHref(route);
+  }, [route]);
 
-  // Move focus to the page heading region on view change (not on param changes).
+  // Move focus to the content region on view change (not on param changes).
   const lastView = useRef(route.view);
   useEffect(() => {
     if (lastView.current !== route.view) {
@@ -105,46 +123,26 @@ export function App() {
   }, [route.view]);
 
   return (
-    <div className={s.app}>
-      <button
-        type="button"
-        className="skip-link"
-        onClick={() => mainRef.current?.focus()}
-      >
+    <div className={`lab-root ${s.window}`}>
+      <button type="button" className="skip-link" onClick={() => mainRef.current?.focus()}>
         跳到主要内容
       </button>
-      <header className={s.topbar}>
-        <a className={s.brand} href="#/" aria-label="BPP 前缀选择科研工作台，返回结果总览">
-          <ForkMark size={22} />
-          <span className={s.brandName}>BPP 前缀选择</span>
-          <span className={s.brandSub}>科研工作台</span>
-        </a>
-        <nav className={s.topNav} aria-label="主要视图">
-          <NavLinks route={route} variant="top" />
-        </nav>
-        <ValidationChip />
-      </header>
-      <main ref={mainRef} className={s.main} tabIndex={-1} aria-label={TITLES[route.view]}>
-        <Suspense fallback={<div className={s.viewLoading}>正在载入视图…</div>}>
-          {route.view === 'overview' && <Overview />}
-          {route.view === 'samples' && <Samples route={route} />}
-          {route.view === 'replay' && <ReplayView route={route} />}
-          {route.view === 'risk' && <RiskView route={route} />}
-          {route.view === 'evidence' && <EvidenceView route={route} />}
-          {route.view === 'notfound' && (
-            <div className={s.notFound}>
-              <h1>没有这个页面</h1>
-              <p>
-                地址 <code className="mono">{route.hash}</code> 不对应任何视图。<a href="#/">回到结果总览</a>
-              </p>
-            </div>
-          )}
-        </Suspense>
+      <Sidebar route={route} />
+      <main ref={mainRef} className={s.main} tabIndex={-1} aria-label={VIEW_TITLES[route.view]}>
+        {isLab && <LabContent route={route} />}
+        {isBpp && <BppContent route={route} meta={meta} />}
+        {route.view === 'notfound' && (
+          <Page title="没有这个页面">
+            <p className={s.notFound}>
+              地址 <code className="mono">{route.hash}</code> 不对应任何视图。<a href="#/">回到科研面板概览</a> ·{' '}
+              <a href="#/bpp">BPP 历史结果</a>
+            </p>
+          </Page>
+        )}
       </main>
-      <nav className={s.bottomNav} aria-label="主要视图">
-        <NavLinks route={route} variant="bottom" />
-      </nav>
-      <ProvenanceDrawer />
+      <div className={s.bppType}>
+        <ProvenanceDrawer />
+      </div>
     </div>
   );
 }

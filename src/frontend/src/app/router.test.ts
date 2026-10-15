@@ -3,7 +3,11 @@ import { buildHash, parseHash } from './router';
 
 describe('parseHash', () => {
   it('routes known views and ids', () => {
-    expect(parseHash('#/').view).toBe('overview');
+    expect(parseHash('#/').view).toBe('lab');
+    expect(parseHash('#/bpp').view).toBe('overview');
+    expect(parseHash('#/plan/farm-rows-warehouse').id).toBe('farm-rows-warehouse');
+    expect(buildHash('overview')).toBe('#/bpp');
+    expect(buildHash('lab')).toBe('#/');
     expect(parseHash('#/samples').view).toBe('samples');
     const r = parseHash('#/replay/confirmation_weibull_3_45_r0__descending?a=SELECTOR&t=500');
     expect(r.view).toBe('replay');
