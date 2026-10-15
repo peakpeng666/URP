@@ -1,0 +1,9 @@
+{
+  "version": "2.1.0",
+  "wheel": "vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl",
+  "wheel_sha256": "0fe53e459024b282be455b2a4bdbca3d93efa029539ff87c88c1105361344c19",
+  "binary_sha256": "f9737d9c997b96c59e63b38b1461613dd624b2dacbc1d9d006f15a6660baa64a",
+  "metadata_sha256": "f28f24e74f3e6337b774642ea6b9049e87fd2bb5e3332e1689e18bedaa51e689",
+  "source": "https://pypi.org/project/fields2cover/2.1.0/",
+  "build_provenance": "接手时已有的本地 wheel；本轮未重建 C++。锁定二进制和绑定指纹，原构建命令/源码提交未恢复，不宣称源码逐位重建。"
+}
