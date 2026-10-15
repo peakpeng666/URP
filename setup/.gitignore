@@ -1,0 +1,4 @@
+**/cache/
+**/runtime/
+**/backups/
+**/__pycache__/
