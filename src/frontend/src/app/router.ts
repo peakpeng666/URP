@@ -5,7 +5,21 @@ import { useSyncExternalStore } from 'react';
  * was" lives in the hash: #/<view>/<id>?k=v. Scrubbing the replay uses
  * replace() so the history stack only records deliberate navigation.
  */
-export type ViewName = 'overview' | 'samples' | 'replay' | 'risk' | 'evidence' | 'notfound';
+export type ViewName =
+  | 'lab'
+  | 'plan'
+  | 'sim'
+  | 'runs'
+  | 'archive'
+  | 'overview'
+  | 'samples'
+  | 'replay'
+  | 'risk'
+  | 'evidence'
+  | 'notfound';
+
+/** URP Lab views (科研面板) do not depend on the historical BPP exports. */
+export const LAB_VIEWS: ReadonlySet<ViewName> = new Set(['lab', 'plan', 'sim', 'runs', 'archive']);
 
 export interface Route {
   view: ViewName;
@@ -15,7 +29,13 @@ export interface Route {
 }
 
 const VIEWS: Record<string, ViewName> = {
-  '': 'overview',
+  '': 'lab',
+  lab: 'lab',
+  plan: 'plan',
+  sim: 'sim',
+  runs: 'runs',
+  archive: 'archive',
+  bpp: 'overview',
   samples: 'samples',
   replay: 'replay',
   risk: 'risk',
@@ -50,7 +70,9 @@ export function buildHash(
   id?: string | null,
   params?: Record<string, string | number | null | undefined> | URLSearchParams,
 ): string {
-  const path = view === 'overview' ? '/' : `/${view}${id ? `/${encodeURIComponent(id)}` : ''}`;
+  // The lab dashboard is the landing page; the BPP result overview lives at #/bpp.
+  const segment = view === 'overview' ? 'bpp' : view;
+  const path = view === 'lab' && !id ? '/' : `/${segment}${id ? `/${encodeURIComponent(id)}` : ''}`;
   let search = '';
   if (params) {
     const sp = params instanceof URLSearchParams ? new URLSearchParams(params) : new URLSearchParams();

@@ -36,7 +36,8 @@ export async function fetchJSON(url, {
   if (typeof fetchImpl !== 'function') throw new DataLoadError('fetch is unavailable');
   if (signal?.aborted) throw abortError();
   let response;
-  try { response = await fetchImpl(url, { signal, cache: 'no-cache' }); }
+  // A missing JSON resource must return 404 instead of the SPA's HTML fallback.
+  try { response = await fetchImpl(url, { signal, cache: 'no-cache', headers: { Accept: 'application/json' } }); }
   catch (cause) {
     if (signal?.aborted || cause?.name === 'AbortError') throw abortError();
     throw new DataLoadError(`Cannot load ${url}`, { code: 'NETWORK_ERROR', url, cause });

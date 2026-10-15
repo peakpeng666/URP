@@ -1,169 +1,83 @@
-.app {
+/* Window: floating translucent sidebar beside the content column. */
+.window {
+  display: grid;
+  grid-template-columns: calc(var(--mac-sidebar-w) + 8px) minmax(0, 1fr);
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  min-height: 100dvh;
+  background:
+    radial-gradient(1200px 600px at -10% -20%, rgba(0, 122, 255, 0.06), transparent 60%),
+    radial-gradient(900px 500px at 0% 110%, rgba(52, 199, 89, 0.05), transparent 60%),
+    var(--mac-window);
 }
 
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  display: flex;
-  align-items: center;
-  gap: var(--s5);
-  height: var(--topbar-h);
-  padding: 0 var(--s5);
-  background: var(--panel);
-  border-bottom: 1px solid var(--line);
+.main {
+  min-width: 0;
+  outline: none;
 }
 
-.brand {
+.viewLoading {
   display: flex;
   align-items: center;
-  gap: var(--s2);
+  gap: 8px;
+  padding: 28px 24px;
+  color: var(--mac-label-3);
+}
+
+.notFound {
+  margin: 0;
+  color: var(--mac-label-2);
+}
+
+/* BPP history views keep their own typography and tokens inside the window. */
+.bppType {
+  font-family: var(--font-sans);
+  font-size: var(--fs-14);
+  line-height: 1.6;
   color: var(--ink);
-  text-decoration: none;
-  white-space: nowrap;
 }
 
-.brandName {
-  font-size: var(--fs-16);
-  font-weight: 600;
+.bppType :global(.mono) {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
 }
 
-.brandSub {
-  font-size: var(--fs-13);
+.bpp {
+  --topbar-h: var(--mac-toolbar-h);
+  --bottomnav-h: 0px;
+  min-height: 100%;
+  background: var(--page);
+}
+
+.bppLoading {
+  padding: var(--s6) var(--s5);
   color: var(--ink-3);
 }
 
-.topNav {
-  display: flex;
-  align-items: stretch;
-  gap: var(--s1);
-  height: 100%;
-}
-
-.navLink {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 var(--s3);
-  color: var(--ink-2);
-  text-decoration: none;
-  font-size: var(--fs-14);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-}
-
-.navLink:hover {
-  color: var(--ink);
-  background: var(--inset);
-}
-
-.navLink[aria-current='page'] {
-  color: var(--ink);
-  font-weight: 600;
-  border-bottom-color: var(--ink);
-}
-
 .statusChip {
-  margin-left: auto;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  border: 1px solid var(--line);
+  height: 26px;
+  padding: 0 10px;
   border-radius: 999px;
-  color: var(--ink-2);
-  font-size: var(--fs-13);
+  color: var(--mac-label-2);
+  background: var(--mac-elevated);
+  box-shadow: var(--mac-shadow-control);
+  font-size: var(--mac-fs-12);
   text-decoration: none;
   white-space: nowrap;
 }
 
 .statusChip:hover {
-  border-color: var(--line-strong);
-  color: var(--ink);
+  color: var(--mac-label);
 }
 
-.main {
-  flex: 1;
-  outline: none;
-  min-width: 0;
-}
-
-.viewLoading {
-  padding: var(--s6) var(--s5);
-  color: var(--ink-3);
-}
-
-.notFound {
-  max-width: 640px;
-  margin: var(--s7) auto;
-  padding: 0 var(--s5);
-  display: grid;
-  gap: var(--s3);
-}
-
-.bottomNav {
-  display: none;
-}
-
-.bottomLink {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  min-width: 0;
-  color: var(--ink-3);
-  font-size: var(--fs-11);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.bottomLink[aria-current='page'] {
-  color: var(--ink);
-  font-weight: 600;
-}
-
-@media (max-width: 1100px) {
-  .brandSub {
-    display: none;
+@media (max-width: 899.98px) {
+  .window {
+    display: block;
   }
-  .topbar {
-    gap: var(--s3);
-    padding: 0 var(--s4);
-  }
-  .navLink {
-    padding: 0 var(--s2);
-  }
-}
 
-@media (max-width: 760px) {
-  .topNav {
-    display: none;
-  }
-  .topbar {
-    height: 48px;
-  }
-  .statusChip span {
-    font-size: var(--fs-12);
-  }
-  .bottomNav {
-    position: sticky;
-    bottom: 0;
-    z-index: 30;
-    display: flex;
-    height: calc(var(--bottomnav-h) + env(safe-area-inset-bottom, 0px));
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: var(--panel);
-    border-top: 1px solid var(--line);
-  }
-}
-
-@media (max-width: 380px) {
-  .brandName {
-    font-size: var(--fs-14);
+  .bpp {
+    --topbar-h: calc(48px + var(--mac-toolbar-h));
   }
 }

@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -eo pipefail
+urp_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+operation="${1:-help}"
+if (( $# )); then shift; fi
+cd "$urp_root"
+# Desktop launches do not load nvm; use its newest node when none is on PATH (lab operations only).
+lab_node_path() {
+  command -v node >/dev/null 2>&1 && return 0
+  local node_bin
+  node_bin="$(ls -d "$HOME"/.nvm/versions/node/*/bin 2>/dev/null | sort -V | tail -n 1 || true)"
+  [[ -n "$node_bin" ]] && export PATH="$node_bin:$PATH"
+  return 0
+}
+case "$operation" in
+  build) exec bash setup/profile.sh frontend npm run build --prefix src/frontend -- "$@" ;;
+  frontend) exec bash setup/profile.sh frontend bash src/start.sh frontend "$@" ;;
+  backend) exec bash src/start.sh backend "$@" ;;
+  research) exec bash setup/profile.sh research src/research/.venv/bin/python src/research/scripts/urp.py "$@" ;;
+  numpy) exec bash setup/profile.sh numpy src/frontend/.venv/bin/python "$@" ;;
+  solver-check)
+    exec bash setup/profile.sh research src/research/.venv/bin/python setup/2026-10-15/deployment/benchmark.py solver --workers "${URP_WORKERS:-12}"
+    ;;
+  navigation)
+    source /opt/ros/humble/setup.bash
+    navigation_flags=(--ordered-bridge-stop)
+    case "${URP_TF_FIX:-1}" in
+      1) navigation_flags+=(--tf-candidate) ;;
+      0) ;;
+      *) printf 'URP_TF_FIX must be 0 or 1.\n' >&2; exit 2 ;;
+    esac
+    case "${URP_GUI_FIX:-1}" in
+      1) navigation_flags+=(--pin-gui-plugins) ;;
+      0) ;;
+      *) printf 'URP_GUI_FIX must be 0 or 1.\n' >&2; exit 2 ;;
+    esac
+    # Unique labels preserve all previous runs; Ctrl+C is handled by the supervisor.
+    exec bash setup/profile.sh simulation /usr/bin/python3 setup/2026-10-15/deployment/nav-smoke.py \
+      --label "run-$(date -u +%Y%m%d-%H%M%S)-$$" "${navigation_flags[@]}" "$@"
+    ;;
+  lab)
+    # 科研面板网关 127.0.0.1:4100；前端缺失或比源码旧时先构建。
+    lab_node_path
+    dist_index=src/frontend/dist/index.html
+    if [[ ! -f "$dist_index" ]] || [[ -n "$(find src/frontend/src src/frontend/core src/frontend/index.html -newer "$dist_index" -not -path '*/node_modules/*' -print -quit 2>/dev/null)" ]]; then
+      printf '前端构建缺失或过期，正在构建…\n'
+      if ! bash setup/profile.sh frontend npm run build --prefix src/frontend; then
+        printf '前端构建失败；停止启动，避免把旧页面作为当前实现。\n' >&2
+        exit 1
+      fi
+    fi
+    cd src/lab
+    exec .venv/bin/python -m urp_lab serve "$@"
+    ;;
+  lab-setup)
+    lab_node_path
+    (cd src/lab && UV_CACHE_DIR="$urp_root/setup/2026-10-15/cache/uv" uv sync --locked --inexact)
+    # Reuse the optional, locally built wheel only after checking its pinned bytes.
+    if [[ -f src/lab/vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl ]]; then
+      src/lab/.venv/bin/python - <<'PY'
+import hashlib,json,pathlib,subprocess
+lab=pathlib.Path('src/lab');m=json.loads((lab/'vendor/fields2cover-manifest.json').read_text());p=lab/m['wheel']
+if hashlib.sha256(p.read_bytes()).hexdigest()!=m['wheel_sha256']:raise SystemExit('Fields2Cover wheel 指纹不匹配，拒绝安装')
+subprocess.run(['uv','pip','install','--no-deps','--python',str(lab/'.venv/bin/python'),str(p)],check=True)
+PY
+    fi
+    if [[ ! -d src/frontend/node_modules ]]; then (cd src/frontend && npm ci); fi
+    exec bash setup/profile.sh frontend npm run build --prefix src/frontend
+    ;;
+  lab-stop)
+    exec curl --fail-with-body -sS -X POST -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:4100/lab/api/shutdown
+    ;;
+  *) printf 'Usage: bash setup/run.sh lab|lab-stop|lab-setup|build|frontend|backend|research|numpy|solver-check|navigation [ARGS...]\n' ;;
+esac

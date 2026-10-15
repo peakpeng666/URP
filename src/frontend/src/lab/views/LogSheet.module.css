@@ -1,0 +1,134 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 28px 16px 16px;
+  background: rgba(0, 0, 0, 0.18);
+  animation: fade 160ms var(--mac-ease);
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  width: min(960px, 100%);
+  height: min(760px, calc(100dvh - 56px));
+  border-radius: 14px;
+  background: rgba(250, 250, 252, 0.97);
+  -webkit-backdrop-filter: var(--mac-blur);
+  backdrop-filter: var(--mac-blur);
+  box-shadow: var(--mac-shadow-pop);
+  overflow: hidden;
+  animation: sheet 220ms var(--mac-ease);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  padding: 12px 14px;
+  box-shadow: inset 0 -0.5px 0 var(--mac-separator);
+}
+
+.headIcon {
+  flex: none;
+  color: var(--mac-accent);
+}
+
+.titleBlock {
+  flex: 1;
+  min-width: 160px;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--mac-fs-15);
+  font-weight: 650;
+  line-height: 1.2;
+}
+
+.path {
+  margin: 2px 0 0;
+  font-size: var(--mac-fs-11);
+  color: var(--mac-label-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.picker {
+  max-width: 260px;
+}
+
+.notices {
+  display: grid;
+  gap: 6px;
+  padding: 10px 14px 0;
+}
+
+.pre {
+  flex: 1;
+  min-height: 0;
+  margin: 10px 14px;
+  padding: 10px 12px;
+  overflow: auto;
+  border-radius: 9px;
+  background: #1e1e22;
+  color: #e6e6ea;
+  font-family: var(--mac-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+  tab-size: 4;
+}
+
+.pre:focus-visible {
+  outline: 3px solid rgba(0, 122, 255, 0.45);
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 14px 10px;
+  font-size: var(--mac-fs-12);
+  color: var(--mac-label-3);
+}
+
+.follow {
+  color: var(--mac-green);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes sheet {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.985);
+  }
+}
+
+@media (max-width: 899.98px) {
+  .scrim {
+    padding: 8px;
+  }
+
+  .sheet {
+    height: calc(100dvh - 16px);
+  }
+
+  .picker {
+    max-width: none;
+    flex: 1;
+  }
+}

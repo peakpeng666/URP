@@ -161,6 +161,10 @@ export function explainLoadError(error: Error | null): { title: string; detail: 
   const code = (error as Error & { code?: string }).code;
   const url = (error as Error & { url?: string }).url ?? '';
   if (code === 'HTTP_ERROR' && /404/.test(error.message)) {
+    if (url === '/data/meta.json') return {
+      title: '无历史数据',
+      detail: '本机尚未恢复历史实验数据，因此暂不展示结果、回放或核验结论。恢复可信数据后刷新页面。',
+    };
     return {
       title: `找不到数据文件 ${url}`,
       detail: '派生数据尚未生成或已被移动。请在项目根目录运行 bash scripts/console.sh data-convert，然后刷新。',

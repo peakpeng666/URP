@@ -9,6 +9,8 @@ dist/
 .env
 .env.*
 !.env.example
+!.env.1password
+!.env.local.example
 *.pyc
 *.zip
 *.7z
@@ -34,3 +36,22 @@ dist/
 /src/backend/backend_data/**
 /.workbuddy/
 /.materialized-files.json
+/.v2c/
+/.video_agent/
+
+# setup/2026-10-15：本机运行目录与原始大证据留在本地，不入库
+/setup/2026-10-15/cache/
+/setup/2026-10-15/backups/
+/setup/2026-10-15/runtime/
+/setup/2026-10-15/logs/
+/setup/2026-10-15/deployment/runtime/
+/setup/2026-10-15/deployment/logs/
+/setup/2026-10-15/integration/acceptance/sessions/
+/setup/2026-10-15/integration/acceptance/api-loops/
+/setup/2026-10-15/integration/acceptance/edge-cases.json
+/setup/2026-10-15/integration/acceptance/edge-cases-before-supervision-fix.json
+/setup/2026-10-15/integration/extended/sessions/
+/setup/2026-10-15/integration/extended/api-loops/
+/setup/2026-10-15/integration/extended/selector-study/
+/setup/2026-10-15/integration/extended/ui-coverage-experiment.json
+/setup/2026-10-15/integration/bridge-exit/recovered-raw-logs/

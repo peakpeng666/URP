@@ -2,6 +2,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
+import { copyPublicAssets } from './tools/optional-public.mjs';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 
@@ -26,7 +28,13 @@ const ignored = [
 ];
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), {
+    name: 'optional-historical-exports',
+    apply: 'build',
+    writeBundle(options) {
+      copyPublicAssets(resolve(root, 'public'), resolve(root, options.dir ?? 'dist'));
+    },
+  }],
   resolve: {
     alias: {
       '@core': `${root}core`,
@@ -42,6 +50,7 @@ export default defineConfig({
     port: 4173,
   },
   build: {
+    copyPublicDir: false,
     outDir: 'dist',
     target: 'es2022',
     chunkSizeWarningLimit: 900,

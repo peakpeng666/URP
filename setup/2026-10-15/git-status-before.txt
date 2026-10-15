@@ -1,0 +1,3 @@
+?? setup/2026-10-15/tracked-dependency-files.json
+?? src/repos/typesafe-router/.env.1password
+?? src/repos/typesafe-router/.env.local.example
