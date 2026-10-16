@@ -15,7 +15,7 @@ b=Buffer(node=n);listener=TransformListener(b,n);latest={}
 def truth(msg):
  for t in msg.transforms:
   if t.child_frame_id=='turtlebot4':latest['truth']=t
-subs=[n.create_subscription(LaserScan,'/scan',lambda m:latest.update(scan=m),qos_profile_sensor_data),n.create_subscription(TFMessage,'/urp_ground_truth',truth,qos_profile_sensor_data)]
+subs=[n.create_subscription(LaserScan,'/scan',lambda m:latest.update(scan=m),qos_profile_sensor_data),n.create_subscription(TFMessage,'/ground_truth/poses',truth,qos_profile_sensor_data)]
 end=time.monotonic()+20;tf=None
 try:
  while time.monotonic()<end:

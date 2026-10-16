@@ -30,8 +30,8 @@ export const COST_UNIT_LABEL: Record<string, string> = {
 };
 
 export const SIM_MODE_LABEL: Record<SimMode, string> = {
-  follow_path: '跟踪 URP 路径（FollowPath）',
-  nav2_waypoints: 'Nav2 航点（URP 仅给顺序）',
+  follow_path: '沿规划路径行驶（FollowPath）',
+  nav2_waypoints: 'Nav2 逐点导航（只用任务顺序）',
 };
 
 export const SIM_RUN_STATE_LABEL: Record<SimRunState, string> = {
@@ -70,7 +70,8 @@ export function checkVerdict(run: Pick<Solution, 'check'>): { tone: Tone; mark: 
 
 export function frameLabel(frame: Frame | null | undefined): string {
   if (!frame) return '坐标系未知';
-  return frame.kind === 'map' ? `地图坐标 · 米 · ${frame.world}` : '基准坐标 · 无单位';
+  if (frame.kind === 'map') return `地图坐标 · 米 · ${frame.world}`;
+  return frame.kind === 'field' ? '实地坐标 · 米' : '基准坐标 · 无单位';
 }
 
 export const lengthUnitLabel = (unit: string | null | undefined) =>

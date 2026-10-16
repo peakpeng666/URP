@@ -1,4 +1,4 @@
-"""URP Lab gateway: serves the panel (src/frontend/dist), /lab/api (CONTRACT §2), SSE and the /api archive proxy."""
+"""Workbench gateway: serves the panel (src/frontend/dist), /lab/api (CONTRACT §2), SSE and the /api archive proxy."""
 from __future__ import annotations
 
 import asyncio
@@ -84,6 +84,10 @@ class Lab:
         self.services = ServiceManager(self.bus, port=config.port, runtime=self.runtime,
                                        archive_url=config.archive_url, sim_port=config.sim_port, jobs=self.jobs)
         self.sim = SimClient(self.store, self.bus, self.services)
+        from .fieldsim import FieldSimManager
+        self.fieldsim = FieldSimManager(self.store, self.services, self.runtime)
+        from .studies import StudyManager
+        self.studies = StudyManager(self.store, self.jobs, self.bus)
         self._catalog: tuple[float, list[dict]] | None = None
         self._catalog_lock = threading.Lock()
         self.shutdown_event = threading.Event()
@@ -101,6 +105,7 @@ class Lab:
 
     def shutdown(self):
         self.jobs.shutdown()
+        self.fieldsim.shutdown()
         self.services.shutdown()
         self.sim.stop()
         for run in self.store.active_sim_runs():
@@ -212,7 +217,7 @@ def create_app(config: Config | None = None) -> FastAPI:
             await asyncio.to_thread(lab.shutdown)
             log.info('gateway stopped')
 
-    app = FastAPI(title='URP Lab', version=VERSION, lifespan=lifespan, docs_url=None, redoc_url=None,
+    app = FastAPI(title='Agricultural Robot Path Planning Workbench', version=VERSION, lifespan=lifespan, docs_url=None, redoc_url=None,
                   openapi_url='/lab/api/openapi.json')
     app.state.lab = lab
     app.add_middleware(Guard, extra_hosts=config.extra_hosts)
@@ -413,6 +418,32 @@ def create_app(config: Config | None = None) -> FastAPI:
             raise ApiError(400, 'invalid_request', 'run_ids 须为非空字符串数组')
         return export_with(core('export').export_compare, [run_or_404(i) for i in ids], body.get('format', 'csv'))
 
+    # ------------------------------------------------- field simulation --
+    @app.get(f'{api}/fieldsim')
+    def fieldsim_state():
+        return lab.fieldsim.state()
+
+    @app.post(f'{api}/fieldsim', status_code=202)
+    def fieldsim_start(payload: Any = Body(None)):
+        return lab.fieldsim.start(body_dict(payload))
+
+    @app.post(f'{api}/fieldsim/stop', status_code=202)
+    def fieldsim_stop():
+        return lab.fieldsim.stop()
+
+    @app.post(f'{api}/fieldsim/window')
+    def fieldsim_window(payload: Any = Body(None)):
+        body = body_dict(payload)
+        return lab.fieldsim.window(str(body.get('kind')), bool(body.get('on', True)))
+
+    @app.get(f'{api}/fieldsim/results')
+    def fieldsim_results(run_id: str | None = None):
+        return {'results': lab.fieldsim.results(run_id)}
+
+    @app.get(f'{api}/fieldsim/results/{{session_id}}')
+    def fieldsim_result(session_id: str):
+        return lab.fieldsim.result(session_id)
+
     # ------------------------------------------------------- simulation --
     @app.get(f'{api}/sim/state')
     def sim_state():
@@ -474,6 +505,235 @@ def create_app(config: Config | None = None) -> FastAPI:
             record = {**record, 'planning_solution': run_or_404(record['run_id'])}
         return export_with(core('export').export_sim_run, record, format)
 
+    # ------------------------------------------------------- compose --
+    @app.get(f'{api}/compose/examples')
+    def compose_examples():
+        return {'examples': core('compose').EXAMPLES}
+
+    @app.post(f'{api}/compose/parse')
+    def compose_parse(payload: Any = Body(None)):
+        body = body_dict(payload)
+        nl = core('compose.nl')
+        parsed = nl.parse(str(body.get('text') or ''))
+        spec, defaults = nl.fill_defaults(parsed['spec'])
+        return {'spec': spec, 'found': parsed['found'], 'defaults': defaults, 'cards': core('compose').describe(spec)}
+
+    @app.post(f'{api}/compose', status_code=201)
+    def compose(payload: Any = Body(None)):
+        body = body_dict(payload)
+        comp = core('compose')
+        text = str(body.get('text') or '')[:600]
+        seed = body.get('seed')
+        try:
+            if body.get('field_id'):
+                sc = comp.from_field(str(body['field_id']), text, seed)
+            else:
+                sc = comp.compose(text, int(seed) if seed is not None else None, body.get('overrides') or None)
+            return core('scenarios').save_user_scenario(sc, overwrite=False)
+        except (ValueError, KeyError) as exc:
+            raise ApiError(400, 'compose_failed', f'无法生成地图：{exc}') from None
+
+    def user_scenario_or_403(scenario_id: str) -> dict:
+        sc = scenario_or_404(scenario_id)
+        if sc.get('origin') != 'user':
+            raise ApiError(403, 'read_only', '内置或资源库场景不能直接修改，请先“另存为我的场景”')
+        return sc
+
+    @app.put(f'{api}/scenarios/{{scenario_id}}')
+    def update_scenario(scenario_id: str, payload: Any = Body(None)):
+        body = body_dict(payload)
+        sc = user_scenario_or_403(scenario_id)
+        for key in ('title', 'summary', 'instance', 'layers'):
+            if key in body:
+                sc[key] = body[key]
+        try:
+            return core('scenarios').save_user_scenario(sc, overwrite=True)
+        except ValueError as exc:
+            raise ApiError(400, 'invalid_instance', str(exc)) from None
+
+    @app.post(f'{api}/scenarios/{{scenario_id}}/fork', status_code=201)
+    def fork_scenario(scenario_id: str, payload: Any = Body(None)):
+        body = body_dict(payload) if payload is not None else {}
+        sc = scenario_or_404(scenario_id)
+        import re as _re
+        from datetime import datetime as _dt, timezone as _tz
+        stamp = _dt.now(_tz.utc).strftime('%m%d%H%M%S')
+        sc['id'] = _re.sub(r'[^a-z0-9_.-]', '-', f"{scenario_id[:40]}-my-{stamp}".lower())
+        sc['title'] = str(body.get('title') or f"{sc.get('title', scenario_id)}（我的）")[:60]
+        if body.get('instance') is not None:
+            sc['instance'] = body['instance']
+        sc.pop('library', None)
+        sc['provenance'] = {**(sc.get('provenance') or {}), 'forked_from': scenario_id}
+        try:
+            return core('scenarios').save_user_scenario(sc, overwrite=False)
+        except ValueError as exc:
+            raise ApiError(400, 'invalid_instance', str(exc)) from None
+
+    @app.post(f'{api}/scenarios/import/geojson', status_code=201)
+    def import_geojson(payload: Any = Body(None)):
+        body = body_dict(payload)
+        try:
+            sc = core('compose.geo').import_geojson(body.get('geojson') or {}, body.get('title'), body.get('vehicles'))
+            return core('scenarios').save_user_scenario(sc, overwrite=False)
+        except (ValueError, KeyError, TypeError) as exc:
+            raise ApiError(400, 'invalid_geojson', f'GeoJSON 无法导入：{exc}') from None
+
+    @app.get(f'{api}/scenarios/{{scenario_id}}/export')
+    def export_scenario(scenario_id: str, format: str = 'geojson'):
+        sc = scenario_or_404(scenario_id)
+        if format == 'json':
+            return attachment(__import__('json').dumps(sc, ensure_ascii=False, indent=1).encode(), 'application/json', f'{scenario_id}.json')
+        if format == 'geojson' and sc['problem_class'] == 'fleet_routing':
+            return attachment(core('compose.geo').export_geojson(sc), 'application/geo+json', f'{scenario_id}.geojson')
+        raise ApiError(400, 'invalid_format', '场景导出格式为 json，多车任务地图另支持 geojson')
+
+    # ------------------------------------------------------- library --
+    @app.get(f'{api}/library')
+    def library_overview():
+        return core('library').overview()
+
+    @app.get(f'{api}/library/cvrplib/sets')
+    def cvrplib_sets():
+        return {'sets': core('library.cvrplib').sets()}
+
+    @app.get(f'{api}/library/cvrplib/instances')
+    def cvrplib_instances(set: str | None = None, q: str | None = None):
+        return {'instances': core('library.cvrplib').instances(set, q)}
+
+    @app.get(f'{api}/library/fields')
+    def fields_list(country: str | None = None, q: str | None = None):
+        lib = core('library.fields')
+        return {'status': lib.status(), 'fields': lib.listing(country, q)}
+
+    @app.post(f'{api}/library/fields/fetch')
+    def fields_fetch(payload: Any = Body(None)):
+        body = body_dict(payload) if payload is not None else {}
+        try:
+            return core('library.fields').fetch(images=bool(body.get('images')))
+        except OSError as exc:
+            raise ApiError(502, 'download_failed', f'下载 Fields2Benchmark 失败：{exc}') from None
+
+    @app.get(f'{api}/library/fields/{{field_id}}/image')
+    def field_image(field_id: str):
+        img = core('library.fields').image(field_id)
+        if img is None:
+            raise ApiError(404, 'not_found', '没有该田块的卫星影像（影像包未下载）')
+        return Response(img[0], media_type=img[1], headers={'Cache-Control': 'max-age=86400'})
+
+    @app.get(f'{api}/library/fields/{{field_id}}/outline.svg')
+    def field_outline(field_id: str):
+        try:
+            return Response(core('library.fields').thumbnail_svg(field_id), media_type='image/svg+xml', headers={'Cache-Control': 'max-age=86400'})
+        except (KeyError, StopIteration):
+            raise ApiError(404, 'not_found', f'没有田块 {field_id}') from None
+
+    @app.get(f'{api}/references')
+    def references(topic: str | None = None, q: str | None = None):
+        refs = core('library.references')
+        return {'references': refs.listing(topic, q), 'topics': refs.TOPICS}
+
+    @app.get(f'{api}/references.bib')
+    def references_bib(keys: str | None = None):
+        data = core('library.references').bibtex([k for k in (keys or '').split(',') if k] or None)
+        return Response(data, media_type='application/x-bibtex; charset=utf-8',
+                        headers={'Content-Disposition': 'attachment; filename="references.bib"'})
+
+    @app.get(f'{api}/source')
+    def source(path: str):
+        allowed = ('src/research/src/urp_research/', 'src/lab/urp_lab/', 'src/lab/ros/', 'src/frontend/core/routing/')
+        clean = PurePosixPath(path)
+        if clean.is_absolute() or '..' in clean.parts or not any(str(clean).startswith(a) for a in allowed):
+            raise ApiError(403, 'forbidden', '只能查看算法与集成源码')
+        target = paths.REPO / clean
+        if not target.is_file() or target.stat().st_size > 512 * 1024:
+            raise ApiError(404, 'not_found', f'没有文件 {path}')
+        return {'path': str(clean), 'language': target.suffix.lstrip('.'), 'text': target.read_text(encoding='utf-8', errors='replace')}
+
+    # ---------------------------------------------------- ROS robot models --
+    @app.get(f'{api}/ros/robots/{{model}}.urdf')
+    def robot_urdf(model: str):
+        try:
+            text = core('robots').urdf(model)
+        except KeyError:
+            raise ApiError(404, 'unknown_robot', f'没有机器人模型 {model}') from None
+        except (FileNotFoundError, RuntimeError, OSError) as exc:
+            raise ApiError(503, 'robot_unavailable', f'无法展开 {model} 的 URDF：{exc}') from None
+        return Response(text, media_type='application/xml', headers={'Cache-Control': 'max-age=3600'})
+
+    @app.get(f'{api}/ros/package/{{package}}/{{rel:path}}')
+    def ros_package_file(package: str, rel: str):
+        try:
+            target, media = core('robots').package_file(package, rel)
+        except PermissionError:
+            raise ApiError(403, 'forbidden', '只能读取机器人描述包里的模型文件') from None
+        except FileNotFoundError:
+            raise ApiError(404, 'not_found', f'没有文件 package://{package}/{rel}') from None
+        return FileResponse(target, media_type=media, headers={'Cache-Control': 'max-age=86400'})
+
+    # ------------------------------------------------------- studies --
+    @app.post(f'{api}/studies', status_code=201)
+    def create_study(payload: Any = Body(None)):
+        body = body_dict(payload)
+        try:
+            return lab.studies.create(body, core('scenarios').get_scenario, lab.catalog())
+        except KeyError as exc:
+            raise ApiError(404, 'unknown_scenario', f'没有场景 {exc}') from None
+        except ValueError as exc:
+            raise ApiError(400, 'invalid_study', str(exc)) from None
+        except RuntimeError as exc:
+            raise ApiError(503, 'shutting_down', str(exc)) from None
+
+    @app.get(f'{api}/studies')
+    def list_studies():
+        return {'studies': lab.studies.list()}
+
+    def study_or_404(study_id: str) -> dict:
+        s = lab.studies.get(study_id)
+        if s is None:
+            raise ApiError(404, 'not_found', f'没有课题 {study_id}')
+        return s
+
+    @app.get(f'{api}/studies/{{study_id}}')
+    def get_study(study_id: str):
+        return study_or_404(study_id)
+
+    @app.post(f'{api}/studies/{{study_id}}/cancel')
+    def cancel_study(study_id: str, payload: Any = Body(None)):
+        study_or_404(study_id)
+        return lab.studies.cancel(study_id)
+
+    @app.get(f'{api}/studies/{{study_id}}/analysis')
+    def study_analysis(study_id: str, alpha: float = 0.05):
+        study_or_404(study_id)
+        return core('analysis').analyze(lab.studies.runs(study_id), alpha)
+
+    @app.get(f'{api}/studies/{{study_id}}/instance-space')
+    def study_space(study_id: str):
+        study_or_404(study_id)
+        return core('analysis').instance_space(lab.studies.runs(study_id))
+
+    @app.get(f'{api}/studies/{{study_id}}/export')
+    def study_export(study_id: str, format: str = 'csv'):
+        study = study_or_404(study_id)
+        runs = lab.studies.runs(study_id)
+        an = core('analysis')
+        if format == 'latex':
+            return attachment(an.latex_table(an.analyze(runs), study['title']).encode(), 'application/x-tex', f'{study_id}.tex')
+        if format == 'json':
+            data = __import__('json').dumps({'study': study, 'analysis': an.analyze(runs)}, ensure_ascii=False, indent=1, default=str)
+            return attachment(data.encode(), 'application/json', f'{study_id}.json')
+        if format == 'csv':
+            return export_with(core('export').export_compare, runs, 'csv')
+        raise ApiError(400, 'invalid_format', '课题导出格式为 csv / json / latex')
+
+    @app.post(f'{api}/analysis')
+    def analysis(payload: Any = Body(None)):
+        body = body_dict(payload)
+        ids = body.get('run_ids')
+        if not isinstance(ids, list) or not ids:
+            raise ApiError(400, 'invalid_request', 'run_ids 须为非空数组')
+        return core('analysis').analyze(lab.store.runs_by_ids([str(i) for i in ids]), float(body.get('alpha') or 0.05))
+
     @app.api_route(f'{api}/{{rest:path}}', methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
     def api_not_found(rest: str):
         raise ApiError(404, 'not_found', f'没有接口 /lab/api/{rest}')
@@ -508,7 +768,7 @@ def create_app(config: Config | None = None) -> FastAPI:
     def index() -> Response:
         page = lab.dist / 'index.html'
         if not page.is_file():
-            return HTMLResponse('<!doctype html><meta charset="utf-8"><title>URP 科研面板</title>'
+            return HTMLResponse('<!doctype html><meta charset="utf-8"><title>农业机器人路径规划工作台</title>'
                                 '<p>前端尚未构建。请在项目根目录运行 <code>bash setup/run.sh lab-setup</code>，'
                                 '或 <code>bash setup/run.sh build</code>，然后刷新。</p>', status_code=503)
         return FileResponse(page, headers={'Cache-Control': 'no-cache'})

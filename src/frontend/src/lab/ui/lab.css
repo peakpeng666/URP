@@ -1,5 +1,5 @@
 /*
- * URP Lab design tokens — macOS (Tahoe) light appearance matching the local
+ * Workbench design tokens — macOS (Tahoe) light appearance matching the local
  * MacTahoe desktop: vibrant translucent sidebar, white content, system accent
  * blue, 26px window radius family scaled down for in-page surfaces.
  * Tokens are prefixed --mac- so they never collide with the BPP console tokens.

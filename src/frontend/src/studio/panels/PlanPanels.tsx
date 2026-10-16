@@ -1,0 +1,713 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Check,
+  ChevronDown,
+  CircleDashed,
+  Download,
+  Eye,
+  EyeOff,
+  Hand,
+  Home,
+  Maximize,
+  MousePointer2,
+  Pause,
+  Play,
+  Plus,
+  Redo2,
+  RefreshCw,
+  Shapes,
+  Sprout,
+  Tractor,
+  Trash2,
+  Undo2,
+  X,
+} from 'lucide-react';
+import * as Plot from '@observablehq/plot';
+import { exportUrl, fmt } from '../../lab/api';
+import { Badge, Button, EmptyState, Input, Notice, Segmented, Select, Spinner } from '../../lab/ui';
+import type { Solution } from '../../lab/types';
+import { FieldEditor } from '../editor/FieldEditor';
+import { OBSTACLE_STYLE, area, routeLength } from '../editor/geometry';
+import { asFleet, isFleet, useStudio } from '../store';
+import { studio, urls } from '../api';
+import type { FleetInstance, FleetRoute, FleetScenario, ObstacleKind, PerVehicle } from '../types';
+import { MapCanvas } from '../../lab/canvas/MapCanvas';
+import { baseScene, solutionPaths, violationMarkers } from '../../lab/views/plan/planModel';
+import type { Instance, Scenario } from '../../lab/types';
+import { logTimeAxis, unitSuffix } from '../chart';
+import s from './panels.module.css';
+
+const LIB_TONE: Record<string, 'blue' | 'purple' | 'teal' | 'orange' | 'gray' | 'green'> = {
+  本项目: 'blue', PyVRP: 'purple', 'OR-Tools': 'teal', Fields2Cover: 'green', OMPL: 'orange', 基线: 'gray',
+};
+/** Older run records carry the previous labels. */
+const LIB_ALIAS: Record<string, string> = { URP: '本项目', 面板: '基线' };
+
+export function LibraryBadge({ library }: { library?: string }) {
+  if (!library) return null;
+  const name = LIB_ALIAS[library] ?? library;
+  return <Badge tone={LIB_TONE[name] ?? 'gray'}>{name}</Badge>;
+}
+
+/** Geometry signature: a solution belongs to the current map only if these match. */
+export function signature(inst: FleetInstance | null | undefined): string {
+  if (!inst) return '';
+  return JSON.stringify({
+    t: inst.tasks.map((t) => [t.id, t.xy, t.demand]), o: inst.obstacles.map((o) => o.polygon), b: inst.boundary, d: inst.depot,
+    v: [inst.vehicles.count, inst.vehicles.capacity, inst.vehicles.trips ?? 'multi', inst.vehicles.speed_mps], j: inst.objective, r: inst.robot_radius,
+  });
+}
+
+function useFocus() {
+  const runs = useStudio((st) => st.runs);
+  const focusRun = useStudio((st) => st.focusRun);
+  return focusRun ? runs[focusRun] : undefined;
+}
+
+/* ------------------------------------------------------------------ map -- */
+const TOOLS = [
+  { value: 'select', label: '选择', icon: MousePointer2, title: '选择与拖动 (V)' },
+  { value: 'pan', label: '平移', icon: Hand, title: '平移 (H，或按住 Shift 拖动)' },
+  { value: 'task', label: '任务点', icon: Plus, title: '点击添加任务点 (T)' },
+  { value: 'obstacle', label: '障碍', icon: Shapes, title: '拖动绘制障碍 (O)' },
+  { value: 'plot', label: '地块', icon: Sprout, title: '拖动绘制地块 (P)' },
+  { value: 'depot', label: '车库', icon: Home, title: '点击放置车库 (D)' },
+] as const;
+
+export function MapPanel() {
+  const st = useStudio();
+  const focus = useFocus();
+  if (st.loadError) return <div className={s.pad}><Notice tone="error">{st.loadError}</Notice></div>;
+  if (!st.scenario || !st.draft) {
+    return (
+      <EmptyState icon={Sprout} title={st.busy ? `${st.busy}…` : '从一句话开始'}
+        detail="在上方输入任务描述并生成地图，或从左侧场景库打开一个场景。" />
+    );
+  }
+  if (!isFleet(st.scenario)) return <GenericMap scenario={st.scenario} draft={st.draft} run={focus} />;
+  const inst = asFleet(st.draft);
+  const stale = !!focus && signature(focus.instance as unknown as FleetInstance) !== signature(inst);
+  const routes = focus?.state === 'done' ? (focus.routes as FleetRoute[]) : [];
+  return (
+    <div className={s.mapPanel}>
+      <div className={s.mapBar}>
+        <Segmented value={st.tool} onChange={(t) => st.setTool(t)} label="编辑工具"
+          options={TOOLS.map((t) => ({ value: t.value, label: t.label, icon: t.icon, title: t.title }))} />
+        {st.tool === 'obstacle' && (
+          <Select aria-label="障碍类型" value={st.obstacleKind} onChange={(e) => st.setObstacleKind(e.target.value as ObstacleKind)}>
+            {(Object.keys(OBSTACLE_STYLE) as ObstacleKind[]).map((k) => <option key={k} value={k}>{OBSTACLE_STYLE[k].label}</option>)}
+          </Select>
+        )}
+        <span className={s.spacer} />
+        <Button size="sm" icon={Undo2} title="撤销 (⌘Z)" disabled={!st.past.length} onClick={st.undo} />
+        <Button size="sm" icon={Redo2} title="重做 (⇧⌘Z)" disabled={!st.future.length} onClick={st.redo} />
+        <Button size="sm" icon={Maximize} title="适配全图 (F)" onClick={() => window.dispatchEvent(new Event('studio:fit'))} />
+        <SaveChip />
+      </div>
+      <div className={s.mapStage}>
+        <FieldEditor
+          inst={inst}
+          routes={stale ? [] : routes}
+          hidden={st.hiddenVehicles}
+          playback={st.playback}
+          tool={st.tool}
+          obstacleKind={st.obstacleKind}
+          selection={st.selection}
+          editable
+          fitKey={st.scenario.id}
+          onEdit={(fn) => st.edit((i) => fn(i as unknown as FleetInstance) as unknown as typeof i)}
+          onSelect={st.select}
+          onCursor={st.setCursor}
+        />
+        {stale && <div className={s.staleBadge}><RefreshCw size={12} /> 地图已修改，结果需重新求解</div>}
+        {!stale && focus && focus.state === 'done' && <VehicleLegend run={focus} />}
+        {!stale && focus && focus.state === 'done' && <Playback run={focus} speed={inst.vehicles.speed_mps} />}
+      </div>
+    </div>
+  );
+}
+
+/** Read-only scenario canvas for routing, coverage and motion-planning problems, following the focused solution. */
+function GenericMap({ scenario, draft, run }: { scenario: Scenario; draft: Instance; run?: Solution }) {
+  const scene = useMemo(() => {
+    const out = baseScene(scenario, draft);
+    if (scenario.problem_class === 'point_to_point') {
+      const inst = draft as unknown as { start: [number, number, number]; goal: [number, number, number] };
+      out.nodes = [...(out.nodes ?? []),
+        { id: 'start', xy: [inst.start[0], inst.start[1]], kind: 'start', label: '起点' },
+        { id: 'goal', xy: [inst.goal[0], inst.goal[1]], kind: 'task', label: '终点' }];
+    }
+    if (run?.state === 'done' && run.routes.length) {
+      const swath = scenario.problem_class === 'coverage' ? (draft as { swath_width?: number }).swath_width ?? null : null;
+      out.paths = solutionPaths([{ solution: run, colorIndex: 0, current: true, focused: true }], scenario.problem_class, run.instance ?? draft, swath);
+      out.markers = violationMarkers([run]);
+    }
+    return out;
+  }, [scenario, draft, run]);
+  return (
+    <div className={s.mapPanel}>
+      <div className={s.mapBar}>
+        <span className={s.hint} style={{ margin: 0 }}>{scenario.summary}</span>
+        <span className={s.spacer} />
+        <Button size="sm" title="打开经典视图：可编辑 JSON、逐项调整任务" onClick={() => window.dispatchEvent(new CustomEvent('studio:open-panel', { detail: 'classic' }))}>经典视图</Button>
+      </div>
+      <div className={s.mapStage}>
+        <MapCanvas scene={scene} fitKey={scenario.id} ariaLabel="场景地图"
+          overlay={run?.state === 'done' ? <span className={s.saveChip}>{run.algorithm.name} · {fmt.num(run.objective.value, 2)} {run.objective.unit === 'euc_2d_rounded' ? '' : run.objective.unit}</span> : undefined} />
+      </div>
+    </div>
+  );
+}
+
+function SaveChip() {
+  const save = useStudio((st) => st.save);
+  const err = useStudio((st) => st.saveError);
+  const text = { idle: '', dirty: '未保存', saving: '保存中…', saved: '已保存', error: '保存失败' }[save];
+  if (!text) return null;
+  return <span className={save === 'error' ? s.saveErr : s.saveChip} title={err ?? undefined}>{text}</span>;
+}
+
+function VehicleLegend({ run }: { run: Solution }) {
+  const hidden = useStudio((st) => st.hiddenVehicles);
+  const toggle = useStudio((st) => st.toggleVehicle);
+  const per = (run.metrics.per_vehicle as unknown as PerVehicle[] | undefined) ?? [];
+  const [open, setOpen] = useState(true);
+  if (!per.length) return null;
+  return (
+    <div className={s.legend} data-collapsed={!open || undefined}>
+      <button type="button" className={s.legendHead} onClick={() => setOpen(!open)} title={open ? '收起图例' : '展开图例'}>
+        {!open && per.map((v) => <span key={v.vehicle} className={s.swatch} style={{ background: v.color }} />)}
+        <span>{run.algorithm.name}</span>
+        <ChevronDown size={12} className={s.legendChevron} />
+      </button>
+      {open && per.map((v) => {
+        const off = hidden.includes(v.vehicle);
+        return (
+          <button key={v.vehicle} type="button" className={s.legendRow} data-off={off || undefined} onClick={() => toggle(v.vehicle)}>
+            <span className={s.swatch} style={{ background: v.color }} />
+            <span className={s.legendName}>{v.vehicle}</span>
+            <span className={s.legendMeta}>{v.tasks} 点{v.trips > 1 ? ` · ${v.trips} 趟` : ''}</span>
+            <span className={s.legendMeta}>{fmt.num(v.length_m, 0)} m</span>
+            <span className={s.legendMeta}>{fmt.sec(v.duration_s)}</span>
+            {off ? <EyeOff size={12} /> : <Eye size={12} />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Playback clock, m:ss. */
+function clock(t: number): string {
+  const sec = Math.round(t);
+  return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
+}
+
+function Playback({ run, speed }: { run: Solution; speed: number }) {
+  const t = useStudio((st) => st.playback);
+  const set = useStudio((st) => st.setPlayback);
+  const [playing, setPlaying] = useState(false);
+  const routes = run.routes as FleetRoute[];
+  const total = Math.max(...routes.map((r) => routeLength(r.polyline) / (speed || 1)), 1);
+  const raf = useRef(0);
+  useEffect(() => {
+    if (!playing) return;
+    let last = performance.now();
+    const step = (now: number) => {
+      const dt = (now - last) / 1000;
+      last = now;
+      const cur = useStudio.getState().playback ?? 0;
+      const next = cur + dt * Math.max(10, total / 25);
+      if (next >= total) {
+        set(total);
+        setPlaying(false);
+        return;
+      }
+      set(next);
+      raf.current = requestAnimationFrame(step);
+    };
+    raf.current = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf.current);
+  }, [playing, total, set]);
+  return (
+    <div className={s.playback}>
+      <Button size="sm" icon={playing ? Pause : Play} title={playing ? '暂停' : '播放各车同时作业的过程'}
+        onClick={() => { if (!playing && (t === null || t >= total)) set(0); setPlaying(!playing); }} />
+      <input type="range" min={0} max={total} step={total / 400} value={t ?? 0} aria-label="回放时间"
+        onChange={(e) => { setPlaying(false); set(Number(e.target.value)); }} />
+      <span className={s.mono}>{clock(t ?? 0)} / {clock(total)}</span>
+      {t !== null && <Button size="sm" icon={X} title="结束回放" onClick={() => { setPlaying(false); set(null); }} />}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------ inspector -- */
+export function InspectorPanel() {
+  const sc = useStudio((st) => st.scenario);
+  const draft = useStudio((st) => st.draft);
+  const [tab, setTab] = useState<'fleet' | 'selection' | 'scenario'>('fleet');
+  const selection = useStudio((st) => st.selection);
+  useEffect(() => {
+    if (selection) setTab('selection');
+  }, [selection]);
+  if (!sc || !draft) return <EmptyState title="未打开场景" />;
+  if (!isFleet(sc)) return <ScenarioInfo />;
+  return (
+    <div className={s.inspector}>
+      <div className={s.tabs}>
+        <Segmented value={tab} onChange={setTab} full label="检查器"
+          options={[{ value: 'fleet', label: '车队' }, { value: 'selection', label: '选中' }, { value: 'scenario', label: '场景' }]} />
+      </div>
+      <div className={s.scroll}>
+        {tab === 'fleet' && <FleetForm />}
+        {tab === 'selection' && <SelectionForm />}
+        {tab === 'scenario' && <ScenarioInfo />}
+      </div>
+    </div>
+  );
+}
+
+function Num({ label, value, onChange, min, step = 1, unit }: { label: string; value: number; onChange: (v: number) => void; min?: number; step?: number; unit?: string }) {
+  return (
+    <label className={s.field}>
+      <span>{label}</span>
+      <span className={s.inputUnit}>
+        <Input type="number" value={value} min={min} step={step} onChange={(e) => Number.isFinite(e.target.valueAsNumber) && onChange(e.target.valueAsNumber)} />
+        {unit && <em>{unit}</em>}
+      </span>
+    </label>
+  );
+}
+
+function FleetForm() {
+  const draft = useStudio((st) => st.draft);
+  const edit = useStudio((st) => st.edit);
+  const inst = asFleet(draft);
+  const set = (fn: (i: FleetInstance) => FleetInstance) => edit((i) => fn(i as unknown as FleetInstance) as unknown as typeof i);
+  const v = inst.vehicles;
+  const demand = inst.tasks.reduce((a, t) => a + t.demand, 0);
+  const trips = Math.ceil(demand / Math.max(1, v.capacity));
+  return (
+    <div className={s.form}>
+      <h3>车队</h3>
+      <div className={s.grid2}>
+        <Num label="车辆数" value={v.count} min={1} onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, count: Math.max(1, Math.round(n)), names: undefined } }))} />
+        <Num label="单车容量" value={v.capacity} min={1} onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, capacity: Math.max(1, Math.round(n)) } }))} />
+        <Num label="车速" value={v.speed_mps} min={0.1} step={0.1} unit="m/s" onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, speed_mps: n } }))} />
+        <Num label="车体半径" value={inst.robot_radius} min={0.1} step={0.05} unit="m" onChange={(n) => set((i) => ({ ...i, robot_radius: n }))} />
+      </div>
+      <label className={s.field}>
+        <span>往返方式</span>
+        <Segmented value={v.trips ?? 'multi'} full onChange={(t) => set((i) => ({ ...i, vehicles: { ...i.vehicles, trips: t } }))}
+          options={[{ value: 'multi', label: '装满回库，可多趟' }, { value: 'single', label: '每车只跑一趟' }]} />
+      </label>
+      <label className={s.field}>
+        <span>优化目标</span>
+        <Segmented value={inst.objective} full onChange={(o) => set((i) => ({ ...i, objective: o }))}
+          options={[{ value: 'total_distance', label: '总里程最短' }, { value: 'makespan', label: '尽快完成（均衡分工）' }]} />
+      </label>
+      <p className={s.hint}>
+        {inst.tasks.length} 个任务点，总需求 {demand}；按容量至少需要 {trips} 趟
+        {v.trips === 'single' && trips > v.count ? <strong className={s.warn}>，单趟模式下车辆不够</strong> : ''}。
+      </p>
+      <h3>任务点</h3>
+      <div className={s.row}>
+        <Button size="sm" onClick={() => set((i) => ({ ...i, tasks: i.tasks.map((t) => ({ ...t, demand: 1 })) }))}>需求全部设为 1</Button>
+        <Button size="sm" onClick={() => set((i) => ({ ...i, tasks: i.tasks.map((t, k) => ({ ...t, id: k + 1, label: t.label || `T${k + 1}` })) }))}>重新编号</Button>
+      </div>
+      <h3>地图元素</h3>
+      <p className={s.hint}>{inst.plots.length} 块地 · {inst.obstacles.length} 处障碍 · 场地 {fmt.num(area(inst.boundary) / 10000, 2)} 公顷</p>
+    </div>
+  );
+}
+
+function SelectionForm() {
+  const selection = useStudio((st) => st.selection);
+  const draft = useStudio((st) => st.draft);
+  const edit = useStudio((st) => st.edit);
+  const select = useStudio((st) => st.select);
+  const inst = asFleet(draft);
+  const set = (fn: (i: FleetInstance) => FleetInstance) => edit((i) => fn(i as unknown as FleetInstance) as unknown as typeof i);
+  if (!selection) return <p className={s.hint}>在地图上点选任务点、障碍、地块、车库或边界查看属性。按 Delete 删除选中对象。</p>;
+  if (selection.type === 'task') {
+    const t = inst.tasks.find((x) => x.id === selection.id);
+    if (!t) return null;
+    const setT = (patch: Partial<typeof t>) => set((i) => ({ ...i, tasks: i.tasks.map((x) => (x.id === t.id ? { ...x, ...patch } : x)) }));
+    return (
+      <div className={s.form}>
+        <h3>任务点 {t.label}</h3>
+        <label className={s.field}><span>名称</span><Input value={t.label} onChange={(e) => setT({ label: e.target.value })} /></label>
+        <div className={s.grid2}>
+          <Num label="需求" value={t.demand} min={1} onChange={(n) => setT({ demand: Math.max(1, Math.round(n)) })} />
+          <Num label="作业时间" value={t.service_s ?? 0} min={0} unit="s" onChange={(n) => setT({ service_s: Math.max(0, n) })} />
+          <Num label="X" value={t.xy[0]} step={0.5} unit="m" onChange={(n) => setT({ xy: [n, t.xy[1]] })} />
+          <Num label="Y" value={t.xy[1]} step={0.5} unit="m" onChange={(n) => setT({ xy: [t.xy[0], n] })} />
+        </div>
+        <Button variant="destructive" icon={Trash2} onClick={() => { set((i) => ({ ...i, tasks: i.tasks.filter((x) => x.id !== t.id) })); select(null); }}>删除任务点</Button>
+      </div>
+    );
+  }
+  if (selection.type === 'obstacle') {
+    const o = inst.obstacles.find((x) => x.id === selection.id);
+    if (!o) return null;
+    const setO = (patch: Partial<typeof o>) => set((i) => ({ ...i, obstacles: i.obstacles.map((x) => (x.id === o.id ? { ...x, ...patch } : x)) }));
+    return (
+      <div className={s.form}>
+        <h3>障碍 {o.name || o.id}</h3>
+        <label className={s.field}><span>类型</span>
+          <Select value={o.kind} onChange={(e) => setO({ kind: e.target.value as ObstacleKind })}>
+            {(Object.keys(OBSTACLE_STYLE) as ObstacleKind[]).map((k) => <option key={k} value={k}>{OBSTACLE_STYLE[k].label}</option>)}
+          </Select>
+        </label>
+        <label className={s.field}><span>名称</span><Input value={o.name ?? ''} onChange={(e) => setO({ name: e.target.value })} /></label>
+        <p className={s.hint}>{o.polygon.length} 个顶点 · 面积 {fmt.num(area(o.polygon), 1)} m²。拖动整体移动，拖动顶点改形。</p>
+        <Button variant="destructive" icon={Trash2} onClick={() => { set((i) => ({ ...i, obstacles: i.obstacles.filter((x) => x.id !== o.id) })); select(null); }}>删除障碍</Button>
+      </div>
+    );
+  }
+  if (selection.type === 'plot') {
+    const p = inst.plots.find((x) => x.id === selection.id);
+    if (!p) return null;
+    const setP = (patch: Partial<typeof p>) => set((i) => ({ ...i, plots: i.plots.map((x) => (x.id === p.id ? { ...x, ...patch } : x)) }));
+    return (
+      <div className={s.form}>
+        <h3>地块 {p.name}</h3>
+        <label className={s.field}><span>名称</span><Input value={p.name} onChange={(e) => setP({ name: e.target.value })} /></label>
+        <label className={s.field}><span>作物</span><Input value={p.crop ?? ''} onChange={(e) => setP({ crop: e.target.value })} /></label>
+        <label className={s.field}><span>作物行方向</span>
+          <Segmented value={String(p.rows_deg ?? 0)} full onChange={(v) => setP({ rows_deg: Number(v) })}
+            options={[{ value: '0', label: '东西向' }, { value: '90', label: '南北向' }, { value: '45', label: '斜向' }]} />
+        </label>
+        <p className={s.hint}>面积 {fmt.num(area(p.polygon), 0)} m²</p>
+        <Button variant="destructive" icon={Trash2} onClick={() => { set((i) => ({ ...i, plots: i.plots.filter((x) => x.id !== p.id) })); select(null); }}>删除地块</Button>
+      </div>
+    );
+  }
+  if (selection.type === 'depot') {
+    return (
+      <div className={s.form}>
+        <h3>车库</h3>
+        <div className={s.grid2}>
+          <Num label="X" value={inst.depot[0]} step={0.5} unit="m" onChange={(n) => set((i) => ({ ...i, depot: [n, i.depot[1]] }))} />
+          <Num label="Y" value={inst.depot[1]} step={0.5} unit="m" onChange={(n) => set((i) => ({ ...i, depot: [i.depot[0], n] }))} />
+        </div>
+        <p className={s.hint}>所有车辆从这里出发并返回；也可用“车库”工具在地图上点击放置。</p>
+      </div>
+    );
+  }
+  return (
+    <div className={s.form}>
+      <h3>场地边界</h3>
+      <p className={s.hint}>{inst.boundary.length} 个顶点 · {fmt.num(area(inst.boundary) / 10000, 3)} 公顷。拖动顶点修改边界形状。</p>
+    </div>
+  );
+}
+
+export function ScenarioInfo() {
+  const sc = useStudio((st) => st.scenario) as unknown as FleetScenario | null;
+  const notify = useStudio((st) => st.notify);
+  if (!sc) return null;
+  const cards = sc.compose?.cards ?? [];
+  const found = new Set((sc.compose?.found ?? []).map((f) => f.key.split('.')[0]));
+  return (
+    <div className={s.form}>
+      <h3>{sc.title}</h3>
+      <p className={s.hint}>{sc.summary}</p>
+      {sc.compose?.text && <blockquote className={s.quote}>{sc.compose.text}</blockquote>}
+      {cards.length > 0 && (
+        <div className={s.cards}>
+          {cards.map((c) => (
+            <div key={c.key} className={s.card} data-default={!found.has(c.key) || undefined} title={found.has(c.key) ? '来自你的描述' : '未提到，使用默认值'}>
+              <span>{c.label}</span>
+              <strong>{c.value}</strong>
+            </div>
+          ))}
+        </div>
+      )}
+      <p className={s.meta}>{sc.provenance?.note}</p>
+      <div className={s.row}>
+        <a className={s.link} href={urls.scenarioExport(sc.id, 'json')} download><Download size={12} /> 场景 JSON</a>
+        {sc.problem_class === 'fleet_routing' && <a className={s.link} href={urls.scenarioExport(sc.id, 'geojson')} download><Download size={12} /> GeoJSON</a>}
+        {sc.compose?.text && (
+          <Button size="sm" icon={RefreshCw} onClick={async () => {
+            try {
+              const next = await studio.compose(sc.compose!.text, { seed: (sc.compose!.seed ?? 0) + 1 });
+              location.hash = `#/plan/${encodeURIComponent(next.id)}`;
+            } catch (e) { notify('error', String((e as Error).message)); }
+          }}>换一种布局</Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------- advisor -- */
+export function AdvisorPanel() {
+  const st = useStudio();
+  const rec = st.recommendation;
+  const algos = useMemo(() => Object.fromEntries(st.algorithms.map((a) => [a.id, a])), [st.algorithms]);
+  if (!st.scenario) return <EmptyState title="未打开场景" />;
+  return (
+    <div className={s.scroll}>
+      <div className={s.form}>
+        <div className={s.rowSpace}>
+          <h3>推荐算法</h3>
+          {st.recommending ? <Spinner /> : <Button size="sm" variant="plain" icon={RefreshCw} onClick={() => void st.refreshRecommendation()}>重新分析</Button>}
+        </div>
+        {rec && <p className={s.lead}>{rec.explanation}</p>}
+        {rec && rec.features.length > 0 && (
+          <div className={s.features}>
+            {rec.features.map((f) => (
+              <div key={f.key} className={s.feature} title={(f as { hint?: string }).hint ?? ''}>
+                <span>{f.name}</span>
+                <strong>{f.value ?? '—'}{f.unit ? ` ${f.unit}` : ''}</strong>
+              </div>
+            ))}
+          </div>
+        )}
+        <ul className={s.ranking}>
+          {(rec?.ranking ?? []).map((r) => {
+            const a = algos[r.algorithm_id];
+            const on = st.chosen.includes(r.algorithm_id);
+            return (
+              <li key={r.algorithm_id} data-off={!r.applicable || undefined}>
+                <label className={s.rankHead}>
+                  <input type="checkbox" checked={on} disabled={!r.applicable}
+                    onChange={() => st.setChosen(on ? st.chosen.filter((x) => x !== r.algorithm_id) : [...st.chosen, r.algorithm_id])} />
+                  <span className={s.rankNo}>{r.rank}</span>
+                  <span className={s.rankName}>{a?.name ?? r.algorithm_id}</span>
+                  <LibraryBadge library={a?.library} />
+                  {r.suitability === '推荐' && <Badge tone="green">推荐</Badge>}
+                </label>
+                <p>{r.reasons[0]}</p>
+                {r.reasons.length > 1 && <p className={s.meta}>{r.reasons.slice(1).join('；')}</p>}
+              </li>
+            );
+          })}
+        </ul>
+        <div className={s.solveBar}>
+          <label className={s.field}><span>时间预算</span>
+            <span className={s.inputUnit}><Input type="number" min={0.2} step={0.5} value={st.budget} onChange={(e) => st.setBudget(Number(e.target.value) || 1)} /><em>秒/算法</em></span>
+          </label>
+          <Button variant="primary" size="lg" icon={Play} loading={st.busy === '求解中'} disabled={!st.chosen.length}
+            onClick={() => void st.solve()}>
+            {st.chosen.length > 1 ? `对比 ${st.chosen.length} 个算法` : '求解'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------- compare -- */
+type Col = { label: string; get: (r: Solution) => number | null | undefined; digits?: number; unit?: string; better?: 'min' | 'max'; pct?: boolean };
+const metric = (k: string) => (r: Solution) => r.metrics[k] as number | null | undefined;
+const COLUMNS: Record<string, Col[]> = {
+  fleet_routing: [
+    { label: '总里程', get: (r) => metric('total_distance_m')(r), digits: 1, unit: ' m', better: 'min' },
+    { label: '最晚完成', get: metric('makespan_s'), digits: 0, unit: ' s', better: 'min' },
+    { label: '车辆', get: metric('vehicles_used'), digits: 0 },
+    { label: '趟数', get: metric('trips'), digits: 0 },
+    { label: '均衡度', get: metric('balance_cv'), digits: 2, better: 'min' },
+  ],
+  euclidean_cvrp: [
+    { label: '目标值', get: (r) => r.objective.value, digits: 2, better: 'min' },
+    { label: '与 BKS 差距', get: metric('gap_to_bks_pct'), digits: 2, unit: '%', better: 'min' },
+    { label: '路线数', get: metric('n_routes'), digits: 0 },
+  ],
+  coverage: [
+    { label: '总长度', get: (r) => r.objective.value, digits: 1, unit: ' m', better: 'min' },
+    { label: '作业距离', get: metric('working_length_m'), digits: 1, unit: ' m' },
+    { label: '非作业距离', get: metric('non_working_length_m'), digits: 1, unit: ' m', better: 'min' },
+    { label: '作业效率', get: metric('efficiency'), digits: 1, pct: true, better: 'max' },
+    { label: '覆盖率', get: metric('coverage_fraction'), digits: 1, pct: true, better: 'max' },
+  ],
+  point_to_point: [
+    { label: '路径长度', get: (r) => r.objective.value, digits: 2, unit: ' m', better: 'min' },
+    { label: '最大曲率', get: metric('max_curvature_per_m'), digits: 2, unit: ' /m', better: 'min' },
+    { label: '最小净空', get: metric('min_clearance_m'), digits: 3, unit: ' m', better: 'max' },
+    { label: '拐点', get: metric('turns'), digits: 0, better: 'min' },
+  ],
+  turn_routing: [
+    { label: '成本', get: (r) => r.objective.value, digits: 0, better: 'min' },
+    { label: '长度', get: (r) => r.metrics.length, digits: 2 },
+    { label: '转弯惩罚', get: metric('turn_penalty_total'), digits: 0 },
+    { label: '违规转弯', get: metric('forbidden_turn_violations'), digits: 0, better: 'min' },
+  ],
+};
+
+function stateText(r: Solution): { text: string; title?: string } {
+  if (['queued', 'running'].includes(r.state)) return { text: '计算中' };
+  if (r.state === 'timeout') return { text: '超时', title: r.error ?? undefined };
+  if (r.state !== 'done') return { text: '出错', title: r.error ?? undefined };
+  if (r.status === 'infeasible' || r.status === 'no_solution') {
+    const why = ((r as Solution & { raw_result?: { reason?: string } }).raw_result)?.reason ?? r.check?.errors?.[0] ?? r.error ?? undefined;
+    return { text: r.status === 'infeasible' ? '不可行' : '无解', title: why };
+  }
+  return { text: '完成' };
+}
+
+export function ComparePanel() {
+  const st = useStudio();
+  const rows = st.runIds.map((id) => st.runs[id]).filter(Boolean) as Solution[];
+  const cols = COLUMNS[st.scenario?.problem_class ?? ''] ?? COLUMNS.euclidean_cvrp;
+  const valid = rows.filter((r) => r.state === 'done' && r.check?.valid);
+  const bests = cols.map((c) => {
+    if (!c.better) return null;
+    const vals = valid.map(c.get).filter((v): v is number => typeof v === 'number' && Number.isFinite(v));
+    return vals.length ? (c.better === 'min' ? Math.min(...vals) : Math.max(...vals)) : null;
+  });
+  if (!rows.length) {
+    return <EmptyState icon={CircleDashed} title="还没有方案" detail="在“推荐与求解”里勾选算法后点击对比，结果会出现在这里。" />;
+  }
+  return (
+    <div className={s.compare}>
+      <div className={s.tableWrap}>
+        <table className={s.table}>
+          <thead>
+            <tr>
+              <th>算法</th><th>状态</th>
+              {cols.map((c) => <th key={c.label} className={s.num}>{c.label}</th>)}
+              <th className={s.num}>计算</th><th>验算</th><th />
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => {
+              const state = stateText(r);
+              return (
+                <tr key={r.run_id} aria-selected={st.focusRun === r.run_id} onClick={() => st.focus(r.run_id)}>
+                  <td><span className={s.algName}>{r.algorithm.name}</span></td>
+                  <td title={state.title}>{state.text === '计算中' ? <span className={s.running}><Spinner /> 计算中</span> : state.text}{state.title ? ' ⓘ' : ''}</td>
+                  {cols.map((c, i) => {
+                    const v = r.state === 'done' && r.routes.length ? c.get(r) : null;
+                    const isBest = v != null && bests[i] != null && Math.abs(v - (bests[i] as number)) < 1e-9 && valid.length > 1;
+                    return <td key={c.label} className={s.num} data-best={isBest || undefined}>{v == null ? '—' : `${fmt.num(c.pct ? v * 100 : v, c.digits ?? 2)}${c.pct ? '%' : c.unit ?? ''}`}</td>;
+                  })}
+                  <td className={s.num}>{fmt.sec(r.metrics.wall_s)}</td>
+                  <td>{r.check ? (r.check.valid ? <span className={s.ok}><Check size={13} /> 通过</span> : <span className={s.bad} title={r.check.errors.join('；')}><X size={13} /> {r.check.errors.length} 项</span>) : '—'}</td>
+                  <td className={s.rowActions} onClick={(e) => e.stopPropagation()}>
+                    <a href={exportUrl.run(r.run_id, 'json')} download title="完整记录 JSON">JSON</a>
+                    <a href={exportUrl.run(r.run_id, 'csv')} download title="路线 CSV">CSV</a>
+                    <a href={exportUrl.run(r.run_id, 'geojson')} download title="地图与路线">GeoJSON</a>
+                    {r.problem_class === 'fleet_routing' && r.state === 'done' && r.routes.length > 0 && (
+                      <button type="button" className={s.simLink} title="在 Gazebo 田间世界里让各车按此方案执行"
+                        onClick={() => void import('./FieldSimPanel').then((m) => m.startFieldSim(r.run_id))}>
+                        <Tractor size={12} /> Gazebo
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {rows.some((r) => r.error) && <Notice tone="error">{rows.filter((r) => r.error).map((r) => `${r.algorithm.name}：${r.error}`).join('；')}</Notice>}
+      </div>
+      <Convergence runs={rows} />
+    </div>
+  );
+}
+
+function Convergence({ runs }: { runs: Solution[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const data = runs.flatMap((r) => ((r as Solution & { trace?: [number, number][] }).trace ?? []).map(([t, v]) => ({ t: Math.max(t, 1e-3), v, alg: r.algorithm.name })));
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.replaceChildren();
+    if (data.length < 2) return;
+    const chart = Plot.plot({
+      width: el.clientWidth || 360, height: 150, marginLeft: 56, marginBottom: 30, style: { fontFamily: 'Inter, PingFang SC, sans-serif', fontSize: '10px' },
+      x: logTimeAxis(data.map((d) => d.t)), y: { label: `目标值${unitSuffix(runs[0]?.objective.unit)}`, grid: true }, color: { legend: true },
+      marks: [Plot.line(data, { x: 't', y: 'v', stroke: 'alg', curve: 'step-after', strokeWidth: 1.6 }), Plot.dot(data, { x: 't', y: 'v', fill: 'alg', r: 1.6 })],
+    });
+    el.append(chart);
+  }, [data]);
+  if (data.length < 2) return null;
+  return (
+    <div className={s.convergence}>
+      <h4>求解过程中最好解的变化</h4>
+      <div ref={ref} />
+    </div>
+  );
+}
+
+/* --------------------------------------------------------------- verify -- */
+export function VerifyPanel() {
+  const st = useStudio();
+  const run = st.focusRun ? st.runs[st.focusRun] : undefined;
+  if (!run) return <EmptyState icon={Check} title="选择一个方案" detail="求解完成后，这里逐项列出独立验算结果。" />;
+  if (run.state !== 'done') return <EmptyState title={run.error ?? '方案还在计算'} />;
+  const check = run.check;
+  const errors = check?.errors ?? [];
+  const fleet = isFleet(st.scenario);
+  const has = (re: RegExp) => errors.filter((e) => re.test(e));
+  const items = fleet ? [
+    { label: '每个任务点恰好服务一次', bad: has(/未被分配|重复/) },
+    { label: '每趟载重不超过容量', bad: has(/载重/) },
+    { label: '使用车辆不超过车队规模', bad: has(/超过车队|单趟/) },
+    { label: '路线避开障碍、不出场地', bad: has(/穿过障碍|越出/) },
+    { label: '从车库出发并返回', bad: has(/车库/) },
+  ] : [{ label: '独立检查器', bad: errors }];
+  const computed = check?.computed_cost;
+  const reported = (run.metrics.total_distance_m as number | undefined) ?? run.metrics.length;
+  const same = computed != null && reported != null && Math.abs(computed - reported) <= 1e-6 * Math.max(1, Math.abs(reported));
+  return (
+    <div className={s.scroll}>
+      <div className={s.form}>
+        <div className={s.rowSpace}>
+          <h3>{run.algorithm.name} 的验算</h3>
+          {check?.valid ? <Badge tone="green">全部通过</Badge> : <Badge tone="red">{errors.length} 项未通过</Badge>}
+        </div>
+        <ul className={s.checks}>
+          {items.map((it) => (
+            <li key={it.label} data-bad={it.bad.length > 0 || undefined}>
+              {it.bad.length ? <X size={14} /> : <Check size={14} />}
+              <span>{it.label}</span>
+              {it.bad.length > 0 && <small>{it.bad.join('；')}</small>}
+            </li>
+          ))}
+          {fleet && (
+            <li data-bad={!same || undefined}>
+              {same ? <Check size={14} /> : <X size={14} />}
+              <span>里程复算一致</span>
+              <small>{fmt.num(computed, 2)} m（验算） vs {fmt.num(reported, 2)} m（求解器）</small>
+            </li>
+          )}
+          {run.map_check && (
+            <li data-bad={!run.map_check.collision_free || undefined}>
+              {run.map_check.collision_free ? <Check size={14} /> : <X size={14} />}
+              <span>地图净空</span>
+              <small>最小 {fmt.num(run.map_check.min_clearance_m, 3)} m</small>
+            </li>
+          )}
+        </ul>
+        <p className={s.meta}>验算方：{check?.checker ?? '—'}。数据来源：{run.algorithm.origin}</p>
+        {fleet && <PerVehicleTable run={run} />}
+      </div>
+    </div>
+  );
+}
+
+function PerVehicleTable({ run }: { run: Solution }) {
+  const per = (run.metrics.per_vehicle as unknown as PerVehicle[] | undefined) ?? [];
+  const routes = run.routes as FleetRoute[];
+  return (
+    <table className={s.table}>
+      <thead><tr><th>车辆</th><th className={s.num}>任务</th><th className={s.num}>趟数</th><th className={s.num}>最大单趟载重</th><th className={s.num}>里程</th><th className={s.num}>用时</th><th>顺序</th></tr></thead>
+      <tbody>
+        {per.map((v, i) => (
+          <tr key={v.vehicle}>
+            <td><span className={s.swatch} style={{ background: v.color }} /> {v.vehicle}</td>
+            <td className={s.num}>{v.tasks}</td>
+            <td className={s.num}>{v.trips}</td>
+            <td className={s.num}>{v.load}</td>
+            <td className={s.num}>{fmt.num(v.length_m, 1)} m</td>
+            <td className={s.num}>{fmt.sec(v.duration_s)}</td>
+            <td className={s.seq}>{(routes[i]?.trips ?? [routes[i]?.sequence ?? []]).map((t) => t.join('→')).join(' ｜ ')}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}

@@ -6,7 +6,11 @@ import math
 
 from shapely.geometry import Polygon
 
-PROBLEM_CLASSES = ('turn_routing', 'euclidean_cvrp', 'coverage')
+PROBLEM_CLASSES = ('turn_routing', 'euclidean_cvrp', 'coverage', 'point_to_point', 'fleet_routing')
+OBSTACLE_KINDS = ('pond', 'building', 'tree', 'pole', 'ditch', 'greenhouse', 'rock', 'other')
+FLEET_OBJECTIVES = ('total_distance', 'makespan')
+CVRP_OBJECTIVES = ('sum_unrounded_euclidean_distance', 'sum_rounded_euclidean_distance')
+MOTION_MODELS = ('holonomic', 'dubins', 'reeds_shepp')
 MAX_NODES = 5000
 MAX_CVRP_TASKS = 1000
 
@@ -144,8 +148,8 @@ def euclidean_cvrp(inst: dict) -> dict:
     if fleet != 'unlimited_identical_vehicles':
         raise ValueError('只支持不限数量的同型车辆（unlimited_identical_vehicles）')
     objective = inst.get('objective', 'sum_unrounded_euclidean_distance')
-    if objective != 'sum_unrounded_euclidean_distance':
-        raise ValueError('只支持未取整欧氏总距离目标')
+    if objective not in CVRP_OBJECTIVES:
+        raise ValueError('目标须为欧氏总距离（未取整，或 TSPLIB EUC_2D 四舍五入）')
     labels = inst.get('labels')
     if labels is not None and (not isinstance(labels, list) or len(labels) != len(coords)):
         raise ValueError('labels 长度应与坐标一致')
@@ -192,9 +196,110 @@ def coverage(inst: dict) -> dict:
     return out
 
 
+def _pose(p, what: str) -> list[float]:
+    if not isinstance(p, (list, tuple)) or len(p) not in (2, 3):
+        raise ValueError(f'{what} 应为 [x, y] 或 [x, y, yaw]')
+    return [_num(p[0], what + '.x'), _num(p[1], what + '.y'), _num(p[2] if len(p) == 3 else 0.0, what + '.yaw')]
+
+
+def point_to_point(inst: dict) -> dict:
+    out = copy.deepcopy(inst)
+    model = inst.get('motion_model', 'holonomic')
+    if model not in MOTION_MODELS:
+        raise ValueError('motion_model 须为 holonomic / dubins / reeds_shepp')
+    radius = _num(inst.get('turning_radius', 0.5), 'turning_radius')
+    if model != 'holonomic' and radius <= 0:
+        raise ValueError('Dubins / Reeds–Shepp 需要正的最小转弯半径')
+    out.update(start=_pose(inst.get('start'), 'start'), goal=_pose(inst.get('goal'), 'goal'), motion_model=model,
+               turning_radius=radius, robot_radius=_num(inst.get('robot_radius', 0.175), 'robot_radius', True),
+               clearance_margin=max(0.0, _num(inst.get('clearance_margin', 0.05), 'clearance_margin')),
+               goal_tolerance=_num(inst.get('goal_tolerance', 0.05), 'goal_tolerance', True))
+    if math.dist(out['start'][:2], out['goal'][:2]) < 1e-6:
+        raise ValueError('起点与终点重合')
+    return out
+
+
+def _polygon(points, what: str) -> list[list[float]]:
+    pts = [_xy(p, f'{what}[{i}]') for i, p in enumerate(points or [])]
+    if len(pts) >= 2 and pts[0] == pts[-1]:
+        pts = pts[:-1]
+    if len(pts) < 3:
+        raise ValueError(f'{what} 至少需要 3 个顶点')
+    poly = Polygon(pts)
+    if not poly.is_valid or poly.area <= 0:
+        raise ValueError(f'{what} 多边形无效（自交或面积为 0）')
+    return pts if poly.exterior.is_ccw else pts[::-1]
+
+
+def fleet_routing(inst: dict) -> dict:
+    out = copy.deepcopy(inst)
+    boundary = _polygon(inst.get('boundary'), '场地边界')
+    outer = Polygon(boundary)
+    radius = _num(inst.get('robot_radius', 0.5), 'robot_radius', True)
+    plots = []
+    for i, p in enumerate(inst.get('plots') or []):
+        if not isinstance(p, dict):
+            raise ValueError(f'plots[{i}] 应为对象')
+        plots.append({**p, 'id': str(p.get('id') or f'P{i + 1}'), 'name': str(p.get('name') or f'地块{i + 1}'),
+                      'polygon': _polygon(p.get('polygon'), f'地块 {i + 1}')})
+    obstacles = []
+    for i, o in enumerate(inst.get('obstacles') or []):
+        if not isinstance(o, dict):
+            raise ValueError(f'obstacles[{i}] 应为对象')
+        kind = o.get('kind', 'other')
+        obstacles.append({**o, 'id': str(o.get('id') or f'O{i + 1}'), 'kind': kind if kind in OBSTACLE_KINDS else 'other',
+                          'polygon': _polygon(o.get('polygon'), f'障碍 {i + 1}')})
+    from shapely.geometry import Point
+    from shapely.ops import unary_union
+    blocked = unary_union([Polygon(o['polygon']).buffer(radius) for o in obstacles]) if obstacles else None
+    free = outer.buffer(-radius)
+    if blocked is not None:
+        free = free.difference(blocked)
+
+    def placeable(xy, what):
+        if not free.buffer(1e-6).contains(Point(xy)):
+            raise ValueError(f'{what} 位于障碍物内、离障碍太近或在边界外（需留出机器人半径 {radius:g} m）')
+    depot = _xy(inst.get('depot'), 'depot')
+    placeable(depot, '车库')
+    tasks, seen = [], set()
+    for i, t in enumerate(inst.get('tasks') or []):
+        if not isinstance(t, dict):
+            raise ValueError(f'tasks[{i}] 应为对象')
+        tid = _int(t.get('id', i + 1), f'tasks[{i}].id', 1)
+        if tid in seen:
+            raise ValueError(f'任务编号 {tid} 重复')
+        seen.add(tid)
+        xy = _xy(t.get('xy'), f'任务 {tid}')
+        placeable(xy, f"任务 {t.get('label') or tid}")
+        tasks.append({**t, 'id': tid, 'xy': xy, 'demand': _int(t.get('demand', 1), f'任务 {tid} 需求', 1),
+                      'label': str(t.get('label') or f'T{tid}'), 'service_s': max(0.0, _num(t.get('service_s', 0), f'任务 {tid} 作业时间'))})
+    if not tasks:
+        raise ValueError('至少需要一个任务点')
+    if len(tasks) > 800:
+        raise ValueError('任务点超过 800 个')
+    veh = inst.get('vehicles') or {}
+    count = _int(veh.get('count', 1), '车辆数', 1)
+    if count > 60:
+        raise ValueError('车辆数超过 60')
+    capacity = _int(veh.get('capacity', max(t['demand'] for t in tasks) * len(tasks)), '车辆容量', 1)
+    if capacity < max(t['demand'] for t in tasks):
+        raise ValueError(f'单车容量 {capacity} 小于最大单点需求 {max(t["demand"] for t in tasks)}')
+    names = veh.get('names') if isinstance(veh.get('names'), list) else None
+    objective = inst.get('objective', 'total_distance')
+    if objective not in FLEET_OBJECTIVES:
+        raise ValueError('objective 须为 total_distance（总里程最短）或 makespan（最晚完成时间最短）')
+    out.update(boundary=boundary, plots=plots, obstacles=obstacles, depot=depot, tasks=tasks, robot_radius=radius,
+               vehicles={'count': count, 'capacity': capacity, 'speed_mps': _num(veh.get('speed_mps', 1.0), '车速', True),
+                         'trips': 'single' if veh.get('trips') == 'single' else 'multi',
+                         'names': [str(n) for n in names][:count] if names else [f'车{i + 1}' for i in range(count)]},
+               objective=objective, units='m')
+    return out
+
+
 def validate_instance(problem_class: str, instance: dict) -> dict:
     if problem_class not in PROBLEM_CLASSES:
         raise ValueError(f'未知问题类别 {problem_class!r}')
     if not isinstance(instance, dict):
         raise ValueError('instance 应为 JSON 对象')
-    return {'turn_routing': turn_routing, 'euclidean_cvrp': euclidean_cvrp, 'coverage': coverage}[problem_class](instance)
+    return {'turn_routing': turn_routing, 'euclidean_cvrp': euclidean_cvrp, 'coverage': coverage,
+            'point_to_point': point_to_point, 'fleet_routing': fleet_routing}[problem_class](instance)

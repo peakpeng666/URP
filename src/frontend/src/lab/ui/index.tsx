@@ -171,10 +171,10 @@ export function Badge({
   );
 }
 
-/** Source badge: keeps URP project / third-party / panel baseline / Nav2 visually distinct. */
+/** Source badge: keeps project / third-party / baseline / Nav2 visually distinct. */
 export function SourceBadge({ source }: { source: string }) {
   const map: Record<string, { tone: 'blue' | 'purple' | 'gray' | 'orange'; text: string }> = {
-    project: { tone: 'blue', text: 'URP 项目' },
+    project: { tone: 'blue', text: '本项目' },
     third_party: { tone: 'purple', text: '第三方' },
     panel_baseline: { tone: 'gray', text: '面板基线' },
     nav2: { tone: 'orange', text: 'Nav2' },

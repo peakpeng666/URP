@@ -59,7 +59,7 @@ def serve(args) -> int:
     url = f'http://127.0.0.1:{args.port}/'
     status, data = http_json('GET', f'{url}lab/api/health', timeout=1.0)
     if status == 200 and isinstance(data, dict) and data.get('status') == 'ok':
-        print(f'科研面板网关已在 {url} 运行。', flush=True)
+        print(f'工作台网关已在 {url} 运行。', flush=True)
         if args.open:
             open_browser(url)
         return 0
@@ -89,7 +89,7 @@ def serve(args) -> int:
         while not server.started and not server.should_exit:
             time.sleep(0.1)
         if server.started:
-            log.info('科研面板：%s（Ctrl+C 有序退出）', url)
+            log.info('农业机器人路径规划工作台：%s（Ctrl+C 有序退出）', url)
             if args.open:
                 open_browser(url)
             while not server.should_exit:
@@ -162,7 +162,7 @@ def solve(args) -> int:
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(prog='python -m urp_lab', description='URP 科研面板')
+    parser = argparse.ArgumentParser(prog='python -m urp_lab', description='农业机器人路径规划工作台')
     sub = parser.add_subparsers(dest='command', required=True)
     p = sub.add_parser('serve', help='启动网关（127.0.0.1）')
     p.add_argument('--port', type=int, default=4100)

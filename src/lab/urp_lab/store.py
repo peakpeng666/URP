@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS sim_runs (
   state TEXT, created_utc TEXT, finished_utc TEXT, json TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS sim_runs_run ON sim_runs(run_id);
 CREATE INDEX IF NOT EXISTS sim_runs_created ON sim_runs(created_utc);
+CREATE TABLE IF NOT EXISTS studies (
+  study_id TEXT PRIMARY KEY, created_utc TEXT, json TEXT NOT NULL);
 """
 
 RUN_ACTIVE = ('queued', 'running')
@@ -87,3 +89,22 @@ class Store:
 
     def active_sim_runs(self) -> list[dict]:
         return self._query('SELECT json FROM sim_runs WHERE state IN (?,?,?)', SIM_ACTIVE)
+
+    def put_study(self, study: dict):
+        with self._lock:
+            self._db.execute('INSERT OR REPLACE INTO studies VALUES (?,?,?)',
+                             (study['study_id'], study.get('created_utc'), json.dumps(study, ensure_ascii=False)))
+
+    def get_study(self, study_id: str) -> dict | None:
+        rows = self._query('SELECT json FROM studies WHERE study_id=?', (study_id,))
+        return rows[0] if rows else None
+
+    def list_studies(self, limit: int = 200) -> list[dict]:
+        return self._query('SELECT json FROM studies ORDER BY created_utc DESC LIMIT ?', (int(limit),))
+
+    def runs_by_ids(self, run_ids: list[str]) -> list[dict]:
+        out = []
+        for i in range(0, len(run_ids), 400):
+            chunk = run_ids[i:i + 400]
+            out += self._query(f"SELECT json FROM runs WHERE run_id IN ({','.join('?' * len(chunk))})", chunk)
+        return out

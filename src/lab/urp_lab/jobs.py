@@ -28,7 +28,7 @@ GRACE_S = 2.0
 DEFAULT_TIME_LIMIT_S = 60.0
 LOG_TAIL_BYTES = 4096
 FINAL = ('done', 'error', 'timeout', 'canceled')
-_RESULT_KEYS = ('status', 'objective', 'routes', 'check', 'map_check', 'raw_result')
+_RESULT_KEYS = ('status', 'objective', 'routes', 'check', 'map_check', 'raw_result', 'trace')
 
 
 def new_id(prefix: str) -> str:

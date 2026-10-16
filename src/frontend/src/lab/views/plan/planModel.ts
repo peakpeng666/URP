@@ -19,11 +19,13 @@ import type {
 } from '../../types';
 import type { CanvasMarker, CanvasNode, CanvasPath, CanvasPolygon, CanvasScene } from '../../canvas/types';
 
-export const CLASS_ORDER: ProblemClass[] = ['turn_routing', 'euclidean_cvrp', 'coverage'];
+export const CLASS_ORDER: ProblemClass[] = ['fleet_routing', 'turn_routing', 'euclidean_cvrp', 'coverage', 'point_to_point'];
 export const CLASS_LABEL: Record<ProblemClass, string> = {
+  fleet_routing: '多车任务',
   turn_routing: '转弯约束路网',
-  euclidean_cvrp: '欧氏 CVRP',
+  euclidean_cvrp: '车辆路径 CVRP',
   coverage: '覆盖作业',
+  point_to_point: '点到点规划',
 };
 
 export const COST_UNIT_LABEL: Record<string, string> = {
@@ -257,7 +259,7 @@ export function scenarioPolygons(scenario: Scenario, inst: Instance): CanvasPoly
 export function baseScene(scenario: Scenario, inst: Instance): CanvasScene {
   const frame = scenario.frame;
   const scene: CanvasScene = {
-    units: frame.kind === 'map' ? 'm' : 'unitless',
+    units: frame.units === 'm' ? 'm' : 'unitless',
     map: frame.kind === 'map' ? frame.map : null,
     polygons: scenarioPolygons(scenario, inst),
     labels: Array.isArray(scenario.layers?.labels) ? scenario.layers!.labels : [],
@@ -447,7 +449,7 @@ export function mapCheckCaveat(sol: Solution | null): string | null {
   if (!sol || sol.frame?.kind !== 'map') return null;
   if (!mc) return '缺少地图检查结果';
   if (!mc.checked) return '地图检查未执行';
-  if (mc.collision_free === false) return `地图检查发现 ${mc.violations.length} 处净空不足：按 URP 路径跟踪模式会被拒绝，仅可用 Nav2 逐点导航`;
+  if (mc.collision_free === false) return `地图检查发现 ${mc.violations.length} 处净空不足：沿规划路径行驶会被拒绝，只能用 Nav2 逐点导航`;
   return null;
 }
 

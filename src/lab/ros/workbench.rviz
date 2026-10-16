@@ -514,11 +514,11 @@ Visualization Manager:
       Value: waypoints
     Value: true
   - Class: rviz_default_plugins/Path
-    Name: URP planned path
+    Name: Workbench planned path
     Enabled: true
     Value: true
     Topic:
-      Value: /urp/planned_path
+      Value: /workbench/planned_path
       Reliability Policy: Reliable
       Durability Policy: Transient Local
       Depth: 1
@@ -533,7 +533,7 @@ Visualization Manager:
     Enabled: true
     Value: true
     Topic:
-      Value: /urp/actual_path
+      Value: /workbench/actual_path
       Reliability Policy: Reliable
       Durability Policy: Transient Local
       Depth: 1
@@ -544,11 +544,11 @@ Visualization Manager:
     Buffer Length: 1
     Pose Style: None
   - Class: rviz_default_plugins/MarkerArray
-    Name: URP tasks
+    Name: Workbench tasks
     Enabled: true
     Value: true
     Topic:
-      Value: /urp/tasks
+      Value: /workbench/tasks
       Reliability Policy: Reliable
       Durability Policy: Transient Local
       Depth: 1

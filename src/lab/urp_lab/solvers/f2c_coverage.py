@@ -8,6 +8,7 @@ import importlib.util
 import importlib.metadata
 import json
 import math
+import time
 from functools import lru_cache
 from pathlib import Path
 
@@ -118,3 +119,87 @@ def solve(instance, pattern):
     routes = [dict(vehicle=0,nodes=None,sequence=[],services=[],polyline=points,
                    execution_legs=legs,cost=check.get('computed_cost'),load=0)] if check['valid'] else []
     return routes,check,metrics,raw
+
+
+TURN_MODELS = {'dubins': 'PP_DubinsCurves', 'dubins_cc': 'PP_DubinsCurvesCC', 'reeds_shepp': 'PP_ReedsSheppCurves'}
+SWATH_OBJECTIVES = {'n_swath': 'OBJ_NSwathModified', 'swath_length': 'OBJ_SwathLength', 'field_coverage': 'OBJ_FieldCoverage'}
+DECOMPOSITIONS = {'boustrophedon': 'DECOMP_Boustrophedon', 'trapezoidal': 'DECOMP_TrapezoidalDecomp', 'none': None}
+SECTION = {1: 'swath', 2: 'turn', 3: 'headland'}
+
+
+def solve_full(instance, params):
+    """Fields2Cover 2.x end-to-end pipeline for arbitrary (non-convex) fields:
+    constant headlands → cell decomposition → best-angle swaths per cell → route across cells via the
+    headland ring → path planning with the chosen turn model. Section types split working vs non-working distance."""
+    import fields2cover as f2c
+    from shapely.geometry import Polygon, LineString
+    from shapely.ops import unary_union
+    if instance['turn_radius'] <= 0:
+        raise ValueError('需要大于 0 的最小转弯半径')
+    t0 = time.perf_counter()
+
+    def ring(points):
+        pts = list(points) + [points[0]]
+        return f2c.LinearRing(f2c.VectorPoint([f2c.Point(float(x), float(y)) for x, y in pts]))
+    cell = f2c.Cell(ring(instance['field']))
+    for hole in instance.get('obstacles') or []:
+        cell.addRing(ring(hole))
+    cells = f2c.Cells(cell)
+    robot = f2c.Robot(instance['robot_width'], instance['swath_width'])
+    robot.setMinTurningRadius(instance['turn_radius'])
+    hl = f2c.HG_Const_gen()
+    width = instance['headland_width']
+    mid_hl = hl.generateHeadlands(cells, width / 2)
+    inner = hl.generateHeadlands(cells, width)
+    decomposition = params.get('decomposition', 'boustrophedon')
+    if DECOMPOSITIONS.get(decomposition):
+        decomp = getattr(f2c, DECOMPOSITIONS[decomposition])()
+        decomp.setSplitAngle(0.5 * math.pi)
+        inner = decomp.decompose(inner)
+    objective = getattr(f2c, SWATH_OBJECTIVES[params.get('swath_objective', 'n_swath')])()
+    generator = f2c.SG_BruteForce()
+    if instance.get('angle_deg') is not None:
+        swaths = f2c.SwathsByCells()
+        for i in range(inner.size()):
+            swaths.push_back(generator.generateSwaths(math.radians(instance['angle_deg']), robot.getCovWidth(), inner.getGeometry(i)))
+    else:
+        swaths = generator.generateBestSwaths(objective, robot.getCovWidth(), inner)
+    route = f2c.RP_RoutePlannerBase().genRoute(mid_hl, swaths)
+    turner = getattr(f2c, TURN_MODELS[params.get('turn_model', 'dubins')])()
+    path = f2c.PP_PathPlanning().planPath(robot, route, turner)
+    elapsed = time.perf_counter() - t0
+    if path.size() < 2:
+        return [], dict(valid=False, errors=['Fields2Cover 没有生成路径']), {}, None
+    states = [path.getState(i) for i in range(path.size())]
+    full = [[s.point.getX(), s.point.getY()] for s in states]
+    kinds = [SECTION.get(int(s.type), 'other') for s in states]
+    # A state's type labels the section that starts at it (a swath is a single state followed by its end point).
+    lengths = {'swath': 0.0, 'turn': 0.0, 'headland': 0.0, 'other': 0.0}
+    swath_lines = []
+    for a, b, k in zip(full, full[1:], kinds):
+        lengths[k] += math.dist(a, b)
+        if k == 'swath' and math.dist(a, b) > 1e-6:
+            swath_lines.append(LineString([a, b]))
+    reverse = sum(1 for s in states if s.dir == f2c.PathDirection_BACKWARD)
+    field = Polygon(instance['field'], instance.get('obstacles') or [])
+    covered = unary_union([s.buffer(instance['swath_width'] / 2, cap_style=2) for s in swath_lines]).intersection(field).area if swath_lines else 0.0
+    outside = LineString(full).buffer(instance['robot_width'] / 2).difference(field).area
+    step = max(1, len(full) // 6000)
+    pts = full[::step] + ([full[-1]] if (len(full) - 1) % step else [])
+    total = sum(lengths.values())
+    errors = [] if outside < 0.01 * field.area else ['机器人足迹有明显部分越出田块边界']
+    check = dict(valid=not errors, errors=errors, computed_cost=total, source='panel_baseline',
+                 checker='urp_lab.solvers.f2c_coverage.solve_full · Shapely 足迹与覆盖复算')
+    metrics = dict(coverage_area_m2=covered, field_area_m2=field.area, coverage_fraction=covered / field.area if field.area else None,
+                   working_length_m=lengths['swath'], turning_length_m=lengths['turn'], headland_length_m=lengths['headland'],
+                   non_working_length_m=lengths['turn'] + lengths['headland'] + lengths['other'],
+                   efficiency=lengths['swath'] / total if total else None, n_swaths=len(swath_lines), n_cells=inner.size(),
+                   reverse_states=reverse, footprint_outside_m2=outside, planning_s=elapsed,
+                   coverage_scope='作业行覆盖面积 / 全田块；转弯与地头行驶计为非作业距离')
+    raw = dict(implementation='Fields2Cover HG_Const_gen → ' + (DECOMPOSITIONS.get(decomposition) or '不分解') +
+               f" → SG_BruteForce({SWATH_OBJECTIVES[params.get('swath_objective', 'n_swath')]}) → RP_RoutePlannerBase → PP_PathPlanning({TURN_MODELS[params.get('turn_model', 'dubins')]})",
+               states=len(full), decimation=step, binding=available())
+    route_out = dict(vehicle=0, nodes=None, sequence=[], services=[], polyline=pts, cost=total, load=0,
+                     sections=[[i // step, k] for i, k in enumerate(kinds) if i == 0 or k != kinds[i - 1]])
+    return [route_out], check, metrics, raw
+

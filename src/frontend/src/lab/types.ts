@@ -1,9 +1,9 @@
 /**
- * Types for the URP Lab gateway (/lab/api). Mirrors src/lab/CONTRACT.md; change
+ * Types for the workbench gateway (/lab/api). Mirrors src/lab/CONTRACT.md; change
  * both together. Values the gateway cannot know are null, never invented.
  */
 
-export type ProblemClass = 'turn_routing' | 'euclidean_cvrp' | 'coverage';
+export type ProblemClass = 'turn_routing' | 'euclidean_cvrp' | 'coverage' | 'point_to_point' | 'fleet_routing';
 export type Source = 'project' | 'third_party' | 'panel_baseline' | 'nav2';
 export type XY = [number, number];
 
@@ -19,7 +19,8 @@ export interface MapMeta {
 
 export type Frame =
   | { kind: 'map'; units: 'm'; world: string; map: MapMeta & { yaml: string } }
-  | { kind: 'benchmark'; units: 'unitless' };
+  | { kind: 'benchmark'; units: 'unitless' }
+  | { kind: 'field'; units: 'm'; crs?: string; offset?: [number, number] };
 
 export interface SimSupport {
   supported: boolean;
@@ -77,7 +78,7 @@ export interface CoverageInstance {
   angle_deg: number | null;
 }
 
-export type Instance = TurnRoutingInstance | EuclideanCvrpInstance | CoverageInstance;
+export type Instance = TurnRoutingInstance | EuclideanCvrpInstance | CoverageInstance | Record<string, unknown>;
 
 export interface Scenario extends ScenarioSummary {
   provenance: { generator: string; params?: Record<string, unknown>; seed?: number | null; note?: string };
@@ -107,16 +108,20 @@ export interface Algorithm {
   id: string;
   name: string;
   problem_classes: ProblemClass[];
-  family: 'exact' | 'metaheuristic' | 'heuristic' | 'baseline' | 'coverage' | 'relaxation';
+  family: 'exact' | 'metaheuristic' | 'heuristic' | 'baseline' | 'coverage' | 'relaxation' | 'graph_search' | 'sampling';
   source: Source;
   origin: string;
   turn_aware: boolean;
-  guarantee: 'optimal' | 'optimal_for_relaxation' | 'none';
+  guarantee: 'optimal' | 'optimal_for_relaxation' | 'none' | 'resolution_optimal' | 'asymptotically_optimal' | 'probabilistically_complete';
   limits: { max_tasks?: number | null };
   available: boolean;
   unavailable_reason: string | null;
   params: AlgorithmParam[];
   description: string;
+  summary?: string;
+  library?: string;
+  refs?: string[];
+  problem_label?: string;
 }
 
 export interface Recommendation {

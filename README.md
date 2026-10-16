@@ -23,8 +23,7 @@
 ## 本机启动
 
 ```sh
-bash src/start.sh backend
-bash src/start.sh frontend
+bash setup/run.sh lab --open
 ```
 
-前端为BPP静态结果面板，后端提供实验记录API；两者待接通。[src/checks.json](src/checks.json)保存2026年10月10日的253项历史PASS；全库目录、前后端和用户主机环境尚未重新验收。2026年10月14日已单独完成CVRPLIB运行前验收及来源核验，范围见[当前入口](experiments/CVRPLIB入口.md)，不据此声称全库测试或构建通过。
+打开农业机器人路径规划工作台（http://127.0.0.1:4100）：一句话生成任务地图、编辑、推荐算法、多车对比、验算，以及在 Gazebo 田间世界里让多车经 ROS 2 执行方案，都在这里，详见 [本机使用说明](setup/README.md)。[src/checks.json](src/checks.json) 保存 2026 年 10 月 10 日的历史检查记录。

@@ -43,13 +43,13 @@ function PlanWorkspace({ route }: { route: Route }) {
   async function solve(){if(!inst)return;setBusy(true);setError(null);try{const j=await lab.solve(id,[{id:selected,params}],inst);setRun(null);setRunId(j.runs[0]);}catch(e){setError(String(e));}finally{setBusy(false);}}
   const pending=busy||!!run&&['queued','running'].includes(run.state);
   function edit(i:Instance){setText(JSON.stringify(i,null,2));setRun(null);setRunId(null);setRecommendation(null);setError(null);}
-  return <Page title="规划实验" subtitle="场景 → 推荐 → 求解 → 独立检查 → 仿真" actions={<a href="#/runs">运行记录</a>}>
+  return <Page title="经典视图" subtitle="场景 → 推荐 → 求解 → 验算 → 仿真" actions={<a href="#/runs">运行记录</a>}>
     {!connected&&<Notice tone="error">网关连接已断开，当前显示可能为旧数据；连接恢复后可重试。</Notice>}
     {(error||scenario.error||algorithms.error)&&<Notice tone="error">{error||scenario.error?.message||algorithms.error?.message}</Notice>}
     <div className={s.workspace}><aside className={s.stack}>
       <Card title="1. 场景与任务"><div className={s.pad}>
         <label className={s.field}>演示场景<Select aria-label="演示场景" value={id} onChange={e=>{location.hash=`#/plan/${e.target.value}`;setError(null);}}>{scenarios.data?.scenarios.map(c=><option key={c.id} value={c.id}>{c.title}</option>)}</Select></label>
-        {sc&&<><p>{sc.summary}</p><div className={s.meta}>{sc.frame.kind==='map'?`${sc.frame.world} · map 坐标 · 米`:'基准坐标 · 无量纲 · 不可直接仿真'}</div>
+        {sc&&<><p>{sc.summary}</p><div className={s.meta}>{sc.frame.kind==='map'?`${sc.frame.world} · map 坐标 · 米`:sc.frame.kind==='field'?'实地坐标 · 米':'基准坐标 · 无量纲 · 不可直接仿真'}</div>
           {inst&&<TaskEditor scenario={sc} instance={inst} onChange={edit}/>}
           {sc.problem_class!=='coverage'&&<label className={s.row}><input type="checkbox" checked={editing} onChange={e=>setEditing(e.target.checked)}/>在地图上编辑任务（路网点选；CVRP 点击空白添加）</label>}
           <details><summary>编辑任务与场景参数 (JSON)</summary><textarea aria-label="场景实例 JSON" className={s.editor} value={text} onChange={e=>{setText(e.target.value);setRun(null);setRunId(null);setRecommendation(null);}}/><Button onClick={()=>setText(JSON.stringify(sc.instance,null,2))}>恢复场景默认值</Button>{!inst&&<Notice tone="error">JSON 语法或实例结构无效，请恢复默认值后编辑。</Notice>}</details>
@@ -61,7 +61,7 @@ function PlanWorkspace({ route }: { route: Route }) {
         <label className={s.field}>求解算法<Select aria-label="求解算法" value={selected} onChange={e=>setSelected(e.target.value)}>{algorithms.data?.algorithms.filter(a=>sc&&a.problem_classes.includes(sc.problem_class)).map(a=><option key={a.id} value={a.id} disabled={!a.available}>{a.name}{!a.available?'（不可用）':''}</option>)}</Select></label>
         {alg&&<><SourceBadge source={alg.source}/><p>{alg.description}</p><div className={s.meta}>{alg.origin}</div>{alg.params.map(p=><label className={s.field} key={p.name}>{p.label}<Input type="number" min={p.min??undefined} max={p.max??undefined} step={p.type==='integer'?1:.05} aria-label={p.label} value={Number(params[p.name]??p.default)} onChange={e=>setParams(v=>({...v,[p.name]:Number(e.target.value)}))}/></label>)}</>}
         {recommendation&&<details><summary>全部算法的适用性与推荐理由</summary>{recommendation.ranking.map(r=><p key={r.algorithm_id}><strong>{r.algorithm_id} · {r.suitability}</strong><br/>{r.reasons.join('；')}</p>)}</details>}
-        <Button variant="primary" disabled={!sc||!inst||!connected||pending||!alg?.available} onClick={()=>void solve()}>求解并独立检查</Button>
+        <Button variant="primary" disabled={!sc||!inst||!connected||pending||!alg?.available} onClick={()=>void solve()}>求解并验算</Button>
         {pending&&runId&&<Button variant="destructive" onClick={()=>lab.cancelRun(runId).catch(e=>setError(String(e)))}>取消求解</Button>}
       </div></Card>
     </aside><div className={s.stack}>
@@ -73,8 +73,8 @@ function PlanWorkspace({ route }: { route: Route }) {
           {run.error&&<Notice tone="error">{run.error}</Notice>}
           <div className={s.metrics}><Metric label="目标成本" value={fmt.num(run.objective.value)} unit={run.objective.unit}/><Metric label="几何长度" value={fmt.num(run.metrics.length)} unit={run.frame.units}/><Metric label="独立检查" value={run.check?(run.check.valid?'通过':'未通过'):'未检查'}/><Metric label="整段路径净空" value={fmt.num(run.map_check?.min_clearance_m)} unit="m"/></div>
           {run.check&&!run.check.valid&&<Notice tone="error">{run.check.errors.join('；')}</Notice>}
-          {run.map_check&&<Notice tone={run.map_check.collision_free?'ok':'warn'}>地图检查：{run.map_check.collision_free?'整段路径与机器人占用通过':'未通过 / 无路线'}；机器人半径 {run.map_check.robot_radius_m} m，另留安全余量。</Notice>}
-          {sc?.problem_class==='coverage'&&<Notice>覆盖率 {fmt.num(Number(run.metrics.coverage_fraction)*100)}% · {String(run.metrics.coverage_scope??'未评估覆盖')}。路线完成不等同于全田块覆盖。</Notice>}
+          {run.map_check&&<Notice tone={run.map_check.collision_free?'ok':'warn'}>地图净空：{run.map_check.collision_free?'通过':'未通过'} · 机器人半径 {run.map_check.robot_radius_m} m</Notice>}
+          {sc?.problem_class==='coverage'&&<Notice>覆盖率 {fmt.num(Number(run.metrics.coverage_fraction)*100)}%</Notice>}
           <div className={s.row}>{(['json','csv','geojson'] as const).map(f=><a key={f} href={exportUrl.run(run.run_id,f)} download>导出 {f.toUpperCase()}</a>)}{!simBlockReason(run,sc?.sim)&&<a className={s.primaryLink} href={`#/sim?run=${run.run_id}`}>进入仿真</a>}</div>
           {simBlockReason(run,sc?.sim)&&<p className={s.muted}>{simBlockReason(run,sc?.sim)}</p>}
           <details><summary>原始结果、检查器与复现信息</summary><pre>{JSON.stringify(run,null,2)}</pre></details>

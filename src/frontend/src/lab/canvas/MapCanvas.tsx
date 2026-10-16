@@ -62,6 +62,12 @@ export function MapCanvas({
   const [view, setView] = useState<V.View | null>(null);
   const viewRef = useRef(view);
   viewRef.current = view;
+  // Until the user pans or zooms, the map keeps refitting when its panel resizes.
+  const touched = useRef(false);
+  const moveView = useCallback((f: (v: V.View | null) => V.View | null) => {
+    touched.current = true;
+    setView(f);
+  }, []);
   const [hover, setHover] = useState<Hover | null>(null);
   const [pointer, setPointer] = useState<XY | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -97,6 +103,7 @@ export function MapCanvas({
   useEffect(() => stopAnim, []);
 
   const fit = useCallback(() => {
+    touched.current = false;
     if (size.width && size.height) animateTo(V.fitView(bounds, size.width, size.height, 44));
   }, [animateTo, bounds, size.width, size.height]);
 
@@ -113,6 +120,7 @@ export function MapCanvas({
     if (!size.width || !size.height) return;
     if (pendingFit.current && !V.isEmpty(bounds)) {
       pendingFit.current = false;
+      touched.current = false;
       if (viewRef.current) animateTo(V.fitView(bounds, size.width, size.height, 44));
       else setView(V.fitView(bounds, size.width, size.height, 44));
       return;
@@ -122,7 +130,8 @@ export function MapCanvas({
       return;
     }
     if (prev.width && prev.height && (prev.width !== size.width || prev.height !== size.height)) {
-      setView((v) => v && V.panBy(v, (size.width - prev.width) / 2, (size.height - prev.height) / 2));
+      if (!touched.current) setView(V.fitView(bounds, size.width, size.height, 44));
+      else setView((v) => v && V.panBy(v, (size.width - prev.width) / 2, (size.height - prev.height) / 2));
     }
   }, [bounds, size, fitKey, animateTo]);
 
@@ -198,14 +207,14 @@ export function MapCanvas({
       const prevMid = { x: (prev.x + o.x) / 2, y: (prev.y + o.y) / 2 };
       const factor = dist / g.pinch;
       g.pinch = dist;
-      setView((cur) => cur && V.zoomAt(V.panBy(cur, mid.x - prevMid.x, mid.y - prevMid.y), factor, mid.x, mid.y));
+      moveView((cur) => cur && V.zoomAt(V.panBy(cur, mid.x - prevMid.x, mid.y - prevMid.y), factor, mid.x, mid.y));
     } else if (g) {
       if (!g.moved && Math.hypot(p.x - g.x, p.y - g.y) > 4) {
         g.moved = true;
         setDragging(true);
         setHover(null);
       }
-      if (g.moved) setView((cur) => cur && V.panBy(cur, p.x - prev.x, p.y - prev.y));
+      if (g.moved) moveView((cur) => cur && V.panBy(cur, p.x - prev.x, p.y - prev.y));
     }
     pointers.current.set(e.pointerId, p);
   };
@@ -240,15 +249,15 @@ export function MapCanvas({
       const r = el.getBoundingClientRect();
       const scale = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 400 : 1;
       const factor = Math.exp(-e.deltaY * scale * (e.ctrlKey ? 0.01 : 0.0018));
-      setView((v) => v && V.zoomAt(v, factor, e.clientX - r.left, e.clientY - r.top));
+      moveView((v) => v && V.zoomAt(v, factor, e.clientX - r.left, e.clientY - r.top));
     };
     el.addEventListener('wheel', onWheel, { passive: false });
     return () => el.removeEventListener('wheel', onWheel);
-  }, [ref]);
+  }, [ref, moveView]);
 
   const zoomCenter = (factor: number) => {
     stopAnim();
-    setView((v) => v && V.zoomAt(v, factor, size.width / 2, size.height / 2));
+    moveView((v) => v && V.zoomAt(v, factor, size.width / 2, size.height / 2));
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -260,10 +269,10 @@ export function MapCanvas({
       '-': () => zoomCenter(1 / 1.4),
       _: () => zoomCenter(1 / 1.4),
       '0': fit,
-      ArrowLeft: () => setView((v) => v && V.panBy(v, step, 0)),
-      ArrowRight: () => setView((v) => v && V.panBy(v, -step, 0)),
-      ArrowUp: () => setView((v) => v && V.panBy(v, 0, step)),
-      ArrowDown: () => setView((v) => v && V.panBy(v, 0, -step)),
+      ArrowLeft: () => moveView((v) => v && V.panBy(v, step, 0)),
+      ArrowRight: () => moveView((v) => v && V.panBy(v, -step, 0)),
+      ArrowUp: () => moveView((v) => v && V.panBy(v, 0, step)),
+      ArrowDown: () => moveView((v) => v && V.panBy(v, 0, -step)),
       Escape: () => setHover(null),
     };
     const action = actions[e.key];

@@ -17,6 +17,16 @@ def export_run(sol, fmt):
     if fmt=='csv':
         rows=[dict(run_id=stem,vehicle=r['vehicle'],point=i,x=p[0],y=p[1],units=sol['frame']['units'],instance_sha256=sol['instance_sha256']) for r in sol['routes'] for i,p in enumerate(r['polyline'])]
         return rows_csv(rows,['run_id','vehicle','point','x','y','units','instance_sha256'],stem)
+    if fmt=='geojson' and sol.get('problem_class')=='fleet_routing':
+        from .compose.geo import export_geojson
+        return export_geojson(sol.get('scenario_snapshot') or {'instance':sol.get('instance')}, sol),'application/geo+json',stem+'.geojson'
+    if fmt=='csv' and sol.get('problem_class')=='fleet_routing':
+        inst=sol.get('instance') or {}
+        tasks={t['id']:t for t in inst.get('tasks',[])}
+        rows=[dict(run_id=stem,vehicle=r.get('vehicle_name'),trip=k+1,order=i+1,task=tid,label=tasks.get(tid,{}).get('label'),
+                   x=tasks.get(tid,{}).get('xy',[None,None])[0],y=tasks.get(tid,{}).get('xy',[None,None])[1],demand=tasks.get(tid,{}).get('demand'))
+              for r in sol['routes'] for k,trip in enumerate(r.get('trips') or [r['sequence']]) for i,tid in enumerate(trip)]
+        return rows_csv(rows,['run_id','vehicle','trip','order','task','label','x','y','demand'],stem)
     if fmt=='geojson':
         # Explicit local-coordinate extension, never advertise WGS84 / RFC7946 geographic compatibility.
         obj={'type':'FeatureCollection','coordinate_reference':sol['frame'], 'warning':'Local coordinates; NOT WGS84 / RFC7946 geographic coordinates',
@@ -32,8 +42,9 @@ def export_sim_run(run, fmt):
     raise ValueError('格式须为 json/csv')
 
 def export_compare(solutions, fmt):
-    if fmt=='json': return pack(solutions,fmt,'urp-compare')
+    if fmt=='json': return pack(solutions,fmt,'plan-compare')
     if fmt=='csv':
-        rows=[dict(run_id=s['run_id'],scenario=s['scenario_id'],instance_sha256=s['instance_sha256'],algorithm=s['algorithm']['id'],state=s['state'],status=s['status'],cost=s['objective']['value'],unit=s['objective']['unit'],valid=(s.get('check')or{}).get('valid')) for s in solutions]
-        return rows_csv(rows,['run_id','scenario','instance_sha256','algorithm','state','status','cost','unit','valid'],'urp-compare')
+        rows=[dict(run_id=s['run_id'],scenario=s['scenario_id'],instance_sha256=s['instance_sha256'],algorithm=s['algorithm']['id'],name=s['algorithm'].get('name'),state=s['state'],status=s['status'],cost=s['objective']['value'],unit=s['objective']['unit'],valid=(s.get('check')or{}).get('valid'),
+                   length=s['metrics'].get('length'),total_distance_m=s['metrics'].get('total_distance_m'),makespan_s=s['metrics'].get('makespan_s'),vehicles_used=s['metrics'].get('vehicles_used'),trips=s['metrics'].get('trips'),balance_cv=s['metrics'].get('balance_cv'),gap_to_bks_pct=s['metrics'].get('gap_to_bks_pct'),wall_s=s['metrics'].get('wall_s')) for s in solutions]
+        return rows_csv(rows,['run_id','scenario','instance_sha256','algorithm','name','state','status','cost','unit','valid','length','total_distance_m','makespan_s','vehicles_used','trips','balance_cv','gap_to_bks_pct','wall_s'],'plan-compare')
     raise ValueError('格式须为 json/csv')

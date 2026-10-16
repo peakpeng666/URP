@@ -32,8 +32,8 @@ SIM_SCRIPT_REL = 'src/lab/ros/urp_sim_session.py'
 WORLDS = ('warehouse', 'depot', 'maze')
 SIM_STOP_WAIT_S = 120.0
 SIM_ESCALATION = ((signal.SIGINT, 15.0), (signal.SIGTERM, 10.0), (signal.SIGKILL, 5.0))
-BRIDGE_ISSUE = ('ros_gz_bridge 0.244.26 退出堆损坏根因未定位；会话默认仅对 parameter_bridge 加载 _exit(main 状态) 临时缓解，'
-                '不代表内存缺陷修复。URP_BRIDGE_FIX=0 可关闭；证据见 setup/2026-10-15/integration/。')
+BRIDGE_ISSUE = ('ros_gz_bridge 0.244.26 退出时堆损坏（上游问题，根因未定位）；会话给 parameter_bridge 加了退出垫片，'
+                '以 main 的返回码直接退出来绕开。URP_BRIDGE_FIX=0 可关闭，记录见 setup/2026-10-15/integration/。')
 BRIDGE_CRASH = re.compile(r'free\(\): corrupted|corrupted unsorted chunks|process has died.*exit code -6|exit code -6')
 PHASE_TEXT = {'stopped': '已停止', 'starting': '启动中', 'undocking': '离开充电座', 'localizing': '定位初始化',
               'nav2_starting': 'Nav2 启动中', 'ready': '就绪', 'executing': '执行中', 'stopping': '关闭中', 'failed': '失败'}
@@ -411,7 +411,7 @@ class ServiceManager:
             facts.append({'label': '求解并发', 'value': str(a['concurrency'])})
         state, detail = ('running', f'127.0.0.1:{self.port}，提供面板、/lab/api 与 /api 代理') if dist.exists() else \
             ('degraded', '前端未构建：运行 bash setup/run.sh lab-setup')
-        return _service('gateway', '科研面板网关', 'process', state, detail, pid=os.getpid(), port=self.port,
+        return _service('gateway', '工作台网关', 'process', state, detail, pid=os.getpid(), port=self.port,
                         url=f'http://127.0.0.1:{self.port}/', started_utc=self.started_utc, log='gateway', facts=facts)
 
     def _archive_service(self) -> dict:
@@ -669,6 +669,9 @@ class ServiceManager:
         with self._lock:
             if self.sim_alive() or self._busy.get('sim'):
                 raise ServiceError(409, 'sim_running', '已有仿真会话在运行或正在关闭；请先停止')
+            field = getattr(self, 'field_sim', None)
+            if field is not None and field.alive:
+                raise ServiceError(409, 'fieldsim_running', '田间多车仿真正在运行，请先停止')
             ros = self.ros()
             if ros['state'] == 'unavailable':
                 raise ServiceError(503, 'ros_unavailable', f"ROS 不可用：{ros['detail']}")

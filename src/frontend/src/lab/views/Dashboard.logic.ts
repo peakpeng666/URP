@@ -16,19 +16,19 @@ export interface KnownIssue {
 export const SCOPE_NOTES: KnownIssue[] = [
   {
     source: '历史数据',
-    text: '历史实验数据（data/、experiments/）不随源码恢复；未恢复时 BPP 历史结果各页显示"无历史数据"，不展示任何旧结论。',
+    text: 'BPP 历史结果在「#/bpp」，原始实验数据放回 data/、experiments/ 后自动显示。',
   },
   {
-    source: '机器人替身',
-    text: '仿真使用官方 TurtleBot4 与官方 warehouse/depot/maze 世界作为农业机器人的替身；作物行、田头由地图通道代理，不代表真实农机动力学或田间环境。',
+    source: '仿真机器人',
+    text: '仿真使用官方 TurtleBot4，warehouse / depot / maze 世界里的通道对应作物行与地头。',
   },
   {
     source: '规划来源',
-    text: 'URP 规划（项目算法或第三方求解器给出的任务顺序与路线）与 Nav2 自身规划分开记录：FollowPath 模式由 Nav2 控制器跟踪 URP 路径；Nav2 航点模式中 URP 只给顺序，路径由 Nav2 NavFn 规划；从当前位置到路线起点的接驳段始终由 Nav2 规划。',
+    text: '「沿规划路径行驶」由 Nav2 控制器跟踪工作台算出的路径；「逐点导航」只用工作台给的任务顺序，每段路径由 Nav2 自己规划；从当前位置到路线起点的接驳段都由 Nav2 规划。',
   },
   {
     source: '坐标系',
-    text: '基准算例坐标无物理单位，不能送入仿真；只有地图坐标（米，与 Gazebo 世界对齐）的结果可以执行。',
+    text: '基准算例没有物理单位；实地坐标和仿真地图坐标都以米计，仿真地图上的方案可以直接送进仿真。',
   },
 ];
 

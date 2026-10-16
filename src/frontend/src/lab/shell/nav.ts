@@ -29,7 +29,7 @@ export interface NavSection {
 export const NAV_SECTIONS: NavSection[] = [
   {
     id: 'lab',
-    title: '科研面板',
+    title: '工作台',
     items: [
       { view: 'lab', label: '概览', href: '#/', icon: LayoutDashboard },
       { view: 'plan', label: '规划', href: '#/plan', icon: RouteIcon },

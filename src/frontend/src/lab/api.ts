@@ -39,7 +39,7 @@ async function request<T>(method: 'GET' | 'POST' | 'DELETE', path: string, body?
     });
   } catch (cause) {
     if ((cause as Error)?.name === 'AbortError') throw cause;
-    throw new LabApiError('无法连接科研面板网关（127.0.0.1:4100）。请用 bash setup/run.sh lab 启动。', 'network', 0);
+    throw new LabApiError('无法连接工作台网关（127.0.0.1:4100），请运行 bash setup/run.sh lab。', 'network', 0);
   }
   const text = await response.text();
   let data: unknown = null;
@@ -118,7 +118,7 @@ export async function downloadCompare(run_ids: string[], format: 'csv' | 'json')
   const name = /filename\*?=(?:UTF-8'')?"?([^";]+)/i.exec(response.headers.get('Content-Disposition') ?? '')?.[1];
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = name ? decodeURIComponent(name) : `urp-compare.${format}`;
+  a.download = name ? decodeURIComponent(name) : `plan-compare.${format}`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
@@ -130,13 +130,38 @@ type Listener = (event: string, data: unknown) => void;
 /**
  * One shared EventSource for the whole app. EventSource reconnects by itself;
  * `connected` is exposed so views can show a "网关断开" state instead of stale data.
+ *
+ * The stream is closed while the page is hidden or cached (bfcache): browsers allow only six
+ * HTTP/1.1 connections per host, and every tab or cached page holding a stream takes one, so a
+ * few background tabs could otherwise stall every request of the visible one.
  */
 class EventHub {
   private source: EventSource | null = null;
   private listeners = new Set<Listener>();
   private stateListeners = new Set<() => void>();
+  private hiddenTimer = 0;
   connected = false;
   private readonly types = ['services', 'job', 'run', 'sim_state', 'sim_run', 'log', 'ping'];
+
+  constructor() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    window.addEventListener('pagehide', () => this.close());
+    window.addEventListener('pageshow', (e) => {
+      if ((e as PageTransitionEvent).persisted) this.ensure();
+    });
+    document.addEventListener('visibilitychange', () => {
+      window.clearTimeout(this.hiddenTimer);
+      if (document.visibilityState === 'hidden') this.hiddenTimer = window.setTimeout(() => this.close(), 10_000);
+      else this.ensure();
+    });
+  }
+
+  private close() {
+    window.clearTimeout(this.hiddenTimer);
+    this.source?.close();
+    this.source = null;
+    this.setConnected(false);
+  }
 
   subscribe(listener: Listener): () => void {
     this.listeners.add(listener);
@@ -162,6 +187,7 @@ class EventHub {
 
   private ensure() {
     if (this.source || typeof EventSource === 'undefined') return;
+    if (!this.listeners.size && !this.stateListeners.size) return;
     const source = new EventSource(`${BASE}/events`);
     this.source = source;
     source.onopen = () => this.setConnected(true);
@@ -276,7 +302,7 @@ export const fmt = {
   },
   sourceLabel(source: string): string {
     return (
-      { project: 'URP 项目', third_party: '第三方', panel_baseline: '面板基线', nav2: 'Nav2' } as Record<string, string>
+      { project: '本项目', third_party: '第三方', panel_baseline: '基线', nav2: 'Nav2' } as Record<string, string>
     )[source] ?? source;
   },
 };

@@ -433,15 +433,16 @@ function RecentRuns({ runs, error }: { runs: Solution[] | null; error: Error | n
 }
 
 const STEPS: { text: string; detail: string; href?: string }[] = [
-  { text: '选择或导入场景', detail: '地图坐标场景（米）可后续仿真；基准算例（无单位）只做算法比较。', href: '#/plan' },
-  { text: '设置任务点与仓库（起点）', detail: '可编辑的字段由场景声明；改动后实例哈希随之改变。' },
-  { text: '选择算法，或接受推荐', detail: '规则推荐与已评估的学习原型分别标识；查看模型适用范围、固定预算和独立测试结果。' },
-  { text: '求解并核对', detail: '查看真实路线、指标和独立检查器结论；不可行时不画路线。' },
-  { text: '比较与导出', detail: '同一场景、同一实例、同一成本单位的运行才直接比较。', href: '#/runs' },
-  { text: '在仿真中执行', detail: '地图坐标结果可交给 TurtleBot4 + Nav2 执行，并回传轨迹与任务进度。', href: '#/sim' },
+  { text: '描述任务或打开场景', detail: '一句话生成任务地图，也可以打开仿真地图、CVRPLIB 算例或真实田块。', href: '#/plan' },
+  { text: '在地图上调整', detail: '拖动任务点、地块、障碍和车库，修改自动保存。' },
+  { text: '推荐算法', detail: '按任务规模、障碍、聚集度和目标排序，并给出理由。' },
+  { text: '求解与验算', detail: '多车路线按颜色区分，每个方案逐项验算。' },
+  { text: '对比与导出', detail: '同一场景的方案并排比较，导出 JSON / CSV / GeoJSON。', href: '#/runs' },
+  { text: '送进仿真', detail: '仿真地图上的方案交给 TurtleBot4 + Nav2 执行，回传实际轨迹。', href: '#/sim' },
 ];
 
-export function Dashboard() {
+/** `embedded`: inside the studio's System workspace, without the page header and getting-started card. */
+export function Dashboard({ embedded = false }: { embedded?: boolean }) {
   const connected = useGatewayConnected();
   const services = useLabResource('dash:services', () => lab.services(), {
     event: 'services',
@@ -486,21 +487,13 @@ export function Dashboard() {
   const recent = runs.data ? newestFirst(runs.data.runs).slice(0, 6) : null;
   const stale = !!services.error && !!services.data;
 
-  return (
-    <Page
-      title="URP 科研面板"
-      subtitle="面向农业机器人的路径规划算法库构建与智能推荐方法研究 · 仅仿真，不连接真实机器人"
-      actions={
-        <>
-          <Button size="sm" icon={RefreshCw} onClick={reloadAll} aria-label="刷新全部状态">
-            刷新
-          </Button>
-          <LinkButton href="#/plan" size="sm" variant="primary" icon={ArrowRight}>
-            开始规划
-          </LinkButton>
-        </>
-      }
-    >
+  const refresh = (
+    <Button size="sm" icon={RefreshCw} onClick={reloadAll} aria-label="刷新全部状态">
+      刷新
+    </Button>
+  );
+  const body = (
+    <>
       {!connected && services.error && (
         <Notice tone="error">
           {services.error.message}
@@ -512,11 +505,14 @@ export function Dashboard() {
         <div className={s.col}>
           <Card
             title="服务与环境"
-            subtitle={connected ? '实时（事件流）' : '事件流未连接 · 每 5 秒重试读取'}
+            subtitle={connected ? '实时' : '连接中断，每 5 秒重试'}
             actions={
-              <Button size="sm" variant="plain" icon={FileText} onClick={() => setLog({ open: true, name: null })}>
-                全部日志
-              </Button>
+              <>
+                {embedded && refresh}
+                <Button size="sm" variant="plain" icon={FileText} onClick={() => setLog({ open: true, name: null })}>
+                  全部日志
+                </Button>
+              </>
             }
             flush
           >
@@ -560,7 +556,7 @@ export function Dashboard() {
             }}
           />
 
-          <Card title="快速开始">
+          {!embedded && <Card title="快速开始">
             <ol className={s.steps}>
               {STEPS.map((step, i) => (
                 <li key={step.text}>
@@ -572,9 +568,9 @@ export function Dashboard() {
                 </li>
               ))}
             </ol>
-          </Card>
+          </Card>}
 
-          <Card title="已知问题与范围" subtitle="实时已知问题来自各服务与仿真会话；范围说明为固定内容">
+          <Card title="已知问题与说明">
             <ul className={s.issues}>
               {issues.map((i) => (
                 <li key={`${i.source}:${i.text}`}>
@@ -600,6 +596,23 @@ export function Dashboard() {
       </div>
 
       <LogSheet open={log.open} initialLog={log.name} onClose={() => setLog({ open: false, name: null })} />
+    </>
+  );
+  if (embedded) return <div className={s.embedded}>{body}</div>;
+  return (
+    <Page
+      title="农业机器人路径规划工作台"
+      subtitle="面向农业机器人的路径规划算法库构建与智能推荐方法研究"
+      actions={
+        <>
+          {refresh}
+          <LinkButton href="#/plan" size="sm" variant="primary" icon={ArrowRight}>
+            开始规划
+          </LinkButton>
+        </>
+      }
+    >
+      {body}
     </Page>
   );
 }

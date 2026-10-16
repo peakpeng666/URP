@@ -62,12 +62,12 @@ function StatusFooter({ connected, sim }: { connected: boolean; sim: SimState | 
 
 function Brand() {
   return (
-    <a className={s.brand} href="#/" aria-label="URP 科研面板，返回概览">
+    <a className={s.brand} href="#/" aria-label="农业机器人路径规划工作台">
       <span className={s.appIcon} aria-hidden>
         <Sprout size={17} strokeWidth={2} />
       </span>
       <span className={s.brandText}>
-        <span className={s.brandName}>URP 科研面板</span>
+        <span className={s.brandName}>农业机器人路径规划工作台</span>
         <span className={s.brandSub}>农业机器人路径规划</span>
       </span>
     </a>
@@ -132,7 +132,7 @@ export function Sidebar({ route }: { route: Route }) {
           {menuOpen ? <X size={18} aria-hidden /> : <Menu size={18} aria-hidden />}
         </button>
         <div className={s.mobileTitle}>
-          <span className={s.mobileSection}>{section?.title ?? 'URP 科研面板'}</span>
+          <span className={s.mobileSection}>{section?.title ?? '农业机器人路径规划工作台'}</span>
           <span className={s.mobileView}>{VIEW_TITLES[route.view]}</span>
         </div>
         <span className={s.mobileStatus} title={connected ? '网关已连接' : '网关未连接'}>

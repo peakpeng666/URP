@@ -25,6 +25,8 @@ def to_sim_plan(solution, scenario, mode):
             legs.extend(r['execution_legs'])
         else:
             legs.extend([list(p) for p in densify([a,b],.05)] for a,b in zip(r['polyline'],r['polyline'][1:]) if math.dist(a,b)>1e-8)
+        if scenario['problem_class']=='point_to_point':
+            tasks.append(dict(task=0,label='终点',xy=list(inst['goal'][:2]))); continue
         for t in r['sequence']:
             if scenario['problem_class']=='turn_routing':
                 c=next(c for c in inst['customers'] if c['id']==t); xy=inst['coordinates'][str(c['node'])]; label=c.get('label',str(t))

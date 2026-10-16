@@ -39,7 +39,7 @@ case "$operation" in
       --label "run-$(date -u +%Y%m%d-%H%M%S)-$$" "${navigation_flags[@]}" "$@"
     ;;
   lab)
-    # 科研面板网关 127.0.0.1:4100；前端缺失或比源码旧时先构建。
+    # 工作台网关 127.0.0.1:4100；前端缺失或比源码旧时先构建。
     lab_node_path
     dist_index=src/frontend/dist/index.html
     if [[ ! -f "$dist_index" ]] || [[ -n "$(find src/frontend/src src/frontend/core src/frontend/index.html -newer "$dist_index" -not -path '*/node_modules/*' -print -quit 2>/dev/null)" ]]; then
@@ -48,6 +48,11 @@ case "$operation" in
         printf '前端构建失败；停止启动，避免把旧页面作为当前实现。\n' >&2
         exit 1
       fi
+    fi
+    overlay_dir=setup/2026-10-15/deployment/runtime
+    if [[ ! -f $overlay_dir/tf-repro/liburp_tf_buffer.so || ! -f $overlay_dir/liburp_gui_lifetime.so ]]; then
+      printf '重建仿真修补库（TF2 / GUI，与验收二进制逐字节一致）…\n'
+      bash src/lab/ros/native/rebuild-ros-overlays.sh || printf '仿真修补库重建失败；规划功能不受影响，仿真启动会提示原因。\n' >&2
     fi
     cd src/lab
     exec .venv/bin/python -m urp_lab serve "$@"
@@ -65,6 +70,7 @@ subprocess.run(['uv','pip','install','--no-deps','--python',str(lab/'.venv/bin/p
 PY
     fi
     if [[ ! -d src/frontend/node_modules ]]; then (cd src/frontend && npm ci); fi
+    bash src/lab/ros/native/rebuild-ros-overlays.sh
     exec bash setup/profile.sh frontend npm run build --prefix src/frontend
     ;;
   lab-stop)

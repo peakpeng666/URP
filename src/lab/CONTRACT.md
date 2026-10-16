@@ -218,7 +218,7 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 → 202 `{"accepted": true}`；正在执行时 409。
 - `POST /cancel`、`POST /gui {"on":bool}`、`POST /rviz {"on":bool}`、`POST /shutdown`（有序关闭后进程退出，写 `session-report.json`）。
 - `GET /runs/{sim_run_id}` → SimRun（含完整轨迹）。
-- ROS 话题（供 RViz）：`/urp/planned_path`（nav_msgs/Path，transient local）、`/urp/actual_path`（真值轨迹，nav_msgs/Path）、`/urp/tasks`（visualization_msgs/MarkerArray：待访/已达/未达三色 + 标签）、`/urp/status_text`（Marker 文本）。Nav2 自身路径仍为 `/plan`，在 RViz 中用不同颜色。
+- ROS 话题（供 RViz）：`/workbench/planned_path`（nav_msgs/Path，transient local）、`/workbench/actual_path`（真值轨迹，nav_msgs/Path）、`/workbench/tasks`（visualization_msgs/MarkerArray：待访/已达/未达三色 + 标签）、`/workbench/status_text`（Marker 文本）。Nav2 自身路径仍为 `/plan`，在 RViz 中用不同颜色。
 
 
 ## 5. 已实现的验收约束（2026-10-15）
@@ -237,3 +237,56 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 - `POST /lab/api/shutdown {}` 为整体有序关闭；API 请求不伪造 SIGINT。Ctrl+C 使用正常信号语义，终端返回 130 表示用户中断，不代表所有子组件返回 0；以清理报告逐项判断。
 - 覆盖基线分别报告内缩作业区面积、扫掠覆盖面积/比例及 `turn_radius_enforced=false`。检查器复核扫掠和连接段；路线跑完不能声称全田块覆盖。所有输出的 `.geojson` 是带本地坐标说明的几何数据，**不是 WGS84/RFC7946 经纬度文件**，不得直接用于地理定位。
 - 用户入口及证据索引只维护在 `setup/README.md` 和 `setup/2026-10-15/integration/REPORT.md`；本契约不是第二份操作指南。
+
+## 5. 工作台扩展（2026-10-15 第二轮）
+
+### 5.1 新增坐标系与问题类型
+- `frame.kind = "field"`：实地 / 生成农田的局部米制坐标（`units: "m"`，可带 `crs`、`offset`），可在二维中比较，不进入 Gazebo。
+- `fleet_routing`（多车任务分配与路径）：`{boundary, plots[{id,name,crop,rows_deg,polygon}], obstacles[{id,kind,name,polygon}], depot, tasks[{id,xy,demand,label,plot,service_s}], vehicles{count,capacity,speed_mps,trips:'multi'|'single',names}, objective:'total_distance'|'makespan', robot_radius, units:'m'}`。障碍 `kind ∈ pond|building|greenhouse|tree|ditch|rock|other`。距离为机器人半径膨胀障碍上的可视图最短路。
+  结果 route 额外字段：`vehicle_name, color, trips[[task ids]], duration_s`；metrics：`total_distance_m, makespan_s, longest_route_m, vehicles_used, fleet_size, trips, balance_cv, capacity_utilization, detour_ratio, per_vehicle[]`。目标为 makespan 时 `objective.unit = 's'`。
+- `point_to_point`：`{start:[x,y,yaw], goal:[x,y,yaw], motion_model:'holonomic'|'dubins'|'reeds_shepp', turning_radius, robot_radius, clearance_margin, goal_tolerance}`，地图坐标，可仿真（单条路线，终点为唯一任务点）。
+- `euclidean_cvrp.objective` 可为 `sum_rounded_euclidean_distance`（TSPLIB EUC_2D，CVRPLIB 用）；场景可带 `reference{bks, optimal, routes}`，结果给出 `metrics.gap_to_bks_pct`。
+- 所有结果可带 `trace: [[秒, 当前最好目标值], …]`（PyVRP、OR-Tools、OMPL 渐近最优规划器）。
+
+### 5.2 新增接口（`/lab/api`）
+| 方法 | 路径 | 用途 |
+|---|---|---|
+| GET | `compose/examples` | 示例任务描述 |
+| POST | `compose/parse {text}` | 解析结果 `{spec, found, defaults, cards}` |
+| POST | `compose {text, seed?, overrides?, field_id?}` | 生成并保存多车任务地图（201，返回场景） |
+| PUT | `scenarios/{id} {instance?, title?, summary?}` | 更新我的场景（内置 / 资源库 403） |
+| POST | `scenarios/{id}/fork {instance?, title?}` | 另存为我的场景 |
+| POST | `scenarios/import/geojson {geojson, title?, vehicles?}` | GeoJSON 导入 |
+| GET | `scenarios/{id}/export?format=json\|geojson` | 场景导出 |
+| GET | `library`、`library/cvrplib/sets`、`library/cvrplib/instances?set=&q=` | CVRPLIB 目录 |
+| GET / POST | `library/fields?country=&q=`、`library/fields/fetch {images}`、`library/fields/{id}/image`、`library/fields/{id}/outline.svg` | Fields2Benchmark |
+| GET | `references?topic=&q=`、`references.bib?keys=` | 文献与 BibTeX |
+| GET | `source?path=` | 算法源码（白名单目录） |
+| POST / GET | `studies`、`studies/{id}`、`studies/{id}/cancel`、`studies/{id}/analysis`、`studies/{id}/instance-space`、`studies/{id}/export?format=csv\|json\|latex` | 研究课题与统计分析 |
+| POST | `analysis {run_ids}` | 任意运行集合的统计分析 |
+
+场景 id：CVRPLIB 为 `cvrplib-<算例名小写>`，真实田块为 `field-<国家>-field-<编号>`，打开后记入“最近打开”。
+
+## 6. 田间多车仿真与浏览器里的 ROS / Gazebo 视图（2026-10-16）
+
+### 6.1 接口（`/lab/api`）
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `fieldsim` | 当前田间仿真状态：`phase`（idle / starting / running / finished / failed / stopped）、`running`、`sim_time`、`real_time_factor`、`vehicles[]`（每车状态、位姿、速度、完成度、到达任务数、里程、横向偏差、规划里程 / 用时）、`metrics`（结束后：规划与执行的最晚完成时间、总里程、到达任务数、横向偏差）、`components`、`web`、`errors`、`warnings` |
+| POST | `fieldsim {run_id, real_time_factor?=4, gui?, rviz?}` | 用某个已完成的 `fleet_routing` 运行生成 Gazebo 世界并启动会话；与 TurtleBot4 会话互斥 |
+| POST | `fieldsim/stop` | 有序关闭（会话写 `session-report.json`，含各组件返回码与残留进程检查） |
+| POST | `fieldsim/window {kind: gui\|rviz, on}` | 打开 / 关闭原生 Gazebo GUI 或 RViz2 窗口 |
+| GET | `fieldsim/results?run_id=`、`fieldsim/results/{session_id}` | 历次执行摘要 / 完整结果（含各车轨迹与任务到达时间） |
+| GET | `ros/robots/{model}.urdf` | 用系统 ROS 的 xacro 展开官方 TurtleBot4 描述（`turtlebot4`、`turtlebot4_lite`），缓存在 `runtime/library/robots/` |
+| GET | `ros/package/{package}/{path}` | `turtlebot4_description`、`irobot_create_description` 包内的网格文件，供 URDF 的 `package://` 引用 |
+
+### 6.2 会话与世界
+- 世界生成：`urp_lab/fieldworld.py`。世界坐标 = 任务地图坐标（米）。田块、地块、作物行（沿 `rows_deg`，只做显示）、障碍为二进制 STL 网格（Gazebo 与 gzweb 都能读；障碍碰撞用 SDF `polyline`），车库、任务标记、每车一台差速机器人（官方 `DiffDrive` 系统，0.8 × 0.56 m，各车碰撞掩码互不相交，只与地面和障碍碰撞）。
+- 会话进程：`src/lab/ros/field_sim_session.py`（系统 Python 3.10，控制端口 127.0.0.1:4192）。组件：`ign gazebo -s`、一个 `ros_gz_bridge parameter_bridge`（`/clock`、`/world/<w>/dynamic_pose/info → /ground_truth/poses`、每车 `/vehicle_i/cmd_vel`、`/vehicle_i/odom`）、Foxglove Bridge（127.0.0.1:8765）、Gazebo WebSocket 服务（9002，每会话随机授权密钥，资源路径限定为会话目录与 ROS share）、可选 Gazebo GUI 与 RViz2。
+- 控制：每车纯追踪，前视 1.4 m，不越过下一个未到达任务；进入 0.45 m 记为到达，有 `service_s` 时原地停留；60 s 无进展记为受阻；总时限为规划最晚完成时间的 2.5 倍加 120 s。
+- ROS 话题（`map` 坐标系）：`/workbench/field`、`/workbench/routes`、`/workbench/tasks`（transient local）、`/workbench/trails`、`/workbench/vehicles`（MarkerArray）、`/workbench/fleet_status`（std_msgs/String JSON，约 5 Hz）、TF `map → vehicle_i/base_link`。
+- TurtleBot4 会话也同时启动 Foxglove Bridge 与 Gazebo WebSocket 服务（`--no-web` 关闭），话题改名为 `/workbench/planned_path`、`/workbench/actual_path`、`/workbench/tasks`、`/workbench/status_text`，真值 `/ground_truth/poses`，RViz 配置 `src/lab/ros/workbench.rviz`。
+
+### 6.3 前端
+- `studio/ros/foxglove.ts`：唯一的 Foxglove WebSocket 连接（子协议 `foxglove.sdk.v1`），用 `@foxglove/rosmsg` + `@foxglove/rosmsg2-serialization` 解码 CDR，按话题引用计数订阅。
+- `studio/ros/RosScene.tsx`（R3F）：地图、代价地图、激光、Nav2 路径、MarkerArray、TF、`urdf-loader` 载入的 TurtleBot4。`studio/ros/GazeboView.tsx`：gzweb `SceneManager`。`studio/ros/Telemetry.tsx`：uPlot。`studio/panels/FieldSimPanel.tsx`：田间仿真控制与结果。

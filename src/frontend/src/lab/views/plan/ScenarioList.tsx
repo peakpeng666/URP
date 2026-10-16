@@ -12,6 +12,8 @@ export function FrameBadge({ frame }: { frame: ScenarioSummary['frame'] }) {
     <Badge tone="teal" title="ROS map 坐标系，单位米，附官方地图">
       地图·米 · {frame.world}
     </Badge>
+  ) : frame.kind === 'field' ? (
+    <Badge tone="green" title="实地局部坐标，单位米">实地·米</Badge>
   ) : (
     <Badge tone="gray" title="基准算例坐标，无物理单位，不能直接仿真">
       基准·无量纲

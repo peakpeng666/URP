@@ -18,7 +18,7 @@ export type ViewName =
   | 'evidence'
   | 'notfound';
 
-/** URP Lab views (科研面板) do not depend on the historical BPP exports. */
+/** Workbench views do not depend on the historical BPP exports. */
 export const LAB_VIEWS: ReadonlySet<ViewName> = new Set(['lab', 'plan', 'sim', 'runs', 'archive']);
 
 export interface Route {

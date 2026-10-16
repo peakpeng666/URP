@@ -1,0 +1,1467 @@
+{
+ "source": "DOI 内容协商（doi.org，application/x-bibtex）与 Crossref 检索，2026-10-15；无 DOI 的条目手工录入：holm1979, demsar2006, augerat1995, christofides1979, queiroga2022xml, ortools, cvrplib",
+ "references": [
+  {
+   "key": "angelopoulos2024crc",
+   "type": "misc",
+   "title": "Conformal Risk Control",
+   "authors": [
+    "Angelopoulos, Anastasios N.",
+    "Bates, Stephen",
+    "Fisch, Adam",
+    "Lei, Lihua",
+    "Schuster, Tal"
+   ],
+   "year": 2022,
+   "venue": "arXiv",
+   "volume": null,
+   "number": null,
+   "pages": null,
+   "doi": "10.48550/ARXIV.2208.02814",
+   "url": "https://arxiv.org/abs/2208.02814",
+   "tags": [
+    "selection"
+   ],
+   "bibtex": "@misc{angelopoulos2024crc,\n  doi = {10.48550/ARXIV.2208.02814},\n  url = {https://arxiv.org/abs/2208.02814},\n  author = {Angelopoulos, Anastasios N. and Bates, Stephen and Fisch, Adam and Lei, Lihua and Schuster, Tal},\n  keywords = {Methodology (stat.ME), Artificial Intelligence (cs.AI), Machine Learning (cs.LG), Statistics Theory (math.ST), Machine Learning (stat.ML), FOS: Computer and information sciences, FOS: Computer and information sciences, FOS: Mathematics, FOS: Mathematics},\n  title = {Conformal Risk Control},\n  publisher = {arXiv},\n  year = {2022},\n  copyright = {arXiv.org perpetual, non-exclusive license}\n}"
+  },
+  {
+   "key": "arnold2019ags",
+   "type": "article",
+   "title": "Efficiently solving very large-scale routing problems",
+   "authors": [
+    "Arnold, Florian",
+    "Gendreau, Michel",
+    "Sörensen, Kenneth"
+   ],
+   "year": 2019,
+   "venue": "Computers &amp; Operations Research",
+   "volume": "107",
+   "number": null,
+   "pages": "32–42",
+   "doi": "10.1016/j.cor.2019.03.006",
+   "url": "http://dx.doi.org/10.1016/j.cor.2019.03.006",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@article{arnold2019ags, title={Efficiently solving very large-scale routing problems}, volume={107}, ISSN={0305-0548}, url={http://dx.doi.org/10.1016/j.cor.2019.03.006}, DOI={10.1016/j.cor.2019.03.006}, journal={Computers &amp; Operations Research}, publisher={Elsevier BV}, author={Arnold, Florian and Gendreau, Michel and Sörensen, Kenneth}, year={2019}, month=July, pages={32–42} }"
+  },
+  {
+   "key": "augerat1995",
+   "type": "techreport",
+   "title": "Computational Results with a Branch and Cut Code for the Capacitated Vehicle Routing Problem",
+   "authors": [
+    "Augerat, Philippe",
+    "Belenguer, Jos\\'e Manuel",
+    "Benavent, Enrique",
+    "Corber\\'an, Angel",
+    "Naddef, Denis",
+    "Rinaldi, Giovanni"
+   ],
+   "year": 1995,
+   "venue": "Institut National Polytechnique de Grenoble",
+   "volume": null,
+   "number": "RR 949-M",
+   "pages": null,
+   "doi": null,
+   "url": "https://www.osti.gov/etdeweb/biblio/289002",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@techreport{augerat1995,\n  author = {Augerat, Philippe and Belenguer, Jos{\\'e} Manuel and Benavent, Enrique and Corber{\\'a}n, Angel and Naddef, Denis and Rinaldi, Giovanni},\n  title = {Computational Results with a Branch and Cut Code for the Capacitated Vehicle Routing Problem},\n  institution = {Institut National Polytechnique de Grenoble}, number = {RR 949-M}, year = {1995},\n  url = {https://www.osti.gov/etdeweb/biblio/289002}\n}"
+  },
+  {
+   "key": "bochtis2008headland",
+   "type": "article",
+   "title": "Minimising the non-working distance travelled by machines operating in a headland field pattern",
+   "authors": [
+    "Bochtis, D.D.",
+    "Vougioukas, S.G."
+   ],
+   "year": 2008,
+   "venue": "Biosystems Engineering",
+   "volume": "101",
+   "number": "1",
+   "pages": "1–12",
+   "doi": "10.1016/j.biosystemseng.2008.06.008",
+   "url": "http://dx.doi.org/10.1016/j.biosystemseng.2008.06.008",
+   "tags": [
+    "agriculture",
+    "coverage",
+    "turn"
+   ],
+   "bibtex": "@article{bochtis2008headland, title={Minimising the non-working distance travelled by machines operating in a headland field pattern}, volume={101}, ISSN={1537-5110}, url={http://dx.doi.org/10.1016/j.biosystemseng.2008.06.008}, DOI={10.1016/j.biosystemseng.2008.06.008}, number={1}, journal={Biosystems Engineering}, publisher={Elsevier BV}, author={Bochtis, D.D. and Vougioukas, S.G.}, year={2008}, month=Sept, pages={1–12} }"
+  },
+  {
+   "key": "braysy2011turn",
+   "type": "article",
+   "title": "The mixed capacitated general routing problem with turn penalties",
+   "authors": [
+    "Bräysy, Olli",
+    "Martínez, Eulalia",
+    "Nagata, Yuichi",
+    "Soler, David"
+   ],
+   "year": 2011,
+   "venue": "Expert Systems with Applications",
+   "volume": "38",
+   "number": "10",
+   "pages": "12954–12966",
+   "doi": "10.1016/j.eswa.2011.04.092",
+   "url": "http://dx.doi.org/10.1016/j.eswa.2011.04.092",
+   "tags": [
+    "routing",
+    "turn"
+   ],
+   "bibtex": "@article{braysy2011turn, title={The mixed capacitated general routing problem with turn penalties}, volume={38}, ISSN={0957-4174}, url={http://dx.doi.org/10.1016/j.eswa.2011.04.092}, DOI={10.1016/j.eswa.2011.04.092}, number={10}, journal={Expert Systems with Applications}, publisher={Elsevier BV}, author={Bräysy, Olli and Martínez, Eulalia and Nagata, Yuichi and Soler, David}, year={2011}, month=Sept, pages={12954–12966} }"
+  },
+  {
+   "key": "choset2000boustrophedon",
+   "type": "article",
+   "title": "Coverage of Known Spaces: The Boustrophedon Cellular Decomposition",
+   "authors": [
+    "Choset, Howie"
+   ],
+   "year": 2000,
+   "venue": "Autonomous Robots",
+   "volume": "9",
+   "number": "3",
+   "pages": "247–253",
+   "doi": "10.1023/a:1008958800904",
+   "url": "http://dx.doi.org/10.1023/A:1008958800904",
+   "tags": [
+    "coverage"
+   ],
+   "bibtex": "@article{choset2000boustrophedon, title={Coverage of Known Spaces: The Boustrophedon Cellular Decomposition}, volume={9}, ISSN={1573-7527}, url={http://dx.doi.org/10.1023/A:1008958800904}, DOI={10.1023/a:1008958800904}, number={3}, journal={Autonomous Robots}, publisher={Springer Science and Business Media LLC}, author={Choset, Howie}, year={2000}, month=Dec, pages={247–253} }"
+  },
+  {
+   "key": "christofides1969e",
+   "type": "article",
+   "title": "An Algorithm for the Vehicle-dispatching Problem",
+   "authors": [
+    "Christofides, N.",
+    "Eilon, S."
+   ],
+   "year": 1969,
+   "venue": "Journal of the Operational Research Society",
+   "volume": "20",
+   "number": "3",
+   "pages": "309–318",
+   "doi": "10.1057/jors.1969.75",
+   "url": "http://dx.doi.org/10.1057/jors.1969.75",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@article{christofides1969e, title={An Algorithm for the Vehicle-dispatching Problem}, volume={20}, ISSN={1476-9360}, url={http://dx.doi.org/10.1057/jors.1969.75}, DOI={10.1057/jors.1969.75}, number={3}, journal={Journal of the Operational Research Society}, publisher={Informa UK Limited}, author={Christofides, N. and Eilon, S.}, year={1969}, month=Sept, pages={309–318} }"
+  },
+  {
+   "key": "christofides1979",
+   "type": "incollection",
+   "title": "The Vehicle Routing Problem",
+   "authors": [
+    "Christofides, Nicos",
+    "Mingozzi, Aristide",
+    "Toth, Paolo"
+   ],
+   "year": 1979,
+   "venue": "Combinatorial Optimization",
+   "volume": null,
+   "number": null,
+   "pages": "315--338",
+   "doi": null,
+   "url": null,
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@incollection{christofides1979,\n  author = {Christofides, Nicos and Mingozzi, Aristide and Toth, Paolo},\n  title = {The Vehicle Routing Problem},\n  booktitle = {Combinatorial Optimization},\n  editor = {Christofides, Nicos and Mingozzi, Aristide and Toth, Paolo and Sandi, Claudio},\n  publisher = {Wiley}, address = {Chichester}, pages = {315--338}, year = {1979}\n}"
+  },
+  {
+   "key": "clarke1964savings",
+   "type": "article",
+   "title": "Scheduling of Vehicles from a Central Depot to a Number of Delivery Points",
+   "authors": [
+    "Clarke, G.",
+    "Wright, J. W."
+   ],
+   "year": 1964,
+   "venue": "Operations Research",
+   "volume": "12",
+   "number": "4",
+   "pages": "568–581",
+   "doi": "10.1287/opre.12.4.568",
+   "url": "http://dx.doi.org/10.1287/opre.12.4.568",
+   "tags": [
+    "routing"
+   ],
+   "bibtex": "@article{clarke1964savings, title={Scheduling of Vehicles from a Central Depot to a Number of Delivery Points}, volume={12}, ISSN={1526-5463}, url={http://dx.doi.org/10.1287/opre.12.4.568}, DOI={10.1287/opre.12.4.568}, number={4}, journal={Operations Research}, publisher={Institute for Operations Research and the Management Sciences (INFORMS)}, author={Clarke, G. and Wright, J. W.}, year={1964}, month=Aug, pages={568–581} }"
+  },
+  {
+   "key": "clossey2001turn",
+   "type": "article",
+   "title": "Solving arc routing problems with turn penalties",
+   "authors": [
+    "Clossey, J",
+    "Laporte, G",
+    "Soriano, P"
+   ],
+   "year": 2001,
+   "venue": "Journal of the Operational Research Society",
+   "volume": "52",
+   "number": "4",
+   "pages": "433–439",
+   "doi": "10.1057/palgrave.jors.2601052",
+   "url": "http://dx.doi.org/10.1057/palgrave.jors.2601052",
+   "tags": [
+    "routing",
+    "turn"
+   ],
+   "bibtex": "@article{clossey2001turn, title={Solving arc routing problems with turn penalties}, volume={52}, ISSN={1476-9360}, url={http://dx.doi.org/10.1057/palgrave.jors.2601052}, DOI={10.1057/palgrave.jors.2601052}, number={4}, journal={Journal of the Operational Research Society}, publisher={Informa UK Limited}, author={Clossey, J and Laporte, G and Soriano, P}, year={2001}, month=Apr, pages={433–439} }"
+  },
+  {
+   "key": "croes1958twoopt",
+   "type": "article",
+   "title": "A Method for Solving Traveling-Salesman Problems",
+   "authors": [
+    "Croes, G. A."
+   ],
+   "year": 1958,
+   "venue": "Operations Research",
+   "volume": "6",
+   "number": "6",
+   "pages": "791–812",
+   "doi": "10.1287/opre.6.6.791",
+   "url": "http://dx.doi.org/10.1287/opre.6.6.791",
+   "tags": [
+    "routing"
+   ],
+   "bibtex": "@article{croes1958twoopt, title={A Method for Solving Traveling-Salesman Problems}, volume={6}, ISSN={1526-5463}, url={http://dx.doi.org/10.1287/opre.6.6.791}, DOI={10.1287/opre.6.6.791}, number={6}, journal={Operations Research}, publisher={Institute for Operations Research and the Management Sciences (INFORMS)}, author={Croes, G. A.}, year={1958}, month=Dec, pages={791–812} }"
+  },
+  {
+   "key": "cvrplib",
+   "type": "misc",
+   "title": "CVRPLIB: Capacitated Vehicle Routing Problem Library",
+   "authors": [
+    "Galgos -- PUC-Rio"
+   ],
+   "year": 2026,
+   "venue": null,
+   "volume": null,
+   "number": null,
+   "pages": null,
+   "doi": null,
+   "url": "https://galgos.inf.puc-rio.br/cvrplib/",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@misc{cvrplib,\n  title = {{CVRPLIB}: Capacitated Vehicle Routing Problem Library},\n  author = {{Galgos -- PUC-Rio}},\n  year = {2026}, url = {https://galgos.inf.puc-rio.br/cvrplib/},\n  note = {Instances and best known solutions, accessed 2026-10-15}\n}"
+  },
+  {
+   "key": "daniel2010thetastar",
+   "type": "article",
+   "title": "Theta*: Any-Angle Path Planning on Grids",
+   "authors": [
+    "Daniel, K.",
+    "Nash, A.",
+    "Koenig, S.",
+    "Felner, A."
+   ],
+   "year": 2010,
+   "venue": "Journal of Artificial Intelligence Research",
+   "volume": "39",
+   "number": null,
+   "pages": "533–579",
+   "doi": "10.1613/jair.2994",
+   "url": "http://dx.doi.org/10.1613/jair.2994",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{daniel2010thetastar, title={Theta*: Any-Angle Path Planning on Grids}, volume={39}, ISSN={1076-9757}, url={http://dx.doi.org/10.1613/jair.2994}, DOI={10.1613/jair.2994}, journal={Journal of Artificial Intelligence Research}, publisher={AI Access Foundation}, author={Daniel, K. and Nash, A. and Koenig, S. and Felner, A.}, year={2010}, month=Oct, pages={533–579} }"
+  },
+  {
+   "key": "demsar2006",
+   "type": "article",
+   "title": "Statistical Comparisons of Classifiers over Multiple Data Sets",
+   "authors": [
+    "Dem\\vsar, Janez"
+   ],
+   "year": 2006,
+   "venue": "Journal of Machine Learning Research",
+   "volume": "7",
+   "number": null,
+   "pages": "1--30",
+   "doi": null,
+   "url": "https://jmlr.org/papers/v7/demsar06a.html",
+   "tags": [
+    "statistics"
+   ],
+   "bibtex": "@article{demsar2006,\n  author = {Dem{\\v{s}}ar, Janez},\n  title = {Statistical Comparisons of Classifiers over Multiple Data Sets},\n  journal = {Journal of Machine Learning Research},\n  volume = {7}, pages = {1--30}, year = {2006},\n  url = {https://jmlr.org/papers/v7/demsar06a.html}\n}"
+  },
+  {
+   "key": "dijkstra1959",
+   "type": "article",
+   "title": "A note on two problems in connexion with graphs",
+   "authors": [
+    "Dijkstra, E. W."
+   ],
+   "year": 1959,
+   "venue": "Numerische Mathematik",
+   "volume": "1",
+   "number": "1",
+   "pages": "269–271",
+   "doi": "10.1007/bf01386390",
+   "url": "http://dx.doi.org/10.1007/BF01386390",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{dijkstra1959, title={A note on two problems in connexion with graphs}, volume={1}, ISSN={0945-3245}, url={http://dx.doi.org/10.1007/BF01386390}, DOI={10.1007/bf01386390}, number={1}, journal={Numerische Mathematik}, publisher={Springer Science and Business Media LLC}, author={Dijkstra, E. W.}, year={1959}, month=Dec, pages={269–271} }"
+  },
+  {
+   "key": "doerr2020iohanalyzer",
+   "type": "misc",
+   "title": "IOHanalyzer: Detailed Performance Analyses for Iterative Optimization Heuristics",
+   "authors": [
+    "Wang, Hao",
+    "Vermetten, Diederick",
+    "Ye, Furong",
+    "Doerr, Carola",
+    "Bäck, Thomas"
+   ],
+   "year": 2020,
+   "venue": "arXiv",
+   "volume": null,
+   "number": null,
+   "pages": null,
+   "doi": "10.48550/ARXIV.2007.03953",
+   "url": "https://arxiv.org/abs/2007.03953",
+   "tags": [
+    "statistics"
+   ],
+   "bibtex": "@misc{doerr2020iohanalyzer,\n  doi = {10.48550/ARXIV.2007.03953},\n  url = {https://arxiv.org/abs/2007.03953},\n  author = {Wang, Hao and Vermetten, Diederick and Ye, Furong and Doerr, Carola and Bäck, Thomas},\n  keywords = {Neural and Evolutionary Computing (cs.NE), FOS: Computer and information sciences, FOS: Computer and information sciences},\n  title = {IOHanalyzer: Detailed Performance Analyses for Iterative Optimization Heuristics},\n  publisher = {arXiv},\n  year = {2020},\n  copyright = {arXiv.org perpetual, non-exclusive license}\n}"
+  },
+  {
+   "key": "dolan2002profiles",
+   "type": "article",
+   "title": "Benchmarking optimization software with performance profiles",
+   "authors": [
+    "Dolan, Elizabeth D.",
+    "Moré, Jorge J."
+   ],
+   "year": 2002,
+   "venue": "Mathematical Programming",
+   "volume": "91",
+   "number": "2",
+   "pages": "201–213",
+   "doi": "10.1007/s101070100263",
+   "url": "http://dx.doi.org/10.1007/s101070100263",
+   "tags": [
+    "statistics"
+   ],
+   "bibtex": "@article{dolan2002profiles, title={Benchmarking optimization software with performance profiles}, volume={91}, ISSN={1436-4646}, url={http://dx.doi.org/10.1007/s101070100263}, DOI={10.1007/s101070100263}, number={2}, journal={Mathematical Programming}, publisher={Springer Science and Business Media LLC}, author={Dolan, Elizabeth D. and Moré, Jorge J.}, year={2002}, month=Jan, pages={201–213} }"
+  },
+  {
+   "key": "dubins1957",
+   "type": "article",
+   "title": "On Curves of Minimal Length with a Constraint on Average Curvature, and with Prescribed Initial and Terminal Positions and Tangents",
+   "authors": [
+    "Dubins, L. E."
+   ],
+   "year": 1957,
+   "venue": "American Journal of Mathematics",
+   "volume": "79",
+   "number": "3",
+   "pages": "497",
+   "doi": "10.2307/2372560",
+   "url": "http://dx.doi.org/10.2307/2372560",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{dubins1957, title={On Curves of Minimal Length with a Constraint on Average Curvature, and with Prescribed Initial and Terminal Positions and Tangents}, volume={79}, ISSN={0002-9327}, url={http://dx.doi.org/10.2307/2372560}, DOI={10.2307/2372560}, number={3}, journal={American Journal of Mathematics}, publisher={JSTOR}, author={Dubins, L. E.}, year={1957}, month=July, pages={497} }"
+  },
+  {
+   "key": "fisher1981gap",
+   "type": "article",
+   "title": "A generalized assignment heuristic for vehicle routing",
+   "authors": [
+    "Fisher, Marshall L.",
+    "Jaikumar, Ramchandran"
+   ],
+   "year": 1981,
+   "venue": "Networks",
+   "volume": "11",
+   "number": "2",
+   "pages": "109–124",
+   "doi": "10.1002/net.3230110205",
+   "url": "http://dx.doi.org/10.1002/net.3230110205",
+   "tags": [
+    "routing"
+   ],
+   "bibtex": "@article{fisher1981gap, title={A generalized assignment heuristic for vehicle routing}, volume={11}, ISSN={1097-0037}, url={http://dx.doi.org/10.1002/net.3230110205}, DOI={10.1002/net.3230110205}, number={2}, journal={Networks}, publisher={Wiley}, author={Fisher, Marshall L. and Jaikumar, Ramchandran}, year={1981}, month=June, pages={109–124} }"
+  },
+  {
+   "key": "fisher1994f",
+   "type": "article",
+   "title": "Optimal Solution of Vehicle Routing Problems Using Minimum K-Trees",
+   "authors": [
+    "Fisher, Marshall L."
+   ],
+   "year": 1994,
+   "venue": "Operations Research",
+   "volume": "42",
+   "number": "4",
+   "pages": "626–642",
+   "doi": "10.1287/opre.42.4.626",
+   "url": "http://dx.doi.org/10.1287/opre.42.4.626",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@article{fisher1994f, title={Optimal Solution of Vehicle Routing Problems Using Minimum K-Trees}, volume={42}, ISSN={1526-5463}, url={http://dx.doi.org/10.1287/opre.42.4.626}, DOI={10.1287/opre.42.4.626}, number={4}, journal={Operations Research}, publisher={Institute for Operations Research and the Management Sciences (INFORMS)}, author={Fisher, Marshall L.}, year={1994}, month=Aug, pages={626–642} }"
+  },
+  {
+   "key": "fox1997dwa",
+   "type": "article",
+   "title": "The dynamic window approach to collision avoidance",
+   "authors": [
+    "Fox, D.",
+    "Burgard, W.",
+    "Thrun, S."
+   ],
+   "year": 1997,
+   "venue": "IEEE Robotics &amp; Automation Magazine",
+   "volume": "4",
+   "number": "1",
+   "pages": "23–33",
+   "doi": "10.1109/100.580977",
+   "url": "http://dx.doi.org/10.1109/100.580977",
+   "tags": [
+    "navigation"
+   ],
+   "bibtex": "@article{fox1997dwa, title={The dynamic window approach to collision avoidance}, volume={4}, ISSN={1070-9932}, url={http://dx.doi.org/10.1109/100.580977}, DOI={10.1109/100.580977}, number={1}, journal={IEEE Robotics &amp; Automation Magazine}, publisher={Institute of Electrical and Electronics Engineers (IEEE)}, author={Fox, D. and Burgard, W. and Thrun, S.}, year={1997}, month=Mar, pages={23–33} }"
+  },
+  {
+   "key": "fox2003kld",
+   "type": "article",
+   "title": "Adapting the Sample Size in Particle Filters Through KLD-Sampling",
+   "authors": [
+    "Fox, Dieter"
+   ],
+   "year": 2003,
+   "venue": "The International Journal of Robotics Research",
+   "volume": "22",
+   "number": "12",
+   "pages": "985–1003",
+   "doi": "10.1177/0278364903022012001",
+   "url": "http://dx.doi.org/10.1177/0278364903022012001",
+   "tags": [
+    "navigation"
+   ],
+   "bibtex": "@article{fox2003kld, title={Adapting the Sample Size in Particle Filters Through KLD-Sampling}, volume={22}, ISSN={1741-3176}, url={http://dx.doi.org/10.1177/0278364903022012001}, DOI={10.1177/0278364903022012001}, number={12}, journal={The International Journal of Robotics Research}, publisher={SAGE Publications}, author={Fox, Dieter}, year={2003}, month=Dec, pages={985–1003} }"
+  },
+  {
+   "key": "friedman1937",
+   "type": "article",
+   "title": "The Use of Ranks to Avoid the Assumption of Normality Implicit in the Analysis of Variance",
+   "authors": [
+    "Friedman, Milton"
+   ],
+   "year": 1937,
+   "venue": "Journal of the American Statistical Association",
+   "volume": "32",
+   "number": "200",
+   "pages": "675–701",
+   "doi": "10.1080/01621459.1937.10503522",
+   "url": "http://dx.doi.org/10.1080/01621459.1937.10503522",
+   "tags": [
+    "statistics"
+   ],
+   "bibtex": "@article{friedman1937, title={The Use of Ranks to Avoid the Assumption of Normality Implicit in the Analysis of Variance}, volume={32}, ISSN={1537-274X}, url={http://dx.doi.org/10.1080/01621459.1937.10503522}, DOI={10.1080/01621459.1937.10503522}, number={200}, journal={Journal of the American Statistical Association}, publisher={Informa UK Limited}, author={Friedman, Milton}, year={1937}, month=Dec, pages={675–701} }"
+  },
+  {
+   "key": "galceran2013cpp",
+   "type": "article",
+   "title": "A survey on coverage path planning for robotics",
+   "authors": [
+    "Galceran, Enric",
+    "Carreras, Marc"
+   ],
+   "year": 2013,
+   "venue": "Robotics and Autonomous Systems",
+   "volume": "61",
+   "number": "12",
+   "pages": "1258–1276",
+   "doi": "10.1016/j.robot.2013.09.004",
+   "url": "http://dx.doi.org/10.1016/j.robot.2013.09.004",
+   "tags": [
+    "coverage"
+   ],
+   "bibtex": "@article{galceran2013cpp, title={A survey on coverage path planning for robotics}, volume={61}, ISSN={0921-8890}, url={http://dx.doi.org/10.1016/j.robot.2013.09.004}, DOI={10.1016/j.robot.2013.09.004}, number={12}, journal={Robotics and Autonomous Systems}, publisher={Elsevier BV}, author={Galceran, Enric and Carreras, Marc}, year={2013}, month=Dec, pages={1258–1276} }"
+  },
+  {
+   "key": "gammell2014informed",
+   "type": "inproceedings",
+   "title": "Informed RRT*: Optimal sampling-based path planning focused via direct sampling of an admissible ellipsoidal heuristic",
+   "authors": [
+    "Gammell, Jonathan D.",
+    "Srinivasa, Siddhartha S.",
+    "Barfoot, Timothy D."
+   ],
+   "year": 2014,
+   "venue": "2014 IEEE/RSJ International Conference on Intelligent Robots and Systems",
+   "volume": null,
+   "number": null,
+   "pages": "2997–3004",
+   "doi": "10.1109/iros.2014.6942976",
+   "url": "http://dx.doi.org/10.1109/IROS.2014.6942976",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@inproceedings{gammell2014informed, title={Informed RRT*: Optimal sampling-based path planning focused via direct sampling of an admissible ellipsoidal heuristic}, url={http://dx.doi.org/10.1109/IROS.2014.6942976}, DOI={10.1109/iros.2014.6942976}, booktitle={2014 IEEE/RSJ International Conference on Intelligent Robots and Systems}, publisher={IEEE}, author={Gammell, Jonathan D. and Srinivasa, Siddhartha S. and Barfoot, Timothy D.}, year={2014}, month=Sept, pages={2997–3004} }"
+  },
+  {
+   "key": "gammell2015bitstar",
+   "type": "inproceedings",
+   "title": "Batch Informed Trees (BIT*): Sampling-based optimal planning via the heuristically guided search of implicit random geometric graphs",
+   "authors": [
+    "Gammell, Jonathan D.",
+    "Srinivasa, Siddhartha S.",
+    "Barfoot, Timothy D."
+   ],
+   "year": 2015,
+   "venue": "2015 IEEE International Conference on Robotics and Automation (ICRA)",
+   "volume": null,
+   "number": null,
+   "pages": "3067–3074",
+   "doi": "10.1109/icra.2015.7139620",
+   "url": "http://dx.doi.org/10.1109/ICRA.2015.7139620",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@inproceedings{gammell2015bitstar, title={Batch Informed Trees (BIT*): Sampling-based optimal planning via the heuristically guided search of implicit random geometric graphs}, url={http://dx.doi.org/10.1109/ICRA.2015.7139620}, DOI={10.1109/icra.2015.7139620}, booktitle={2015 IEEE International Conference on Robotics and Automation (ICRA)}, publisher={IEEE}, author={Gammell, Jonathan D. and Srinivasa, Siddhartha S. and Barfoot, Timothy D.}, year={2015}, month=May, pages={3067–3074} }"
+  },
+  {
+   "key": "gammell2020bitstar",
+   "type": "article",
+   "title": "Batch Informed Trees (BIT*): Informed asymptotically optimal anytime search",
+   "authors": [
+    "Gammell, Jonathan D",
+    "Barfoot, Timothy D",
+    "Srinivasa, Siddhartha S"
+   ],
+   "year": 2020,
+   "venue": "The International Journal of Robotics Research",
+   "volume": "39",
+   "number": "5",
+   "pages": "543–567",
+   "doi": "10.1177/0278364919890396",
+   "url": "http://dx.doi.org/10.1177/0278364919890396",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{gammell2020bitstar, title={Batch Informed Trees (BIT*): Informed asymptotically optimal anytime search}, volume={39}, ISSN={1741-3176}, url={http://dx.doi.org/10.1177/0278364919890396}, DOI={10.1177/0278364919890396}, number={5}, journal={The International Journal of Robotics Research}, publisher={SAGE Publications}, author={Gammell, Jonathan D and Barfoot, Timothy D and Srinivasa, Siddhartha S}, year={2020}, month=Jan, pages={543–567} }"
+  },
+  {
+   "key": "gillett1974sweep",
+   "type": "article",
+   "title": "A Heuristic Algorithm for the Vehicle-Dispatch Problem",
+   "authors": [
+    "Gillett, Billy E.",
+    "Miller, Leland R."
+   ],
+   "year": 1974,
+   "venue": "Operations Research",
+   "volume": "22",
+   "number": "2",
+   "pages": "340–349",
+   "doi": "10.1287/opre.22.2.340",
+   "url": "http://dx.doi.org/10.1287/opre.22.2.340",
+   "tags": [
+    "routing"
+   ],
+   "bibtex": "@article{gillett1974sweep, title={A Heuristic Algorithm for the Vehicle-Dispatch Problem}, volume={22}, ISSN={1526-5463}, url={http://dx.doi.org/10.1287/opre.22.2.340}, DOI={10.1287/opre.22.2.340}, number={2}, journal={Operations Research}, publisher={Institute for Operations Research and the Management Sciences (INFORMS)}, author={Gillett, Billy E. and Miller, Leland R.}, year={1974}, month=Apr, pages={340–349} }"
+  },
+  {
+   "key": "golden1998",
+   "type": "inbook",
+   "title": "The Impact of Metaheuristics on Solving the Vehicle Routing Problem: Algorithms, Problem Sets, and Computational Results",
+   "authors": [
+    "Golden, Bruce L.",
+    "Wasil, Edward A.",
+    "Kelly, James P.",
+    "Chao, I-Ming"
+   ],
+   "year": 1998,
+   "venue": "Fleet Management and Logistics",
+   "volume": null,
+   "number": null,
+   "pages": "33–56",
+   "doi": "10.1007/978-1-4615-5755-5_2",
+   "url": "http://dx.doi.org/10.1007/978-1-4615-5755-5_2",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@inbook{golden1998, title={The Impact of Metaheuristics on Solving the Vehicle Routing Problem: Algorithms, Problem Sets, and Computational Results}, ISBN={9781461557555}, url={http://dx.doi.org/10.1007/978-1-4615-5755-5_2}, DOI={10.1007/978-1-4615-5755-5_2}, booktitle={Fleet Management and Logistics}, publisher={Springer US}, author={Golden, Bruce L. and Wasil, Edward A. and Kelly, James P. and Chao, I-Ming}, year={1998}, pages={33–56} }"
+  },
+  {
+   "key": "hart1968astar",
+   "type": "article",
+   "title": "A Formal Basis for the Heuristic Determination of Minimum Cost Paths",
+   "authors": [
+    "Hart, Peter",
+    "Nilsson, Nils",
+    "Raphael, Bertram"
+   ],
+   "year": 1968,
+   "venue": "IEEE Transactions on Systems Science and Cybernetics",
+   "volume": "4",
+   "number": "2",
+   "pages": "100–107",
+   "doi": "10.1109/tssc.1968.300136",
+   "url": "http://dx.doi.org/10.1109/TSSC.1968.300136",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{hart1968astar, title={A Formal Basis for the Heuristic Determination of Minimum Cost Paths}, volume={4}, ISSN={0536-1567}, url={http://dx.doi.org/10.1109/TSSC.1968.300136}, DOI={10.1109/tssc.1968.300136}, number={2}, journal={IEEE Transactions on Systems Science and Cybernetics}, publisher={Institute of Electrical and Electronics Engineers (IEEE)}, author={Hart, Peter and Nilsson, Nils and Raphael, Bertram}, year={1968}, pages={100–107} }"
+  },
+  {
+   "key": "hoffmann2023curvature",
+   "type": "article",
+   "title": "Optimal Coverage Path Planning for Agricultural Vehicles with Curvature Constraints",
+   "authors": [
+    "Höffmann, Maria",
+    "Patel, Shruti",
+    "Büskens, Christof"
+   ],
+   "year": 2023,
+   "venue": "Agriculture",
+   "volume": "13",
+   "number": "11",
+   "pages": "2112",
+   "doi": "10.3390/agriculture13112112",
+   "url": "http://dx.doi.org/10.3390/agriculture13112112",
+   "tags": [
+    "agriculture",
+    "coverage"
+   ],
+   "bibtex": "@article{hoffmann2023curvature, title={Optimal Coverage Path Planning for Agricultural Vehicles with Curvature Constraints}, volume={13}, ISSN={2077-0472}, url={http://dx.doi.org/10.3390/agriculture13112112}, DOI={10.3390/agriculture13112112}, number={11}, journal={Agriculture}, publisher={MDPI AG}, author={Höffmann, Maria and Patel, Shruti and Büskens, Christof}, year={2023}, month=Nov, pages={2112} }"
+  },
+  {
+   "key": "holm1979",
+   "type": "article",
+   "title": "A Simple Sequentially Rejective Multiple Test Procedure",
+   "authors": [
+    "Holm, Sture"
+   ],
+   "year": 1979,
+   "venue": "Scandinavian Journal of Statistics",
+   "volume": "6",
+   "number": "2",
+   "pages": "65--70",
+   "doi": null,
+   "url": "https://www.jstor.org/stable/4615733",
+   "tags": [
+    "statistics"
+   ],
+   "bibtex": "@article{holm1979,\n  author = {Holm, Sture},\n  title = {A Simple Sequentially Rejective Multiple Test Procedure},\n  journal = {Scandinavian Journal of Statistics},\n  volume = {6}, number = {2}, pages = {65--70}, year = {1979},\n  url = {https://www.jstor.org/stable/4615733}\n}"
+  },
+  {
+   "key": "homberger2005",
+   "type": "article",
+   "title": "A two-phase hybrid metaheuristic for the vehicle routing problem with time windows",
+   "authors": [
+    "Homberger, Jörg",
+    "Gehring, Hermann"
+   ],
+   "year": 2005,
+   "venue": "European Journal of Operational Research",
+   "volume": "162",
+   "number": "1",
+   "pages": "220–238",
+   "doi": "10.1016/j.ejor.2004.01.027",
+   "url": "http://dx.doi.org/10.1016/j.ejor.2004.01.027",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@article{homberger2005, title={A two-phase hybrid metaheuristic for the vehicle routing problem with time windows}, volume={162}, ISSN={0377-2217}, url={http://dx.doi.org/10.1016/j.ejor.2004.01.027}, DOI={10.1016/j.ejor.2004.01.027}, number={1}, journal={European Journal of Operational Research}, publisher={Elsevier BV}, author={Homberger, Jörg and Gehring, Hermann}, year={2005}, month=Apr, pages={220–238} }"
+  },
+  {
+   "key": "janson2015fmt",
+   "type": "article",
+   "title": "Fast marching tree: A fast marching sampling-based method for optimal motion planning in many dimensions",
+   "authors": [
+    "Janson, Lucas",
+    "Schmerling, Edward",
+    "Clark, Ashley",
+    "Pavone, Marco"
+   ],
+   "year": 2015,
+   "venue": "The International Journal of Robotics Research",
+   "volume": "34",
+   "number": "7",
+   "pages": "883–921",
+   "doi": "10.1177/0278364915577958",
+   "url": "http://dx.doi.org/10.1177/0278364915577958",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{janson2015fmt, title={Fast marching tree: A fast marching sampling-based method for optimal motion planning in many dimensions}, volume={34}, ISSN={1741-3176}, url={http://dx.doi.org/10.1177/0278364915577958}, DOI={10.1177/0278364915577958}, number={7}, journal={The International Journal of Robotics Research}, publisher={SAGE Publications}, author={Janson, Lucas and Schmerling, Edward and Clark, Ashley and Pavone, Marco}, year={2015}, month=May, pages={883–921} }"
+  },
+  {
+   "key": "jin2010coverage",
+   "type": "article",
+   "title": "Optimal Coverage Path Planning for Arable Farming on 2D Surfaces",
+   "authors": [
+    "J. Jin",
+    "L. Tang"
+   ],
+   "year": 2010,
+   "venue": "Transactions of the ASABE",
+   "volume": "53",
+   "number": "1",
+   "pages": "283–295",
+   "doi": "10.13031/2013.29488",
+   "url": "http://dx.doi.org/10.13031/2013.29488",
+   "tags": [
+    "agriculture",
+    "coverage"
+   ],
+   "bibtex": "@article{jin2010coverage, title={Optimal Coverage Path Planning for Arable Farming on 2D Surfaces}, volume={53}, ISSN={2151-0040}, url={http://dx.doi.org/10.13031/2013.29488}, DOI={10.13031/2013.29488}, number={1}, journal={Transactions of the ASABE}, publisher={American Society of Agricultural and Biological Engineers (ASABE)}, author={J. Jin and L. Tang}, year={2010}, pages={283–295} }"
+  },
+  {
+   "key": "karaman2011rrtstar",
+   "type": "article",
+   "title": "Sampling-based algorithms for optimal motion planning",
+   "authors": [
+    "Karaman, Sertac",
+    "Frazzoli, Emilio"
+   ],
+   "year": 2011,
+   "venue": "The International Journal of Robotics Research",
+   "volume": "30",
+   "number": "7",
+   "pages": "846–894",
+   "doi": "10.1177/0278364911406761",
+   "url": "http://dx.doi.org/10.1177/0278364911406761",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{karaman2011rrtstar, title={Sampling-based algorithms for optimal motion planning}, volume={30}, ISSN={1741-3176}, url={http://dx.doi.org/10.1177/0278364911406761}, DOI={10.1177/0278364911406761}, number={7}, journal={The International Journal of Robotics Research}, publisher={SAGE Publications}, author={Karaman, Sertac and Frazzoli, Emilio}, year={2011}, month=June, pages={846–894} }"
+  },
+  {
+   "key": "kavraki1996prm",
+   "type": "article",
+   "title": "Probabilistic roadmaps for path planning in high-dimensional configuration spaces",
+   "authors": [
+    "Kavraki, L.E.",
+    "Svestka, P.",
+    "Latombe, J.-C.",
+    "Overmars, M.H."
+   ],
+   "year": 1996,
+   "venue": "IEEE Transactions on Robotics and Automation",
+   "volume": "12",
+   "number": "4",
+   "pages": "566–580",
+   "doi": "10.1109/70.508439",
+   "url": "http://dx.doi.org/10.1109/70.508439",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{kavraki1996prm, title={Probabilistic roadmaps for path planning in high-dimensional configuration spaces}, volume={12}, ISSN={1042-296X}, url={http://dx.doi.org/10.1109/70.508439}, DOI={10.1109/70.508439}, number={4}, journal={IEEE Transactions on Robotics and Automation}, publisher={Institute of Electrical and Electronics Engineers (IEEE)}, author={Kavraki, L.E. and Svestka, P. and Latombe, J.-C. and Overmars, M.H.}, year={1996}, pages={566–580} }"
+  },
+  {
+   "key": "kerschke2019survey",
+   "type": "article",
+   "title": "Automated Algorithm Selection: Survey and Perspectives",
+   "authors": [
+    "Kerschke, Pascal",
+    "Hoos, Holger H.",
+    "Neumann, Frank",
+    "Trautmann, Heike"
+   ],
+   "year": 2019,
+   "venue": "Evolutionary Computation",
+   "volume": "27",
+   "number": "1",
+   "pages": "3–45",
+   "doi": "10.1162/evco_a_00242",
+   "url": "http://dx.doi.org/10.1162/evco_a_00242",
+   "tags": [
+    "selection"
+   ],
+   "bibtex": "@article{kerschke2019survey, title={Automated Algorithm Selection: Survey and Perspectives}, volume={27}, ISSN={1530-9304}, url={http://dx.doi.org/10.1162/evco_a_00242}, DOI={10.1162/evco_a_00242}, number={1}, journal={Evolutionary Computation}, publisher={MIT Press}, author={Kerschke, Pascal and Hoos, Holger H. and Neumann, Frank and Trautmann, Heike}, year={2019}, month=Mar, pages={3–45} }"
+  },
+  {
+   "key": "kuffner2000rrtconnect",
+   "type": "inproceedings",
+   "title": "RRT-connect: An efficient approach to single-query path planning",
+   "authors": [
+    "Kuffner, J.J.",
+    "LaValle, S.M."
+   ],
+   "year": 2000,
+   "venue": "Proceedings 2000 ICRA. Millennium Conference. IEEE International Conference on Robotics and Automation. Symposia Proceedings (Cat. No.00CH37065)",
+   "volume": null,
+   "number": null,
+   "pages": "995–1001 vol.2",
+   "doi": "10.1109/robot.2000.844730",
+   "url": "http://dx.doi.org/10.1109/ROBOT.2000.844730",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@inproceedings{kuffner2000rrtconnect, title={RRT-connect: An efficient approach to single-query path planning}, url={http://dx.doi.org/10.1109/ROBOT.2000.844730}, DOI={10.1109/robot.2000.844730}, booktitle={Proceedings 2000 ICRA. Millennium Conference. IEEE International Conference on Robotics and Automation. Symposia Proceedings (Cat. No.00CH37065)}, publisher={IEEE}, author={Kuffner, J.J. and LaValle, S.M.}, year={2000}, pages={995–1001 vol.2} }"
+  },
+  {
+   "key": "li2005",
+   "type": "article",
+   "title": "Very large-scale vehicle routing: new test problems, algorithms, and results",
+   "authors": [
+    "Li, Feiyue",
+    "Golden, Bruce",
+    "Wasil, Edward"
+   ],
+   "year": 2005,
+   "venue": "Computers &amp; Operations Research",
+   "volume": "32",
+   "number": "5",
+   "pages": "1165–1179",
+   "doi": "10.1016/j.cor.2003.10.002",
+   "url": "http://dx.doi.org/10.1016/j.cor.2003.10.002",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@article{li2005, title={Very large-scale vehicle routing: new test problems, algorithms, and results}, volume={32}, ISSN={0305-0548}, url={http://dx.doi.org/10.1016/j.cor.2003.10.002}, DOI={10.1016/j.cor.2003.10.002}, number={5}, journal={Computers &amp; Operations Research}, publisher={Elsevier BV}, author={Li, Feiyue and Golden, Bruce and Wasil, Edward}, year={2005}, month=May, pages={1165–1179} }"
+  },
+  {
+   "key": "lopez2024eaf",
+   "type": "article",
+   "title": "Using the Empirical Attainment Function for Analyzing Single-objective Black-box Optimization Algorithms",
+   "authors": [
+    "López-Ibáñez, Manuel",
+    "Vermetten, Diederick",
+    "Dreo, Johann",
+    "Doerr, Carola"
+   ],
+   "year": 2024,
+   "venue": "arXiv",
+   "volume": null,
+   "number": null,
+   "pages": null,
+   "doi": "10.48550/ARXIV.2404.02031",
+   "url": "https://arxiv.org/abs/2404.02031",
+   "tags": [
+    "statistics"
+   ],
+   "bibtex": "@article{lopez2024eaf,\n  doi = {10.48550/ARXIV.2404.02031},\n  url = {https://arxiv.org/abs/2404.02031},\n  author = {López-Ibáñez, Manuel and Vermetten, Diederick and Dreo, Johann and Doerr, Carola},\n  keywords = {Optimization and Control (math.OC), Neural and Evolutionary Computing (cs.NE), FOS: Mathematics, FOS: Mathematics, FOS: Computer and information sciences, FOS: Computer and information sciences},\n  title = {Using the Empirical Attainment Function for Analyzing Single-objective Black-box Optimization Algorithms},\n  publisher = {arXiv},\n  year = {2024},\n  copyright = {Creative Commons Attribution 4.0 International}\n}"
+  },
+  {
+   "key": "lourenco2003ils",
+   "type": "inbook",
+   "title": "Iterated Local Search",
+   "authors": [
+    "Lourenço, Helena R.",
+    "Martin, Olivier C.",
+    "Stützle, Thomas"
+   ],
+   "year": null,
+   "venue": "Handbook of Metaheuristics",
+   "volume": null,
+   "number": null,
+   "pages": "320–353",
+   "doi": "10.1007/0-306-48056-5_11",
+   "url": "http://dx.doi.org/10.1007/0-306-48056-5_11",
+   "tags": [
+    "routing"
+   ],
+   "bibtex": "@inbook{lourenco2003ils, title={Iterated Local Search}, ISBN={1402072635}, url={http://dx.doi.org/10.1007/0-306-48056-5_11}, DOI={10.1007/0-306-48056-5_11}, booktitle={Handbook of Metaheuristics}, publisher={Kluwer Academic Publishers}, author={Lourenço, Helena R. and Martin, Olivier C. and Stützle, Thomas}, pages={320–353} }"
+  },
+  {
+   "key": "lozanoperez1979visibility",
+   "type": "article",
+   "title": "An algorithm for planning collision-free paths among polyhedral obstacles",
+   "authors": [
+    "Lozano-Pérez, Tomás",
+    "Wesley, Michael A."
+   ],
+   "year": 1979,
+   "venue": "Communications of the ACM",
+   "volume": "22",
+   "number": "10",
+   "pages": "560–570",
+   "doi": "10.1145/359156.359164",
+   "url": "http://dx.doi.org/10.1145/359156.359164",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{lozanoperez1979visibility, title={An algorithm for planning collision-free paths among polyhedral obstacles}, volume={22}, ISSN={1557-7317}, url={http://dx.doi.org/10.1145/359156.359164}, DOI={10.1145/359156.359164}, number={10}, journal={Communications of the ACM}, publisher={Association for Computing Machinery (ACM)}, author={Lozano-Pérez, Tomás and Wesley, Michael A.}, year={1979}, month=Oct, pages={560–570} }"
+  },
+  {
+   "key": "macenski2020nav2",
+   "type": "inproceedings",
+   "title": "The Marathon 2: A Navigation System",
+   "authors": [
+    "Macenski, Steve",
+    "Martin, Francisco",
+    "White, Ruffin",
+    "Clavero, Jonatan Gines"
+   ],
+   "year": 2020,
+   "venue": "2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)",
+   "volume": null,
+   "number": null,
+   "pages": "2718–2725",
+   "doi": "10.1109/iros45743.2020.9341207",
+   "url": "http://dx.doi.org/10.1109/IROS45743.2020.9341207",
+   "tags": [
+    "navigation"
+   ],
+   "bibtex": "@inproceedings{macenski2020nav2, title={The Marathon 2: A Navigation System}, url={http://dx.doi.org/10.1109/IROS45743.2020.9341207}, DOI={10.1109/iros45743.2020.9341207}, booktitle={2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)}, publisher={IEEE}, author={Macenski, Steve and Martin, Francisco and White, Ruffin and Clavero, Jonatan Gines}, year={2020}, month=Oct, pages={2718–2725} }"
+  },
+  {
+   "key": "macenski2023rpp",
+   "type": "article",
+   "title": "Regulated pure pursuit for robot path tracking",
+   "authors": [
+    "Macenski, Steve",
+    "Singh, Shrijit",
+    "Martín, Francisco",
+    "Ginés, Jonatan"
+   ],
+   "year": 2023,
+   "venue": "Autonomous Robots",
+   "volume": "47",
+   "number": "6",
+   "pages": "685–694",
+   "doi": "10.1007/s10514-023-10097-6",
+   "url": "http://dx.doi.org/10.1007/s10514-023-10097-6",
+   "tags": [
+    "navigation"
+   ],
+   "bibtex": "@article{macenski2023rpp, title={Regulated pure pursuit for robot path tracking}, volume={47}, ISSN={1573-7527}, url={http://dx.doi.org/10.1007/s10514-023-10097-6}, DOI={10.1007/s10514-023-10097-6}, number={6}, journal={Autonomous Robots}, publisher={Springer Science and Business Media LLC}, author={Macenski, Steve and Singh, Shrijit and Martín, Francisco and Ginés, Jonatan}, year={2023}, month=June, pages={685–694} }"
+  },
+  {
+   "key": "mico2011windy",
+   "type": "article",
+   "title": "The capacitated general windy routing problem with turn penalties",
+   "authors": [
+    "Micó, Joan C.",
+    "Soler, David"
+   ],
+   "year": 2011,
+   "venue": "Operations Research Letters",
+   "volume": "39",
+   "number": "4",
+   "pages": "265–271",
+   "doi": "10.1016/j.orl.2011.04.007",
+   "url": "http://dx.doi.org/10.1016/j.orl.2011.04.007",
+   "tags": [
+    "routing",
+    "turn"
+   ],
+   "bibtex": "@article{mico2011windy, title={The capacitated general windy routing problem with turn penalties}, volume={39}, ISSN={0167-6377}, url={http://dx.doi.org/10.1016/j.orl.2011.04.007}, DOI={10.1016/j.orl.2011.04.007}, number={4}, journal={Operations Research Letters}, publisher={Elsevier BV}, author={Micó, Joan C. and Soler, David}, year={2011}, month=July, pages={265–271} }"
+  },
+  {
+   "key": "mier2023f2c",
+   "type": "article",
+   "title": "Fields2Cover: An Open-Source Coverage Path Planning Library for Unmanned Agricultural Vehicles",
+   "authors": [
+    "Mier, Gonzalo",
+    "Valente, João",
+    "de Bruin, Sytze"
+   ],
+   "year": 2023,
+   "venue": "IEEE Robotics and Automation Letters",
+   "volume": "8",
+   "number": "4",
+   "pages": "2166–2172",
+   "doi": "10.1109/lra.2023.3248439",
+   "url": "http://dx.doi.org/10.1109/LRA.2023.3248439",
+   "tags": [
+    "agriculture",
+    "coverage"
+   ],
+   "bibtex": "@article{mier2023f2c, title={Fields2Cover: An Open-Source Coverage Path Planning Library for Unmanned Agricultural Vehicles}, volume={8}, ISSN={2377-3774}, url={http://dx.doi.org/10.1109/LRA.2023.3248439}, DOI={10.1109/lra.2023.3248439}, number={4}, journal={IEEE Robotics and Automation Letters}, publisher={Institute of Electrical and Electronics Engineers (IEEE)}, author={Mier, Gonzalo and Valente, João and de Bruin, Sytze}, year={2023}, month=Apr, pages={2166–2172} }"
+  },
+  {
+   "key": "mier2024fields2benchmark",
+   "type": "misc",
+   "title": "Fields2Benchmark dataset",
+   "authors": [
+    "Mier, Gonzalo",
+    "Casado Faulí, Ana María",
+    "Valente, João",
+    "de Bruin, Sytze"
+   ],
+   "year": 2024,
+   "venue": "Zenodo",
+   "volume": null,
+   "number": null,
+   "pages": null,
+   "doi": "10.5281/ZENODO.14524735",
+   "url": "https://zenodo.org/doi/10.5281/zenodo.14524735",
+   "tags": [
+    "agriculture",
+    "benchmark",
+    "coverage"
+   ],
+   "bibtex": "@misc{mier2024fields2benchmark,\n  doi = {10.5281/ZENODO.14524735},\n  url = {https://zenodo.org/doi/10.5281/zenodo.14524735},\n  author = {Mier, Gonzalo and Casado Faulí, Ana María and Valente, João and de Bruin, Sytze},\n  keywords = {Autonomous robots, precision agriculture, Coverage path planning, Benchmarking},\n  language = {en},\n  title = {Fields2Benchmark dataset},\n  publisher = {Zenodo},\n  year = {2024},\n  copyright = {Creative Commons Attribution 4.0 International}\n}"
+  },
+  {
+   "key": "mier2024headland",
+   "type": "article",
+   "title": "Continuous Curvature Path Planning for Headland Coverage With Agricultural Robots",
+   "authors": [
+    "Mier, Gonzalo",
+    "Fennema, Rick",
+    "Valente, João",
+    "de Bruin, Sytze"
+   ],
+   "year": 2024,
+   "venue": "Journal of Field Robotics",
+   "volume": "42",
+   "number": "3",
+   "pages": "641–656",
+   "doi": "10.1002/rob.22489",
+   "url": "http://dx.doi.org/10.1002/rob.22489",
+   "tags": [
+    "agriculture",
+    "coverage"
+   ],
+   "bibtex": "@article{mier2024headland, title={Continuous Curvature Path Planning for Headland Coverage With Agricultural Robots}, volume={42}, ISSN={1556-4967}, url={http://dx.doi.org/10.1002/rob.22489}, DOI={10.1002/rob.22489}, number={3}, journal={Journal of Field Robotics}, publisher={Wiley}, author={Mier, Gonzalo and Fennema, Rick and Valente, João and de Bruin, Sytze}, year={2024}, month=Dec, pages={641–656} }"
+  },
+  {
+   "key": "moysiadis2020review",
+   "type": "article",
+   "title": "Mobile Robotics in Agricultural Operations: A Narrative Review on Planning Aspects",
+   "authors": [
+    "Moysiadis, Vasileios",
+    "Tsolakis, Naoum",
+    "Katikaridis, Dimitris",
+    "Sørensen, Claus G.",
+    "Pearson, Simon",
+    "Bochtis, Dionysis"
+   ],
+   "year": 2020,
+   "venue": "Applied Sciences",
+   "volume": "10",
+   "number": "10",
+   "pages": "3453",
+   "doi": "10.3390/app10103453",
+   "url": "http://dx.doi.org/10.3390/app10103453",
+   "tags": [
+    "agriculture"
+   ],
+   "bibtex": "@article{moysiadis2020review, title={Mobile Robotics in Agricultural Operations: A Narrative Review on Planning Aspects}, volume={10}, ISSN={2076-3417}, url={http://dx.doi.org/10.3390/app10103453}, DOI={10.3390/app10103453}, number={10}, journal={Applied Sciences}, publisher={MDPI AG}, author={Moysiadis, Vasileios and Tsolakis, Naoum and Katikaridis, Dimitris and Sørensen, Claus G. and Pearson, Simon and Bochtis, Dionysis}, year={2020}, month=May, pages={3453} }"
+  },
+  {
+   "key": "ortools",
+   "type": "misc",
+   "title": "OR-Tools",
+   "authors": [
+    "Perron, Laurent",
+    "Furnon, Vincent"
+   ],
+   "year": 2026,
+   "venue": null,
+   "volume": null,
+   "number": null,
+   "pages": null,
+   "doi": null,
+   "url": "https://developers.google.com/optimization/",
+   "tags": [
+    "routing"
+   ],
+   "bibtex": "@misc{ortools,\n  author = {Perron, Laurent and Furnon, Vincent},\n  title = {{OR-Tools}},\n  organization = {Google}, version = {9.15}, year = {2026},\n  url = {https://developers.google.com/optimization/}\n}"
+  },
+  {
+   "key": "queiroga2022xml",
+   "type": "inproceedings",
+   "title": "10,000 Optimal CVRP Solutions for Testing Machine Learning Based Heuristics",
+   "authors": [
+    "Queiroga, Eduardo",
+    "Sadykov, Ruslan",
+    "Uchoa, Eduardo",
+    "Vidal, Thibaut"
+   ],
+   "year": 2022,
+   "venue": "AAAI-22 Workshop on Machine Learning for Operations Research (ML4OR)",
+   "volume": null,
+   "number": null,
+   "pages": null,
+   "doi": null,
+   "url": "https://openreview.net/forum?id=yHiMXKN6nTl",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@inproceedings{queiroga2022xml,\n  author = {Queiroga, Eduardo and Sadykov, Ruslan and Uchoa, Eduardo and Vidal, Thibaut},\n  title = {10,000 Optimal {CVRP} Solutions for Testing Machine Learning Based Heuristics},\n  booktitle = {AAAI-22 Workshop on Machine Learning for Operations Research (ML4OR)}, year = {2022},\n  url = {https://openreview.net/forum?id=yHiMXKN6nTl}\n}"
+  },
+  {
+   "key": "queiroga2026xl",
+   "type": "misc",
+   "title": "The XL Instances and the CVRPLib Best Known Solution Challenge",
+   "authors": [
+    "Queiroga, Eduardo",
+    "Martinelli, Rafael",
+    "Subramanian, Anand",
+    "Uchoa, Eduardo",
+    "Vidal, Thibaut"
+   ],
+   "year": 2026,
+   "venue": "arXiv",
+   "volume": null,
+   "number": null,
+   "pages": null,
+   "doi": "10.48550/ARXIV.2601.11467",
+   "url": "https://arxiv.org/abs/2601.11467",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@misc{queiroga2026xl,\n  doi = {10.48550/ARXIV.2601.11467},\n  url = {https://arxiv.org/abs/2601.11467},\n  author = {Queiroga, Eduardo and Martinelli, Rafael and Subramanian, Anand and Uchoa, Eduardo and Vidal, Thibaut},\n  keywords = {Optimization and Control (math.OC), FOS: Mathematics},\n  title = {The XL Instances and the CVRPLib Best Known Solution Challenge},\n  publisher = {arXiv},\n  year = {2026},\n  copyright = {arXiv.org perpetual, non-exclusive license}\n}"
+  },
+  {
+   "key": "reeds1990",
+   "type": "article",
+   "title": "Optimal paths for a car that goes both forwards and backwards",
+   "authors": [
+    "Reeds, James",
+    "Shepp, Lawrence"
+   ],
+   "year": 1990,
+   "venue": "Pacific Journal of Mathematics",
+   "volume": "145",
+   "number": "2",
+   "pages": "367–393",
+   "doi": "10.2140/pjm.1990.145.367",
+   "url": "http://dx.doi.org/10.2140/pjm.1990.145.367",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{reeds1990, title={Optimal paths for a car that goes both forwards and backwards}, volume={145}, ISSN={0030-8730}, url={http://dx.doi.org/10.2140/pjm.1990.145.367}, DOI={10.2140/pjm.1990.145.367}, number={2}, journal={Pacific Journal of Mathematics}, publisher={Mathematical Sciences Publishers}, author={Reeds, James and Shepp, Lawrence}, year={1990}, month=Oct, pages={367–393} }"
+  },
+  {
+   "key": "rice1976",
+   "type": "inbook",
+   "title": "The Algorithm Selection Problem",
+   "authors": [
+    "Rice, John R."
+   ],
+   "year": 1976,
+   "venue": "Advances in Computers Volume 15",
+   "volume": null,
+   "number": null,
+   "pages": "65–118",
+   "doi": "10.1016/s0065-2458(08)60520-3",
+   "url": "http://dx.doi.org/10.1016/S0065-2458(08)60520-3",
+   "tags": [
+    "selection"
+   ],
+   "bibtex": "@inbook{rice1976, title={The Algorithm Selection Problem}, ISBN={9780120121151}, ISSN={0065-2458}, url={http://dx.doi.org/10.1016/S0065-2458(08)60520-3}, DOI={10.1016/s0065-2458(08)60520-3}, booktitle={Advances in Computers Volume 15}, publisher={Elsevier}, author={Rice, John R.}, year={1976}, pages={65–118} }"
+  },
+  {
+   "key": "rochat1995tai",
+   "type": "article",
+   "title": "Probabilistic diversification and intensification in local search for vehicle routing",
+   "authors": [
+    "Rochat, Yves",
+    "Taillard, Éric D."
+   ],
+   "year": 1995,
+   "venue": "Journal of Heuristics",
+   "volume": "1",
+   "number": "1",
+   "pages": "147–167",
+   "doi": "10.1007/bf02430370",
+   "url": "http://dx.doi.org/10.1007/BF02430370",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@article{rochat1995tai, title={Probabilistic diversification and intensification in local search for vehicle routing}, volume={1}, ISSN={1572-9397}, url={http://dx.doi.org/10.1007/BF02430370}, DOI={10.1007/bf02430370}, number={1}, journal={Journal of Heuristics}, publisher={Springer Science and Business Media LLC}, author={Rochat, Yves and Taillard, Éric D.}, year={1995}, month=Sept, pages={147–167} }"
+  },
+  {
+   "key": "sakai2018pythonrobotics",
+   "type": "misc",
+   "title": "PythonRobotics: a Python code collection of robotics algorithms",
+   "authors": [
+    "Sakai, Atsushi",
+    "Ingram, Daniel",
+    "Dinius, Joseph",
+    "Chawla, Karan",
+    "Raffin, Antonin",
+    "Paques, Alexis"
+   ],
+   "year": 2018,
+   "venue": "arXiv",
+   "volume": null,
+   "number": null,
+   "pages": null,
+   "doi": "10.48550/ARXIV.1808.10703",
+   "url": "https://arxiv.org/abs/1808.10703",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@misc{sakai2018pythonrobotics,\n  doi = {10.48550/ARXIV.1808.10703},\n  url = {https://arxiv.org/abs/1808.10703},\n  author = {Sakai, Atsushi and Ingram, Daniel and Dinius, Joseph and Chawla, Karan and Raffin, Antonin and Paques, Alexis},\n  keywords = {Robotics (cs.RO), FOS: Computer and information sciences, FOS: Computer and information sciences},\n  title = {PythonRobotics: a Python code collection of robotics algorithms},\n  publisher = {arXiv},\n  year = {2018},\n  copyright = {arXiv.org perpetual, non-exclusive license}\n}"
+  },
+  {
+   "key": "schneider2023eurocrops",
+   "type": "article",
+   "title": "EuroCrops: The Largest Harmonized Open Crop Dataset Across the European Union",
+   "authors": [
+    "Schneider, Maja",
+    "Schelte, Tobias",
+    "Schmitz, Felix",
+    "Körner, Marco"
+   ],
+   "year": 2023,
+   "venue": "Scientific Data",
+   "volume": "10",
+   "number": "1",
+   "pages": null,
+   "doi": "10.1038/s41597-023-02517-0",
+   "url": "http://dx.doi.org/10.1038/s41597-023-02517-0",
+   "tags": [
+    "agriculture",
+    "benchmark"
+   ],
+   "bibtex": "@article{schneider2023eurocrops, title={EuroCrops: The Largest Harmonized Open Crop Dataset Across the European Union}, volume={10}, ISSN={2052-4463}, url={http://dx.doi.org/10.1038/s41597-023-02517-0}, DOI={10.1038/s41597-023-02517-0}, number={1}, journal={Scientific Data}, publisher={Springer Science and Business Media LLC}, author={Schneider, Maja and Schelte, Tobias and Schmitz, Felix and Körner, Marco}, year={2023}, month=Sept }"
+  },
+  {
+   "key": "smithmiles2023isa",
+   "type": "article",
+   "title": "Instance Space Analysis for Algorithm Testing: Methodology and Software Tools",
+   "authors": [
+    "Smith-Miles, Kate",
+    "Muñoz, Mario Andrés"
+   ],
+   "year": 2023,
+   "venue": "ACM Computing Surveys",
+   "volume": "55",
+   "number": "12",
+   "pages": "1–31",
+   "doi": "10.1145/3572895",
+   "url": "http://dx.doi.org/10.1145/3572895",
+   "tags": [
+    "selection"
+   ],
+   "bibtex": "@article{smithmiles2023isa, title={Instance Space Analysis for Algorithm Testing: Methodology and Software Tools}, volume={55}, ISSN={1557-7341}, url={http://dx.doi.org/10.1145/3572895}, DOI={10.1145/3572895}, number={12}, journal={ACM Computing Surveys}, publisher={Association for Computing Machinery (ACM)}, author={Smith-Miles, Kate and Muñoz, Mario Andrés}, year={2023}, month=Mar, pages={1–31} }"
+  },
+  {
+   "key": "solomon1987",
+   "type": "article",
+   "title": "Algorithms for the Vehicle Routing and Scheduling Problems with Time Window Constraints",
+   "authors": [
+    "Solomon, Marius M."
+   ],
+   "year": 1987,
+   "venue": "Operations Research",
+   "volume": "35",
+   "number": "2",
+   "pages": "254–265",
+   "doi": "10.1287/opre.35.2.254",
+   "url": "http://dx.doi.org/10.1287/opre.35.2.254",
+   "tags": [
+    "benchmark"
+   ],
+   "bibtex": "@article{solomon1987, title={Algorithms for the Vehicle Routing and Scheduling Problems with Time Window Constraints}, volume={35}, ISSN={1526-5463}, url={http://dx.doi.org/10.1287/opre.35.2.254}, DOI={10.1287/opre.35.2.254}, number={2}, journal={Operations Research}, publisher={Institute for Operations Research and the Management Sciences (INFORMS)}, author={Solomon, Marius M.}, year={1987}, month=Apr, pages={254–265} }"
+  },
+  {
+   "key": "sucan2009kpiece",
+   "type": "inbook",
+   "title": "Kinodynamic Motion Planning by Interior-Exterior Cell Exploration",
+   "authors": [
+    "Şucan, Ioan A.",
+    "Kavraki, Lydia E."
+   ],
+   "year": 2009,
+   "venue": "Algorithmic Foundation of Robotics VIII",
+   "volume": null,
+   "number": null,
+   "pages": "449–464",
+   "doi": "10.1007/978-3-642-00312-7_28",
+   "url": "http://dx.doi.org/10.1007/978-3-642-00312-7_28",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@inbook{sucan2009kpiece, title={Kinodynamic Motion Planning by Interior-Exterior Cell Exploration}, ISBN={9783642003127}, ISSN={1610-742X}, url={http://dx.doi.org/10.1007/978-3-642-00312-7_28}, DOI={10.1007/978-3-642-00312-7_28}, booktitle={Algorithmic Foundation of Robotics VIII}, publisher={Springer Berlin Heidelberg}, author={Şucan, Ioan A. and Kavraki, Lydia E.}, year={2009}, pages={449–464} }"
+  },
+  {
+   "key": "sucan2012ompl",
+   "type": "article",
+   "title": "The Open Motion Planning Library",
+   "authors": [
+    "Sucan, Ioan A.",
+    "Moll, Mark",
+    "Kavraki, Lydia E."
+   ],
+   "year": 2012,
+   "venue": "IEEE Robotics &amp; Automation Magazine",
+   "volume": "19",
+   "number": "4",
+   "pages": "72–82",
+   "doi": "10.1109/mra.2012.2205651",
+   "url": "http://dx.doi.org/10.1109/MRA.2012.2205651",
+   "tags": [
+    "motion"
+   ],
+   "bibtex": "@article{sucan2012ompl, title={The Open Motion Planning Library}, volume={19}, ISSN={1558-223X}, url={http://dx.doi.org/10.1109/MRA.2012.2205651}, DOI={10.1109/mra.2012.2205651}, number={4}, journal={IEEE Robotics &amp; Automation Magazine}, publisher={Institute of Electrical and Electronics Engineers (IEEE)}, author={Sucan, Ioan A. and Moll, Mark and Kavraki, Lydia E.}, year={2012}, month=Dec, pages={72–82} }"
+  },
+  {
+   "key": "toth2014vrp",
+   "type": "book",
+   "title": "Vehicle Routing: Problems, Methods, and Applications, Second Edition",
+   "authors": [],
+   "year": 2014,
+   "venue": "Society for Industrial and Applied Mathematics",
+   "volume": null,
+   "number": null,
+   "pages": null,
+   "doi": "10.1137/1.9781611973594",
+   "url": "http://dx.doi.org/10.1137/1.9781611973594",
+   "tags": [
+    "routing"
+   ],
+   "bibtex": "@book{toth2014vrp, title={Vehicle Routing: Problems, Methods, and Applications, Second Edition}, ISBN={9781611973594}, url={http://dx.doi.org/10.1137/1.9781611973594}, DOI={10.1137/1.9781611973594}, publisher={Society for Industrial and Applied Mathematics}, year={2014}, month=Nov }"
+  },
+  {
+   "key": "tu2019headland",
+   "type": "article",
+   "title": "Headland turning optimisation for agricultural vehicles and those with towed implements",
+   "authors": [
+    "Tu, Xuyong",
+    "Tang, Lie"
+   ],
+   "year": 2019,
+   "venue": "Journal of Agriculture and Food Research",
+   "volume": "1",
+   "number": null,
+   "pages": "100009",
+   "doi": "10.1016/j.jafr.2019.100009",
+   "url": "http://dx.doi.org/10.1016/j.jafr.2019.100009",
+   "tags": [
+    "agriculture",
+    "turn"
+   ],
+   "bibtex": "@article{tu2019headland, title={Headland turning optimisation for agricultural vehicles and those with towed implements}, volume={1}, ISSN={2666-1543}, url={http://dx.doi.org/10.1016/j.jafr.2019.100009}, DOI={10.1016/j.jafr.2019.100009}, journal={Journal of Agriculture and Food Research}, publisher={Elsevier BV}, author={Tu, Xuyong and Tang, Lie}, year={2019}, month=Dec, pages={100009} }"
+  },
+  {
+   "key": "uchoa2017x",
+   "type": "article",
+   "title": "New benchmark instances for the Capacitated Vehicle Routing Problem",
+   "authors": [
+    "Uchoa, Eduardo",
+    "Pecin, Diego",
+    "Pessoa, Artur",
+    "Poggi, Marcus",
+    "Vidal, Thibaut",
+    "Subramanian, Anand"
+   ],
+   "year": 2017,
+   "venue": "European Journal of Operational Research",
+   "volume": "257",
+   "number": "3",
+   "pages": "845–858",
+   "doi": "10.1016/j.ejor.2016.08.012",
+   "url": "http://dx.doi.org/10.1016/j.ejor.2016.08.012",
+   "tags": [
+    "benchmark",
+    "routing"
+   ],
+   "bibtex": "@article{uchoa2017x, title={New benchmark instances for the Capacitated Vehicle Routing Problem}, volume={257}, ISSN={0377-2217}, url={http://dx.doi.org/10.1016/j.ejor.2016.08.012}, DOI={10.1016/j.ejor.2016.08.012}, number={3}, journal={European Journal of Operational Research}, publisher={Elsevier BV}, author={Uchoa, Eduardo and Pecin, Diego and Pessoa, Artur and Poggi, Marcus and Vidal, Thibaut and Subramanian, Anand}, year={2017}, month=Mar, pages={845–858} }"
+  },
+  {
+   "key": "vidal2017turn",
+   "type": "article",
+   "title": "Node, Edge, Arc Routing and Turn Penalties: Multiple Problems—One Neighborhood Extension",
+   "authors": [
+    "Vidal, Thibaut"
+   ],
+   "year": 2017,
+   "venue": "Operations Research",
+   "volume": "65",
+   "number": "4",
+   "pages": "992–1010",
+   "doi": "10.1287/opre.2017.1595",
+   "url": "http://dx.doi.org/10.1287/opre.2017.1595",
+   "tags": [
+    "routing",
+    "turn"
+   ],
+   "bibtex": "@article{vidal2017turn, title={Node, Edge, Arc Routing and Turn Penalties: Multiple Problems—One Neighborhood Extension}, volume={65}, ISSN={1526-5463}, url={http://dx.doi.org/10.1287/opre.2017.1595}, DOI={10.1287/opre.2017.1595}, number={4}, journal={Operations Research}, publisher={Institute for Operations Research and the Management Sciences (INFORMS)}, author={Vidal, Thibaut}, year={2017}, month=Aug, pages={992–1010} }"
+  },
+  {
+   "key": "vidal2022hgs",
+   "type": "article",
+   "title": "Hybrid genetic search for the CVRP: Open-source implementation and SWAP* neighborhood",
+   "authors": [
+    "Vidal, Thibaut"
+   ],
+   "year": 2022,
+   "venue": "Computers &amp; Operations Research",
+   "volume": "140",
+   "number": null,
+   "pages": "105643",
+   "doi": "10.1016/j.cor.2021.105643",
+   "url": "http://dx.doi.org/10.1016/j.cor.2021.105643",
+   "tags": [
+    "routing"
+   ],
+   "bibtex": "@article{vidal2022hgs, title={Hybrid genetic search for the CVRP: Open-source implementation and SWAP* neighborhood}, volume={140}, ISSN={0305-0548}, url={http://dx.doi.org/10.1016/j.cor.2021.105643}, DOI={10.1016/j.cor.2021.105643}, journal={Computers &amp; Operations Research}, publisher={Elsevier BV}, author={Vidal, Thibaut}, year={2022}, month=Apr, pages={105643} }"
+  },
+  {
+   "key": "voudouris1999gls",
+   "type": "article",
+   "title": "Guided local search and its application to the traveling salesman problem",
+   "authors": [
+    "Voudouris, Christos",
+    "Tsang, Edward"
+   ],
+   "year": 1999,
+   "venue": "European Journal of Operational Research",
+   "volume": "113",
+   "number": "2",
+   "pages": "469–499",
+   "doi": "10.1016/s0377-2217(98)00099-x",
+   "url": "http://dx.doi.org/10.1016/S0377-2217(98)00099-X",
+   "tags": [
+    "routing"
+   ],
+   "bibtex": "@article{voudouris1999gls, title={Guided local search and its application to the traveling salesman problem}, volume={113}, ISSN={0377-2217}, url={http://dx.doi.org/10.1016/S0377-2217(98)00099-X}, DOI={10.1016/s0377-2217(98)00099-x}, number={2}, journal={European Journal of Operational Research}, publisher={Elsevier BV}, author={Voudouris, Christos and Tsang, Edward}, year={1999}, month=Mar, pages={469–499} }"
+  },
+  {
+   "key": "wilcoxon1945",
+   "type": "article",
+   "title": "Individual Comparisons by Ranking Methods",
+   "authors": [
+    "Wilcoxon, Frank"
+   ],
+   "year": 1945,
+   "venue": "Biometrics Bulletin",
+   "volume": "1",
+   "number": "6",
+   "pages": "80",
+   "doi": "10.2307/3001968",
+   "url": "http://dx.doi.org/10.2307/3001968",
+   "tags": [
+    "statistics"
+   ],
+   "bibtex": "@article{wilcoxon1945, title={Individual Comparisons by Ranking Methods}, volume={1}, ISSN={0099-4987}, url={http://dx.doi.org/10.2307/3001968}, DOI={10.2307/3001968}, number={6}, journal={Biometrics Bulletin}, publisher={JSTOR}, author={Wilcoxon, Frank}, year={1945}, month=Dec, pages={80} }"
+  },
+  {
+   "key": "wouda2024pyvrp",
+   "type": "article",
+   "title": "PyVRP: A High-Performance VRP Solver Package",
+   "authors": [
+    "Wouda, Niels A.",
+    "Lan, Leon",
+    "Kool, Wouter"
+   ],
+   "year": 2024,
+   "venue": "INFORMS Journal on Computing",
+   "volume": "36",
+   "number": "4",
+   "pages": "943–955",
+   "doi": "10.1287/ijoc.2023.0055",
+   "url": "http://dx.doi.org/10.1287/ijoc.2023.0055",
+   "tags": [
+    "routing"
+   ],
+   "bibtex": "@article{wouda2024pyvrp, title={PyVRP: A High-Performance VRP Solver Package}, volume={36}, ISSN={1526-5528}, url={http://dx.doi.org/10.1287/ijoc.2023.0055}, DOI={10.1287/ijoc.2023.0055}, number={4}, journal={INFORMS Journal on Computing}, publisher={Institute for Operations Research and the Management Sciences (INFORMS)}, author={Wouda, Niels A. and Lan, Leon and Kool, Wouter}, year={2024}, month=July, pages={943–955} }"
+  }
+ ]
+}
