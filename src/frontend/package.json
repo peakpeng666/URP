@@ -2,7 +2,7 @@
   "name": "bpp-research-console",
   "version": "1.0.0",
   "private": true,
-  "description": "BPP 前缀安全算法选择实验的中文科研工作台（只读消费历史实验数据）",
+  "description": "URP 路径任务与实验档案工作台，保留 BPP 历史结果及回放",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"

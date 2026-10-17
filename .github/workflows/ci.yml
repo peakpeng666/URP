@@ -1,0 +1,55 @@
+name: URP engineering checks
+
+on:
+  pull_request:
+  push:
+    branches: [main, cvrp-baselines, 'optimize/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  engineering:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            .github
+            tools
+            scripts
+            protocol
+            independent
+            src/backend
+            src/frontend
+            src/research
+            src/robotics
+            data/bpp
+            data/packages
+            data/benchmarks
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: src/frontend/package-lock.json
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.23'
+      - run: uv sync --locked --extra solvers
+      - run: npm ci --prefix src/frontend --engine-strict --no-audit --no-fund
+      - run: uv run --no-sync python tools/check_project.py --output .local-state/ci
+      - name: Retain checks and all failures
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: engineering-checks
+          path: .local-state/ci
+          include-hidden-files: true
+          if-no-files-found: warn

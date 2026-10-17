@@ -43,8 +43,14 @@ class RouteSceneFixtureIntegration(unittest.TestCase):
             def source_hashes():
                 return {str(path.relative_to(sources)): sha(path.read_bytes())
                         for path in sources.rglob('*') if path.is_file()}
+            def archived_records():
+                with store.connect() as db:
+                    return (
+                        list(map(tuple, db.execute('SELECT * FROM experiments ORDER BY id,revision'))),
+                        list(map(tuple, db.execute('SELECT * FROM artifacts ORDER BY experiment_id,revision,id'))),
+                    )
             before = source_hashes()
-            database_before = store.path.read_bytes()
+            records_before = archived_records()
             schema = json.loads((Path(__file__).parent.parent/'docs/route_scene_v1.schema.json').read_text())
             jsonschema.Draft202012Validator.check_schema(schema)
             validator = jsonschema.Draft202012Validator(schema)
@@ -69,6 +75,10 @@ class RouteSceneFixtureIntegration(unittest.TestCase):
                 self.assertEqual(status, 200, (path, body))
                 return body
             try:
+                # Starting the service may create its job tables. It must leave
+                # every imported experiment row and attachment byte unchanged.
+                self.assertEqual(archived_records(), records_before)
+                database_before = store.path.read_bytes()
                 for experiment in ('legacy', 'mature', 'public', 'portfolio'):
                     existing = get('/api/experiments/'+experiment+'/runs?revision=1')
                     for run in existing['runs']:
@@ -102,6 +112,7 @@ class RouteSceneFixtureIntegration(unittest.TestCase):
                 self.assertEqual(scenes, 14)
                 self.assertEqual(states, {'feasible', 'partial', 'invalid', 'infeasible', 'no_solution'})
                 self.assertEqual(source_hashes(), before)
+                self.assertEqual(archived_records(), records_before)
                 self.assertEqual(store.path.read_bytes(), database_before)
             finally:
                 server.shutdown(); server.server_close(); thread.join()

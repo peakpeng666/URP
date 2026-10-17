@@ -19,6 +19,7 @@ from sensor_msgs.msg import Imu
 from rosgraph_msgs.msg import Clock
 from .control_core import WAYPOINTS, command, yaw_from_quaternion
 from .scene_core import number
+from .runtime_core import FeedbackTracker
 
 
 class Smoke(Node):
@@ -26,13 +27,13 @@ class Smoke(Node):
         super().__init__('urp_synthetic_smoke')
         self.stream = stream
         self.pose = self.truth = None
-        self.count = dict(odom=0, ground_truth=0, imu=0, clock=0, commands=0)
-        self.latest = {}
+        self.feedback = FeedbackTracker()
+        self.count = self.feedback.count
+        self.count['commands'] = 0
         self.max_displacement = self.max_truth_displacement = self.max_imu_yaw_rate = 0.0
         self.clock_first = self.clock_last = None
         self.error = None
         self.goal_index = 0
-        self.stamps = {}
         self.pub = self.create_publisher(Twist, '/urp_synthetic/cmd_vel', 10)
         self.create_subscription(Odometry, '/urp_synthetic/odom', self.odom, 10)
         self.create_subscription(Odometry, '/urp_synthetic/ground_truth', self.ground_truth, 10)
@@ -43,12 +44,9 @@ class Smoke(Node):
         self.stream.write(json.dumps({'kind': kind, 'wall_monotonic': time.monotonic(), **data}, allow_nan=False)+'\n')
 
     def stamp(self, kind, stamp):
+        if not self.feedback.observe(kind, stamp.sec, stamp.nanosec, time.monotonic()):
+            return None
         value = stamp.sec + stamp.nanosec*1e-9
-        if value < self.stamps.get(kind, 0):
-            self.error = f'{kind} timestamp went backwards'
-        self.stamps[kind] = value
-        self.latest[kind] = time.monotonic()
-        self.count[kind] += 1
         return value
 
     def parse_pose(self, kind, msg, expected_frame, expected_child):
@@ -57,20 +55,28 @@ class Smoke(Node):
         p, q = msg.pose.pose.position, msg.pose.pose.orientation
         pose = (number(p.x, 'x'), number(p.y, 'y'), yaw_from_quaternion(q.x,q.y,q.z,q.w))
         stamp = self.stamp(kind, msg.header.stamp)
+        if stamp is None:
+            return None
         self.record(kind, {'stamp': stamp, 'frame': msg.header.frame_id, 'child': msg.child_frame_id,
                            'x': pose[0], 'y': pose[1], 'yaw': pose[2]})
         return pose
 
     def odom(self, msg):
         try:
-            self.pose = self.parse_pose('odom', msg, 'synthetic_odom', 'synthetic_base_footprint')
+            pose = self.parse_pose('odom', msg, 'synthetic_odom', 'synthetic_base_footprint')
+            if pose is None:
+                return
+            self.pose = pose
             self.max_displacement = max(self.max_displacement, math.hypot(*self.pose[:2]))
         except ValueError as exc:
             self.error = str(exc)
 
     def ground_truth(self, msg):
         try:
-            self.truth = self.parse_pose('ground_truth', msg, 'synthetic_world', 'synthetic_body')
+            pose = self.parse_pose('ground_truth', msg, 'synthetic_world', 'synthetic_body')
+            if pose is None:
+                return
+            self.truth = pose
             self.max_truth_displacement = max(self.max_truth_displacement, math.hypot(*self.truth[:2]))
             if not (-1.0 <= self.truth[0] <= 3.0 and -0.8 <= self.truth[1] <= 0.8):
                 self.error = 'ground truth left the bounded synthetic aisle'
@@ -82,20 +88,28 @@ class Smoke(Node):
             fields = [msg.angular_velocity.x, msg.angular_velocity.y, msg.angular_velocity.z,
                       msg.linear_acceleration.x, msg.linear_acceleration.y, msg.linear_acceleration.z]
             fields = [number(v, 'IMU') for v in fields]
-            if not msg.header.frame_id:
-                raise ValueError('IMU frame is empty')
+            if msg.header.frame_id != 'synthetic_imu':
+                raise ValueError(f'IMU frame mismatch: {msg.header.frame_id}')
+            stamp = self.stamp('imu', msg.header.stamp)
+            if stamp is None:
+                return
             self.max_imu_yaw_rate = max(self.max_imu_yaw_rate, abs(fields[2]))
-            self.record('imu', {'stamp': self.stamp('imu',msg.header.stamp),
+            self.record('imu', {'stamp': stamp,
                                'frame':msg.header.frame_id, 'angular_velocity':fields[:3],
                                'linear_acceleration':fields[3:]})
         except ValueError as exc:
             self.error = str(exc)
 
     def clock(self, msg):
-        value = self.stamp('clock', msg.clock)
-        if self.clock_first is None:
-            self.clock_first = value
-        self.clock_last = value
+        try:
+            value = self.stamp('clock', msg.clock)
+            if value is None:
+                return
+            if self.clock_first is None:
+                self.clock_first = value
+            self.clock_last = value
+        except ValueError as exc:
+            self.error = str(exc)
 
     def send(self, linear=0.0, angular=0.0):
         msg = Twist()
@@ -105,11 +119,10 @@ class Smoke(Node):
         self.record('command', {'linear_m_s': linear, 'angular_rad_s': angular, 'waypoint': self.goal_index})
 
     def ready(self):
-        return all(self.count[key] >= 5 for key in ('odom','ground_truth','imu','clock'))
+        return self.feedback.ready()
 
     def fresh(self):
-        now = time.monotonic()
-        return all(now-self.latest.get(key,0) < 2.0 for key in ('odom','ground_truth','imu','clock'))
+        return self.feedback.fresh(time.monotonic())
 
 
 def main():
@@ -127,11 +140,13 @@ def main():
         parser.error('timeout must be 10..90 seconds')
     out = Path(args.output_dir)
     out.mkdir(parents=True, exist_ok=True)
+    if any((out / name).exists() for name in ('telemetry.jsonl', 'smoke_result.json')):
+        parser.error('refusing to overwrite existing telemetry or result; use a new evidence directory')
     rclpy.init(args=[])
     success = False
     reason = 'wall timeout'
     start = time.monotonic()
-    with (out/'telemetry.jsonl').open('w', encoding='utf-8') as stream:
+    with (out/'telemetry.jsonl').open('x', encoding='utf-8') as stream:
         node = Smoke(stream)
         try:
             while time.monotonic()-start < args.timeout:
@@ -166,8 +181,12 @@ def main():
             node.error = reason
         finally:
             for _ in range(8):
-                node.send()
-                rclpy.spin_once(node, timeout_sec=0.05)
+                try:
+                    node.send()
+                    rclpy.spin_once(node, timeout_sec=0.05)
+                except Exception as exc:
+                    node.error = f'stop/feedback exception ({type(exc).__name__}): {exc}'
+                    break
             final_error = math.hypot(*node.pose[:2]) if node.pose else None
             truth_error = math.hypot(*node.truth[:2]) if node.truth else None
             checks = {
@@ -188,6 +207,7 @@ def main():
                 reason += '; failed checks: ' + ', '.join(failed_checks)
             report = {'scope': 'SYNTHETIC_GREENHOUSE_ONLY', 'runtime_executed': True,
                       'success': success, 'reason': reason, 'checks': checks, 'failed_checks': failed_checks, 'counts':node.count,
+                      'feedback_received_counts': node.feedback.received,
                       'waypoints_m': WAYPOINTS, 'completed_waypoints':node.goal_index,
                       'wall_seconds':time.monotonic()-start, 'odom_return_error_m':final_error,
                       'ground_truth_return_error_m':truth_error,
@@ -195,9 +215,13 @@ def main():
                       'max_physical_displacement_m':node.max_truth_displacement,
                       'max_imu_yaw_rate_rad_s':node.max_imu_yaw_rate,
                       'limitations':['No Nav2, localization, obstacle avoidance or benchmark task validity demonstrated.']}
-            (out/'smoke_result.json').write_text(json.dumps(report, indent=2, allow_nan=False)+'\n')
-            node.destroy_node()
-            rclpy.shutdown()
+            try:
+                with (out/'smoke_result.json').open('x', encoding='utf-8') as result_stream:
+                    json.dump(report, result_stream, indent=2, allow_nan=False)
+                    result_stream.write('\n')
+            finally:
+                node.destroy_node()
+                rclpy.shutdown()
     print(json.dumps({'success':success, 'reason':reason, 'report':str(out/'smoke_result.json')}))
     sys.exit(0 if success else 1)
 

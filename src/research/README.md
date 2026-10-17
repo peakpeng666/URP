@@ -16,6 +16,7 @@ python3 scripts/test.py
 | [NAS](docs/NAS_FIDELITY.md) | 训练保真度、重算与训练接口 |
 | [生成器](generator/README.md) | 已有装箱输入与模型执行器 |
 | [进程监督](execution/README.md) | 子进程回收、资源与退出状态记录 |
+| [研究结果验收](docs/RESEARCH_ACCEPTANCE.md) | 路线验算、计划分母、推荐划分与失败记账 |
 | `configs/` | 输入清单、哈希和依赖 |
 
 完整结果在[experiments](../../experiments/README.md)。既有实验输入使用`../../data/research`，新运行输出使用`../../experiments/runs/<run_id>`。多问题生成循环是下一步工作，见[下一阶段](../../下一阶段.md)。

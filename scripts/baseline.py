@@ -28,11 +28,15 @@ def solve(case_id,algorithm,seed=0,budget=5,run_name=None):
     cmd=[sys.executable,str(ROOT/'src/research/scripts/cvrplib.py'),'run-one','--instance',str(ROOT/case['instance_path']),'--algorithm',algorithm,'--seed',str(seed),'--budget',str(budget),'--output',str(out),'--run-registry',str(out.parent/(out.name+'-registry'))]
     run=subprocess.run(cmd,cwd=ROOT)
     result=out/'result.json';evaluation=out/'evaluation.json'
+    score_returncode=None
     if result.exists():
         raw=json.loads(result.read_text())
         if 'case_manifest_sha256' in raw:
-            subprocess.run([sys.executable,str(ROOT/'src/research/scripts/cvrplib.py'),'score','--repo',str(ROOT),'--result',str(result),'--output',str(evaluation)],cwd=ROOT)
-    return {'returncode':run.returncode,'result':str(result),'evaluation':str(evaluation) if evaluation.exists() else None,'purpose':'separate_user_run_not_original_baseline'}
+            scored=subprocess.run([sys.executable,str(ROOT/'src/research/scripts/cvrplib.py'),'score','--repo',str(ROOT),'--result',str(result),'--output',str(evaluation)],cwd=ROOT)
+            score_returncode=scored.returncode
+    returncode=run.returncode or (score_returncode if score_returncode is not None else 2)
+    if returncode==0 and not evaluation.exists():returncode=2
+    return {'returncode':returncode,'solver_returncode':run.returncode,'score_returncode':score_returncode,'result':str(result),'evaluation':str(evaluation) if evaluation.exists() else None,'purpose':'separate_user_run_not_original_baseline'}
 
 def main():
     p=argparse.ArgumentParser(description='当前17配置CVRP算法库：列举、单例、复现、汇总、验算。')
@@ -49,7 +53,10 @@ def main():
         print('case_id\tcustomers\tsize\tfamily\tbase_id')
         for c in cases():print('\t'.join(str(c[k]) for k in ('case_id','n_customers','size_stratum','source_family','base_id')))
         return
-    if a.command=='run':print(json.dumps(solve(a.case,a.algorithm,a.seed,a.budget,a.name),ensure_ascii=False));return
+    if a.command=='run':
+        result=solve(a.case,a.algorithm,a.seed,a.budget,a.name)
+        print(json.dumps(result,ensure_ascii=False))
+        return result['returncode']
     if a.command=='reproduce':
         out=output_path(a.name)
         if out.exists():raise FileExistsError(str(out))
@@ -62,4 +69,4 @@ def main():
         subprocess.run([sys.executable,str(ROOT/'src/research/scripts/cvrplib.py'),'score','--repo',str(ROOT),'--result',str(a.result.resolve()),'--output',str(out/'evaluation.json')],cwd=ROOT,check=True);return
     if a.command=='summarize':
         subprocess.run([sys.executable,str(ROOT/'protocol/aggregate_hosts.py'),'--plan',str(PLAN),'--cases',str(CASES),'--distribution',str(ROOT/'protocol/distribution_metadata.json'),'--runs',*[str(x.resolve()) for x in a.runs],'--assignment',str(a.assignment.resolve()),'--out',str(a.out.resolve())],cwd=ROOT,check=True)
-if __name__=='__main__':main()
+if __name__=='__main__':raise SystemExit(main())

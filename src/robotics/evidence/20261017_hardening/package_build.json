@@ -1,0 +1,13 @@
+{
+  "scope": "OFFLINE_SETPUPTOOLS_WHEEL_BUILD_ONLY",
+  "ros_build_executed": false,
+  "command_exit_code": 0,
+  "required_files_present": {
+    "urp_route_sim/upstream_core.py": true,
+    "urp_route_sim/runtime_core.py": true,
+    "share/urp_route_sim/launch/turtlebot4_reference.launch.py": true,
+    "share/urp_route_sim/config/upstream_turtlebot4_humble.json": true
+  },
+  "bytecode_directories_excluded": true,
+  "passed": true
+}

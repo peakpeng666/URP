@@ -1,0 +1,56 @@
+{
+  "scope": "OFFLINE_REGRESSION_REPRODUCTION_ONLY",
+  "runtime_executed": false,
+  "baseline_commit": "50b3b2c2cc7377e1f13dcaeebce09abf5619dbf8",
+  "method": "Execute reviewed baseline scene/control code and extracted timestamp/runner decision blocks on unit fixtures; never import ROS or start Gazebo.",
+  "baseline_source_sha256": {
+    "scene_core.py": "069b448f2d4a0ccc53303455e593fda920529fbc9cadfdcec977323589c21777",
+    "control_core.py": "4505cdfcb6605a3f8091bd80be6cdac3665aaeaf2a4bc7041eb933d7e34237f9",
+    "synthetic_smoke.py": "c09a8ec47273f6e15aa0f63790baa4a36d5de3448b57b080eabed8935faf24a7"
+  },
+  "observations": [
+    {
+      "case": "nonmetric_robot_frame",
+      "baseline_accepted": true,
+      "corrected_rejected": true
+    },
+    {
+      "case": "duplicate_vehicle_id",
+      "baseline_accepted": true,
+      "corrected_rejected": true
+    },
+    {
+      "case": "missing_run_identity",
+      "baseline_accepted": true,
+      "corrected_rejected": true
+    },
+    {
+      "case": "duplicate_json_keys",
+      "baseline_silently_selected": {
+        "simulation_ready": false
+      },
+      "corrected_rejected": true
+    },
+    {
+      "case": "quaternion_normalization",
+      "expected_yaw_rad": 1.5707963267948966,
+      "baseline_yaw_rad": 1.5607211645710701,
+      "corrected_yaw_rad": 1.5707963267948968
+    },
+    {
+      "case": "duplicate_feedback",
+      "baseline_ready": true,
+      "baseline_fresh": true,
+      "corrected_ready": false,
+      "corrected_fresh": false,
+      "received_per_stream": 10,
+      "distinct_timestamps_per_stream": 1
+    },
+    {
+      "case": "zero_exit_missing_controller_report",
+      "baseline_runner_exit_code": 0,
+      "baseline_written_report_success": false,
+      "corrected_gate_exit_code": 1
+    }
+  ]
+}

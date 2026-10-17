@@ -5,7 +5,7 @@ import { useSyncExternalStore } from 'react';
  * was" lives in the hash: #/<view>/<id>?k=v. Scrubbing the replay uses
  * replace() so the history stack only records deliberate navigation.
  */
-export type ViewName = 'overview' | 'samples' | 'replay' | 'risk' | 'evidence' | 'notfound';
+export type ViewName = 'overview' | 'jobs' | 'samples' | 'replay' | 'risk' | 'evidence' | 'notfound';
 
 export interface Route {
   view: ViewName;
@@ -16,6 +16,7 @@ export interface Route {
 
 const VIEWS: Record<string, ViewName> = {
   '': 'overview',
+  jobs: 'jobs',
   samples: 'samples',
   replay: 'replay',
   risk: 'risk',

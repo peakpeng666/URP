@@ -1,10 +1,43 @@
 """Aggregate fixed-plan runs without dropping failed/unstarted keys. Standard library only."""
-import argparse,csv,hashlib,itertools,json,statistics
+import argparse,csv,hashlib,itertools,json,math,statistics
 from collections import Counter,defaultdict
+from fractions import Fraction
 from pathlib import Path
 
 def mean(xs): return statistics.mean(xs) if xs else None
-def key(r): return (r['case_id'],r['algorithm'],r['seed'],r['budget_seconds'])
+def finite_number(value):
+    try:return type(value) in (int,float) and math.isfinite(value)
+    except OverflowError:return False
+def key(r):
+    if not isinstance(r,dict) or any(not isinstance(r.get(k),str) or not r[k] for k in ('case_id','algorithm')) or type(r.get('seed')) is not int or r['seed']<0 or not finite_number(r.get('budget_seconds')) or not 0<r['budget_seconds']<=60:
+        raise ValueError('Invalid result/plan key: explicit case, algorithm, integer seed and positive finite budget required')
+    return (r['case_id'],r['algorithm'],r['seed'],r['budget_seconds'])
+def planned_keys(plan):
+    for axis in ('case_ids','algorithms','seeds'):
+        values=plan.get(axis)
+        if not isinstance(values,list) or not values:raise ValueError('Plan axes must be nonempty lists')
+        if axis=='seeds':valid=all(type(x) is int and x>=0 for x in values)
+        else:valid=all(isinstance(x,str) and x for x in values)
+        if not valid or len(set(values))!=len(values):raise ValueError('Duplicate or invalid plan axis: '+axis)
+    budget=plan.get('budget_seconds')
+    if not finite_number(budget) or not 0<budget<=60:raise ValueError('Invalid planned budget')
+    expected={(c,a,s,budget) for c,a,s in itertools.product(plan['case_ids'],plan['algorithms'],plan['seeds'])}
+    if 'planned_keys' in plan and (type(plan['planned_keys']) is not int or plan['planned_keys']!=len(expected)):
+        raise ValueError('Declared planned denominator differs from Cartesian plan')
+    if 'schedule' in plan:
+        if not isinstance(plan['schedule'],list):raise ValueError('Schedule must be a list')
+        scheduled=[key(r) for r in plan['schedule']]
+        if len(scheduled)!=len(expected) or set(scheduled)!=expected:raise ValueError('Schedule must contain each planned key exactly once')
+    return expected
+def indexed_cases(items,label):
+    rows={}
+    for row in items:
+        case_id=row['case_id']
+        if case_id in rows:raise ValueError('Duplicate '+label+' case ID: '+case_id)
+        rows[case_id]=row
+    return rows
+def checked_cost(check):
+    return isinstance(check,dict) and all(check.get(k) is True for k in ('valid','feasible','reported_cost_checked','reported_cost_matches')) and check.get('errors')==[] and type(check.get('cost')) is int and finite_number(check['cost']) and check['cost']>=0
 def equal_mean(rows, group):
     buckets=defaultdict(list)
     for r in rows:
@@ -16,9 +49,12 @@ def summarize(rows):
     for r in rows:
         if r['gap_percent'] is not None: percase[r['case_id']].append(r['gap_percent'])
     caserows=[dict(case_id=c,base_id=next(r['base_id'] for r in rows if r['case_id']==c),gap_percent=mean(v)) for c,v in percase.items()]
-    return dict(planned=len(rows),started=sum(r['started'] for r in rows),not_started=sum(not r['started'] for r in rows),feasible=len(valid),failed_started=sum(r['started'] and not r['feasible'] for r in rows),feasible_rate_of_planned=len(valid)/len(rows) if rows else None,status_counts=dict(Counter(r['status'] for r in rows)),gap_rows=sum(r['gap_percent'] is not None for r in rows),quality_case_count=len(caserows),quality_base_count=len(set(r['base_id'] for r in caserows)),case_equal_gap_percent=equal_mean(caserows,'case_id'),base_equal_gap_percent=equal_mean(caserows,'base_id'),cpu_seconds_mean_started=mean([r['cpu_seconds'] for r in rows if r['cpu_seconds'] is not None]))
-def aggregate(plan,cases,distribution,runroot):
-    cm={c['case_id']:c for c in cases['cases']}; dm={c['case_id']:c['customer_distribution'] for c in distribution['cases']}; found={}; extras=[]
+    cpu=[r['cpu_seconds'] for r in rows if r['started'] and r['cpu_seconds'] is not None]
+    return dict(planned=len(rows),started=sum(r['started'] for r in rows),not_started=sum(not r['started'] for r in rows),feasible=len(valid),failed_started=sum(r['started'] and not r['feasible'] for r in rows),feasible_rate_of_planned=len(valid)/len(rows) if rows else None,status_counts=dict(Counter(r['status'] for r in rows)),gap_rows=sum(r['gap_percent'] is not None for r in rows),gap_status_counts=dict(Counter(r['gap_status'] for r in rows)),quality_case_count=len(caserows),quality_base_count=len(set(r['base_id'] for r in caserows)),case_equal_gap_percent=equal_mean(caserows,'case_id'),base_equal_gap_percent=equal_mean(caserows,'base_id'),cpu_seconds_mean_started=mean(cpu),cpu_rows_started=len(cpu))
+def aggregate(plan,cases,distribution,runroot,plan_sha256=None):
+    planned_keys(plan)
+    cm=indexed_cases(cases['cases'],'instance'); dm={k:v['customer_distribution'] for k,v in indexed_cases(distribution['cases'],'distribution').items()}; found={}; extras=[]
+    if any(c not in cm for c in plan['case_ids']):raise ValueError('Plan references a case absent from the case manifest')
     roots=runroot if isinstance(runroot,(list,tuple)) else [runroot]
     paths=sorted({p.resolve() for root in roots for p in root.rglob('result.json')})
     for p in paths:
@@ -28,18 +64,32 @@ def aggregate(plan,cases,distribution,runroot):
     rows=[]
     for c,a,s in itertools.product(plan['case_ids'],plan['algorithms'],plan['seeds']):
         case=cm[c]; k=(c,a,s,plan['budget_seconds']); item=found.pop(k,None)
-        row=dict(case_id=c,base_id=case['base_id'],algorithm=a,seed=s,budget_seconds=plan['budget_seconds'],size_stratum=case['size_stratum'],source_family=case['source_family'],contract_id=case['contract']['id'],distribution=dm.get(c,distribution['family_metadata'].get(case['source_family'],{}).get('customer_distribution','unknown')),started=item is not None,status='NOT_STARTED',feasible=False,cost=None,gap_percent=None,cpu_seconds=None,result_path=None,reference_review_required=False)
+        row=dict(case_id=c,base_id=case['base_id'],algorithm=a,seed=s,budget_seconds=plan['budget_seconds'],size_stratum=case['size_stratum'],source_family=case['source_family'],contract_id=case['contract']['id'],distribution=dm.get(c,distribution['family_metadata'].get(case['source_family'],{}).get('customer_distribution','unknown')),started=item is not None,status='NOT_STARTED',feasible=False,cost=None,gap_percent=None,gap_status='NOT_ELIGIBLE',cpu_seconds=None,measurement_errors=[],result_path=None,reference_review_required=False)
         if item:
-            p,r=item; ep=p.with_name('evaluation.json'); row.update(status=r.get('status','MISSING_STATUS'),cpu_seconds=r.get('cpu_seconds'),result_path=str(p))
-            if r.get('purpose')!='formal_baseline' or r.get('protocol_sha256')!=plan['protocol_sha256'] or r.get('instance_sha256')!=case['instance_sha256'] or r.get('case_manifest_sha256')!=plan['case_manifest_sha256'] or (plan.get('solver_source_sha256') is not None and r.get('solver_source_sha256') != plan['solver_source_sha256']):
+            p,r=item; ep=p.with_name('evaluation.json'); row.update(status=r.get('status','MISSING_STATUS'),result_path=str(p))
+            cpu=r.get('cpu_seconds')
+            if finite_number(cpu) and cpu>=0:row['cpu_seconds']=cpu
+            elif cpu is not None:row['measurement_errors'].append('invalid cpu_seconds')
+            if r.get('schema')!='urp-cvrplib-result-v1' or type(r.get('feasible')) is not bool or not isinstance(r.get('status'),str) or not r['status']:
+                row['status']='RESULT_SCHEMA_INVALID'
+            elif r.get('purpose')!='formal_baseline' or r.get('protocol_sha256')!=plan['protocol_sha256'] or r.get('instance_sha256')!=case['instance_sha256'] or r.get('case_manifest_sha256')!=plan['case_manifest_sha256'] or (plan_sha256 is not None and r.get('plan_sha256')!=plan_sha256) or (plan.get('solver_source_sha256') is not None and r.get('solver_source_sha256') != plan['solver_source_sha256']) or ('solver_source_end_sha256' in r and r['solver_source_end_sha256']!=r.get('solver_source_sha256')):
                 row['status']='METADATA_MISMATCH'
             elif not ep.exists(): row['status']='CHECKER_MISSING'
             else:
-                e=json.loads(ep.read_text())
-                if e.get('result_sha256')!=hashlib.sha256(p.read_bytes()).hexdigest(): row['status']='CHECKER_HASH_MISMATCH'
-                elif r.get('feasible') and r.get('status') in ('OK','TIMEOUT_WITH_FEASIBLE_INCUMBENT') and e.get('candidate_check',{}).get('valid') and e.get('candidate_check',{}).get('reported_cost_checked'):
-                    row.update(feasible=True,cost=e['candidate_check'].get('cost'),gap_percent=e.get('gap_percent') if e.get('eligible_for_gap') else None,reference_review_required=e.get('reference_review_required',False))
-                elif r.get('feasible'): row['status']='CHECKER_REJECTED'
+                try:e=json.loads(ep.read_text())
+                except (OSError,ValueError):e=None
+                if not isinstance(e,dict):row['status']='CHECKER_INVALID'
+                elif e.get('result_sha256')!=hashlib.sha256(p.read_bytes()).hexdigest(): row['status']='CHECKER_HASH_MISMATCH'
+                elif r['feasible'] and r.get('status') in ('OK','TIMEOUT_WITH_FEASIBLE_INCUMBENT') and checked_cost(e.get('candidate_check')) and type(r.get('cost')) is int and r['cost']==e['candidate_check']['cost']:
+                    row.update(feasible=True,cost=e['candidate_check']['cost'])
+                    if e.get('eligible_for_gap') is True:
+                        reference=e.get('reference_check')
+                        if not checked_cost(reference) or reference['cost']==0:row['gap_status']='REFERENCE_CHECKER_REJECTED'
+                        else:
+                            gap=float(Fraction(100*(row['cost']-reference['cost']),reference['cost']))
+                            if not finite_number(e.get('gap_percent')) or not math.isclose(e['gap_percent'],gap,rel_tol=1e-12,abs_tol=1e-12):row['gap_status']='GAP_MISMATCH'
+                            else:row.update(gap_percent=gap,gap_status='CHECKED',reference_review_required=gap<0 or e.get('reference_review_required') is True)
+                elif r['feasible']: row['status']='CHECKER_REJECTED'
         rows.append(row)
     extras=[dict(key=list(k),path=str(v[0])) for k,v in found.items()]
     groups={}
@@ -64,9 +114,11 @@ def aggregate(plan,cases,distribution,runroot):
     return rows,dict(schema='urp-cvrplib-summary-v1',cohort=plan['cohort'],denominator_policy='All planned keys retained; quality conditional on independently checked feasibility; pairwise matched case+seed',groups=groups,per_case=per_case,pairwise=pairs,unexpected_results=extras)
 def main():
     p=argparse.ArgumentParser();p.add_argument('--plan',required=True,type=Path);p.add_argument('--cases',required=True,type=Path);p.add_argument('--distribution',required=True,type=Path);p.add_argument('--runs',required=True,type=Path);p.add_argument('--out',required=True,type=Path);a=p.parse_args()
-    rows,summary=aggregate(json.loads(a.plan.read_text()),json.loads(a.cases.read_text()),json.loads(a.distribution.read_text()),a.runs)
+    plan=json.loads(a.plan.read_text())
+    if hashlib.sha256(a.cases.read_bytes()).hexdigest()!=plan['case_manifest_sha256']:raise ValueError('Case manifest bytes differ from frozen plan')
+    rows,summary=aggregate(plan,json.loads(a.cases.read_text()),json.loads(a.distribution.read_text()),a.runs,hashlib.sha256(a.plan.read_bytes()).hexdigest())
     a.out.mkdir(parents=True,exist_ok=True)
     with (a.out/'runs.csv').open('w') as f:
         w=csv.DictWriter(f,fieldnames=list(rows[0]));w.writeheader();w.writerows(rows)
-    (a.out/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
+    (a.out/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
 if __name__=='__main__': main()

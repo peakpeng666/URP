@@ -1,4 +1,5 @@
 import argparse,csv,hashlib,json,signal,sys,time
+from collections import Counter
 from pathlib import Path
 from . import solver,oracle,checker
 ROOT=Path(__file__).resolve().parent
@@ -9,10 +10,29 @@ def timed(call):
     try:return call()
     finally:signal.setitimer(signal.ITIMER_PROF,0)
 
+def plan_accounting(input_files,records):
+    """Keep the frozen plan visible even if the panel stops before completion."""
+    planned=[path.stem for path in input_files]
+    attempted={record['id'] for record in records}
+    completed=sum(record['terminal']=='completed' for record in records)
+    mode_valid=sum(record.get('checks',{}).get('mode',{}).get('valid',False) for record in records)
+    return {'schema':'urp-turn-panel-accounting-v1','planned':len(planned),
+      'attempted':len(records),'not_started':len(planned)-len(records),
+      'not_started_ids':[identity for identity in planned if identity not in attempted],
+      'terminal_counts':dict(Counter(record['terminal'] for record in records)),
+      'completed':completed,'completed_rate_planned':completed/len(planned) if planned else None,
+      'mode_valid':mode_valid,'mode_valid_rate_planned':mode_valid/len(planned) if planned else None}
+
+def write_accounting(output,input_files,records):
+    temporary=output/'plan_accounting.json.partial'
+    temporary.write_text(json.dumps(plan_accounting(input_files,records),indent=2,allow_nan=False)+'\n')
+    temporary.replace(output/'plan_accounting.json')
+
 def replay(split, output):
     from types import SimpleNamespace
     a=SimpleNamespace(split=split,out=output)
     out=Path(a.out);out.mkdir(parents=True,exist_ok=True)
+    if any(out.iterdir()):raise RuntimeError('Replay output must be an empty reserved directory')
     manifest=ROOT/'PRE_RUN_SHA256SUMS.json'
     if a.split=='formal':
         if not manifest.exists():raise RuntimeError('Formal run requires frozen manifest')
@@ -22,13 +42,19 @@ def replay(split, output):
     expected={'formal':36,'smoke':6,'fixtures':3}[a.split]
     if len(input_files)!=expected:
         raise RuntimeError(f'Expected {expected} {a.split} inputs, found {len(input_files)}')
-    records=[];started=time.time()
+    records=[];started=time.monotonic()
+    write_accounting(out,input_files,records)
     for f in input_files:
-        inst=json.loads(f.read_text());record={'id':inst['id'],'split':a.split,'data_sha256':hashlib.sha256(f.read_bytes()).hexdigest(),'shape':inst.get('shape'),'rule':inst.get('rule'),'seed':inst.get('seed')}
+        record={'id':f.stem,'split':a.split}
         signal.signal(signal.SIGALRM,lambda *_:(_ for _ in ()).throw(BudgetExceeded('180-second instance wall budget exceeded')));signal.alarm(180)
         try:
-            reset,_=timed(lambda:solver.solve(inst,'reset'));mode,tab=timed(lambda:solver.solve(inst,'mode'));raw=timed(lambda:oracle.solve(inst))
-            record.update(reset=reset,mode=mode,oracle=raw)
+            content=f.read_bytes();record['data_sha256']=hashlib.sha256(content).hexdigest()
+            inst=json.loads(content)
+            if inst['id']!=f.stem:raise ValueError('instance ID differs from planned filename')
+            record.update(shape=inst.get('shape'),rule=inst.get('rule'),seed=inst.get('seed'))
+            reset,_=timed(lambda:solver.solve(inst,'reset'));record['reset']=reset
+            mode,tab=timed(lambda:solver.solve(inst,'mode'));record['mode']=mode
+            raw=timed(lambda:oracle.solve(inst));record['oracle']=raw
             record['checks']={k:checker.check(inst,v) for k,v in [('reset',reset),('mode',mode),('oracle',raw)]}
             record['exact_match']=(mode['cost']==raw['cost'] and mode['status']==raw['status'])
             record['relaxation_bound']=mode['cost'] is None or (reset['cost'] is not None and reset['cost']<=mode['cost'])
@@ -41,11 +67,12 @@ def replay(split, output):
             record['terminal']='completed'
         except Exception as e:record['terminal']='error';record['error']=repr(e)
         finally:signal.alarm(0)
-        (out/(inst['id']+'.json')).write_text(json.dumps(record,indent=2,allow_nan=False))
+        (out/(f.stem+'.json')).write_text(json.dumps(record,indent=2,allow_nan=False))
         records.append(record)
-        with (out/'progress.jsonl').open('a') as log:log.write(json.dumps({'id':inst['id'],'terminal':record['terminal'],'exact_match':record.get('exact_match')})+'\n')
-        print(inst['id'],record['terminal'],record.get('mode',{}).get('cost'),record.get('checks',{}).get('reset',{}).get('valid'),flush=True)
-        if time.time()-started>1200:break
+        with (out/'progress.jsonl').open('a') as log:log.write(json.dumps({'id':f.stem,'terminal':record['terminal'],'exact_match':record.get('exact_match')})+'\n')
+        write_accounting(out,input_files,records)
+        print(f.stem,record['terminal'],record.get('mode',{}).get('cost'),record.get('checks',{}).get('reset',{}).get('valid'),flush=True)
+        if time.monotonic()-started>1200:break
     rows=[]
     for r in records:
         row={k:r.get(k) for k in ('id','terminal','rule','seed','exact_match','relaxation_bound')}
@@ -60,7 +87,7 @@ def replay(split, output):
       'exact_matches':sum(r.get('exact_match',False) for r in records),'mode_feasible':sum(r.get('mode',{}).get('status')=='optimal' for r in records),
       'mode_valid':sum(r.get('checks',{}).get('mode',{}).get('valid',False) for r in records),
       'reset_invalid':sum(r.get('reset',{}).get('status')=='optimal' and not r.get('checks',{}).get('reset',{}).get('valid',False) for r in records),
-      'wall_s':time.time()-started,'paid_api_calls':0}
+      'wall_s':time.monotonic()-started,'paid_api_calls':0}
     (out/'summary.json').write_text(json.dumps(summary,indent=2));print(json.dumps(summary))
     if summary['completed']!=expected:
         raise RuntimeError('Incomplete frozen panel; inspect per-instance errors')

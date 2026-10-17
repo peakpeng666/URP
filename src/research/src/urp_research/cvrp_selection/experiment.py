@@ -5,27 +5,68 @@ from .preflight import ROOT, digest, load_json, validate
 ALGOS=['multistart_vnd','parallel_savings','pyvrp_ils_s1e6']
 PROFILES=['cpu025','cpu100']
 
+def finite_number(value,label,minimum=None):
+    try:valid=type(value) in (int,float) and math.isfinite(value) and (minimum is None or value>=minimum)
+    except OverflowError:valid=False
+    if not valid:
+        raise ValueError(label+' must be a finite number'+(' >= '+str(minimum) if minimum is not None else ''))
+    return value
+
+def feature_values(record,dimension=None):
+    values=record.get('values') if isinstance(record,dict) else None
+    if not isinstance(values,list) or not values or (dimension is not None and len(values)!=dimension):
+        raise ValueError('feature vectors must have the same nonzero dimension')
+    for x in values:finite_number(x,'feature')
+    return values
+
+def prediction_contract(pred):
+    if not isinstance(pred,dict) or any(not isinstance(pred.get(k),str) or not pred[k] for k in ('chosen','sbs')):
+        raise ValueError('prediction must contain chosen and sbs algorithm names')
+    finite_number(pred.get('score'),'ranking score',0)
+
 def timed(fn,*a,**k):
     c=time.process_time();w=time.perf_counter();r=fn(*a,**k)
     return r,{'cpu_seconds':time.process_time()-c,'wall_seconds':time.perf_counter()-w}
 
 def features(x):
-    coords=x['coordinates'];demands=x['demands'][1:];n=len(demands);cap=x['capacity']
+    coords=x['coordinates'];all_demands=x['demands'];cap=x['capacity']
+    if not isinstance(coords,list) or len(coords)<2 or not isinstance(all_demands,list) or len(coords)!=len(all_demands):
+        raise ValueError('coordinates and demands must include a depot and at least one customer')
+    finite_number(cap,'capacity',0)
+    if cap==0:raise ValueError('capacity must be positive')
+    for point in coords:
+        if not isinstance(point,(list,tuple)) or len(point)!=2:raise ValueError('coordinates must be pairs')
+        for value in point:finite_number(value,'coordinate')
+    for demand in all_demands:
+        finite_number(demand,'demand',0)
+        if demand>cap:raise ValueError('demand exceeds capacity')
+    if all_demands[0]!=0:raise ValueError('depot demand must be zero')
+    demands=all_demands[1:];n=len(demands)
     radii=[math.dist(p,coords[0]) for p in coords[1:]];r=st.mean(radii)
-    nearest=[min(math.dist(p,q) for j,q in enumerate(coords[1:]) if i!=j) for i,p in enumerate(coords[1:])]
+    nearest=[min((math.dist(p,q) for j,q in enumerate(coords[1:]) if i!=j),default=0.) for i,p in enumerate(coords[1:])]
     width=max(p[0] for p in coords[1:])-min(p[0] for p in coords[1:])
     height=max(p[1] for p in coords[1:])-min(p[1] for p in coords[1:])
-    f=[math.log(n),st.mean(demands)/cap,st.pstdev(demands)/cap,st.pstdev(radii)/r,st.mean(nearest)/r,min(width,height)/max(width,height)]
+    f=[math.log(n),st.mean(demands)/cap,st.pstdev(demands)/cap,st.pstdev(radii)/r if r else 0.,st.mean(nearest)/r if r else 0.,min(width,height)/max(width,height) if max(width,height) else 0.]
+    feature_values({'values':f})
     return {'values':f,'star_upper_bound':2*math.fsum(radii)}
 
 def aggregate(rows,inputs):
+    """Aggregate a verified historical panel; never silently drop failed rows."""
     groups=collections.defaultdict(list)
-    for r in rows:groups[(r['profile'],r['instance_id'],r['algorithm'])].append(r)
+    for r in rows:
+        if r.get('status')!='returned' or any(r.get(k) is not True for k in ('accepted','budget_conformant','scoreable')) or r.get('checker_errors'):
+            raise ValueError('performance panel contains an unaccepted run; retain it in the failure ledger')
+        groups[(r['profile'],r['instance_id'],r['algorithm'])].append(r)
     matrix={}
     for (p,i,a),rs in groups.items():
+        costs=[finite_number(r['recomputed_cost'],'recomputed cost',0) for r in rs]
+        scale=finite_number(inputs[i]['star_upper_bound'],'star upper bound',0)
+        if scale==0 and any(costs):raise ValueError('positive cost with zero geometric upper bound')
+        seeds=[r['solver_seed'] for r in rs]
+        if len(set(seeds))!=len(seeds):raise ValueError('duplicate solver seed in performance cell')
         matrix.setdefault(p,{}).setdefault(i,{})[a]={
-            'cost':st.mean(r['recomputed_cost'] for r in rs),
-            'normalized_cost':st.mean(r['recomputed_cost'] for r in rs)/inputs[i]['star_upper_bound'],
+            'cost':st.mean(costs),
+            'normalized_cost':st.mean(costs)/scale if scale else 0.,
             'solver_cpu_seconds':st.mean(r['solver_cpu_seconds'] for r in rs),
             'child_cpu_seconds':st.mean(r['child_total_cpu_seconds'] for r in rs),
             'wall_seconds':st.mean(r['total_wall_seconds'] for r in rs),
@@ -35,7 +76,13 @@ def aggregate(rows,inputs):
     return matrix
 
 def fit(train_ids,feat,matrix):
+    if not train_ids or any(not isinstance(i,str) for i in train_ids) or len(set(train_ids))!=len(train_ids):
+        raise ValueError('training IDs must be nonempty and unique')
     train_ids=sorted(train_ids)
+    dimension=len(feature_values(feat[train_ids[0]]))
+    for i in train_ids:
+        feature_values(feat[i],dimension)
+        for a in ALGOS:finite_number(matrix[i][a]['normalized_cost'],'training cost',0)
     cols=list(zip(*(feat[i]['values'] for i in train_ids)))
     mu=list(map(st.mean,cols));sd=[st.pstdev(c) or 1. for c in cols]
     scaled={i:[(x-m)/s for x,m,s in zip(feat[i]['values'],mu,sd)] for i in train_ids}
@@ -45,15 +92,22 @@ def fit(train_ids,feat,matrix):
             'targets':{i:{a:matrix[i][a]['normalized_cost'] for a in ALGOS} for i in train_ids},'k':3}
 
 def predict(model,i,feat):
+    feature_values(feat[i],len(model['mu']))
     v=[(x-m)/s for x,m,s in zip(feat[i]['values'],model['mu'],model['sd'])]
     near=sorted(model['train_ids'],key=lambda t:(math.dist(v,model['scaled'][t]),t))[:model['k']]
     pred={a:st.mean(model['targets'][t][a] for t in near) for a in ALGOS}
     chosen=min(ALGOS,key=lambda a:(pred[a],a));sbs=model['sbs']
-    score=(pred[sbs]-pred[chosen])/pred[sbs]
+    score=(pred[sbs]-pred[chosen])/pred[sbs] if pred[sbs] else 0.
     return {'instance_id':i,'chosen':chosen,'sbs':sbs,'score':score,'predicted_costs':pred,'neighbor_ids':near}
 
 def crc(cal,alpha):
     """Nonnegative gate parameter. Strict > ensures right-continuous losses."""
+    finite_number(alpha,'alpha')
+    if not 0<alpha<1:raise ValueError('alpha must be strictly between zero and one')
+    if not isinstance(cal,(list,tuple)):raise ValueError('calibration records must be a list')
+    for row in cal:
+        prediction_contract(row)
+        if type(row.get('harm')) is not bool:raise ValueError('calibration harm must be boolean')
     n=len(cal);trials=[]
     for threshold in sorted({0.}|{x['score'] for x in cal if x['score']>=0}):
         loss=sum(x['harm'] and x['chosen']!=x['sbs'] and x['score']>threshold for x in cal)
@@ -66,11 +120,25 @@ def crc(cal,alpha):
             'corrected_risk':None,'finite_sample_floor':1/(n+1),'reason':'no finite threshold satisfies correction; structurally zero-risk fallback'}
 
 def route(pred,gate=None):
+    prediction_contract(pred)
     if gate is None:return pred['chosen'],pred['chosen']!=pred['sbs']
+    if not isinstance(gate,dict) or type(gate.get('safe_endpoint')) is not bool:raise ValueError('invalid CRC gate')
+    if not gate['safe_endpoint']:finite_number(gate.get('threshold'),'CRC threshold',0)
     accept=not gate['safe_endpoint'] and pred['chosen']!=pred['sbs'] and pred['score']>gate['threshold']
     return (pred['chosen'] if accept else pred['sbs']),accept
 
 def fit_calibrate(profile,fold,manifest,feat,matrix):
+    if type(fold) is not int or not 0<=fold<4:raise ValueError('fold must be 0..3')
+    ids=[m['instance_id'] for m in manifest]
+    if len(set(ids))!=len(ids):raise ValueError('duplicate instance IDs in split manifest')
+    groups={}
+    for m in manifest:
+        replicate=m['replicate']
+        if type(replicate) is not int or not 0<=replicate<4:raise ValueError('replicate must be 0..3')
+        group=m.get('base_id') or m.get('parent_instance_id') or m['instance_id']
+        if group in groups and groups[group]!=replicate:
+            raise ValueError('related instances cross train/calibration/test partitions')
+        groups[group]=replicate
     test=sorted(m['instance_id'] for m in manifest if m['replicate']==fold)
     cal=sorted(m['instance_id'] for m in manifest if m['replicate']==(fold+1)%4)
     train=sorted(m['instance_id'] for m in manifest if m['replicate'] not in [fold,(fold+1)%4])

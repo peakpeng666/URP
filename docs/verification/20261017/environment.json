@@ -1,0 +1,28 @@
+{
+  "schema": "urp-engineering-environment-v1",
+  "python": "3.12.14",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "node": "v24.19.0",
+  "uv": "uv 0.12.23 (x86_64-unknown-linux-gnu)",
+  "packages": {
+    "numpy": "2.2.6",
+    "pyvrp": "0.14.0",
+    "ortools": "9.14.6206",
+    "jsonschema": "4.26.0"
+  },
+  "browser": {
+    "version": "155.0.8059.84",
+    "source": "https://storage.googleapis.com/chrome-for-testing-public/155.0.8059.84/linux64/chrome-headless-shell-linux64.zip",
+    "executable_sha256": "d8a78ffa2b88968cd74ff2df4040b48a25cce02351b75c92ed76a69d44efc7c2",
+    "playwright": "1.63.0",
+    "note": "Pinned Playwright browser download returned an empty archive; ran the locked driver with a separately verified official Chrome headless-shell executable."
+  },
+  "fonts": {
+    "name": "NotoSansCJKsc-Regular",
+    "scope": "Temporary test fontconfig; not a new product dependency",
+    "sha256": "2c76254f6fc379fddfce0a7e84fb5385bb135d3e399294f6eeb6680d0365b74b"
+  },
+  "research_baseline_environment_replaced": false,
+  "ros_runtime_executed": false,
+  "gazebo_runtime_executed": false
+}

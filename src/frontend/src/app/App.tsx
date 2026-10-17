@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useRef } from 'react';
-import { ChartColumn, ShieldCheck, Split, Table2, Waypoints } from 'lucide-react';
+import { ChartColumn, Play, ShieldCheck, Split, Table2, Waypoints } from 'lucide-react';
 import { lastViewHref, useRoute, type Route, type ViewName } from './router';
 import { loadMeta, useAsync } from '../data/api';
 import { ProvenanceDrawer } from '../components/ProvenanceDrawer';
@@ -12,9 +12,11 @@ const Samples = lazy(() => import('../views/Samples').then((m) => ({ default: m.
 const ReplayView = lazy(() => import('../views/ReplayView').then((m) => ({ default: m.ReplayView })));
 const RiskView = lazy(() => import('../views/RiskView').then((m) => ({ default: m.RiskView })));
 const EvidenceView = lazy(() => import('../views/EvidenceView').then((m) => ({ default: m.EvidenceView })));
+const JobsView = lazy(() => import('../views/JobsView').then((m) => ({ default: m.JobsView })));
 
 const NAV: { view: Exclude<ViewName, 'notfound'>; label: string; href: string; icon: typeof ChartColumn }[] = [
-  { view: 'overview', label: '结果', href: '#/', icon: ChartColumn },
+  { view: 'jobs', label: '路径任务', href: '#/jobs', icon: Play },
+  { view: 'overview', label: 'BPP 结果', href: '#/', icon: ChartColumn },
   { view: 'samples', label: '样本', href: '#/samples', icon: Table2 },
   { view: 'replay', label: '回放', href: '#/replay', icon: Waypoints },
   { view: 'risk', label: '同前缀风险', href: '#/risk', icon: Split },
@@ -22,6 +24,7 @@ const NAV: { view: Exclude<ViewName, 'notfound'>; label: string; href: string; i
 ];
 
 const TITLES: Record<ViewName, string> = {
+  jobs: '路径任务工作台',
   overview: '结果总览',
   samples: '样本',
   replay: '回放',
@@ -81,7 +84,7 @@ export function App() {
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    document.title = `${TITLES[route.view]} · BPP 前缀选择科研工作台`;
+    document.title = `${TITLES[route.view]} · URP 科研工作台`;
   }, [route.view]);
 
   useEffect(() => {
@@ -114,18 +117,19 @@ export function App() {
         跳到主要内容
       </button>
       <header className={s.topbar}>
-        <a className={s.brand} href="#/" aria-label="BPP 前缀选择科研工作台，返回结果总览">
+        <a className={s.brand} href="#/jobs" aria-label="URP 科研工作台，进入路径任务">
           <ForkMark size={22} />
-          <span className={s.brandName}>BPP 前缀选择</span>
+          <span className={s.brandName}>URP</span>
           <span className={s.brandSub}>科研工作台</span>
         </a>
         <nav className={s.topNav} aria-label="主要视图">
           <NavLinks route={route} variant="top" />
         </nav>
-        <ValidationChip />
+        {route.view !== 'jobs' && <ValidationChip />}
       </header>
       <main ref={mainRef} className={s.main} tabIndex={-1} aria-label={TITLES[route.view]}>
         <Suspense fallback={<div className={s.viewLoading}>正在载入视图…</div>}>
+          {route.view === 'jobs' && <JobsView route={route} />}
           {route.view === 'overview' && <Overview />}
           {route.view === 'samples' && <Samples route={route} />}
           {route.view === 'replay' && <ReplayView route={route} />}

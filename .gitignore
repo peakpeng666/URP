@@ -13,3 +13,7 @@ dist/
 /src/backend/backend_data/**
 /.workbuddy/
 /.materialized-files.json
+/.local-state/
+/user-runs/
+/cohort_b/ails/build/
+/cohort_b/sisr/build/

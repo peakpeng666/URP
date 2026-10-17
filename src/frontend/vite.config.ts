@@ -2,8 +2,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
+import { localApi } from './server/local-api.ts';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
+const api = localApi(Number(process.env.URP_API_PORT ?? 4180));
 
 // Files on a WSL-mounted Windows drive (/mnt/<letter>/...) do not raise inotify
 // events when edited from Windows, so the dev server polls there. Override with
@@ -26,7 +28,7 @@ const ignored = [
 ];
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), api.plugin],
   resolve: {
     alias: {
       '@core': `${root}core`,
@@ -35,11 +37,17 @@ export default defineConfig({
   server: {
     host: '127.0.0.1',
     port: 5173,
+    strictPort: true,
+    cors: false,
+    proxy: api.proxy,
     watch: { usePolling, interval: 400, ignored },
   },
   preview: {
     host: '127.0.0.1',
     port: 4173,
+    strictPort: true,
+    cors: false,
+    proxy: api.proxy,
   },
   build: {
     outDir: 'dist',

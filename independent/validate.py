@@ -117,7 +117,16 @@ def read_solution(path):
 
 def check_result(p, result, vehicle_limit):
     """Failed runs remain records, not discarded observations."""
-    status = result.get('status')
+    schema_errors=[]
+    if not isinstance(result,dict):
+        result={}
+        schema_errors.append('result must be an object')
+    status = result.get('status','INVALID_RESULT')
+    if not isinstance(status,str) or not status:
+        status='INVALID_STATUS'
+        schema_errors.append('status must be a nonempty string')
+    if type(result.get('feasible')) is not bool:
+        schema_errors.append('feasible must be a boolean')
     claimed = result.get('feasible') is True
     validation = check(p, result.get('routes'), result.get('cost'), vehicle_limit)
     timing_errors = []
@@ -125,15 +134,28 @@ def check_result(p, result, vehicle_limit):
         if status not in {'OK', 'TIMEOUT_WITH_FEASIBLE_INCUMBENT'}:
             timing_errors.append('feasible/status contradiction')
         stamps = [result.get(k) for k in ('start_monotonic_ns','incumbent_emitted_ns','incumbent_received_ns','deadline_monotonic_ns')]
-        if any(type(t) is not int for t in stamps) or stamps != sorted(stamps):
+        if any(type(t) is not int or t<0 for t in stamps) or stamps != sorted(stamps):
             timing_errors.append('missing/late incumbent timestamps')
-        elif stamps[3]-stamps[0] != int(Decimal(str(result['budget_seconds']))*10**9):
-            timing_errors.append('budget/deadline mismatch')
-        if not any(e.get('event') == 'incumbent' and e.get('routes') == result.get('routes') and e.get('cost') == result.get('cost') and e.get('emitted_ns') == stamps[1] and e.get('received_ns') == stamps[2] for e in result.get('events', [])):
+        else:
+            budget=result.get('budget_seconds')
+            decimal_budget=Decimal(str(budget)) if type(budget) in (int,float) else None
+            if decimal_budget is None or not decimal_budget.is_finite() or not 0<decimal_budget<=60:
+                timing_errors.append('budget must be finite and in (0, 60] seconds')
+            elif stamps[3]-stamps[0] != int(decimal_budget*10**9):
+                timing_errors.append('budget/deadline mismatch')
+        events=result.get('events',[])
+        if not isinstance(events,list) or any(not isinstance(e,dict) for e in events):
+            timing_errors.append('events must be a list of objects')
+            events=[]
+        def matches(e):
+            routes=e.get('routes')
+            strict_routes=isinstance(routes,list) and all(isinstance(route,list) and all(type(v) is int for v in route) for route in routes)
+            return e.get('event')=='incumbent' and strict_routes and routes==result.get('routes') and type(e.get('cost')) is int and e['cost']==result.get('cost') and type(e.get('emitted_ns')) is int and e['emitted_ns']==stamps[1] and type(e.get('received_ns')) is int and e['received_ns']==stamps[2]
+        if not any(matches(e) for e in events):
             timing_errors.append('matching incumbent event absent')
     return {'status':status, 'count_in_denominator':True, 'claimed_feasible':claimed,
-            'eligible':claimed and validation['valid'] and not timing_errors,
-            'solution':validation, 'timing_errors':timing_errors}
+            'eligible':claimed and validation['valid'] and not timing_errors and not schema_errors,
+            'solution':validation, 'timing_errors':timing_errors, 'schema_errors':schema_errors}
 
 
 if __name__ == '__main__':

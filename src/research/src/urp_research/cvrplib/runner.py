@@ -227,8 +227,22 @@ def _run_payload(payload, *, worker_path=None, python=None):
 
 def summarize(rows, planned):
     """Never turn survivor means into all-plan quality, or missing into zero."""
-    if type(planned) is not int or planned < len(rows):
+    if not isinstance(rows,(list,tuple)) or type(planned) is not int or planned < len(rows):
         raise ValueError("planned must cover every attempt")
+    seen=set()
+    for row in rows:
+        if not isinstance(row,dict) or not isinstance(row.get('status'),str) or not row['status'] or type(row.get('feasible')) is not bool:
+            raise ValueError('result rows require a status and boolean feasibility')
+        if row['feasible']:
+            if row['status'] not in {'OK','TIMEOUT_WITH_FEASIBLE_INCUMBENT'} or type(row.get('cost')) is not int or row['cost']<0:
+                raise ValueError('feasible result has contradictory status or invalid cost')
+        elif row.get('cost') is not None:
+            raise ValueError('failed result cost must be null')
+        key=row.get('run_key')
+        if key is not None:
+            if not isinstance(key,str) or not key or key in seen:
+                raise ValueError('invalid or duplicate run key in summary')
+            seen.add(key)
     good = [r for r in rows if r.get("feasible") and r.get("cost") is not None]
     return {"planned": planned, "attempted": len(rows), "not_started": planned-len(rows),
             "feasible": len(good), "feasible_rate_planned": len(good)/planned if planned else None,

@@ -21,7 +21,7 @@ Visualization Manager:
       Class: rviz_default_plugins/TopDownOrtho
       Name: Current View
       Scale: 50
-      Target Frame: benchmark_xy
+      Target Frame: <Fixed Frame>
       X: 0
       Y: 0
 Window Geometry:

@@ -7,7 +7,9 @@ from functools import lru_cache
 def solve(inst):
     startwall=time.perf_counter();startcpu=time.process_time()
     depot=inst['depot'];cap=inst['capacity'];tasks=inst['customers'];n=len(tasks);full=(1<<n)-1
-    lookup={x['node']:i for i,x in enumerate(tasks)}
+    lookup={}
+    for i,task in enumerate(tasks):
+        lookup.setdefault(task['node'],[]).append(i)
     neighbors={}
     for u,v,c in inst['arcs']:neighbors.setdefault(u,[]).append((v,c))
     banned=set(map(tuple,inst['forbidden_turns']));pen={tuple(t[:3]):t[3] for t in inst['turn_penalties']}
@@ -19,8 +21,8 @@ def solve(inst):
         expanded+=1;mask,prior,node=state
         if node==depot and mask and cost<closed.get(mask,math.inf):closed[mask]=cost;endstates[mask]=state
         options=[]
-        if node in lookup:
-            i=lookup[node];m=mask|(1<<i)
+        for i in lookup.get(node,[]):
+            m=mask|(1<<i)
             if m!=mask and loads[m]<=cap:options.append(((m,prior,node),0,('serve',i)))
         for nxt,base in neighbors.get(node,[]):
             if prior!=-1 and (prior,node,nxt) in banned:continue

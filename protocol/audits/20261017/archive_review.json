@@ -1,0 +1,384 @@
+{
+  "schema": "urp-cvrplib-archive-reaudit-v1",
+  "scope": "Read-only main baseline re-audit; no solver runs; vendor120 excluded",
+  "plan_sha256": "a8a4bee5f43c9a186996845f725f5b2fdfa8cad51df6582ea30561513a995ad5",
+  "baseline_solver_source_sha256": "0d60312417f36be46a69a0e532bdc5efebcbae54964fb3034ae0959e197194ec",
+  "audit_source_sha256": {
+    "independent/audit_archives.py": "7ee522e11d125c3b536b69fa269e559d5dab628f2210095ff549cfe123cb1630",
+    "independent/audit_results.py": "a64cb2672e98c3adf697dff54e4a33c85463835bd44cdb1ea2fe8785d7b1a519",
+    "independent/validate.py": "5585468f82e1b004802282b60ae05f1536e81786840c19f9fa29e8a928beccaa",
+    "protocol/aggregate.py": "6c2eb9a7f07a139679b29ff28304e3b4e7c4099859000f495ca5737f32a352f4",
+    "protocol/aggregate_hosts.py": "da7f56cc0abe2055d9b90c12e3f95c77092afd1d751e2e62347df2c6d182debc"
+  },
+  "archives": [
+    {
+      "file": "ubuntu-local-seed1-results.tar.xz",
+      "bytes": 4417720,
+      "sha256": "a790cd7e77c798c3b78f76d77d6f28f27fb458e9758ae834a295065e8f3bfbef",
+      "verified": true,
+      "extracted_files": 2835,
+      "terminal_results": 901
+    },
+    {
+      "file": "cloud-results.tar.xz",
+      "bytes": 6103108,
+      "sha256": "c9127e53b6528bc286745648cdf972a5d0d76255f102e3f4a86841232df3010f",
+      "verified": true,
+      "extracted_files": 5486,
+      "terminal_results": 1802
+    },
+    {
+      "file": "ubuntu-local-seeds3-4-results.tar.xz",
+      "bytes": 7278644,
+      "sha256": "b32ce11c149c4594744c00678c67ef45ee5fefa6b8cfc3ab3a661d7563032a13",
+      "verified": true,
+      "extracted_files": 5474,
+      "terminal_results": 1802
+    }
+  ],
+  "denominator": {
+    "planned": 4505,
+    "terminal_results": 4505,
+    "not_started": 0,
+    "extra_consumed_claims_without_terminal_result": 4,
+    "recorded_attempts_including_interrupted_claims": 4509,
+    "duplicate_terminal_keys": [],
+    "unexpected_terminal_results": []
+  },
+  "quality": {
+    "independently_eligible": 4316,
+    "failed_terminal_results": 189,
+    "aggregation_feasible": 4316,
+    "feasibility_disagreement_count": 0,
+    "feasibility_disagreement_examples": [],
+    "independent_audit_error_count": 0,
+    "independent_audit_error_examples": [],
+    "status_counts": {
+      "TIMEOUT_WITH_FEASIBLE_INCUMBENT": 2405,
+      "OK": 1911,
+      "NO_SOLUTION": 179,
+      "TIMEOUT_NO_SOLUTION": 10
+    },
+    "checked_reference_cases": 53,
+    "reference_errors": [],
+    "independently_recomputed_gap_rows": 4316,
+    "gap_error_count": 0,
+    "gap_error_examples": [],
+    "negative_reference_gaps": 0,
+    "algorithm_results": [
+      {
+        "algorithm": "T",
+        "planned": 265,
+        "feasible": 265,
+        "failed_started": 0,
+        "gap_rows": 265,
+        "case_equal_gap_percent": 23.52970946825851,
+        "base_equal_gap_percent": 22.692978821928353
+      },
+      {
+        "algorithm": "TRS",
+        "planned": 265,
+        "feasible": 265,
+        "failed_started": 0,
+        "gap_rows": 265,
+        "case_equal_gap_percent": 13.393691532621514,
+        "base_equal_gap_percent": 13.188516017308023
+      },
+      {
+        "algorithm": "TSR",
+        "planned": 265,
+        "feasible": 265,
+        "failed_started": 0,
+        "gap_rows": 265,
+        "case_equal_gap_percent": 11.847302029746,
+        "base_equal_gap_percent": 11.258823207556988
+      },
+      {
+        "algorithm": "de_random_keys",
+        "planned": 265,
+        "feasible": 262,
+        "failed_started": 3,
+        "gap_rows": 262,
+        "case_equal_gap_percent": 121.23009806528049,
+        "base_equal_gap_percent": 120.37390459252603
+      },
+      {
+        "algorithm": "ga_random_keys",
+        "planned": 265,
+        "feasible": 262,
+        "failed_started": 3,
+        "gap_rows": 262,
+        "case_equal_gap_percent": 58.897614988301584,
+        "base_equal_gap_percent": 59.18052210758241
+      },
+      {
+        "algorithm": "multistart_vnd",
+        "planned": 265,
+        "feasible": 260,
+        "failed_started": 5,
+        "gap_rows": 260,
+        "case_equal_gap_percent": 3.909094913489723,
+        "base_equal_gap_percent": 3.8600855505030083
+      },
+      {
+        "algorithm": "nearest_neighbor",
+        "planned": 265,
+        "feasible": 260,
+        "failed_started": 5,
+        "gap_rows": 260,
+        "case_equal_gap_percent": 37.52824624629509,
+        "base_equal_gap_percent": 37.39739779853429
+      },
+      {
+        "algorithm": "ortools",
+        "planned": 265,
+        "feasible": 260,
+        "failed_started": 5,
+        "gap_rows": 260,
+        "case_equal_gap_percent": 3.9630553299904694,
+        "base_equal_gap_percent": 4.030365166438441
+      },
+      {
+        "algorithm": "pso_random_keys",
+        "planned": 265,
+        "feasible": 261,
+        "failed_started": 4,
+        "gap_rows": 261,
+        "case_equal_gap_percent": 119.39966282694945,
+        "base_equal_gap_percent": 119.28910473366142
+      },
+      {
+        "algorithm": "pyvrp",
+        "planned": 265,
+        "feasible": 265,
+        "failed_started": 0,
+        "gap_rows": 265,
+        "case_equal_gap_percent": 0.3410435274980443,
+        "base_equal_gap_percent": 0.34525519737578714
+      },
+      {
+        "algorithm": "random_cheapest",
+        "planned": 265,
+        "feasible": 265,
+        "failed_started": 0,
+        "gap_rows": 265,
+        "case_equal_gap_percent": 4.302720880703353,
+        "base_equal_gap_percent": 4.306024426018283
+      },
+      {
+        "algorithm": "random_regret2",
+        "planned": 265,
+        "feasible": 265,
+        "failed_started": 0,
+        "gap_rows": 265,
+        "case_equal_gap_percent": 2.463461137767915,
+        "base_equal_gap_percent": 2.41651210677887
+      },
+      {
+        "algorithm": "savings",
+        "planned": 265,
+        "feasible": 265,
+        "failed_started": 0,
+        "gap_rows": 265,
+        "case_equal_gap_percent": 24.278383284792977,
+        "base_equal_gap_percent": 23.43315750538064
+      },
+      {
+        "algorithm": "savings_vnd",
+        "planned": 265,
+        "feasible": 200,
+        "failed_started": 65,
+        "gap_rows": 200,
+        "case_equal_gap_percent": 4.829089723638314,
+        "base_equal_gap_percent": 4.774226239410028
+      },
+      {
+        "algorithm": "seeded_sweep",
+        "planned": 265,
+        "feasible": 166,
+        "failed_started": 99,
+        "gap_rows": 166,
+        "case_equal_gap_percent": 71.97525177088015,
+        "base_equal_gap_percent": 71.76473507492071
+      },
+      {
+        "algorithm": "worst_cheapest",
+        "planned": 265,
+        "feasible": 265,
+        "failed_started": 0,
+        "gap_rows": 265,
+        "case_equal_gap_percent": 15.254092495542604,
+        "base_equal_gap_percent": 15.019329896735453
+      },
+      {
+        "algorithm": "worst_regret2",
+        "planned": 265,
+        "feasible": 265,
+        "failed_started": 0,
+        "gap_rows": 265,
+        "case_equal_gap_percent": 12.260241000567893,
+        "base_equal_gap_percent": 11.972055081676025
+      }
+    ]
+  },
+  "provenance": {
+    "level_counts": {
+      "verified_host_manifest_and_environment_hash": 901,
+      "result_bound_resource_manifest_without_archived_host_verification": 2703,
+      "unverified_host_manifest_and_result_declarations": 901
+    },
+    "resource_binding_error_count": 0,
+    "resource_binding_error_examples": [],
+    "cohorts": [
+      {
+        "seed": 0,
+        "recorded_host_id": "cloud",
+        "recorded_resource_cohort": "cloud-serial-single-thread-unpinned-v1",
+        "evidence_level": "verified_host_manifest_and_environment_hash",
+        "terminal_results": 901
+      },
+      {
+        "seed": 1,
+        "recorded_host_id": "ubuntu-local",
+        "recorded_resource_cohort": "ubuntu-local-pcore4-20261015-b03",
+        "evidence_level": "result_bound_resource_manifest_without_archived_host_verification",
+        "terminal_results": 770
+      },
+      {
+        "seed": 1,
+        "recorded_host_id": "ubuntu-local",
+        "recorded_resource_cohort": "ubuntu-local-pcore4-20261015-b04",
+        "evidence_level": "result_bound_resource_manifest_without_archived_host_verification",
+        "terminal_results": 127
+      },
+      {
+        "seed": 1,
+        "recorded_host_id": "ubuntu-local",
+        "recorded_resource_cohort": "ubuntu-local-pcore4-20261015-b05",
+        "evidence_level": "result_bound_resource_manifest_without_archived_host_verification",
+        "terminal_results": 4
+      },
+      {
+        "seed": 2,
+        "recorded_host_id": "cloud",
+        "recorded_resource_cohort": "cloud_parallel4_pinned_0_1_2_3",
+        "evidence_level": "unverified_host_manifest_and_result_declarations",
+        "terminal_results": 901
+      },
+      {
+        "seed": 3,
+        "recorded_host_id": "ubuntu-local",
+        "recorded_resource_cohort": "ubuntu-local-pcore4-20261015-b01",
+        "evidence_level": "result_bound_resource_manifest_without_archived_host_verification",
+        "terminal_results": 901
+      },
+      {
+        "seed": 4,
+        "recorded_host_id": "ubuntu-local",
+        "recorded_resource_cohort": "ubuntu-local-pcore4-20261015-b01",
+        "evidence_level": "result_bound_resource_manifest_without_archived_host_verification",
+        "terminal_results": 901
+      }
+    ]
+  },
+  "comparison": {
+    "original_summary_sha256": "dce6eafa7bf156c521f743a605107bace1601a3811330ccd760629214fce2297",
+    "original_runs_csv_sha256": "a2e1fb65ce03b45841382094aa7f28a3e001108dc3313050894f9bcf05ab4cfe",
+    "compared_terminal_rows": 4505,
+    "changed_quality_row_count": 0,
+    "changed_quality_row_examples": [],
+    "compared_pooled_groups": 289,
+    "changed_pooled_quality_group_count": 0,
+    "changed_pooled_quality_groups": [],
+    "published_same_host_gap_pairs": 31512,
+    "archived_verified_same_host_gap_pairs": 6618,
+    "published_pairs_by_resource_cohort": {
+      "cloud-serial-single-thread-unpinned-v1": 6618,
+      "cloud_parallel4_pinned_0_1_2_3": 6592,
+      "ubuntu-local-pcore4-20261015-b01": 13315,
+      "ubuntu-local-pcore4-20261015-b03": 4842,
+      "ubuntu-local-pcore4-20261015-b04": 144,
+      "ubuntu-local-pcore4-20261015-b05": 1
+    },
+    "verified_pairs_by_resource_cohort": {
+      "cloud-serial-single-thread-unpinned-v1": 6618
+    },
+    "published_overall_cpu_groups": 89,
+    "archived_verified_overall_cpu_groups": 17
+  },
+  "interrupted_claims_and_retries": [
+    {
+      "case_id": "F-n45-k4",
+      "algorithm": "pyvrp",
+      "seed": 1,
+      "original_claim": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b03/lane-2/run-registry/bce0bea8aeabbb075fa4bdbaafd2d075d71c7c45e1ebea4d20347663f2dbc9d3.json",
+      "original_claim_sha256": "82bef74a0d5a653118d25d94f9bbc27ac94179fe853e8f6d8273579d30b104b4",
+      "adjudication": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b03/interrupted-claims-adjudication.json",
+      "adjudication_sha256": "98bbb17b34d553630a054bd40dd7d7fa32fb6aed708c0ed3b8d34e591f6c5ee9",
+      "retry_result": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b05/lane-2/01635-F-n45-k4-pyvrp-s1/result.json",
+      "retry_result_sha256": "51cac11c11698fb9d547ca336d71864a32014c3f9ad120081da5a928b2e26503",
+      "retry_resource_manifest_sha256": "1525f7d97029c9d1bf0eb6307e75bfe80d9c3e2f158d1984b3ecc2d3ac9196f9",
+      "policy_bound_to_retry": true,
+      "same_planned_key": true,
+      "original_terminal_result_absent": true,
+      "retry_selection_policy": "Exactly one authorized infrastructure retry for each of four consumed keys lacking any result; no score-dependent selection."
+    },
+    {
+      "case_id": "B-n50-k7",
+      "algorithm": "worst_regret2",
+      "seed": 1,
+      "original_claim": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b03/lane-1/run-registry/284d5b1b7af53c53319b0e984e757816d8f157c7c2a2784f9f929a236c7bb1de.json",
+      "original_claim_sha256": "4bb0e27770e166d33717d8fc8b8c21775927344b3217df0995577b60020016ea",
+      "adjudication": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b03/interrupted-claims-adjudication.json",
+      "adjudication_sha256": "98bbb17b34d553630a054bd40dd7d7fa32fb6aed708c0ed3b8d34e591f6c5ee9",
+      "retry_result": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b05/lane-1/01666-B-n50-k7-worst_regret2-s1/result.json",
+      "retry_result_sha256": "21b76cfaca7401f72e0504ead1c3df79ce87da8562767ec5952eb6a40676946e",
+      "retry_resource_manifest_sha256": "1525f7d97029c9d1bf0eb6307e75bfe80d9c3e2f158d1984b3ecc2d3ac9196f9",
+      "policy_bound_to_retry": true,
+      "same_planned_key": true,
+      "original_terminal_result_absent": true,
+      "retry_selection_policy": "Exactly one authorized infrastructure retry for each of four consumed keys lacking any result; no score-dependent selection."
+    },
+    {
+      "case_id": "P-n40-k5",
+      "algorithm": "de_random_keys",
+      "seed": 1,
+      "original_claim": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b03/lane-3/run-registry/89f1b0651f19c1b2133efa8ce16691ee69ccee1a9c1b161a2f414a285309d5e9.json",
+      "original_claim_sha256": "276a8009e994c5df9acca6b101da899dd8c657aa535f993a90f3b298810ed0cf",
+      "adjudication": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b03/interrupted-claims-adjudication.json",
+      "adjudication_sha256": "98bbb17b34d553630a054bd40dd7d7fa32fb6aed708c0ed3b8d34e591f6c5ee9",
+      "retry_result": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b05/lane-3/01656-P-n40-k5-de_random_keys-s1/result.json",
+      "retry_result_sha256": "b47f5c180df780eccae2088eb193a5bef50cf1c2df9a57d1639f89e17c90af80",
+      "retry_resource_manifest_sha256": "1525f7d97029c9d1bf0eb6307e75bfe80d9c3e2f158d1984b3ecc2d3ac9196f9",
+      "policy_bound_to_retry": true,
+      "same_planned_key": true,
+      "original_terminal_result_absent": true,
+      "retry_selection_policy": "Exactly one authorized infrastructure retry for each of four consumed keys lacking any result; no score-dependent selection."
+    },
+    {
+      "case_id": "P-n40-k5",
+      "algorithm": "random_cheapest",
+      "seed": 1,
+      "original_claim": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b03/lane-0/run-registry/093ae6d72e2378cce87d78abe44a44d5f8e12a7e5e865505c0dad54d32eca187.json",
+      "original_claim_sha256": "bcd93970ac9f97bef922d7dc8be68a302020589e8eca21d395a4aa65b661d540",
+      "adjudication": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b03/interrupted-claims-adjudication.json",
+      "adjudication_sha256": "98bbb17b34d553630a054bd40dd7d7fa32fb6aed708c0ed3b8d34e591f6c5ee9",
+      "retry_result": "ubuntu-local-seed1-results/baseline-worker/batches/ubuntu-local-pcore4-20261015-b05/lane-0/01733-P-n40-k5-random_cheapest-s1/result.json",
+      "retry_result_sha256": "88b90a2d88bebee3d93d1996cc6874da1bd116ce7d07bd0c603571fb7c36dfea",
+      "retry_resource_manifest_sha256": "1525f7d97029c9d1bf0eb6307e75bfe80d9c3e2f158d1984b3ecc2d3ac9196f9",
+      "policy_bound_to_retry": true,
+      "same_planned_key": true,
+      "original_terminal_result_absent": true,
+      "retry_selection_policy": "Exactly one authorized infrastructure retry for each of four consumed keys lacking any result; no score-dependent selection."
+    }
+  ],
+  "retry_evidence_errors": [],
+  "conclusions": [
+    "Candidate feasibility and reference gaps are distinct from verification of host/resource provenance.",
+    "Pooled quality remains descriptive heterogeneous-hardware evidence; seeds are confounded with machines.",
+    "Only archived VERIFIED host manifests with matching plan and environment hashes qualify for verified CPU and same-host pairing.",
+    "Result-bound local resource manifests retain useful evidence but do not replace absent archived host/environment verification wrappers.",
+    "The four initial consumed claims have no recoverable terminal witness; count attempts without inventing their scores or times.",
+    "This audit adds a correction alongside immutable historical reports and never changes the original archive bytes."
+  ]
+}

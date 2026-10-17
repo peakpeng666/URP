@@ -1,0 +1,14 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> bpp-research-console@1.0.0 test:ui
+> vitest run
+
+
+ RUN  v5.0.3 /workspace/scratch/e1e41186b481/URP/src/frontend
+
+
+ Test Files  4 passed (4)
+      Tests  17 passed (17)
+   Start at  18:15:28
+   Duration  316ms (transform 49%, tests 36%, import 12%, worker 4%)
+
