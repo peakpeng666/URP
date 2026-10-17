@@ -1482,6 +1482,24 @@
     "motion"
    ],
    "bibtex": "@article{dubins1957curvature,\n  author  = {Dubins, Lester E.},\n  title   = {On Curves of Minimal Length with a Constraint on Average Curvature, and with Prescribed Initial and Terminal Positions and Tangent Directions},\n  journal = {American Journal of Mathematics},\n  year    = {1957},\n  volume  = {79},\n  number  = {3},\n  pages   = {497--516},\n  doi     = {10.2307/2372560}\n}"
+  },
+  {
+   "key": "leny2007dubins",
+   "type": "inproceedings",
+   "title": "On the Dubins Traveling Salesman Problem",
+   "authors": [
+    "Le Ny, Jerome",
+    "Frazzoli, Emilio",
+    "Feron, Eric"
+   ],
+   "year": 2007,
+   "venue": "IEEE Conference on Decision and Control",
+   "tags": [
+    "turn",
+    "motion",
+    "routing"
+   ],
+   "bibtex": "@inproceedings{leny2007dubins,\n  author    = {Le Ny, Jerome and Frazzoli, Emilio and Feron, Eric},\n  title     = {On the Dubins Traveling Salesman Problem},\n  booktitle = {IEEE Conference on Decision and Control},\n  year      = {2007}\n}"
   }
  ]
 }

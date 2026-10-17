@@ -63,10 +63,10 @@ FLEET_PARAMS = [dict(TIME, default=5), SEED]
 _TABLE += [
     ('pyvrp.fleet', 'PyVRP 固定车队', 'fleet_routing', 'PyVRP', 'metaheuristic', 'none',
      '在绕障最短路距离上用 PyVRP 迭代局部搜索分配任务、安排顺序，车辆数不超过车队规模，目标总里程最短。',
-     ['wouda2024pyvrp', 'vidal2022hgs', 'lozanoperez1979visibility', 'dubins1957curvature', 'sucan2012ompl'], 'pyvrp', {'params': FLEET_PARAMS}),
+     ['wouda2024pyvrp', 'vidal2022hgs', 'lozanoperez1979visibility', 'dubins1957curvature', 'leny2007dubins', 'sucan2012ompl'], 'pyvrp', {'params': FLEET_PARAMS}),
     ('ortools.fleet', 'OR-Tools 车队调度', 'fleet_routing', 'OR-Tools', 'metaheuristic', 'none',
      'OR-Tools 引导局部搜索；目标为“最晚完成时间最短”时加入跨车跨度代价，使各车工作量更均衡。',
-     ['ortools', 'voudouris1999gls', 'lozanoperez1979visibility', 'dubins1957curvature', 'sucan2012ompl'], 'ortools', {'params': FLEET_PARAMS}),
+     ['ortools', 'voudouris1999gls', 'lozanoperez1979visibility', 'dubins1957curvature', 'leny2007dubins', 'sucan2012ompl'], 'ortools', {'params': FLEET_PARAMS}),
     ('panel.savings_fleet', '节约算法 + 2-opt', 'fleet_routing', '基线', 'heuristic', 'none',
      'Clarke–Wright 节约算法在绕障距离上合并路线，再逐车 2-opt 改进；确定性、速度快。',
      ['clarke1964savings', 'croes1958twoopt'], 'src/lab/urp_lab/solvers/fleet.py', {'params': [dict(TIME, default=5)]}),

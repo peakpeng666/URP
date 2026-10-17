@@ -31,8 +31,12 @@ FOOTPRINT = [list(p) for p in MultiPoint(_points).convex_hull.exterior.coords[:-
 LIMITS = {'max_speed_mps': 2.0, 'max_yaw_rate_radps': 2.0,
           'accel_mps2': 1.5, 'decel_mps2': 2.0, 'yaw_accel_radps2': 4.0}
 # Post-hoc kinematic energy accounting (no battery/motor/thermal model in the loop).
-ENERGY = {'model': 'kinematic_post_hoc/1', 'rolling_resistance': .06, 'drive_efficiency': .8,
-          'recuperation': False}
+# Surface coefficients follow the ASAE D497 / S296 motion-resistance-ratio ranges:
+# firm untilled soil 0.04–0.08, hard surface (farm road/headland track) 0.02–0.04.
+ENERGY = {'model': 'kinematic_post_hoc/2', 'rolling_resistance': .06, 'rolling_resistance_corridor': .03,
+          'drive_efficiency': .8, 'recuperation': False,
+          'surfaces': 'field 0.06 (firm soil, ASAE D497 0.04–0.08); corridor/road 0.03 (hard surface, 0.02–0.04); '
+                      'tilled soil 0.10–0.16 not modelled'}
 
 
 def digest(value):
@@ -52,7 +56,8 @@ def cylinder_inertia(mass, radius, width):
 
 def profile(overrides=None):
     values = {'max_step_size_s': .004, 'collision_detector': 'ode', 'ground_friction': 1.0,
-              'wheel_friction': 1.0, 'payload_kg': 0.0, 'wheel_contact': 'tyre', 'tyre_width_m': TYRE_WIDTH}
+              'wheel_friction': 1.0, 'payload_kg': 0.0, 'wheel_contact': 'tyre', 'tyre_width_m': TYRE_WIDTH,
+              'wheel_lateral_friction': None}
     if overrides is not None:
         if not isinstance(overrides, dict) or set(overrides) - set(values):
             raise ValueError('physics 仅接受 max_step_size_s、collision_detector、ground_friction、wheel_friction、payload_kg、'
@@ -65,8 +70,11 @@ def profile(overrides=None):
     for k, (lo, hi) in {'max_step_size_s': (.0005, .01), 'ground_friction': (.01, 2),
                         'wheel_friction': (.01, 2), 'payload_kg': (0, 50),
                         # wider than the frozen hull is rejected, so collision_hull_m always covers the wheels
-                        'tyre_width_m': (.04, TYRE_WIDTH_MAX)}.items():
+                        'tyre_width_m': (.04, TYRE_WIDTH_MAX),
+                        'wheel_lateral_friction': (.01, 2)}.items():
         v = values[k]
+        if v is None and k == 'wheel_lateral_friction':
+            continue                     # unset means isotropic: mu2 follows wheel_friction
         if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or not lo <= v <= hi:
             raise ValueError(f'physics.{k} 必须是 {lo}–{hi} 的有限数值')
         values[k] = float(v)
@@ -188,7 +196,12 @@ def audit_sdf(path, expected):
                 errors.append('声明的主惯量坐标系出现非零非对角项')
             if part != 'body':
                 friction = expected['wheel_friction'] if part == 'wheel' else expected['caster']['friction']
-                if any(float(link.findtext('collision/surface/friction/ode/'+k,'nan')) != friction for k in ('mu','mu2')):
+                wanted = {'mu': friction}
+                if part == 'wheel':
+                    wanted['mu2'] = expected.get('wheel_lateral_friction') or friction
+                else:
+                    wanted['mu2'] = friction
+                if any(float(link.findtext('collision/surface/friction/ode/'+k,'nan')) != v for k, v in wanted.items()):
                     errors.append(f'{part} 摩擦与冻结配置不一致')
             mass += m
         if abs(mass - expected['total_mass_kg']) > 1e-8:

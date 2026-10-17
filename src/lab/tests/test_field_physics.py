@@ -158,3 +158,20 @@ def test_runtime_audit_rejects_silent_detector_fallback(tmp_path, monkeypatch):
     assert audit(p.profile(), log, [123456])['valid']
     assert not audit(p.profile({'collision_detector':'bullet'}),log,[123456])['valid']
     assert not audit(p.profile(),log,[])['valid']
+
+
+def test_energy_split_by_surface_uses_corridor_coefficient():
+    from urp_lab.field_energy import account
+    physics = p.profile()
+    model = physics['energy_model']
+    assert model['rolling_resistance'] == .06 and model['rolling_resistance_corridor'] == .03
+    dt = .02
+    samples = [[i * dt, 5 + i * dt, 0, 0, 0, 0, 0] for i in range(201)]     # 4 m of driving
+    road = [[4.5, -1], [8.5, -1], [8.5, 1], [4.5, 1]]                       # covers x∈[4.5,8.5]
+    field_only = account(samples, physics)
+    with_road = account(samples, physics, [road])
+    assert field_only['energy_corridor_j'] == 0.0
+    assert with_road['energy_corridor_j'] > 0        # most of this run rolls on the road, so it dominates
+    ratio = with_road['energy_field_j'] / field_only['energy_field_j']
+    assert .08 < ratio < .18         # only the truly off-road tail (x>8.5, ~12.5% of the run) stays on the field coefficient
+    assert with_road['energy_j'] < .7 * field_only['energy_j']   # most of the run rolls on the cheaper surface

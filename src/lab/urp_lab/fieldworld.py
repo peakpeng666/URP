@@ -157,7 +157,7 @@ def _robot(v: Vehicle, index: int, speed: float, physics=None) -> str:
         {inertia('wheel')}
         <visual name='visual'><geometry>{geom}</geometry>{_material((0.12, 0.12, 0.13, 1))}</visual>
         <collision name='collision'><geometry>{geom}</geometry>
-          <surface><friction><ode><mu>{physics['wheel_friction']}</mu><mu2>{physics['wheel_friction']}</mu2></ode></friction>
+          <surface><friction><ode><mu>{physics['wheel_friction']}</mu><mu2>{physics.get('wheel_lateral_friction') or physics['wheel_friction']}</mu2></ode></friction>
           <contact><collide_bitmask>{bit}</collide_bitmask></contact></surface></collision>
         {contacts()}
       </link>"""

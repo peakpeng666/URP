@@ -77,6 +77,10 @@ def main():
              'step1ms_bullet':{'collision_detector':'bullet','max_step_size_s':.001},
              'sphere_legacy':{'wheel_contact':'sphere'},
              'tyre_narrow':{'tyre_width_m':.10},
+             'lat03_yaw0':{'wheel_lateral_friction':.3,'__initial_yaw':0.0},
+             'lat03_yaw45':{'wheel_lateral_friction':.3,'__initial_yaw':math.pi/4},
+             'lat03_yaw90':{'wheel_lateral_friction':.3,'__initial_yaw':math.pi/2},
+             'lat06_yaw0':{'wheel_lateral_friction':.6,'__initial_yaw':0.0},
              'low_grip':{'ground_friction':.05,'wheel_friction':.05},'loaded':{'payload_kg':20}}
     rows=[]
     def save(name,data):(out/name).write_text(json.dumps(data,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
@@ -89,9 +93,11 @@ def main():
             routes,check,*_=fleet.solve({},inst,'panel.sweep',{})
             assert check['valid']
             config = dict(configs[case])
+            initial_yaw = config.pop('__initial_yaw', 0.0)
             plan=fieldworld.build(inst,routes,folder,'physics_probe',4,config)
-            # Isolated analytic-response fixture at known initial yaw/position.
-            doc=ET.parse(plan['sdf']);doc.find(".//model[@name='vehicle_1']/pose").text='0 0 0.02 0 0 0'
+            # Isolated analytic-response fixture at a controlled initial yaw/position; yaw sweeps
+            # expose world-frame-locked friction directions (anisotropic mu2 diagnostics).
+            doc=ET.parse(plan['sdf']);doc.find(".//model[@name='vehicle_1']/pose").text=f'0 0 0.02 0 0 {initial_yaw!r}'
             doc.write(plan['sdf'])
             plan['vehicles'][0].update(start=[0,0,0],path=[[0,0],[10,0]],tasks=[])
             sid=f'physics_{case}_{repeat}_{time.time_ns()}'

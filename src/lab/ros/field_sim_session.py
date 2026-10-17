@@ -662,7 +662,8 @@ Window Geometry:
         durations = [v['duration_s'] for v in vehicles if v['duration_s'] is not None]
         planned = self.plan.get('planned', {})
         from urp_lab.field_energy import account
-        energy = {d.name: account(self.rigid_poses.get(d.name) or [], self.plan.get('physics'))
+        corridors = [c.get('polygon') for c in (self.plan.get('instance') or {}).get('corridors') or []]
+        energy = {d.name: account(self.rigid_poses.get(d.name) or [], self.plan.get('physics'), corridors)
                   for d in self.drivers}
         metrics = {
             'tasks_total': sum(len(d.tasks) for d in self.drivers),
