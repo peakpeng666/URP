@@ -10,7 +10,9 @@ import { Badge, Button, EmptyState, Notice, Select, Spinner } from '../../lab/ui
 import { studio } from '../api';
 import { useStudio } from '../store';
 import { useFieldSim } from '../ros/live';
-import { indexAt, poseAt, SIM_BODY, useReplay, type Anomaly } from './replay';
+import { indexAt, poseAt, simBody, useReplay, type Anomaly } from './replay';
+import { trafficStatus } from './traffic';
+import { SessionEvidence } from './SessionEvidence';
 import p from '../panels/panels.module.css';
 import a from '../assets/assets.module.css';
 
@@ -21,7 +23,8 @@ export const centerMap = (xy: [number, number], span = 24) =>
 export function ReplayOverlay({ view }: { view: View }) {
   const { result, derived, t, show, hidden, focus } = useReplay();
   const scenarioId = useStudio((x) => x.scenarioId);
-  if (!result || !derived || result.scenario_id !== scenarioId) return null;
+  const focusRun = useStudio((x) => x.focusRun);
+  if (!result || !derived || result.scenario_id !== scenarioId || (focusRun && result.run_id !== focusRun)) return null;
   const k = view.k || 1;
   const px = (n: number) => n / k;
   const vehicles = result.vehicles.filter((v) => !hidden.includes(v.name));
@@ -52,7 +55,8 @@ export function ReplayOverlay({ view }: { view: View }) {
         const pose = poseAt(result.trails[v.name] ?? [], t);
         if (!pose) return null;
         const deg = (pose[2] * 180) / Math.PI;
-        const L = SIM_BODY.length_m, W = SIM_BODY.width_m;
+        const body = simBody(result);
+        const L = body.length_m, W = body.width_m;
         const visible = Math.max(L * k, 8) / k / L; // keep the body at least ~8 px long when zoomed out
         return (
           <g key={`b-${v.name}`} transform={`translate(${pose[0]} ${pose[1]}) rotate(${deg}) scale(${Math.max(1, visible)})`}>
@@ -103,6 +107,7 @@ export function ReplayPanel() {
   }, [scenarioId]); // eslint-disable-line react-hooks/exhaustive-deps
   if (!scenarioId) return <EmptyState icon={Play} title="未打开任务地图" detail="仿真回放显示在任务地图上：先打开一个多车任务地图。" />;
   const r = rp.result, d = rp.derived;
+  const traffic = r ? trafficStatus(r) : null;
   const liveHere = live?.running && live.scenario_id === scenarioId;
   const focusRun = async (runId: string) => {
     const st = useStudio.getState();
@@ -142,7 +147,7 @@ export function ReplayPanel() {
             {!mine.length && list.data && <p className={p.hint}>还没有仿真记录：在「方案对比」里点某个方案的 Gazebo 执行。</p>}
             {mine.slice(0, 20).map((x) => (
               <button key={x.session_id} type="button" className={a.ver} onClick={() => void rp.load(x.session_id)}>
-                <b>{x.state === 'succeeded' ? <Badge tone="green">完成</Badge> : <Badge tone="red">未完成</Badge>}</b>
+                <b>{x.state === 'succeeded' ? <Badge tone="green">完成</Badge> : x.state === 'canceled' ? <Badge tone="orange">已取消</Badge> : <Badge tone="red">失败</Badge>}</b>
                 <span>{x.algorithm ?? x.run_id}<div className={a.hint}>{fmt.time(x.finished_utc)} · 到达 {x.metrics.tasks_reached}/{x.metrics.tasks_total} · 最晚完成 {fmt.sec(x.metrics.makespan_s)}{x.travel === 'rows' ? ' · 沿行间' : ''}</div></span>
                 <span />
               </button>
@@ -155,11 +160,12 @@ export function ReplayPanel() {
           <>
             <div className={a.kv}>
               <span>方案</span><span>{r.algorithm ?? '—'} <button type="button" className={p.link} style={{ border: 0, background: 'none' }} onClick={() => void focusRun(r.run_id)}>{runs[r.run_id] ? '在地图上对照此方案' : '载入此方案对照'}</button></span>
-              <span>结果</span><span>{r.state === 'succeeded' ? '全部车辆完成' : '未完成'} · 到达 {r.metrics.tasks_reached}/{r.metrics.tasks_total} 个任务点</span>
+              <span>结果</span><span>{r.state === 'succeeded' ? '全部车辆完成' : r.state === 'canceled' ? '执行已取消' : '执行失败'} · 到达 {r.metrics.tasks_reached}/{r.metrics.tasks_total} 个任务点{r.metrics.tasks_completed != null ? ` · 完成停留 ${r.metrics.tasks_completed}` : ''}</span>
               <span>仿真</span><span>{r.world} · 仿真时长 {fmt.sec(d.duration)}{r.real_time_factor ? ` · 实际倍速 ${fmt.num(r.real_time_factor, 1)}×` : ''}{r.travel === 'rows' ? ' · 作物行为实体' : ''}</span>
-              <span>会话</span><span className={a.mono}>{r.session_id}</span>
+              <span>会话</span><span className={a.mono}>{r.session_id} · 清理 {r.session_report?.cleanup_status ?? '未记录'}</span>
             </div>
             {r.provenance_warning && <Notice tone="warn">{r.provenance_warning}</Notice>}
+            <SessionEvidence result={r} />
             <div className={a.timeline}>
               <Button size="sm" icon={rp.playing ? Pause : Play} onClick={() => { if (!rp.playing && rp.t >= d.duration) rp.setT(0); rp.setPlaying(!rp.playing); }} />
               <input type="range" min={0} max={d.duration} step={d.duration / 600 || 1} value={rp.t} aria-label="回放时间"
@@ -207,9 +213,10 @@ export function ReplayPanel() {
                 {an.xy && <Crosshair size={12} />}
               </button>
             ))}
-            {d.separation && (
+            {traffic && (
               <p className={p.meta}>
-                多车之间：最近相距 {d.separation.d.toFixed(2)} m（t = {d.separation.t.toFixed(0)} s）。规划不建模车间冲突、仿真不做车间避让，所以多车避碰<b>未验收</b>；这里只报告实测的最近距离。
+                <Badge tone={traffic.tone === 'good' ? 'green' : traffic.tone === 'bad' ? 'red' : 'orange'}>{traffic.value}</Badge>{' '}
+                {d.separation ? `记录轨迹最近相距 ${d.separation.d.toFixed(2)} m（t = ${d.separation.t.toFixed(0)} s）；` : ''}{traffic.note}
               </p>
             )}
           </>

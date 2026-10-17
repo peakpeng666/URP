@@ -1,0 +1,13 @@
+{
+  "session_id": null,
+  "phase": "stopped",
+  "world": null,
+  "spawn": null,
+  "components": {},
+  "robot": null,
+  "execution": null,
+  "errors": [],
+  "warnings": [],
+  "stages": [],
+  "known_issues": []
+}

@@ -9,6 +9,8 @@
 }
 .editor[data-tool="task"],
 .editor[data-tool="depot"],
+.editor[data-tool="unload"],
+.editor[data-tool="corridor"],
 .editor[data-tool="obstacle"],
 .editor[data-tool="plot"] {
   cursor: crosshair;
@@ -181,4 +183,29 @@
 .extent {
   text-anchor: end;
   fill: #86868b;
+}
+.corridor {
+  fill: rgba(194, 157, 74, 0.28);
+  stroke: #9a7b3c;
+  stroke-width: 1.6;
+  stroke-dasharray: 7 3;
+  vector-effect: non-scaling-stroke;
+  cursor: move;
+}
+.unload {
+  cursor: move;
+}
+.unload path {
+  fill: #bf5af2;
+  stroke: #fff;
+  stroke-width: 1.6;
+}
+.unload text,
+.depot text {
+  font: 600 10px var(--mac-font);
+  fill: #3a3a3c;
+  paint-order: stroke;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-width: 3px;
+  pointer-events: none;
 }

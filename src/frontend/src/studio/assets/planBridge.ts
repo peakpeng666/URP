@@ -103,6 +103,7 @@ export function fleetBindingOf(a: Asset, ver: AssetVersion): FleetAssetBinding |
 export function bindVehicle(a: Asset, ver: AssetVersion): string | null {
   const cur = openFleet();
   if (typeof cur === 'string') return cur;
+  if (cur.inst.vehicles.fleet?.length) return '当前资产选择器用于同构车队；类别车队请保留各类已有资产引用，或先返回同构设置再绑定';
   const binding = fleetBindingOf(a, ver);
   if (typeof binding === 'string') return binding;
   edit((i) => ({
@@ -132,10 +133,12 @@ export function bindingDrift(inst: AssetAwareInstance): string[] {
   const b = inst.fleet;
   if (!b) return [];
   const out: string[] = [];
+  const capacity = inst.vehicles.capacity ?? inst.vehicles.fleet?.[0]?.capacity;
+  const speed = inst.vehicles.speed_mps ?? inst.vehicles.fleet?.[0]?.speed_mps;
   if (Math.abs(inst.robot_radius - b.robot_radius_m) > 1e-6) out.push(`车体半径 ${inst.robot_radius} m（资产 ${b.robot_radius_m} m）`);
-  if (b.capacity != null && inst.vehicles.capacity !== b.capacity) out.push(`容量 ${inst.vehicles.capacity}（资产 ${b.capacity}）`);
-  if (b.capacity == null && inst.vehicles.capacity < unconstrained(inst)) out.push(`容量 ${inst.vehicles.capacity}（资产不载货，不应有容量约束）`);
-  if (b.speed_mps != null && Math.abs(inst.vehicles.speed_mps - b.speed_mps) > 1e-9) out.push(`车速 ${inst.vehicles.speed_mps} m/s（资产 ${b.speed_mps} m/s）`);
+  if (b.capacity != null && capacity !== b.capacity) out.push(`容量 ${capacity ?? '—'}（资产 ${b.capacity}）`);
+  if (b.capacity == null && (capacity ?? 0) < unconstrained(inst)) out.push(`容量 ${capacity ?? '—'}（资产不载货，不应有容量约束）`);
+  if (b.speed_mps != null && Math.abs((speed ?? 0) - b.speed_mps) > 1e-9) out.push(`车速 ${speed ?? '—'} m/s（资产 ${b.speed_mps} m/s）`);
   return out;
 }
 

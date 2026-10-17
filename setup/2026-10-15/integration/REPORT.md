@@ -1,9 +1,51 @@
-# URP 集成验收记录 · 2026-10-15
+# URP 集成验收记录
 
-**迷宫巡检、仓库五任务和 Fields2Cover 覆盖闭环均已实测通过，可从面板操作。** 唯一使用入口为 [setup/README](../../README.md)。保留现有研究源码、前端外壳、环境与官方仿真组件，补齐缺失集成，并处理了实测暴露的问题。范围是本机仿真研究平台；不包含实机或真实农业环境验证。学习原型已训练并独立留出评估，但未证明推荐增益；Fields2Cover 已完成限定范围的曲率几何与仿真验收。
+唯一使用入口为 [setup/README](../../README.md)。本报告按日期保留验收范围与原始证据；最新结论在最上方，历史通过不自动覆盖之后的模型或代码。迷宫巡检、仓库五任务、Fields2Cover 的限定闭环及 CVRP 学习原型评估见下方历史记录，不等于新车队功能、推荐增益或真实农业环境已验证。
 
+## GLM 增量独立验收（2026-10-17，当前）
 
-## 建模与物理后端验证（2026-10-17，当前）
+**结论：基础田间闭环复验通过，新增能力不予整体通过。** 基线 `056b857c302b7a04775336630c317bf84eda0ae7`，接手时工作区干净；本轮只增加独立验收证据、前端交接提示词并修正文档，未修改应用源码。354 个后端/前端源码和配置文件的起始指纹见 [takeover.json](../../2026-10-17/glm-acceptance/takeover.json)，最终核对见 [结构化汇总](../../2026-10-17/glm-acceptance/summary.json)。正式 4100 网关保持运行；仿真测试使用隔离存储、端口和 ROS 域，不覆盖用户实验。
+
+| 独立复验 | 结果与证据 |
+|---|---|
+| Python 回归 | **226 passed**，3 条已有弃用警告；[原始日志](../../2026-10-17/glm-acceptance/pytest.log) |
+| 前端检查 | 类型检查、42 项 UI 测试、Vite 隔离构建通过；仍有大 chunk 和静态/动态重复导入警告。[typecheck](../../2026-10-17/glm-acceptance/typecheck.log)、[测试](../../2026-10-17/glm-acceptance/frontend-tests.log)、[构建](../../2026-10-17/glm-acceptance/build.log) |
+| 自由通行，2 车 8 点 | succeeded/0，8/8，实际 216.45 m、253.24 s，最大横向偏差 0.1178 m，清理 PASS、所属残留为空 |
+| 行间通行，2 车 8 点 | succeeded/0，8/8，实际 369.88 m、428.01 s，最大横向偏差 0.1278 m，清理 PASS、所属残留为空 |
+| 取消、时钟故障、故障后重启 | 分别 canceled/0、failed/1、succeeded/0，故障被看门狗明确记录；3 场清理均 PASS、所属残留为空。以上 5 场的[汇总](../../2026-10-17/glm-acceptance/live/summary.json)、[原始日志](../../2026-10-17/glm-acceptance/live.log)、[会话文件](../../2026-10-17/glm-acceptance/live/runtime/fieldsim/) |
+| 开环物理对照 | 当前默认轮胎接触与 sphere 对照各 1 场，真实 Gazebo、正常退出、清理 PASS；[原始结果](../../2026-10-17/glm-acceptance/physics/summary.json)、[日志](../../2026-10-17/glm-acceptance/physics.log) |
+| 浏览器与导出核对 | 实际打开已有实验、回放/结果界面并点击下载，确认状态文案和导出问题；[宽窗口截图](../../2026-10-17/glm-acceptance/ui-desktop.png)、[窄窗口截图](../../2026-10-17/glm-acceptance/ui-result-state.png)、[DOM](../../2026-10-17/glm-acceptance/ui-result-state.txt)。本轮没有从浏览器新建并跑完整实验；新增 5 场闭环由隔离验收脚本执行，不能替代 KIMI 的最终浏览器全流程验收。 |
+
+本轮检查范围内有 **8 项后端/契约问题、5 项前端对接问题**；它们是当前版本的缺口，不把每项都归因于某个作者。完整定位、复现性质与修复要求见 [findings.json](../../2026-10-17/glm-acceptance/findings.json)。
+
+| 编号/优先级 | 问题及实证 | 验收要求 |
+|---|---|---|
+| B1 / P1 | `fleet_engines.py:195` 提取错补给边界；ORTools 原解工期 **133.3 s**，解码路线改为趟间返库、最后绕行补给点，变成 **203.933067 s**，仍 feasible/check.valid。`fleet.py:685` 的 reload_stops 还误用了遗留变量。见 [原解与输出](../../2026-10-17/glm-acceptance/unload-free.json)。 | 原始节点映射、补给顺序、解码路径与目标一致；测试须真正使用补给点，不能以全返库代替。 |
+| B2 / P1 | `fleet.py:132` 的 rows 图按 depot→unload→task 排列，求解器按 depot→task→unload 解释；合法 8 点实例所有作业位置错配并 no_solution。[复现](../../2026-10-17/glm-acceptance/unload-rows.json)。 | 统一节点映射，复验 rows/free × 单/多库 × 有/无补给。 |
+| B3 / P1 | `fleet_curvature.py:13` 把共线反向也判作无穷大半径：Rmin=2 m、前进 1 m 后原线折返，0.05 m 采样，检查仍通过。[反例](../../2026-10-17/glm-acceptance/curvature-reversal.json)。 | 航向连续性、倒车语义、退化段与 SE(2) 路径证据独立检查；三点圆拟合不足以证明前进 Dubins 可行。 |
+| B4 / P1 | `field_dynamics.py:33` 用缺口两端位姿相同豁免采样缺失；t=0/10/20 s 三个位姿、轮速 1 m/s，仍 valid。[反例](../../2026-10-17/glm-acceptance/telemetry-gap.json)。 | 超阈值未知区间应拒绝或有覆盖全区间的独立静止证据。此为离线检查边界反例，本轮真实成功会话最大源采样间隔约 0.02 s，未据此声称真实会话缺流。 |
+| B5 / P2 | `field_energy.py:48` 按全程样本数选滤波窗。同一约 5 m 运动添加 0/120/600 s 静止尾段，能耗 **97.6458/87.9613/66.1946 J**，最后下降 **32.2%**；峰值功率也改变。[复现汇总](../../2026-10-17/glm-acceptance/reproductions.json)。 | 固定物理时间尺度，验证停车尾段/采样率不变性；当前不可用于可靠能效排序。 |
+| B6 / P2 | 容量 1/10 两车、需求 1/10 两任务有可行分配，但校验要求小车也能装最大任务，整体拒绝。 | 按每任务可服务车型集合检查；不要将小车“不服务大任务”误写成“不能服务任何任务”。 |
+| B7 / P2 | 异构输入仍默认比较 `panel.cluster_first`，三种构造基线 applicable=true，求解端却明确不支持。[接口复现](../../2026-10-17/glm-acceptance/frontend-contract.json)。 | 推荐、默认选择、提交准入统一；前端临时过滤须有原因及可移除条件。 |
+| B8 / P2 | 默认 API 是 rigid/4，使用说明原为球面 v3；`model_contract` 仍写多库 makespan 不支持、仅返库补给。 | 本轮已修正使用说明与历史标题；后端输出契约和其他旧接口文案仍需统一，不改写历史原始记录。 |
+| F1 / P1 | 车库编辑仅改 `depot`，后端按未变的 `depots[0]` 恢复旧坐标。[往返复现](../../2026-10-17/glm-acceptance/frontend-contract.json)。 | 统一编辑模型、兼容别名和保存后归一化回写，浏览器保存/重开验证。 |
+| F2 / P1 | 实际 signature 函数对 service_s、第二车库、补给点、走廊、fleet 类别的变化均不变。[五类反例](../../2026-10-17/glm-acceptance/frontend-signature.json)。 | 完整规划输入稳定指纹，当前草稿与历史输入明确分开。 |
+| F3 / P1 | 当前结果有串行交通与接触检查，页面仍固定写“屏蔽车间碰撞/未验收”。 | 按每个结果显示，未知与零不同，串行基线与并行避碰不同。 |
+| F4 / P1 | 实际按钮下载 [schema /1](../../2026-10-17/glm-acceptance/ui-export.json)，无 integrity；[服务端 /2](../../2026-10-17/glm-acceptance/server-record.json) 完整记录 SHA256 独立复算一致。 | 下载服务端完整 envelope，保留全部会话与关闭报告；散列不是身份签名。 |
+| F5 / P2 | 619 px 窗口里按钮 x=717，页面无可达横向滚动；1440×900 同按钮正常下载。 | 宽/中/窄三档窗口均能完成核心操作。 |
+
+**物理结论的边界**：v4 默认是轮胎接触刚体模型，仍使用理想关节速度伺服与真值定位。此次轮胎开环原地转向 2.68710 rad，解析参考 2.32 rad，偏差 **0.36710 rad / 15.82%**；组合运动末端轮式里程计漂移 **1.57769 m**。sphere 对照分别为 **0.001756 rad / 0.003084 m**。两者的 `reference_conformance=true` 使用不同门槛：轮胎采用经验滑移 ≤20%，sphere 采用理想滚动误差 ≤0.15 rad。**门槛变化不证明轮胎真实度更高或接触根因已修复**，也不能将本轮各 1 次对照说成重复统计验证。自由通行实际任务两车末端轮式里程计偏差为 **11.534/6.500 m**，真值控制仍能跟踪；跟踪成功不能替代定位/轮胎模型验证。已有 GLM 敏感性及 holdout 原始报告保留，本轮未重跑其全部样本。能耗为后验代理且有 B5；没有实测轮胎/土壤校准、电池或环内力矩模型。
+
+**可复验命令**：在 `src/lab` 使用现有 `.venv/bin/python`；输出目录必须是新的绝对路径，两个脚本顺序运行：
+
+```bash
+.venv/bin/python e2e/field_backend.py --out /一个新的绝对路径/field --cases free,rows,cancel,clock_stall,restart
+.venv/bin/python e2e/physics_backend.py --out /一个新的绝对路径/physics --cases step4ms,sphere_legacy --repeats 1
+```
+
+后端最小反例脚本为 [reproduce_findings.py](../../2026-10-17/glm-acceptance/reproduce_findings.py)，前端指纹/往返探针与全部日志一并保存在该目录。三个探针均要求 `--out /新的绝对目录`，拒绝覆盖既有目录；Python 探针使用项目 `.venv/bin/python`，JS 探针使用 `node`。修复应先用这些反例证明失败，再验证真实流程，不通过修改证据或放宽门槛获得“通过”。KIMI 的完整任务提示词见 [前端交接任务](../../2026-10-17/KIMI-前端任务提示词.md)：优先 F1–F4，随后新增字段、科研状态与窄窗口；B1–B7 修复前相关能力保留限制和解释。应用源码本轮未修复，TB4/AMCL、Fuel 依赖及桥接压力试验本轮未重新执行，仍以各自历史证据为限。
+
+## 建模与物理后端验证（2026-10-17，早期 v3 验收）
 
 本轮只修改后端、验证工具和既有文档；接手时的 **224 个前端文件未变**。默认田间执行现在使用 `urp.field-diffdrive.rigid/3`，完整输入、参数、解析参考、源时间轨迹与实际物理库哈希随结果保存。统一入口仍为 [setup/README](../../README.md)，证据集中于 [modeling](../../2026-10-17/modeling/)，总索引为 [summary.json](../../2026-10-17/modeling/summary.json)。
 

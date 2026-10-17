@@ -5,26 +5,37 @@
  */
 import { create } from 'zustand';
 import type { XY } from '../../lab/types';
-import { urls } from '../api';
-import type { FieldSimMetrics, FieldVehicleState } from '../types';
+import { studio } from '../api';
+import type { FieldPhysics, FieldPhysicsEvidence, FieldSimMetrics, FieldVehicleState } from '../types';
+import { trafficStatus, type TrafficEvidence } from './traffic';
 
 export type TrailPoint = [number, number, number, number]; // t (sim s), x, y, yaw
 
 export interface SimTask { vehicle: string; stop: XY | null; id: number; label: string; xy: XY; state: string; t_sim: number | null; distance_m: number | null }
 export interface SimPlanVehicle { name: string; label: string; color: string; start: [number, number, number]; path: XY[]; planned_length_m: number; planned_duration_s: number }
-export interface SimResult {
+export interface SimResult extends TrafficEvidence {
   session_id: string; run_id: string; scenario_id: string; algorithm: string | null; world: string; finished_utc: string;
-  sim_time: number | null; real_time_factor: number | null; state: 'succeeded' | 'failed';
-  metrics: FieldSimMetrics; travel?: 'rows' | 'free'; row_collisions?: number;
+  sim_time: number | null; real_time_factor: number | null; state: 'succeeded' | 'failed' | 'canceled';
+  metrics: FieldSimMetrics; travel?: 'rows' | 'free';
   vehicles: FieldVehicleState[]; tasks: SimTask[]; trails: Record<string, TrailPoint[]>;
   execution_plan?: { vehicles?: SimPlanVehicle[]; robot_radius_m?: number; travel?: string; world?: string; bounds?: number[] };
   execution_provenance?: Record<string, unknown> | null; planning_solution?: Record<string, unknown> | null; provenance_warning?: string;
+  physics?: FieldPhysics | null;
+  physics_audit?: FieldPhysicsEvidence | null;
+  physics_runtime?: FieldPhysicsEvidence | null;
+  truth_timing?: { scope?: string; [key: string]: unknown } | null;
+  energy?: Record<string, unknown> | null;
+  errors?: string[];
+  session_report?: { status?: string; cleanup_status?: string; execution_state?: string; remaining_owned_processes?: unknown[]; errors?: string[] } | null;
 }
 
 export interface Anomaly { key: string; tone: 'error' | 'warn'; text: string; xy: XY | null; t: number | null; vehicle?: string }
 
-/** The field simulation spawns its own differential robot body for every vehicle (see fieldworld.py). */
 export const SIM_BODY = { length_m: 0.8, width_m: 0.56 };
+export function simBody(result: SimResult): { length_m: number; width_m: number } {
+  const size = result.physics?.body?.size_m;
+  return size?.length === 3 ? { length_m: size[0], width_m: size[1] } : SIM_BODY;
+}
 
 export function poseAt(trail: TrailPoint[], t: number): [number, number, number] | null {
   if (!trail.length) return null;
@@ -142,12 +153,19 @@ export function derive(r: SimResult): Derived {
   for (const [n, c] of Object.entries(crossTrack)) {
     if (c.at && c.max > 0.3) anomalies.push({ key: `xt-${n}`, tone: 'warn', text: `${label(n)} 最大横向偏差 ${c.max.toFixed(2)} m（t=${c.at[0].toFixed(0)} s）`, xy: [c.at[1], c.at[2]], t: c.at[0], vehicle: n });
   }
-  const body = Math.hypot(SIM_BODY.length_m, SIM_BODY.width_m);
-  if (separation && separation.d < body) {
-    anomalies.push({ key: 'sep', tone: 'warn', text: `${label(separation.a)} 与 ${label(separation.b)} 最近相距 ${separation.d.toFixed(2)} m（t=${separation.t.toFixed(0)} s）：现实中车体可能接触（仿真屏蔽了车间碰撞，也不做避让）`, xy: separation.xy, t: separation.t });
+  const body = simBody(r);
+  const traffic = trafficStatus(r);
+  if (separation && separation.d < Math.hypot(body.length_m, body.width_m)) {
+    anomalies.push({ key: 'sep', tone: 'warn', text: `${label(separation.a)} 与 ${label(separation.b)} 最近相距 ${separation.d.toFixed(2)} m（t=${separation.t.toFixed(0)} s）：记录轨迹接近；${traffic.value}，以接触事件与独立检查为准`, xy: separation.xy, t: separation.t });
   }
-  if (r.row_collisions) {
-    anomalies.push({ key: 'rows', tone: 'warn', text: `车辆与作物行接触 ${r.row_collisions} 次（Gazebo 接触计数，结果未记录位置）`, xy: null, t: null });
+  if (r.row_collisions != null && r.row_collisions > 0) {
+    anomalies.push({ key: 'rows', tone: 'warn', text: `车辆与作物行接触消息 ${r.row_collisions} 条（去重时间戳 + 碰撞体对，非事故次数）`, xy: null, t: null });
+  }
+  if (r.robot_contact_events != null && r.robot_contact_events > 0) {
+    anomalies.push({ key: 'robot-contacts', tone: 'error', text: `车间接触消息 ${r.robot_contact_events} 条（去重时间戳 + 碰撞体对，非事故次数）`, xy: null, t: null });
+  }
+  if (traffic.tone !== 'good') {
+    anomalies.push({ key: 'traffic-evidence', tone: traffic.tone === 'bad' ? 'error' : 'warn', text: `${traffic.value}：${traffic.note}`, xy: null, t: null });
   }
   return { duration, crossTrack, separation, stalls, anomalies };
 }
@@ -174,6 +192,8 @@ interface ReplayStore {
   setFocus: (a: Anomaly | null) => void;
 }
 
+let loadController: AbortController | null = null;
+
 export const useReplay = create<ReplayStore>((set, get) => ({
   sessionId: null,
   result: null,
@@ -187,19 +207,27 @@ export const useReplay = create<ReplayStore>((set, get) => ({
   hidden: [],
   focus: null,
   async load(sessionId) {
+    loadController?.abort();
+    const controller = new AbortController();
+    loadController = controller;
     set({ sessionId, loading: true, error: null, playing: false, focus: null });
     try {
-      const res = await fetch(urls.fieldsimResult(sessionId), { cache: 'no-store' });
-      if (!res.ok) throw new Error(res.status === 404 ? '没有这次仿真的结果文件' : `读取失败（HTTP ${res.status}）`);
-      const result = (await res.json()) as SimResult;
-      if (get().sessionId !== sessionId) return;
+      const result = await studio.fieldsimResult(sessionId, { signal: controller.signal });
+      if (get().sessionId !== sessionId || controller.signal.aborted) return;
       const derived = derive(result);
       set({ result, derived, loading: false, t: derived.duration, hidden: [] });
     } catch (e) {
-      set({ loading: false, error: (e as Error).message, result: null, derived: null });
+      if (get().sessionId !== sessionId) return;
+      set({ loading: false, error: (e as Error).name === 'AbortError' ? '回放读取已取消' : (e as Error).message, result: null, derived: null });
+    } finally {
+      if (loadController === controller) loadController = null;
     }
   },
-  clear: () => set({ sessionId: null, result: null, derived: null, playing: false, focus: null, error: null }),
+  clear: () => {
+    loadController?.abort();
+    loadController = null;
+    set({ sessionId: null, result: null, derived: null, playing: false, focus: null, error: null, loading: false });
+  },
   setT: (t) => set({ t }),
   setPlaying: (playing) => set({ playing }),
   setSpeed: (speed) => set({ speed }),

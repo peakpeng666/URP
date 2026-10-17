@@ -68,8 +68,12 @@ export function FleetAssetSection() {
   const drift = bindingDrift(inst);
   const run = focusRun ? (runs[focusRun] as Solution | undefined) : undefined;
   const per = (run?.state === 'done' ? (run.metrics.per_vehicle as unknown as PerVehicle[] | undefined) : undefined) ?? [];
-  const names = inst.vehicles.names ?? Array.from({ length: inst.vehicles.count }, (_, i) => `车${i + 1}`);
-  const simOf = (i: number) => (replay && replay.scenario_id === useStudio.getState().scenarioId ? replay.vehicles[i] : undefined);
+  const expanded = inst.vehicles.fleet?.length
+    ? inst.vehicles.fleet.flatMap((item, classIndex) => Array.from({ length: item.count }, () => ({ name: item.name ?? `车型 ${classIndex + 1}`, classIndex })))
+    : Array.from({ length: inst.vehicles.count ?? 1 }, () => ({ name: '统一车型', classIndex: 0 }));
+  const names = inst.vehicles.names ?? expanded.map((item, i) => `${item.name} · 车${i + 1}`);
+  const depots = inst.depots?.length ? inst.depots : [inst.depot];
+  const simOf = (i: number) => (replay && replay.scenario_id === useStudio.getState().scenarioId && (!focusRun || replay.run_id === focusRun) ? replay.vehicles[i] : undefined);
   const apply = async () => {
     if (!pick) return;
     try {
@@ -93,7 +97,7 @@ export function FleetAssetSection() {
           <span>规划参数</span><span>车体半径 {b.robot_radius_m} m（足迹外接圆）· 容量 {b.capacity ?? '不载货'} · {b.speed_mps} m/s{b.kinematics ? ` · ${b.kinematics}` : ''}</span>
           <span>仿真</span><span>{b.adapter ? '可在 Gazebo 田间仿真中执行（车体与资产一致）' : `不能在工作台仿真中执行：${b.adapter_note ?? '缺仿真适配'}`}</span>
           {b.ignored.length > 0 && <><span>未参与规划</span><span>{b.ignored.join('；')}</span></>}
-          {b.min_turn_radius_m ? <><span>转弯半径</span><span>{b.min_turn_radius_m} m：多车求解器不保证（路线是折线 / 行间通道）</span></> : null}
+          {b.min_turn_radius_m ? <><span>转弯半径</span><span>{b.min_turn_radius_m} m：Dubins 规划已接入；B3 反向漏检未修复，田间执行返回 422</span></> : null}
         </div>
       ) : (
         <p className={p.hint}>车队参数目前是手工设置的。选一种车辆资产，车体半径、容量和车速会写入任务地图并随方案记录资产版本。</p>
@@ -114,15 +118,16 @@ export function FleetAssetSection() {
       </div>
       <h3>车辆实例</h3>
       <table className={p.table}>
-        <thead><tr><th>车辆</th><th>起点</th><th className={p.num}>分配任务</th><th>状态</th></tr></thead>
+        <thead><tr><th>车辆 / 类别</th><th>家库（轮询分配）</th><th className={p.num}>分配任务</th><th>状态</th></tr></thead>
         <tbody>
           {names.map((n, i) => {
             const pv = per.find((x) => x.vehicle === n) ?? per[i];
             const sv = simOf(i);
+            const home = pv?.depot ?? i % depots.length;
             return (
-              <tr key={n} style={{ cursor: 'default' }}>
+              <tr key={`${n}-${i}`} style={{ cursor: 'default' }}>
                 <td><span className={p.swatch} style={{ background: pv?.color ?? sv?.color ?? '#c7c7cc' }} /> {n}</td>
-                <td className={p.mono}>车库 ({inst.depot.map((x) => x.toFixed(1)).join(', ')})</td>
+                <td className={p.mono}>D{home + 1} ({depots[home]?.map((x) => x.toFixed(1)).join(', ') ?? '—'})</td>
                 <td className={p.num}>{pv ? `${pv.tasks}${pv.trips > 1 ? ` · ${pv.trips} 趟` : ''}` : '—'}</td>
                 <td>{sv ? `仿真 ${sv.tasks_done}/${sv.tasks_total}${sv.state === 'failed' ? ' 受阻' : sv.state === 'done' ? ' 完成' : ''}` : pv ? '已规划' : run ? '未使用' : '未求解'}</td>
               </tr>
@@ -130,7 +135,7 @@ export function FleetAssetSection() {
           })}
         </tbody>
       </table>
-      <p className={p.meta}><Layers size={11} style={{ verticalAlign: -1 }} /> 同一车型、同一车库出发与返回；混合车型、多车库 / 多卸货点需要后端支持（见接口清单）。</p>
+      <p className={p.meta}><Layers size={11} style={{ verticalAlign: -1 }} /> 家库按车辆表序轮询分配，不是优化选库；路线类别、家库、趟次与任务顺序以冻结结果为准。多车执行仍是串行交通基线。</p>
     </>
   );
 }

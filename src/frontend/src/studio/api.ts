@@ -5,6 +5,7 @@ import type {
   CvrplibInstance,
   CvrplibSet,
   FieldEntry,
+  FieldPhysics,
   FieldSimState,
   FieldSimSummary,
   FleetInstance,
@@ -16,26 +17,69 @@ import type {
   Study,
   StudySpec,
 } from './types';
+import type { SimResult } from './experiment/replay';
 
 const BASE = '/lab/api';
 
-async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
+export interface CallOptions {
+  signal?: AbortSignal;
+  timeoutMs?: number;
+}
+
+export interface ExperimentRecordEnvelope {
+  record: { schema?: string; run_id?: string; [key: string]: unknown };
+  integrity: { algorithm?: string; sha256: string; canonicalization?: string; scope?: string; [key: string]: unknown };
+  assembled_utc: string;
+}
+
+export interface FieldPhysicsResponse {
+  default: FieldPhysics;
+  override_keys: string[];
+  scope?: string;
+}
+
+async function call<T>(method: string, path: string, body?: unknown, options: CallOptions = {}): Promise<T> {
+  const controller = new AbortController();
+  const onAbort = () => controller.abort(options.signal?.reason);
+  if (options.signal?.aborted) onAbort();
+  else options.signal?.addEventListener('abort', onAbort, { once: true });
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, options.timeoutMs ?? 30_000);
   let response: Response;
+  let text: string;
   try {
     response = await fetch(`${BASE}${path}`, {
       method,
+      signal: controller.signal,
       cache: 'no-store',
       headers: body === undefined ? { Accept: 'application/json' } : { Accept: 'application/json', 'Content-Type': 'application/json' },
       body: body === undefined ? undefined : JSON.stringify(body),
     });
-  } catch {
+    text = await response.text();
+  } catch (cause) {
+    if (options.signal?.aborted) throw cause;
+    if (timedOut) throw new LabApiError(`请求超时（${options.timeoutMs ?? 30_000} ms）：${path}`, 'timeout', 0);
+    if ((cause as Error)?.name === 'AbortError') throw cause;
     throw new LabApiError('连接不上工作台服务（127.0.0.1:4100）', 'network', 0);
+  } finally {
+    clearTimeout(timer);
+    options.signal?.removeEventListener('abort', onAbort);
   }
-  const text = await response.text();
-  const data = text ? (JSON.parse(text) as unknown) : null;
+  let data: unknown = null;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new LabApiError(`服务返回了非 JSON 内容（HTTP ${response.status}）：${path}`, 'bad_response', response.status);
+    }
+  }
   if (!response.ok) {
-    const e = (data ?? {}) as { error?: string; message?: string };
-    throw new LabApiError(e.message ?? `请求失败（HTTP ${response.status}）`, e.error ?? 'http_error', response.status);
+    const e = (data ?? {}) as { error?: string; message?: string; detail?: unknown };
+    const message = e.message ?? (typeof e.detail === 'string' ? e.detail : `请求失败（HTTP ${response.status}）`);
+    throw new LabApiError(message, e.error ?? 'http_error', response.status);
   }
   return data as T;
 }
@@ -82,12 +126,17 @@ export const studio = {
   instanceSpace: (id: string) => call<InstanceSpace>('GET', `/studies/${encodeURIComponent(id)}/instance-space`),
   analyzeRuns: (run_ids: string[]) => call<Analysis>('POST', '/analysis', { run_ids }),
   fieldsim: () => call<FieldSimState>('GET', '/fieldsim'),
-  startFieldsim: (run_id: string, opts: { gui?: boolean; rviz?: boolean; real_time_factor?: number } = {}) =>
+  fieldsimPhysics: () => call<FieldPhysicsResponse>('GET', '/fieldsim/physics'),
+  startFieldsim: (run_id: string, opts: { gui?: boolean; rviz?: boolean; real_time_factor?: number; physics?: Record<string, unknown> } = {}) =>
     call<FieldSimState>('POST', '/fieldsim', { run_id, ...opts }),
   stopFieldsim: () => call<FieldSimState>('POST', '/fieldsim/stop', {}),
   fieldsimWindow: (kind: 'gui' | 'rviz', on: boolean) => call<FieldSimState>('POST', '/fieldsim/window', { kind, on }),
   fieldsimResults: (run_id?: string) =>
     call<{ results: FieldSimSummary[] }>('GET', `/fieldsim/results${run_id ? `?run_id=${encodeURIComponent(run_id)}` : ''}`),
+  fieldsimResult: (sessionId: string, options: CallOptions = {}) =>
+    call<SimResult>('GET', `/fieldsim/results/${encodeURIComponent(sessionId)}`, undefined, options),
+  runRecord: (runId: string, options: CallOptions = {}) =>
+    call<ExperimentRecordEnvelope>('GET', `/runs/${encodeURIComponent(runId)}/record`, undefined, { timeoutMs: 60_000, ...options }),
 };
 
 export const urls = {

@@ -1,0 +1,144 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { Algorithm, Instance, Scenario, Solution } from '../lab/types';
+import type { FleetInstance } from './types';
+
+const mocks = vi.hoisted(() => ({
+  saveScenario: vi.fn(),
+  forkScenario: vi.fn(),
+  solve: vi.fn(),
+  cancelRun: vi.fn(),
+  scenario: vi.fn(),
+  runs: vi.fn(),
+  recommend: vi.fn(),
+  navigate: vi.fn(),
+}));
+
+vi.mock('../app/router', async (importOriginal) => ({ ...await importOriginal<typeof import('../app/router')>(), navigate: mocks.navigate }));
+vi.mock('../lab/api', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../lab/api')>();
+  return {
+    ...actual,
+    lab: { ...actual.lab, solve: mocks.solve, cancelRun: mocks.cancelRun, scenario: mocks.scenario, runs: mocks.runs, recommend: mocks.recommend },
+    events: { subscribe: vi.fn() },
+  };
+});
+vi.mock('./api', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./api')>();
+  return { ...actual, studio: { ...actual.studio, saveScenario: mocks.saveScenario, forkScenario: mocks.forkScenario } };
+});
+
+import { LabApiError } from '../lab/api';
+import { flushSave, useStudio } from './store';
+
+const instance: FleetInstance = {
+  boundary: [[0, 0], [60, 0], [60, 40], [0, 40]],
+  plots: [], obstacles: [], depot: [3, 15],
+  tasks: [{ id: 1, xy: [20, 15], demand: 1, label: 'T1' }, { id: 2, xy: [40, 25], demand: 1, label: 'T2' }],
+  vehicles: { count: 2, capacity: 4, speed_mps: 1, trips: 'multi', travel: 'free' },
+  objective: 'total_distance', robot_radius: 0.5, units: 'm',
+};
+const scenario = { id: 'scenario-a', origin: 'user', problem_class: 'fleet_routing', instance } as unknown as Scenario;
+const algorithm = { id: 'pyvrp.fleet', params: [{ name: 'time_limit_s' }, { name: 'seed' }] } as unknown as Algorithm;
+
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (reason: unknown) => void;
+  const promise = new Promise<T>((res, rej) => { resolve = res; reject = rej; });
+  return { promise, resolve, reject };
+}
+
+function stored(body: { instance?: unknown }): Scenario {
+  return { ...scenario, instance: body.instance } as unknown as Scenario;
+}
+
+async function microtasks(count = 12) {
+  for (let i = 0; i < count; i++) await Promise.resolve();
+}
+
+beforeEach(() => {
+  vi.useFakeTimers();
+  vi.stubGlobal('window', {
+    setTimeout: globalThis.setTimeout.bind(globalThis),
+    clearTimeout: globalThis.clearTimeout.bind(globalThis),
+  });
+  useStudio.setState({
+    scenarioId: scenario.id,
+    scenario,
+    draft: structuredClone(instance) as unknown as Instance,
+    past: [], future: [], save: 'dirty', saveError: null, solveError: null,
+    algorithms: [algorithm], chosen: [algorithm.id], budget: 3, seed: 42,
+    runIds: [], runs: {}, focusRun: null, manualFocus: false,
+    recommendation: null, recommending: false, busy: null, toast: null,
+  });
+  mocks.solve.mockResolvedValue({ job_id: 'job-test', runs: [] });
+});
+
+afterEach(() => {
+  vi.clearAllTimers();
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+  vi.clearAllMocks();
+});
+
+describe('serialized draft saving before solve', () => {
+  it('finishes the second PUT before submitting the newest draft', async () => {
+    const firstResponse = deferred<Scenario>();
+    const secondResponse = deferred<Scenario>();
+    mocks.saveScenario
+      .mockImplementationOnce(() => firstResponse.promise)
+      .mockImplementationOnce(() => secondResponse.promise);
+
+    const firstFlush = flushSave();
+    useStudio.getState().edit((draft) => ({ ...draft, depot: [10, 15], depots: [[10, 15]] } as unknown as Instance));
+    const solving = useStudio.getState().solve();
+    await microtasks();
+    expect(mocks.saveScenario).toHaveBeenCalledTimes(1);
+
+    firstResponse.resolve(stored({ instance: (useStudio.getState().scenario!.instance as unknown as FleetInstance) }));
+    await microtasks();
+    expect(mocks.saveScenario).toHaveBeenCalledTimes(2);
+    expect(mocks.solve).not.toHaveBeenCalled();
+    const secondBody = mocks.saveScenario.mock.calls[1][1];
+    expect(secondBody.instance.depot).toEqual([10, 15]);
+    expect(secondBody.instance.depots).toEqual([[10, 15]]);
+
+    secondResponse.resolve(stored(secondBody));
+    await Promise.all([firstFlush, solving]);
+    expect(mocks.solve).toHaveBeenCalledTimes(1);
+    expect(mocks.solve.mock.calls[0][2].depot).toEqual([10, 15]);
+    expect(mocks.solve.mock.calls[0][2].depots).toEqual([[10, 15]]);
+    expect(useStudio.getState().save).toBe('saved');
+    expect((useStudio.getState().draft as unknown as FleetInstance).depot).toEqual([10, 15]);
+  });
+
+  it('keeps B6 capacity and demand input unchanged and blocks solve after a 422', async () => {
+    const hetero = structuredClone(instance);
+    hetero.vehicles.fleet = [
+      { name: '小型', count: 1, capacity: 1, payload: 'load' },
+      { name: '大型', count: 1, capacity: 10, payload: 'load' },
+    ];
+    hetero.tasks[1].demand = 10;
+    useStudio.setState({ draft: hetero as unknown as Instance, save: 'dirty' });
+    mocks.saveScenario.mockRejectedValue(new LabApiError('fleet[0] 容量 1 小于最大单点需求 10，该类车无法服务任何任务', 'invalid_instance', 422));
+
+    await useStudio.getState().solve();
+
+    expect(mocks.solve).not.toHaveBeenCalled();
+    const current = useStudio.getState();
+    expect(current.save).toBe('error');
+    expect(current.solveError).toContain('B6');
+    expect(current.solveError).toContain('类别容量 [1, 10]');
+    expect(current.solveError).toContain('任务需求 [1, 10]');
+    expect((current.draft as unknown as FleetInstance).vehicles.fleet?.map((item) => item.capacity)).toEqual([1, 10]);
+    expect((current.draft as unknown as FleetInstance).tasks.map((item) => item.demand)).toEqual([1, 10]);
+  });
+
+  it('does not switch away from a draft whose save failed', async () => {
+    mocks.saveScenario.mockRejectedValue(new LabApiError('服务暂不可用', 'network', 0));
+    await useStudio.getState().open('scenario-b');
+    expect(useStudio.getState().scenarioId).toBe('scenario-a');
+    expect(useStudio.getState().draft).not.toBeNull();
+    expect(mocks.scenario).not.toHaveBeenCalled();
+    expect(mocks.navigate).toHaveBeenCalledWith('#/plan/scenario-a', { replace: true });
+  });
+});

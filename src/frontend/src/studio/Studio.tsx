@@ -23,9 +23,10 @@ import { Button, Segmented, Spinner, StatusDot } from '../lab/ui';
 import { simPhaseLabel } from '../lab/shell/labels';
 import { studio } from './api';
 import { flushSave, useStudio, type Workspace } from './store';
+import { removeDepot } from './fleet';
 import { useAssets } from './assets/store';
 import { ReplayPanel } from './experiment/ReplayPanel';
-import type { ParseResult } from './types';
+import type { FleetInstance, ParseResult } from './types';
 import { AdvisorPanel, ComparePanel, InspectorPanel, MapPanel, VerifyPanel } from './panels/PlanPanels';
 import { ScenarioNavigator } from './panels/LibraryPanels';
 import { ConsolePanel, LegacyPlan, RunsPanel, ServicesPanel, SimPanel } from './panels/SystemPanels';
@@ -295,10 +296,12 @@ export function Studio({ route }: { route: Route }) {
           <span>农业机器人路径规划</span>
         </div>
         <ComposeBar />
-        <Segmented value={st.workspace} onChange={(w) => st.setWorkspace(w)} label="工作区"
-          options={WORKSPACES.map((w) => ({ value: w.value, label: w.label, icon: w.icon }))} />
-        <Button size="sm" icon={ListRestart} title="恢复当前工作区的默认布局" onClick={resetLayout} />
-        <Button size="sm" icon={CommandIcon} title="命令面板 (⌘K)" onClick={() => st.setPalette(true)}>⌘K</Button>
+        <div className={s.workspaceNav}>
+          <Segmented value={st.workspace} onChange={(w) => st.setWorkspace(w)} label="工作区"
+            options={WORKSPACES.map((w) => ({ value: w.value, label: w.label, icon: w.icon }))} />
+          <Button size="sm" icon={ListRestart} title="恢复当前工作区的默认布局" onClick={resetLayout} />
+          <Button size="sm" icon={CommandIcon} title="命令面板 (⌘K)" onClick={() => st.setPalette(true)}>⌘K</Button>
+        </div>
       </header>
       <div className={s.dock}>
         <DockviewReact components={COMPONENTS} onReady={onReady} theme={themeLight} className={s.dockview} singleTabMode="default" />
@@ -503,7 +506,7 @@ function useShortcuts(api: React.RefObject<DockviewApi | null>) {
         return;
       }
       if (mod) return;
-      const tools: Record<string, Parameters<typeof st.setTool>[0]> = { v: 'select', h: 'pan', t: 'task', o: 'obstacle', p: 'plot', d: 'depot' };
+      const tools: Record<string, Parameters<typeof st.setTool>[0]> = { v: 'select', h: 'pan', t: 'task', o: 'obstacle', p: 'plot', d: 'depot', u: 'unload', c: 'corridor' };
       const k = e.key.toLowerCase();
       if (tools[k]) st.setTool(tools[k]);
       else if (k === 'f') window.dispatchEvent(new Event('studio:fit'));
@@ -511,10 +514,13 @@ function useShortcuts(api: React.RefObject<DockviewApi | null>) {
       else if ((e.key === 'Delete' || e.key === 'Backspace') && st.selection) {
         const sel = st.selection;
         st.edit((inst) => {
-          const i = inst as unknown as { tasks: { id: number }[]; obstacles: { id: string }[]; plots: { id: string }[] };
+          const i = inst as unknown as FleetInstance;
           if (sel.type === 'task') return { ...inst, tasks: i.tasks.filter((t) => t.id !== sel.id) } as typeof inst;
           if (sel.type === 'obstacle') return { ...inst, obstacles: i.obstacles.filter((o) => o.id !== sel.id) } as typeof inst;
           if (sel.type === 'plot') return { ...inst, plots: i.plots.filter((o) => o.id !== sel.id) } as typeof inst;
+          if (sel.type === 'corridor') return { ...inst, corridors: (i.corridors ?? []).filter((o) => o.id !== sel.id) } as typeof inst;
+          if (sel.type === 'unload') return { ...inst, unload_points: (i.unload_points ?? []).filter((_, index) => index !== sel.index) } as typeof inst;
+          if (sel.type === 'depot') return removeDepot(i, sel.index ?? 0) as unknown as typeof inst;
           return inst;
         });
         st.select(null);

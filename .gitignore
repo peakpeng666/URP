@@ -57,3 +57,14 @@ setup/2026-10-17/modeling/ui-runtime/
 setup/2026-10-17/tyre-energy/model-v4-*/
 setup/2026-10-17/modeling/source-time-live/
 setup/2026-10-17/critique/mu2-study/*/
+
+# 本地验收的浏览器配置、数据库和大轨迹留在原位；提交摘要、探针、日志和截图。
+/setup/2026-10-17/frontend-kimi/browser/smoke-profile*/
+/setup/2026-10-17/glm-acceptance/live/runtime/
+/setup/2026-10-17/glm-acceptance/live/experiment-*.json
+/setup/2026-10-17/glm-acceptance/server-record.json
+/setup/2026-10-17/glm-acceptance/physics/*/result.json
+/setup/2026-10-17/integration-closeout/runtime/
+/setup/2026-10-17/integration-closeout/live/
+/setup/2026-10-17/integration-closeout/browser-profile*/
+/setup/2026-10-17/integration-closeout/*-record.json

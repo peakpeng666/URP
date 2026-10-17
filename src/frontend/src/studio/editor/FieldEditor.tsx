@@ -3,6 +3,7 @@ import { useElementSize } from '../../lib/useElementSize';
 import { fitView, toScreen, toWorld, worldTransform, zoomAt, type View } from '../../lab/canvas/view';
 import type { XY } from '../../lab/types';
 import type { FleetInstance, FleetRoute, ObstacleKind, Selection, Tool } from '../types';
+import { addDepot, depotsOf, fleetSpeed, setDepot } from '../fleet';
 import {
   OBSTACLE_STYLE,
   along,
@@ -41,13 +42,15 @@ export interface FieldEditorProps {
   onCursor?: (p: XY | null) => void;
 }
 
+type PolyTarget = 'obstacle' | 'plot' | 'corridor';
 type Drag =
   | { kind: 'pan'; sx: number; sy: number; view: View }
   | { kind: 'task'; id: number; from: XY; orig: XY }
-  | { kind: 'depot'; from: XY; orig: XY }
-  | { kind: 'poly'; target: 'obstacle' | 'plot'; id: string; from: XY; orig: XY[] }
-  | { kind: 'vertex'; target: 'obstacle' | 'plot' | 'boundary'; id: string; index: number }
-  | { kind: 'shape'; target: 'obstacle' | 'plot'; from: XY; to: XY };
+  | { kind: 'depot'; index: number; from: XY; orig: XY }
+  | { kind: 'unload'; index: number; from: XY; orig: XY }
+  | { kind: 'poly'; target: PolyTarget; id: string; from: XY; orig: XY[] }
+  | { kind: 'vertex'; target: PolyTarget | 'boundary'; id: string; index: number }
+  | { kind: 'shape'; target: PolyTarget; from: XY; to: XY };
 
 const GRID_STEPS = [0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500];
 
@@ -56,7 +59,7 @@ export function FieldEditor(props: FieldEditorProps) {
   const [box, size] = useElementSize<HTMLDivElement>();
   const [view, setView] = useState<View>({ k: 1, tx: 0, ty: 0 });
   const [preview, setPreview] = useState<FleetInstance | null>(null);
-  const [shape, setShape] = useState<{ a: XY; b: XY; target: 'obstacle' | 'plot' } | null>(null);
+  const [shape, setShape] = useState<{ a: XY; b: XY; target: PolyTarget } | null>(null);
   const drag = useRef<Drag | null>(null);
   const svg = useRef<SVGSVGElement>(null);
   const fittedFor = useRef('');
@@ -132,7 +135,7 @@ export function FieldEditor(props: FieldEditorProps) {
     if (tool === 'select' || !editable) {
       if (hit === 'vertex' && editable) {
         const [target, owner, index] = id.split(':');
-        drag.current = { kind: 'vertex', target: target as 'obstacle' | 'plot' | 'boundary', id: owner, index: Number(index) };
+        drag.current = { kind: 'vertex', target: target as PolyTarget | 'boundary', id: owner, index: Number(index) };
         return;
       }
       if (hit === 'task') {
@@ -142,14 +145,23 @@ export function FieldEditor(props: FieldEditorProps) {
         return;
       }
       if (hit === 'depot') {
-        onSelect({ type: 'depot' });
-        if (editable) drag.current = { kind: 'depot', from: p, orig: inst.depot };
+        const index = Number(id || 0);
+        const xy = depotsOf(inst)[index];
+        onSelect({ type: 'depot', index });
+        if (xy && editable) drag.current = { kind: 'depot', index, from: p, orig: xy };
         return;
       }
-      if (hit === 'obstacle' || hit === 'plot') {
-        const list = hit === 'obstacle' ? inst.obstacles : inst.plots;
+      if (hit === 'unload') {
+        const index = Number(id);
+        const xy = inst.unload_points?.[index];
+        onSelect({ type: 'unload', index });
+        if (xy && editable) drag.current = { kind: 'unload', index, from: p, orig: xy };
+        return;
+      }
+      if (hit === 'obstacle' || hit === 'plot' || hit === 'corridor') {
+        const list = hit === 'obstacle' ? inst.obstacles : hit === 'plot' ? inst.plots : inst.corridors ?? [];
         const item = list.find((x) => x.id === id);
-        onSelect(hit === 'obstacle' ? { type: 'obstacle', id } : { type: 'plot', id });
+        onSelect({ type: hit, id } as Selection);
         if (item && editable) drag.current = { kind: 'poly', target: hit, id, from: p, orig: item.polygon };
         return;
       }
@@ -169,11 +181,21 @@ export function FieldEditor(props: FieldEditorProps) {
       return;
     }
     if (tool === 'depot') {
-      onEdit((i) => ({ ...i, depot: [round(p[0]), round(p[1])] }));
-      onSelect({ type: 'depot' });
+      const xy: XY = [round(p[0]), round(p[1])];
+      const index = depotsOf(inst).length;
+      onEdit((i) => (depotsOf(i).length === 1 ? setDepot(i, 0, xy) : addDepot(i, xy)));
+      onSelect({ type: 'depot', index: index === 1 ? 0 : Math.min(index, 7) });
       return;
     }
-    if (tool === 'obstacle' || tool === 'plot') {
+    if (tool === 'unload') {
+      const xy: XY = [round(p[0]), round(p[1])];
+      const index = inst.unload_points?.length ?? 0;
+      if (index >= 16) return;
+      onEdit((i) => ({ ...i, unload_points: [...(i.unload_points ?? []), xy] }));
+      onSelect({ type: 'unload', index });
+      return;
+    }
+    if (tool === 'obstacle' || tool === 'plot' || tool === 'corridor') {
       drag.current = { kind: 'shape', target: tool, from: p, to: p };
       setShape({ a: p, b: p, target: tool });
     }
@@ -199,18 +221,23 @@ export function FieldEditor(props: FieldEditorProps) {
       const xy: XY = [round(d.orig[0] + p[0] - d.from[0]), round(d.orig[1] + p[1] - d.from[1])];
       setPreview({ ...base, tasks: base.tasks.map((t) => (t.id === d.id ? { ...t, xy } : t)) });
     } else if (d.kind === 'depot') {
-      setPreview({ ...base, depot: [round(d.orig[0] + p[0] - d.from[0]), round(d.orig[1] + p[1] - d.from[1])] });
+      const xy: XY = [round(d.orig[0] + p[0] - d.from[0]), round(d.orig[1] + p[1] - d.from[1])];
+      setPreview(setDepot(base, d.index, xy));
+    } else if (d.kind === 'unload') {
+      const xy: XY = [round(d.orig[0] + p[0] - d.from[0]), round(d.orig[1] + p[1] - d.from[1])];
+      setPreview({ ...base, unload_points: (base.unload_points ?? []).map((q, i) => (i === d.index ? xy : q)) });
     } else if (d.kind === 'poly') {
       const moved = translate(d.orig, p[0] - d.from[0], p[1] - d.from[1]);
-      setPreview(d.target === 'obstacle'
-        ? { ...base, obstacles: base.obstacles.map((o) => (o.id === d.id ? { ...o, polygon: moved } : o)) }
-        : { ...base, plots: base.plots.map((o) => (o.id === d.id ? { ...o, polygon: moved } : o)) });
+      if (d.target === 'obstacle') setPreview({ ...base, obstacles: base.obstacles.map((o) => (o.id === d.id ? { ...o, polygon: moved } : o)) });
+      else if (d.target === 'plot') setPreview({ ...base, plots: base.plots.map((o) => (o.id === d.id ? { ...o, polygon: moved } : o)) });
+      else setPreview({ ...base, corridors: (base.corridors ?? []).map((o) => (o.id === d.id ? { ...o, polygon: moved } : o)) });
     } else if (d.kind === 'vertex') {
       const xy: XY = [round(p[0]), round(p[1])];
       const set = (poly: XY[]) => poly.map((q, i) => (i === d.index ? xy : q));
       if (d.target === 'boundary') setPreview({ ...base, boundary: set(base.boundary) });
       else if (d.target === 'obstacle') setPreview({ ...base, obstacles: base.obstacles.map((o) => (o.id === d.id ? { ...o, polygon: set(o.polygon) } : o)) });
-      else setPreview({ ...base, plots: base.plots.map((o) => (o.id === d.id ? { ...o, polygon: set(o.polygon) } : o)) });
+      else if (d.target === 'plot') setPreview({ ...base, plots: base.plots.map((o) => (o.id === d.id ? { ...o, polygon: set(o.polygon) } : o)) });
+      else setPreview({ ...base, corridors: (base.corridors ?? []).map((o) => (o.id === d.id ? { ...o, polygon: set(o.polygon) } : o)) });
     }
   }
 
@@ -231,13 +258,19 @@ export function FieldEditor(props: FieldEditorProps) {
           return { ...i, obstacles: [...i.obstacles, { id: newId, kind: obstacleKind, name: OBSTACLE_STYLE[obstacleKind].label, polygon }] };
         });
         if (newId) onSelect({ type: 'obstacle', id: newId });
-      } else {
+      } else if (d.target === 'plot') {
         const letter = String.fromCharCode(65 + (inst.plots.length % 26));
         let pid = letter;
         let k = 2;
         while (inst.plots.some((pl) => pl.id === pid)) pid = `${letter}${k++}`;
         onEdit((i) => ({ ...i, plots: [...i.plots, { id: pid, name: `${pid} 区`, crop: '', rows_deg: 0, polygon: rect(a, b) }] }));
         onSelect({ type: 'plot', id: pid });
+      } else {
+        let cid = `C${(inst.corridors?.length ?? 0) + 1}`;
+        let k = 2;
+        while (inst.corridors?.some((c) => c.id === cid)) cid = `C${k++}`;
+        onEdit((i) => ({ ...i, corridors: [...(i.corridors ?? []), { id: cid, name: `机耕道 ${cid}`, polygon: rect(a, b) }] }));
+        onSelect({ type: 'corridor', id: cid });
       }
       return;
     }
@@ -259,14 +292,15 @@ export function FieldEditor(props: FieldEditorProps) {
   const [bx0, by0, bx1, by1] = boundsOf(shown);
   const playbackPos = useMemo(() => {
     if (playback === null) return [];
-    return visibleRoutes.map((r) => ({ r, ...along(r.polyline, playback * (inst.vehicles.speed_mps || 1)) }));
-  }, [playback, visibleRoutes, inst.vehicles.speed_mps]);
+    return visibleRoutes.map((r) => ({ r, ...along(r.polyline, playback * fleetSpeed(inst)) }));
+  }, [playback, visibleRoutes, inst]);
 
   const selPoly =
     selection?.type === 'obstacle' ? shown.obstacles.find((o) => o.id === selection.id)?.polygon :
     selection?.type === 'plot' ? shown.plots.find((o) => o.id === selection.id)?.polygon :
+    selection?.type === 'corridor' ? shown.corridors?.find((o) => o.id === selection.id)?.polygon :
     selection?.type === 'boundary' ? shown.boundary : undefined;
-  const selTarget = selection?.type === 'obstacle' || selection?.type === 'plot' || selection?.type === 'boundary' ? selection.type : null;
+  const selTarget = selection?.type === 'obstacle' || selection?.type === 'plot' || selection?.type === 'corridor' || selection?.type === 'boundary' ? selection.type : null;
   const selId = selection && 'id' in selection ? String(selection.id) : 'boundary';
 
   return (
@@ -307,6 +341,11 @@ export function FieldEditor(props: FieldEditorProps) {
               {lanes.map((ln, i) => <polyline key={i} points={ln.map((p) => p.join(',')).join(' ')} />)}
             </g>
           )}
+          {(shown.corridors ?? []).map((c) => (
+            <polygon key={c.id} data-hit="corridor" data-id={c.id} className={s.corridor} points={c.polygon.map((p) => p.join(',')).join(' ')}>
+              <title>{`${c.name ?? c.id} · rows 模式并入通行网络，free 模式仅保留几何`}</title>
+            </polygon>
+          ))}
           {shown.obstacles.map((o) => (
             <polygon
               key={o.id}
@@ -360,7 +399,21 @@ export function FieldEditor(props: FieldEditorProps) {
             </g>
           );
         })}
-        <Depot xy={scr(shown.depot)} selected={selection?.type === 'depot'} />
+        {(shown.unload_points ?? []).map((xy, index) => {
+          const [x, y] = scr(xy);
+          const selected = selection?.type === 'unload' && selection.index === index;
+          return (
+            <g key={`${index}-${xy.join(',')}`} data-hit="unload" data-id={index} className={s.unload} transform={`translate(${x} ${y})`}>
+              <title>{`补给 / 卸载点 U${index + 1}`}</title>
+              {selected && <circle r={14} className={s.taskHalo} />}
+              <path d="M 0 -9 L 9 0 L 0 9 L -9 0 Z" />
+              <text x={11} y={-8}>U{index + 1}</text>
+            </g>
+          );
+        })}
+        {depotsOf(shown).map((xy, index) => (
+          <Depot key={`${index}-${xy.join(',')}`} xy={scr(xy)} index={index} selected={selection?.type === 'depot' && (selection.index ?? 0) === index} />
+        ))}
         {playbackPos.map(({ r, xy, heading }) => {
           const [x, y] = scr(xy);
           return (
@@ -415,14 +468,15 @@ function ScaleBar({ step, k, height }: { step: number; k: number; height: number
   );
 }
 
-function Depot({ xy, selected }: { xy: XY; selected: boolean }) {
+function Depot({ xy, index, selected }: { xy: XY; index: number; selected: boolean }) {
   const [x, y] = xy;
   return (
-    <g data-hit="depot" className={s.depot} transform={`translate(${x} ${y})`}>
-      <title>车库（所有车辆出发与返回）</title>
+    <g data-hit="depot" data-id={index} className={s.depot} transform={`translate(${x} ${y})`}>
+      <title>{`车库 D${index + 1}（车辆按类别展开后的表序轮询分配家库）`}</title>
       {selected && <circle r={15} className={s.taskHalo} />}
       <rect x={-10} y={-10} width={20} height={20} rx={5} />
       <path d="M -6 1 L 0 -5 L 6 1 M -4 0 L -4 6 L 4 6 L 4 0" />
+      <text x={12} y={-10}>D{index + 1}</text>
     </g>
   );
 }

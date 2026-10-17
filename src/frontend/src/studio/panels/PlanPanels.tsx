@@ -29,9 +29,11 @@ import type { Solution } from '../../lab/types';
 import { FieldEditor } from '../editor/FieldEditor';
 import { OBSTACLE_STYLE, area, routeLength } from '../editor/geometry';
 import { useLanes } from '../editor/lanes';
-import { asFleet, isFleet, useStudio } from '../store';
+import { asFleet, isFleet, retrySave, useStudio } from '../store';
 import { studio, urls } from '../api';
 import type { FleetInstance, FleetRoute, FleetScenario, ObstacleKind, PerVehicle } from '../types';
+import { addDepot, depotsOf, fleetClassFor, fleetClasses, fleetSize, fleetSpeed, planningFingerprint, removeDepot, setDepot } from '../fleet';
+import { researchAcceptanceIssues } from '../execution';
 import { MapCanvas } from '../../lab/canvas/MapCanvas';
 import { baseScene, solutionPaths, violationMarkers } from '../../lab/views/plan/planModel';
 import type { Instance, Scenario } from '../../lab/types';
@@ -52,17 +54,9 @@ export function LibraryBadge({ library }: { library?: string }) {
   return <Badge tone={LIB_TONE[name] ?? 'gray'}>{name}</Badge>;
 }
 
-/** Geometry signature: a solution belongs to the current map only if these match. */
+/** Complete frozen planning input, canonically serialized; pure view state is not part of FleetInstance. */
 export function signature(inst: FleetInstance | null | undefined): string {
-  if (!inst) return '';
-  const rows = inst.vehicles.travel === 'rows';
-  return JSON.stringify({
-    t: inst.tasks.map((t) => [t.id, t.xy, t.demand]), o: inst.obstacles.map((o) => o.polygon), b: inst.boundary, d: inst.depot,
-    v: [inst.vehicles.count, inst.vehicles.capacity, inst.vehicles.trips ?? 'multi', inst.vehicles.speed_mps, inst.vehicles.travel ?? 'free'],
-    j: inst.objective, r: inst.robot_radius,
-    // with travel along the rows the plots (shape, crop, row direction) decide the lanes too
-    p: rows ? inst.plots.map((pl) => [pl.polygon, pl.crop ?? '', pl.rows_deg ?? 0]) : null,
-  });
+  return planningFingerprint(inst);
 }
 
 /** How one plot's rows are driven, in a few words. */
@@ -85,7 +79,9 @@ const TOOLS = [
   { value: 'task', label: '任务点', icon: Plus, title: '点击添加任务点 (T)' },
   { value: 'obstacle', label: '障碍', icon: Shapes, title: '拖动绘制障碍 (O)' },
   { value: 'plot', label: '地块', icon: Sprout, title: '拖动绘制地块 (P)' },
-  { value: 'depot', label: '车库', icon: Home, title: '点击放置车库 (D)' },
+  { value: 'depot', label: '车库', icon: Home, title: '点击放置车库；多库时追加车库 (D)' },
+  { value: 'unload', label: '补给点', icon: Plus, title: '点击添加补给 / 卸载点（B1/B2 未验收）' },
+  { value: 'corridor', label: '机耕道', icon: Shapes, title: '拖动绘制机耕道 / 地头走廊' },
 ] as const;
 
 export function MapPanel() {
@@ -105,51 +101,73 @@ export function MapPanel() {
 
 function FleetMap({ inst, focus }: { inst: FleetInstance; focus?: Solution }) {
   const st = useStudio();
-  const lanes = useLanes(inst, inst.vehicles.travel === 'rows');
-  if (!st.scenario) return null;
+  const [snapshot, setSnapshot] = useState(false);
   const stale = !!focus && signature(focus.instance as unknown as FleetInstance) !== signature(inst);
+  useEffect(() => setSnapshot(false), [focus?.run_id, st.scenario?.id]);
+  const frozen = snapshot && stale && focus?.state === 'done' && focus.instance ? focus.instance as unknown as FleetInstance : null;
+  const shownInst = frozen ?? inst;
+  const lanes = useLanes(shownInst, shownInst.vehicles.travel === 'rows');
+  if (!st.scenario) return null;
   const routes = focus?.state === 'done' ? (focus.routes as FleetRoute[]) : [];
+  const showResult = !stale || !!frozen;
   return (
     <div className={s.mapPanel}>
-      <div className={s.mapBar}>
-        <Segmented value={st.tool} onChange={(t) => st.setTool(t)} label="编辑工具"
-          options={TOOLS.map((t) => ({ value: t.value, label: t.label, icon: t.icon, title: t.title }))} />
-        {st.tool === 'obstacle' && (
-          <Select aria-label="障碍类型" value={st.obstacleKind} onChange={(e) => st.setObstacleKind(e.target.value as ObstacleKind)}>
-            {(Object.keys(OBSTACLE_STYLE) as ObstacleKind[]).map((k) => <option key={k} value={k}>{OBSTACLE_STYLE[k].label}</option>)}
-          </Select>
-        )}
-        <BackgroundControl />
-        <span className={s.spacer} />
-        <Button size="sm" icon={Undo2} title="撤销 (⌘Z)" disabled={!st.past.length} onClick={st.undo} />
-        <Button size="sm" icon={Redo2} title="重做 (⇧⌘Z)" disabled={!st.future.length} onClick={st.redo} />
-        <Button size="sm" icon={Maximize} title="适配全图 (F)" onClick={() => window.dispatchEvent(new Event('studio:fit'))} />
-        <SaveChip />
-      </div>
+      {frozen ? (
+        <div className={s.mapBar}>
+          <Badge tone="orange">历史运行冻结输入</Badge>
+          <span className={s.meta} style={{ margin: 0 }}>{focus?.run_id} · 只读，不回写当前草稿</span>
+          <span className={s.spacer} />
+          <Button size="sm" icon={Maximize} title="适配全图 (F)" onClick={() => window.dispatchEvent(new Event('studio:fit'))} />
+          <Button size="sm" onClick={() => setSnapshot(false)}>返回当前草稿</Button>
+        </div>
+      ) : (
+        <div className={s.mapBar}>
+          <Segmented value={st.tool} onChange={(t) => st.setTool(t)} label="编辑工具"
+            options={TOOLS.map((t) => ({ value: t.value, label: t.label, icon: t.icon, title: t.title }))} />
+          {st.tool === 'obstacle' && (
+            <Select aria-label="障碍类型" value={st.obstacleKind} onChange={(e) => st.setObstacleKind(e.target.value as ObstacleKind)}>
+              {(Object.keys(OBSTACLE_STYLE) as ObstacleKind[]).map((k) => <option key={k} value={k}>{OBSTACLE_STYLE[k].label}</option>)}
+            </Select>
+          )}
+          <BackgroundControl />
+          <span className={s.spacer} />
+          <Button size="sm" icon={Undo2} title="撤销 (⌘Z)" disabled={!st.past.length} onClick={st.undo} />
+          <Button size="sm" icon={Redo2} title="重做 (⇧⌘Z)" disabled={!st.future.length} onClick={st.redo} />
+          <Button size="sm" icon={Maximize} title="适配全图 (F)" onClick={() => window.dispatchEvent(new Event('studio:fit'))} />
+          <SaveChip />
+        </div>
+      )}
       <div className={s.mapStage}>
         <FieldEditor
-          inst={inst}
-          routes={stale ? [] : routes}
+          inst={shownInst}
+          routes={showResult ? routes : []}
           hidden={st.hiddenVehicles}
           playback={st.playback}
-          tool={st.tool}
+          tool={frozen ? 'select' : st.tool}
           obstacleKind={st.obstacleKind}
-          selection={st.selection}
-          editable
-          fitKey={st.scenario.id}
+          selection={frozen ? null : st.selection}
+          editable={!frozen}
+          fitKey={`${st.scenario.id}:${frozen ? focus?.run_id : 'draft'}`}
           lanes={lanes?.lanes}
-          background={<PlanBackground />}
+          background={frozen ? undefined : <PlanBackground />}
           overlay={(view) => <ReplayOverlay view={view} />}
           onEdit={(fn) => st.edit((i) => fn(i as unknown as FleetInstance) as unknown as typeof i)}
-          onSelect={st.select}
+          onSelect={frozen ? () => undefined : st.select}
           onCursor={st.setCursor}
         />
-        {stale && <div className={s.staleBadge}><RefreshCw size={12} /> 地图已修改，结果需重新求解</div>}
-        {st.save === 'error' && st.saveError && (
-          <div className={s.saveBanner} role="alert">未保存：{st.saveError}。{/连接不上/.test(st.saveError) ? '服务恢复后会自动重试保存。' : '修改地图（或撤销 ⌘Z）后会自动重试。'}</div>
+        {stale && !frozen && (
+          <div className={s.staleBadge}><RefreshCw size={12} /> 当前输入已修改，历史结果需重新求解
+            {focus?.state === 'done' && <Button size="sm" variant="plain" onClick={() => setSnapshot(true)}>查看冻结输入</Button>}
+          </div>
         )}
-        {!stale && focus && focus.state === 'done' && <VehicleLegend run={focus} />}
-        {!stale && focus && focus.state === 'done' && <Playback run={focus} speed={inst.vehicles.speed_mps} />}
+        {st.save === 'error' && st.saveError && (
+          <div className={s.saveBanner} role="alert">
+            <span>未保存：{st.saveError}。{/连接不上|无法连接/.test(st.saveError) ? '断连时会自动重试；' : ''}草稿仍保留在当前页面。</span>
+            <Button size="sm" onClick={() => void retrySave()}>重试保存</Button>
+          </div>
+        )}
+        {showResult && focus && focus.state === 'done' && <VehicleLegend run={focus} />}
+        {showResult && focus && focus.state === 'done' && <Playback run={focus} speed={fleetSpeed(shownInst)} />}
       </div>
     </div>
   );
@@ -195,6 +213,20 @@ function SaveChip() {
   return <span className={save === 'error' ? s.saveErr : s.saveChip} title={err ?? undefined}>{text}</span>;
 }
 
+function vehicleFacts(run: Solution, vehicle: PerVehicle, index: number) {
+  const inst = run.instance as unknown as FleetInstance | undefined;
+  const routes = run.routes as FleetRoute[];
+  const route = routes.find((item) => item.vehicle_name === vehicle.vehicle) ?? routes[index];
+  const classes = inst?.vehicles ? fleetClasses(inst) : [];
+  const classRef = vehicle.fleet_class ?? route?.fleet_class;
+  const depotIndex = vehicle.depot ?? route?.depot;
+  const className = classRef != null
+    ? (inst ? fleetClassFor(inst, classRef)?.name : undefined) ?? `未记录类别 ${classRef}`
+    : classes.length > 1 ? '类别未记录' : classes[0]?.name ?? '同构';
+  const home = depotIndex != null ? `D${depotIndex + 1}` : inst && depotsOf(inst).length > 1 ? '未记录' : inst ? 'D1' : '未记录';
+  return { className, home };
+}
+
 function VehicleLegend({ run }: { run: Solution }) {
   const hidden = useStudio((st) => st.hiddenVehicles);
   const toggle = useStudio((st) => st.toggleVehicle);
@@ -208,13 +240,14 @@ function VehicleLegend({ run }: { run: Solution }) {
         <span>{run.algorithm.name}</span>
         <ChevronDown size={12} className={s.legendChevron} />
       </button>
-      {open && per.map((v) => {
+      {open && per.map((v, index) => {
         const off = hidden.includes(v.vehicle);
+        const facts = vehicleFacts(run, v, index);
         return (
           <button key={v.vehicle} type="button" className={s.legendRow} data-off={off || undefined} onClick={() => toggle(v.vehicle)}>
             <span className={s.swatch} style={{ background: v.color }} />
-            <span className={s.legendName}>{v.vehicle}</span>
-            <span className={s.legendMeta}>{v.tasks} 点{v.trips > 1 ? ` · ${v.trips} 趟` : ''}</span>
+            <span className={s.legendName}>{v.vehicle}<div className={s.legendMeta}>{facts.className} · 家库 {facts.home}</div></span>
+            <span className={s.legendMeta}>{v.tasks} 点 · {v.trips} 趟</span>
             <span className={s.legendMeta}>{fmt.num(v.length_m, 0)} m</span>
             <span className={s.legendMeta}>{fmt.sec(v.duration_s)}</span>
             {off ? <EyeOff size={12} /> : <Eye size={12} />}
@@ -314,17 +347,56 @@ function FleetForm() {
   const lanes = useLanes(inst, inst.vehicles.travel === 'rows');
   const set = (fn: (i: FleetInstance) => FleetInstance) => edit((i) => fn(i as unknown as FleetInstance) as unknown as typeof i);
   const v = inst.vehicles;
+  const classes = fleetClasses(inst);
+  const classMode = !!v.fleet?.length;
   const demand = inst.tasks.reduce((a, t) => a + t.demand, 0);
-  const trips = Math.ceil(demand / Math.max(1, v.capacity));
+  const perWave = classes.reduce((sum, item) => sum + item.count * item.capacity, 0);
+  const waves = Math.ceil(demand / Math.max(1, perWave));
+  const setClass = (index: number, patch: Partial<(typeof classes)[number]>) => set((i) => {
+    const next = fleetClasses(i).map((item, k) => (k === index ? { ...item, ...patch } : item));
+    return { ...i, robot_radius: Math.max(...next.map((item) => item.robot_radius ?? 0.1)), vehicles: { ...i.vehicles, fleet: next } };
+  });
   return (
     <div className={s.form}>
-      <h3>车队</h3>
-      <div className={s.grid2}>
-        <Num label="车辆数" value={v.count} min={1} onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, count: Math.max(1, Math.round(n)), names: undefined } }))} />
-        <Num label="单车容量" value={v.capacity} min={1} onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, capacity: Math.max(1, Math.round(n)) } }))} />
-        <Num label="车速" value={v.speed_mps} min={0.1} step={0.1} unit="m/s" onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, speed_mps: n } }))} />
-        <Num label="车体半径" value={inst.robot_radius} min={0.1} step={0.05} unit="m" onChange={(n) => set((i) => ({ ...i, robot_radius: n }))} />
-      </div>
+      <div className={s.rowSpace}><h3>车队</h3><Badge tone="gray">{fleetSize(inst)} 台 · {classes.length} 类</Badge></div>
+      {!classMode ? (
+        <>
+          <div className={s.grid2}>
+            <Num label="车辆数" value={v.count ?? 1} min={1} onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, count: Math.max(1, Math.round(n)), names: undefined } }))} />
+            <Num label="单车容量" value={v.capacity ?? 1} min={1} onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, capacity: Math.max(1, Math.round(n)) } }))} />
+            <Num label="车速" value={v.speed_mps ?? 1} min={0.1} step={0.1} unit="m/s" onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, speed_mps: n } }))} />
+            <Num label="车体半径" value={inst.robot_radius} min={0.1} step={0.05} unit="m" onChange={(n) => set((i) => ({ ...i, robot_radius: n }))} />
+          </div>
+          <Button size="sm" onClick={() => set((i) => ({ ...i, vehicles: { ...i.vehicles, fleet: fleetClasses(i) } }))}>按类别编辑车队</Button>
+        </>
+      ) : (
+        <>
+          {classes.map((item, index) => (
+            <div key={index} className={s.fleetClass}>
+              <div className={s.rowSpace}>
+                <strong>{item.name ?? `车型 ${index + 1}`}</strong>
+                <Button size="sm" variant="plain" icon={Trash2} title="删除此车型" disabled={classes.length <= 1} onClick={() => set((i) => ({ ...i, vehicles: { ...i.vehicles, fleet: fleetClasses(i).filter((_, k) => k !== index) } }))} />
+              </div>
+              <label className={s.field}><span>类别名称</span><Input value={item.name ?? `车型 ${index + 1}`} onChange={(e) => setClass(index, { name: e.target.value })} /></label>
+              <div className={s.grid2}>
+                <Num label="数量" value={item.count} min={1} onChange={(n) => setClass(index, { count: Math.max(1, Math.round(n)) })} />
+                <Num label="容量（抽象单位）" value={item.capacity} min={1} onChange={(n) => setClass(index, { capacity: Math.max(1, Math.round(n)) })} />
+                <Num label="车速" value={item.speed_mps ?? 1} min={0.1} step={0.1} unit="m/s" onChange={(n) => setClass(index, { speed_mps: n })} />
+                <Num label="规划半径" value={item.robot_radius ?? inst.robot_radius} min={0.1} step={0.05} unit="m" onChange={(n) => setClass(index, { robot_radius: n })} />
+                <Num label="最小转弯半径" value={item.min_turn_radius_m ?? 0} min={0} step={0.1} unit="m" onChange={(n) => setClass(index, { min_turn_radius_m: Math.max(0, n) })} />
+              </div>
+              <label className={s.field}><span>载货语义</span><Select value={item.payload} onChange={(e) => setClass(index, { payload: e.target.value as 'load' | 'none' })}><option value="load">载货 / 采样容量</option><option value="none">不载货（容量不构成约束）</option></Select></label>
+              {item.asset && <p className={s.meta}>资产 {item.asset.name ?? item.asset.id} · v{item.asset.version} · {item.asset.sha256.slice(0, 12)}</p>}
+            </div>
+          ))}
+          <div className={s.row}>
+            <Button size="sm" icon={Plus} disabled={classes.length >= 8} onClick={() => set((i) => ({ ...i, vehicles: { ...i.vehicles, fleet: [...fleetClasses(i), { ...fleetClasses(i)[0], name: `车型 ${classes.length + 1}`, count: 1 }] } }))}>添加车型</Button>
+            <Button size="sm" variant="plain" onClick={() => set((i) => { const first = fleetClasses(i)[0]; return { ...i, robot_radius: first.robot_radius ?? i.robot_radius, vehicles: { ...i.vehicles, fleet: undefined, count: first.count, capacity: first.capacity, speed_mps: first.speed_mps ?? 1, names: undefined } }; })}>返回同构设置</Button>
+          </div>
+          {classes.some((item) => (item.min_turn_radius_m ?? 0) > 0) && <p className={s.hint}><strong className={s.warn}>B3 未验收：</strong>曲率结果可保存、求解和查看，但反向漏检尚未修复；rows 不支持，Gazebo 执行会返回 422 curvature_constrained_execution。</p>}
+          {classes.length > 1 && <p className={s.hint}>异构方案仅 PyVRP / OR-Tools 可提交；Gazebo 当前返回 422 heterogeneous_fleet_execution。B6 容量分配限制由后端如实返回，不会自动抬高小车容量。</p>}
+        </>
+      )}
       <label className={s.field}>
         <span>往返方式</span>
         <Segmented value={v.trips ?? 'multi'} full onChange={(t) => set((i) => ({ ...i, vehicles: { ...i.vehicles, trips: t } }))}
@@ -343,11 +415,11 @@ function FleetForm() {
       <p className={s.hint}>
         {v.travel === 'rows'
           ? `车辆只在作物行之间的通道里行驶，经地头和机耕路换行，不斜穿作物；任务在离它最近的通道上作业。${lanes ? `共 ${lanes.lane_count} 条行间通道。` : ''}`
-          : '车辆可在地块内任意穿行，只避开障碍物（不考虑作物行）。'}
+          : '车辆可在地块内任意穿行，只避开障碍物；走廊在 free 模式不构成通行约束。'}
       </p>
       <p className={s.hint}>
-        {inst.tasks.length} 个任务点，总需求 {demand}；按容量至少需要 {trips} 趟
-        {v.trips === 'single' && trips > v.count ? <strong className={s.warn}>，单趟模式下车辆不够</strong> : ''}。
+        {inst.tasks.length} 个任务点，总需求 {demand}（抽象容量单位，不是 kg）；每车各一趟的总容量为 {perWave}，估算至少 {waves} 轮，实际趟次由求解结果确定
+        {v.trips === 'single' && waves > 1 ? <strong className={s.warn}>，单趟模式容量不足</strong> : ''}。
       </p>
       <FleetAssetSection />
       <h3>任务点</h3>
@@ -356,7 +428,8 @@ function FleetForm() {
         <Button size="sm" onClick={() => set((i) => ({ ...i, tasks: i.tasks.map((t, k) => ({ ...t, id: k + 1, label: t.label || `T${k + 1}` })) }))}>重新编号</Button>
       </div>
       <h3>地图元素</h3>
-      <p className={s.hint}>{inst.plots.length} 块地 · {inst.obstacles.length} 处障碍 · 场地 {fmt.num(area(inst.boundary) / 10000, 2)} 公顷</p>
+      <p className={s.hint}>{inst.plots.length} 块地 · {inst.obstacles.length} 处障碍 · {depotsOf(inst).length} 个车库 · {(inst.unload_points ?? []).length} 个补给点 · {(inst.corridors ?? []).length} 条走廊 · 场地 {fmt.num(area(inst.boundary) / 10000, 2)} 公顷</p>
+      {!!inst.unload_points?.length && <p className={s.hint}><strong className={s.warn}>B1/B2 未验收：</strong>补给输入会无损保存；新实验标记为未验收，不把补给路线作为已验收可执行方案。</p>}
     </div>
   );
 }
@@ -426,15 +499,51 @@ function SelectionForm() {
       </div>
     );
   }
-  if (selection.type === 'depot') {
+  if (selection.type === 'corridor') {
+    const corridor = inst.corridors?.find((x) => x.id === selection.id);
+    if (!corridor) return null;
     return (
       <div className={s.form}>
-        <h3>车库</h3>
+        <h3>机耕道 / 地头 {corridor.id}</h3>
+        <label className={s.field}><span>名称</span><Input value={corridor.name ?? ''} onChange={(e) => set((i) => ({ ...i, corridors: (i.corridors ?? []).map((x) => x.id === corridor.id ? { ...x, name: e.target.value } : x) }))} /></label>
+        <p className={s.hint}>{corridor.polygon.length} 个顶点 · 面积 {fmt.num(area(corridor.polygon), 1)} m²。rows 模式并入通行网络；free 模式保留几何但不构成该通行约束。</p>
+        <Button variant="destructive" icon={Trash2} onClick={() => { set((i) => ({ ...i, corridors: (i.corridors ?? []).filter((x) => x.id !== corridor.id) })); select(null); }}>删除走廊</Button>
+      </div>
+    );
+  }
+  if (selection.type === 'depot') {
+    const index = selection.index ?? 0;
+    const xy = depotsOf(inst)[index];
+    if (!xy) return null;
+    return (
+      <div className={s.form}>
+        <h3>车库 D{index + 1}</h3>
+        <div className={s.row}>{depotsOf(inst).map((_, k) => <Button key={k} size="sm" variant={k === index ? 'primary' : 'plain'} onClick={() => select({ type: 'depot', index: k })}>D{k + 1}</Button>)}</div>
         <div className={s.grid2}>
-          <Num label="X" value={inst.depot[0]} step={0.5} unit="m" onChange={(n) => set((i) => ({ ...i, depot: [n, i.depot[1]] }))} />
-          <Num label="Y" value={inst.depot[1]} step={0.5} unit="m" onChange={(n) => set((i) => ({ ...i, depot: [i.depot[0], n] }))} />
+          <Num label="X" value={xy[0]} step={0.5} unit="m" onChange={(n) => set((i) => setDepot(i, index, [n, xy[1]]))} />
+          <Num label="Y" value={xy[1]} step={0.5} unit="m" onChange={(n) => set((i) => setDepot(i, index, [xy[0], n]))} />
         </div>
-        <p className={s.hint}>所有车辆从这里出发并返回；也可用“车库”工具在地图上点击放置。</p>
+        <p className={s.hint}>车辆按类别展开后的表序轮询分配家库，并非优化选库；车库顺序不会被界面隐式重排。</p>
+        <div className={s.row}>
+          <Button size="sm" icon={Plus} disabled={depotsOf(inst).length >= 8} onClick={() => { set((i) => addDepot(i, [xy[0] + 2, xy[1]])); select({ type: 'depot', index: depotsOf(inst).length }); }}>添加车库</Button>
+          <Button size="sm" variant="destructive" icon={Trash2} disabled={depotsOf(inst).length <= 1} onClick={() => { set((i) => removeDepot(i, index)); select(null); }}>删除此库</Button>
+        </div>
+      </div>
+    );
+  }
+  if (selection.type === 'unload') {
+    const index = selection.index;
+    const xy = inst.unload_points?.[index];
+    if (!xy) return null;
+    return (
+      <div className={s.form}>
+        <h3>补给 / 卸载点 U{index + 1}</h3>
+        <div className={s.grid2}>
+          <Num label="X" value={xy[0]} step={0.5} unit="m" onChange={(n) => set((i) => ({ ...i, unload_points: (i.unload_points ?? []).map((q, k) => k === index ? [n, xy[1]] : q) }))} />
+          <Num label="Y" value={xy[1]} step={0.5} unit="m" onChange={(n) => set((i) => ({ ...i, unload_points: (i.unload_points ?? []).map((q, k) => k === index ? [xy[0], n] : q) }))} />
+        </div>
+        <p className={s.hint}><strong className={s.warn}>B1/B2 未验收：</strong>补给路线与 rows 节点映射后端尚未修复；仅无损保存和查看，不作为已验收可执行方案。</p>
+        <Button variant="destructive" icon={Trash2} onClick={() => { set((i) => ({ ...i, unload_points: (i.unload_points ?? []).filter((_, k) => k !== index) })); select(null); }}>删除补给点</Button>
       </div>
     );
   }
@@ -497,6 +606,7 @@ export function AdvisorPanel() {
           <h3>推荐算法</h3>
           {st.recommending ? <Spinner /> : <Button size="sm" variant="plain" icon={RefreshCw} onClick={() => void st.refreshRecommendation()}>重新分析</Button>}
         </div>
+        {st.solveError && <Notice tone="error">{st.solveError}</Notice>}
         {rec && <p className={s.lead}>{rec.explanation}</p>}
         {rec && rec.features.length > 0 && (
           <div className={s.features}>
@@ -531,6 +641,9 @@ export function AdvisorPanel() {
         <div className={s.solveBar}>
           <label className={s.field}><span>时间预算</span>
             <span className={s.inputUnit}><Input type="number" min={0.2} step={0.5} value={st.budget} onChange={(e) => st.setBudget(Number(e.target.value) || 1)} /><em>秒/算法</em></span>
+          </label>
+          <label className={s.field}><span>随机种子</span>
+            <span className={s.inputUnit}><Input type="number" min={0} step={1} value={st.seed} onChange={(e) => st.setSeed(Math.max(0, Math.round(Number(e.target.value) || 0)))} /><em>提交时冻结</em></span>
           </label>
           <Button variant="primary" size="lg" icon={Play} loading={st.busy === '求解中'} disabled={!st.chosen.length}
             onClick={() => void st.solve()}>
@@ -582,6 +695,7 @@ const COLUMNS: Record<string, Col[]> = {
 function stateText(r: Solution): { text: string; title?: string } {
   if (['queued', 'running'].includes(r.state)) return { text: '计算中' };
   if (r.state === 'timeout') return { text: '超时', title: r.error ?? undefined };
+  if (r.state === 'canceled') return { text: '已取消', title: r.error ?? undefined };
   if (r.state !== 'done') return { text: '出错', title: r.error ?? undefined };
   if (r.status === 'infeasible' || r.status === 'no_solution') {
     const why = ((r as Solution & { raw_result?: { reason?: string } }).raw_result)?.reason ?? r.check?.errors?.[0] ?? r.error ?? undefined;
@@ -592,6 +706,7 @@ function stateText(r: Solution): { text: string; title?: string } {
 
 export function ComparePanel() {
   const st = useStudio();
+  const [canceling, setCanceling] = useState<string | null>(null);
   const rows = st.runIds.map((id) => st.runs[id]).filter(Boolean) as Solution[];
   const cols = COLUMNS[st.scenario?.problem_class ?? ''] ?? COLUMNS.euclidean_cvrp;
   const valid = rows.filter((r) => r.state === 'done' && r.check?.valid);
@@ -617,9 +732,26 @@ export function ComparePanel() {
           <tbody>
             {rows.map((r) => {
               const state = stateText(r);
+              const fleetInput = r.problem_class === 'fleet_routing' && st.draft ? asFleet(st.draft) : null;
+              const historicalInput = !!fleetInput && signature(r.instance as unknown as FleetInstance) !== signature(fleetInput);
+              const algorithm = st.algorithms.find((a) => a.id === r.algorithm.id);
+              const supportsBudget = !!algorithm?.params.some((param) => param.name === 'time_limit_s');
+              const supportsSeed = !!algorithm?.params.some((param) => param.name === 'seed');
+              const differentParams = (supportsBudget && r.params.time_limit_s !== st.budget) || (supportsSeed && r.params.seed !== st.seed);
+              const frozenParams = [supportsBudget ? `预算 ${String(r.params.time_limit_s ?? '默认/未记录')} s` : '', supportsSeed ? `种子 ${String(r.params.seed ?? '默认/未记录')}` : ''].filter(Boolean).join(' · ');
+              const instance = r.instance as unknown as FleetInstance | undefined;
+              const blocked = [instance?.unload_points?.length ? 'B1/B2' : '', instance?.vehicles.fleet?.some((item) => (item.min_turn_radius_m ?? 0) > 0) ? 'B3' : ''].filter(Boolean).join(' / ');
               return (
                 <tr key={r.run_id} aria-selected={st.focusRun === r.run_id} onClick={() => st.focus(r.run_id)}>
-                  <td><span className={s.algName}>{r.algorithm.name}</span></td>
+                  <td>
+                    <span className={s.algName}>{r.algorithm.name}</span>
+                    <div className={s.meta} title={`冻结 run_id：${r.run_id}`}>{r.run_id.slice(0, 8)} · {frozenParams || '参数见原始记录'}</div>
+                    <div className={s.row}>
+                      {historicalInput && <Badge tone="orange" >历史输入</Badge>}
+                      {differentParams && <Badge tone="gray">当前参数不同</Badge>}
+                      {blocked && <Badge tone="orange">{blocked} 未验收</Badge>}
+                    </div>
+                  </td>
                   <td title={state.title}>{state.text === '计算中' ? <span className={s.running}><Spinner /> 计算中</span> : state.text}{state.title ? ' ⓘ' : ''}</td>
                   {cols.map((c, i) => {
                     const v = r.state === 'done' && r.routes.length ? c.get(r) : null;
@@ -629,9 +761,24 @@ export function ComparePanel() {
                   <td className={s.num}>{fmt.sec(r.metrics.wall_s)}</td>
                   <td>{r.check ? (r.check.valid ? <span className={s.ok}><Check size={13} /> 通过</span> : <span className={s.bad} title={r.check.errors.join('；')}><X size={13} /> {r.check.errors.length} 项</span>) : '—'}</td>
                   <td className={s.rowActions} onClick={(e) => e.stopPropagation()}>
-                    <a href={exportUrl.run(r.run_id, 'json')} download title="完整记录 JSON">JSON</a>
+                    <a href={exportUrl.run(r.run_id, 'json')} download title="求解结果 JSON（路线与指标）">JSON</a>
                     <a href={exportUrl.run(r.run_id, 'csv')} download title="路线 CSV">CSV</a>
                     <a href={exportUrl.run(r.run_id, 'geojson')} download title="地图与路线">GeoJSON</a>
+                    {['queued', 'running'].includes(r.state) && (
+                      <button type="button" className={s.simLink} title="取消这个求解运行" disabled={canceling === r.run_id}
+                        onClick={async () => {
+                          setCanceling(r.run_id);
+                          try {
+                            await st.cancelRun(r.run_id);
+                          } catch (e) {
+                            st.notify('error', `取消 ${r.algorithm.name} 失败：${(e as Error).message}`);
+                          } finally {
+                            setCanceling(null);
+                          }
+                        }}>
+                        <X size={12} /> {canceling === r.run_id ? '取消中…' : '取消'}
+                      </button>
+                    )}
                     {r.problem_class === 'fleet_routing' && r.state === 'done' && r.routes.length > 0 && (
                       <button type="button" className={s.simLink} title="在 Gazebo 田间世界里让各车按此方案执行"
                         onClick={() => void import('./FieldSimPanel').then((m) => m.startFieldSim(r.run_id))}>
@@ -680,7 +827,7 @@ export function VerifyPanel() {
   const st = useStudio();
   const run = st.focusRun ? st.runs[st.focusRun] : undefined;
   if (!run) return <EmptyState icon={Check} title="选择一个方案" detail="求解完成后，这里逐项列出独立验算结果。" />;
-  if (run.state !== 'done') return <EmptyState title={run.error ?? '方案还在计算'} />;
+  if (run.state !== 'done') return <EmptyState title={run.error ?? (run.state === 'canceled' ? '方案已取消' : run.state === 'timeout' ? '方案计算超时' : '方案还在计算')} />;
   const check = run.check;
   const errors = check?.errors ?? [];
   const fleet = isFleet(st.scenario);
@@ -705,6 +852,7 @@ export function VerifyPanel() {
           <h3>{run.algorithm.name} 的验算</h3>
           {check?.valid ? <Badge tone="green">全部通过</Badge> : <Badge tone="red">{errors.length} 项未通过</Badge>}
         </div>
+        {fleet && researchAcceptanceIssues(run.instance as unknown as FleetInstance).map((issue) => <Notice key={issue} tone="warn">{issue} 绿色验算徽标不覆盖该限制。</Notice>)}
         <ul className={s.checks}>
           {items.map((it) => (
             <li key={it.label} data-bad={it.bad.length > 0 || undefined}>
@@ -742,17 +890,24 @@ function PerVehicleTable({ run }: { run: Solution }) {
     <table className={s.table}>
       <thead><tr><th>车辆</th><th className={s.num}>任务</th><th className={s.num}>趟数</th><th className={s.num}>最大单趟载重</th><th className={s.num}>里程</th><th className={s.num}>用时</th><th>顺序</th></tr></thead>
       <tbody>
-        {per.map((v, i) => (
-          <tr key={v.vehicle}>
-            <td><span className={s.swatch} style={{ background: v.color }} /> {v.vehicle}</td>
-            <td className={s.num}>{v.tasks}</td>
-            <td className={s.num}>{v.trips}</td>
-            <td className={s.num}>{v.load}</td>
-            <td className={s.num}>{fmt.num(v.length_m, 1)} m</td>
-            <td className={s.num}>{fmt.sec(v.duration_s)}</td>
-            <td className={s.seq}>{(routes[i]?.trips ?? [routes[i]?.sequence ?? []]).map((t) => t.join('→')).join(' ｜ ')}</td>
-          </tr>
-        ))}
+        {per.map((v, i) => {
+          const facts = vehicleFacts(run, v, i);
+          const route = routes.find((item) => item.vehicle_name === v.vehicle) ?? routes[i];
+          return (
+            <tr key={v.vehicle}>
+              <td><span className={s.swatch} style={{ background: v.color }} /> {v.vehicle}<div className={s.meta}>{facts.className} · 家库 {facts.home}</div></td>
+              <td className={s.num}>{v.tasks}</td>
+              <td className={s.num}>{v.trips}</td>
+              <td className={s.num}>{v.load}</td>
+              <td className={s.num}>{fmt.num(v.length_m, 1)} m</td>
+              <td className={s.num}>{fmt.sec(v.duration_s)}</td>
+              <td className={s.seq}>
+                <div>{(route?.trips ?? [route?.sequence ?? []]).map((t) => t.join('→')).join(' ｜ ')}</div>
+                {!!route?.reload_stops?.length && <div title="原始 reload_stops 坐标；B1/B2 未验收，不由前端推断补给节点">中途停靠：{route.reload_stops.map((xy) => `(${fmt.num(xy[0], 2)}, ${fmt.num(xy[1], 2)})`).join('；')}</div>}
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );

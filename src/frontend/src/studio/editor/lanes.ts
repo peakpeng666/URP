@@ -8,7 +8,9 @@ export function laneKey(inst: FleetInstance): string {
     inst.boundary,
     inst.plots.map((p) => [p.polygon, p.crop ?? '', p.rows_deg ?? 0]),
     inst.obstacles.map((o) => o.polygon),
+    (inst.corridors ?? []).map((c) => c.polygon),
     inst.robot_radius,
+    inst.vehicles.fleet?.map((c) => c.robot_radius ?? inst.robot_radius) ?? null,
   ]);
 }
 

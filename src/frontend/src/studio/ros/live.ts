@@ -10,8 +10,12 @@ import { ros } from './foxglove';
 interface FieldSimStore {
   state: FieldSimState | null;
   error: string | null;
+  actionError: string | null;
 }
-export const useFieldSimStore = create<FieldSimStore>(() => ({ state: null, error: null }));
+export const useFieldSimStore = create<FieldSimStore>(() => ({ state: null, error: null, actionError: null }));
+export function setFieldSimActionError(actionError: string | null) {
+  useFieldSimStore.setState({ actionError });
+}
 
 let watchers = 0;
 let timer = 0;

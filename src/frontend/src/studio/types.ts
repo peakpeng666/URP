@@ -26,14 +26,40 @@ export interface FleetPlot {
   polygon: XY[];
 }
 
-export interface FleetVehicles {
+export interface FleetAssetRef {
+  id: string;
+  version: number;
+  sha256: string;
+  name?: string;
+}
+
+export interface FleetClass {
+  name?: string;
   count: number;
   capacity: number;
-  speed_mps: number;
-  trips: 'single' | 'multi';
+  speed_mps?: number;
+  robot_radius?: number;
+  payload: 'load' | 'none';
+  min_turn_radius_m?: number;
+  asset?: FleetAssetRef;
+  footprint?: { type: 'polygon'; points: XY[] };
+}
+
+export interface FleetVehicles {
+  count?: number;
+  capacity?: number;
+  speed_mps?: number;
+  trips?: 'single' | 'multi';
   /** rows: along the lanes between crop rows and the headland / farm roads; free: anywhere clear of obstacles. */
   travel?: 'rows' | 'free';
   names?: string[];
+  fleet?: FleetClass[];
+}
+
+export interface FleetCorridor {
+  id: string;
+  name?: string;
+  polygon: XY[];
 }
 
 export interface FleetInstance {
@@ -41,6 +67,9 @@ export interface FleetInstance {
   plots: FleetPlot[];
   obstacles: FleetObstacle[];
   depot: XY;
+  depots?: XY[];
+  unload_points?: XY[];
+  corridors?: FleetCorridor[];
   tasks: FleetTask[];
   vehicles: FleetVehicles;
   objective: 'total_distance' | 'makespan';
@@ -75,6 +104,11 @@ export interface FleetRoute extends Route {
   color: string;
   trips: number[][];
   duration_s: number;
+  fleet_class?: string | number;
+  depot?: number;
+  depot_xy?: XY;
+  reload_stops?: XY[];
+  min_turn_radius_m?: number;
 }
 
 export interface PerVehicle {
@@ -85,6 +119,8 @@ export interface PerVehicle {
   load: number;
   length_m: number;
   duration_s: number;
+  fleet_class?: string | number;
+  depot?: number;
 }
 
 export interface ComposeCard {
@@ -110,11 +146,13 @@ export type Selection =
   | { type: 'task'; id: number }
   | { type: 'obstacle'; id: string }
   | { type: 'plot'; id: string }
-  | { type: 'depot' }
+  | { type: 'corridor'; id: string }
+  | { type: 'depot'; index?: number }
+  | { type: 'unload'; index: number }
   | { type: 'boundary' }
   | null;
 
-export type Tool = 'select' | 'pan' | 'task' | 'obstacle' | 'plot' | 'depot';
+export type Tool = 'select' | 'pan' | 'task' | 'obstacle' | 'plot' | 'depot' | 'unload' | 'corridor';
 
 export interface Reference {
   key: string;
@@ -261,6 +299,9 @@ export interface FieldVehicleState {
   duration_s: number | null;
   planned_length_m: number | null;
   planned_duration_s: number | null;
+  queue_wait_s?: number;
+  parking_xy?: XY;
+  fleet_class?: string | number;
 }
 export interface LiveWeb {
   ros?: { url: string; protocol: string };
@@ -269,6 +310,7 @@ export interface LiveWeb {
 export interface FieldSimMetrics {
   tasks_total: number;
   tasks_reached: number;
+  tasks_completed?: number | null;
   vehicles_done: number;
   makespan_s: number | null;
   planned_makespan_s: number | null;
@@ -276,6 +318,36 @@ export interface FieldSimMetrics {
   planned_total_distance_m: number | null;
   cross_track_mean_m: number;
   cross_track_max_m: number;
+}
+export interface FieldPhysics {
+  schema?: string;
+  body?: { size_m?: [number, number, number]; [key: string]: unknown };
+  assumptions?: Record<string, string>;
+  sha256?: string;
+  [key: string]: unknown;
+}
+export interface FieldPhysicsEvidence {
+  valid?: boolean;
+  errors?: string[];
+  scope?: string;
+  [key: string]: unknown;
+}
+export interface FieldTraffic {
+  policy?: string;
+  robot_collisions?: boolean;
+  scope?: string;
+  [key: string]: unknown;
+}
+export interface FieldCheck {
+  valid?: boolean;
+  errors?: string[];
+  traffic?: {
+    valid?: boolean;
+    method?: string;
+    pairs?: { min_center_distance_m?: number; min_footprint_gap_m?: number; t_sim?: number; valid?: boolean }[];
+  } | null;
+  dynamics?: { valid?: boolean; max_truth_gap_s?: number; [key: string]: unknown };
+  [key: string]: unknown;
 }
 export interface FieldSimState {
   phase: 'idle' | 'starting' | 'ready' | 'running' | 'finished' | 'failed' | 'stopped';
@@ -294,6 +366,9 @@ export interface FieldSimState {
   errors: string[];
   warnings: string[];
   result?: string | null;
+  physics?: FieldPhysics | null;
+  physics_audit?: FieldPhysicsEvidence | null;
+  physics_runtime?: FieldPhysicsEvidence | null;
 }
 export interface FieldSimSummary {
   session_id: string;
@@ -302,12 +377,20 @@ export interface FieldSimSummary {
   algorithm: string | null;
   world: string;
   finished_utc: string;
-  state: 'succeeded' | 'failed';
+  state: 'succeeded' | 'failed' | 'canceled';
   metrics: FieldSimMetrics;
   real_time_factor: number | null;
   sim_time: number | null;
   /** rows: crop rows were solid and the plan drove along the lanes (older results: absent) */
   travel?: 'rows' | 'free';
-  row_collisions?: number;
+  row_collision_shapes?: number | null;
+  row_collisions?: number | null;
+  robot_contact_events?: number | null;
+  traffic?: FieldTraffic | null;
+  check?: FieldCheck | null;
+  contact_observation?: { status?: string; count_unit?: string; legacy_note?: string | null } | null;
+  physics?: FieldPhysics | null;
+  physics_audit?: FieldPhysicsEvidence | null;
+  physics_runtime?: FieldPhysicsEvidence | null;
   vehicles: Pick<FieldVehicleState, 'name' | 'label' | 'color' | 'state' | 'distance_m' | 'duration_s' | 'planned_length_m' | 'planned_duration_s' | 'tasks_done' | 'tasks_total' | 'cross_track_mean_m' | 'cross_track_max_m'>[];
 }
