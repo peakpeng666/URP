@@ -35,7 +35,7 @@ def configure(parser):
     one = sub.add_parser("run-one", help="A single acceptance call; no batch or paid-model entrypoint")
     one.add_argument("--instance", type=Path, required=True)
     one.add_argument("--manifest", type=Path, default=CASES)
-    one.add_argument("--algorithm", choices=["savings", "T", "TRS", "TSR", "pyvrp"], required=True)
+    one.add_argument("--algorithm", choices=['savings', 'T', 'TRS', 'TSR', 'pyvrp', 'ortools', 'nearest_neighbor', 'seeded_sweep', 'savings_vnd', 'multistart_vnd', 'random_cheapest', 'random_regret2', 'worst_cheapest', 'worst_regret2', 'ga_random_keys', 'pso_random_keys', 'de_random_keys'], required=True)
     one.add_argument("--seed", type=int, required=True)
     one.add_argument("--budget", type=float, choices=[1, 5], required=True)
     one.add_argument("--capped-x", action="store_true", help="Separately labelled derived X contract")
@@ -65,7 +65,7 @@ def run(args):
     started = time.monotonic()
     args.output.mkdir(parents=True, exist_ok=False)
     def record(value):
-        (args.output / "result.json").write_text(json.dumps(value, ensure_ascii=False, indent=2)+"\n")
+        (args.output / "result.json").write_text(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False)+"\n")
     try:
         p = parse_vrp(args.instance.read_text())
         manifest = json.loads(args.manifest.read_text())
@@ -89,15 +89,22 @@ def run(args):
         return 2
     try:
         r = run_payload(payload)
-    except (OSError, ValueError) as exc:
-        r = {"status": "INFRA_ERROR", "error": str(exc), "feasible": False, "cost": None}
+    except (OSError, ValueError, RuntimeError) as exc:
+        r = {"schema":"urp-cvrplib-result-v1", "purpose":"acceptance_only",
+             "status": "INFRA_ERROR", "error": str(exc), "feasible": False,
+             "cost": None, "routes":None, "algorithm":payload['algorithm'],
+             "seed":payload['seed'], "budget_seconds":payload['budget_seconds'],
+             "payload_sha256":digest(payload)}
     source_dir = Path(__file__).parent
+    final_source_digest=digest({str(f.relative_to(source_dir)):sha(f)
+                               for f in sorted(source_dir.rglob('*.py'))})
+    if final_source_digest!=source_digest:
+        r.update(status='INFRA_ERROR',error='solver sources changed during the run',feasible=False,cost=None,routes=None)
     r.update(run_key=run_key, run_id=args.output.name, case_id=p["name"], contract=contract, instance_sha256=sha(args.instance),
              case_manifest_sha256=sha(args.manifest), parse_setup_wall_seconds=preparation_wall,
              full_wall_seconds=time.monotonic()-started, gap=None,
              gap_note="reference evaluation is a separate post-run operation",
-             solver_source_sha256=digest({str(f.relative_to(source_dir)): sha(f)
-                 for f in sorted(source_dir.rglob("*.py"))}))
+             solver_source_sha256=source_digest, solver_source_end_sha256=final_source_digest)
     record(r)
     print(json.dumps({k: r.get(k) for k in ("case_id", "status", "algorithm", "seed", "cost", "process_wall_seconds")}))
     return 0 if r["feasible"] else 1

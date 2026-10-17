@@ -15,7 +15,9 @@ try:
     view=prepare_scene(read_json(a.scene_file),read_json(a.calibration_file) if a.calibration_file else None,a.require_metric)
     print(json.dumps({'valid':True,'frame':view.frame,'metric_display':view.metric,
                       'point_count':len(view.points),'vehicle_count':len(view.routes),
-                      'simulation_ready':False,'label':view.label},indent=2))
+                      'simulation_ready':False,'label':view.label,
+                      'identity':view.identity_label,'status':view.status_label,
+                      'experiment_fingerprint':view.experiment_fingerprint},indent=2))
 except (ValueError,OSError) as exc:
     print(json.dumps({'valid':False,'error':str(exc)}),file=sys.stderr)
     sys.exit(1)

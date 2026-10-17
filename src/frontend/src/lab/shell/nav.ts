@@ -36,6 +36,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { view: 'sim', label: '仿真', href: '#/sim', icon: Bot },
       { view: 'runs', label: '运行记录', href: '#/runs', icon: History },
       { view: 'archive', label: '实验档案', href: '#/archive', icon: Archive },
+      { view: 'jobs', label: 'CVRP 数值任务', href: '#/jobs', icon: RouteIcon },
     ],
   },
   {
@@ -58,6 +59,7 @@ export const VIEW_TITLES: Record<ViewName, string> = {
   sim: '仿真',
   runs: '运行记录',
   archive: '实验档案',
+  jobs: 'CVRP 数值任务',
   overview: '结果总览',
   samples: '样本',
   replay: '回放',

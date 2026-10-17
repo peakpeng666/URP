@@ -1,0 +1,22 @@
+{
+  "stopped_at_utc": "2026-10-15T11:32:34.129736+00:00",
+  "reason": "authorized between-run ownership-sharding pause",
+  "completed": 193,
+  "last_progress": {
+    "index": 193,
+    "planned": 4505,
+    "case_id": "X-n524-k153",
+    "algorithm": "multistart_vnd",
+    "seed": 0,
+    "budget_seconds": 5,
+    "status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+    "feasible": true,
+    "cost": 165097,
+    "gap_percent": 6.794615538866572
+  },
+  "source_sha_restored": "0d60312417f36be46a69a0e532bdc5efebcbae54964fb3034ae0959e197194ec",
+  "incomplete_attempt_directories": 0,
+  "original_driver_sha256": "d6af3e745eb9fe4e078df0ea09f83f073533f4a49ba5d3455026dae61abee368",
+  "sharded_driver_sha256": "0fcd6a113dfe35ff6e1b329cbef5948532b48996deaa0c23131c47cb1e93a732",
+  "pause_not_scientific_failure": true
+}

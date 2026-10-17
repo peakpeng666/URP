@@ -1,0 +1,29 @@
+{
+  "archives": [
+    {
+      "file": "ubuntu-local-seed1-results.tar.xz",
+      "bytes": 4417720,
+      "sha256": "a790cd7e77c798c3b78f76d77d6f28f27fb458e9758ae834a295065e8f3bfbef",
+      "git_blob": "153c180b533748f0942f329c8935baa100d81031"
+    },
+    {
+      "file": "cloud-results.tar.xz",
+      "bytes": 6103108,
+      "sha256": "c9127e53b6528bc286745648cdf972a5d0d76255f102e3f4a86841232df3010f",
+      "git_blob": "3915ee1e2b249f6291d9b7a1d1976b2889b115c7"
+    },
+    {
+      "file": "ubuntu-local-seeds3-4-results.tar.xz",
+      "bytes": 7278644,
+      "sha256": "b32ce11c149c4594744c00678c67ef45ee5fefa6b8cfc3ab3a661d7563032a13",
+      "git_blob": "6ea469bc57f58447c7868b0c9fa0c8253d87a08c"
+    },
+    {
+      "file": "native-results.tar.xz",
+      "bytes": 2184308,
+      "sha256": "748536e909e79d05e2c17042c3381d6a3dd5aba5724d1c6b31b9b950802d3a63",
+      "git_blob": "a78ef74886d8cc2f24e8ac81662f4a77a50df672"
+    }
+  ],
+  "format": "lossless tar.xz; original member content retained"
+}

@@ -1,0 +1,19 @@
+# Cohort B vendor adapter predeclaration
+
+Purpose: unchanged classical vendor search with deterministic RNG and incumbent observation adapters, separate from already frozen 17-configuration cohort.
+
+Initial technical smoke: deterministic synthetic20-customer integer instance, unit demands, Q5, K20, seed0, 2seconds end-to-end; both vendors, independently check all emitted routes. Repeated seed test uses fixed iteration only if vendor supports it; wall cutoff traces are not promised bitwise deterministic. Metric contract checks all matrix edges before optimization. No references read by workers.
+
+Main quality cohort (only after technical smoke, independent review, and final source/hash freeze): all12 X cases from frozen53-case panel whose contract id is standard-X-unlimited and vehicle_limit is null (adapter derives K=n_customers), seeds0..4,5seconds end-to-end, both vendors. No removing hard cases by observed outcomes; incompatible metric/technical failures remain planned rows. Original AILS internal route search bound remains part of algorithm configuration, not target fleet optimum. No original A/B/E/F/P fixedK cases silently evaluated as unrestricted. An explicitly labelled fixedK adapter may be a later separate cohort.
+
+Algorithm constants: AILS upstream default gamma30,varphi40,dMin15,dMax30, epsilon0.01, original internal route bound; best target remains0 (never BKS), original local search/perturbations. SISR original config300000*n iterations, initial100/final1 temperature, weights[4,4,2,1], max_cardinality10,average_removed10, split probabilities and blink unchanged. External deadline may truncate original schedule; no result-informed rescaling.
+
+Safety: sanitized instance file/JSON, no identifier/reference routes/cost; observer validates before acceptance; full subprocess start/import/initialization counted; parent receipts must precede deadline. Native search stopping only at iteration boundaries, strict external kill retains only earlier complete incumbents. Build/smoke does not overlap timed cohort A.
+
+Technical admission results: both build commands succeeded. First AILS20 toy failed because default varphi40 exceeded n20; documented public parameter is now min(40,n), without changing the search operators. This does not alter defaults for the twelve X instances (n>=100). Re-test AILS and initial SISR toy both emitted independently checked valid complete routes. X12 all-edge metric screening passed both implementations with zero mismatches. First failed attempt retained. AILS JVM includes compiler module, no JDK installation required. SISR compiled directly using g++.
+
+Static objective audit: AILS bestF tracks solution.f (distance); SISR tracks total_cost (distance). No fleet-first objective found. AILS demand-derived min/max route count remains original internal search configuration, not a proven optimal fleet restriction. Adapter does not feed best reference and does not change route bounds.
+
+Host allocation amendment before formal launch: all120 planned slots remain; seed0 runs on cloud(24), seeds1–4 on local(96), matching the main cohort's host allocation. Source/config protocol hashes are shared; native binary/JVM class fingerprints are recorded separately per build host. Java builds target release17. No cross-host pooled runtime advantage claimed.
+
+Exit and checker accounting: feasible_incumbent is independent of termination_status(normal_exit/deadline_kill/early_cleanup_kill/native_error_exit). A native error after an incumbent is VALID_WITH_NATIVE_ERROR, not clean success. Exact signed exit codes are retained. Supervisor validation of streamed incumbents occurs synchronously during shared elapsed budget, its CPU is separately reported; unlike cohortA post-validation, this observer overhead may reduce usable search time and is disclosed. Metric checks also remain inside end-to-end budget.

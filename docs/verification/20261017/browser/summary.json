@@ -1,0 +1,91 @@
+{
+  "schema": "urp-workspace-browser-acceptance-v1",
+  "status": "passed",
+  "generated_utc": "2026-10-17T10:10:15.185Z",
+  "scope": "Real local API, two six-node engineering runs, optional synthetic archived route fixtures, and one explicitly intercepted pagination/terminal-state fixture; no formal baseline or physics.",
+  "fixture_id": "ui-route-fixture",
+  "omitted": [],
+  "checks": [
+    {
+      "name": "production_page_and_api",
+      "status": "passed",
+      "elapsed_ms": 927
+    },
+    {
+      "name": "proxy_rejects_foreign_origin",
+      "status": "passed",
+      "elapsed_ms": 3
+    },
+    {
+      "name": "invalid_input_does_not_enqueue",
+      "status": "passed",
+      "elapsed_ms": 104
+    },
+    {
+      "name": "savings_real_solution_and_checker",
+      "status": "passed",
+      "elapsed_ms": 854
+    },
+    {
+      "name": "refresh_preserves_job_identity",
+      "status": "passed",
+      "elapsed_ms": 834
+    },
+    {
+      "name": "download_preserves_result_and_identity",
+      "status": "passed",
+      "elapsed_ms": 35
+    },
+    {
+      "name": "edited_input_pyvrp_has_new_identity",
+      "status": "passed",
+      "elapsed_ms": 1896
+    },
+    {
+      "name": "desktop_and_mobile_geometry",
+      "status": "passed",
+      "elapsed_ms": 214
+    },
+    {
+      "name": "archive_list_reads_real_backend",
+      "status": "passed",
+      "elapsed_ms": 75
+    },
+    {
+      "name": "archived_routes_keep_partial_invalid_and_no_solution",
+      "status": "passed",
+      "elapsed_ms": 220
+    },
+    {
+      "name": "pagination_and_terminal_labels_with_explicit_response_fixtures",
+      "status": "passed",
+      "elapsed_ms": 1011
+    },
+    {
+      "name": "no_uncaught_browser_errors",
+      "status": "passed",
+      "elapsed_ms": 0
+    }
+  ],
+  "browser_errors": [],
+  "jobs": [
+    {
+      "id": "2cba22aaf9c640dfaa47ca880cdd1041",
+      "algorithm": "savings",
+      "input_sha256": "0996a8e085e51c10ad8a2d8b03b22a4f91d214451186fac5cb1e85b296456434",
+      "source_sha256": "01e0f71aa781ddb673a3847369a981cd03d0c162b771d5e8a0d749e8003f436b",
+      "status": "OK",
+      "feasible": true,
+      "cost": 123
+    },
+    {
+      "id": "764a3b87e4834991821179c7c229a102",
+      "algorithm": "pyvrp",
+      "input_sha256": "8c45ce203ef9c480569d55504480051845b77132b73aa8e606a786340873cf41",
+      "source_sha256": "01e0f71aa781ddb673a3847369a981cd03d0c162b771d5e8a0d749e8003f436b",
+      "status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "feasible": true,
+      "cost": 123
+    }
+  ]
+}

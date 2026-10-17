@@ -1,0 +1,8 @@
+{
+  "completed": 565,
+  "source_sha_restored": "0d60312417f36be46a69a0e532bdc5efebcbae54964fb3034ae0959e197194ec",
+  "time": "2026-10-15T11:49:49.308866+00:00",
+  "controlled_driver_sha256": "631a3a2a35926aab5c2c24422199c297ba83d629cb17e40ba45d7da16919feda",
+  "reason": "boundary pause: short vendor technical build; then controlled orchestration migration",
+  "no_interrupted_keys": true
+}

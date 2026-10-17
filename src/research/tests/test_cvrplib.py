@@ -107,6 +107,16 @@ class InputContract(unittest.TestCase):
         self.assertEqual(r['not_started'],1)
         with self.assertRaises(ValueError): summarize([{}],0)
 
+    def test_denominators_reject_forged_flags_costs_and_duplicate_attempts(self):
+        for row in ({'status':'OK','feasible':'true','cost':20},
+                    {'status':'CRASH','feasible':True,'cost':20},
+                    {'status':'OK','feasible':True,'cost':float('nan')},
+                    {'status':'OK','feasible':True,'cost':True},
+                    {'status':'CRASH','feasible':False,'cost':20}):
+            with self.subTest(row=row),self.assertRaises(ValueError):summarize([row],1)
+        row={'status':'OK','feasible':True,'cost':20,'run_key':'same-scientific-attempt'}
+        with self.assertRaises(ValueError):summarize([row,row],2)
+
 
 class RealProcesses(unittest.TestCase):
     def fault(self, body, **fields):

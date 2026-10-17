@@ -1,0 +1,97 @@
+running egg_info
+creating /tmp/urp_robotics_package_e0cbvxp2/egg/urp_route_sim.egg-info
+writing /tmp/urp_robotics_package_e0cbvxp2/egg/urp_route_sim.egg-info/PKG-INFO
+writing dependency_links to /tmp/urp_robotics_package_e0cbvxp2/egg/urp_route_sim.egg-info/dependency_links.txt
+writing entry points to /tmp/urp_robotics_package_e0cbvxp2/egg/urp_route_sim.egg-info/entry_points.txt
+writing requirements to /tmp/urp_robotics_package_e0cbvxp2/egg/urp_route_sim.egg-info/requires.txt
+writing top-level names to /tmp/urp_robotics_package_e0cbvxp2/egg/urp_route_sim.egg-info/top_level.txt
+writing manifest file '/tmp/urp_robotics_package_e0cbvxp2/egg/urp_route_sim.egg-info/SOURCES.txt'
+reading manifest file '/tmp/urp_robotics_package_e0cbvxp2/egg/urp_route_sim.egg-info/SOURCES.txt'
+writing manifest file '/tmp/urp_robotics_package_e0cbvxp2/egg/urp_route_sim.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim
+copying urp_route_sim/route_markers.py -> /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim
+copying urp_route_sim/control_core.py -> /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim
+copying urp_route_sim/upstream_core.py -> /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim
+copying urp_route_sim/scene_core.py -> /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim
+copying urp_route_sim/synthetic_smoke.py -> /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim
+copying urp_route_sim/runtime_core.py -> /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim
+copying urp_route_sim/__init__.py -> /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim
+running bdist_wheel
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/site-packages/setuptools/_distutils/cmd.py:90: SetuptoolsDeprecationWarning: setup.py install is deprecated.
+!!
+
+        ********************************************************************************
+        Please avoid running ``setup.py`` directly.
+        Instead, use pypa/build, pypa/installer or other
+        standards-based tools.
+
+        This deprecation is overdue, please update your project and remove deprecated
+        calls to avoid build errors in the future.
+
+        See https://blog.ganssle.io/articles/2021/10/setup-py-deprecated.html for details.
+        ********************************************************************************
+
+!!
+  self.initialize_options()
+installing to /tmp/urp_robotics_package_e0cbvxp2/bdist
+running install
+running install_lib
+creating /tmp/urp_robotics_package_e0cbvxp2/bdist
+creating /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim
+copying /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim/route_markers.py -> /tmp/urp_robotics_package_e0cbvxp2/bdist/./urp_route_sim
+copying /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim/control_core.py -> /tmp/urp_robotics_package_e0cbvxp2/bdist/./urp_route_sim
+copying /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim/upstream_core.py -> /tmp/urp_robotics_package_e0cbvxp2/bdist/./urp_route_sim
+copying /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim/scene_core.py -> /tmp/urp_robotics_package_e0cbvxp2/bdist/./urp_route_sim
+copying /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim/synthetic_smoke.py -> /tmp/urp_robotics_package_e0cbvxp2/bdist/./urp_route_sim
+copying /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim/runtime_core.py -> /tmp/urp_robotics_package_e0cbvxp2/bdist/./urp_route_sim
+copying /tmp/urp_robotics_package_e0cbvxp2/build/lib/urp_route_sim/__init__.py -> /tmp/urp_robotics_package_e0cbvxp2/bdist/./urp_route_sim
+running install_data
+creating /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data
+creating /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/ament_index/resource_index/packages
+copying resource/urp_route_sim -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/ament_index/resource_index/packages
+creating /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim
+copying package.xml -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim
+creating /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/config
+copying config/bridge_fortress.yaml -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/config
+copying config/route_scene_synthetic_fixture.json -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/config
+copying config/route_view.rviz -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/config
+copying config/synthetic_view.rviz -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/config
+copying config/upstream_turtlebot4_humble.json -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/config
+creating /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/launch
+copying launch/route_view.launch.py -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/launch
+copying launch/synthetic_fortress.launch.py -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/launch
+copying launch/turtlebot4_reference.launch.py -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/launch
+creating /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/worlds
+copying worlds/synthetic_greenhouse.sdf -> /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.data/data/share/urp_route_sim/worlds
+running install_egg_info
+Copying /tmp/urp_robotics_package_e0cbvxp2/egg/urp_route_sim.egg-info to /tmp/urp_robotics_package_e0cbvxp2/bdist/./urp_route_sim-0.1.0-py3.12.egg-info
+running install_scripts
+creating /tmp/urp_robotics_package_e0cbvxp2/bdist/urp_route_sim-0.1.0.dist-info/WHEEL
+creating '/tmp/urp_robotics_package_e0cbvxp2/dist/urp_route_sim-0.1.0-py3-none-any.whl' and adding '/tmp/urp_robotics_package_e0cbvxp2/bdist' to it
+adding 'urp_route_sim/__init__.py'
+adding 'urp_route_sim/control_core.py'
+adding 'urp_route_sim/route_markers.py'
+adding 'urp_route_sim/runtime_core.py'
+adding 'urp_route_sim/scene_core.py'
+adding 'urp_route_sim/synthetic_smoke.py'
+adding 'urp_route_sim/upstream_core.py'
+adding 'urp_route_sim-0.1.0.data/data/share/ament_index/resource_index/packages/urp_route_sim'
+adding 'urp_route_sim-0.1.0.data/data/share/urp_route_sim/package.xml'
+adding 'urp_route_sim-0.1.0.data/data/share/urp_route_sim/config/bridge_fortress.yaml'
+adding 'urp_route_sim-0.1.0.data/data/share/urp_route_sim/config/route_scene_synthetic_fixture.json'
+adding 'urp_route_sim-0.1.0.data/data/share/urp_route_sim/config/route_view.rviz'
+adding 'urp_route_sim-0.1.0.data/data/share/urp_route_sim/config/synthetic_view.rviz'
+adding 'urp_route_sim-0.1.0.data/data/share/urp_route_sim/config/upstream_turtlebot4_humble.json'
+adding 'urp_route_sim-0.1.0.data/data/share/urp_route_sim/launch/route_view.launch.py'
+adding 'urp_route_sim-0.1.0.data/data/share/urp_route_sim/launch/synthetic_fortress.launch.py'
+adding 'urp_route_sim-0.1.0.data/data/share/urp_route_sim/launch/turtlebot4_reference.launch.py'
+adding 'urp_route_sim-0.1.0.data/data/share/urp_route_sim/worlds/synthetic_greenhouse.sdf'
+adding 'urp_route_sim-0.1.0.dist-info/METADATA'
+adding 'urp_route_sim-0.1.0.dist-info/WHEEL'
+adding 'urp_route_sim-0.1.0.dist-info/entry_points.txt'
+adding 'urp_route_sim-0.1.0.dist-info/top_level.txt'
+adding 'urp_route_sim-0.1.0.dist-info/zip-safe'
+adding 'urp_route_sim-0.1.0.dist-info/RECORD'
+removing /tmp/urp_robotics_package_e0cbvxp2/bdist

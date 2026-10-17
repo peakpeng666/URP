@@ -31,6 +31,8 @@ def shortest(inst,start_node,source_arc=None):
     return dist,path,expansions
 
 def preprocess(inst,kind):
+    if kind not in {'mode','reset'}:
+        raise ValueError('kind must be mode or reset')
     t=time.perf_counter();out,inc,_,_=graph(inst);tasks=inst['customers'];dep=inst['depot']
     labels=[];groups=[]
     for i,task in enumerate(tasks):
@@ -104,19 +106,25 @@ def unpack(inst,tab,chain):
 
 def fixed_sequence(inst,tab,sequence):
     """Freeze assignment/order; optimize incoming modes without resetting heading."""
-    if not sequence:return {'cost':0,'nodes':[inst['depot']],'services':[]}
-    dp={k:(tab['start'][k],[k]) for k in tab['groups'][sequence[0]]}
+    if any(type(i) is not int or not 0<=i<len(tab['groups']) for i in sequence) or len(set(sequence))!=len(sequence):
+        raise ValueError('sequence must contain distinct customer indices')
+    if not sequence:return {'status':'optimal','cost':0,'nodes':[inst['depot']],'services':[]}
+    infeasible={'cost':None,'status':'infeasible'}
+    dp={k:(tab['start'][k],[k]) for k in tab['groups'][sequence[0]] if tab['start'][k]!=INF}
+    if not dp:return infeasible
     for i in sequence[1:]:
         nd={}
         for j in tab['groups'][i]:
             cost,k=min((v[0]+tab['conn'][k][j],k) for k,v in dp.items())
-            nd[j]=(cost,dp[k][1]+[j])
+            if cost!=INF:nd[j]=(cost,dp[k][1]+[j])
         dp=nd
+        if not dp:return infeasible
     cost,k=min((v[0]+tab['end'][k],k) for k,v in dp.items())
-    if cost==INF:return {'cost':None,'status':'infeasible'}
+    if cost==INF:return infeasible
     return {**unpack(inst,tab,dp[k][1]),'cost':cost,'status':'optimal'}
 
 def brute_modes(tab,sequence):
+    if not sequence:return 0,1
     best=INF;count=0
     for ch in itertools.product(*(tab['groups'][i] for i in sequence)):
         c=tab['start'][ch[0]]+tab['end'][ch[-1]]+sum(tab['conn'][a][b] for a,b in zip(ch,ch[1:]));count+=1

@@ -1,0 +1,14 @@
+{
+  "schema": "urp-cvrplib-host-manifest-v1",
+  "host_id": "REPLACE_WITH_cloud_OR_ubuntu-local",
+  "resource_cohort": "REPLACE_WITH_FIXED_RESOURCE_COHORT_ID",
+  "canonical_plan_sha256": "a8a4bee5f43c9a186996845f725f5b2fdfa8cad51df6582ea30561513a995ad5",
+  "scope": "All result.json descendants of the directory containing this manifest; nearer manifests override",
+  "seed_assignment": [],
+  "hardware": {"cpu_model": null, "logical_cpu_count": null, "ram_bytes": null, "os": null},
+  "resources": {"concurrent_solver_processes": null, "threads_per_solver": 1, "cpu_affinity_by_lane": {}, "thread_environment": {}},
+  "environment_manifest_path": null,
+  "environment_manifest_sha256": null,
+  "recorded_utc": null,
+  "verification_status": "TEMPLATE_NOT_EXECUTION_EVIDENCE"
+}

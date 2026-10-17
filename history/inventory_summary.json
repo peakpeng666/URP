@@ -1,0 +1,43 @@
+{
+  "base_commit": "50b3b2c2cc7377e1f13dcaeebce09abf5619dbf8",
+  "base_tree": "bad7e98a248a2ab393c986692b1163a4e4598349",
+  "branch": "cvrp-baselines",
+  "all_repository_blob_entries": 26197,
+  "handoff_asset_entries": 7274,
+  "by_scope": {
+    "experiments/": 1079,
+    "data/": 5635,
+    "acceptance/": 168,
+    "audits/": 49,
+    "evidence/": 11,
+    "src/research/": 109,
+    "src/backend/": 38,
+    "src/frontend/": 140,
+    "src/robotics/": 29,
+    "src/verification/": 4,
+    "runtime/": 9,
+    "tools/": 2,
+    "patches/": 1
+  },
+  "manifest_files": [
+    "manifests/assets-01.csv",
+    "manifests/assets-02.csv",
+    "manifests/assets-03.csv",
+    "manifests/assets-04.csv",
+    "manifests/assets-05.csv",
+    "manifests/assets-06.csv",
+    "manifests/assets-07.csv",
+    "manifests/assets-08.csv",
+    "manifests/assets-09.csv",
+    "manifests/assets-10.csv",
+    "manifests/assets-11.csv",
+    "manifests/assets-12.csv",
+    "manifests/assets-13.csv",
+    "manifests/assets-14.csv",
+    "manifests/assets-15.csv"
+  ],
+  "all_retrieved_subtrees_untruncated": true,
+  "scientific_reexecution": false,
+  "archive_members_newly_reaudited": false,
+  "unpublished_user_computer_changes_included": false
+}

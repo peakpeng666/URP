@@ -1,5 +1,5 @@
 from __future__ import annotations
-import argparse,json
+import argparse,json,signal
 from pathlib import Path
 from .store import Store,StoreError
 from .server import make_server
@@ -7,7 +7,7 @@ from .routes import import_vrptw
 from .mature_routes import import_route_archive
 
 def main():
-    p=argparse.ArgumentParser(description='本地科研记录导入与查询，不运行实验')
+    p=argparse.ArgumentParser(description='本地科研记录导入、查询及受控CVRP任务服务')
     p.add_argument('--db',type=Path,default=Path('backend_data/research.sqlite3'))
     sub=p.add_subparsers(dest='command',required=True)
     a=sub.add_parser('import');a.add_argument('package',type=Path)
@@ -22,9 +22,13 @@ def main():
     args=p.parse_args();store=Store(args.db)
     if args.command=='serve':
         server=make_server(store,args.import_root,args.port);print(f'Local research API: http://127.0.0.1:{server.server_port}',flush=True)
+        def stop(signum,frame):raise KeyboardInterrupt
+        previous=signal.signal(signal.SIGTERM,stop)
         try:server.serve_forever()
         except KeyboardInterrupt:pass
-        finally:server.server_close()
+        finally:
+            server.server_close()
+            signal.signal(signal.SIGTERM,previous)
         return
     if args.command=='bootstrap':result=[store.import_package(p.parent) for p in sorted(args.package_root.glob('*/experiment.json'))]
     elif args.command=='import':result=store.import_package(args.package)

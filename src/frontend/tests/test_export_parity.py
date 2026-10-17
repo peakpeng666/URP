@@ -198,7 +198,16 @@ class ExportParityTests(unittest.TestCase):
         self.assertEqual(meta["historical_audit"], read(RESEARCH / "independent_audit/FINAL_AUDIT.json"))
         for relative, descriptor in meta["sources"].items():
             self.assert_source(descriptor, relative)
-        project_validation = read(ROOT / "artifacts/validation_report.json")
+        # Shared-workspace exports were rebuilt in data/bpp/audit. The older
+        # standalone frontend report remains historical evidence, so do not
+        # require a newer export to impersonate that older run's timestamp.
+        project_validation = read(OUTPUT / "validation.json")
+        report_paths = [ROOT / "artifacts/validation_report.json"]
+        shared_audit = ROOT.parents[1] / "data/bpp/audit/validation_report.json"
+        if OUTPUT.resolve() == (ROOT.parents[1] / "data/bpp/exports").resolve():
+            report_paths.append(shared_audit)
+        known_reports = [read(path) for path in report_paths if path.is_file()]
+        self.assertIn(project_validation, known_reports, "Export validation must match a retained source report")
         self.assertEqual(meta["project_validation"], project_validation)
         self.assertEqual(read(OUTPUT / "validation.json"), project_validation)
         self.assertEqual(project_validation["status"], "PASS", "Full real-data parity requires completed scientific validation")

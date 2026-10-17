@@ -1,0 +1,38 @@
+{
+  "scope": "OFFLINE_CORE_AND_SOURCE_VALIDATION",
+  "date": "2026-10-17",
+  "baseline_commit": "50b3b2c2cc7377e1f13dcaeebce09abf5619dbf8",
+  "unit_tests": {
+    "passed": 56,
+    "failed": 0,
+    "log": "unit_tests_final.log"
+  },
+  "static_checks": {
+    "exit_code": 0,
+    "report": "static_checks.json"
+  },
+  "wheel_build": {
+    "passed": true,
+    "report": "package_build.json",
+    "ros_build_executed": false
+  },
+  "upstream_preflight": {
+    "exit_code": 2,
+    "report": "upstream_preflight/preflight.json",
+    "runtime_executed": false
+  },
+  "synthetic_preflight": {
+    "exit_code": 2,
+    "report": "synthetic_preflight/preflight.json",
+    "runtime_executed": false
+  },
+  "ros_runtime_executed": false,
+  "gazebo_runtime_executed": false,
+  "gui_verified": false,
+  "upstream_task_verified": false,
+  "full_dependency_lock": false,
+  "historical_evidence_modified": false,
+  "regression_reproduction": "baseline_gaps.json",
+  "source_manifest": "SOURCE_SHA256.json",
+  "source_file_count": 32
+}

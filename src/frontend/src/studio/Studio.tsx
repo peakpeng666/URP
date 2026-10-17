@@ -424,6 +424,7 @@ function StatusBar() {
       <span className={s.statusGrow}>{scenario ? `${scenario.title}` : ''}</span>
       {selection && <span className={s.statusItem}>选中：{selection.type === 'task' ? `任务 ${selection.id}` : selection.type === 'obstacle' ? `障碍 ${selection.id}` : selection.type === 'plot' ? `地块 ${selection.id}` : selection.type === 'depot' ? '车库' : '边界'}</span>}
       <span className={s.statusMono}>{cursor ? `x ${cursor[0].toFixed(1)}  y ${cursor[1].toFixed(1)} ${units}` : ''}</span>
+      <a className={s.statusLink} href="#/jobs">CVRP 数值任务</a>
       <a className={s.statusLink} href="#/bpp">BPP 历史</a>
     </footer>
   );
@@ -455,6 +456,7 @@ function Palette({ api }: { api: React.RefObject<DockviewApi | null> }) {
               <Command.Item onSelect={run(st.redo)}>重做</Command.Item>
               <Command.Item onSelect={run(() => { st.setWorkspace('experiments'); st.setStudy(null); })}>新建研究课题</Command.Item>
               <Command.Item onSelect={run(() => { location.hash = '#/bpp'; })}>打开 BPP 历史结果</Command.Item>
+              <Command.Item onSelect={run(() => { location.hash = '#/jobs'; })}>打开 CVRP 数值任务</Command.Item>
             </Command.Group>
             <Command.Group heading="工作区">
               {WORKSPACES.map((w) => <Command.Item key={w.value} onSelect={run(() => st.setWorkspace(w.value))}>切换到 {w.label}</Command.Item>)}

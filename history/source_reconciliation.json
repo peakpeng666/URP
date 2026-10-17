@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-15",
+  "base_commit": "50b3b2c2cc7377e1f13dcaeebce09abf5619dbf8",
+  "scope": "experiments/",
+  "drive_file_count": 1079,
+  "github_blob_count": 1079,
+  "drive_only_paths": [],
+  "github_only_paths": [],
+  "size_mismatches": [],
+  "verification": "path and recorded size only; not a fresh full byte audit",
+  "reports_read_txt_md": 126,
+  "new_scientific_runs": 0
+}

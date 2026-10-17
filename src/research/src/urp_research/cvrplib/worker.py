@@ -64,6 +64,14 @@ def main():
         import worker as original_adapter
         build = original_adapter.build_model
         extract = original_adapter.extract_routes
+    elif p["algorithm"] == "ortools":
+        from urp_research.cvrplib.ortools_adapter import solve as extra_solve
+    elif p["algorithm"] in {"ga_random_keys", "pso_random_keys", "de_random_keys"}:
+        from urp_research.cvrplib.population_baselines import solve as extra_solve
+    elif p["algorithm"] in {"random_cheapest", "random_regret2", "worst_cheapest", "worst_regret2"}:
+        from urp_research.cvrplib.lns_baselines import solve as extra_solve
+    elif p["algorithm"] in {"nearest_neighbor", "seeded_sweep", "savings_vnd", "multistart_vnd"}:
+        from urp_research.cvrplib.extra_baselines import solve as extra_solve
     else:
         sys.path.insert(0, str(frozen / "vnd"))
         import capacity_solver as init
@@ -79,7 +87,10 @@ def main():
     check_deadline()
     emit("phase", name="imports_complete", cpu_seconds=time.process_time(),
          cpu_affinity=sorted(os.sched_getaffinity(0)))
-    if p["algorithm"] == "pyvrp":
+    if p["algorithm"] in {"ortools", "nearest_neighbor", "seeded_sweep", "savings_vnd", "multistart_vnd", "random_cheapest", "random_regret2", "worst_cheapest", "worst_regret2", "ga_random_keys", "pso_random_keys", "de_random_keys"}:
+        extra_solve(p, deadline, publish)
+        emit("done", termination="adapter_returned", cpu_seconds=time.process_time())
+    elif p["algorithm"] == "pyvrp":
         data, _, mapping = build(p)
         check_deadline()
         emit("phase", name="model_complete", cpu_seconds=time.process_time())

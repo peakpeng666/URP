@@ -1,0 +1,198 @@
+{
+  "algorithm": "ails",
+  "budget_seconds": 2,
+  "seed": 0,
+  "start_ns": 9871208915664,
+  "deadline_ns": 9873208915664,
+  "wall_seconds": 2.002366332,
+  "returncode": -9,
+  "killed_at_cutoff": true,
+  "incumbent": {
+    "event": "incumbent",
+    "cost": 576.0,
+    "routes": [
+      [
+        0,
+        9,
+        14,
+        17,
+        12,
+        4,
+        0
+      ],
+      [
+        0,
+        18,
+        16,
+        19,
+        2,
+        7,
+        0
+      ],
+      [
+        0,
+        13,
+        8,
+        5,
+        10,
+        15,
+        0
+      ],
+      [
+        0,
+        6,
+        11,
+        3,
+        20,
+        1,
+        0
+      ]
+    ],
+    "receipt_ns": 9871396622716,
+    "before_deadline": true
+  },
+  "invalid_outputs": [],
+  "events": [
+    {
+      "event": "metric_verified",
+      "edges": 441,
+      "internal_max_routes": 8,
+      "receipt_ns": 9871363171781,
+      "before_deadline": true
+    },
+    {
+      "event": "incumbent",
+      "cost": 576.0,
+      "routes": [
+        [
+          0,
+          9,
+          14,
+          17,
+          12,
+          4,
+          0
+        ],
+        [
+          0,
+          18,
+          16,
+          19,
+          2,
+          7,
+          0
+        ],
+        [
+          0,
+          13,
+          8,
+          5,
+          10,
+          15,
+          0
+        ],
+        [
+          0,
+          6,
+          11,
+          3,
+          20,
+          1,
+          0
+        ]
+      ],
+      "receipt_ns": 9871396622716,
+      "before_deadline": true
+    },
+    {
+      "event": "incumbent",
+      "cost": 589.0,
+      "routes": [
+        [
+          0,
+          13,
+          8,
+          5,
+          10,
+          18,
+          0
+        ],
+        [
+          0,
+          11,
+          14,
+          17,
+          12,
+          9,
+          0
+        ],
+        [
+          0,
+          16,
+          19,
+          2,
+          7,
+          4,
+          0
+        ],
+        [
+          0,
+          15,
+          20,
+          3,
+          6,
+          1,
+          0
+        ]
+      ],
+      "receipt_ns": 9871399392193,
+      "before_deadline": true
+    },
+    {
+      "event": "incumbent",
+      "cost": 576.0,
+      "routes": [
+        [
+          0,
+          6,
+          11,
+          3,
+          20,
+          1,
+          0
+        ],
+        [
+          0,
+          15,
+          10,
+          5,
+          8,
+          13,
+          0
+        ],
+        [
+          0,
+          9,
+          14,
+          17,
+          12,
+          4,
+          0
+        ],
+        [
+          0,
+          18,
+          16,
+          19,
+          2,
+          7,
+          0
+        ]
+      ],
+      "receipt_ns": 9871404030828,
+      "before_deadline": true
+    }
+  ],
+  "stderr": "",
+  "status": "VALID"
+}

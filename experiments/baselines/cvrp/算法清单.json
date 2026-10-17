@@ -1,0 +1,185 @@
+{
+  "schema": "urp-cvrp-current-registry-v1",
+  "canonical_plan_sha256": "a8a4bee5f43c9a186996845f725f5b2fdfa8cad51df6582ea30561513a995ad5",
+  "algorithm_count": 17,
+  "scope": "current main experiment portfolio; vendor supplementary cohort separate",
+  "historical_registry": "src/research/configs/cvrplib_algorithms.json records earlier five-arm admission, not current full portfolio",
+  "algorithms": [
+    {
+      "id": "savings",
+      "family": "Clarke-Wright construction",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/configs/cvrplib_algorithms.json",
+        "src/research/src/urp_research/cvrplib/worker.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "T",
+      "family": "VND",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/configs/cvrplib_algorithms.json",
+        "src/research/src/urp_research/cvrplib/worker.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "TRS",
+      "family": "VND",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/configs/cvrplib_algorithms.json",
+        "src/research/src/urp_research/cvrplib/worker.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "TSR",
+      "family": "VND",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/configs/cvrplib_algorithms.json",
+        "src/research/src/urp_research/cvrplib/worker.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "pyvrp",
+      "family": "ILS",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/configs/cvrplib_algorithms.json",
+        "src/research/src/urp_research/cvrplib/worker.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "ortools",
+      "family": "see algorithm_inventory.json",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "nearest_neighbor",
+      "family": "nearest-neighbor construction",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/extra_baselines.py",
+        "src/research/src/urp_research/cvrplib/restored_vnd.py",
+        "experiments/results/组件/vehicle_routing/urp_cvrp/baselines.py",
+        "experiments/results/组件/vehicle_routing/local_search_v2/solvers.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "seeded_sweep",
+      "family": "sweep construction",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/extra_baselines.py",
+        "src/research/src/urp_research/cvrplib/restored_vnd.py",
+        "experiments/results/组件/vehicle_routing/urp_cvrp/baselines.py",
+        "experiments/results/组件/vehicle_routing/local_search_v2/solvers.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "savings_vnd",
+      "family": "VND",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/extra_baselines.py",
+        "src/research/src/urp_research/cvrplib/restored_vnd.py",
+        "experiments/results/组件/vehicle_routing/urp_cvrp/baselines.py",
+        "experiments/results/组件/vehicle_routing/local_search_v2/solvers.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "multistart_vnd",
+      "family": "VND",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/extra_baselines.py",
+        "src/research/src/urp_research/cvrplib/restored_vnd.py",
+        "experiments/results/组件/vehicle_routing/urp_cvrp/baselines.py",
+        "experiments/results/组件/vehicle_routing/local_search_v2/solvers.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "random_cheapest",
+      "family": "fixed destroy-repair LNS",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/lns_baselines.py",
+        "experiments/results/路线求解/官方CVRP三实例_纯Python控制实验.zip",
+        "experiments/reports/路线求解/CVRP新32几何验证.md"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "random_regret2",
+      "family": "fixed destroy-repair LNS",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/lns_baselines.py",
+        "experiments/results/路线求解/官方CVRP三实例_纯Python控制实验.zip",
+        "experiments/reports/路线求解/CVRP新32几何验证.md"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "worst_cheapest",
+      "family": "fixed destroy-repair LNS",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/lns_baselines.py",
+        "experiments/results/路线求解/官方CVRP三实例_纯Python控制实验.zip",
+        "experiments/reports/路线求解/CVRP新32几何验证.md"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "worst_regret2",
+      "family": "fixed destroy-repair LNS",
+      "origin": "existing reviewed implementation or restored adapter",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/lns_baselines.py",
+        "experiments/results/路线求解/官方CVRP三实例_纯Python控制实验.zip",
+        "experiments/reports/路线求解/CVRP新32几何验证.md"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "ga_random_keys",
+      "family": "GA",
+      "origin": "new standard teaching CVRP adaptation",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/population_baselines.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "pso_random_keys",
+      "family": "PSO",
+      "origin": "new standard teaching CVRP adaptation",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/population_baselines.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    },
+    {
+      "id": "de_random_keys",
+      "family": "DE",
+      "origin": "new standard teaching CVRP adaptation",
+      "source_evidence": [
+        "src/research/src/urp_research/cvrplib/population_baselines.py"
+      ],
+      "execution_status": "see raw run ledger and independent audit; registry is not completion proof"
+    }
+  ]
+}

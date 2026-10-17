@@ -189,6 +189,15 @@ class Guard:
         if urlsplit(f'//{host}').hostname not in {h.strip('[]') for h in self.hosts}:
             return error(403, 'invalid_host', f'拒绝的 Host：{host}（网关只服务本机地址）')
         method = scope['method']
+        if scope['path'].startswith('/api/'):
+            # The archive proxy rewrites Origin only after validating this boundary.
+            # Preserve the archive's same-origin read/write policy through the gateway.
+            origins = headers.getlist('origin')
+            if (len(headers.getlist('host')) != 1 or len(origins) > 1
+                    or headers.get('sec-fetch-site') == 'cross-site'):
+                return error(403, 'cross_origin', '拒绝跨源档案请求')
+            if origins and origins[0] != f'{scope.get("scheme", "http")}://{host}':
+                return error(403, 'cross_origin', '拒绝跨源档案请求')
         if method not in WRITE_METHODS:
             return None
         origin = headers.get('origin')
@@ -783,7 +792,11 @@ def create_app(config: Config | None = None) -> FastAPI:
         url = f'{config.archive_url}/api/{rest}'
         if request.url.query:
             url += f'?{request.url.query}'
-        headers = [(k, v) for k, v in request.headers.raw if k.decode('latin-1').lower() not in HOP_BY_HOP]
+        headers = [(k, v) for k, v in request.headers.raw
+                   if k.decode('latin-1').lower() not in HOP_BY_HOP | {'host', 'origin'}]
+        if 'origin' in request.headers:
+            target = urlsplit(config.archive_url)
+            headers.append((b'origin', f'{target.scheme}://{target.netloc}'.encode('ascii')))
         client: httpx.AsyncClient = request.app.state.http
         upstream = client.build_request(request.method, url, headers=headers, content=await request.body())
         try:

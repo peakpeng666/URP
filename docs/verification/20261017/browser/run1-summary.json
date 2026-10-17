@@ -1,0 +1,57 @@
+{
+  "schema": "urp-workspace-browser-acceptance-v1",
+  "status": "failed",
+  "generated_utc": "2026-10-17T10:01:56.051Z",
+  "scope": "Real local API, two six-node engineering runs, optional synthetic archived route fixtures, and one explicitly intercepted pagination/terminal-state fixture; no formal baseline or physics.",
+  "fixture_id": "ui-route-fixture",
+  "omitted": [],
+  "checks": [
+    {
+      "name": "production_page_and_api",
+      "status": "passed",
+      "elapsed_ms": 912
+    },
+    {
+      "name": "proxy_rejects_foreign_origin",
+      "status": "passed",
+      "elapsed_ms": 3
+    },
+    {
+      "name": "invalid_input_does_not_enqueue",
+      "status": "passed",
+      "elapsed_ms": 92
+    },
+    {
+      "name": "savings_real_solution_and_checker",
+      "status": "passed",
+      "elapsed_ms": 859
+    },
+    {
+      "name": "refresh_preserves_job_identity",
+      "status": "passed",
+      "elapsed_ms": 829
+    },
+    {
+      "name": "download_preserves_result_and_identity",
+      "status": "passed",
+      "elapsed_ms": 33
+    },
+    {
+      "name": "edited_input_pyvrp_has_new_identity",
+      "status": "failed",
+      "error": "locator.selectOption: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('算法', { exact: true })\u001b[22m\n"
+    }
+  ],
+  "browser_errors": [],
+  "jobs": [
+    {
+      "id": "649f421d99614bcf9efd0a1b2d29807d",
+      "algorithm": "savings",
+      "input_sha256": "0996a8e085e51c10ad8a2d8b03b22a4f91d214451186fac5cb1e85b296456434",
+      "source_sha256": "01e0f71aa781ddb673a3847369a981cd03d0c162b771d5e8a0d749e8003f436b",
+      "status": "OK",
+      "feasible": true,
+      "cost": 123
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "purpose": "packaging_smoke_only_not_formal",
+  "case": "P-n19-k2",
+  "algorithm": "ortools",
+  "budget_seconds": 1,
+  "cost": 212,
+  "eligible_for_gap": true,
+  "gap_percent": 0.0,
+  "raw_result_sha256": "d401a506969f4c62cb66d0bd0eca4fa890637424c2dd61530bed61c7a08ea416"
+}

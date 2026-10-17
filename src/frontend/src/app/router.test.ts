@@ -9,6 +9,9 @@ describe('parseHash', () => {
     expect(buildHash('overview')).toBe('#/bpp');
     expect(buildHash('lab')).toBe('#/');
     expect(parseHash('#/samples').view).toBe('samples');
+    const job = parseHash(buildHash('jobs', 'job-123'));
+    expect(job.view).toBe('jobs');
+    expect(job.id).toBe('job-123');
     const r = parseHash('#/replay/confirmation_weibull_3_45_r0__descending?a=SELECTOR&t=500');
     expect(r.view).toBe('replay');
     expect(r.id).toBe('confirmation_weibull_3_45_r0__descending');

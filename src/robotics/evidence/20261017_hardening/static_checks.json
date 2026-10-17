@@ -1,0 +1,50 @@
+{
+  "scope": "OFFLINE_ONLY",
+  "results": [
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "compileall",
+        "-q",
+        "urp_route_sim",
+        "scripts"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "bash",
+        "-n",
+        "scripts/run_smoke.sh"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "scripts/check_scene.py",
+        "urp_route_sim/config/route_scene_synthetic_fixture.json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"valid\": true,\n  \"frame\": \"benchmark_xy\",\n  \"metric_display\": false,\n  \"point_count\": 3,\n  \"vehicle_count\": 1,\n  \"simulation_ready\": false,\n  \"label\": \"BENCHMARK DIAGRAM; arbitrary units, NOT metres / navigation\",\n  \"identity\": \"fixture / revision 1 / fixture_possible.distance_first / instance fixture_possible\",\n  \"status\": \"execution=completed; solution=feasible; candidate=True; full_service=True\",\n  \"experiment_fingerprint\": \"45269ad3979abe481b6da152ff12dec63ad342cdbc6bbf232520f6ace4c240a9\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "src/robotics"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ]
+}

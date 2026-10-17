@@ -1,12 +1,16 @@
 # 后端接口
 
-本机 `http://127.0.0.1:4180`，JSON响应。数据位置：`../../data/packages`；数据库：`backend_data/research.sqlite3`。由Hill负责后端，GrokBot接入前端。接口读取已有档案，不提供模型、solver或研究任务执行。
+本机 `http://127.0.0.1:4180`，JSON响应。数据位置：`../../data/packages`；数据库：`backend_data/research.sqlite3`。历史记录接口读取已有档案；新增受控CVRP任务接口调用研究runner，并保存实际结果与独立验算证据。详细输入、预算和失败口径见[任务契约](docs/JOBS_API.md)。
 
 ## HTTP
 
 | 方法 | 路径 | 用途 |
 |---|---|---|
-| GET | `/api/health` | `status=ok`、`mode=local_import_query`、`executes_experiments=false` |
+| GET | `/api/health` | 数据API与任务模块状态；可运行时`mode=local_import_query_and_cvrp_jobs`、`executes_experiments=true`，并返回精确`execution_scope`、算法可用项与限制 |
+| GET | `/api/algorithms` | 本期Jobs API注册的算法、实际安装状态、输入和预算限制 |
+| POST | `/api/jobs` | 接收严格CVRP数值请求，持久化后返回202及任务身份 |
+| GET | `/api/jobs?limit=100&offset=0` | 分页任务列表及覆盖全部已接收尝试的状态计数 |
+| GET | `/api/jobs/{id}` | 已接受请求、不可变输入身份、执行源码身份、原runner结果与错误 |
 | GET | `/api/experiments` | `experiments`数组 |
 | GET | `/api/experiments/{id}?revision=1` | 完整记录；省略revision取最新 |
 | GET | `/api/experiments/{id}/artifacts/{artifact_id}?revision=1` | 原字节；响应头 `X-Content-SHA256` |
@@ -18,11 +22,13 @@
 | GET | `/api/experiments/{id}/runs/{run_id}/vehicles/{vehicle_id}` | 原车辆ID、路线与逐站时间表 |
 | GET | `/api/route-comparison?experiments=id1,id2&revisions=1,1&instance=...` | 同一问题合同下的路线记录比较 |
 
-路线读取支持 `revision`，默认最新正整数版本。比较的revisions数量须等于experiments数量。POST仅接受application/json，正文1字节至1MiB；错误响应为 `{"error":"代码","message":"说明"}`。无效字段400、跨源写入403、不存在404、路线写入405、不可比较409、正文过大413、媒体类型415。
+路线读取支持 `revision`，默认最新正整数版本。比较的revisions数量须等于experiments数量。所有查询拒绝未知、重复或空字段。POST仅接受application/json，正文1字节至1MiB；需要唯一Content-Length，不支持Transfer-Encoding，拒绝重复JSON键。错误响应为 `{"error":"代码","message":"说明"}`。无效字段400、非本机Host或跨源请求403、不存在404、路线写入405、身份冲突或不可比较409、正文过大413、媒体类型415、算法不可用422、队列已满或数据库暂不可用503。
+
+仅接受服务实际端口上的`127.0.0.1`或`localhost` Host；带Origin的请求必须与该Host同源。最多16个活跃HTTP请求，读取超时10秒。浏览器前端应使用先检查本机Host/Origin再转发的同源代理，不应把公网Origin或任意Host改写成本机来源。
 
 ## 数据和比较
 
-每包放 `experiment.json`，`schema_version=1`；字段包括 `id`、`title`、`status`、`source`、`counts`、`metrics`、`artifacts`、`failure_reason`、`failures`。实物示例：[selector](../../data/packages/selector/experiment.json)、[budget](../../data/packages/budget/experiment.json)。附件引用包内安全相对路径，记录SHA256，导入后原字节进入不可变版本。
+每包放 `experiment.json`，`schema_version=1`；字段包括 `id`、`title`、`status`、`provenance`、`counts`、`metrics`、`artifacts`、`failure_reason`、`failures`。实物示例：[selector](../../data/packages/selector/experiment.json)、[budget](../../data/packages/budget/experiment.json)。附件引用包内安全相对路径，记录SHA256，导入后原字节进入不可变版本。描述符上限1MiB，单附件32MiB、单包附件合计128MiB、最多512附件；容器类型、有限数值、凭据字段与响应媒体类型在事务前检查。Linux读取相对文件时逐层禁止符号链接，且只读取普通文件。同一实验ID的路线格式与输入身份在SQLite写事务内再次核对，避免并发导入覆盖身份。
 
 counts必须同时声明unit和scope；fit、decision、trajectory、checkpoint和historical run不混加。未知值null，0须有真零证据。完成执行与合法全服务分开，恢复过的失败仍在failures中。
 
@@ -52,4 +58,4 @@ metrics比较合同须同时一致：metric、unit、direction、cohort、protoc
 4. 比较页使用后端合同；409须显示原因，不在前端忽略失败或改算跨口径排名。
 5. 在Ubuntu原生外壳选定同源本机代理或原生桥接。4173与4180目前是不同源，后端未开放CORS且拒绝跨源POST；不能直接假定浏览器fetch可用。
 
-当前尚无原生Ubuntu外壳、身份系统或公网部署。静态BPP界面仍可独立编译并读取已有冻结记录。
+该后端面向本机使用，当前无身份系统或公网部署合同。原生Ubuntu外壳和物理地图/车辆约束不属于本期CVRP任务契约。

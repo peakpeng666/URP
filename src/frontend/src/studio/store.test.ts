@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Algorithm, Instance, Scenario, Solution } from '../lab/types';
+import type { Algorithm, Instance, Scenario } from '../lab/types';
 import type { FleetInstance } from './types';
 
 const mocks = vi.hoisted(() => ({

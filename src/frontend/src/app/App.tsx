@@ -22,6 +22,7 @@ const PlanView = lazy(() => import('../lab/views/plan/PlanView').then((m) => ({ 
 const SimView = lazy(() => import('../lab/views/sim/SimView').then((m) => ({ default: m.SimView })));
 const Runs = lazy(() => import('../lab/views/Runs').then((m) => ({ default: m.Runs })));
 const Archive = lazy(() => import('../lab/views/Archive').then((m) => ({ default: m.Archive })));
+const JobsView = lazy(() => import('../views/JobsView').then((m) => ({ default: m.JobsView })));
 
 function ValidationChip({ meta }: { meta: AsyncState<Meta> }) {
   if (meta.status !== 'ready') {
@@ -94,7 +95,7 @@ function BppContent({ route, meta }: { route: Route; meta: AsyncState<Meta> & { 
 export function App() {
   const route = useRoute();
   const isLab = LAB_VIEWS.has(route.view);
-  const isBpp = !isLab && route.view !== 'notfound';
+  const isBpp = !isLab && route.view !== 'notfound' && route.view !== 'jobs';
   const meta = useAsync(isBpp ? 'meta' : null, () => loadMeta());
   const mainRef = useRef<HTMLElement>(null);
 
@@ -140,6 +141,9 @@ export function App() {
       <main ref={mainRef} className={s.main} tabIndex={-1} aria-label={VIEW_TITLES[route.view]}>
         {isLab && <LabContent route={route} />}
         {isBpp && <BppContent route={route} meta={meta} />}
+        {route.view === 'jobs' && <Page title="CVRP 数值任务" subtitle="基准坐标中的访问顺序与独立验算；每次提交单独留档" flush>
+          <div className={s.bppType}><ViewErrorBoundary name="CVRP 数值任务"><Suspense fallback={loading}><JobsView route={route} /></Suspense></ViewErrorBoundary></div>
+        </Page>}
         {route.view === 'notfound' && (
           <Page title="没有这个页面">
             <p className={s.notFound}>

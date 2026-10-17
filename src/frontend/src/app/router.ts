@@ -12,6 +12,7 @@ export type ViewName =
   | 'sim'
   | 'runs'
   | 'archive'
+  | 'jobs'
   | 'overview'
   | 'samples'
   | 'replay'
@@ -37,6 +38,7 @@ const VIEWS: Record<string, ViewName> = {
   sim: 'sim',
   runs: 'runs',
   archive: 'archive',
+  jobs: 'jobs',
   bpp: 'overview',
   samples: 'samples',
   replay: 'replay',

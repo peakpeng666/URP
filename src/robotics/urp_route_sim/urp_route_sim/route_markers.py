@@ -21,6 +21,7 @@ class RouteMarkers(Node):
         self.publisher = self.create_publisher(MarkerArray, '/urp_routes/markers', qos)
         self.create_timer(1.0, self.publish_scene)
         self.get_logger().warn(self.scene.label)
+        self.get_logger().info(self.scene.identity_label + '; ' + self.scene.status_label)
         self.publish_scene()
 
     def marker(self, namespace, mid, kind, color):
@@ -35,6 +36,8 @@ class RouteMarkers(Node):
     def publish_scene(self):
         result = MarkerArray()
         clear = Marker()
+        clear.header.frame_id = self.scene.frame
+        clear.header.stamp = self.get_clock().now().to_msg()
         clear.action = Marker.DELETEALL
         result.markers.append(clear)
         size = self.scene.point_size
@@ -57,7 +60,8 @@ class RouteMarkers(Node):
         text = self.marker('semantics', 0, Marker.TEXT_VIEW_FACING, (1.0, 0.8, 0.1))
         text.pose.position.y = max(p[1] for p in self.scene.points.values()) + size*5
         text.pose.position.x = sum(p[0] for p in self.scene.points.values()) / len(self.scene.points)
-        text.scale.z, text.text = size * 1.3, self.scene.label
+        text.scale.z = size * 1.3
+        text.text = '\n'.join((self.scene.label, self.scene.identity_label, self.scene.status_label))
         result.markers.append(text)
         self.publisher.publish(result)
 

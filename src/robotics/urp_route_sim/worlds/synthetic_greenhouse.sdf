@@ -42,7 +42,7 @@
       <inertial><pose>-0.06 0 0 0 0 0</pose><mass>2</mass><inertia><ixx>0.018</ixx><iyy>0.04</iyy><izz>0.052</izz></inertia></inertial>
       <collision name="chassis"><geometry><box><size>0.45 0.30 0.12</size></box></geometry></collision>
       <visual name="chassis"><geometry><box><size>0.45 0.30 0.12</size></box></geometry><material><ambient>0.1 0.4 0.9 1</ambient><diffuse>0.1 0.4 0.9 1</diffuse></material></visual>
-      <sensor name="imu" type="imu"><always_on>true</always_on><update_rate>50</update_rate><topic>/urp_synthetic/imu</topic><imu/></sensor>
+      <sensor name="imu" type="imu"><always_on>true</always_on><update_rate>50</update_rate><topic>/urp_synthetic/imu</topic><ignition_frame_id>synthetic_imu</ignition_frame_id><imu/></sensor>
     </link>
     <link name="left_wheel"><pose>0 0.19 0.1 -1.5707963267948966 0 0</pose>
       <inertial><mass>0.2</mass><inertia><ixx>0.00054</ixx><iyy>0.00054</iyy><izz>0.001</izz></inertia></inertial>

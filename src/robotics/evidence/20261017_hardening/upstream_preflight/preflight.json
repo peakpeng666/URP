@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "platform_id": "turtlebot4_humble_reference",
+  "stage": "preflight",
+  "status": "blocked",
+  "launch_available": false,
+  "runtime_executed": false,
+  "simulation_ready": false,
+  "task_execution_verified": false,
+  "scope": "OFFLINE_DEPENDENCY_AND_SOURCE_CHECK",
+  "reference_commit": "0ea4a60c51e49ed4a9e25b4f9971ff0f0c9a08fe",
+  "observed_os": {
+    "id": "ubuntu",
+    "version_id": "24.04"
+  },
+  "observed_ros_distro": null,
+  "executables": {
+    "ros2": false,
+    "ign": false
+  },
+  "gazebo_versions": null,
+  "packages": {
+    "turtlebot4_ignition_bringup": {
+      "available": false
+    },
+    "turtlebot4_description": {
+      "available": false
+    },
+    "turtlebot4_msgs": {
+      "available": false
+    },
+    "turtlebot4_node": {
+      "available": false
+    },
+    "turtlebot4_navigation": {
+      "available": false
+    },
+    "turtlebot4_viz": {
+      "available": false
+    },
+    "turtlebot4_ignition_gui_plugins": {
+      "available": false
+    },
+    "turtlebot4_ignition_toolbox": {
+      "available": false
+    },
+    "irobot_create_description": {
+      "available": false
+    },
+    "irobot_create_common_bringup": {
+      "available": false
+    },
+    "irobot_create_nodes": {
+      "available": false
+    },
+    "irobot_create_ignition_bringup": {
+      "available": false
+    },
+    "irobot_create_ignition_plugins": {
+      "available": false
+    },
+    "irobot_create_ignition_toolbox": {
+      "available": false
+    },
+    "ros_ign_gazebo": {
+      "available": false
+    },
+    "ros_gz_bridge": {
+      "available": false
+    },
+    "tf2_ros": {
+      "available": false
+    }
+  },
+  "missing_packages": [
+    "turtlebot4_ignition_bringup",
+    "turtlebot4_description",
+    "turtlebot4_msgs",
+    "turtlebot4_node",
+    "turtlebot4_navigation",
+    "turtlebot4_viz",
+    "turtlebot4_ignition_gui_plugins",
+    "turtlebot4_ignition_toolbox",
+    "irobot_create_description",
+    "irobot_create_common_bringup",
+    "irobot_create_nodes",
+    "irobot_create_ignition_bringup",
+    "irobot_create_ignition_plugins",
+    "irobot_create_ignition_toolbox",
+    "ros_ign_gazebo",
+    "ros_gz_bridge",
+    "tf2_ros"
+  ],
+  "reference_layout": null,
+  "graphical_session_environment_present": false,
+  "external_asset_uris": [
+    "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Depot"
+  ],
+  "asset_versions_frozen": false,
+  "full_dependency_lock": false,
+  "blockers": [
+    "requires_Ubuntu_22.04",
+    "ROS_2_Humble_environment_not_sourced",
+    "missing_executable:ros2",
+    "missing_executable:ign",
+    "ament_index_python_not_available",
+    "required_ROS_packages_missing",
+    "official_launch_requires_graphical_session"
+  ],
+  "remaining_acceptance": [
+    "Freeze installed dependency versions and cached Fuel assets, including licenses and hashes.",
+    "Run the official world/model/bridge and collect actual clock, sensors, TF and physics evidence.",
+    "Define metric service poses, map registration, task executive and failure/stop behavior.",
+    "Validate navigation, independent trajectory, service events and declared collision observation."
+  ]
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "set": "smoke-existing-v3",
+    "count": 30,
+    "statuses": {
+      "OK": 23,
+      "TIMEOUT_WITH_FEASIBLE_INCUMBENT": 7
+    }
+  },
+  {
+    "set": "smoke-extended",
+    "count": 30,
+    "statuses": {
+      "OK": 21,
+      "API_ERROR": 6,
+      "TIMEOUT_WITH_FEASIBLE_INCUMBENT": 2,
+      "NO_SOLUTION": 1
+    }
+  },
+  {
+    "set": "smoke-ortools-v2",
+    "count": 6,
+    "statuses": {
+      "TIMEOUT_WITH_FEASIBLE_INCUMBENT": 6
+    }
+  },
+  {
+    "set": "smoke-lns",
+    "count": 24,
+    "statuses": {
+      "TIMEOUT_WITH_FEASIBLE_INCUMBENT": 24
+    }
+  },
+  {
+    "set": "smoke-population",
+    "count": 18,
+    "statuses": {
+      "TIMEOUT_WITH_FEASIBLE_INCUMBENT": 18
+    }
+  }
+]

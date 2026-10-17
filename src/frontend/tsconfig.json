@@ -11,6 +11,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowJs": true,
+    "allowImportingTsExtensions": true,
     "checkJs": false,
     "skipLibCheck": true,
     "isolatedModules": true,

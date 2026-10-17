@@ -1,0 +1,35 @@
+{
+  "keys": 1802,
+  "expected": 1802,
+  "missing": [],
+  "extra": [],
+  "issues": [],
+  "affinity_counts": {
+    "(6,)": 451,
+    "(5,)": 450,
+    "(4,)": 450,
+    "(7,)": 451
+  },
+  "identity_sets": {
+    "plan_sha256": [
+      "a8a4bee5f43c9a186996845f725f5b2fdfa8cad51df6582ea30561513a995ad5"
+    ],
+    "protocol_sha256": [
+      "644a79233f8ea4626da0faabb6c6e817090ad1099bb80918a1e32ad81d267e0a"
+    ],
+    "solver_source_sha256": [
+      "0d60312417f36be46a69a0e532bdc5efebcbae54964fb3034ae0959e197194ec"
+    ],
+    "resource_manifest_sha256": [
+      "abcc8193bf79ef5ad8716c58e1d0aaa9bda3d1217fde8028d641ddc010f844bb"
+    ],
+    "machine_id": [
+      "ubuntu-local"
+    ]
+  },
+  "resource_manifest_hash_matches": true,
+  "source_files_compared": 0,
+  "source_differences": [],
+  "evaluation_files_checked": 1802,
+  "evaluation_errors": []
+}

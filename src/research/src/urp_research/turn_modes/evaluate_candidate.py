@@ -9,6 +9,10 @@ from . import solver,checker
 
 def evaluate(instance,candidate):
     ids={x['id']:i for i,x in enumerate(instance['customers'])}
+    if not isinstance(candidate,dict):
+        return {'accepted':False,'reason':'invalid_candidate'}
+    if len(ids)!=len(instance['customers']):
+        return {'accepted':False,'reason':'duplicate_customer_ids'}
     seqs=candidate.get('service_sequences')
     if not isinstance(seqs,list) or any(not isinstance(s,list) or not s for s in seqs):
         return {'accepted':False,'reason':'invalid_sequences'}

@@ -68,3 +68,7 @@ setup/2026-10-17/critique/mu2-study/*/
 /setup/2026-10-17/integration-closeout/live/
 /setup/2026-10-17/integration-closeout/browser-profile*/
 /setup/2026-10-17/integration-closeout/*-record.json
+/.local-state/
+/user-runs/
+/cohort_b/ails/build/
+/cohort_b/sisr/build/
