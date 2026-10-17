@@ -16,7 +16,7 @@ MAX_CVRP_TASKS = 1000
 
 
 def _int(v, what: str, lo: int | None = None) -> int:
-    if isinstance(v, bool) or not isinstance(v, (int, float)) or float(v) != int(v):
+    if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(float(v)) or float(v) != int(v):
         raise ValueError(f'{what} 应为整数，实际 {v!r}')
     v = int(v)
     if lo is not None and v < lo:
@@ -231,17 +231,90 @@ def _polygon(points, what: str) -> list[list[float]]:
     return pts if poly.exterior.is_ccw else pts[::-1]
 
 
+def _fleet_names(fleet: list[dict]) -> list[str]:
+    return [f"{c['name']}-{k + 1}" if c['count'] > 1 or len(fleet) > 1 else c['name']
+            for c in fleet for k in range(c['count'])]
+
+
+def _vehicle_fleet(veh: dict, tasks: list[dict], radius: float) -> list[dict]:
+    """Normalised `vehicles.fleet` class list: per-class count / capacity / speed / footprint.
+
+    `radius` is the instance-level robot radius; a class without its own footprint uses it, and the
+    instance radius is raised to the largest class radius so graphs and clearance stay conservative.
+    Validation is idempotent: top-level count / capacity / names that match the derived fleet values
+    (as written by normalisation) pass; conflicting values are rejected.
+    """
+    raw = veh.get('fleet')
+    if not isinstance(raw, list) or not 1 <= len(raw) <= 8:
+        raise ValueError('vehicles.fleet 须为 1–8 个车型类别的数组')
+    demands = []
+    for j, t in enumerate(tasks if isinstance(tasks, list) else []):
+        if not isinstance(t, dict):
+            raise ValueError(f'tasks[{j}] 应为对象')
+        demands.append(_int(t.get('demand', 1), f'tasks[{j}].demand', 1))
+    total_demand, max_demand = sum(demands), max(demands, default=1)
+    classes, seen_names = [], set()
+    for i, c in enumerate(raw):
+        if not isinstance(c, dict):
+            raise ValueError(f'fleet[{i}] 应为对象')
+        payload = c.get('payload', 'load')
+        if payload not in ('load', 'none'):
+            raise ValueError(f'fleet[{i}].payload 只能是 load（载货）或 none（不载货）')
+        capacity = total_demand if payload == 'none' else _int(c.get('capacity'), f'fleet[{i}].capacity', 1)
+        if capacity < max_demand:
+            raise ValueError(f'fleet[{i}] 容量 {capacity} 小于最大单点需求 {max_demand}，该类车无法服务任何任务')
+        name = str(c.get('name') or f'车型{i + 1}')[:24]
+        if name in seen_names:
+            raise ValueError(f'车型类别名重复：{name}')
+        seen_names.add(name)
+        speed = _num(c.get('speed_mps', veh.get('speed_mps', 1.0)), f'fleet[{i}].speed_mps（或全局默认车速）', True)
+        if speed > 15:
+            raise ValueError(f'fleet[{i}] 车速 {speed} m/s 超出规划范围（≤ 15）')
+        cls_radius = radius if c.get('robot_radius') is None else _num(c.get('robot_radius'), f'fleet[{i}].robot_radius', True)
+        turn = 0.0 if c.get('min_turn_radius_m') is None else _num(c.get('min_turn_radius_m'), f'fleet[{i}].min_turn_radius_m')
+        if not 0 <= turn <= 10:
+            raise ValueError(f'fleet[{i}].min_turn_radius_m 应为 0–10 的数值（0 = 可原地转向；阿克曼/铰接车型须给出正的最小转弯半径）')
+        if turn > 0 and veh.get('travel') == 'rows':
+            raise ValueError(f'fleet[{i}] 的最小转弯半径 {turn} m 暂不支持行间通行（rows）：通道内转弯的曲率规划尚未实现，请改为自由通行')
+        asset = c.get('asset')
+        if asset is not None and not (isinstance(asset, dict) and isinstance(asset.get('id'), str)
+                                      and isinstance(asset.get('version'), int) and not isinstance(asset.get('version'), bool)
+                                      and asset['version'] >= 1 and isinstance(asset.get('sha256'), str) and asset['sha256']):
+            raise ValueError(f'fleet[{i}].asset 须为 {{id, version, sha256}} 资产引用')
+        classes.append({'name': name, 'count': _int(c.get('count', 1), f'fleet[{i}].count', 1),
+                        'capacity': capacity, 'speed_mps': speed, 'robot_radius': cls_radius,
+                        'min_turn_radius_m': turn, 'payload': payload,
+                        **({'asset': asset} if asset is not None else {})})
+    total = sum(c['count'] for c in classes)
+    if total > 60:
+        raise ValueError(f'车队总台数 {total} 超过 60')
+    derived_names = _fleet_names(classes)
+    for key, derived in (('count', total), ('capacity', max(c['capacity'] for c in classes))):
+        if veh.get(key) is not None and veh[key] != derived:
+            raise ValueError(f'vehicles.{key}（{veh[key]}）与 fleet 类别清单推得的值（{derived}）不一致；台数与容量按类别写在 fleet 里')
+    if veh.get('names') is not None and [str(n) for n in (veh['names'] if isinstance(veh['names'], list) else [])] != derived_names:
+        raise ValueError('vehicles.names 与 fleet 类别清单推得的名字不一致；类别名与编号由 fleet 生成')
+    return classes
+
+
 def fleet_routing(inst: dict) -> dict:
     out = copy.deepcopy(inst)
     boundary = _polygon(inst.get('boundary'), '场地边界')
     outer = Polygon(boundary)
     radius = _num(inst.get('robot_radius', 0.5), 'robot_radius', True)
+    veh = inst.get('vehicles') or {}
+    if not isinstance(veh, dict):
+        raise ValueError('vehicles 应为对象')
+    fleet = _vehicle_fleet(veh, inst.get('tasks') or [], radius) if veh.get('fleet') is not None else None
+    if fleet:
+        radius = max([radius] + [c['robot_radius'] for c in fleet])
     plots = []
     for i, p in enumerate(inst.get('plots') or []):
         if not isinstance(p, dict):
             raise ValueError(f'plots[{i}] 应为对象')
         plots.append({**p, 'id': str(p.get('id') or f'P{i + 1}'), 'name': str(p.get('name') or f'地块{i + 1}'),
-                      'polygon': _polygon(p.get('polygon'), f'地块 {i + 1}')})
+                      'polygon': _polygon(p.get('polygon'), f'地块 {i + 1}'),
+                      'rows_deg': _num(p.get('rows_deg', 0), f'地块 {i + 1} 作物行方向')})
     obstacles = []
     for i, o in enumerate(inst.get('obstacles') or []):
         if not isinstance(o, dict):
@@ -249,6 +322,15 @@ def fleet_routing(inst: dict) -> dict:
         kind = o.get('kind', 'other')
         obstacles.append({**o, 'id': str(o.get('id') or f'O{i + 1}'), 'kind': kind if kind in OBSTACLE_KINDS else 'other',
                           'polygon': _polygon(o.get('polygon'), f'障碍 {i + 1}')})
+    # 道路 / 机耕道 / 地头走廊：可通行、不种植；行间通行的开阔区自动包含它们
+    corridors = []
+    for i, c in enumerate(inst.get('corridors') or []):
+        if not isinstance(c, dict):
+            raise ValueError(f'corridors[{i}] 应为对象')
+        corridors.append({**c, 'id': str(c.get('id') or f'C{i + 1}'), 'name': str(c.get('name') or ''),
+                          'polygon': _polygon(c.get('polygon'), f'通行走廊 {i + 1}')})
+    if len(corridors) > 200:
+        raise ValueError('通行走廊超过 200 条')
     from shapely.geometry import Point
     from shapely.ops import unary_union
     blocked = unary_union([Polygon(o['polygon']).buffer(radius) for o in obstacles]) if obstacles else None
@@ -261,6 +343,19 @@ def fleet_routing(inst: dict) -> dict:
             raise ValueError(f'{what} 位于障碍物内、离障碍太近或在边界外（需留出机器人半径 {radius:g} m）')
     depot = _xy(inst.get('depot'), 'depot')
     placeable(depot, '车库')
+    depots = [depot]
+    if inst.get('depots') is not None:
+        raw_depots = inst['depots']
+        if not isinstance(raw_depots, list) or not 1 <= len(raw_depots) <= 8:
+            raise ValueError('depots 须为 1–8 个车库坐标的数组')
+        depots = []
+        for i, d in enumerate(raw_depots):
+            xy = _xy(d, f'depots[{i}]')
+            placeable(xy, f'车库 {i + 1}')
+            if any(math.dist(xy, other) < 1e-6 for other in depots):
+                raise ValueError(f'depots[{i}] 与已有车库坐标重复')
+            depots.append(xy)
+        depot = depots[0]
     tasks, seen = [], set()
     for i, t in enumerate(inst.get('tasks') or []):
         if not isinstance(t, dict):
@@ -278,20 +373,35 @@ def fleet_routing(inst: dict) -> dict:
     if len(tasks) > 800:
         raise ValueError('任务点超过 800 个')
     veh = inst.get('vehicles') or {}
-    count = _int(veh.get('count', 1), '车辆数', 1)
-    if count > 60:
-        raise ValueError('车辆数超过 60')
-    capacity = _int(veh.get('capacity', max(t['demand'] for t in tasks) * len(tasks)), '车辆容量', 1)
-    if capacity < max(t['demand'] for t in tasks):
-        raise ValueError(f'单车容量 {capacity} 小于最大单点需求 {max(t["demand"] for t in tasks)}')
-    names = veh.get('names') if isinstance(veh.get('names'), list) else None
+    if not isinstance(veh, dict):
+        raise ValueError('vehicles 应为对象')
+    if veh.get('travel', 'free') not in ('free', 'rows') or veh.get('trips', 'multi') not in ('single', 'multi'):
+        raise ValueError('travel 须为 free/rows，trips 须为 single/multi')
     objective = inst.get('objective', 'total_distance')
     if objective not in FLEET_OBJECTIVES:
         raise ValueError('objective 须为 total_distance（总里程最短）或 makespan（最晚完成时间最短）')
-    out.update(boundary=boundary, plots=plots, obstacles=obstacles, depot=depot, tasks=tasks, robot_radius=radius,
-               vehicles={'count': count, 'capacity': capacity, 'speed_mps': _num(veh.get('speed_mps', 1.0), '车速', True),
+    if fleet is not None:
+        count = sum(c['count'] for c in fleet)
+        capacity = max(c['capacity'] for c in fleet)
+        speed = max(c['speed_mps'] for c in fleet)
+        names = _fleet_names(fleet)
+    else:
+        count = _int(veh.get('count', 1), '车辆数', 1)
+        if count > 60:
+            raise ValueError('车辆数超过 60')
+        capacity = _int(veh.get('capacity', max(t['demand'] for t in tasks) * len(tasks)), '车辆容量', 1)
+        if capacity < max(t['demand'] for t in tasks):
+            raise ValueError(f'单车容量 {capacity} 小于最大单点需求 {max(t["demand"] for t in tasks)}')
+        speed = _num(veh.get('speed_mps', 1.0), '车速', True)
+        names = veh.get('names') if isinstance(veh.get('names'), list) else None
+    out.update(boundary=boundary, plots=plots, obstacles=obstacles, corridors=corridors, depot=depot, depots=depots, tasks=tasks, robot_radius=radius,
+               vehicles={'count': count, 'capacity': capacity, 'speed_mps': speed,
                          'trips': 'single' if veh.get('trips') == 'single' else 'multi',
-                         'names': [str(n) for n in names][:count] if names else [f'车{i + 1}' for i in range(count)]},
+                         # how vehicles move: along crop-row lanes and headlands, or anywhere clear of obstacles
+                         'travel': 'rows' if veh.get('travel') == 'rows' else 'free',
+                         'names': [str(n) for n in names][:count] if names else [f'车{i + 1}' for i in range(count)],
+                         # per-class count / capacity / speed / footprint; absent for legacy homogeneous instances
+                         **({'fleet': fleet} if fleet is not None else {})},
                objective=objective, units='m')
     return out
 

@@ -1462,6 +1462,26 @@
     "routing"
    ],
    "bibtex": "@article{wouda2024pyvrp, title={PyVRP: A High-Performance VRP Solver Package}, volume={36}, ISSN={1526-5528}, url={http://dx.doi.org/10.1287/ijoc.2023.0055}, DOI={10.1287/ijoc.2023.0055}, number={4}, journal={INFORMS Journal on Computing}, publisher={Institute for Operations Research and the Management Sciences (INFORMS)}, author={Wouda, Niels A. and Lan, Leon and Kool, Wouter}, year={2024}, month=July, pages={943–955} }"
+  },
+  {
+   "key": "dubins1957curvature",
+   "type": "article",
+   "title": "On Curves of Minimal Length with a Constraint on Average Curvature, and with Prescribed Initial and Terminal Positions and Tangent Directions",
+   "authors": [
+    "Dubins, Lester E."
+   ],
+   "year": 1957,
+   "venue": "American Journal of Mathematics",
+   "volume": "79",
+   "number": "3",
+   "pages": "497–516",
+   "doi": "10.2307/2372560",
+   "url": "https://doi.org/10.2307/2372560",
+   "tags": [
+    "turn",
+    "motion"
+   ],
+   "bibtex": "@article{dubins1957curvature,\n  author  = {Dubins, Lester E.},\n  title   = {On Curves of Minimal Length with a Constraint on Average Curvature, and with Prescribed Initial and Terminal Positions and Tangent Directions},\n  journal = {American Journal of Mathematics},\n  year    = {1957},\n  volume  = {79},\n  number  = {3},\n  pages   = {497--516},\n  doi     = {10.2307/2372560}\n}"
   }
  ]
 }

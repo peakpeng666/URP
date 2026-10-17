@@ -1,0 +1,9 @@
+2026-10-17 13:19:10,091 INFO uvicorn.error: Started server process [84052]
+2026-10-17 13:19:10,091 INFO uvicorn.error: Waiting for application startup.
+2026-10-17 13:19:10,105 INFO urp_lab.services: archive backend started pid=84118
+2026-10-17 13:19:10,106 INFO urp_lab.gateway: gateway ready on 127.0.0.1:4100 (runtime /home/peakpeng/Desktop/URP/src/lab/runtime)
+2026-10-17 13:19:10,106 INFO uvicorn.error: Application startup complete.
+2026-10-17 13:19:10,106 INFO uvicorn.error: Uvicorn running on http://127.0.0.1:4100 (Press CTRL+C to quit)
+2026-10-17 13:19:10,184 INFO urp_lab: 农业机器人路径规划工作台：http://127.0.0.1:4100/（Ctrl+C 有序退出）
+2026-10-17 13:19:50,587 INFO urp_lab.jobs: job job_20261017T041950_71e6d5: pyvrp.fleet
+2026-10-17 13:19:54,664 INFO urp_lab.jobs: job job_20261017T041954_122046: ortools.fleet

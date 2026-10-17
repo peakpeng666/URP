@@ -155,7 +155,7 @@ Solution（`GET /lab/api/runs/{run_id}`）：
  "state": "queued"|"approach"|"executing"|"succeeded"|"failed"|"canceled",
  "localization": "amcl"|"ground_truth", "navigation_profile": {…参数文件、来源 SHA256、覆盖值与实测参数…},
  "controller": "FollowPath"|"FollowCoverage", "progress": {"leg":1,"legs_total":5},
- "sources": {"route_plan": "URP · 转弯模式分层 DP (src/research/…)", "approach": "Nav2 NavigateToPose (NavFn+DWB)", "tracking": "Nav2 FollowPath (DWB 控制器)"},
+ "sources": {"route_plan": "URP · 转弯模式分层 DP (src/research/…)", "approach": "Nav2 NavigateToPose (NavFn+RPP)", "tracking": "Nav2 FollowPath (RPP 控制器)"},
  "planned": {"path": [[x,y],…], "length_m": 52.1},
  "tasks": [{"task": 0, "label": "A3", "xy": [x,y], "state": "pending"|"reached"|"missed", "t_sim": null, "distance_m": null}],
  "actual": {"ground_truth": [[t_sim,x,y,yaw],…], "amcl": [[t_sim,x,y,yaw],…]},
@@ -204,7 +204,7 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 
 ## 4. 仿真会话控制接口（网关 ↔ ROS，127.0.0.1:4191，仅本机）
 
-启动：`bash setup/profile.sh simulation /usr/bin/python3 src/lab/ros/urp_sim_session.py --session-id ID --world warehouse --spawn X,Y,YAW --runtime DIR --port 4191 [--gui] [--rviz]`（先 `source /opt/ros/humble/setup.bash`）。默认启用 `--tf-candidate --pin-gui-plugins --ordered-bridge-stop` 等价行为；环境变量 `URP_TF_FIX=0`/`URP_GUI_FIX=0`/`URP_BRIDGE_FIX=0` 可关闭（与 `setup/run.sh navigation` 一致）。
+启动：`bash setup/profile.sh simulation /usr/bin/python3 src/lab/ros/urp_sim_session.py --session-id ID --world warehouse --spawn X,Y,YAW --runtime DIR --port 4191 [--gui] [--rviz]`（先 `source /opt/ros/humble/setup.bash`）。默认启用 TF、GUI 兼容覆盖与桥接源码修复，按依赖顺序关闭；`URP_TF_FIX=0`、`URP_GUI_FIX=0`、`URP_BRIDGE_FIX=0` 分别选择对应的原系统实现，最后一项不关闭有序回收。
 
 - `GET /state` → SimState（§2.7，`execution` 为当前/最近一次运行）。
 - `POST /execute`：
@@ -229,11 +229,12 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 - 精确求解进程有 SIGALRM 时间上限；主进程另有预算 + 2 s 墙钟看门狗，超时/取消终止其拥有的进程组。非零退出不能因 stdout 中有 JSON 而变成成功。
 - 地图未知区与边界外均占据；EDT 对单元格尺寸作保守扣减，按半个栅格采样所有路径段并扣减采样间误差界。要求机器人半径 0.175 m + 0.05 m 余量，不只检查离散节点。该圆足迹用于官方 TB4；其他机器人需新的足迹及控制器适配。
 - `/execute` 的 `legs` 为加密原始几何边（0.05 m），F2C 则为连续的整条作业行及随后的 Dubins 转弯（0.02 m）。拼接必须与独立检查过的 polyline 相同，禁止断开的多路线隐式跳跃。闭环不能整条直接交给 FollowPath，否则起终点相同可能立即结束。每段端点真值误差、实际到计划及计划到实际的最大距离均须 ≤0.35 m，访问任务还须按序全部到达。覆盖任务还须实际内缩作业区覆盖 ≥90%、足迹在田块内；所有类型均检查实际整段足迹与地图。允许 TB4 原地转向，不把规划曲率约束当作实机运动学验证。
-- 会话复制官方导航 YAML 后施加仿真参数，不写系统目录。默认 AMCL 使用 180 束激光及低噪声里程计配置；关键参数通过 ROS 服务读取核实后才就绪。访问路径用 DWB，覆盖路径用已安装的 RPP（FollowCoverage，0.18 m lookahead，碰撞检测开启）。实际参数文件及哈希随会话归档。
+- 会话复制官方导航 YAML 后施加仿真参数，不写系统目录。默认 AMCL 使用 180 束激光及低噪声里程计配置；关键参数通过 ROS 服务读取核实后才就绪。访问与覆盖路径使用已安装的 RPP（FollowPath / FollowCoverage，0.18 m lookahead，碰撞检测开启），支持面向相反方向的新目标。实际参数文件及哈希随会话归档。
 - `approach_trajectory` 与 `tracking_trajectory` 分别保存，跟踪指标排除接驳段。`nav2_plans` 保存 Nav2 `/plan` 及阶段，逐点导航的成功不能解读为执行原算法几何路径。真值 Pose_V 桥接头时间为 0 时，样本取最新 `/clock`；不声称严格同步采样。AMCL 保留自身时间戳。
+- `localization`（2026-10-17 第四轮）是后验对比记录：AMCL 估计在自身源时间戳上与插值真值配对，给出位置 RMSE/均值/p50/p95/最大/最终误差与航向 RMSE；`replans` 汇总 Nav2 全局规划消息（次数、首末 t_sim、首末路径长度；重规划原因 BT 不发布、不做推断）。纯记录不参与成败判定；amcl 模式下估算质量是仿真激光 + AMCL 默认参数的证据，不是标定结论。实测对照（maze-inspection）：follow_path 0 次重规划（纯追踪不经规划器），nav2_waypoints 42 s 内 43 次重规划、AMCL 位置 RMSE ≈ 0.04 m。
 - SimState 有 `telemetry` 消息计数、数据年龄和 map→base_link TF 年龄；执行中时钟、scan、odom 或真值中断会失败。必需启动器退出、必需子节点提前退出（含 rc=0）、Nav2 心跳故障均导致会话失败及清理；模型 create/controller spawner 的正常一次性退出除外。窗口单独退出会告警。
 - 每会话预审官方 SDF、Fuel 模型、碰撞网格与当前 Fortress 使用的材质贴图，记录文件哈希。Fuel 模型数量按规范化 owner/name 去重，mesh URL 不能重复计数。Classic 的不适用材质脚本单列 `inactive_classic_materials`，不跳过活动 PBR 贴图。实际地图/碰撞一致性仍需传感器证据，清单完整不等于地图已验收。
-- 正常关闭：取消活动动作、观察停车、暂停物理、关闭 Nav2/定位生命周期、逐个桥接退出、回收本会话进程组，保存 `session-report.json`。强制终止、异常退出、生命周期未正常关闭或残留进程不得报告 PASS。桥接 `_exit` 只缓解 main 返回后的 teardown 崩溃，不修复内存根因，保留 main 返回码；库/源码指纹不符则拒绝加载。
+- 正常关闭：取消活动动作、观察停车、在时钟仍运行时关闭 Nav2/定位生命周期及 TB4 节点，再关闭桥接、调用 Fortress `/server_control` 停止物理服务器，回收本会话进程，保存 `session-report.json`。必须核验实际退出与残留，原生停止接口接受请求本身不代表关闭通过。强杀、异常退出、生命周期未关闭或残留进程不得报告 PASS。桥接在 main 返回前完成 ROS shutdown，保留正常静态析构与真实状态码，不使用 `_exit`；源码/依赖指纹不符则拒绝使用。
 - `POST /lab/api/shutdown {}` 为整体有序关闭；API 请求不伪造 SIGINT。Ctrl+C 使用正常信号语义，终端返回 130 表示用户中断，不代表所有子组件返回 0；以清理报告逐项判断。
 - 覆盖基线分别报告内缩作业区面积、扫掠覆盖面积/比例及 `turn_radius_enforced=false`。检查器复核扫掠和连接段；路线跑完不能声称全田块覆盖。所有输出的 `.geojson` 是带本地坐标说明的几何数据，**不是 WGS84/RFC7946 经纬度文件**，不得直接用于地理定位。
 - 用户入口及证据索引只维护在 `setup/README.md` 和 `setup/2026-10-15/integration/REPORT.md`；本契约不是第二份操作指南。
@@ -241,9 +242,16 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 ## 5. 工作台扩展（2026-10-15 第二轮）
 
 ### 5.1 新增坐标系与问题类型
-- `frame.kind = "field"`：实地 / 生成农田的局部米制坐标（`units: "m"`，可带 `crs`、`offset`），可在二维中比较，不进入 Gazebo。
-- `fleet_routing`（多车任务分配与路径）：`{boundary, plots[{id,name,crop,rows_deg,polygon}], obstacles[{id,kind,name,polygon}], depot, tasks[{id,xy,demand,label,plot,service_s}], vehicles{count,capacity,speed_mps,trips:'multi'|'single',names}, objective:'total_distance'|'makespan', robot_radius, units:'m'}`。障碍 `kind ∈ pond|building|greenhouse|tree|ditch|rock|other`。距离为机器人半径膨胀障碍上的可视图最短路。
-  结果 route 额外字段：`vehicle_name, color, trips[[task ids]], duration_s`；metrics：`total_distance_m, makespan_s, longest_route_m, vehicles_used, fleet_size, trips, balance_cv, capacity_utilization, detour_ratio, per_vehicle[]`。目标为 makespan 时 `objective.unit = 's'`。
+- `frame.kind = "field"`：实地 / 生成农田的局部米制坐标（`units: "m"`，可带 `crs`、`offset`）；符合第 6 节准入条件的 `fleet_routing` 可进入生成的田间 Gazebo 世界，其余问题类型不能据此直接执行。
+- `fleet_routing`（多车任务分配与路径）：`{boundary, plots[{id,name,crop,rows_deg,polygon}], obstacles[{id,kind,name,polygon}], depot, tasks[{id,xy,demand,label,plot,service_s}], vehicles{count,capacity,speed_mps,trips:'multi'|'single',travel:'rows'|'free',names,fleet?}, objective:'total_distance'|'makespan', robot_radius, units:'m'}`。障碍 `kind ∈ pond|building|greenhouse|tree|ditch|rock|other`。
+  `vehicles.fleet`（可选，2026-10-17 第三轮）是异构车队类别清单：`[{name?, count, capacity, speed_mps?, robot_radius?, payload:'load'|'none', min_turn_radius_m?, asset?:{id,version,sha256}}]`（1–8 类，总台数 ≤ 60；给出 `fleet` 时不再单独给 `count`/`capacity`/`names`）。`min_turn_radius_m`（0–10 m，默认 0 = 可原地转向）为正的类别按 Dubins (1957) 曲线实现路径（OMPL `DubinsStateSpace`，仅前进不倒车）：航向在路段间携带，每个航向变化成为曲率受约束的转弯；分配在直线图距离上优化，实现的曲线长度作为执行指标（`curvature_constrained_vehicles`、逐路线 `min_turn_radius_m` / `curvature_radius_m`）。检查器按连续三点外接圆独立复核最小转弯半径（Dubins 弧段上采样曲率精确）并要求采样间距 ≤ 0.15 m。`travel='rows'` 暂不支持曲率约束（通道内转弯规划未实现，校验直接拒绝）；执行侧田间仿真为可原地转向差速模型，曲率约束类别求解/验算可行但启动执行返回 422（`curvature_constrained_execution`）。每条结果路线带自己的类别字段 `fleet_class, capacity, speed_mps, robot_radius`；`pyvrp.fleet` 与 `ortools.fleet`（两种目标）按类别容量 / 车速求解，makespan 时为每类车速建独立时间矩阵与每车容量；构造基线（sweep / cluster_first / savings）只支持同构车队，异构输入直接报错。通行图与障碍膨胀按车队最大足迹半径（`robot_radius` 归一为最大值），独立检查器按各车自身足迹、容量与车速复算并核对路线声明的类别字段；`payload:'none'` 的类别容量取总需求（不构成约束）。按类 `asset` 引用进入提交快照与一致性校验；执行侧田间仿真当前只生成同构内置差速机器人，多类别方案可求解 / 验算，但启动执行返回 422（`heterogeneous_fleet_execution`）。旧实例无 `fleet` 时行为与历史完全一致（单类别路径）。
+  实例可含 `depots[[x,y],…]`（2026-10-17 第六轮，第 7 项）：1–8 个车库，车辆按表序轮询分配到家库（出发、分趟卸载与返回都在家库）；pyvrp.fleet / ortools.fleet 总里程目标支持多车库（pyvrp 每库建 depot、OR-Tools 每车 start/end），路线带 `depot`（家库下标）与 `depot_xy`，检查器按家库复核起终点与分趟返库，生成世界时各库独立安排停车位。构造基线与 makespan 目标的多车库建模未实现，输入直接报错；GeoJSON 导入把多个 depot 点收进 `depots` 并原样导出。旧实例无 `depots` 时等价单库，行为不变。
+  实例可含 `corridors[{id,name,polygon}]`（2026-10-17 第五轮，第 8 项）：GeoJSON 里 role/type/name 含 road/track/headland/道路/机耕道/地头 等词的面要素成为通行走廊，线要素按 `width_m`（1–8 m，默认 2.5）缓冲成面；行间通行（`rows`）下走廊不种植、自动并入开阔区（地头 / 机耕路的通行网络直接吃这些要素），`free` 通行下它们不构成约束。导出 GeoJSON 原样保留走廊要素（role=corridor）。
+  `vehicles.travel` 决定距离模型（生成的农田地图默认 `rows`，导入 / 旧场景缺省为 `free`）：
+  - `free`：机器人半径膨胀障碍上的可视图最短路，地块可任意穿行。
+  - `rows`：田间通行图（`urp_lab/lanes.py`）。每个地块按 `rows_deg` 与作物行距（作物表 `lanes.CROPS`，未知作物用默认行距；单块超过 160 行时等比放宽）种植作物行，地块边缘留 0.8 m、地块内障碍周围留 `2r + 1` m 不种；行间净宽 ≥ 2(r + 0.1) m 时每两行之间是一条通道，否则每两行留出一条作业道（空出 1 个或多个行位）。通道中线向外延伸到开阔区（地头、机耕路、障碍周围的空地）处为出入口；开阔区内是可视图，通道内只能沿中线行驶，不得穿过作物行。每个任务在离它最近的通道点或开阔区点作业（超过 `max(3 m, 最大通道间隔)` 报错），车库须在开阔区。
+  结果 route 额外字段：`vehicle_name, color, trips[[task ids]], duration_s`，`services[i].position` 为有序 polyline 的顶点下标（旧记录可为空），`services[i].stop` 为作业位置（`free` 时即任务点）；metrics：`total_distance_m, makespan_s, longest_route_m, vehicles_used, fleet_size, trips, balance_cv, capacity_utilization, detour_ratio, travel, per_vehicle[]`，`rows` 时另有 `lanes, service_offset_mean_m, service_offset_max_m`；`raw_result.travel_network` 给出通道数、出入口、开阔区拐点、各地块行距与通道宽。目标为 makespan 时 `objective.unit = 's'`。
+  验算（`fleet.check`）另核对：每个任务的作业位置在路线上，且是离任务最近的可达处（`free` 时必须是任务点本身）；`rows` 时由地块重新生成作物行与通道，每段路线都须落在开阔区或通道中线上，否则报“离开行间通道和地头，斜穿了作物”。
 - `point_to_point`：`{start:[x,y,yaw], goal:[x,y,yaw], motion_model:'holonomic'|'dubins'|'reeds_shepp', turning_radius, robot_radius, clearance_margin, goal_tolerance}`，地图坐标，可仿真（单条路线，终点为唯一任务点）。
 - `euclidean_cvrp.objective` 可为 `sum_rounded_euclidean_distance`（TSPLIB EUC_2D，CVRPLIB 用）；场景可带 `reference{bks, optimal, routes}`，结果给出 `metrics.gap_to_bks_pct`。
 - 所有结果可带 `trace: [[秒, 当前最好目标值], …]`（PyVRP、OR-Tools、OMPL 渐近最优规划器）。
@@ -257,6 +265,7 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 | PUT | `scenarios/{id} {instance?, title?, summary?}` | 更新我的场景（内置 / 资源库 403） |
 | POST | `scenarios/{id}/fork {instance?, title?}` | 另存为我的场景 |
 | POST | `scenarios/import/geojson {geojson, title?, vehicles?}` | GeoJSON 导入 |
+| POST | `fleet/lanes {instance}` | 任务地图（可未保存）的通道中线 `lanes[[x,y],…]`、`lane_count`、`closed_lanes` 与各地块 `plots[{id,crop,spacing_m,row_width_m,mode:'every'\|'track',lane_width_m,pitch_m,rows,lanes}]`，供地图编辑器叠加显示 |
 | GET | `scenarios/{id}/export?format=json\|geojson` | 场景导出 |
 | GET | `library`、`library/cvrplib/sets`、`library/cvrplib/instances?set=&q=` | CVRPLIB 目录 |
 | GET / POST | `library/fields?country=&q=`、`library/fields/fetch {images}`、`library/fields/{id}/image`、`library/fields/{id}/outline.svg` | Fields2Benchmark |
@@ -273,7 +282,7 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | GET | `fieldsim` | 当前田间仿真状态：`phase`（idle / starting / running / finished / failed / stopped）、`running`、`sim_time`、`real_time_factor`、`vehicles[]`（每车状态、位姿、速度、完成度、到达任务数、里程、横向偏差、规划里程 / 用时）、`metrics`（结束后：规划与执行的最晚完成时间、总里程、到达任务数、横向偏差）、`components`、`web`、`errors`、`warnings` |
-| POST | `fieldsim {run_id, real_time_factor?=4, gui?, rviz?}` | 用某个已完成的 `fleet_routing` 运行生成 Gazebo 世界并启动会话；与 TurtleBot4 会话互斥 |
+| POST | `fieldsim {run_id, real_time_factor?=4, gui?, rviz?, vehicle_asset?:{id,version,sha256}, physics?:{...}}` | 用已验算的 `fleet_routing` 运行生成世界；服务端核对绑定车型；与 TurtleBot4 会话互斥 |
 | POST | `fieldsim/stop` | 有序关闭（会话写 `session-report.json`，含各组件返回码与残留进程检查） |
 | POST | `fieldsim/window {kind: gui\|rviz, on}` | 打开 / 关闭原生 Gazebo GUI 或 RViz2 窗口 |
 | GET | `fieldsim/results?run_id=`、`fieldsim/results/{session_id}` | 历次执行摘要 / 完整结果（含各车轨迹与任务到达时间） |
@@ -281,12 +290,51 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 | GET | `ros/package/{package}/{path}` | `turtlebot4_description`、`irobot_create_description` 包内的网格文件，供 URDF 的 `package://` 引用 |
 
 ### 6.2 会话与世界
-- 世界生成：`urp_lab/fieldworld.py`。世界坐标 = 任务地图坐标（米）。田块、地块、作物行（沿 `rows_deg`，只做显示）、障碍为二进制 STL 网格（Gazebo 与 gzweb 都能读；障碍碰撞用 SDF `polyline`），车库、任务标记、每车一台差速机器人（官方 `DiffDrive` 系统，0.8 × 0.56 m，各车碰撞掩码互不相交，只与地面和障碍碰撞）。
-- 会话进程：`src/lab/ros/field_sim_session.py`（系统 Python 3.10，控制端口 127.0.0.1:4192）。组件：`ign gazebo -s`、一个 `ros_gz_bridge parameter_bridge`（`/clock`、`/world/<w>/dynamic_pose/info → /ground_truth/poses`、每车 `/vehicle_i/cmd_vel`、`/vehicle_i/odom`）、Foxglove Bridge（127.0.0.1:8765）、Gazebo WebSocket 服务（9002，每会话随机授权密钥，资源路径限定为会话目录与 ROS share）、可选 Gazebo GUI 与 RViz2。
-- 控制：每车纯追踪，前视 1.4 m，不越过下一个未到达任务；进入 0.45 m 记为到达，有 `service_s` 时原地停留；60 s 无进展记为受阻；总时限为规划最晚完成时间的 2.5 倍加 120 s。
+- 世界生成：`urp_lab/fieldworld.py`。世界坐标 = 任务地图坐标（米）。田块、地块、作物行（与规划同一套 `lanes` 行布局）、障碍为二进制 STL 网格（Gazebo 与 gzweb 都能读；障碍碰撞用 SDF `polyline`），车库、任务标记、每车一台差速机器人（官方 `DiffDrive` 系统，车体 0.8 × 0.56 m、含球面轮总宽 0.96 m，驱动轮在车体中线上、前后各一个万向轮，可绕中心原地转向；各车碰撞掩码均为 0xffff，车间碰撞开启；每车独立停车位和交通预约见 6.5）。方案为 `travel = rows` 时作物行带碰撞（静态模型 `crop_rows`：矩形行用 box，被裁过的行用 `polyline`，高度至少 0.5 m），停车位避开作物行；`free` 时作物行只做显示。
+- 会话进程：`src/lab/ros/field_sim_session.py`（系统 Python 3.10，控制端口 127.0.0.1:4192）。组件：`ign gazebo -s`、一个 `ros_gz_bridge parameter_bridge`（`/clock`、`/model/vehicle_i/pose → /ground_truth/poses`（各车 PosePublisher）、每车 `/vehicle_i/cmd_vel`、`/vehicle_i/odom`、`/model/vehicle_i/contacts`）、Foxglove Bridge（127.0.0.1:8765）、Gazebo WebSocket 服务（9002，每会话随机授权密钥，资源路径限定为会话目录与 ROS share）、可选 Gazebo GUI 与 RViz2。
+- 控制：每车纯追踪，前视 1.4 m，不越过下一个未到达任务的作业位置（`services[i].stop`，旧记录用任务点）与下一个急弯（转角 > 0.6 rad：通道出入口、行内掉头）；到急弯处先原地转到对准下一段再走；进度只沿路线向前投影，路线原路折返时按返程计。进入作业位置 0.45 m（路线在此急转时 0.2 m）记为到达，有 `service_s` 时原地停留；60 s 无进展记为受阻；总时限按全部车辆的规划时长之和计算，见 6.5。结果另记 `travel`、`row_collision_shapes`（世界几何数量）、`row_collisions`（观测接触计数，未知为 null）与每个任务的 `stop`。
 - ROS 话题（`map` 坐标系）：`/workbench/field`、`/workbench/routes`、`/workbench/tasks`（transient local）、`/workbench/trails`、`/workbench/vehicles`（MarkerArray）、`/workbench/fleet_status`（std_msgs/String JSON，约 5 Hz）、TF `map → vehicle_i/base_link`。
 - TurtleBot4 会话也同时启动 Foxglove Bridge 与 Gazebo WebSocket 服务（`--no-web` 关闭），话题改名为 `/workbench/planned_path`、`/workbench/actual_path`、`/workbench/tasks`、`/workbench/status_text`，真值 `/ground_truth/poses`，RViz 配置 `src/lab/ros/workbench.rviz`。
 
-### 6.3 前端
+### 6.3 后端验收与故障语义
+- 准入：`state=done`、`status=feasible|optimal`、`check.valid=true` 只是前置条件；启动必须用保存的 instance/routes 重新调用 `fleet.check`。`real_time_factor` 为有限数字 0.5–20，非法值返回 400；未检查/重验失败返回 422。`web:false` 可关闭可选网页桥，默认开启。两类会话共用生命周期互斥锁。
+- `fleet.check` 核对 sequence、trips、services 一致且覆盖所有任务；按有序折线查验任务与趟间返库，比较里程/载重/用时，按原始多边形距离复算连续圆足迹。候选未通过时 `status=no_solution, routes=[]`，候选保留在 `raw_result.rejected_routes`。距离是构造出的候选图上的最短路，不保证连续空间全局最短。
+- 当前田间执行模型外接圆半径 `hypot(0.4, 0.28)` m、至多 15 辆，树木碰撞与地图多边形一致，接驳段验证净空。通用规划器的半径/车辆数范围不因此缩小。
+- 控制器的纯 Python 实现在 `urp_lab.field_tracking`；任务携带执行路径弧长 `path_s` 和完成停留的仿真时刻 `serviced_at`。重合位置/重复经过不能提前服务；服务停留期间不启动下一任务、不累积卡住时限。
+- `result.state = succeeded|failed|canceled`。成功必须通过 `urp_lab.fieldcheck` 对实测轨迹的独立检查（圆足迹、双向路径偏差及终点、停留时间）。偏差按 0.1 m 采样并加入 0.05 m 保守误差界；圆足迹检查每条实测线段。缺少数据或检查器失败不能产生 succeeded。取消/异常也保存结果。
+- 时钟进展、每车真值、里程计与接触消息有 3 s 墙钟看门狗；必需进程提前退出即会话故障，不以子进程 rc=0 当成功。`state.json` 保存最终状态，GET fieldsim 在进程退出后补读它并返回真实 `returncode`。非零码不会因用户请求停止而被隐藏。
+- `session-report.json` 的 `execution_state` 为任务结果，`cleanup_status` 为进程回收结果，`status` 为会话整体结果；执行失败或关闭异常返回非零退出码。正常取消可以 rc=0，但结果保持 canceled。
+- 导出额外包含 `planning_solution`、`execution_plan`、`execution_provenance`（执行源码与世界 SHA256、坐标/定位/控制/比较口径）、`session_report`（未关闭时为 null）。田间控制使用 Gazebo 真值和 URP 跟踪器，不使用 Nav2 重规划。actual 含往返停车接驳、转向和排队，planned 从车库算起。
+- 网页桥只在端口可连接后发布地址；可选服务失败告警。窗口开关在执行中处理，关闭异步回收窗口进程，不暂停跟踪；每次启动使用独立日志名。
+
+### 6.4 前端
 - `studio/ros/foxglove.ts`：唯一的 Foxglove WebSocket 连接（子协议 `foxglove.sdk.v1`），用 `@foxglove/rosmsg` + `@foxglove/rosmsg2-serialization` 解码 CDR，按话题引用计数订阅。
 - `studio/ros/RosScene.tsx`（R3F）：地图、代价地图、激光、Nav2 路径、MarkerArray、TF、`urdf-loader` 载入的 TurtleBot4。`studio/ros/GazeboView.tsx`：gzweb `SceneManager`。`studio/ros/Telemetry.tsx`：uPlot。`studio/panels/FieldSimPanel.tsx`：田间仿真控制与结果。
+
+### 6.5 交通、资产与可追溯记录（2026-10-17）
+
+- `traffic.policy=exclusive_mission_v1`：完整停车位→车库→原规划路线→原停车位依次预约执行；停车位须在所有其他任务及停车接驳走廊之外。`traffic.parking`、每车 `parking_xy`、`queue_wait_s`、预约事件随结果保存。计时从共同任务起点开始；总超时按各车规划时长之和的 2.5 倍加 120 s（基数至少 60 s）。这是保守基线，不承诺并行通行效率。
+- 所有车体碰撞掩码为 `0xffff`。车身、驱动轮及脚轮接触经 `/model/vehicle_i/contacts`（`ros_gz_interfaces/Contacts`）送入控制进程，缺流超过 3 s 墙钟报错。地面接触保留样例；其他接触记录 `t_sim`、碰撞体、车辆、位置和深度，并停止全部车辆。碰撞状态不能以传感器缺数据的零计数代替。`row_collision_shapes` 是实体作物行几何数量，`row_collisions` 是去重的“仿真时间戳 + 碰撞体对”接触消息数，`robot_contact_events` 同理；不称为独立事故次数。历史 `row_collisions` 几何值在 API 中转为 shapes 并将接触数置 null，原始文件不改写。
+- 独立检查计算共同时间轴上的分段线性轨迹最小车间距离，圆足迹半径同物理模型；最大采样间隔须 ≤0.5 s，首尾时间须一致到 0.2 s。该结论限定在记录及线性插值假设内，不证明未观测曲线运动。
+- `vehicle_asset` 必须与求解时 `instance.fleet.asset` / vehicle 角色引用一致。求解提交保存 `asset_snapshot`；执行解析锁定版本、文件哈希与元数据快照，身份或参数不符返回 409，未适配车型返回 422。仅内置田间差速模型已支持；无资产绑定的历史方案显式记录 `explicit_legacy_builtin`，不静默替代已绑定的导入车型。
+- `control_traces` 列为 `t_sim,path_s_m,cross_track_m,cmd_v_mps,cmd_w_radps,state`，未测量误差为 null，不复用上一周期数值。任务含 `requested_service_s,actual_service_s,service_complete`；未结束停留的实际时长为 null。`tasks_reached` 是到达数，`tasks_completed` 是完成作业数；`execution_started_sim_s` 给出共同时间原点。
+- 实测速度与里程随真值更新，完成状态也继续更新。当前版本通过各车 PosePublisher 直接提供源仿真时间，50 Hz 记录；零时间戳拒绝执行，`truth_timing.latest_clock_samples` 必须为 0。此前以最新 `/clock` 回退的记录属于旧版本接收时刻估计，原始记录保留。全车到终点后再观测至少 1 s 仿真时间，实测线速度 <0.02 m/s、角速度 <0.05 rad/s 才结束；5 s 内未稳定则失败。`makespan_s` 计至最后一车到达终点并发出停车命令，原始轨迹及里程另覆盖这段制动观察。独立检查复算轨迹长度，核对在线里程（误差上限 max(0.2 m, 1%)）和最终速度，防止位置持续变化却导出零里程。
+- `GET /lab/api/runs/{id}/record` 返回 `{record, integrity, assembled_utc}`。schema 为 `agri-workbench.experiment-record/2`；record 含原始规划、场景/资产快照、推荐及田间/Nav2 仿真。SHA256 对 UTF-8、键排序、无多余空白、不转义非 ASCII、禁止非有限数的 record JSON 计算；是内容完整性散列，不是身份签名。未保存提交时资产快照的历史结果明确标注导出时解析。
+- 结果列表按文件纳秒修改时间、大小及 inode 缓存紧凑摘要，原子替换/删除后失效，返回独立副本。图表按实际记录内容散列缓存，图像及元数据预算 64 MiB；历史图使用提交实例，拒绝混合其他场景/会话及不同输入的单实例比较。控制误差图优先读取在线控制周期，任务完成曲线以完成停留为准。
+
+
+### 6.6 模型契约与物理验证（2026-10-17；轮胎接触与能耗核算为第二轮更新）
+
+- `GET /lab/api/fieldsim/physics` 返回默认 `urp.field-diffdrive.rigid/4` 和可覆盖键。POST 的 `physics` 仅支持 `max_step_size_s`（0.0005–0.01 s）、`collision_detector`（ode / bullet）、`ground_friction` / `wheel_friction`（0.01–2）、`payload_kg`（0–50 kg）、`wheel_contact`（tyre / sphere）、`tyre_width_m`（0.04–默认 0.10 m，上限 0.16 m）；未知键、非有限数、错误类型拒绝。默认步长 0.004 s、ODE 接触、DART 动力学、Dantzig 约束求解。参数可配置不等于该工况已验证；复验覆盖范围见集成报告。当前 Fortress 无可用的显式引擎 seed 设置，传入 seed 拒绝，不能承诺逐位重现。
+- 默认总质量 25 kg，20 kg 箱体、两枚 2 kg 有限宽圆柱驱动轮（刚性胎圈，默认胎宽 0.10 m，`wheel_contact:'sphere'` 可退回 v3 球面轮）、两枚 0.5 kg 球面脚轮；均匀实体惯量独立复算。载荷均匀分布在箱体，更新质量和惯量。足迹包含轮胎投影矩形（按最大支持胎宽冻结），外接圆仍为 0.4882623 m；旧车型绑定不会静默换成新模型，须重新绑定并求解。原地旋转含胎面刮擦：实测自旋滑移率约 15–16%（默认胎宽），轮式里程计漂移因此显著大于球面轮模型（如实记录，真值轨迹仍是验收基准）。
+- 物理速度上限 2 m/s，线加速 1.5 / 制动 2 m/s²，角速度 2 rad/s、角加速 4 rad/s²。这是理想关节速度伺服，环内无电机力矩饱和与电池模型；`energy` 字段是后验运动学核算（滚动阻力 0.06、传动效率 0.8、制动不回收），给出每车 J/Wh、平均/峰值功率与峰值单轮力矩需求，不是电机电流或电池实测。额外质量是常量，VRP demand 仍是抽象容量单位，不自动换成 kg 或随任务变化。
+- `physics` 含配置、假设与 SHA256；`physics_audit` 检查生成 SDF 的惯量、质量、驱动、重力、摩擦与配置一致；`physics_runtime` 读取所属进程的实际库映射和 Gazebo 选择日志，保存库哈希。选择日志未完整出现或实际实现不符时拒绝就绪。Gazebo 以行缓冲记录日志，不依赖退出时才 flush。
+- `rigid_body_poses` 列为 `t_sim,x_m,y_m,z_m,roll_rad,pitch_rad,yaw_rad`；`wheel_odometry` 为 `t_sim,x_local_m,y_local_m,yaw_local_rad,v_mps,w_radps`。轮式里程计只按首个共同姿态做 SE(2) 对齐，保存完整位置/航向漂移统计，不用全轨迹拟合消除误差。轨迹与刚体真值须一致；运动中单个采样缺口超过 0.25 s 拒绝验收，静止期（跨缺口位移 <0.05 m 且转角 <0.05 rad）的缺口不影响插值正确性。倾斜超过 0.35 rad 或模型原点高度绝对值超过 0.5 m 时超出当前平地模型范围并停车，异常姿态保存至关闭报告。执行侧在贴近障碍 / 作物 / 边界的路径段收紧纯追踪预瞄（1.4→0.7 m），减小切入规划裕度的切角。
+- `execution_timing_reference` 为逐顶点停、原地转、再加速的解析参考，含平移、转向、停留和串行放行间隔；不是当前追踪器工期预测或上下界。求解 `raw_result.model_contract` 明确同构车队、匀速时间代理、瞬时返库卸载、访问停车代理、LPT 启发式与未证最优。任务成功表示访问与规定停留完成，不表示机械作业具够到作物或农业作业质量达标。
+- 验证脚本 `e2e/physics_backend.py` 使用隔离 ROS 域与开放场地，保存实际指令、源时间真值、里程计、物理参数、原始日志和真实清理状态。primary / holdout 为预定义不同速度及转向的协议；每设置重复 3 次，独立检查直行、制动解析参考与原地转向：球面轮按 0.15 rad 理想滚动界，轮胎模型按原地滑移率 ≤20% 判定（实测 15–16%）。`low_grip` 是敏感性试验，偏离无滑移参考会明确记 false；`sphere_legacy` 为旧球面轮对照，`tyre_narrow` 为窄胎敏感性。离线 `e2e/physics_summary.py` 输出 CSV、图和输入哈希，不拟合物理参数。
+
+### 桥接关闭生命周期（2026-10-16）
+
+`bridge_runtime.py` 通过会话子进程的 ament 前缀选择经指纹校验的 `parameter_bridge`。主函数退出前完成 `rclcpp::shutdown()` 并 join 异步信号线程，保留标准退出析构；旧 `_exit` 垫片已退役。`URP_BRIDGE_FIX=0` 使用原系统桥接，仅用于对照。`session-report.json.bridge_runtime` 记录可执行文件、SHA-256、源码清单及 `exit_guard:false`。运行管理由 `ros/processes.py` 提供，不依赖历史验收脚本；必需桥接即使以 0 提前退出，也判会话失败。
+
+网关启动会话后的响应必须携带新 `session_id`，未就绪时为 `starting`；旧会话的缓存、迟到响应和退出通知不能覆盖新会话。崩溃恢复时只接管同一运行目录、环境会话标识、PID 与启动时间均匹配的监督进程；接管进程消失时进入失败状态，原始退出码未知须明确记录，不能永远显示启动中。

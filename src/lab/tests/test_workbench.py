@@ -1,6 +1,8 @@
 """Task composer, fleet routing, motion planning, libraries and study analysis."""
+import copy
 import math
 
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
@@ -77,6 +79,87 @@ def test_checker_catches_tampering():
     routes = r['routes']
     routes[0]['sequence'] = routes[0]['sequence'][1:]
     assert not fleet.check(sc['instance'], routes)['valid']
+
+
+def test_lane_graph_connects_every_lane_and_task():
+    from urp_lab import lanes
+    from urp_lab.solvers.fleet import LaneGraph
+    sc = _scenario(EXAMPLES[0])
+    inst = sc['instance']
+    assert inst['vehicles']['travel'] == 'rows'  # generated field maps drive along the crop rows
+    g = LaneGraph(inst)
+    assert g.net.lanes and g.info['entries'] >= len(g.net.lanes)
+    # depot, every service position, lane entry and open-area corner hang together
+    assert np.isfinite(g.dist[0]).all()
+    assert all(o <= g.net.max_reach for o in g.offsets)
+    r = inst['robot_radius']
+    rows = g.net.rows()
+    for lane in g.net.lanes:  # a lane keeps the vehicle clear of every crop row
+        assert min(lane.line.distance(row) for row in rows) >= r + lanes.SIDE_M - 1e-6
+    # narrow rows get a driving track every few rows, wide ones are driven between every two rows
+    square = [[0, 0], [60, 0], [60, 40], [0, 40]]
+    wheat = lanes.plot_rows({'id': 'A', 'crop': '小麦', 'rows_deg': 0, 'polygon': square}, None, [], 0.5)
+    kiwi = lanes.plot_rows({'id': 'B', 'crop': '猕猴桃', 'rows_deg': 90, 'polygon': square}, None, [], 0.5)
+    assert wheat.mode == 'track' and kiwi.mode == 'every'
+    assert min(wheat.lane_width, kiwi.lane_width) >= 2 * (0.5 + lanes.SIDE_M)
+
+
+@pytest.mark.parametrize('algorithm', ['pyvrp.fleet', 'panel.savings_fleet'])
+def test_rows_routes_never_cross_crop_rows(algorithm):
+    from shapely.geometry import LineString
+    from shapely.strtree import STRtree
+    from urp_lab import lanes
+    sc = _scenario(EXAMPLES[0])
+    inst = sc['instance']
+    r = run_algorithm(sc, inst, algorithm, {'time_limit_s': 0.5})
+    assert r['status'] == 'feasible' and r['check']['valid'], r['check']
+    assert r['metrics']['travel'] == 'rows' and r['metrics']['lanes'] > 0
+    rows = lanes.Network(inst).rows()
+    tree = STRtree(rows)
+    for route in r['routes']:
+        line = LineString(route['polyline'])
+        assert not tree.query(line, predicate='intersects').size
+        near = tree.query(line.buffer(inst['robot_radius']))
+        assert all(line.distance(rows[i]) >= inst['robot_radius'] - 1e-6 for i in near)
+        for sv in route['services']:  # served on the route, next to the task
+            assert line.distance(LineString([sv['stop'], sv['stop']]).centroid) < 1e-6
+    # the same map with free travel cuts straight across the rows, and is shorter for it
+    free_inst = copy.deepcopy(inst)
+    free_inst['vehicles']['travel'] = 'free'
+    free = run_algorithm(sc, free_inst, algorithm, {'time_limit_s': 0.5})
+    assert free['check']['valid'] and free['metrics']['travel'] == 'free'
+    assert any(tree.query(LineString(rt['polyline']), predicate='intersects').size for rt in free['routes'])
+    assert free['metrics']['total_distance_m'] < r['metrics']['total_distance_m']
+
+
+def test_checker_rejects_shortcut_across_crop_rows():
+    from shapely.geometry import LineString
+    from shapely.strtree import STRtree
+    from urp_lab import lanes
+    from urp_lab.solvers import fleet
+    sc = _scenario(EXAMPLES[0])
+    inst = sc['instance']
+    r = run_algorithm(sc, inst, 'panel.savings_fleet', {})
+    assert r['check']['valid'], r['check']
+    tree = STRtree(lanes.Network(inst).rows())
+    free = lanes.free_space(inst)[0]
+    routes = copy.deepcopy(r['routes'])
+    done = False
+    for route in routes:  # replace the way between two consecutive stops by a straight line through the crops
+        pts = route['polyline']
+        at = [next(i for i, p in enumerate(pts) if math.dist(p, sv['stop']) < 1e-9) for sv in route['services']]
+        for (a, b) in zip(at, at[1:]):
+            cut = LineString([pts[a], pts[b]])
+            if b > a + 1 and free.covers(cut) and tree.query(cut, predicate='intersects').size:
+                route['polyline'] = pts[:a + 1] + pts[b:]
+                done = True
+                break
+        if done:
+            break
+    assert done
+    res = fleet.check(inst, routes)
+    assert not res['valid']
+    assert any('1 段路线离开行间通道和地头' in e for e in res['errors']), res['errors']
 
 
 def test_makespan_objective_balances():
@@ -164,6 +247,9 @@ def test_gateway_compose_edit_solve(tmp_path, monkeypatch):
         assert c.get('/lab/api/source', params={'path': '../../etc/passwd'}).status_code == 403
         geo = c.get(f"/lab/api/scenarios/{sc['id']}/export", params={'format': 'geojson'})
         assert geo.status_code == 200 and b'FeatureCollection' in geo.content
+        lanes = c.post('/lab/api/fleet/lanes', json={'instance': upd['instance']}).json()
+        assert lanes['lanes'] and lanes['lane_count'] == len(lanes['lanes']) and len(lanes['plots']) == len(inst['plots'])
+        assert c.post('/lab/api/fleet/lanes', json={'instance': {'plots': []}}).status_code == 400
 
 
 def test_task_map_on_real_field():
@@ -208,6 +294,379 @@ def test_gazebo_world_from_fleet_plan(tmp_path):
         assert len(data) == 84 + 50 * count and count > 0
     for v in meta['vehicles']:  # every vehicle starts at its parking spot, passes the depot and visits its tasks in order
         assert math.dist(v['path'][1], sc['instance']['depot']) < 1e-6 and len(v['tasks']) > 0
+        assert all(any(math.dist(t['stop'], p) < 1e-6 for p in v['path']) for t in v['tasks'])
+    # travelling along the rows makes every crop row solid; with free travel they are only drawn
+    crops = world.find("model[@name='crop_rows']")
+    assert meta['travel'] == 'rows' and crops is not None and len(crops.findall('link/collision')) == meta['row_collision_shapes'] > 0
+    free_inst = copy.deepcopy(sc['instance'])
+    free_inst['vehicles']['travel'] = 'free'
+    free = fieldworld.build(free_inst, r['routes'], tmp_path / 'free', 'field_free', 4.0)
+    assert free['row_collision_shapes'] == 0
+    assert ET.parse(tmp_path / 'free' / 'world.sdf').getroot().find("world/model[@name='crop_rows']") is None
     layers, outlines = marker_layers(sc['instance'])
     assert all(len(layer['triangles']) % 3 == 0 and layer['triangles'] for layer in layers)
     assert outlines[0]['ns'] == 'boundary'
+
+
+# ------------------------------------------------------- heterogeneous fleet --
+HETERO_FLEET = [{'name': '重载车', 'count': 2, 'capacity': 20, 'speed_mps': 1.0},
+                {'name': '快车', 'count': 1, 'capacity': 10, 'speed_mps': 1.8, 'robot_radius': 0.35}]
+
+
+def _fleet_scenario(example, fleet, **extra):
+    sc = compose(example)
+    veh = {'fleet': [dict(c) for c in fleet]}
+    travel = sc['instance']['vehicles'].get('travel')
+    if travel:
+        veh['travel'] = travel
+    veh.update(extra)
+    sc['instance']['vehicles'] = veh
+    sc['instance'] = validate_instance('fleet_routing', sc['instance'])
+    return sc
+
+
+@pytest.mark.parametrize('algorithm', ['pyvrp.fleet', 'ortools.fleet'])
+def test_heterogeneous_fleet_solves_and_checks(algorithm):
+    sc = _fleet_scenario(EXAMPLES[0], HETERO_FLEET)
+    r = run_algorithm(sc, sc['instance'], algorithm, {'time_limit_s': 2})
+    assert r['status'] == 'feasible' and r['check']['valid'], r['check']
+    served = sorted(t for route in r['routes'] for t in route['sequence'])
+    assert served == sorted(t['id'] for t in sc['instance']['tasks'])
+    classes = {c['name']: c for c in sc['instance']['vehicles']['fleet']}
+    for route in r['routes']:
+        cls = classes[route['fleet_class']]
+        assert route['load'] <= cls['capacity'] and route['capacity'] == cls['capacity']
+        service = sum(t['service_s'] for t in sc['instance']['tasks'] if t['id'] in route['sequence'])
+        assert math.isclose(route['duration_s'], route['cost'] / cls['speed_mps'] + service, rel_tol=1e-6)
+        assert route['robot_radius'] == cls['robot_radius']
+    contract = r['raw_result']['model_contract']['fleet']
+    assert contract['type'] == 'heterogeneous' and len(contract['classes']) == 2
+
+
+def test_heterogeneous_makespan_uses_class_speed():
+    sc = _fleet_scenario(EXAMPLES[1], [{'name': '重载车', 'count': 2, 'capacity': 20, 'speed_mps': 1.0},
+                                       {'name': '快车', 'count': 2, 'capacity': 10, 'speed_mps': 1.8}])
+    r = run_algorithm(sc, sc['instance'], 'ortools.fleet', {'time_limit_s': 2})
+    assert r['status'] == 'feasible' and r['check']['valid'], r['check']
+    classes = {c['name']: c for c in sc['instance']['vehicles']['fleet']}
+    assert {route['fleet_class'] for route in r['routes']} == set(classes)
+    for route in r['routes']:
+        cls = classes[route['fleet_class']]
+        service = sum(t['service_s'] for t in sc['instance']['tasks'] if t['id'] in route['sequence'])
+        assert math.isclose(route['duration_s'], route['cost'] / cls['speed_mps'] + service, rel_tol=1e-6)
+
+
+def test_heterogeneous_single_trip_capacity_is_reported_as_infeasible():
+    sc = _fleet_scenario(EXAMPLES[0], [{'name': '小车', 'count': 2, 'capacity': 5, 'speed_mps': 1.0}], trips='single')
+    r = run_algorithm(sc, sc['instance'], 'pyvrp.fleet', {'time_limit_s': 0.5})
+    assert r['status'] == 'infeasible' and not r['routes']
+    assert r['metrics']['fleet_capacity'] == 10
+
+
+@pytest.mark.parametrize('algorithm', ['panel.sweep', 'panel.cluster_first', 'panel.savings_fleet'])
+def test_constructive_baselines_reject_heterogeneous_fleet(algorithm):
+    sc = _fleet_scenario(EXAMPLES[0], HETERO_FLEET)
+    with pytest.raises(ValueError, match='同构'):
+        run_algorithm(sc, sc['instance'], algorithm, {})
+
+
+def test_heterogeneous_checker_catches_tampering():
+    from urp_lab.solvers.fleet import check as fleet_check
+    sc = _fleet_scenario(EXAMPLES[0], HETERO_FLEET)
+    r = run_algorithm(sc, sc['instance'], 'pyvrp.fleet', {'time_limit_s': 1})
+    routes = r['routes']
+    routes[0]['capacity'] = routes[0]['capacity'] + 5
+    chk = fleet_check(sc['instance'], routes)
+    assert not chk['valid'] and any('声明' in e for e in chk['errors'])
+    routes[0]['capacity'] -= 5
+    routes[0]['fleet_class'] = '不存在的类别'
+    chk = fleet_check(sc['instance'], routes)
+    assert not chk['valid'] and any('类别' in e for e in chk['errors'])
+    # relabeling a heavy route as the small fast class cannot pass: capacity, speed or duration gives it away
+    routes[0]['fleet_class'] = '重载车'
+    heavy = max(routes, key=lambda x: x['load'])
+    heavy['fleet_class'] = '快车'
+    chk = fleet_check(sc['instance'], routes)
+    assert not chk['valid'] and any(('载重' in e or '用时' in e or '声明' in e) for e in chk['errors'])
+
+
+def test_heterogeneous_fleet_validation():
+    def bad(mutator):
+        sc = compose(EXAMPLES[0])
+        veh = {'fleet': [dict(c) for c in HETERO_FLEET]}
+        mutator(veh)
+        sc['instance']['vehicles'] = veh
+        with pytest.raises(ValueError):
+            validate_instance('fleet_routing', sc['instance'])
+
+    bad(lambda v: v.update(count=4))          # 与 fleet 推得的总台数冲突
+    bad(lambda v: v.update(capacity=21))      # 与 fleet 推得的最大容量冲突
+    bad(lambda v: v.update(names=['a']))
+    bad(lambda v: v['fleet'][0].update(capacity=0))
+    bad(lambda v: v['fleet'][1].update(count=-1))
+    bad(lambda v: v['fleet'][1].update(speed_mps=0))
+    bad(lambda v: v['fleet'][1].update(speed_mps=16))
+    bad(lambda v: v['fleet'][0].update(name=v['fleet'][1]['name']))
+    bad(lambda v: v['fleet'][0].update(payload='huge'))
+    bad(lambda v: v.update(fleet=[]))
+    bad(lambda v: v['fleet'][0].update(asset={'id': 'x'}))
+    # a class that cannot hold the largest single demand is rejected outright
+    sc = compose(EXAMPLES[0])
+    sc['instance']['tasks'][0]['demand'] = 3
+    sc['instance']['vehicles'] = {'fleet': [{'count': 1, 'capacity': 2}]}
+    with pytest.raises(ValueError, match='最大单点需求'):
+        validate_instance('fleet_routing', sc['instance'])
+
+
+def test_fleet_normalisation_defaults():
+    sc = _fleet_scenario(EXAMPLES[0], [{'count': 3, 'capacity': 10, 'speed_mps': 1.2}])
+    veh = sc['instance']['vehicles']
+    assert veh['count'] == 3 and veh['capacity'] == 10 and veh['speed_mps'] == 1.2
+    assert [c['count'] for c in veh['fleet']] == [3]
+    assert veh['names'] == ['车型1-1', '车型1-2', '车型1-3']
+    # validation is idempotent: a normalised instance re-validates unchanged (fieldsim restart path)
+    again = validate_instance('fleet_routing', sc['instance'])
+    assert again['vehicles'] == veh and again['robot_radius'] == sc['instance']['robot_radius']
+    # a bigger class footprint raises the shared planning radius
+    sc2 = _fleet_scenario(EXAMPLES[0], [{'count': 1, 'capacity': 10, 'robot_radius': 0.9},
+                                        {'count': 1, 'capacity': 10, 'robot_radius': 0.3}])
+    assert sc2['instance']['robot_radius'] == 0.9
+    assert sc2['instance']['vehicles']['fleet'][1]['robot_radius'] == 0.3
+
+
+def test_recommendation_for_heterogeneous_fleet():
+    sc = _fleet_scenario(EXAMPLES[0], HETERO_FLEET)
+    rec = recommend(sc, sc['instance'])
+    assert rec['recommended'] in ('pyvrp.fleet', 'ortools.fleet')
+    panels = [row for row in rec['ranking'] if row['algorithm_id'].startswith('panel.')]
+    assert panels and all(row['score'] == 0 and any('同构' in w for w in row['reasons']) for row in panels)
+    assert any(f['key'] == 'fleet_classes' and f['value'] == 2 for f in rec['features'])
+
+
+# ------------------------------------------------ curvature-constrained fleet --
+def test_curvature_constrained_fleet_solves_and_checks():
+    from urp_lab.solvers.fleet import min_curvature_radius
+    sc = _fleet_scenario(EXAMPLES[0], [{'name': '阿克曼运输车', 'count': 2, 'capacity': 20, 'min_turn_radius_m': 1.5},
+                                       {'name': '差速快车', 'count': 1, 'capacity': 10, 'speed_mps': 1.8}], travel='free')
+    r = run_algorithm(sc, sc['instance'], 'pyvrp.fleet', {'time_limit_s': 2})
+    assert r['status'] == 'feasible' and r['check']['valid'], r['check']
+    assert r['metrics']['curvature_constrained_vehicles'] >= 1
+    served = sorted(t for route in r['routes'] for t in route['sequence'])
+    assert served == sorted(t['id'] for t in sc['instance']['tasks'])
+    classes = {c['name']: c for c in sc['instance']['vehicles']['fleet']}
+    for route in r['routes']:
+        bound = classes[route['fleet_class']].get('min_turn_radius_m', 0)
+        if bound:
+            sampled = min_curvature_radius(route['polyline'])
+            assert sampled >= bound * 0.99, (bound, sampled)
+            assert math.isclose(route['curvature_radius_m'], sampled, rel_tol=1e-3)
+        else:
+            assert 'min_turn_radius_m' not in route
+    contract = r['raw_result']['model_contract']['geometry']
+    assert contract['curvature_bounded'] is True and 'Dubins' in contract['path']
+
+
+def test_curvature_length_exceeds_straight_line_and_makespan_uses_it():
+    sc = _fleet_scenario(EXAMPLES[0], [{'name': '阿克曼车', 'count': 2, 'capacity': 30, 'min_turn_radius_m': 2.0}], travel='free')
+    curved = run_algorithm(sc, sc['instance'], 'ortools.fleet', {'time_limit_s': 2})
+    assert curved['status'] == 'feasible' and curved['check']['valid']
+    straight_inst = validate_instance('fleet_routing', {**sc['instance'],
+                                                         'vehicles': {**sc['instance']['vehicles'], 'names': None,
+                                                                      'fleet': [{'count': 2, 'capacity': 30}]}})
+    straight = run_algorithm(sc, straight_inst, 'ortools.fleet', {'time_limit_s': 2})
+    assert curved['metrics']['total_distance_m'] > straight['metrics']['total_distance_m']
+
+
+def test_curvature_checker_catches_sharp_insert():
+    from urp_lab.solvers.fleet import check as fleet_check
+    sc = _fleet_scenario(EXAMPLES[0], [{'name': '阿克曼车', 'count': 2, 'capacity': 20, 'min_turn_radius_m': 1.5}], travel='free')
+    r = run_algorithm(sc, sc['instance'], 'pyvrp.fleet', {'time_limit_s': 1})
+    routes = r['routes']
+    victim = max(routes, key=lambda x: len(x['polyline']))
+    i = len(victim['polyline']) // 2
+    x, y = victim['polyline'][i]
+    victim['polyline'][i:i] = [[x + 0.25, y], [x, y + 0.25]]      # 0.35 m-scale zigzag: radius ≈ 0.18 m
+    chk = fleet_check(sc['instance'], routes)
+    assert not chk['valid'] and any('转弯半径' in e for e in chk['errors'])
+    victim['min_turn_radius_m'] = 3.0                              # declared bound no longer matches the class
+    chk = fleet_check(sc['instance'], routes)
+    assert not chk['valid'] and any('声明' in e for e in chk['errors'])
+
+
+def test_curvature_validation_and_rows_rejection():
+    with pytest.raises(ValueError, match='最小转弯半径'):
+        _fleet_scenario(EXAMPLES[0], [{'count': 1, 'capacity': 10, 'min_turn_radius_m': 11}])
+    with pytest.raises(ValueError, match='最小转弯半径'):
+        _fleet_scenario(EXAMPLES[0], [{'count': 1, 'capacity': 10, 'min_turn_radius_m': -0.5}])
+    sc = compose(EXAMPLES[1])                      # generated farmland travels along rows
+    travel = sc['instance']['vehicles'].get('travel')
+    assert travel == 'rows'
+    sc['instance']['vehicles'] = {'fleet': [{'count': 2, 'capacity': 20, 'min_turn_radius_m': 1.0}], 'travel': travel}
+    with pytest.raises(ValueError, match='行间通行'):
+        validate_instance('fleet_routing', sc['instance'])
+
+
+# -------------------------------------------------- transit corridors (item 8) --
+CORRIDOR_GEOJSON = {
+ 'type': 'FeatureCollection',
+ 'features': [
+  {'type': 'Feature', 'properties': {'role': 'boundary'},
+   'geometry': {'type': 'Polygon', 'coordinates': [[[0, 0], [60, 0], [60, 40], [0, 40], [0, 0]]]}},
+  {'type': 'Feature', 'properties': {'role': 'plot', 'crop': 'wheat'},
+   'geometry': {'type': 'Polygon', 'coordinates': [[[5, 5], [55, 5], [55, 35], [5, 35], [5, 5]]]}},
+  {'type': 'Feature', 'properties': {'role': 'road', 'name': '机耕道'},
+   'geometry': {'type': 'Polygon', 'coordinates': [[[24, 0], [30, 0], [30, 40], [24, 40], [24, 0]]]}},
+  {'type': 'Feature', 'properties': {'role': 'headland', 'name': '地头', 'width_m': 3},
+   'geometry': {'type': 'LineString', 'coordinates': [[0, 20], [60, 20]]}},
+  {'type': 'Feature', 'properties': {'role': 'depot'}, 'geometry': {'type': 'Point', 'coordinates': [2, 2]}},
+  {'type': 'Feature', 'properties': {'role': 'task'}, 'geometry': {'type': 'Point', 'coordinates': [50, 30]}},
+  {'type': 'Feature', 'properties': {'role': 'task'}, 'geometry': {'type': 'Point', 'coordinates': [10, 30]}},
+ ]}
+
+
+def _corridor_scenario(travel='rows'):
+    from urp_lab import lanes as _lanes
+    sc = import_geojson(CORRIDOR_GEOJSON, vehicles={'count': 1})
+    inst = validate_instance('fleet_routing', sc['instance'])
+    inst['vehicles']['travel'] = travel
+    sc['instance'] = inst
+    return sc, inst
+
+
+def test_geojson_corridor_import_and_roundtrip():
+    sc, inst = _corridor_scenario()
+    assert [c['name'] for c in inst['corridors']] == ['机耕道', '地头']
+    from shapely.geometry import Polygon
+    road, headland = (Polygon(c['polygon']) for c in inst['corridors'])
+    assert 235 < road.area < 245                       # 6 m × 40 m polygon road
+    assert 185 < headland.area < 189                   # 3 m buffered headland line (round caps)
+    import json as _json
+    again = import_geojson(_json.loads(export_geojson(sc, None)), vehicles={'count': 1})
+    inst2 = validate_instance('fleet_routing', again['instance'])
+    assert [c['name'] for c in inst2['corridors']] == ['机耕道', '地头']
+
+
+def test_corridor_stays_unplanted_and_open_for_rows_travel():
+    from shapely.geometry import Polygon
+    from urp_lab import lanes
+    from shapely.ops import unary_union
+    sc, inst = _corridor_scenario()
+    net = lanes.Network(inst)
+    road = Polygon(next(c['polygon'] for c in inst['corridors'] if c['name'] == '机耕道'))
+    planted = unary_union([p.planted for p in net.plots])
+    assert road.difference(planted).area > 0.95 * road.area      # the road is not planted over
+    assert net.travel_area().covers(road.representative_point())  # and it is drivable open area
+
+
+def test_corridor_scenario_solves_along_rows():
+    sc, inst = _corridor_scenario()
+    r = run_algorithm(sc, inst, 'pyvrp.fleet', {'time_limit_s': 1})
+    assert r['status'] == 'feasible' and r['check']['valid'], r['check']
+    from shapely.geometry import LineString
+    from urp_lab import lanes
+    crop_rows = lanes.Network(inst).rows()
+    for route in r['routes']:
+        for a, b in zip(route['polyline'], route['polyline'][1:]):
+            seg = LineString([a, b])
+            assert all(seg.distance(row) >= inst['robot_radius'] - 1e-6 for row in crop_rows)
+
+
+def test_corridor_validation_rejects_bad_polygons():
+    sc, inst = _corridor_scenario()
+    inst['corridors'][0]['polygon'] = [[0, 0], [1, 1]]          # not a polygon
+    with pytest.raises(ValueError, match='通行走廊'):
+        validate_instance('fleet_routing', inst)
+
+
+# ------------------------------------------------------------- multi-depot --
+def _multi_depot_scenario(n_depots=2, **vehicles):
+    sc = compose(EXAMPLES[0])
+    inst = sc['instance']
+    from shapely.geometry import Polygon as _P
+    b = _P(inst['boundary'])
+    xs = [b.bounds[0] + 8, b.bounds[2] - 8]
+    inst['depots'] = [[xs[i], (b.bounds[1] + b.bounds[3]) / 2] for i in range(n_depots)]
+    inst['vehicles'].update(vehicles)
+    sc['instance'] = validate_instance('fleet_routing', inst)
+    return sc
+
+
+@pytest.mark.parametrize('algorithm', ['pyvrp.fleet', 'ortools.fleet'])
+def test_multi_depot_fleet_solves_and_checks(algorithm):
+    sc = _multi_depot_scenario(2, count=4)
+    r = run_algorithm(sc, sc['instance'], algorithm, {'time_limit_s': 2})
+    assert r['status'] == 'feasible' and r['check']['valid'], r['check']
+    depots = sc['instance']['depots']
+    used = set()
+    served = sorted(t for route in r['routes'] for t in route['sequence'])
+    assert served == sorted(t['id'] for t in sc['instance']['tasks'])
+    for route in r['routes']:
+        home = route['depot']
+        used.add(home)
+        assert math.dist(route['polyline'][0], depots[home]) < 1e-6
+        assert math.dist(route['polyline'][-1], depots[home]) < 1e-6
+        assert route['depot_xy'] == depots[home]
+    assert len(used) >= 1 and all(0 <= d < len(depots) for d in used)
+
+
+def test_multi_depot_spreads_vehicles_over_depots():
+    from urp_lab.solvers import fleet as F
+    sc = _multi_depot_scenario(2, count=4)
+    table = F.vehicle_table(sc['instance'])
+    depots_used = {di for _vi, _ci, _cls, di in table}
+    assert depots_used == {0, 1}                        # round-robin assignment in table order
+    r = run_algorithm(sc, sc['instance'], 'pyvrp.fleet', {'time_limit_s': 2})
+    assert r['status'] == 'feasible'
+    assert {route['depot'] for route in r['routes']} >= {0, 1} or len(r['routes']) < 4
+
+
+def test_multi_depot_checker_rejects_wrong_depot_return():
+    from urp_lab.solvers.fleet import check as fleet_check
+    sc = _multi_depot_scenario(2, count=2)
+    r = run_algorithm(sc, sc['instance'], 'pyvrp.fleet', {'time_limit_s': 1})
+    routes = r['routes']
+    victim = routes[0]
+    other = 1 - victim['depot']
+    victim['polyline'][-1] = list(sc['instance']['depots'][other])     # return to the wrong depot
+    chk = fleet_check(sc['instance'], routes)
+    assert not chk['valid'] and any('自己的车库' in e for e in chk['errors'])
+
+
+def test_multi_depot_rejections():
+    sc = _multi_depot_scenario(2, count=2)
+    sc['instance']['objective'] = 'makespan'
+    sc['instance'] = validate_instance('fleet_routing', sc['instance'])
+    with pytest.raises(ValueError, match='多车库'):
+        run_algorithm(sc, sc['instance'], 'ortools.fleet', {'time_limit_s': 1})
+    with pytest.raises(ValueError, match='多车库'):
+        run_algorithm(sc, sc['instance'], 'panel.savings_fleet', {})
+    inst = copy.deepcopy(sc['instance'])
+    inst['objective'] = 'total_distance'
+    inst['depots'].append(inst['depots'][0])           # duplicate depot
+    with pytest.raises(ValueError, match='重复'):
+        validate_instance('fleet_routing', inst)
+
+
+def test_multi_depot_geojson_roundtrip_and_world_parking(tmp_path):
+    doc = {'type': 'FeatureCollection', 'features': [
+        {'type': 'Feature', 'properties': {'role': 'boundary'},
+         'geometry': {'type': 'Polygon', 'coordinates': [[[0, 0], [80, 0], [80, 50], [0, 50], [0, 0]]]}},
+        {'type': 'Feature', 'properties': {'role': 'depot'}, 'geometry': {'type': 'Point', 'coordinates': [5, 25]}},
+        {'type': 'Feature', 'properties': {'role': 'depot'}, 'geometry': {'type': 'Point', 'coordinates': [75, 25]}},
+        *[{'type': 'Feature', 'properties': {'role': 'task'}, 'geometry': {'type': 'Point', 'coordinates': [x, y]}}
+          for x, y in [(15, 10), (30, 35), (45, 15), (60, 40), (20, 40), (65, 10)]],
+    ]}
+    import json as _json
+    sc = import_geojson(doc, vehicles={'count': 2})
+    inst = validate_instance('fleet_routing', sc['instance'])
+    assert len(inst['depots']) == 2 and inst['depot'] == inst['depots'][0]
+    r = run_algorithm(sc, inst, 'pyvrp.fleet', {'time_limit_s': 1})
+    assert r['status'] == 'feasible' and r['check']['valid']
+    again = import_geojson(_json.loads(export_geojson(sc, None)), vehicles={'count': 2})
+    assert len(validate_instance('fleet_routing', again['instance'])['depots']) == 2
+    from urp_lab import fieldworld
+    plan = fieldworld.build(inst, r['routes'], tmp_path, 'multi_depot', 4.0)
+    homes = [tuple(v['start'][:2]) for v in plan['vehicles']]
+    for v, route in zip(plan['vehicles'], r['routes']):
+        assert math.dist(v['start'][:2], inst['depots'][route['depot']]) < 8.0   # parked near its own depot
+    assert len(homes) == len(r['routes'])

@@ -24,13 +24,16 @@ def _clark_evans(points, area):
 def _fleet(inst):
     from shapely.geometry import Polygon
     from shapely.ops import unary_union
+    from .solvers.fleet import fleet_classes
     n, K = len(inst['tasks']), inst['vehicles']['count']
+    classes = fleet_classes(inst)
     cap, demand = inst['vehicles']['capacity'], sum(t['demand'] for t in inst['tasks'])
     area = Polygon(inst['boundary']).area
     obs = unary_union([Polygon(o['polygon']) for o in inst['obstacles']]).area if inst['obstacles'] else 0.0
     R = _clark_evans([tuple(t['xy']) for t in inst['tasks']], area)
     trips = math.ceil(demand / cap)
     feats = [_feature('任务点', 'n_tasks', n), _feature('车辆', 'vehicles', K), _feature('至少需要的趟数', 'min_trips', trips),
+             _feature('车型类别', 'fleet_classes', len(classes), None, '同构=1；异构车队按类别容量/车速/足迹求解'),
              _feature('障碍占地', 'obstacle_ratio', round(100 * obs / area, 2), '%'),
              _feature('聚集度 R', 'clark_evans', None if R is None else round(R, 2), None, '<1 成片聚集，≈1 随机，>1 均匀散开'),
              _feature('目标', 'objective', '均衡完成时间' if inst['objective'] == 'makespan' else '总里程')]
@@ -38,32 +41,38 @@ def _fleet(inst):
     why = {k: [] for k in score}
     if inst['objective'] == 'makespan':
         score['ortools.fleet'] += 3
-        why['ortools.fleet'].append('目标是“尽快完成”：OR-Tools 可直接优化各车最长工作时间，使分工均衡')
+        why['ortools.fleet'].append('规则建议：OR-Tools 使用路线跨度与里程的加权目标；时间为匀速代理，不含转向或交通排队')
         score['pyvrp.fleet'] += 1.5
-        why['pyvrp.fleet'].append('总里程通常最短，但不直接均衡各车工作量')
+        why['pyvrp.fleet'].append('以总里程为搜索目标，不直接均衡各车工作量；是否更优需同实例比较')
     else:
         score['pyvrp.fleet'] += 3
-        why['pyvrp.fleet'].append('目标是总里程：PyVRP 的迭代局部搜索在同等时间内通常给出最短总路程')
+        why['pyvrp.fleet'].append('规则建议：目标是总里程，优先试用 PyVRP 迭代局部搜索；当前场景的收益尚未评估')
         score['ortools.fleet'] += 2
-        why['ortools.fleet'].append('成熟稳健的对照，结果可与 PyVRP 互相印证')
+        why['ortools.fleet'].append('采用不同搜索实现的对照，需用相同实例和预算比较')
     if R is not None and R < 0.8:
         score['panel.cluster_first'] += 1.8
-        why['panel.cluster_first'].append(f'任务成片聚集（R={R:.2f}），按片区分给各车，分工清楚、路线不交叉')
+        why['panel.cluster_first'].append(f'任务成片聚集（R={R:.2f}），可尝试按空间聚类分配；交叉通行仍需交通调度')
     else:
         why['panel.cluster_first'].append('按区域划分各车负责范围，便于现场分工')
     score['panel.savings_fleet'] += 1.2
-    why['panel.savings_fleet'].append('毫秒级确定性基线，可作为改进幅度的参照')
+    why['panel.savings_fleet'].append('确定性构造基线，可作为改进幅度的参照；耗时以实测为准')
     if inst['tasks'] and _depot_central(inst):
         score['panel.sweep'] += 1.0
-        why['panel.sweep'].append('车库位于任务中间，按方位扫描切分效果较好')
+        why['panel.sweep'].append('车库位于任务中间，可尝试按方位扫描切分；质量需同实例比较')
     else:
-        why['panel.sweep'].append('经典扫描切分基线；车库在边角时效果一般')
+        why['panel.sweep'].append('按车库方位进行扫描切分的构造基线')
     if obs / area > 0.03:
         for k in why:
             why[k].append('所有算法都在绕障最短路距离上求解，障碍不会被直线穿越')
     if trips > K:
         for k in ('pyvrp.fleet', 'ortools.fleet'):
             why[k].append(f'总量需要至少 {trips} 趟，多趟往返会分配到 {K} 台车上')
+    if len(classes) > 1:
+        for k in ('panel.savings_fleet', 'panel.sweep', 'panel.cluster_first'):
+            score[k] = 0.0
+            why[k].append('构造基线只支持同构车队；异构车队由 PyVRP / OR-Tools 按类别容量、车速与足迹求解')
+        why['pyvrp.fleet'].append(f'异构车队（{len(classes)} 类）按各类容量与车速分配任务与趟次')
+        why['ortools.fleet'].append('OR-Tools 可为每类车使用不同车速的时间矩阵，均衡最晚完成')
     budget = 2 if n <= 30 else 5 if n <= 120 else 15
     return feats, score, why, {'time_limit_s': budget}
 
@@ -90,7 +99,7 @@ def recommend(scenario, instance):
                      _feature('转弯惩罚', 'penalties', len(instance['turn_penalties']))]
             if n <= 12:
                 score['urp.turn_mode_dp'] += 3
-                why['urp.turn_mode_dp'].append(f'任务数 {n} ≤ 12：分层 DP 能在秒级给出转弯约束下的精确最优')
+                why['urp.turn_mode_dp'].append(f'任务数 {n} ≤ 12：优先尝试精确分层 DP，是否证最优以终态和预算为准')
             score['pyvrp.hgs+urp.layered'] += 2
             why['pyvrp.hgs+urp.layered'].append('规模较大时的首选：PyVRP 定顺序，项目分层 DP 补全转弯可行路径')
             score['ortools.gls+urp.layered'] += 1.5
@@ -104,12 +113,12 @@ def recommend(scenario, instance):
             feats = [_feature('客户数', 'n_tasks', n), _feature('容量', 'capacity', instance['capacity']),
                      _feature('最少车辆', 'min_routes', math.ceil(sum(instance['demands']) / instance['capacity']))]
             score['pyvrp.hgs'] += 3
-            why['pyvrp.hgs'].append('当前开源 CVRP 求解的强基线，CVRPLIB 上 2 秒内通常距最优已知解 1% 左右')
+            why['pyvrp.hgs'].append('CVRP 迭代局部搜索对照；相对最优已知解的差距由本次求解实测，不预设性能数字')
             score['ortools.gls'] += 2
             why['ortools.gls'].append('稳健的对照求解器')
             score['urp.js.savings'] += 1.5
-            why['urp.js.savings'].append('毫秒级构造基线（≤ 100 客户）')
-            why['urp.js.nearest_neighbor'].append('最朴素的下限参照')
+            why['urp.js.savings'].append('节约算法构造基线（≤ 100 客户），耗时以实测为准')
+            why['urp.js.nearest_neighbor'].append('最近邻构造基线，成本经独立验算')
             model = learned.recommend(scenario, instance)
             if model and model['status'] == 'available':
                 chosen = model['prediction']['selected']
@@ -160,7 +169,7 @@ def recommend(scenario, instance):
                 for gid in ('grid.astar', 'grid.dijkstra', 'grid.theta_star'):
                     score[gid] -= 5
                     why[gid].append('栅格搜索不考虑最小转弯半径，仅作几何参照')
-            why['ompl.rrt_connect'].append('最快得到一条可行路径，不追求最短')
+            why['ompl.rrt_connect'].append('优先搜索可行路径，不优化路径长度；耗时以实测为准')
     by_id = {a['id']: a for a in algs}
     rows = []
     for aid in sorted(score, key=lambda k: (-score[k], k)):
