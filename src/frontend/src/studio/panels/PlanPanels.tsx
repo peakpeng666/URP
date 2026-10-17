@@ -28,6 +28,7 @@ import { Badge, Button, EmptyState, Input, Notice, Segmented, Select, Spinner } 
 import type { Solution } from '../../lab/types';
 import { FieldEditor } from '../editor/FieldEditor';
 import { OBSTACLE_STYLE, area, routeLength } from '../editor/geometry';
+import { useLanes } from '../editor/lanes';
 import { asFleet, isFleet, useStudio } from '../store';
 import { studio, urls } from '../api';
 import type { FleetInstance, FleetRoute, FleetScenario, ObstacleKind, PerVehicle } from '../types';
@@ -35,6 +36,8 @@ import { MapCanvas } from '../../lab/canvas/MapCanvas';
 import { baseScene, solutionPaths, violationMarkers } from '../../lab/views/plan/planModel';
 import type { Instance, Scenario } from '../../lab/types';
 import { logTimeAxis, unitSuffix } from '../chart';
+import { BackgroundControl, FleetAssetSection, PlanBackground } from '../assets/PlanLayers';
+import { ReplayOverlay } from '../experiment/ReplayPanel';
 import s from './panels.module.css';
 
 const LIB_TONE: Record<string, 'blue' | 'purple' | 'teal' | 'orange' | 'gray' | 'green'> = {
@@ -52,10 +55,21 @@ export function LibraryBadge({ library }: { library?: string }) {
 /** Geometry signature: a solution belongs to the current map only if these match. */
 export function signature(inst: FleetInstance | null | undefined): string {
   if (!inst) return '';
+  const rows = inst.vehicles.travel === 'rows';
   return JSON.stringify({
     t: inst.tasks.map((t) => [t.id, t.xy, t.demand]), o: inst.obstacles.map((o) => o.polygon), b: inst.boundary, d: inst.depot,
-    v: [inst.vehicles.count, inst.vehicles.capacity, inst.vehicles.trips ?? 'multi', inst.vehicles.speed_mps], j: inst.objective, r: inst.robot_radius,
+    v: [inst.vehicles.count, inst.vehicles.capacity, inst.vehicles.trips ?? 'multi', inst.vehicles.speed_mps, inst.vehicles.travel ?? 'free'],
+    j: inst.objective, r: inst.robot_radius,
+    // with travel along the rows the plots (shape, crop, row direction) decide the lanes too
+    p: rows ? inst.plots.map((pl) => [pl.polygon, pl.crop ?? '', pl.rows_deg ?? 0]) : null,
   });
+}
+
+/** How one plot's rows are driven, in a few words. */
+function laneText(p: { mode: 'every' | 'track'; spacing_m: number; lane_width_m: number; pitch_m: number }): string {
+  return p.mode === 'every'
+    ? `行距 ${fmt.num(p.spacing_m, 2)} m，行间通道宽 ${fmt.num(p.lane_width_m, 2)} m`
+    : `行距 ${fmt.num(p.spacing_m, 2)} m，行间太窄，每两行留一条 ${fmt.num(p.lane_width_m, 2)} m 宽的作业道（间隔 ${fmt.num(p.pitch_m, 2)} m）`;
 }
 
 function useFocus() {
@@ -86,6 +100,13 @@ export function MapPanel() {
   }
   if (!isFleet(st.scenario)) return <GenericMap scenario={st.scenario} draft={st.draft} run={focus} />;
   const inst = asFleet(st.draft);
+  return <FleetMap inst={inst} focus={focus} />;
+}
+
+function FleetMap({ inst, focus }: { inst: FleetInstance; focus?: Solution }) {
+  const st = useStudio();
+  const lanes = useLanes(inst, inst.vehicles.travel === 'rows');
+  if (!st.scenario) return null;
   const stale = !!focus && signature(focus.instance as unknown as FleetInstance) !== signature(inst);
   const routes = focus?.state === 'done' ? (focus.routes as FleetRoute[]) : [];
   return (
@@ -98,6 +119,7 @@ export function MapPanel() {
             {(Object.keys(OBSTACLE_STYLE) as ObstacleKind[]).map((k) => <option key={k} value={k}>{OBSTACLE_STYLE[k].label}</option>)}
           </Select>
         )}
+        <BackgroundControl />
         <span className={s.spacer} />
         <Button size="sm" icon={Undo2} title="撤销 (⌘Z)" disabled={!st.past.length} onClick={st.undo} />
         <Button size="sm" icon={Redo2} title="重做 (⇧⌘Z)" disabled={!st.future.length} onClick={st.redo} />
@@ -115,11 +137,17 @@ export function MapPanel() {
           selection={st.selection}
           editable
           fitKey={st.scenario.id}
+          lanes={lanes?.lanes}
+          background={<PlanBackground />}
+          overlay={(view) => <ReplayOverlay view={view} />}
           onEdit={(fn) => st.edit((i) => fn(i as unknown as FleetInstance) as unknown as typeof i)}
           onSelect={st.select}
           onCursor={st.setCursor}
         />
         {stale && <div className={s.staleBadge}><RefreshCw size={12} /> 地图已修改，结果需重新求解</div>}
+        {st.save === 'error' && st.saveError && (
+          <div className={s.saveBanner} role="alert">未保存：{st.saveError}。{/连接不上/.test(st.saveError) ? '服务恢复后会自动重试保存。' : '修改地图（或撤销 ⌘Z）后会自动重试。'}</div>
+        )}
         {!stale && focus && focus.state === 'done' && <VehicleLegend run={focus} />}
         {!stale && focus && focus.state === 'done' && <Playback run={focus} speed={inst.vehicles.speed_mps} />}
       </div>
@@ -283,6 +311,7 @@ function FleetForm() {
   const draft = useStudio((st) => st.draft);
   const edit = useStudio((st) => st.edit);
   const inst = asFleet(draft);
+  const lanes = useLanes(inst, inst.vehicles.travel === 'rows');
   const set = (fn: (i: FleetInstance) => FleetInstance) => edit((i) => fn(i as unknown as FleetInstance) as unknown as typeof i);
   const v = inst.vehicles;
   const demand = inst.tasks.reduce((a, t) => a + t.demand, 0);
@@ -306,10 +335,21 @@ function FleetForm() {
         <Segmented value={inst.objective} full onChange={(o) => set((i) => ({ ...i, objective: o }))}
           options={[{ value: 'total_distance', label: '总里程最短' }, { value: 'makespan', label: '尽快完成（均衡分工）' }]} />
       </label>
+      <label className={s.field}>
+        <span>通行方式</span>
+        <Segmented value={v.travel ?? 'free'} full onChange={(t) => set((i) => ({ ...i, vehicles: { ...i.vehicles, travel: t } }))}
+          options={[{ value: 'rows', label: '沿行间与地头' }, { value: 'free', label: '自由通行' }]} />
+      </label>
+      <p className={s.hint}>
+        {v.travel === 'rows'
+          ? `车辆只在作物行之间的通道里行驶，经地头和机耕路换行，不斜穿作物；任务在离它最近的通道上作业。${lanes ? `共 ${lanes.lane_count} 条行间通道。` : ''}`
+          : '车辆可在地块内任意穿行，只避开障碍物（不考虑作物行）。'}
+      </p>
       <p className={s.hint}>
         {inst.tasks.length} 个任务点，总需求 {demand}；按容量至少需要 {trips} 趟
         {v.trips === 'single' && trips > v.count ? <strong className={s.warn}>，单趟模式下车辆不够</strong> : ''}。
       </p>
+      <FleetAssetSection />
       <h3>任务点</h3>
       <div className={s.row}>
         <Button size="sm" onClick={() => set((i) => ({ ...i, tasks: i.tasks.map((t) => ({ ...t, demand: 1 })) }))}>需求全部设为 1</Button>
@@ -327,6 +367,7 @@ function SelectionForm() {
   const edit = useStudio((st) => st.edit);
   const select = useStudio((st) => st.select);
   const inst = asFleet(draft);
+  const lanes = useLanes(inst, inst.vehicles.travel === 'rows');
   const set = (fn: (i: FleetInstance) => FleetInstance) => edit((i) => fn(i as unknown as FleetInstance) as unknown as typeof i);
   if (!selection) return <p className={s.hint}>在地图上点选任务点、障碍、地块、车库或边界查看属性。按 Delete 删除选中对象。</p>;
   if (selection.type === 'task') {
@@ -369,6 +410,7 @@ function SelectionForm() {
     const p = inst.plots.find((x) => x.id === selection.id);
     if (!p) return null;
     const setP = (patch: Partial<typeof p>) => set((i) => ({ ...i, plots: i.plots.map((x) => (x.id === p.id ? { ...x, ...patch } : x)) }));
+    const rows = lanes?.plots.find((x) => x.id === p.id);
     return (
       <div className={s.form}>
         <h3>地块 {p.name}</h3>
@@ -378,7 +420,8 @@ function SelectionForm() {
           <Segmented value={String(p.rows_deg ?? 0)} full onChange={(v) => setP({ rows_deg: Number(v) })}
             options={[{ value: '0', label: '东西向' }, { value: '90', label: '南北向' }, { value: '45', label: '斜向' }]} />
         </label>
-        <p className={s.hint}>面积 {fmt.num(area(p.polygon), 0)} m²</p>
+        <p className={s.hint}>面积 {fmt.num(area(p.polygon), 0)} m²{rows ? ` · ${rows.rows} 行作物、${rows.lanes} 条通道` : ''}</p>
+        {rows && <p className={s.hint}>{laneText(rows)}。</p>}
         <Button variant="destructive" icon={Trash2} onClick={() => { set((i) => ({ ...i, plots: i.plots.filter((x) => x.id !== p.id) })); select(null); }}>删除地块</Button>
       </div>
     );
@@ -641,12 +684,15 @@ export function VerifyPanel() {
   const check = run.check;
   const errors = check?.errors ?? [];
   const fleet = isFleet(st.scenario);
+  const rows = (run.instance as unknown as FleetInstance | undefined)?.vehicles?.travel === 'rows';
   const has = (re: RegExp) => errors.filter((e) => re.test(e));
   const items = fleet ? [
     { label: '每个任务点恰好服务一次', bad: has(/未被分配|重复/) },
     { label: '每趟载重不超过容量', bad: has(/载重/) },
     { label: '使用车辆不超过车队规模', bad: has(/超过车队|单趟/) },
     { label: '路线避开障碍、不出场地', bad: has(/穿过障碍|越出/) },
+    ...(rows ? [{ label: '只走行间通道和地头，不斜穿作物', bad: has(/离开行间/) }] : []),
+    { label: '路线经过每个任务的作业位置', bad: has(/作业位置/) },
     { label: '从车库出发并返回', bad: has(/车库/) },
   ] : [{ label: '独立检查器', bad: errors }];
   const computed = check?.computed_cost;

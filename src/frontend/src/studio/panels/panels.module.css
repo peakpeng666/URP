@@ -144,3 +144,5 @@ td[data-best] { font-weight: 700; color: var(--mac-green); }
 .progressBar > i { display: block; height: 100%; border-radius: 3px; transition: width 0.4s ease; }
 .simLink { display: inline-flex; align-items: center; gap: 3px; margin-left: 6px; padding: 1px 7px; border: 0; border-radius: 6px; background: var(--mac-accent-soft); color: #0b4fa3; font: 600 11px var(--mac-font); cursor: pointer; }
 .simLink:hover { background: rgba(0, 122, 255, 0.2); }
+.saveBanner { position: absolute; top: 44px; left: 50%; transform: translateX(-50%); max-width: 80%; padding: 6px 12px; border-radius: 10px; font-size: 12px;
+  background: rgba(255, 236, 234, 0.97); color: #8a1f17; box-shadow: var(--mac-shadow-pop); z-index: 6; }

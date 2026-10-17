@@ -33,6 +33,7 @@
     "d3-shape": "3.2.0",
     "dockview-react": "8.5.1",
     "fflate": "0.8.3",
+    "gltf-validator": "2.0.0-dev.3.10",
     "gzweb": "3.0.2",
     "katex": "0.19.0",
     "lucide-react": "1.52.0",

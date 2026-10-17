@@ -8,6 +8,7 @@ import { useSyncExternalStore } from 'react';
 export type ViewName =
   | 'lab'
   | 'plan'
+  | 'assets'
   | 'sim'
   | 'runs'
   | 'archive'
@@ -19,7 +20,7 @@ export type ViewName =
   | 'notfound';
 
 /** Workbench views do not depend on the historical BPP exports. */
-export const LAB_VIEWS: ReadonlySet<ViewName> = new Set(['lab', 'plan', 'sim', 'runs', 'archive']);
+export const LAB_VIEWS: ReadonlySet<ViewName> = new Set(['lab', 'plan', 'assets', 'sim', 'runs', 'archive']);
 
 export interface Route {
   view: ViewName;
@@ -32,6 +33,7 @@ const VIEWS: Record<string, ViewName> = {
   '': 'lab',
   lab: 'lab',
   plan: 'plan',
+  assets: 'assets',
   sim: 'sim',
   runs: 'runs',
   archive: 'archive',

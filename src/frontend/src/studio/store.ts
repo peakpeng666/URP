@@ -5,7 +5,7 @@ import type { Algorithm, Instance, Recommendation, Scenario, Solution } from '..
 import { studio } from './api';
 import type { FleetInstance, ParseResult, Selection, Tool, ObstacleKind } from './types';
 
-export type Workspace = 'plan' | 'experiments' | 'sim' | 'library' | 'system';
+export type Workspace = 'plan' | 'assets' | 'experiments' | 'sim' | 'library' | 'system';
 
 type SaveState = 'idle' | 'dirty' | 'saving' | 'saved' | 'error';
 

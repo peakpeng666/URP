@@ -49,6 +49,21 @@
   stroke: rgba(84, 142, 64, 0.38);
   stroke-width: 0.35;
 }
+.lanes polyline {
+  fill: none;
+  stroke: rgba(150, 118, 46, 0.34);
+  stroke-width: 1;
+  stroke-dasharray: 5 3;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+.stopLink {
+  stroke-width: 1.4;
+  stroke-dasharray: 2 2;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.85;
+  pointer-events: none;
+}
 .obstacle {
   stroke-width: 1.4;
   vector-effect: non-scaling-stroke;

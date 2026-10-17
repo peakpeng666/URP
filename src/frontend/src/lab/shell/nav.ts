@@ -54,6 +54,7 @@ export const NAV_SECTIONS: NavSection[] = [
 export const VIEW_TITLES: Record<ViewName, string> = {
   lab: '概览',
   plan: '规划',
+  assets: '资产库',
   sim: '仿真',
   runs: '运行记录',
   archive: '实验档案',

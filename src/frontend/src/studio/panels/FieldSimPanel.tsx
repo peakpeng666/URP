@@ -28,6 +28,18 @@ const pct = (a?: number | null, b?: number | null) => (a != null && b ? `${a >= 
 /** Starts the field simulation for a fleet run and brings the simulation workspace forward. */
 export async function startFieldSim(runId: string, opts: { gui?: boolean; rviz?: boolean; real_time_factor?: number } = {}) {
   const st = useStudio.getState();
+  // The field world spawns its own differential robot for every vehicle: a plan made for another vehicle asset
+  // would be executed by a different body, so it is refused here with what is missing.
+  try {
+    const run = st.runs[runId] ?? (await lab.run(runId));
+    const fleet = (run.instance as { fleet?: { asset?: { name?: string; id: string }; adapter?: string | null; adapter_note?: string } } | undefined)?.fleet;
+    if (fleet && fleet.adapter !== 'fieldsim-diffdrive') {
+      st.notify('error', `这个方案的车队是「${fleet.asset?.name ?? fleet.asset?.id}」，田间仿真不能生成该车型：${fleet.adapter_note ?? '缺仿真适配'}。可改用内置田间差速机器人重新求解后再执行。`);
+      return;
+    }
+  } catch {
+    /* run record unreadable: the backend decides */
+  }
   try {
     await studio.startFieldsim(runId, opts);
     await refreshFieldSim();
@@ -103,7 +115,7 @@ export function FieldSimPanel() {
             {focused && (
               <button type="button" className={s.item} disabled={busy} onClick={() => void start(focused.run_id)}>
                 <span className={s.itemTitle}><Play size={12} /> 当前方案：{focused.algorithm.name}</span>
-                <span className={s.itemSub}>{focused.scenario_id} · {fmt.num(Number(focused.metrics.total_distance_m), 1)} m · {focused.routes.length} 台车</span>
+                <span className={s.itemSub}>{focused.scenario_id} · {fmt.num(Number(focused.metrics.total_distance_m), 1)} m · {focused.routes.length} 台车{travelText(focused.metrics.travel)}</span>
               </button>
             )}
             <ul className={s.list}>
@@ -111,7 +123,7 @@ export function FieldSimPanel() {
                 <li key={r.run_id}>
                   <button type="button" className={s.item} disabled={busy} onClick={() => void start(r.run_id)}>
                     <span className={s.itemTitle}>{r.algorithm.name}</span>
-                    <span className={s.itemSub}>{r.scenario_id} · {fmt.num(Number(r.metrics.total_distance_m), 1)} m · {r.routes.length} 台车 · {fmt.time(r.created_utc)}</span>
+                    <span className={s.itemSub}>{r.scenario_id} · {fmt.num(Number(r.metrics.total_distance_m), 1)} m · {r.routes.length} 台车{travelText(r.metrics.travel)} · {fmt.time(r.created_utc)}</span>
                   </button>
                 </li>
               ))}
@@ -186,6 +198,11 @@ function RunningView({ state, busy, onStop, onWindow }: { state: FieldSimState; 
   );
 }
 
+/** ' · 沿行间' for plans that drive along the crop-row lanes (the rows are solid in Gazebo). */
+function travelText(travel: unknown): string {
+  return travel === 'rows' ? ' · 沿行间' : travel === 'free' ? ' · 自由通行' : '';
+}
+
 function ResultsTable({ rows }: { rows: FieldSimSummary[] }) {
   return (
     <table className={s.table}>
@@ -193,7 +210,7 @@ function ResultsTable({ rows }: { rows: FieldSimSummary[] }) {
       <tbody>
         {rows.slice(0, 12).map((r) => (
           <tr key={r.session_id} title={`${r.scenario_id} · ${r.world}`}>
-            <td>{r.algorithm ?? r.run_id}<div className={s.meta}>{fmt.time(r.finished_utc)}</div></td>
+            <td>{r.algorithm ?? r.run_id}<div className={s.meta}>{fmt.time(r.finished_utc)}{travelText(r.travel)}</div></td>
             <td className={s.num}>{r.state === 'succeeded' ? <Badge tone="green">{r.metrics.tasks_reached}/{r.metrics.tasks_total}</Badge> : <Badge tone="red">{r.metrics.tasks_reached}/{r.metrics.tasks_total}</Badge>}</td>
             <td className={s.num}>{fmt.sec(r.metrics.makespan_s)}</td>
             <td className={s.num}>{pct(r.metrics.makespan_s, r.metrics.planned_makespan_s)}</td>

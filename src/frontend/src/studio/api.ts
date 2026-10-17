@@ -10,6 +10,7 @@ import type {
   FleetInstance,
   FleetScenario,
   InstanceSpace,
+  LaneInfo,
   ParseResult,
   Reference,
   Study,
@@ -44,10 +45,11 @@ export const studio = {
   parse: (text: string) => call<ParseResult>('POST', '/compose/parse', { text }),
   compose: (text: string, opts: { seed?: number; field_id?: string; overrides?: Record<string, unknown> } = {}) =>
     call<FleetScenario>('POST', '/compose', { text, ...opts }),
-  saveScenario: (id: string, body: { instance?: FleetInstance | unknown; title?: string; summary?: string }) =>
+  saveScenario: (id: string, body: { instance?: FleetInstance | unknown; title?: string; summary?: string; layers?: Record<string, unknown> }) =>
     call<FleetScenario>('PUT', `/scenarios/${encodeURIComponent(id)}`, body),
   forkScenario: (id: string, body: { instance?: unknown; title?: string } = {}) =>
     call<Scenario>('POST', `/scenarios/${encodeURIComponent(id)}/fork`, body),
+  lanes: (instance: FleetInstance) => call<LaneInfo>('POST', '/fleet/lanes', { instance }),
   importGeojson: (geojson: unknown, title?: string) => call<FleetScenario>('POST', '/scenarios/import/geojson', { geojson, title }),
   importScenario: (scenario: unknown) => call<Scenario>('POST', '/scenarios', scenario),
   library: () => call<{ cvrplib: Record<string, number | string>; fields: Record<string, unknown>; references: { count: number } }>('GET', '/library'),

@@ -5,6 +5,7 @@ import { Command } from 'cmdk';
 import {
   BookOpen,
   Bot,
+  Boxes,
   ChevronDown,
   Command as CommandIcon,
   FlaskConical,
@@ -22,6 +23,8 @@ import { Button, Segmented, Spinner, StatusDot } from '../lab/ui';
 import { simPhaseLabel } from '../lab/shell/labels';
 import { studio } from './api';
 import { flushSave, useStudio, type Workspace } from './store';
+import { useAssets } from './assets/store';
+import { ReplayPanel } from './experiment/ReplayPanel';
 import type { ParseResult } from './types';
 import { AdvisorPanel, ComparePanel, InspectorPanel, MapPanel, VerifyPanel } from './panels/PlanPanels';
 import { ScenarioNavigator } from './panels/LibraryPanels';
@@ -40,6 +43,14 @@ const RosView = lazy(() => import('./ros/RosScene').then((m) => ({ default: m.Ro
 const GazeboView = lazy(() => import('./ros/GazeboView').then((m) => ({ default: m.GazeboView })));
 const TelemetryView = lazy(() => import('./ros/Telemetry').then((m) => ({ default: m.TelemetryView })));
 const AnalysisPanel = lazy(() => research().then((m) => ({ default: m.AnalysisPanel })));
+const AssetLibrary = lazy(() => import('./assets/AssetLibrary').then((m) => ({ default: m.AssetLibrary })));
+const AssetPreview = lazy(() => import('./assets/AssetPreview').then((m) => ({ default: m.AssetPreview })));
+const AssetInspector = lazy(() => import('./assets/AssetInspector').then((m) => ({ default: m.AssetInspector })));
+const ImportWizard = lazy(() => import('./assets/ImportWizard').then((m) => ({ default: m.ImportWizard })));
+const MapToTaskMap = lazy(() => import('./assets/MapToTaskMap').then((m) => ({ default: m.MapToTaskMap })));
+const ExperimentPanel = lazy(() => import('./experiment/ExperimentPanel').then((m) => ({ default: m.ExperimentPanel })));
+const DecisionPanel = lazy(() => import('./experiment/DecisionPanel').then((m) => ({ default: m.DecisionPanel })));
+const FiguresPanel = lazy(() => import('./figures/FiguresPanel').then((m) => ({ default: m.FiguresPanel })));
 import './dock.css';
 import s from './studio.module.css';
 
@@ -49,6 +60,13 @@ const PANELS = {
   advisor: { title: '推荐与求解', C: AdvisorPanel },
   compare: { title: '方案对比', C: ComparePanel },
   verify: { title: '验算', C: VerifyPanel },
+  results: { title: '实验结果', C: ExperimentPanel },
+  decision: { title: '决策记录', C: DecisionPanel },
+  replay: { title: '仿真回放', C: ReplayPanel },
+  figures: { title: '科研图表', C: FiguresPanel },
+  assets: { title: '资产库', C: AssetLibrary },
+  assetPreview: { title: '资产预览', C: AssetPreview },
+  assetInspector: { title: '资产检查器', C: AssetInspector },
   scenarios: { title: '场景库', C: ScenarioNavigator },
   algorithms: { title: '算法库', C: AlgorithmsPanel },
   cvrplib: { title: 'CVRPLIB', C: CvrplibPanel },
@@ -80,6 +98,7 @@ const COMPONENTS = Object.fromEntries(Object.entries(PANELS).map(([id, p]) => [i
 
 const WORKSPACES: { value: Workspace; label: string; icon: typeof MapIcon }[] = [
   { value: 'plan', label: '任务规划', icon: MapIcon },
+  { value: 'assets', label: '资产库', icon: Boxes },
   { value: 'experiments', label: '算法实验', icon: FlaskConical },
   { value: 'sim', label: '仿真', icon: Bot },
   { value: 'library', label: '资料', icon: BookOpen },
@@ -93,13 +112,23 @@ const LAYOUTS: Record<Workspace, Step[]> = {
     { id: 'scenarios', ref: 'map', dir: 'left', w: 250 },
     { id: 'advisor', ref: 'map', dir: 'right', w: 360 },
     { id: 'inspector', ref: 'advisor', dir: 'within', inactive: true },
+    { id: 'decision', ref: 'advisor', dir: 'within', inactive: true },
     { id: 'compare', ref: 'map', dir: 'below', h: 250 },
     { id: 'verify', ref: 'compare', dir: 'within', inactive: true },
+    { id: 'results', ref: 'compare', dir: 'within', inactive: true },
+    { id: 'replay', ref: 'compare', dir: 'within', inactive: true },
+    { id: 'figures', ref: 'compare', dir: 'within', inactive: true },
     { id: 'console', ref: 'compare', dir: 'within', inactive: true },
+  ],
+  assets: [
+    { id: 'assetPreview' },
+    { id: 'assets', ref: 'assetPreview', dir: 'left', w: 380 },
+    { id: 'assetInspector', ref: 'assetPreview', dir: 'right', w: 400 },
   ],
   experiments: [
     { id: 'studies' },
     { id: 'analysis', ref: 'studies', dir: 'right', w: 640 },
+    { id: 'figures', ref: 'analysis', dir: 'within', inactive: true },
     { id: 'algorithms', ref: 'studies', dir: 'within', inactive: true },
   ],
   sim: [
@@ -125,7 +154,7 @@ const LAYOUTS: Record<Workspace, Step[]> = {
 };
 /** Panels that keep rendering while hidden (map editor state, WebGL contexts, live sockets). */
 const ALWAYS = new Set<PanelId>(['map', 'rosview', 'gazebo']);
-const LAYOUT_KEY = (w: Workspace) => `workbench.layout.v3.${w}`;
+const LAYOUT_KEY = (w: Workspace) => `workbench.layout.v4.${w}`;
 
 function buildDefault(api: DockviewApi, w: Workspace) {
   for (const step of LAYOUTS[w]) {
@@ -178,6 +207,9 @@ export function Studio({ route }: { route: Route }) {
     if (route.view === 'plan' && route.id) {
       void st.open(route.id);
       if (st.workspace !== 'plan') st.setWorkspace('plan');
+    } else if (route.view === 'assets') {
+      st.setWorkspace('assets');
+      if (route.id) void useAssets.getState().select(route.id);
     } else if (route.view === 'sim') st.setWorkspace('sim');
     else if (route.view === 'runs') st.setWorkspace('system');
     else if (route.view === 'archive') st.setWorkspace('library');
@@ -231,6 +263,15 @@ export function Studio({ route }: { route: Route }) {
 
   useShortcuts(api);
 
+  // A save that failed while the service was down is retried as soon as the connection is back.
+  const connected = useGatewayConnected();
+  useEffect(() => {
+    if (connected && useStudio.getState().save === 'error') {
+      useStudio.setState({ save: 'dirty' });
+      void flushSave();
+    }
+  }, [connected]);
+
   useEffect(() => {
     const onOpen = (e: Event) => openPanel(api.current, (e as CustomEvent<PanelId>).detail);
     window.addEventListener('studio:open-panel', onOpen);
@@ -265,7 +306,20 @@ export function Studio({ route }: { route: Route }) {
       <StatusBar />
       {st.toast && <div className={s.toast} data-tone={st.toast.tone}>{st.toast.text}</div>}
       {st.paletteOpen && <Palette api={api} />}
+      <AssetModals />
     </div>
+  );
+}
+
+/** Import wizard and map → task-map wizard: reachable from every workspace. */
+function AssetModals() {
+  const importOpen = useAssets((x) => x.importOpen);
+  const taskMapFrom = useAssets((x) => x.taskMapFrom);
+  return (
+    <Suspense fallback={null}>
+      {importOpen && <ImportWizard />}
+      {taskMapFrom && <MapToTaskMap />}
+    </Suspense>
   );
 }
 
@@ -388,6 +442,10 @@ function Palette({ api }: { api: React.RefObject<DockviewApi | null> }) {
             <Command.Empty>没有匹配项</Command.Empty>
             <Command.Group heading="操作">
               <Command.Item onSelect={run(() => document.querySelector<HTMLInputElement>('input[aria-label="任务描述"]')?.focus())}>输入任务描述</Command.Item>
+              <Command.Item onSelect={run(() => { st.setWorkspace('assets'); useAssets.getState().openImport(); })}>导入资产（地图 / 车辆 / 设施）</Command.Item>
+              <Command.Item onSelect={run(() => openPanel(api.current, 'replay'))}>回放仿真</Command.Item>
+              <Command.Item onSelect={run(() => openPanel(api.current, 'results'))}>查看实验结果并导出</Command.Item>
+              <Command.Item onSelect={run(() => openPanel(api.current, 'figures'))}>科研图表（期刊版式 / 论文图包）</Command.Item>
               <Command.Item onSelect={run(() => void st.solve())}>求解并对比推荐的算法</Command.Item>
               <Command.Item onSelect={run(() => window.dispatchEvent(new Event('studio:fit')))}>地图适配全图</Command.Item>
               <Command.Item onSelect={run(st.undo)}>撤销</Command.Item>

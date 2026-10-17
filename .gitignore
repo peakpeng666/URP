@@ -35,3 +35,23 @@ dist/
 /setup/2026-10-15/integration/extended/selector-study/
 /setup/2026-10-15/integration/extended/ui-coverage-experiment.json
 /setup/2026-10-15/integration/bridge-exit/recovered-raw-logs/
+
+# 原始运行证据留本地（口径见 942fe69b）：入库的是 summary / report / log / 小图等结论文件
+setup/2026-10-15/integration/workbench/
+setup/2026-10-16/assets/
+setup/2026-10-16/backend/
+setup/2026-10-16/hardening/
+setup/2026-10-16/figures/
+setup/2026-10-17/backend/
+setup/2026-10-17/modeling/ui-*.json
+setup/2026-10-17/modeling/model-v3-*/
+setup/2026-10-17/modeling/first-live/
+setup/2026-10-17/modeling/response-pilot*/
+setup/2026-10-17/modeling/timestep-diagnosis/
+setup/2026-10-17/modeling/wheel-contact-diagnosis/
+setup/2026-10-17/modeling/contact-detector-diagnosis/
+setup/2026-10-17/modeling/harness-final-check/
+setup/2026-10-17/modeling/source-snapshot/
+setup/2026-10-17/modeling/integrated-final/
+setup/2026-10-17/modeling/ui-runtime/
+setup/2026-10-17/tyre-energy/model-v4-*/

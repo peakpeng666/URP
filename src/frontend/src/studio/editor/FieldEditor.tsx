@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as RPointerEvent, type WheelEvent as RWheelEvent } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as RPointerEvent, type ReactNode, type WheelEvent as RWheelEvent } from 'react';
 import { useElementSize } from '../../lib/useElementSize';
 import { fitView, toScreen, toWorld, worldTransform, zoomAt, type View } from '../../lab/canvas/view';
 import type { XY } from '../../lab/types';
@@ -29,7 +29,13 @@ export interface FieldEditorProps {
   selection: Selection;
   editable: boolean;
   fitKey: string;
+  /** Lane centre lines between crop rows (drawn faintly when vehicles travel along the rows). */
+  lanes?: XY[][];
   violations?: XY[];
+  /** Display-only layer under the plots (a map asset in task-map metres); never hit-tested. */
+  background?: ReactNode;
+  /** Extra world-space layer above the routes (e.g. a simulation replay); receives the view for pixel-sized marks. */
+  overlay?: (view: View) => ReactNode;
   onEdit: (fn: (i: FleetInstance) => FleetInstance) => void;
   onSelect: (s: Selection) => void;
   onCursor?: (p: XY | null) => void;
@@ -46,7 +52,7 @@ type Drag =
 const GRID_STEPS = [0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500];
 
 export function FieldEditor(props: FieldEditorProps) {
-  const { inst, routes, hidden, playback, tool, obstacleKind, selection, editable, fitKey, violations, onEdit, onSelect, onCursor } = props;
+  const { inst, routes, hidden, playback, tool, obstacleKind, selection, editable, fitKey, lanes, violations, background, overlay, onEdit, onSelect, onCursor } = props;
   const [box, size] = useElementSize<HTMLDivElement>();
   const [view, setView] = useState<View>({ k: 1, tx: 0, ty: 0 });
   const [preview, setPreview] = useState<FleetInstance | null>(null);
@@ -81,9 +87,30 @@ export function FieldEditor(props: FieldEditorProps) {
     return () => window.removeEventListener('studio:fit', onFit);
   }, [fit]);
 
+  // Centre on a point (e.g. an anomaly in a replay), showing about `span` metres across.
+  useEffect(() => {
+    const onCenter = (e: Event) => {
+      const { xy, span = 24 } = (e as CustomEvent<{ xy: XY; span?: number }>).detail ?? {};
+      if (!xy || !size.width || !size.height) return;
+      touched.current = true;
+      setView(fitView({ minX: xy[0] - span / 2, minY: xy[1] - span / 2, maxX: xy[0] + span / 2, maxY: xy[1] + span / 2 }, size.width, size.height, 28));
+    };
+    window.addEventListener('studio:center', onCenter);
+    return () => window.removeEventListener('studio:center', onCenter);
+  }, [size.width, size.height]);
+
   const issues = useMemo(() => taskIssues(shown), [shown]);
   const visibleRoutes = useMemo(() => routes.filter((r) => !hidden.includes(r.vehicle_name)), [routes, hidden]);
   const taskOwner = useMemo(() => vehicleOfTask(visibleRoutes), [visibleRoutes]);
+  // Where each task is served when that is not the task point itself (from a lane or the headland).
+  const stops = useMemo(() => {
+    const at = new Map(inst.tasks.map((t) => [t.id, t.xy] as const));
+    return visibleRoutes.flatMap((r) => r.services.flatMap((sv) => {
+      const stop = (sv as { stop?: XY }).stop;
+      const xy = at.get(sv.task);
+      return stop && xy && Math.hypot(stop[0] - xy[0], stop[1] - xy[1]) > 0.05 ? [{ key: `${r.vehicle_name}-${sv.task}`, xy, stop, color: r.color }] : [];
+    }));
+  }, [visibleRoutes, inst.tasks]);
 
   const world = (e: { clientX: number; clientY: number }): XY => {
     const rect0 = svg.current!.getBoundingClientRect();
@@ -268,12 +295,18 @@ export function FieldEditor(props: FieldEditorProps) {
         <Grid view={view} step={gridStep} width={size.width} height={size.height} />
         <g transform={worldTransform(view)}>
           <polygon data-hit="boundary" className={s.boundary} points={shown.boundary.map((p) => p.join(',')).join(' ')} />
+          {background}
           {shown.plots.map((pl) => (
             <g key={pl.id}>
               <polygon className={s.plot} points={pl.polygon.map((p) => p.join(',')).join(' ')} />
               <polygon data-hit="plot" data-id={pl.id} className={s.plotRows} style={{ fill: `url(#rows-${pl.id})` }} points={pl.polygon.map((p) => p.join(',')).join(' ')} />
             </g>
           ))}
+          {lanes && lanes.length > 0 && (
+            <g className={s.lanes}>
+              {lanes.map((ln, i) => <polyline key={i} points={ln.map((p) => p.join(',')).join(' ')} />)}
+            </g>
+          )}
           {shown.obstacles.map((o) => (
             <polygon
               key={o.id}
@@ -287,6 +320,10 @@ export function FieldEditor(props: FieldEditorProps) {
           {visibleRoutes.map((r) => (
             <polyline key={r.vehicle_name} className={s.route} style={{ stroke: r.color }} points={r.polyline.map((p) => p.join(',')).join(' ')} />
           ))}
+          {stops.map((st) => (
+            <line key={st.key} className={s.stopLink} style={{ stroke: st.color }} x1={st.xy[0]} y1={st.xy[1]} x2={st.stop[0]} y2={st.stop[1]} />
+          ))}
+          {overlay?.(view)}
           {selPoly && <polygon className={s.selected} points={selPoly.map((p) => p.join(',')).join(' ')} />}
         </g>
         {visibleRoutes.map((r) => <Arrows key={r.vehicle_name} poly={r.polyline} view={view} color={r.color} />)}

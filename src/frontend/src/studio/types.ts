@@ -31,6 +31,8 @@ export interface FleetVehicles {
   capacity: number;
   speed_mps: number;
   trips: 'single' | 'multi';
+  /** rows: along the lanes between crop rows and the headland / farm roads; free: anywhere clear of obstacles. */
+  travel?: 'rows' | 'free';
   names?: string[];
 }
 
@@ -45,6 +47,27 @@ export interface FleetInstance {
   robot_radius: number;
   units: 'm';
   meta?: { task_word?: string; margin_m?: number; road_m?: number };
+}
+
+/** Crop-row facts of one plot, as the planner lays the rows out. */
+export interface LanePlot {
+  id: string;
+  crop: string;
+  spacing_m: number;
+  row_width_m: number;
+  /** every: a lane between every two rows; track: a driving track left every few rows */
+  mode: 'every' | 'track';
+  lane_width_m: number;
+  pitch_m: number;
+  rows: number;
+  lanes: number;
+}
+
+export interface LaneInfo {
+  lanes: XY[][];
+  lane_count: number;
+  closed_lanes: number;
+  plots: LanePlot[];
 }
 
 export interface FleetRoute extends Route {
@@ -283,5 +306,8 @@ export interface FieldSimSummary {
   metrics: FieldSimMetrics;
   real_time_factor: number | null;
   sim_time: number | null;
+  /** rows: crop rows were solid and the plan drove along the lanes (older results: absent) */
+  travel?: 'rows' | 'free';
+  row_collisions?: number;
   vehicles: Pick<FieldVehicleState, 'name' | 'label' | 'color' | 'state' | 'distance_m' | 'duration_s' | 'planned_length_m' | 'planned_duration_s' | 'tasks_done' | 'tasks_total' | 'cross_track_mean_m' | 'cross_track_max_m'>[];
 }
