@@ -54,5 +54,21 @@
     "heterogeneous or curvature-constrained physical execution unsupported",
     "post-hoc energy proxy; no calibrated motor, battery or soil model",
     "no learned recommendation gain demonstrated"
-  ]
+  ],
+  "cloud_followup": {
+    "first_main_run": "https://github.com/peakpeng666/URP/actions/runs/39043256121",
+    "first_main_commit": "133256a3c96f3e1b8c7e0d048ad511a901f56047",
+    "first_main_result": "14 passed; supervision fixture readiness missing",
+    "same_commit_other_branch_results": "cvrp-baselines and optimize passed",
+    "production_supervisor_changed": false,
+    "regression_passed": 27,
+    "repeated_lifecycle_passed": 10,
+    "worker_launches_in_repeat": 80,
+    "delayed_startup_old_deadline_negative_control": "expected failure",
+    "source_sha256": {
+      "src/research/execution/supervise.py": "c12c38ed08a6ce8431747f728d7075a4ebe5ebe1eb6c0a8fd464ccada6ce96e3",
+      "src/research/execution/tests/test_supervise.py": "b84ff302785ddbcd3e6662fa2824cc25c5983a8761a916d56ec681e475d5b774"
+    },
+    "final_cloud_result": "See Actions for the final main commit; this source snapshot does not assert a future CI result."
+  }
 }

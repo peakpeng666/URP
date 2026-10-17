@@ -12,7 +12,7 @@
 
 | 验收 | 结果与证据 |
 |---|---|
-| 云端工程体系 | **15 门禁通过**：档案/Jobs、研究、生成器、进程管理、独立验证器、机器人核心、前端与 BPP 历史读回等；不包含物理仿真。[汇总](../../2026-10-17/integration-closeout/engineering/summary.json) |
+| 工程门禁本机复验 | **15 门禁通过**：档案/Jobs、研究、生成器、进程管理、独立验证器、机器人核心、前端与 BPP 历史读回等；不包含物理仿真。[汇总](../../2026-10-17/integration-closeout/engineering/summary.json) |
 | 田间 Python 回归 | **242 passed**；随后仿真转换修复的 80 项及其消费者 81 项复验通过，最终建模回归通过。首次测试夹具错误与日志保留，不改判。[全量](../../2026-10-17/integration-closeout/pytest-final.log)、[转换](../../2026-10-17/integration-closeout/fieldworld-regressions-pass.log)、[消费者](../../2026-10-17/integration-closeout/fieldworld-consumers.log)、[最终模型](../../2026-10-17/integration-closeout/model-regressions-final.log) |
 | 前端 | 类型检查、**78 tests**、最终生产构建通过。仍有已有大 chunk / 重复静动态导入警告。[测试](../../2026-10-17/integration-closeout/frontend-tests-release.log)、[构建](../../2026-10-17/integration-closeout/build-release.log) |
 | 7 场真实 Gazebo 回归 | free、rows、restart 成功；cancel 为 canceled/0；时钟停滞、桥接退出、实体接触为 failed/1。全部清理 PASS、无所属残留；未把故障归零。[逐场结果](../../2026-10-17/integration-closeout/live-summary.json) |
@@ -24,6 +24,8 @@
 范围限制仍然有效：规划曲率检查是采样几何检查；异构、正最小转弯半径或未适配车辆仅可做规划研究，执行如实拒绝。补给是零处理时间、抽象容量重置，不含真实卸载机构或动态载荷。执行为真值定位、平地刚体和串行交通基线；本次网页两车的轮式里程计最大末端漂移约 **26.585 m**，已在页面和原记录显示，**不能声称里程计/轮胎校准通过**。能耗仍为后验纵向代理，缺少电机/电池/转向摩擦模型。并行避碰、可变形土壤、通用导入车辆执行和学习推荐增益尚未交付；这轮未重跑旧 TB4 压力试验或证明论文级算法优越性。
 
 证据统一在 `setup/2026-10-17/integration-closeout/`；[源码指纹](../../2026-10-17/integration-closeout/source-fingerprints.json) 对应测试字节。Git 保留代码、协议、摘要、日志和截图；大体积原始世界/遥测仍在本机 `live/`、`live-supply-fixed/` 与 `src/lab/runtime/fieldsim/field_20261017T145457_3ba96a/`，浏览器原始 envelope 为本机 `ui-browser-record.json`，按 `.gitignore` 不上传。重新运行 `src/lab/e2e/field_backend.py --out /全新绝对目录` 可复验新增 supply 在内的场景；不要与其他物理测试并发。
+
+云端首次同步的 `133256a3` 在 main 的 [GitHub 检查](https://github.com/peakpeng666/URP/actions/runs/39043256121) 中，14 门禁通过、合成进程监督测试缺少就绪文件而失败；同一提交的另外两分支通过。原始日志未保留子进程错误，不能据此断言唯一触发原因。审查修正两处测试时序隐患：三级就绪文件改为原子发布，350 ms 故障计时改为就绪后开始，启动单独限 2 s；保留原 4 s 总限与生产监督逻辑，并在未就绪失败时附上子进程日志。新增慢启动/启动超时回归后 **27 项通过**；旧计时方式在 450 ms 启动延迟下的失败负对照、10 轮重复启停（80 次 worker 启动）的结果分别留存。云端最终状态以 [main 的 Actions](https://github.com/peakpeng666/URP/actions?query=branch%3Amain) 为准。[首次失败](../../2026-10-17/integration-closeout/supervision-ci-first-failure.log)、[修复后](../../2026-10-17/integration-closeout/supervision-ci-fix.log)、[负对照](../../2026-10-17/integration-closeout/supervision-ci-old-deadline.log)、[重复结果](../../2026-10-17/integration-closeout/supervision-ci-repeat.json)
 
 ## GLM 增量独立验收（2026-10-17，合并前快照）
 

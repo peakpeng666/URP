@@ -21,11 +21,14 @@ spec=importlib.util.spec_from_file_location('candidate_supervise',SUPERVISOR)
 supervise=importlib.util.module_from_spec(spec)
 spec.loader.exec_module(supervise)
 EVIDENCE=[]
+CI_STARTUP_TESTS=frozenset({'test_slow_fixture_startup_preserves_lifecycle_expectations',
+                          'test_fixture_startup_timeout_is_bounded_and_reaped'})
 
 LEAF="""import os,signal,sys,time
 from pathlib import Path
 signal.signal(signal.SIGTERM,signal.SIG_IGN)
-Path(sys.argv[1]).write_text(str(os.getpid()))
+ready=Path(sys.argv[1]); pending=Path(str(ready)+'.pending')
+pending.write_text(str(os.getpid())); pending.replace(ready)
 time.sleep(30)
 """
 DESCENDANT="""import json,os,signal,subprocess,sys,time
@@ -34,20 +37,23 @@ signal.signal(signal.SIGTERM,signal.SIG_IGN)
 leaf_ready=Path(sys.argv[1]+'.leaf')
 leaf=subprocess.Popen([sys.executable,'-B','-c',sys.argv[2],str(leaf_ready)])
 while not leaf_ready.exists():time.sleep(.005)
-Path(sys.argv[1]).write_text(json.dumps([os.getpid(),int(leaf_ready.read_text())]))
+ready=Path(sys.argv[1]); pending=Path(str(ready)+'.pending')
+pending.write_text(json.dumps([os.getpid(),int(leaf_ready.read_text())])); pending.replace(ready)
 time.sleep(30)
 """
 WORKER="""import json,os,signal,subprocess,sys,time
 from pathlib import Path
 req=json.loads(sys.argv[1]); mode=req['mode']; info=Path(req['info'])
 signal.signal(signal.SIGTERM,signal.SIG_DFL if mode=='term' else signal.SIG_IGN)
+time.sleep(req.get('startup_delay_s',0))
 pids=[os.getpid()]
 if mode in {'timeout_tree','success_tree','error_tree'}:
     ready=Path(str(info)+'.descendant')
     child=subprocess.Popen([sys.executable,'-B','-c',req['descendant'],str(ready),req['leaf']])
     while not ready.exists():time.sleep(.005)
     pids+=json.loads(ready.read_text())
-info.write_text(json.dumps({'pids':pids,'pgid':os.getpgid(0),'sid':os.getsid(0)}))
+pending=Path(str(info)+'.pending')
+pending.write_text(json.dumps({'pids':pids,'pgid':os.getpgid(0),'sid':os.getsid(0)})); pending.replace(info)
 if mode in {'timeout','timeout_tree','term'}:time.sleep(30)
 elif mode in {'exception','error_tree'}:raise RuntimeError('synthetic worker exception')
 elif mode=='valid_result':
@@ -103,8 +109,9 @@ class SupervisorLifecycleTests(unittest.TestCase):
                 'descendant':DESCENDANT,'leaf':LEAF}
 
     def spawn(self,req):
-        proc=subprocess.Popen([sys.executable,'-B',str(self.worker),json.dumps(req)],
-                              start_new_session=True,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        with Path(req['info']+'.log').open('wb') as log:
+            proc=subprocess.Popen([sys.executable,'-B',str(self.worker),json.dumps(req)],
+                                  start_new_session=True,stdout=log,stderr=subprocess.STDOUT)
         self.processes.append(proc)
         self.assertLessEqual(len(self.processes),8,'Finite task launch cap')
         return proc
@@ -115,6 +122,9 @@ class SupervisorLifecycleTests(unittest.TestCase):
                 os.kill(pid,0)
 
     def observe(self,proc,req,record):
+        self.assertTrue(Path(req['info']).is_file(),
+                        f'Fixture did not publish readiness; exit={record}; '
+                        f'worker log={Path(req["info"]+".log").read_text()}')
         info=json.loads(Path(req['info']).read_text())
         self.assertLessEqual(len(info['pids']),3,'Fixed fixture process cap')
         self.assertEqual(info['pgid'],proc.pid)
@@ -128,9 +138,23 @@ class SupervisorLifecycleTests(unittest.TestCase):
                          'observed_pids':info['pids'],'exit_record':record})
         return info
 
-    def run_mode(self,mode,index=0,reason='child_wall_limit'):
-        req=self.request(mode,index);proc=self.spawn(req);start=time.monotonic()
-        record=supervise.wait_for_worker(proc,lambda:reason if time.monotonic()-start>.35 else None)
+    def fixture_limit(self,req,reason):
+        started=time.monotonic();ready_at=None
+        def limit():
+            nonlocal ready_at
+            now=time.monotonic()
+            if ready_at is None:
+                if Path(req['info']).is_file():ready_at=now
+                elif now-started>2:return 'fixture_startup_timeout'
+            # Exercise termination after the finite fixture has started. The
+            # real supervisor's resource/deadline policy is not changed.
+            if ready_at is not None and now-ready_at>.35:return reason
+        return limit
+
+    def run_mode(self,mode,index=0,reason='child_wall_limit',startup_delay_s=0):
+        req=self.request(mode,index);req['startup_delay_s']=startup_delay_s
+        proc=self.spawn(req)
+        record=supervise.wait_for_worker(proc,self.fixture_limit(req,reason))
         info=self.observe(proc,req,record)
         return record,info
 
@@ -191,6 +215,23 @@ class SupervisorLifecycleTests(unittest.TestCase):
             _,info=self.run_mode(mode,index)
             all_pids.extend(info['pids'])
         self.assert_gone(all_pids)
+
+    def test_slow_fixture_startup_preserves_lifecycle_expectations(self):
+        record,info=self.run_mode('success_tree',startup_delay_s=.45)
+        self.assertEqual(record['returncode'],0)
+        self.assertFalse(record['watchdog_killed'])
+        self.assertEqual(len(info['pids']),3)
+        self.assertEqual(len(record['adopted_descendants']),2)
+
+    def test_fixture_startup_timeout_is_bounded_and_reaped(self):
+        req=self.request('timeout');req['startup_delay_s']=3
+        proc=self.spawn(req)
+        record=supervise.wait_for_worker(proc,self.fixture_limit(req,'child_wall_limit'))
+        self.assertEqual(record['kill_reason'],'fixture_startup_timeout')
+        self.assertEqual(record['returncode'],-signal.SIGKILL)
+        self.assertTrue(record['reaped'] and record['process_group_reaped'])
+        self.assertFalse(Path(req['info']).exists())
+        self.assert_gone([proc.pid])
 
     def test_cleanup_does_not_reap_unrelated_child(self):
         other=subprocess.Popen([sys.executable,'-B','-c','import time;time.sleep(.05);raise SystemExit(23)'])
@@ -512,7 +553,8 @@ class PerCaseResult(unittest.TextTestResult):
     def save_case(self,test,status,detail=None):
         item={'test_id':test.id(),'status':status,
               'duration_s':time.perf_counter()-self.case_start,
-              'original_v1_case':not test._testMethodName.startswith('test_v2_'),
+              'original_v1_case':not test._testMethodName.startswith('test_v2_') and test._testMethodName not in CI_STARTUP_TESTS,
+              'ci_startup_case':test._testMethodName in CI_STARTUP_TESTS,
               'evidence':[entry for entry in EVIDENCE if entry['test']==test.id()]}
         if detail is not None:item['detail']=detail
         self.case_results.append(item)
@@ -530,10 +572,11 @@ def run_and_record():
     stream=io.StringIO()
     suite=load_tests(unittest.defaultTestLoader,None,None)
     result=unittest.TextTestRunner(stream=stream,verbosity=2,resultclass=PerCaseResult).run(suite)
-    report={'version':'v2','tests_run':result.testsRun,'failures':len(result.failures),
+    report={'version':'v3','tests_run':result.testsRun,'failures':len(result.failures),
             'errors':len(result.errors),'skipped':len(result.skipped),'passed':result.wasSuccessful(),
             'original_v1_cases':sum(row['original_v1_case'] for row in result.case_results),
-            'new_v2_cases':sum(not row['original_v1_case'] for row in result.case_results),
+            'new_v2_cases':sum(row['test_id'].rsplit('.',1)[-1].startswith('test_v2_') for row in result.case_results),
+            'ci_startup_cases':sum(row['ci_startup_case'] for row in result.case_results),
             'cases':result.case_results,'log':stream.getvalue(),
             'candidate_sha256':hashlib.sha256(SUPERVISOR.read_bytes()).hexdigest(),
             'test_script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),

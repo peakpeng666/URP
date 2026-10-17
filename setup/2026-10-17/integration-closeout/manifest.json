@@ -226,8 +226,8 @@
   },
   {
     "path": "summary.json",
-    "bytes": 2075,
-    "sha256": "64e4151943b652f177d5f0a638490027d29d19fcda5ad63922a97b9eda51baa0"
+    "bytes": 3021,
+    "sha256": "9b3aa9ca93870c03b562b5a86f1622a41812e349894d8a95af89876710f4d605"
   },
   {
     "path": "typecheck-final.log",
@@ -443,5 +443,50 @@
     "path": "engineering/research_worker_evidence/test_missing_error_type_is_api_error.json",
     "bytes": 1959,
     "sha256": "9226355eebc8c0c1f086d1e3345052fa882330356a009e20fe92d17d8e9fc332"
+  },
+  {
+    "path": "supervision-ci-first-failure.log",
+    "bytes": 5547,
+    "sha256": "34dbc0224a8657d97c8c34e66d99755fd4693919d5b16a53c916e7a6dd9b1d7f"
+  },
+  {
+    "path": "supervision-ci-first-summary.json",
+    "bytes": 10283,
+    "sha256": "ca6ec84af7abd7088f64d1f0adbf74be898a6e3669f633c72a709cf9475276d8"
+  },
+  {
+    "path": "supervision-ci-fix.log",
+    "bytes": 4317,
+    "sha256": "702d9f852727404c34d4ab4ddd58963a4cf5bc78821085cfd873a67b83041ed6"
+  },
+  {
+    "path": "supervision-ci-old-deadline.log",
+    "bytes": 2096,
+    "sha256": "a80c3d320e3957b8a13c213038e3fd724d3f77ef29befd763045c64abae631c5"
+  },
+  {
+    "path": "supervision-ci-record.log",
+    "bytes": 4508,
+    "sha256": "416aa122ee7fdc646f56bba19b6760b59a294c6b284959b0d8f06b44ce8024fc"
+  },
+  {
+    "path": "supervision-ci-repeat.json",
+    "bytes": 1006,
+    "sha256": "671192bb771ff22022aab9b75981b240e1cf29e87acb5ca0c1d7477d7eff4aaa"
+  },
+  {
+    "path": "supervision-ci-repeat.log",
+    "bytes": 2411,
+    "sha256": "ba2bb05a66b130308f224c5602f3a0f9e3eff46c44f25327891cc8c968245aa1"
+  },
+  {
+    "path": "supervision-ci/test-results.json",
+    "bytes": 68514,
+    "sha256": "f0d5bee2e220732ebbffdfa2e8b652fdfa86b39d0cb227ae9b724285ba190786"
+  },
+  {
+    "path": "supervision-ci/test-results.txt",
+    "bytes": 4270,
+    "sha256": "1d636509ed8f8c02933aabe28fc394b80acf5ca3f63bf2303538e8379462e10e"
   }
 ]
