@@ -1,0 +1,127 @@
+"""Independent checks of recorded field-simulation trajectories, run in the solver environment.
+
+Checks the observed line segments swept by the declared circular footprint. This is not a proof
+about unobserved motion between telemetry samples or collision avoidance between robots.
+"""
+from __future__ import annotations
+
+import json
+import math
+import sys
+from pathlib import Path
+
+import numpy as np
+import shapely
+from shapely.geometry import LineString, Point, Polygon
+
+from . import lanes
+from .field_traffic import separation
+
+TRACK_LIMIT_M = 0.5
+
+
+def verify_motion_metrics(result):
+    """Cross-check online integration with the independently saved pose sequence."""
+    errors, details = [], []
+    for v in result.get('vehicles', []):
+        trail = result.get('trails', {}).get(v['name'], [])
+        traced = sum(math.dist(a[1:3], b[1:3]) for a, b in zip(trail, trail[1:]))
+        measured, speed = v.get('distance_m'), v.get('speed')
+        tolerance = max(.2, .01 * traced)  # coarser saved poses omit a little curvature
+        valid = (isinstance(measured, (int, float)) and math.isfinite(measured)
+                 and measured >= 0 and abs(measured - traced) <= tolerance)
+        if not valid:
+            errors.append(f"{v['name']} 在线累计里程与保存的真值轨迹不一致")
+        stopped = isinstance(speed, (int, float)) and math.isfinite(speed) and 0 <= speed < .02
+        if not stopped:
+            errors.append(f"{v['name']} 终点实测速度未稳定停止")
+        details.append({'vehicle': v['name'], 'trace_distance_m': traced, 'reported_distance_m': measured,
+                        'tolerance_m': tolerance, 'distance_valid': valid, 'stopped': stopped})
+    total = result.get('metrics', {}).get('total_distance_m')
+    if (not isinstance(total, (int, float)) or not math.isfinite(total)
+            or abs(total - sum(v.get('distance_m') or 0 for v in result.get('vehicles', []))) > .02 * max(1, len(details))):
+        errors.append('总实测里程与各车里程之和不一致')
+    return {'valid': not errors, 'errors': errors, 'vehicles': details}
+
+
+def verify(plan, result):
+    inst = plan['instance']
+    boundary = Polygon(inst['boundary'])
+    solids = [Polygon(o['polygon']) for o in inst.get('obstacles', [])]
+    if plan['travel'] == 'rows':
+        solids += lanes.Network(inst).rows()
+    solids = np.array(solids, dtype=object)
+    radius = plan['robot_radius_m']
+    errors, details = [], []
+    motion_metrics = verify_motion_metrics(result) if 'truth_timing' in result else None
+    if motion_metrics:
+        errors.extend(motion_metrics['errors'])
+    dynamics = None
+    if result.get('physics'):
+        if (result.get('physics_runtime') or {}).get('valid') is not True:
+            errors.append('缺少物理实现加载及配置核验，不能认证执行结果')
+        from .field_dynamics import verify as verify_dynamics
+        dynamics = verify_dynamics(result)
+        errors.extend(dynamics['errors'])
+    for v in plan['vehicles']:
+        trail = result.get('trails', {}).get(v['name'], [])
+        if not trail or any(len(p) < 4 or not all(math.isfinite(x) for x in p[:4]) for p in trail):
+            errors.append(f"{v['label']} 缺少有效真值轨迹")
+            continue
+        pts = [p[1:3] for p in trail]
+        actual = LineString(pts) if len(pts) > 1 else Point(pts[0])
+        intended = LineString(v['path'])
+        # A stationary trajectory is evidence of no motion, not an empty geometry after segmentize.
+        if actual.length <= 1e-12:
+            actual = Point(pts[0])
+        if intended.length <= 1e-12:
+            intended = Point(v['path'][0])
+        obstacle_clearance = float(shapely.distance(solids, actual).min()) if len(solids) else None
+        boundary_clearance = actual.distance(boundary.boundary)
+        footprint = boundary.covers(actual) and boundary_clearance >= radius - 1e-3
+        footprint = footprint and (obstacle_clearance is None or obstacle_clearance >= radius - 1e-3)
+        # Sample plan segments too: observing just endpoints must not certify a skipped leg.
+        dense = shapely.segmentize(intended, 0.1)
+        reverse = float(shapely.distance(shapely.points(shapely.get_coordinates(dense)), actual).max())
+        actual_dense = shapely.segmentize(actual, 0.1)
+        forward = float(shapely.distance(shapely.points(shapely.get_coordinates(actual_dense)), intended).max())
+        final_error = math.dist(pts[-1], v['path'][-1])
+        if not footprint:
+            errors.append(f"{v['label']} 的实测轨迹圆足迹侵入障碍/作物或越出边界")
+        # Distance to a fixed set is 1-Lipschitz: at most 0.05 m can be missed between samples.
+        if max(reverse, forward) + 0.05 > TRACK_LIMIT_M or final_error > 0.35:
+            errors.append(f"{v['label']} 未完整跟踪计划路径或未回到终点")
+        details.append({'vehicle': v['name'], 'samples': len(trail), 'footprint_clear': footprint,
+                        'obstacle_clearance_m': obstacle_clearance, 'boundary_clearance_m': boundary_clearance,
+                        'planned_to_actual_max_m': reverse, 'actual_to_planned_max_m': forward,
+                        'final_error_m': final_error})
+    observed = {(t['vehicle'], t['id']): t for t in result.get('tasks', [])}
+    for v in plan['vehicles']:
+        for task in v['tasks']:
+            t = observed.get((v['name'], task['id'])) or {}
+            arrival, complete = t.get('t_sim'), t.get('serviced_at')
+            if (t.get('state') != 'reached' or arrival is None or complete is None
+                    or complete - arrival + 1e-6 < task['service_s']):
+                errors.append(f"{v['label']} 任务 {task['id']} 未完成规定的作业停留时间")
+    traffic = None
+    if plan.get('traffic', {}).get('robot_collisions'):
+        try:
+            traffic = separation({v['name']: result.get('trails', {}).get(v['name'], []) for v in plan['vehicles']}, radius)
+            if not traffic['valid']:
+                errors.append('车间实测时间轨迹的足迹净空或采样完整性检查未通过')
+        except ValueError as exc:
+            errors.append(str(exc))
+        if result.get('contacts'):
+            errors.append('Gazebo 记录到车辆与实体障碍或其他车辆接触')
+        if not all(result.get('telemetry', {}).get('contacts', {}).get(v['name'], 0) > 0 for v in plan['vehicles']):
+            errors.append('缺少接触传感器消息，不能把未观测到的接触判为零')
+    return {'valid': not errors, 'errors': errors, 'vehicles': details, 'radius_m': radius,
+            'traffic': traffic, 'motion_metrics': motion_metrics, 'dynamics': dynamics,
+            'track_tolerance_m': TRACK_LIMIT_M, 'distance_sampling_m': 0.1, 'distance_error_bound_m': 0.05,
+            'scope': '实测轨迹线段的圆足迹、完整路径；有交通策略时另检车间同步距离与接触记录'}
+
+
+if __name__ == '__main__':
+    runtime = Path(sys.argv[1])
+    print(json.dumps(verify(json.loads((runtime / 'plan.json').read_text()),
+                            json.loads((runtime / 'result-candidate.json').read_text())), ensure_ascii=False, allow_nan=False))

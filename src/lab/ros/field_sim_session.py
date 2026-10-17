@@ -3,24 +3,25 @@
 
 Gazebo runs the field world generated from the task map; one ros_gz parameter_bridge carries the
 clock, ground-truth poses and every vehicle's cmd_vel / odometry. Each vehicle follows its planned
-VRP route with a pure-pursuit controller that stops at each of its tasks (dwelling for the task's
-service time) and records arrivals, so the executed schedule can be compared with the plan.
+VRP route with a pure-pursuit controller that stops at each of its tasks' service positions (dwelling
+for the task's service time) and records arrivals, so the executed schedule can be compared with the
+plan. Sharp corners (lane entries, U-turns in a lane) are taken exactly: the vehicle drives to the
+corner, turns in place and goes on, so it stays between crop rows when they are solid.
 Foxglove Bridge and the Gazebo WebSocket server feed the workbench's live 3D views; RViz2 and the
 Gazebo GUI can be opened as separate windows.
 """
 from __future__ import annotations
 
 import argparse
-import bisect
 import copy
 from datetime import datetime, timezone
-import importlib.util
 import json
 import math
 import os
 from pathlib import Path
 import secrets
 import signal
+import socket
 import subprocess
 import sys
 import threading
@@ -32,28 +33,28 @@ LAB = Path(__file__).resolve().parents[1]
 ROOT = LAB.parents[1]
 DEPLOY = ROOT / 'setup/2026-10-15/deployment'
 EXTRAS = DEPLOY / 'runtime/ros-extras/root/opt/ros/humble'
-sys.path[:0] = [str(DEPLOY), str(LAB / 'ros')]
-from bridge_guard import verified_bridge_guard  # noqa: E402
+sys.path[:0] = [str(DEPLOY), str(LAB / 'ros'), str(LAB)]
+from urp_lab.field_tracking import Driver, truth_time  # noqa: E402
+from urp_lab.field_traffic import MissionQueue, POLICY
+from bridge_runtime import bridge_environment, bridge_provenance
+from processes import OwnedProcesses  # noqa: E402
+from physics_runtime import audit as audit_physics_runtime, selection as physics_selection
 
 import rclpy  # noqa: E402
 from rclpy.parameter import Parameter  # noqa: E402
-from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy, qos_profile_sensor_data  # noqa: E402
+from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy  # noqa: E402
 from rclpy.signals import SignalHandlerOptions  # noqa: E402
+from nav_msgs.msg import Odometry  # noqa: E402
 from geometry_msgs.msg import Point, Twist, TransformStamped  # noqa: E402
 from rosgraph_msgs.msg import Clock  # noqa: E402
+from ros_gz_interfaces.msg import Contacts
 from std_msgs.msg import ColorRGBA, String  # noqa: E402
 from tf2_msgs.msg import TFMessage  # noqa: E402
 from tf2_ros import TransformBroadcaster  # noqa: E402
 from visualization_msgs.msg import Marker, MarkerArray  # noqa: E402
 
-spec = importlib.util.spec_from_file_location('nav_smoke_processes', DEPLOY / 'nav-smoke.py')
-original = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(original)
 
 OPTIONAL = ('gui', 'rviz', 'foxglove', 'gazebo_web')
-TASK_RADIUS = 0.45          # m: a task counts as reached inside this radius
-LOOKAHEAD = 1.4             # m
-FINAL = ('finished', 'failed', 'stopped')
 
 
 def now():
@@ -64,8 +65,9 @@ def yaw_of(q):
     return math.atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z))
 
 
-def wrap(a):
-    return (a + math.pi) % (2 * math.pi) - math.pi
+def roll_pitch(q):
+    return (math.atan2(2 * (q.w*q.x + q.y*q.z), 1 - 2 * (q.x*q.x + q.y*q.y)),
+            math.asin(max(-1, min(1, 2 * (q.w*q.y - q.z*q.x)))))
 
 
 def save(path: Path, obj):
@@ -79,143 +81,23 @@ def rgba(hexcolor, a=1.0):
     return ColorRGBA(r=int(h[0:2], 16) / 255, g=int(h[2:4], 16) / 255, b=int(h[4:6], 16) / 255, a=a)
 
 
-class Processes(original.OwnedProcesses):
+class Processes(OwnedProcesses):
     def __init__(self, env, runtime):
         super().__init__(env, 'fieldsim')
         self.runtime = runtime
+        self.launch_counts = {}
 
     def start(self, name, command, extra_env=None):
-        count = sum(n == name for n, _, _, _ in self.children)
+        count = self.launch_counts.get(name, 0)
         path = self.runtime / 'logs' / f'{name}{"-" + str(count) if count else ""}.log'
         with path.open('x') as stream:
             p = subprocess.Popen(command, stdout=stream, stderr=subprocess.STDOUT, env={**self.env, **(extra_env or {})},
                                  start_new_session=True)
         self.children.append((name, p, path, command))
+        self.launch_counts[name] = count + 1
         return path
 
 
-class Driver:
-    """Pure pursuit along one vehicle's planned path, stopping at each of its tasks."""
-
-    def __init__(self, v: dict, speed: float):
-        self.name, self.label, self.color = v['name'], v['label'], v['color']
-        self.path = [tuple(p) for p in v['path']]
-        self.cum = [0.0]
-        for a, b in zip(self.path, self.path[1:]):
-            self.cum.append(self.cum[-1] + math.dist(a, b))
-        self.length = self.cum[-1]
-        self.speed = speed
-        self.tasks = [dict(t, state='pending', t_sim=None, distance_m=None) for t in v['tasks']]
-        # arc length of each task along the path, in visiting order
-        s_prev, idx = 0.0, 0
-        for t in self.tasks:
-            best = None
-            for i in range(idx, len(self.path)):
-                d = math.dist(self.path[i], t['xy'])
-                if d < 0.05:
-                    best = i
-                    break
-            if best is None:  # not a vertex: take the closest projection after the previous task
-                best = min(range(idx, len(self.path)), key=lambda i: math.dist(self.path[i], t['xy']))
-            t['s'] = max(s_prev, self.cum[best])
-            s_prev, idx = t['s'], best
-        self.s = 0.0
-        self.state = 'waiting'
-        self.pose = None
-        self.dwell_until = None
-        self.trail: list[list[float]] = []
-        self.distance = 0.0
-        self.cte: list[float] = []
-        self.t_start = self.t_done = None
-        self.v_cmd = self.w_cmd = 0.0
-        self.speed_now = 0.0
-        self.last_progress = (0.0, None)
-
-    def point_at(self, s):
-        s = max(0.0, min(self.length, s))
-        i = max(1, min(len(self.cum) - 1, bisect.bisect_left(self.cum, s)))
-        a, b = self.path[i - 1], self.path[i]
-        seg = self.cum[i] - self.cum[i - 1]
-        u = 0.0 if seg < 1e-9 else (s - self.cum[i - 1]) / seg
-        return a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u
-
-    def project(self, p):
-        """Arc length and distance of the closest path point within a window ahead of the progress."""
-        best = (self.s, math.inf)
-        lo = max(0, bisect.bisect_left(self.cum, self.s - 2) - 1)
-        hi = min(len(self.path) - 1, bisect.bisect_right(self.cum, self.s + LOOKAHEAD + 6) + 1)
-        for i in range(max(1, lo), hi + 1):
-            a, b = self.path[i - 1], self.path[i]
-            dx, dy = b[0] - a[0], b[1] - a[1]
-            den = dx * dx + dy * dy
-            u = 0.0 if den < 1e-12 else max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / den))
-            d = math.hypot(p[0] - a[0] - u * dx, p[1] - a[1] - u * dy)
-            if d < best[1]:
-                best = (self.cum[i - 1] + u * math.sqrt(den), d)
-        return best
-
-    def next_task(self):
-        return next((t for t in self.tasks if t['state'] == 'pending'), None)
-
-    def step(self, t_sim: float):
-        """Returns (v, w) for this control tick."""
-        if self.pose is None or self.state in ('done', 'failed', 'waiting'):
-            return 0.0, 0.0
-        x, y, yaw = self.pose
-        if self.t_start is None:
-            self.t_start = t_sim
-        s_proj, cte = self.project((x, y))
-        self.s = max(self.s, min(s_proj, self.s + LOOKAHEAD))
-        self.cte.append(cte)
-        task = self.next_task()
-        if task and math.dist((x, y), task['xy']) <= TASK_RADIUS:
-            task.update(state='reached', t_sim=t_sim, distance_m=math.dist((x, y), task['xy']))
-            self.s = max(self.s, task['s'])
-            if task.get('service_s', 0) > 0:
-                self.state, self.dwell_until = 'servicing', t_sim + task['service_s']
-            task = self.next_task()
-        if self.state == 'servicing':
-            if t_sim < (self.dwell_until or 0):
-                return 0.0, 0.0
-            self.state = 'driving'
-        stop_s = min(task['s'], self.length) if task else self.length
-        if not task and self.length - self.s < 0.35 and math.dist((x, y), self.path[-1]) < 0.6:
-            self.state, self.t_done = 'done', t_sim
-            return 0.0, 0.0
-        target_s = min(self.s + LOOKAHEAD, stop_s)
-        tx, ty = self.point_at(target_s)
-        if math.dist((x, y), (tx, ty)) < 0.05:  # sitting on a stop point but outside the radius
-            tx, ty = task['xy'] if task else self.path[-1]
-        alpha = wrap(math.atan2(ty - y, tx - x) - yaw)
-        to_stop = max(0.0, stop_s - self.s) + math.dist((x, y), self.point_at(self.s))
-        if abs(alpha) > 0.9:
-            return 0.0, max(-1.6, min(1.6, 2.2 * alpha))
-        v = self.speed * max(0.3, math.cos(alpha))
-        v = min(v, 0.15 + 0.7 * to_stop)
-        look = max(0.4, math.dist((x, y), (tx, ty)))
-        w = max(-1.8, min(1.8, 2 * v * math.sin(alpha) / look + 0.8 * alpha * (v < 0.3)))
-        # stuck watchdog
-        if self.last_progress[1] is None or self.s > self.last_progress[0] + 0.2:
-            self.last_progress = (self.s, t_sim)
-        elif t_sim - self.last_progress[1] > 60:
-            self.state = 'failed'
-            return 0.0, 0.0
-        return v, w
-
-    def summary(self, plan_v: dict | None):
-        reached = [t for t in self.tasks if t['state'] == 'reached']
-        return {
-            'name': self.name, 'label': self.label, 'color': self.color, 'state': self.state,
-            'pose': [round(c, 3) for c in self.pose] if self.pose else None, 'speed': round(self.speed_now, 3),
-            'progress': round(self.s / self.length, 4) if self.length else 1.0,
-            'distance_m': round(self.distance, 2), 'path_length_m': round(self.length, 2),
-            'tasks_done': len(reached), 'tasks_total': len(self.tasks),
-            'cross_track_mean_m': round(sum(self.cte) / len(self.cte), 4) if self.cte else None,
-            'cross_track_max_m': round(max(self.cte), 4) if self.cte else None,
-            'duration_s': round(self.t_done - self.t_start, 2) if self.t_done is not None and self.t_start is not None else None,
-            'planned_length_m': (plan_v or {}).get('planned_length_m'),
-            'planned_duration_s': (plan_v or {}).get('planned_duration_s'),
-        }
 
 
 class Session:
@@ -228,6 +110,7 @@ class Session:
         self.lock = threading.RLock()
         self.stop = threading.Event()
         self.commands = []
+        self.window_workers = {}
         self.started = time.monotonic()
         self.st = dict(session_id=self.plan['session_id'], run_id=self.plan['run_id'], scenario_id=self.plan['scenario_id'],
                        algorithm=self.plan.get('algorithm'), world=self.world, phase='starting', components={}, web={},
@@ -238,17 +121,42 @@ class Session:
         Path(self.env['IGN_HOMEDIR']).mkdir(exist_ok=True)
         os.environ.update({k: self.env[k] for k in ('ROS_HOME', 'ROS_LOG_DIR')})
         self.processes = Processes(self.env, self.runtime)
-        self.bridge_fix = verified_bridge_guard() if os.environ.get('URP_BRIDGE_FIX', '1') == '1' else None
+        self.bridge_env = bridge_environment()
         self.report = dict(session_id=self.plan['session_id'], started_utc=now(), world=self.world, errors=[])
+        self.report['bridge_runtime'] = bridge_provenance()
         self.drivers = [Driver(v, float(self.plan['speed_mps'])) for v in self.plan['vehicles']]
         self.plan_by_name = {v['name']: v for v in self.plan['vehicles']}
         self.clock = None
         self.clock_wall = None
+        self.clock_progress_wall = None
+        self.truth_wall = {}
+        self.odom_wall = {}
+        self.counts = {'clock': 0, 'truth': 0, 'odom': {d.name: 0 for d in self.drivers},
+                       'contacts': {d.name: 0 for d in self.drivers}}
+        self.contact_wall = {}
+        self.contacts, self.contact_examples = [], []
+        self.control_traces = {d.name: [] for d in self.drivers}
+        self.rigid_poses = {d.name: [] for d in self.drivers}
+        self.odometry = {d.name: [] for d in self.drivers}
+        self.truth_timing = {'tf_header_samples': 0, 'latest_clock_samples': 0,
+                             'scope': 'Gazebo PosePublisher 每车模型姿态；源仿真时间；新会话拒绝零时间戳，不再使用接收时钟近似'}
+        self.traffic = None
+        self.result = None
+        self.execution_started = False
         rclpy.init(signal_handler_options=SignalHandlerOptions.NO)
         self.node = rclpy.create_node('field_fleet_session', parameter_overrides=[Parameter('use_sim_time', value=True)])
         latched = QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE, durability=DurabilityPolicy.TRANSIENT_LOCAL)
-        self.node.create_subscription(Clock, '/clock', self.on_clock, qos_profile_sensor_data)
-        self.node.create_subscription(TFMessage, '/ground_truth/poses', self.on_truth, qos_profile_sensor_data)
+        # depth 200: at real_time_factor 4 the bridged 50 Hz truth bursts overflow a depth-5
+        # sensor queue and the record grows spurious gaps; verify rejects moving gaps > 0.25 s.
+        streaming = QoSProfile(depth=200, reliability=ReliabilityPolicy.BEST_EFFORT,
+                                durability=DurabilityPolicy.VOLATILE)
+        self.node.create_subscription(Clock, '/clock', self.on_clock, streaming)
+        self.node.create_subscription(TFMessage, '/ground_truth/poses', self.on_truth, streaming)
+        for d in self.drivers:
+            self.node.create_subscription(Odometry, f'/{d.name}/odom',
+                                          lambda msg, name=d.name: self.on_odom(name, msg), streaming)
+            self.node.create_subscription(Contacts, f'/model/{d.name}/contacts',
+                                          lambda msg, name=d.name: self.on_contacts(name, msg), streaming)
         self.cmd = {d.name: self.node.create_publisher(Twist, f'/{d.name}/cmd_vel', 10) for d in self.drivers}
         self.pub_field = self.node.create_publisher(MarkerArray, '/workbench/field', latched)
         self.pub_routes = self.node.create_publisher(MarkerArray, '/workbench/routes', latched)
@@ -262,8 +170,14 @@ class Session:
 
     # ------------------------------------------------------------ inputs --
     def on_clock(self, msg):
-        self.clock = msg.clock.sec + msg.clock.nanosec / 1e9
+        value = msg.clock.sec + msg.clock.nanosec / 1e9
         wall = time.monotonic()
+        if self.clock is not None and value < self.clock - 1e-6:
+            raise RuntimeError('仿真时钟倒退，不能继续累计实验时间')
+        if self.clock is None or value > self.clock:
+            self.clock_progress_wall = wall
+        self.clock = value
+        self.counts['clock'] += 1
         if self.clock_wall:
             (c0, w0) = self.clock_wall
             if wall - w0 >= 2.0:
@@ -273,6 +187,32 @@ class Session:
             self.clock_wall = (self.clock, wall)
         self.st['sim_time'] = round(self.clock, 2)
 
+    def on_odom(self, name, msg):
+        self.odom_wall[name] = time.monotonic()
+        self.counts['odom'][name] += 1
+        if self.st['phase'] == 'running':
+            p, q = msg.pose.pose.position, msg.pose.pose.orientation
+            stamp = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
+            self.odometry[name].append([stamp, p.x, p.y, yaw_of(q), msg.twist.twist.linear.x, msg.twist.twist.angular.z])
+
+    def on_contacts(self, name, msg):
+        self.contact_wall[name] = time.monotonic()
+        self.counts['contacts'][name] += 1
+        for contact in msg.contacts:
+            pair = [contact.collision1.name, contact.collision2.name]
+            if pair not in self.contact_examples and len(self.contact_examples) < 20:
+                self.contact_examples.append(pair)
+            # Wheel/caster-ground contacts are expected; every other external contact is a failure.
+            if any('ground::' in n for n in pair) or all(f'{name}::' in n for n in pair):
+                continue
+            stamp = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
+            self.contacts.append({'t_sim': stamp, 'vehicle': name, 'collisions': pair,
+                                  'vehicles': [d.name for d in self.drivers if any(f'{d.name}::' in n for n in pair)],
+                                  'positions_m': [[p.x, p.y, p.z] for p in contact.positions],
+                                  'depths_m': list(contact.depths)})
+        if self.contacts:
+            raise RuntimeError('Gazebo 检测到非地面接触，停止全部车辆；时间、位置及碰撞体已记录')
+
     def on_truth(self, msg):
         names = {d.name: d for d in self.drivers}
         out = []
@@ -281,12 +221,28 @@ class Session:
             if not d:
                 continue
             p = t.transform.translation
+            roll, pitch = roll_pitch(t.transform.rotation)
+            if self.st['phase'] in ('ready', 'running') and (max(abs(roll), abs(pitch)) > .35 or abs(p.z) > .5):
+                self.report['physical_domain_violation'] = {'vehicle':d.name,
+                    't_sim':t.header.stamp.sec+t.header.stamp.nanosec/1e9, 'xyz_m':[p.x,p.y,p.z],
+                    'roll_rad':roll, 'pitch_rad':pitch}
+                raise RuntimeError(f'{d.name} 姿态或高度超出平坦刚体模型有效域，停止全部车辆')
             pose = (p.x, p.y, yaw_of(t.transform.rotation))
-            if d.pose is not None:
-                step = math.dist(d.pose[:2], pose[:2])
-                if step < 2.0 and d.state not in ('waiting',):
-                    d.distance += step
-            d.pose = pose
+            stamp = t.header.stamp.sec + t.header.stamp.nanosec / 1e9
+            if stamp <= 0:
+                raise RuntimeError('PosePublisher 未提供正的源仿真时间，拒绝以接收时钟代替')
+            source = 'tf_header_samples' if stamp > 0 else 'latest_clock_samples'
+            stamp = truth_time(stamp, self.clock)
+            if stamp is None:
+                continue
+            self.truth_timing[source] += 1
+            d.observe(pose, stamp, record_distance=self.st['phase'] == 'running')
+            self.truth_wall[d.name] = time.monotonic()
+            self.counts['truth'] += 1
+            if self.st['phase'] == 'running' and self.clock is not None:
+                if not d.samples or stamp > d.samples[-1][0]:
+                    d.samples.append([stamp, *pose])
+                    self.rigid_poses[d.name].append([stamp, p.x, p.y, p.z, roll, pitch, pose[2]])
             tf = TransformStamped()
             tf.header.stamp = t.header.stamp
             tf.header.frame_id = 'map'
@@ -306,6 +262,28 @@ class Session:
         rclpy.spin_once(self.node, timeout_sec=seconds)
         if self.stop.is_set():
             raise KeyboardInterrupt
+        with self.lock:
+            pending, self.commands = self.commands, []
+        for key, on in pending:
+            try:
+                self.window(key, on)
+            except Exception as exc:
+                self.st['components'][key] = 'failed'
+                self.st['warnings'].append(f'{key} 窗口控制失败：{exc}')
+        if self.st['phase'] in ('ready', 'running'):
+            wall = time.monotonic()
+            stale = []
+            if self.clock_progress_wall is None or wall - self.clock_progress_wall > 3.0:
+                stale.append('clock 无进展')
+            for d in self.drivers:
+                if wall - self.truth_wall.get(d.name, 0) > 3.0:
+                    stale.append(f'{d.name} 真值')
+                if wall - self.odom_wall.get(d.name, 0) > 3.0:
+                    stale.append(f'{d.name} 里程计')
+                if wall - self.contact_wall.get(d.name, 0) > 3.0:
+                    stale.append(f'{d.name} 接触传感器')
+            if stale:
+                raise RuntimeError('仿真遥测中断超过 3 秒墙钟：' + '、'.join(stale))
         for name, proc, _, _ in self.processes.children:
             ended = os.waitid(os.P_PID, proc.pid, os.WEXITED | os.WNOHANG | os.WNOWAIT)
             if ended:
@@ -326,19 +304,34 @@ class Session:
 
     def startup(self):
         share = Path('/opt/ros/humble/share')
-        self.processes.start('gazebo', ['ign', 'gazebo', '-s', '-r', '-v', '3', self.plan['sdf']])
+        # Selection diagnostics must be visible before readiness, not only when
+        # Gazebo flushes its buffered stdout on exit.
+        self.processes.start('gazebo', ['stdbuf', '-oL', '-eL', 'ign', 'gazebo', '-s', '-r', '-v', '3', self.plan['sdf']])
         self.st['components']['gazebo'] = 'running'
-        topics = [f'/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock',
-                  f'/world/{self.world}/dynamic_pose/info@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V']
-        remaps = ['-r', f'/world/{self.world}/dynamic_pose/info:=/ground_truth/poses']
+        topics = ['/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock']
+        remaps = []
         for d in self.drivers:
             topics += [f'/model/{d.name}/cmd_vel@geometry_msgs/msg/Twist]ignition.msgs.Twist',
-                       f'/model/{d.name}/odometry@nav_msgs/msg/Odometry[ignition.msgs.Odometry']
+                       f'/model/{d.name}/pose@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V',
+                       f'/model/{d.name}/odometry@nav_msgs/msg/Odometry[ignition.msgs.Odometry',
+                       f'/model/{d.name}/contacts@ros_gz_interfaces/msg/Contacts[ignition.msgs.Contacts']
             remaps += ['-r', f'/model/{d.name}/cmd_vel:=/{d.name}/cmd_vel', '-r', f'/model/{d.name}/odometry:=/{d.name}/odom']
-        bridge_env = {'LD_PRELOAD': str(self.bridge_fix)} if self.bridge_fix else {}
+            remaps += ['-r', f'/model/{d.name}/pose:=/ground_truth/poses']
+        bridge_env = self.bridge_env
         self.processes.start('bridge', ['ros2', 'run', 'ros_gz_bridge', 'parameter_bridge', *topics, '--ros-args', *remaps], bridge_env)
         self.st['components']['bridge'] = 'running'
-        self.wait(lambda: self.clock is not None and all(d.pose is not None for d in self.drivers), 90, 'Gazebo 时钟或车辆真值未就绪')
+        self.wait(lambda: self.clock is not None and all(d.pose is not None and d.name in self.odom_wall
+                  and d.name in self.contact_wall for d in self.drivers), 90, 'Gazebo 时钟、车辆真值、里程计或接触传感器未就绪')
+        if self.plan.get('physics'):
+            # Gazebo may still be flushing startup output when telemetry starts.
+            self.wait(lambda: all(physics_selection(self.runtime/'logs/gazebo.log')), 10,
+                      'Gazebo 未报告碰撞检测器和约束求解器选择')
+            gazebo_group = next(p.pid for name, p, *_ in self.processes.children if name == 'gazebo')
+            pids = [row['pid'] for row in self.processes.sample() if row['group'] == gazebo_group]
+            observed = audit_physics_runtime(self.plan['physics'], self.runtime/'logs/gazebo.log', pids)
+            self.report['physics_runtime'] = observed
+            if not observed['valid']:
+                raise RuntimeError('；'.join(observed['errors']))
         if self.args.web:
             self.web_bridges(share)
         if self.args.gui:
@@ -349,6 +342,7 @@ class Session:
         self.phase('ready')
 
     def web_bridges(self, share):
+        endpoints = {}
         fox = EXTRAS / 'lib/foxglove_bridge/foxglove_bridge'
         if fox.exists():
             env = {'LD_LIBRARY_PATH': ':'.join(filter(None, [str(EXTRAS / 'lib'), self.env.get('LD_LIBRARY_PATH')])),
@@ -357,7 +351,7 @@ class Session:
             self.processes.start('foxglove', [str(fox), '--ros-args', '-p', f'port:={port}', '-p', 'address:=127.0.0.1',
                                               '-p', 'use_sim_time:=true'], env)
             self.st['components']['foxglove'] = 'running'
-            self.st['web']['ros'] = {'url': f'ws://127.0.0.1:{port}', 'protocol': 'foxglove.sdk.v1'}
+            endpoints['ros'] = ('foxglove', port, {'url': f'ws://127.0.0.1:{port}', 'protocol': 'foxglove.sdk.v1'})
         else:
             self.st['warnings'].append('Foxglove Bridge 未安装：bash src/lab/ros/native/install-ros-extras.sh')
         key = secrets.token_hex(16)
@@ -378,16 +372,52 @@ class Session:
         self.processes.start('gazebo_web', ['ign', 'launch', '-v', '3', str(cfg)],
                              {'IGN_GAZEBO_RESOURCE_PATH': paths, 'GZ_SIM_RESOURCE_PATH': paths})
         self.st['components']['gazebo_web'] = 'running'
-        self.st['web']['gazebo'] = {'url': f'ws://127.0.0.1:{port}', 'key': key, 'world': self.world, 'bounds': self.plan['bounds']}
+        endpoints['gazebo'] = ('gazebo_web', port, {'url': f'ws://127.0.0.1:{port}', 'key': key, 'world': self.world, 'bounds': self.plan['bounds']})
+        # Popen is not readiness. Only publish endpoints once their sockets accept connections.
+        deadline = time.monotonic() + 15
+        while endpoints and time.monotonic() < deadline:
+            self.spin()
+            for kind, (component, port, info) in list(endpoints.items()):
+                if self.st['components'].get(component) == 'failed':
+                    del endpoints[kind]
+                    continue
+                try:
+                    with socket.create_connection(('127.0.0.1', port), timeout=0.1):
+                        pass
+                except OSError:
+                    continue
+                self.st['web'][kind] = info
+                del endpoints[kind]
+        for component, port, _ in endpoints.values():
+            self.st['components'][component] = 'failed'
+            self.st['warnings'].append(f'{component} 在 15 秒内未监听端口 {port}；核心仿真仍可运行')
 
     def window(self, key, on):
+        worker = self.window_workers.get(key)
+        if worker and worker.is_alive():
+            if on:
+                with self.lock:
+                    self.commands.append((key, on))
+            return
         if not on:
             chosen = [r for r in self.processes.children if r[0] == key]
             if chosen:
-                everything = self.processes.children
-                self.processes.children = chosen
-                self.report.setdefault('window_cleanup', []).extend(self.processes.cleanup())
-                self.processes.children = [r for r in everything if r not in chosen]
+                # Reaping a GUI must not block the robot control loop or telemetry processing.
+                owner = copy.copy(self.processes)
+                owner.children, owner.resources = chosen, []
+                self.processes.children = [r for r in self.processes.children if r not in chosen]
+                self.st['components'][key] = 'stopping'
+
+                def reap():
+                    records = owner.cleanup()
+                    with self.lock:
+                        self.report.setdefault('window_cleanup', []).extend(records)
+                        self.st['components'][key] = 'off'
+
+                worker = threading.Thread(target=reap, daemon=True)
+                self.window_workers[key] = worker
+                worker.start()
+                return
             self.st['components'][key] = 'off'
             return
         if self.st['components'].get(key) == 'running':
@@ -567,26 +597,31 @@ Window Geometry:
     # ------------------------------------------------------------ execute --
     def execute(self):
         self.phase('running')
-        for d in self.drivers:
-            d.state = 'driving'
-        planned = max([v.get('planned_duration_s') or 0 for v in self.plan['vehicles']] + [60])
+        self.execution_started = True
+        if self.plan.get('traffic', {}).get('policy') != POLICY:
+            raise RuntimeError('缺少已验证的车间交通策略，拒绝执行')
+        self.traffic = MissionQueue(self.drivers, self.plan['robot_radius_m'], self.clock or 0.0)
+        self.st['warnings'].append('保守交通预约：整段任务依次执行，结束回独立停车位；等待计入实际用时，非并行避碰算法')
+        planned = max(sum(v.get('planned_duration_s') or 0 for v in self.plan['vehicles']), 60)
         deadline = (self.clock or 0) + 2.5 * planned + 120
         last_ctrl = last_live = last_trail = -1.0
+        terminal_since = None
         while not self.stop.is_set():
             self.spin(0.005)
             t = self.clock or 0.0
             if t - last_ctrl >= 0.05:
                 last_ctrl = t
+                self.traffic.step(t)
                 for d in self.drivers:
+                    previous_cte_count = len(d.cte)
                     v, w = d.step(t)
                     d.v_cmd, d.w_cmd = v, w
                     msg = Twist()
                     msg.linear.x, msg.angular.z = float(v), float(w)
                     self.cmd[d.name].publish(msg)
+                    measured_cte = d.cte[-1] if len(d.cte) > previous_cte_count else None
+                    self.control_traces[d.name].append([t, d.s, measured_cte, v, w, d.state])
                     if d.pose is not None and (not d.trail or t - d.trail[-1][0] >= 0.5):
-                        if d.trail:
-                            dt = max(1e-6, t - d.trail[-1][0])
-                            d.speed_now = math.dist(d.trail[-1][1:3], d.pose[:2]) / dt
                         d.trail.append([round(t, 2), round(d.pose[0], 3), round(d.pose[1], 3), round(d.pose[2], 4)])
                 if sum(tk['state'] == 'reached' for d in self.drivers for tk in d.tasks) != self.task_version:
                     self.task_version = sum(tk['state'] == 'reached' for d in self.drivers for tk in d.tasks)
@@ -599,7 +634,16 @@ Window Geometry:
                 with self.lock:
                     self.st['vehicles'] = [d.summary(self.plan_by_name.get(d.name)) for d in self.drivers]
             if all(d.state in ('done', 'failed') for d in self.drivers):
-                break
+                if any(d.state == 'failed' for d in self.drivers):
+                    break
+                if terminal_since is None:
+                    terminal_since = t
+                # Keep observing deceleration and contacts before certifying a final
+                # trajectory; a zero command alone is not evidence of a stopped robot.
+                if t - terminal_since >= 1 and all(d.speed_now < .02 and d.angular_speed_now < .05 for d in self.drivers):
+                    break
+                if t - terminal_since > 5:
+                    raise RuntimeError('终点发出停车命令后，实测速度未在 5 秒仿真时间内稳定')
             if t > deadline:
                 for d in self.drivers:
                     if d.state not in ('done', 'failed'):
@@ -609,15 +653,21 @@ Window Geometry:
         for d in self.drivers:
             self.cmd[d.name].publish(Twist())
         self.publish_live(trails=True)
-        self.finish()
+        self.finish('canceled' if self.stop.is_set() else None)
 
-    def finish(self):
+    def finish(self, outcome=None):
+        if self.result is not None:
+            return
         vehicles = [d.summary(self.plan_by_name.get(d.name)) for d in self.drivers]
         durations = [v['duration_s'] for v in vehicles if v['duration_s'] is not None]
         planned = self.plan.get('planned', {})
+        from urp_lab.field_energy import account
+        energy = {d.name: account(self.rigid_poses.get(d.name) or [], self.plan.get('physics'))
+                  for d in self.drivers}
         metrics = {
             'tasks_total': sum(len(d.tasks) for d in self.drivers),
             'tasks_reached': sum(t['state'] == 'reached' for d in self.drivers for t in d.tasks),
+            'tasks_completed': sum(t['serviced_at'] is not None for d in self.drivers for t in d.tasks),
             'vehicles_done': sum(d.state == 'done' for d in self.drivers),
             'makespan_s': max(durations) if durations and len(durations) == len(self.drivers) else None,
             'planned_makespan_s': planned.get('makespan_s'),
@@ -625,52 +675,111 @@ Window Geometry:
             'planned_total_distance_m': planned.get('total_distance_m'),
             'cross_track_mean_m': round(sum(sum(d.cte) for d in self.drivers) / max(1, sum(len(d.cte) for d in self.drivers)), 4),
             'cross_track_max_m': round(max((max(d.cte) for d in self.drivers if d.cte), default=0.0), 4),
+            'energy_wh': round(sum(e['energy_wh'] for e in energy.values() if e), 3),
         }
         result = dict(session_id=self.plan['session_id'], run_id=self.plan['run_id'], scenario_id=self.plan['scenario_id'],
                       algorithm=self.plan.get('algorithm'), world=self.world, finished_utc=now(), sim_time=self.clock,
                       real_time_factor=self.st.get('real_time_factor'), metrics=metrics, vehicles=vehicles,
-                      tasks=[dict(vehicle=d.name, **{k: t[k] for k in ('id', 'label', 'xy', 'state', 't_sim', 'distance_m')})
+                      tasks=[dict(vehicle=d.name, stop=list(t['goal']), requested_service_s=t['service_s'],
+                                  actual_service_s=t['serviced_at'] - t['t_sim'] if t['serviced_at'] is not None else None,
+                                  service_complete=t['serviced_at'] is not None,
+                                  **{k: t[k] for k in ('id', 'label', 'xy', 'state', 't_sim', 'distance_m', 'serviced_at')})
                              for d in self.drivers for t in d.tasks],
-                      trails={d.name: d.trail for d in self.drivers},
+                      travel=self.plan.get('travel', 'free'),
+                      trails={d.name: d.samples for d in self.drivers},
+                      errors=list(self.st['errors']), telemetry=copy.deepcopy(self.counts),
+                      execution_provenance=self.plan.get('execution_provenance'),
+                      traffic={**self.plan.get('traffic', {}), 'events': self.traffic.events if self.traffic else []},
+                      contacts=self.contacts, contact_examples=self.contact_examples,
+                      control_traces=self.control_traces,
+                      control_trace_columns=['t_sim', 'path_s_m', 'cross_track_m', 'cmd_v_mps', 'cmd_w_radps', 'state'],
+                      truth_timing=self.truth_timing,
+                      physics=self.plan.get('physics'), physics_audit=self.plan.get('physics_audit'),
+                      physics_runtime=self.report.get('physics_runtime'),
+                      execution_timing_reference=self.plan.get('execution_timing_reference'),
+                      rigid_body_poses=self.rigid_poses,
+                      rigid_body_pose_columns=['t_sim', 'x_m', 'y_m', 'z_m', 'roll_rad', 'pitch_rad', 'yaw_rad'],
+                      energy=energy,
+                      wheel_odometry=self.odometry,
+                      wheel_odometry_columns=['t_sim', 'x_local_m', 'y_local_m', 'yaw_local_rad', 'v_mps', 'w_radps'],
+                      execution_started_sim_s=self.traffic.started if self.traffic else None,
+                      vehicle_asset=self.plan.get('vehicle_asset'),
                       state='succeeded' if metrics['tasks_reached'] == metrics['tasks_total'] and metrics['vehicles_done'] == len(self.drivers) else 'failed')
+        from urp_lab.field_records import contact_metrics
+        result.update(contact_metrics(result, self.plan))
+        if outcome is not None:
+            result['state'] = outcome
+        save(self.runtime / 'result-candidate.json', result)
+        if result['state'] == 'succeeded':
+            try:
+                # Geometry libraries stay in the locked Python 3.12 solver environment, outside ROS Python.
+                checked = subprocess.run([str(LAB / '.venv/bin/python'), '-m', 'urp_lab.fieldcheck', str(self.runtime)],
+                                         cwd=LAB, capture_output=True, text=True, timeout=30)
+                (self.runtime / 'check.stdout').write_text(checked.stdout)
+                (self.runtime / 'check.stderr').write_text(checked.stderr)
+                if checked.returncode:
+                    raise RuntimeError(f'轨迹检查进程退出码 {checked.returncode}')
+                result['check'] = json.loads(checked.stdout)
+                if not result['check']['valid']:
+                    result['state'] = 'failed'
+                    self.st['errors'].extend(result['check']['errors'])
+            except Exception as exc:
+                result['state'] = 'failed'
+                self.st['errors'].append(f'实际轨迹未通过独立检查：{exc}')
+        result['errors'] = list(self.st['errors'])
+        self.result = result
         save(self.runtime / 'result.json', result)
         with self.lock:
             self.st.update(vehicles=vehicles, metrics=metrics, result=str(self.runtime / 'result.json'))
-        self.phase('finished' if result['state'] == 'succeeded' else 'failed')
+        self.phase({'succeeded': 'finished', 'canceled': 'stopped'}.get(result['state'], 'failed'))
+        save(self.runtime / 'state.json', self.state())
 
     # ------------------------------------------------------------ lifecycle --
     def shutdown(self):
+        cleanup_errors = []
         for d in self.drivers:
             try:
                 self.cmd[d.name].publish(Twist())
             except Exception:  # noqa: BLE001 - shutting down anyway
                 pass
-        self.report['final_state'] = self.state()
         try:
             self.node.destroy_node()
             rclpy.shutdown()
         except Exception as exc:  # noqa: BLE001
             self.report['errors'].append(f'ROS 关闭：{exc}')
+            cleanup_errors.append(f'ROS 关闭：{exc}')
         self.report['bridge_shutdown'] = self.processes.stop_bridges()
         self.report['cleanup'] = self.processes.cleanup()
+        for worker in self.window_workers.values():
+            worker.join(35)
+            if worker.is_alive():
+                cleanup_errors.append('窗口清理线程未退出')
         self.report['remaining_owned_processes'] = self.processes.sample()
         bad = []
-        for child in self.report['cleanup']:
+        for child in self.report['cleanup'] + self.report.get('window_cleanup', []):
             bad.extend(dict(group=child['name'], **p) for p in child['reaped'] if p['returncode'] not in (0, -2, -15, 130, 143))
             if not child['complete'] or 'SIGKILL' in child['signals']:
                 bad.append({'group': child['name'], 'forced_or_incomplete': True})
         self.report['abnormal_exits'] = bad
-        self.report['status'] = 'PASS' if not (bad or self.report['remaining_owned_processes']) else 'FAIL'
+        bridge_bad = bool(self.report['bridge_shutdown']['still_running'])
+        self.report['cleanup_status'] = 'PASS' if not (bad or bridge_bad or cleanup_errors or self.report['remaining_owned_processes']) else 'FAIL'
+        self.report['status'] = 'PASS' if self.report['cleanup_status'] == 'PASS' and not self.report['errors'] and (self.result or {}).get('state') != 'failed' else 'FAIL'
+        if self.st['phase'] not in ('finished', 'failed'):
+            self.st['phase'] = 'stopped'
+        self.report['execution_state'] = (self.result or {}).get('state')
+        self.report['final_state'] = self.state()
+        save(self.runtime / 'state.json', self.state())
         self.report.update(finished_utc=now(), stages=self.st['stages'], resources=self.processes.resources)
         save(self.runtime / 'session-report.json', self.report)
         print(json.dumps({'shutdown': self.report['status']}), flush=True)
         if self.st['phase'] not in ('finished', 'failed'):
             self.st['phase'] = 'stopped'
-        return 0 if self.report['status'] == 'PASS' else 1
+        return 0 if self.report['status'] == 'PASS' and (self.result or {}).get('state') != 'failed' else 1
 
     def state(self):
         with self.lock:
             st = copy.deepcopy(self.st)
+        st['telemetry'] = copy.deepcopy(self.counts)
         if not st['vehicles']:
             st['vehicles'] = [d.summary(self.plan_by_name.get(d.name)) for d in self.drivers]
         return st
@@ -682,21 +791,19 @@ Window Geometry:
                 self.execute()
             while not self.stop.is_set():
                 self.spin(0.05)
-                with self.lock:
-                    pending, self.commands = self.commands, []
-                for key, on in pending:
-                    self.window(key, on)
                 if self.clock is not None:
                     self.publish_live()
         except KeyboardInterrupt:
-            pass
+            self.finish('canceled')
         except Exception as exc:  # noqa: BLE001
             traceback.print_exc()
             self.st['errors'].append(f'{type(exc).__name__}: {exc}')
             self.report['errors'].append(traceback.format_exc())
             self.phase('failed')
+            self.finish('failed')
         finally:
-            return self.shutdown()
+            cleanup_rc = self.shutdown()
+        return cleanup_rc
 
 
 def handler(session: Session):

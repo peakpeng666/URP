@@ -4,7 +4,6 @@ from __future__ import annotations
 import argparse
 import copy
 from datetime import datetime, timezone
-import importlib.util
 import json
 import math
 import os
@@ -29,7 +28,8 @@ EXTRAS=DEPLOY/'runtime/ros-extras/root/opt/ros/humble'
 OPTIONAL=('gui','rviz','foxglove','gazebo_web')
 sys.path[:0]=[str(DEPLOY),str(LAB)]
 from tf_overlay import verified_candidate, verified_gui_lifetime
-from bridge_guard import verified_bridge_guard
+from bridge_runtime import bridge_environment, bridge_provenance
+from processes import OwnedProcesses
 from navigation_profile import create_profile
 from urp_lab.worlds import inspect_world, CACHE
 from urp_lab.process_health import unexpected_launch_exit
@@ -52,8 +52,6 @@ from nav2_msgs.action import NavigateToPose, FollowPath
 from nav2_msgs.srv import ManageLifecycleNodes
 from visualization_msgs.msg import Marker, MarkerArray
 
-spec=importlib.util.spec_from_file_location('urp_existing_nav_smoke',DEPLOY/'nav-smoke.py')
-original=importlib.util.module_from_spec(spec); spec.loader.exec_module(original)
 FINAL={'succeeded','failed','canceled'}
 def now(): return datetime.now(timezone.utc).isoformat()
 def yaw(q): return math.atan2(2*(q.w*q.z+q.x*q.y),1-2*(q.y*q.y+q.z*q.z))
@@ -63,7 +61,7 @@ def save(path,obj):
 
 class Interrupted(Exception): pass
 
-class Processes(original.OwnedProcesses):
+class Processes(OwnedProcesses):
     def __init__(self, env, runtime):
         super().__init__(env,'session'); self.runtime=runtime
     def start(self,name,command,extra_env=None):
@@ -79,7 +77,7 @@ class Session:
         self.lock=threading.RLock(); self.stop=threading.Event(); self.cancel=threading.Event(); self.commands=queue.Queue()
         self.shutting=False; self.started=time.monotonic(); self.execution=None; self.runs={}; self.goal=None
         self.st=dict(session_id=args.session_id,phase='starting',world=args.world,spawn=args.spawn,components={},robot=None,
-                     execution=None,errors=[],warnings=[],stages=[],web={},known_issues=['parameter_bridge 退出时堆损坏（上游问题）；退出垫片以 main 的返回码直接退出来绕开，URP_BRIDGE_FIX=0 可关闭。'])
+                     execution=None,errors=[],warnings=[],stages=[],web={},known_issues=[])
         self.env=dict(os.environ,ROS_HOME=str(self.runtime/'ros'),ROS_LOG_DIR=str(self.runtime/'ros-log'),
                       IGN_PARTITION='urp_'+args.session_id,IGN_HOMEDIR=str(self.runtime/'ignition'),IGN_FUEL_CACHE_PATH=str(CACHE))
         Path(self.env['IGN_HOMEDIR']).mkdir(exist_ok=True)
@@ -87,9 +85,12 @@ class Session:
         self.processes=Processes(self.env,self.runtime)
         self.tf_fix=self.option('URP_TF_FIX',verified_candidate)
         self.gui_fix=self.option('URP_GUI_FIX',verified_gui_lifetime)
-        self.bridge_fix=self.option('URP_BRIDGE_FIX',verified_bridge_guard)
+        self.bridge_env=bridge_environment()
         self.report=dict(session_id=args.session_id,started_utc=now(),world=args.world,spawn=args.spawn,errors=[],
-                         compatibility={k:str(v) if v else None for k,v in [('tf',self.tf_fix),('gui',self.gui_fix),('bridge_exit',self.bridge_fix)]})
+                         compatibility={k:str(v) if v else None for k,v in [('tf',self.tf_fix),('gui',self.gui_fix)]})
+        self.report['bridge_runtime']=bridge_provenance()
+        if self.report['bridge_runtime']['mode'] == 'system_unfixed':
+            self.st['known_issues'].append('URP_BRIDGE_FIX=0：使用未修复系统桥接，关闭竞态仍存在。')
         self.report['navigation_profile']=create_profile(self.runtime,args.localization)
         self.st['localization']=args.localization
         self.counts={}; self.latest={}; self.at={}; self.last_sample=0.; self.last_trace=0.; self.subs=[]; self.actions=[]
@@ -250,7 +251,7 @@ class Session:
         s=self.args.spawn;world=self.args.world
         command=['ros2','launch','turtlebot4_ignition_bringup','turtlebot4_ignition.launch.py',f'world:={world}',
                  'rviz:=false','nav2:=false','localization:=false','slam:=false',f'x:={s["x"]}',f'y:={s["y"]}',f'yaw:={s["yaw"]}',f'gz_args:={world}.sdf -s -r -v 3']
-        bridge_env={'LD_PRELOAD':str(self.bridge_fix)} if self.bridge_fix else {}
+        bridge_env=self.bridge_env
         log=self.processes.start('sim',command,bridge_env);self.st['components']['sim']='running'
         topic=f'/world/{world}/dynamic_pose/info'
         self.processes.start('truth',['ros2','run','ros_gz_bridge','parameter_bridge',topic+'@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V','--ros-args','-r',topic+':=/ground_truth/poses'],bridge_env)
@@ -279,7 +280,8 @@ class Session:
         self.st['components']['localization']='active';self.phase('nav2_starting')
         nav=self.processes.start('nav',['ros2','launch','turtlebot4_navigation','nav2.launch.py','use_sim_time:=true',f'params_file:={self.runtime}/nav2.yaml'],tf_env)
         self.wait(lambda:'Managed nodes are active' in nav.read_text(errors='replace'),70,'Nav2 生命周期未激活')
-        self.verify_parameters('controller_server',{'general_goal_checker.xy_goal_tolerance':.06,'FollowCoverage.lookahead_dist':.18})
+        self.verify_parameters('controller_server',{'general_goal_checker.xy_goal_tolerance':.06,'FollowCoverage.lookahead_dist':.18,
+            'FollowPath.plugin':'nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController'})
         self.wait(lambda:all(self.counts.get(k) for k in ('global_map','local_map')) and self.tf_age is not None and abs(self.tf_age)<2,20,'代价地图/TF 未就绪')
         self.st['components']['nav2']='active'
         for k in ('gui','rviz'): self.st['components'][k]='off'
@@ -434,6 +436,11 @@ class Session:
             except Exception as exc:
                 ex['metrics']['execution_check_error']=str(exc)
                 if ex['state']=='succeeded':ex.update(state='failed',error='独立执行检查失败：'+str(exc))
+            try:
+                from urp_lab.localization_check import compare as localization_compare
+                ex['localization']=localization_compare(ex,self.args.localization)
+            except Exception as exc:  # recorded evidence only; never gates the run
+                ex['localization']={'mode':self.args.localization,'error':str(exc)}
             ex['finished_utc']=now();ex['report']=str(self.runtime/'runs'/f'{ex["sim_run_id"]}.json')
             ex['telemetry_at_finish']=self.state()['telemetry'];save(Path(ex['report']),ex);self.runs[ex['sim_run_id']]=copy.deepcopy(ex)
             if not self.stop.is_set():self.phase('ready')
@@ -465,10 +472,6 @@ class Session:
 
     def shutdown(self):
         self.shutting=True;self.phase('stopping');self.cancel_active();self.settle()
-        try:
-            p=subprocess.run(['ign','service','-s',f'/world/{self.args.world}/control','--reqtype','ignition.msgs.WorldControl','--reptype','ignition.msgs.Boolean','--timeout','2000','--req','pause: true'],env=self.env,capture_output=True,text=True,timeout=4)
-            self.report['pause']=dict(returncode=p.returncode,stdout=p.stdout,stderr=p.stderr)
-        except Exception as exc:self.report['pause']={'error':str(exc)}
         self.report['lifecycle_shutdown']={}
         for name in ('navigation','localization'):
             c=self.node.create_client(ManageLifecycleNodes,f'/lifecycle_manager_{name}/manage_nodes')
@@ -479,9 +482,23 @@ class Session:
                 except Exception as exc:self.report['lifecycle_shutdown'][name]=str(exc)
             self.node.destroy_client(c)
         self.report['final_state']=self.state()
+        # Shut down this ROS consumer while its clock and Create3 services remain
+        # available. Pausing/removing publishers first can strand its teardown.
+        self.report['robot_node_shutdown']=self.processes.stop_executables(
+            [Path('/opt/ros/humble/lib/turtlebot4_node/turtlebot4_node')])
         for a in self.actions:a.destroy()
         self.listener.unregister();self.node.destroy_node();rclpy.shutdown()
         self.report['bridge_shutdown']=self.processes.stop_bridges()
+        # The official launch uses shell=True. SIGINT to the launch leader only
+        # reaches that shell, not reliably the Ruby/FFI Gazebo server below it.
+        # Use Fortress's native stop service in this session's unique partition.
+        try:
+            p=subprocess.run(['ign','service','-s','/server_control','--reqtype','ignition.msgs.ServerControl',
+                '--reptype','ignition.msgs.Boolean','--timeout','3000','--req','stop: true'],
+                env=self.env,capture_output=True,text=True,timeout=5)
+            self.report['gazebo_shutdown']=dict(returncode=p.returncode,stdout=p.stdout,stderr=p.stderr,
+                accepted=p.returncode==0 and 'data: true' in p.stdout)
+        except Exception as exc:self.report['gazebo_shutdown']={'accepted':False,'error':str(exc)}
         self.report['cleanup']=self.processes.cleanup();self.report['remaining_owned_processes']=self.processes.sample()
         bad=[]
         for child in self.report['cleanup']:
