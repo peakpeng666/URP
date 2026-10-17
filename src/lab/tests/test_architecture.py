@@ -9,16 +9,19 @@ from pathlib import Path
 LAB = Path(__file__).resolve().parents[1] / 'urp_lab'
 
 CAPS = {  # module → max lines
-    'solvers/fleet.py': 950,
+    'solvers/fleet.py': 800,
     'solvers/fleet_curvature.py': 250,
-    'scenarios/validate.py': 460,
+    'solvers/fleet_engines.py': 260,
+    'solvers/fleet_common.py': 60,
+    'scenarios/validate.py': 480,
     'fieldworld.py': 520,
 }
 
 FUNCTION_CAPS = {  # (module, function) → max lines
     ('solvers/fleet.py', 'solve'): 210,
-    ('solvers/fleet.py', 'check'): 175,
-    ('solvers/fleet.py', 'metaheuristic'): 100,
+    ('solvers/fleet.py', 'check'): 180,
+    ('solvers/fleet_engines.py', 'metaheuristic'): 100,
+    ('solvers/fleet_engines.py', 'ortools_makespan'): 120,
 }
 
 

@@ -178,7 +178,7 @@ def ompl_dubins_fallback(inst, stops_xy, min_radius, budget_s=0.5):
             ss.setStartAndGoalStates(start, goal, 1e-3)
             ss.setPlanner(og.RRTConnect(si))
             ss.setup()
-            if ss.solve(budget_s / 12) and ss.haveExactSolutionPath():
+            if ss.solve(max(0.3, budget_s / 12)) and ss.haveExactSolutionPath():
                 path = ss.getSolutionPath()
                 path.interpolate(max(2, int(path.length() / 0.05) + 1))   # 5 cm sampling: curvature is exact on Dubins arcs
                 pts += [[st.getX(), st.getY()] for st in path.getStates()[1:]]

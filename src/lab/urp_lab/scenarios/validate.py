@@ -276,6 +276,17 @@ def _vehicle_fleet(veh: dict, tasks: list[dict], radius: float) -> list[dict]:
             raise ValueError(f'fleet[{i}].min_turn_radius_m 应为 0–10 的数值（0 = 可原地转向；阿克曼/铰接车型须给出正的最小转弯半径）')
         if turn > 0 and veh.get('travel') == 'rows':
             raise ValueError(f'fleet[{i}] 的最小转弯半径 {turn} m 暂不支持行间通行（rows）：通道内转弯的曲率规划尚未实现，请改为自由通行')
+        fp = c.get('footprint')
+        if fp is not None:
+            # body-frame polygon [[x, y], …]: oriented clearance is reported post-hoc;
+            # its circumscribed radius must stay inside the class planning circle
+            if (not isinstance(fp, dict) or fp.get('type') != 'polygon'
+                    or not isinstance(fp.get('points'), list) or len(fp['points']) < 3):
+                raise ValueError(f'fleet[{i}].footprint 须为 {{type: polygon, points: [[x,y],…]}}')
+            pts = [_xy(p, f'fleet[{i}].footprint.points') for p in fp['points']]
+            if max(math.hypot(x, y) for x, y in pts) > cls_radius + 1e-9:
+                raise ValueError(f'fleet[{i}].footprint 外接半径超过该类别规划圆 {cls_radius:g} m：朝向足迹不得超出规划契约')
+            fp = {'type': 'polygon', 'points': pts}
         asset = c.get('asset')
         if asset is not None and not (isinstance(asset, dict) and isinstance(asset.get('id'), str)
                                       and isinstance(asset.get('version'), int) and not isinstance(asset.get('version'), bool)
@@ -284,6 +295,7 @@ def _vehicle_fleet(veh: dict, tasks: list[dict], radius: float) -> list[dict]:
         classes.append({'name': name, 'count': _int(c.get('count', 1), f'fleet[{i}].count', 1),
                         'capacity': capacity, 'speed_mps': speed, 'robot_radius': cls_radius,
                         'min_turn_radius_m': turn, 'payload': payload,
+                        **({'footprint': fp} if fp is not None else {}),
                         **({'asset': asset} if asset is not None else {})})
     total = sum(c['count'] for c in classes)
     if total > 60:
@@ -343,6 +355,13 @@ def fleet_routing(inst: dict) -> dict:
             raise ValueError(f'{what} 位于障碍物内、离障碍太近或在边界外（需留出机器人半径 {radius:g} m）')
     depot = _xy(inst.get('depot'), 'depot')
     placeable(depot, '车库')
+    unload_points = []
+    for i, p in enumerate(inst.get('unload_points') or []):
+        xy = _xy(p, f'unload_points[{i}]')
+        placeable(xy, f'补给点 {i + 1}')
+        unload_points.append(xy)
+    if len(unload_points) > 16:
+        raise ValueError('补给点超过 16 个')
     depots = [depot]
     if inst.get('depots') is not None:
         raw_depots = inst['depots']
@@ -394,7 +413,8 @@ def fleet_routing(inst: dict) -> dict:
             raise ValueError(f'单车容量 {capacity} 小于最大单点需求 {max(t["demand"] for t in tasks)}')
         speed = _num(veh.get('speed_mps', 1.0), '车速', True)
         names = veh.get('names') if isinstance(veh.get('names'), list) else None
-    out.update(boundary=boundary, plots=plots, obstacles=obstacles, corridors=corridors, depot=depot, depots=depots, tasks=tasks, robot_radius=radius,
+    out.update(boundary=boundary, plots=plots, obstacles=obstacles, corridors=corridors, depot=depot, depots=depots,
+               unload_points=unload_points, tasks=tasks, robot_radius=radius,
                vehicles={'count': count, 'capacity': capacity, 'speed_mps': speed,
                          'trips': 'single' if veh.get('trips') == 'single' else 'multi',
                          # how vehicles move: along crop-row lanes and headlands, or anywhere clear of obstacles

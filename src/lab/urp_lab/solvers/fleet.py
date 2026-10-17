@@ -19,47 +19,16 @@ import numpy as np
 from .. import lanes
 from ..lanes import free_space
 from ..path_geometry import arc_lengths, locate
+from .fleet_common import depot_list, fleet_classes, vehicle_table  # fleet shape helpers (2026-10-17 拆分)
 from .fleet_curvature import (  # curvature realisation stack (2026-10-17 拆分)
     _circumradius, dubins_realize, min_curvature_radius, ompl_dubins_fallback, relax_corners)
+from .fleet_engines import metaheuristic, ortools_makespan  # PyVRP / OR-Tools engines (2026-10-17 拆分)
 
 COLORS = ['#007aff', '#ff6b00', '#34a853', '#a142f4', '#e8336d', '#00a6a6', '#c49000', '#5856d6', '#8e5a2b', '#2f7d32',
           '#d81b60', '#1e88e5']
 
 
 # ------------------------------------------------------------------- fleet --
-def fleet_classes(inst):
-    """Ordered vehicle classes (`vehicles.fleet`); legacy homogeneous instances synthesise one."""
-    veh = inst['vehicles']
-    fleet = veh.get('fleet')
-    if isinstance(fleet, list) and fleet:
-        return fleet
-    return [{'name': '同型车', 'count': veh['count'], 'capacity': veh['capacity'],
-             'speed_mps': float(veh.get('speed_mps') or 1.0), 'robot_radius': inst['robot_radius'],
-             'min_turn_radius_m': 0.0, 'payload': 'load'}]
-
-
-def vehicle_table(inst):
-    """[(vehicle_index, class_index, class, depot_index)] flattened in class order.
-
-    Vehicle indexes match route `vehicle`. With multiple depots the vehicles are assigned
-    round-robin over `depots` in table order — a deterministic, documented policy."""
-    nd = len(depot_list(inst))
-    out, idx = [], 0
-    for ci, cls in enumerate(fleet_classes(inst)):
-        for _ in range(cls['count']):
-            out.append((idx, ci, cls, idx % nd))
-            idx += 1
-    return out
-
-
-def depot_list(inst):
-    """Ordered depot coordinates (`depots`), single `[depot]` for legacy instances."""
-    depots = inst.get('depots')
-    if isinstance(depots, list) and len(depots) >= 1:
-        return depots
-    return [inst['depot']]
-
-
 class Graph:
     """Visibility graph between depot/tasks and obstacle/boundary corners, with all-pairs shortest paths."""
 
@@ -72,7 +41,8 @@ class Graph:
         from shapely.prepared import prep
         t0 = time.perf_counter()
         self.free, self.boundary, _ = free_space(inst)
-        self.points = [tuple(d) for d in depot_list(inst)] + [tuple(t['xy']) for t in inst['tasks']]
+        self.points = ([tuple(d) for d in depot_list(inst)] + [tuple(t['xy']) for t in inst['tasks']]
+                       + [tuple(p) for p in inst.get('unload_points') or []])
         r = inst['robot_radius']
         corners = []
         for o in inst.get('obstacles') or []:
@@ -152,10 +122,16 @@ class LaneGraph(Graph):
         for di, d in enumerate(depot_list(inst)):
             if not net.in_open((float(d[0]), float(d[1]))):
                 raise ValueError(f'车库 {di + 1} 在作物行里：按行间通行时车辆从地头或机耕路出发，请把车库移到地头，或改为自由通行')
+        for ui, p in enumerate(inst.get('unload_points') or []):
+            if not net.in_open((float(p[0]), float(p[1]))):
+                raise ValueError(f'补给点 {ui + 1} 在作物行里：请把它移到地头或机耕道')
         nodes, special, on_lane, self.offsets = [tuple(depot_list(inst)[0])], [0], defaultdict(list), []
         for d in depot_list(inst)[1:]:
             special.append(len(nodes))
             nodes.append(tuple(d))
+        for p in inst.get('unload_points') or []:
+            special.append(len(nodes))
+            nodes.append(tuple(p))
         for t in inst['tasks']:
             stop, lane, d = net.attach(t['xy'])
             if d > net.max_reach:
@@ -214,7 +190,6 @@ class LaneGraph(Graph):
                      'edges': len(edges), 'service_offset_mean_m': float(np.mean(self.offsets)) if self.offsets else 0.0,
                      'service_offset_max_m': float(np.max(self.offsets)) if self.offsets else 0.0,
                      'plots': net.summary()['plots']}
-
 
 def travel_graph(inst):
     return LaneGraph(inst) if inst['vehicles'].get('travel') == 'rows' else Graph(inst)
@@ -337,179 +312,50 @@ def savings(inst, D, demand):
     return list(route.values())
 
 
-def metaheuristic(engine, inst, D, demand, params, K):
-    """PyVRP or OR-Tools minimising total distance with at most K routes.
-
-    Heterogeneous fleets (`vehicles.fleet`) map each class to its own vehicle type / capacity list;
-    multiple depots (`depots`) start and end every pseudo-route at a depot (vehicles are assigned
-    round-robin in table order). `K` is the pseudo-route budget as before (all tasks' worth in
-    multi-trip mode). Returns (trips, trip_class, trip_depot, trace): the class and home depot of
-    each trip; single-depot instances get depot 0, matching the legacy behaviour."""
-    classes = fleet_classes(inst)
-    hetero = len(classes) > 1
-    multi = inst['vehicles'].get('trips', 'multi') == 'multi'
-    depots = depot_list(inst)
-    nd = len(depots)
-    n = len(inst['tasks'])
-    M = np.rint(D * 100).astype(np.int64)
-    limit = float(params.get('time_limit_s', 3))
-    trace = []
-    real = [(ci, di) for _vi, ci, _cls, di in vehicle_table(inst)]
-    if multi:
-        groups = list(dict.fromkeys(real))
-        pseudo = [key for key in groups for _ in range(n)]      # n pseudo-routes per (class, depot)
-    else:
-        pseudo = real
-    if engine == 'pyvrp':
-        from pyvrp import Model
-        from pyvrp.stop import MaxRuntime
-        model = Model()
-        locs = [model.add_location(i, 0) for i in range(nd + n)]
-        handles = [model.add_depot(locs[i]) for i in range(nd)]
-        for i in range(n):
-            model.add_client(locs[nd + i], delivery=demand[nd + i])
-        counts: dict = {}
-        for key in pseudo:
-            counts[key] = counts.get(key, 0) + 1
-        keys = list(counts)                                       # insertion order == table order
-        for ci, di in keys:
-            model.add_vehicle_type(num_available=counts[(ci, di)], capacity=classes[ci]['capacity'],
-                                   start_depot=handles[di], end_depot=handles[di])
-        for i in range(nd + n):
-            for j in range(nd + n):
-                model.add_edge(locs[i], locs[j], distance=int(M[i, j]))
-        result = model.solve(MaxRuntime(limit), seed=int(params.get('seed', 42)), display=False, collect_stats=True)
-        elapsed, best = 0.0, math.inf
-        for dt, datum in zip(result.stats.runtimes, result.stats.data):
-            elapsed += dt
-            if datum.best_feas and datum.best_cost < best:
-                best = datum.best_cost
-                trace.append([round(elapsed, 4), best / 100])
-        if not result.best.is_feasible():
-            return None, None, None, trace
-        trips = [[a.idx + nd for a in r if a.is_client()] for r in result.best.routes()]   # a.idx is the 0-based client index
-        typed = [keys[int(r.vehicle_type())] for r in result.best.routes()]
-        return trips, [ci for ci, _ in typed], [di for _, di in typed], trace
-    from ortools.constraint_solver import pywrapcp, routing_enums_pb2
-    starts = [di for _ci, di in pseudo]
-    caps = [classes[ci]['capacity'] for ci, _di in pseudo]
-    manager = pywrapcp.RoutingIndexManager(nd + n, len(pseudo), starts, starts)
-    routing = pywrapcp.RoutingModel(manager)
-    cb = routing.RegisterTransitCallback(lambda i, j: int(M[manager.IndexToNode(i), manager.IndexToNode(j)]))
-    routing.SetArcCostEvaluatorOfAllVehicles(cb)
-    dem = routing.RegisterUnaryTransitCallback(lambda i: demand[manager.IndexToNode(i)])
-    routing.AddDimensionWithVehicleCapacity(dem, 0, caps, True, 'Capacity')
-    t0 = time.perf_counter()
-
-    def on_solution():
-        v = routing.CostVar().Value() / 100
-        if not trace or v < trace[-1][1]:
-            trace.append([round(time.perf_counter() - t0, 4), v])
-    routing.AddAtSolutionCallback(on_solution)
-    p = pywrapcp.DefaultRoutingSearchParameters()
-    p.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
-    p.local_search_metaheuristic = routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
-    p.time_limit.FromMilliseconds(max(1, round(limit * 1000)))
-    sol = routing.SolveWithParameters(p)
-    if sol is None:
-        return None, None, None, trace
-    trips, trip_class, trip_depot = [], [], []
-    for v, (ci, di) in enumerate(pseudo):
-        idx, r = routing.Start(v), []
-        while not routing.IsEnd(idx):
-            node = manager.IndexToNode(idx)
-            if node >= nd:
-                r.append(node)          # graph node numbers already offset the depots
-            idx = sol.Value(routing.NextVar(idx))
-        if r:
-            trips.append(r)
-            trip_class.append(ci)
-            trip_depot.append(di)
-    return trips, trip_class, trip_depot, trace
-
-
-def ortools_makespan(inst, D, demand, params, K, multi):
-    """OR-Tools on the real fleet: each vehicle may return to the depot to unload (optional reload
-    nodes, as in the OR-Tools reload sample), and a global span cost on the time dimension
-    minimises the latest finish. Returns trips, the vehicle of each trip and the trace (seconds).
-
-    Heterogeneous fleets get per-class travel-time matrices (speed) and per-vehicle capacities;
-    reload nodes unload down to zero for every class."""
-    from ortools.constraint_solver import pywrapcp, routing_enums_pb2
-    classes = fleet_classes(inst)
-    hetero = len(classes) > 1
-    table = vehicle_table(inst)
-    caps = [cls['capacity'] for _vi, _ci, cls, _di in table]
-    n = len(inst['tasks'])
-    service = [0.0] + [float(t.get('service_s', 0) or 0) for t in inst['tasks']]
-    cap_ref = min(caps) if hetero else inst['vehicles']['capacity']
-    reloads = max(0, math.ceil(sum(demand) / cap_ref)) if multi else 0
-    orig = list(range(n + 1)) + [0] * reloads          # node -> matrix index; reload copies sit on the depot
-    serv = np.array([service[o] for o in orig])
-    if hetero:
-        T = {ci: np.rint(10 * (D[np.ix_(orig, orig)] / cls['speed_mps'] + serv[:, None])).astype(np.int64) for ci, cls in enumerate(classes)}
-        for m in T.values():
-            np.fill_diagonal(m, 0)
-    else:
-        speed = inst['vehicles'].get('speed_mps') or 1.0
-        T = {0: np.rint(10 * (D[np.ix_(orig, orig)] / speed + serv[:, None])).astype(np.int64)}
-        np.fill_diagonal(T[0], 0)
-    load = demand + [-max(caps)] * reloads
-    manager = pywrapcp.RoutingIndexManager(n + 1 + reloads, K, 0)
-    routing = pywrapcp.RoutingModel(manager)
-    cbs = [routing.RegisterTransitCallback(lambda i, j, m=T[table[v][1]]: int(m[manager.IndexToNode(i), manager.IndexToNode(j)]))
-           for v in range(K)]
-    for v, cb in enumerate(cbs):
-        routing.SetArcCostEvaluatorOfVehicle(cb, v)
-    horizon = int(max(m.max() for m in T.values()) * (n + reloads + 2))
-    routing.AddDimensionWithVehicleTransits(cbs, 0, horizon, True, 'Time')
-    time_dim = routing.GetDimensionOrDie('Time')
-    time_dim.SetGlobalSpanCostCoefficient(100)
-    dem = routing.RegisterUnaryTransitCallback(lambda i: int(load[manager.IndexToNode(i)]))
-    routing.AddDimensionWithVehicleCapacity(dem, max(caps), caps, True, 'Capacity')
-    cap_dim = routing.GetDimensionOrDie('Capacity')
-    for node in range(1, n + 1):
-        cap_dim.SlackVar(manager.NodeToIndex(node)).SetValue(0)
-    for node in range(n + 1, n + 1 + reloads):
-        idx = manager.NodeToIndex(node)
-        cap_dim.SlackVar(idx).SetRange(0, max(caps))  # unloading resets the load to zero for any class
-        routing.AddDisjunction([idx], 0)               # reloads are optional and free
-    t0, trace = time.perf_counter(), []
-
-    def on_solution():
+def _validated_reload_stops(r, trips, inst, home, errors):
+    """Declared between-trip supply stops: None when absent/invalid, else the xy list to verify."""
+    declared = r.get('reload_stops')
+    if declared is None:
+        return None
+    if not isinstance(declared, list) or len(declared) != max(0, len(trips) - 1):
+        errors.append(f"车辆 {r.get('vehicle_name')} 的补给停靠清单与分趟数不一致")
+        return None
+    valid_pts = [(float(p[0]), float(p[1])) for p in inst.get('unload_points') or []] + [tuple(home)]
+    for p in declared:
         try:
-            span = max(time_dim.CumulVar(routing.End(v)).Value() for v in range(K)) / 10
-        except Exception:  # noqa: BLE001 - fall back to the raw cost if cumuls are not readable here
-            span = routing.CostVar().Value() / 1000
-        if not trace or span < trace[-1][1]:
-            trace.append([round(time.perf_counter() - t0, 4), span])
-    routing.AddAtSolutionCallback(on_solution)
-    p = pywrapcp.DefaultRoutingSearchParameters()
-    p.first_solution_strategy = routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
-    p.local_search_metaheuristic = routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
-    p.time_limit.FromMilliseconds(max(1, round(float(params.get('time_limit_s', 3)) * 1000)))
-    sol = routing.SolveWithParameters(p)
-    if sol is None:
-        return None, None, trace
-    trips, owner = [], []
-    for v in range(K):
-        idx, cur = routing.Start(v), []
-        while True:
-            idx = sol.Value(routing.NextVar(idx))
-            node = manager.IndexToNode(idx)
-            if routing.IsEnd(idx) or node > n:
-                if cur:
-                    trips.append(cur)
-                    owner.append(v)
-                cur = []
-                if routing.IsEnd(idx):
-                    break
-            else:
-                cur.append(node)
-    return trips, owner, trace
+            ok = len(p) == 2 and (float(p[0]), float(p[1])) in valid_pts
+        except (TypeError, ValueError):
+            ok = False
+        if not ok:
+            errors.append(f'车辆 {r.get("vehicle_name")} 声明了不在补给点/家库之列的停靠 {p}')
+            return None
+    return declared
 
 
-# ------------------------------------------------------------------ check --
+def oriented_clearance(inst, polyline, footprint, obstacles, boundary, crops=()):
+    """Post-hoc oriented-footprint clearance along a realised path (report only).
+
+    Headings come from the polyline segment tangents; the footprint polygon is placed at
+    sampled vertices and its minimum distance to obstacles/boundary is measured. The
+    circumscribed-circle contract still governs acceptance — this quantifies how much
+    conservative headroom the circle assumption leaves on the table."""
+    from shapely import affinity
+    from shapely.geometry import Point, Polygon
+    poly0 = Polygon(footprint['points'])
+    best = math.inf
+    step = max(1, len(polyline) // 400)               # ≤ ~400 poses per route
+    for i in range(0, len(polyline), step):
+        x, y = polyline[i]
+        nxt = polyline[min(i + 1, len(polyline) - 1)]
+        prv = polyline[max(i - 1, 0)]
+        yaw = math.atan2(nxt[1] - prv[1], nxt[0] - prv[0])
+        pose_poly = affinity.translate(affinity.rotate(poly0, yaw, origin=(0, 0), use_radians=True), x, y)
+        d = min([pose_poly.distance(o) for o in obstacles] + [pose_poly.distance(boundary.boundary)]
+                + [pose_poly.distance(row) for row in crops])
+        best = min(best, d)
+    return None if best is math.inf else float(best)
+
+
 def check(inst, routes):
     """Recompute task order, actual depot reloads, capacity, metrics and swept-radius clearance.
 
@@ -619,7 +465,8 @@ def check(inst, routes):
                 errors.append(f'车辆 {name} 声明的车库坐标与车队分配不一致')
         # Locate each stop in sequence, including a real depot return between trips.
         cursor, served_count = 0.0, 0
-        returns = set(np.cumsum([len(trip) for trip in trips]).tolist()[:-1])
+        returns = list(np.cumsum([len(trip) for trip in trips]).tolist()[:-1])
+        declared = _validated_reload_stops(r, trips, inst, home, errors)
         for sv in services:
             task = tasks.get(sv.get('task'))
             if task is None:
@@ -645,9 +492,10 @@ def check(inst, routes):
                 errors.append(f"车辆 {name} 任务 {task['id']} 的作业位置无效")
             served_count += 1
             if served_count in returns:
-                at = locate(pts, home, cursor)
+                stop_at = home if declared is None else declared[returns.index(served_count)]
+                at = locate(pts, stop_at, cursor)
                 if at is None:
-                    errors.append(f'车辆 {name} 分趟之间未返回车库卸载')
+                    errors.append(f'车辆 {name} 分趟之间未返回车库/补给点卸载')
                 else:
                     cursor = at
         duration = length / cls['speed_mps'] + sum(tasks[t]['service_s'] for t in seq if t in tasks)
@@ -656,8 +504,17 @@ def check(inst, routes):
             if not isinstance(value, (int, float)) or not math.isfinite(value) or not math.isclose(value, expected, rel_tol=1e-6, abs_tol=1e-5):
                 errors.append(f'车辆 {name} 的{label}与独立复算不一致')
         total += length
+        oriented = None
+        if isinstance(cls.get('footprint'), dict):
+            try:
+                oriented = oriented_clearance(inst, pts, cls['footprint'], obstacles, boundary, crop_rows)
+            except Exception:                            # reporting only; never blocks the circle contract
+                oriented = None
         details.append({'vehicle': name, 'fleet_class': cls['name'], 'load': load, 'length_m': length, 'duration_s': duration,
-                        'collisions': int(not clear) + int(not crop_clear), 'off_network': off})
+                        'collisions': int(not clear) + int(not crop_clear), 'off_network': off,
+                        'oriented_clearance_m': oriented,
+                        'oriented_scope': 'post-hoc pose-sampled polygon clearance; the circumscribed-circle contract still governs acceptance'
+                        if oriented is not None else None})
     for ci, cls in enumerate(classes):
         if class_use[ci] > cls['count']:
             errors.append(f"车型类别 {cls['name']} 使用 {class_use[ci]} 台，超过该类台数 {cls['count']}")
@@ -685,13 +542,14 @@ def assign_trips(trip_times, K):
 
 def dispatch_algorithm(inst, algorithm_id, D, demand, params, deadline, route_cap, K, multi, class_of):
     """Run one fleet algorithm; returns (trips, owner, trip_class, trip_depot, trace)."""
-    trace, owner, trip_class, trip_depot = [], None, None, None
+    trace, owner, trip_class, trip_depot, reload_at = [], None, None, None, None
     trips = None
     if algorithm_id == 'pyvrp.fleet':
         trips, trip_class, trip_depot, trace = metaheuristic('pyvrp', inst, D, demand, params, route_cap)
     elif algorithm_id == 'ortools.fleet' and inst.get('objective') == 'makespan':
-        trips, owner, trace = ortools_makespan(inst, D, demand, params, K, multi)
+        trips, owner, reload_at, trace = ortools_makespan(inst, D, demand, params, K, multi)
         trip_class = [class_of[v] for v in owner] if owner is not None else None
+        trip_depot = [v % len(depot_list(inst)) for v in owner] if owner is not None else None
     elif algorithm_id == 'ortools.fleet':
         trips, trip_class, trip_depot, trace = metaheuristic('ortools', inst, D, demand, params, route_cap)
     elif algorithm_id == 'panel.sweep':
@@ -702,7 +560,7 @@ def dispatch_algorithm(inst, algorithm_id, D, demand, params, deadline, route_ca
         trips = [two_opt(D, [0] + r + [0], deadline)[1:-1] for r in savings(inst, D, demand)]
     else:
         raise ValueError(f'未知算法 {algorithm_id}')
-    return trips, owner, trip_class, trip_depot, trace
+    return trips, owner, trip_class, trip_depot, reload_at, trace
 
 
 def solve(scenario, inst, algorithm_id, params):
@@ -733,15 +591,15 @@ def solve(scenario, inst, algorithm_id, params):
                        + '；可允许多趟往返或增加车辆/容量'}, 'infeasible', []
     if hetero and algorithm_id in ('panel.sweep', 'panel.cluster_first', 'panel.savings_fleet'):
         raise ValueError('构造基线（sweep / cluster_first / savings）只支持同构车队；异构车队请用 pyvrp.fleet 或 ortools.fleet')
-    if multi_depot and (algorithm_id.startswith('panel.')
-                        or (algorithm_id == 'ortools.fleet' and inst.get('objective') == 'makespan')):
-        raise ValueError('多车库当前支持 pyvrp.fleet / ortools.fleet 的总里程目标；构造基线与 makespan 的多车库建模尚未实现')
+    if multi_depot and algorithm_id.startswith('panel.'):
+        raise ValueError('构造基线（sweep / cluster_first / savings）只支持单车库；多车库请用 pyvrp.fleet 或 ortools.fleet')
     deadline = time.perf_counter() + float(params.get('time_limit_s', 3))
     route_cap = n if multi else K
-    trips, owner, trip_class, trip_depot, trace = dispatch_algorithm(
+    trips, owner, trip_class, trip_depot, reload_at, trace = dispatch_algorithm(
         inst, algorithm_id, D, demand, params, deadline, route_cap, K, multi, class_of)
     if not trips:
         return [], None, {}, {'reason': '求解器没有返回可行方案'}, 'no_solution', trace
+    reload_at = reload_at or [0] * len(trips)              # distance mode reloads at home only
     if trip_class is None:
         trip_class = [0] * len(trips)          # constructive baselines run on homogeneous fleets only
     if trip_depot is None:
@@ -783,20 +641,24 @@ def solve(scenario, inst, algorithm_id, params):
               continue
           cls = table.get(vi) or classes[0]
           home = depot_of[vi] if multi_depot else 0
-          stops = [home] + [s for i in mine for s in trips[i] + [home]]
+          boundaries = [reload_at[i] or home for i in mine]
+          # between-trip supply stops; the mission always ends back at the home depot
+          stops = [home] + [s for i, bnd in zip(mine, boundaries) for s in trips[i] + [bnd]] + [home]
           waypoints, service_waypoints = [], []
           for a, b in zip(stops, stops[1:]):
               seg = graph.path(a, b)
               waypoints += seg if not waypoints else seg[1:]
-              if b != home:
+              if nd <= b < nd + n:                    # services sit on task nodes only
                   service_waypoints.append(len(waypoints) - 1)
           turn = float(cls.get('min_turn_radius_m') or 0)
           if turn > 0 and use_ompl:
-              stops_xy = [list(depots[home])] + [list(graph.points[s])[:2] for s in stops[1:-1]] + [list(depots[home])]
-              pts = ompl_dubins_fallback(inst, stops_xy, turn)
-              if pts is None:
-                  return None
-              service_positions = [min(range(len(pts)), key=lambda i: math.dist(pts[i], xy)) for xy in stops_xy[1:-1]]
+            clean = [stops[0]] + [b for a, b in zip(stops, stops[1:]) if b != a]      # zero-length legs are unplannable
+            stops_xy = [list(graph.points[s])[:2] for s in clean]
+            pts = ompl_dubins_fallback(inst, stops_xy, turn, budget_s=3.0)
+            if pts is None:
+                return None
+            task_xys = [list(graph.points[s])[:2] for s in clean if nd <= s < nd + n]
+            service_positions = [min(range(len(pts)), key=lambda i: math.dist(pts[i], xy)) for xy in task_xys]
           elif turn > 0:
               pts, marks = dubins_realize(relax_corners(waypoints, service_waypoints, corner_shift * turn), turn)
               service_positions = [marks[wi] for wi in service_waypoints]
@@ -819,6 +681,9 @@ def solve(scenario, inst, algorithm_id, params):
               route.update(min_turn_radius_m=turn, curvature_radius_m=round(min_curvature_radius(pts), 4))
           if multi_depot:
               route.update(depot=home, depot_xy=[float(depots[home][0]), float(depots[home][1])])
+          if any(bnd and bnd != home for bnd in boundaries[:-1]):
+              route.update(reload_stops=[[float(graph.points[b][0]), float(graph.points[b][1])]
+                                         for bnd in boundaries[:-1] if bnd])
           routes.append(route)
         return routes
 

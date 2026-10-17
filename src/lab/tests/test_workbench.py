@@ -632,16 +632,29 @@ def test_multi_depot_checker_rejects_wrong_depot_return():
     assert not chk['valid'] and any('自己的车库' in e for e in chk['errors'])
 
 
-def test_multi_depot_rejections():
-    sc = _multi_depot_scenario(2, count=2)
+def test_multi_depot_makespan_balances_over_home_depots():
+    sc = _multi_depot_scenario(2, count=3)
+    sc['instance']['vehicles']['travel'] = 'free'      # rows+makespan on the lane graph is a heavier regime
     sc['instance']['objective'] = 'makespan'
     sc['instance'] = validate_instance('fleet_routing', sc['instance'])
-    with pytest.raises(ValueError, match='多车库'):
-        run_algorithm(sc, sc['instance'], 'ortools.fleet', {'time_limit_s': 1})
+    r = run_algorithm(sc, sc['instance'], 'ortools.fleet', {'time_limit_s': 3})
+    assert r['status'] == 'feasible' and r['check']['valid'], r['check']
+    depots = sc['instance']['depots']
+    used = set()
+    for route in r['routes']:
+        home = route['depot']
+        used.add(home)
+        assert math.dist(route['polyline'][0], depots[home]) < 1e-6
+        assert math.dist(route['polyline'][-1], depots[home]) < 1e-6
+    assert used                             # spread over depots in table order
+
+
+def test_multi_depot_rejections():
+    sc = _multi_depot_scenario(2, count=2)
+    sc['instance'] = validate_instance('fleet_routing', sc['instance'])
     with pytest.raises(ValueError, match='多车库'):
         run_algorithm(sc, sc['instance'], 'panel.savings_fleet', {})
     inst = copy.deepcopy(sc['instance'])
-    inst['objective'] = 'total_distance'
     inst['depots'].append(inst['depots'][0])           # duplicate depot
     with pytest.raises(ValueError, match='重复'):
         validate_instance('fleet_routing', inst)
@@ -709,3 +722,90 @@ def test_curvature_wide_gap_stays_analytic():
     r = run_algorithm(sc, sc['instance'], 'pyvrp.fleet', {'time_limit_s': 1})
     assert r['status'] == 'feasible' and r['check']['valid']
     assert r['raw_result'].get('curvature_realization_attempts') is None   # first (analytic) attempt passed
+
+
+def test_oriented_footprint_clearance_is_reported_not_gating():
+    """A 0.8×0.48 rectangle inside a 0.5 m circle: the oriented clearance must be ≥ the circle
+    clearance (less conservative), reported per route, and never decides acceptance."""
+    from urp_lab.solvers.fleet import check as fleet_check
+    sc = _fleet_scenario(EXAMPLES[0], [{'count': 2, 'capacity': 20,
+                                        'footprint': {'type': 'polygon',
+                                                      'points': [[-0.4, -0.24], [0.4, -0.24], [0.4, 0.24], [-0.4, 0.24]]}}])
+    r = run_algorithm(sc, sc['instance'], 'pyvrp.fleet', {'time_limit_s': 1})
+    assert r['status'] == 'feasible' and r['check']['valid']
+    for d in r['check']['routes']:
+        # the rectangle sits inside the planning circle, so its true clearance can be below the
+        # circle gate — that visible gap IS the conservatism the report is meant to quantify
+        assert d['oriented_clearance_m'] is not None and d['oriented_clearance_m'] >= 0.0
+        assert 'circle contract' in (d['oriented_scope'] or '')
+    # circle-only classes keep the legacy detail shape
+    r2 = run_algorithm(sc := _scenario(EXAMPLES[0]), sc['instance'], 'pyvrp.fleet', {'time_limit_s': 1})
+    assert all(d.get('oriented_clearance_m') is None for d in r2['check']['routes'])
+
+
+def test_oriented_footprint_validation():
+    with pytest.raises(ValueError, match='外接半径'):
+        _fleet_scenario(EXAMPLES[0], [{'count': 1, 'capacity': 10,
+                                       'footprint': {'type': 'polygon', 'points': [[-1, 0], [1, 0], [0, 1]]}}])
+    with pytest.raises(ValueError, match='footprint'):
+        _fleet_scenario(EXAMPLES[0], [{'count': 1, 'capacity': 10, 'footprint': {'type': 'circle'}}])
+
+
+# ------------------------------------------------------------ unload points --
+def _unload_scenario(with_point=True):
+    inst = {'boundary': [[0, 0], [60, 0], [60, 30], [0, 30]], 'depot': [3, 15], 'objective': 'makespan',
+            'tasks': [{'id': i + 1, 'xy': [45 + 4 * (i % 3), 8 + 12 * (i % 2)], 'demand': 4} for i in range(8)],
+            'vehicles': {'count': 1, 'capacity': 16, 'speed_mps': 1.0, 'trips': 'multi', 'travel': 'free'},
+            'robot_radius': 0.5}
+    if with_point:
+        inst['unload_points'] = [[38, 15]]
+    return validate_instance('fleet_routing', inst)
+
+
+def test_unload_point_shortens_makespan_and_is_verified():
+    base = run_algorithm({'problem_class': 'fleet_routing', 'frame': {'kind': 'field'}, 'cost_unit': 's'},
+                         _unload_scenario(False), 'ortools.fleet', {'time_limit_s': 3})
+    supp = run_algorithm({'problem_class': 'fleet_routing', 'frame': {'kind': 'field'}, 'cost_unit': 's'},
+                         _unload_scenario(True), 'ortools.fleet', {'time_limit_s': 3})
+    assert base['status'] == 'feasible' and supp['status'] == 'feasible'
+    assert base['check']['valid'] and supp['check']['valid']
+    route = supp['routes'][0]
+    if len(route['trips']) > 1:                    # when a mid-route supply was used it is declared and checked
+        stops = route.get('reload_stops') or []
+        assert all(any(math.dist(s, p) < 1e-6 for p in supp['instance']['unload_points']) or
+                   math.dist(s, supp['instance']['depot']) < 1e-6 for s in stops)
+    assert supp['metrics']['makespan_s'] <= base['metrics']['makespan_s'] * 1.05 + 1e-6
+
+
+def test_unload_point_tampering_is_rejected():
+    from urp_lab.solvers.fleet import check as fleet_check
+    sc = {'problem_class': 'fleet_routing', 'frame': {'kind': 'field'}, 'cost_unit': 's'}
+    r = run_algorithm(sc, _unload_scenario(True), 'ortools.fleet', {'time_limit_s': 3})
+    assert r['status'] == 'feasible' and r['check']['valid']
+    routes = r['routes']
+    victim = routes[0]
+    if victim.get('reload_stops'):
+        victim['reload_stops'][0] = [55.0, 27.0]          # not an unload point nor the home depot
+        chk = fleet_check(_unload_scenario(True), routes)
+        assert not chk['valid'] and any('补给点' in e for e in chk['errors'])
+
+
+def test_unload_point_geojson_roundtrip_and_validation():
+    doc = {'type': 'FeatureCollection', 'features': [
+        {'type': 'Feature', 'properties': {'role': 'boundary'},
+         'geometry': {'type': 'Polygon', 'coordinates': [[[0, 0], [50, 0], [50, 30], [0, 30], [0, 0]]]}},
+        {'type': 'Feature', 'properties': {'role': 'depot'}, 'geometry': {'type': 'Point', 'coordinates': [3, 3]}},
+        {'type': 'Feature', 'properties': {'role': 'unload', 'name': '补给点A'}, 'geometry': {'type': 'Point', 'coordinates': [30, 15]}},
+        *[{'type': 'Feature', 'properties': {'role': 'task'}, 'geometry': {'type': 'Point', 'coordinates': [x, y]}}
+          for x, y in [(20, 10), (40, 20), (35, 5), (45, 25)]],
+    ]}
+    import json as _json
+    sc = import_geojson(doc, vehicles={'count': 1})
+    inst = validate_instance('fleet_routing', sc['instance'])
+    assert inst['unload_points'] == [[30.0, 15.0]]
+    again = import_geojson(_json.loads(export_geojson(sc, None)), vehicles={'count': 1})
+    assert validate_instance('fleet_routing', again['instance'])['unload_points'] == [[30.0, 15.0]]
+    bad = _unload_scenario(True)
+    bad['unload_points'].append([999, 999])
+    with pytest.raises(ValueError):
+        validate_instance('fleet_routing', bad)

@@ -14,6 +14,8 @@ def _role(props: dict) -> tuple[str, str | None]:
     text = ' '.join(str(props.get(k, '')) for k in ('role', 'type', 'kind', 'class', 'name', 'category')).lower()
     if any(w in text for w in ('boundary', 'field', '边界', '田界', '场地')):
         return 'boundary', None
+    if any(w in text for w in ('unload', 'supply', '补给', '卸货', '卸载点')):
+        return 'unload', None
     if any(w in text for w in ('depot', 'base', 'garage', '车库', '仓库', '基地', '起点')):
         return 'depot', None
     if any(w in text for w in ('task', 'sample', 'point', 'target', '任务', '采样', '点')):
@@ -78,13 +80,15 @@ def import_geojson(obj: dict, title: str | None = None, vehicles: dict | None = 
     def ring(coords):
         pts = [project(p) for p in coords]
         return pts[:-1] if len(pts) > 1 and pts[0] == pts[-1] else pts
-    boundary, plots, obstacles, tasks, depot, corridors, depot_pts = None, [], [], [], None, [], []
+    boundary, plots, obstacles, tasks, depot, corridors, depot_pts, unload_pts = None, [], [], [], None, [], [], []
     for i, f in enumerate(feats):
         g, props = f.get('geometry') or {}, f.get('properties') or {}
         role, kind = _role(props)
         polys = [g['coordinates']] if g.get('type') == 'Polygon' else g.get('coordinates', []) if g.get('type') == 'MultiPolygon' else []
         if g.get('type') == 'Point':
-            if role == 'depot' or (role == 'unknown' and not depot_pts and not tasks and props.get('depot')):
+            if role == 'unload':
+                unload_pts.append(project(g['coordinates']))
+            elif role == 'depot' or (role == 'unknown' and not depot_pts and not tasks and props.get('depot')):
                 depot_pts.append(project(g['coordinates']))
             else:
                 tasks.append({'id': len(tasks) + 1, 'xy': project(g['coordinates']), 'demand': int(props.get('demand') or 1),
@@ -125,6 +129,7 @@ def import_geojson(obj: dict, title: str | None = None, vehicles: dict | None = 
     instance = {'boundary': boundary, 'plots': plots, 'obstacles': obstacles, 'depot': depot, 'tasks': tasks,
                 **({'corridors': corridors} if corridors else {}),
                 **({'depots': depot_pts} if len(depot_pts) > 1 else {}),
+                **({'unload_points': unload_pts} if unload_pts else {}),
                 'vehicles': {'count': K, 'capacity': int((vehicles or {}).get('capacity') or math.ceil(demand / K * 1.3)),
                              'speed_mps': float((vehicles or {}).get('speed_mps') or 1.0), 'trips': 'multi'},
                 'objective': 'total_distance', 'robot_radius': 0.5, 'units': 'm'}
@@ -147,6 +152,8 @@ def export_geojson(scenario: dict, solution: dict | None = None) -> bytes:
     feats.append({'type': 'Feature', 'properties': {'role': 'depot'}, 'geometry': {'type': 'Point', 'coordinates': inst['depot']}})
     feats += [{'type': 'Feature', 'properties': {'role': 'depot'}, 'geometry': {'type': 'Point', 'coordinates': d}}
               for d in (inst.get('depots') or [])[1:]]
+    feats += [{'type': 'Feature', 'properties': {'role': 'unload'}, 'geometry': {'type': 'Point', 'coordinates': p}}
+              for p in inst.get('unload_points') or []]
     feats += [{'type': 'Feature', 'properties': {'role': 'task', 'id': t['id'], 'label': t['label'], 'demand': t['demand']},
                'geometry': {'type': 'Point', 'coordinates': t['xy']}} for t in inst['tasks']]
     for r in (solution or {}).get('routes') or []:
