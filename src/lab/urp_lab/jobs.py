@@ -221,8 +221,11 @@ class JobManager:
             raise RuntimeError('网关正在退出，不再接受求解任务')
         job_id = new_id('job')
         run_ids = []
+        from .assets.bindings import snapshot
+        assets = snapshot(instance)  # validate once before any run in the batch is enqueued
         for algorithm, params in algorithms:
             sol = skeleton(job_id, scenario, instance, algorithm, params, label)
+            sol['asset_snapshot'] = copy.deepcopy(assets)
             request = {'run_id': sol['run_id'], 'scenario': scenario, 'instance': instance,
                        'algorithm_id': algorithm['id'], 'params': params}
             self._save(sol)

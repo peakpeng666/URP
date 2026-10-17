@@ -6,7 +6,7 @@
 
 科研面板、二维路线与 ROS 仿真的统一入口见 **[本机使用说明](setup/README.md)**；实际测试结果见 [集成验收报告](setup/2026-10-15/integration/REPORT.md)。
 
-**[CVRPLIB当前入口](experiments/CVRPLIB入口.md) · [下一阶段](下一阶段.md) · [当前实验进度](experiments/状态.md) · [老师要求与成果](materials/学习/老师要求与进度.md) · [按需取用](按需取用.md)**
+**[CVRPLIB当前入口](experiments/CVRPLIB入口.md) · [下一阶段](docs/下一阶段.md) · [当前实验进度](experiments/状态.md) · [老师要求与成果](materials/学习/老师要求与进度.md) · [按需取用](docs/按需取用.md)**
 
 项目包含源码、论文精读、论文原文、教材、算例和实验原始记录。[私有云盘](https://drive.google.com/drive/folders/1ZpHAznk36B-PVwL19lo_-kulRF3pwtBY)与[私有GitHub仓库](https://github.com/peakpeng666/URP)保存同一项目；范围和来源记录见[storage.json](storage.json)。
 
@@ -19,6 +19,7 @@
 | 论文原文 | [papers](papers/README.md) |
 | 老师指南、学习手册和项目材料 | [materials](materials/README.md) |
 | 输入、算例与记录包 | [data](data/README.md) |
+| 项目文档与目录维护 | [docs](docs/README.md) |
 
 ## 本机启动
 

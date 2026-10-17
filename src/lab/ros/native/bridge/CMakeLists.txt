@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.16)
+project(urp_parameter_bridge)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(ros_gz_bridge REQUIRED)
+add_executable(parameter_bridge parameter_bridge.cpp)
+target_compile_features(parameter_bridge PRIVATE cxx_std_17)
+ament_target_dependencies(parameter_bridge rclcpp ros_gz_bridge)

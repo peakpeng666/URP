@@ -61,11 +61,13 @@ def main() -> int:
     parser.add_argument('--keep-session', action='store_true', help='leave the simulation running afterwards')
     parser.add_argument('--skip-sim', action='store_true')
     parser.add_argument('--budget', type=float, default=1800, help='overall wall seconds')
+    parser.add_argument('--output', type=Path, help='Evidence directory (must not already exist)')
+    parser.add_argument('--runtime', type=Path, default=LAB / 'runtime', help='The target gateway runtime directory')
     args = parser.parse_args()
 
     started = time.monotonic()
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
-    out_dir = LAB / 'runtime' / 'e2e' / stamp
+    out_dir = args.output.resolve() if args.output else LAB / 'runtime' / 'e2e' / stamp
     out_dir.mkdir(parents=True, exist_ok=False)
     api = Client(args.gateway)
     report = {'started_utc': datetime.now(timezone.utc).isoformat(), 'gateway': args.gateway, 'scenario': args.scenario,
@@ -214,7 +216,7 @@ def main() -> int:
             report['shutdown'] = {'phase': state.get('phase') if code == 200 else None, 'errors': state.get('errors') if code == 200 else state,
                                   'warnings': state.get('warnings') if code == 200 else None}
             print(f"[INFO] session shutdown → {report['shutdown']['phase']}", flush=True)
-            session_file = LAB / 'runtime' / 'sim' / report.get('session_id', 'missing') / 'session-report.json'
+            session_file = args.runtime.resolve() / 'sim' / report.get('session_id', 'missing') / 'session-report.json'
             cleanup = json.loads(session_file.read_text()) if session_file.exists() else None
             report['shutdown']['session_report'] = str(session_file)
             report['shutdown']['verified'] = bool(cleanup and cleanup.get('status') == 'PASS'

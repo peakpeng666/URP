@@ -1,0 +1,27 @@
+--- upstream/parameter_bridge.cpp
++++ urp/parameter_bridge.cpp
+@@ -22,7 +22,15 @@
+ #include <rclcpp/rclcpp.hpp>
+ #include <ros_gz_bridge/ros_gz_bridge.hpp>
+ 
+-#include "bridge_handle.hpp"
++#include <rclcpp/utilities.hpp>
++
++// spin() may return as soon as the context is invalidated, while the deferred
++// signal thread is still using spdlog. Join it before static destruction starts.
++// Covers normal and invalid-argument returns without changing status.
++struct ShutdownROS
++{
++  ~ShutdownROS() { rclcpp::shutdown(); }
++};
+ 
+ //////////////////////////////////////////////////
+ void usage()
+@@ -75,6 +83,7 @@
+   // skip the process name in argument processing
+   ++argv;
+   --argc;
++  ShutdownROS shutdown_ros;
+   auto filteredArgs = rclcpp::init_and_remove_ros_arguments(argc, argv);
+ 
+   auto bridge_node = std::make_shared<RosGzBridge>(rclcpp::NodeOptions());

@@ -41,5 +41,5 @@ def to_sim_plan(solution, scenario, mode):
                 waypoints=[dict(task=t['task'],label=t['label'],x=t['xy'][0],y=t['xy'][1],yaw=None) for t in tasks],
                 task_radius_m=.35, planned_length_m=length,budget_s=max(90,min(1800,length/.10+60)),
                 problem_class=scenario['problem_class'], coverage_instance=inst if scenario['problem_class']=='coverage' else None,
-                sources=dict(route_plan=solution['algorithm']['origin'],approach='Nav2 NavigateToPose (NavFn + DWB)，单独记录',
+                sources=dict(route_plan=solution['algorithm']['origin'],approach='Nav2 NavigateToPose (NavFn + RPP)，单独记录',
                              tracking='求解器几何路径 / Nav2 FollowPath 控制器' if mode=='follow_path' else '求解器访问顺序 / Nav2 NavigateToPose 重新规划'))

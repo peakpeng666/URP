@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+import re
 import importlib
 import logging
 import threading
@@ -37,6 +38,8 @@ except ImportError:  # pragma: no cover
     VERSION = '0.1.0'
 
 MAX_BODY = 8 * 1024 * 1024
+MAX_UPLOAD = 768 * 1024 * 1024
+UPLOAD_PATH = re.compile(r'^/lab/api/assets/(inspect|[a-z0-9-]+/replace)$')
 WRITE_METHODS = {'POST', 'PUT', 'PATCH', 'DELETE'}
 LOCAL_HOSTS = {'127.0.0.1', 'localhost', '::1', '[::1]'}
 HOP_BY_HOP = {'connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailer', 'trailers',
@@ -62,6 +65,7 @@ class Config:
     dist: Path | None = None
     archive_url: str = f'http://127.0.0.1:{ARCHIVE_PORT}'
     sim_port: int = SIM_PORT
+    field_sim_port: int = 4192
     archive_autostart: bool = False
     concurrency: int | None = None
     grace_s: float = 2.0
@@ -85,7 +89,7 @@ class Lab:
                                        archive_url=config.archive_url, sim_port=config.sim_port, jobs=self.jobs)
         self.sim = SimClient(self.store, self.bus, self.services)
         from .fieldsim import FieldSimManager
-        self.fieldsim = FieldSimManager(self.store, self.services, self.runtime)
+        self.fieldsim = FieldSimManager(self.store, self.services, self.runtime, port=config.field_sim_port)
         from .studies import StudyManager
         self.studies = StudyManager(self.store, self.jobs, self.bus)
         self._catalog: tuple[float, list[dict]] | None = None
@@ -190,12 +194,16 @@ class Guard:
         origin = headers.get('origin')
         if origin is not None and (origin == 'null' or urlsplit(origin).netloc.lower() != host.lower()):
             return error(403, 'cross_origin', '拒绝跨源写入请求')
+        ctype = headers.get('content-type', '').split(';')[0].strip().lower()
+        # Asset file uploads are multipart; a custom header (which cross-site forms cannot send) keeps them CSRF-safe.
+        upload = (method == 'POST' and ctype == 'multipart/form-data' and UPLOAD_PATH.match(scope['path']) is not None
+                  and headers.get('x-workbench-upload') == '1')
+        limit = MAX_UPLOAD if upload else MAX_BODY
         length = headers.get('content-length')
-        if length and length.isdigit() and int(length) > MAX_BODY:
-            return error(413, 'payload_too_large', f'请求体超过 {MAX_BODY // (1024 * 1024)} MiB')
+        if length and length.isdigit() and int(length) > limit:
+            return error(413, 'payload_too_large', f'请求体超过 {limit // (1024 * 1024)} MiB')
         if method != 'DELETE' and scope['path'].startswith('/lab/api/'):
-            ctype = headers.get('content-type', '').split(';')[0].strip().lower()
-            if ctype != 'application/json':
+            if ctype != 'application/json' and not upload:
                 return error(415, 'unsupported_media_type', 'POST 只接受 application/json')
         return None
 
@@ -260,6 +268,12 @@ def create_app(config: Config | None = None) -> FastAPI:
     @app.get(f'{api}/health')
     def health():
         return {'status': 'ok', 'version': VERSION, 'executes_solvers': True}
+
+    @app.get(f'{api}/fieldsim/physics')
+    def field_physics_profile():
+        from .field_physics import profile
+        return {'default': profile(), 'override_keys': ['max_step_size_s', 'collision_detector', 'ground_friction', 'wheel_friction', 'payload_kg'],
+                'scope': 'synthetic rigid-ground simulation verification; not real-machine calibration'}
 
     @app.post(f'{api}/shutdown', status_code=202)
     def shutdown_gateway():
@@ -410,6 +424,10 @@ def create_app(config: Config | None = None) -> FastAPI:
     def export_run(run_id: str, format: str = 'json'):
         return export_with(core('export').export_run, run_or_404(run_id), format)
 
+    @app.get(f'{api}/runs/{{run_id}}/record')
+    def experiment_record(run_id: str):
+        return core('experiment').record(lab, run_or_404(run_id))
+
     @app.post(f'{api}/compare/export')
     def export_compare(payload: Any = Body(None)):
         body = body_dict(payload)
@@ -532,6 +550,19 @@ def create_app(config: Config | None = None) -> FastAPI:
             return core('scenarios').save_user_scenario(sc, overwrite=False)
         except (ValueError, KeyError) as exc:
             raise ApiError(400, 'compose_failed', f'无法生成地图：{exc}') from None
+
+    @app.post(f'{api}/fleet/lanes')
+    def fleet_lanes(payload: Any = Body(None)):
+        """Crop-row lanes of a (possibly unsaved) task map, for the editor overlay."""
+        inst = body_dict(payload).get('instance')
+        if not isinstance(inst, dict):
+            raise ApiError(400, 'invalid_instance', '需要 instance（多车任务地图）')
+        try:
+            return core('lanes').preview(inst)
+        except ApiError:
+            raise
+        except Exception as exc:  # noqa: BLE001 - a half-edited map must not break the editor
+            raise ApiError(400, 'invalid_instance', f'无法生成作物行：{exc}') from None
 
     def user_scenario_or_403(scenario_id: str) -> dict:
         sc = scenario_or_404(scenario_id)
@@ -733,6 +764,14 @@ def create_app(config: Config | None = None) -> FastAPI:
         if not isinstance(ids, list) or not ids:
             raise ApiError(400, 'invalid_request', 'run_ids 须为非空数组')
         return core('analysis').analyze(lab.store.runs_by_ids([str(i) for i in ids]), float(body.get('alpha') or 0.05))
+
+    # ------------------------------------------------------------ assets --
+    # Asset library (maps, vehicles, facilities, task-map templates): self-contained package, see urp_lab/assets.
+    from .assets.api import router as assets_router
+    app.include_router(assets_router, prefix=api)
+    # Research figures in publication formats (urp_lab/figures): drawn only from recorded runs / simulations / studies.
+    from .figures.api import router as figures_router
+    app.include_router(figures_router, prefix=api)
 
     @app.api_route(f'{api}/{{rest:path}}', methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
     def api_not_found(rest: str):

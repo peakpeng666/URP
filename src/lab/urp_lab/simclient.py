@@ -8,7 +8,7 @@ import time
 
 from .events import EventBus, utc_now
 from .jobs import new_id
-from .services import BRIDGE_ISSUE, ServiceError, ServiceManager, http_json
+from .services import ServiceError, ServiceManager, bridge_known_issues, http_json
 from .store import Store
 
 log = logging.getLogger('urp_lab.sim')
@@ -22,7 +22,7 @@ SIM_FINAL = ('succeeded', 'failed', 'canceled')
 def stopped_state(errors=None, warnings=None) -> dict:
     return {'session_id': None, 'phase': 'stopped', 'world': None, 'spawn': None, 'components': {}, 'robot': None,
             'execution': None, 'errors': errors or [], 'warnings': warnings or [], 'stages': [],
-            'known_issues': [BRIDGE_ISSUE]}
+            'known_issues': bridge_known_issues()}
 
 
 def new_sim_run(sim_run_id: str, solution: dict, session_id: str | None, world: str, mode: str, plan: dict) -> dict:
@@ -112,10 +112,12 @@ class SimClient:
         if status == 200 and isinstance(st, dict):
             self._fails = 0
             st.setdefault('known_issues', [])
-            if not any('ros_gz_bridge' in k for k in st['known_issues']):
-                st['known_issues'].append(BRIDGE_ISSUE)
             self._handle_execution(st.get('execution'))
-            self._set_state(st)
+            with self.services._lock:
+                meta = self.services.sim_meta or self.services.sim_adopted or {}
+                if meta.get('session_id') and st.get('session_id') != meta['session_id']:
+                    return  # A response from the previous session arrived after restart.
+                self._set_state(st)
             return
         self._fails += 1
         meta = self.services.sim_meta or self.services.sim_adopted or {}
@@ -136,16 +138,19 @@ class SimClient:
             self.services.changed()
 
     def _session_gone(self):
-        self.services.note_sim_exit()
-        exit_text = self.services.sim_exit
-        for run in self.store.active_sim_runs():
-            if run['sim_run_id'] in self._waiting:
-                continue
-            self._finish_local(run, 'failed', f'仿真会话已结束，执行中断{"：" + exit_text if exit_text else ""}')
-        steps = [s['text'] for s in self.services.sim_stop_report]
-        state=stopped_state(errors=[exit_text] if exit_text else [], warnings=steps[-3:])
-        if exit_text:state['phase']='failed'
-        self._set_state(state)
+        with self.services._lock:
+            if self.services.sim_alive():
+                return  # A new owner can start between the poll loop's checks.
+            self.services.note_sim_exit()
+            exit_text = self.services.sim_exit
+            for run in self.store.active_sim_runs():
+                if run['sim_run_id'] in self._waiting:
+                    continue
+                self._finish_local(run, 'failed', f'仿真会话已结束，执行中断{"：" + exit_text if exit_text else ""}')
+            steps = [s['text'] for s in self.services.sim_stop_report]
+            state=stopped_state(errors=[exit_text] if exit_text else [], warnings=steps[-3:])
+            if exit_text:state['phase']='failed'
+            self._set_state(state)
 
     # ----------------------------------------------------------- execution --
     def _handle_execution(self, ex: dict | None):
@@ -291,17 +296,19 @@ class SimClient:
         return run
 
     def current_state(self) -> dict:
-        st = dict(self.state)
-        if self.services._busy.get('sim') == 'stopping' and st.get('session_id'):
-            st['phase'] = 'stopping'
-        elif not self.services.sim_alive() and st.get('phase') not in ('stopped','failed'):
-            st = stopped_state(errors=st.get('errors'))
-            if st['errors']:st['phase']='failed'
-        elif self.services.sim_alive() and not st.get('session_id'):
+        with self.services._lock:
+            st = dict(self.state)
+            alive = self.services.sim_alive()
             meta = self.services.sim_meta or self.services.sim_adopted or {}
-            st = {**stopped_state(), 'session_id': meta.get('session_id'), 'phase': 'starting',
-                  'world': meta.get('world'), 'spawn': meta.get('spawn')}
-        return st
+            if alive and st.get('session_id') != meta.get('session_id'):
+                st = {**stopped_state(), 'session_id': meta.get('session_id'), 'phase': 'starting',
+                      'world': meta.get('world'), 'spawn': meta.get('spawn')}
+            if self.services._busy.get('sim') == 'stopping' and st.get('session_id'):
+                st['phase'] = 'stopping'
+            elif not alive and st.get('phase') not in ('stopped','failed'):
+                st = stopped_state(errors=st.get('errors'))
+                if st['errors']:st['phase']='failed'
+            return st
 
     def set_window(self, key: str, on: bool) -> dict:
         self.services.sim_window(key, on)

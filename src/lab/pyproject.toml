@@ -12,9 +12,13 @@ dependencies = [
   "shapely==2.2.0",
   "numpy==2.5.4",
   "scipy==1.18.1",
+  "matplotlib==3.11.2",
   "pillow>=11",
   "ompl==2.0.1",
   "pyproj>=3.7",
+  "python-multipart>=0.0.32",
+  "defusedxml>=0.7.1",
+  "opencv-python-headless>=5.0.0.93",
 ]
 
 [dependency-groups]

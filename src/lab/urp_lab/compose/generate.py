@@ -129,7 +129,7 @@ def generate(spec: dict, seed: int, outline: list | None = None) -> dict:
     return {
         'boundary': [[round(x, 2), round(y, 2)] for x, y in list(outer.exterior.coords)[:-1]],
         'plots': plots, 'obstacles': obstacles, 'depot': [round(depot.x, 2), round(depot.y, 2)], 'tasks': tasks,
-        'vehicles': {'count': K, 'capacity': capacity, 'speed_mps': float(spec['speed_mps']),
+        'vehicles': {'count': K, 'capacity': capacity, 'speed_mps': float(spec['speed_mps']), 'travel': 'rows',
                      'names': [f'{chr(0x2460 + i)} 号车' if i < 20 else f'车{i + 1}' for i in range(K)]},
         'objective': spec['objective'], 'robot_radius': round(radius, 3), 'units': 'm',
         'meta': {'task_word': TASK_WORD.get(spec['kind'], '任务点'), 'margin_m': round(margin, 2), 'road_m': round(road, 2)},

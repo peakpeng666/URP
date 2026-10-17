@@ -32,8 +32,6 @@ SIM_SCRIPT_REL = 'src/lab/ros/urp_sim_session.py'
 WORLDS = ('warehouse', 'depot', 'maze')
 SIM_STOP_WAIT_S = 120.0
 SIM_ESCALATION = ((signal.SIGINT, 15.0), (signal.SIGTERM, 10.0), (signal.SIGKILL, 5.0))
-BRIDGE_ISSUE = ('ros_gz_bridge 0.244.26 退出时堆损坏（上游问题，根因未定位）；会话给 parameter_bridge 加了退出垫片，'
-                '以 main 的返回码直接退出来绕开。URP_BRIDGE_FIX=0 可关闭，记录见 setup/2026-10-15/integration/。')
 BRIDGE_CRASH = re.compile(r'free\(\): corrupted|corrupted unsorted chunks|process has died.*exit code -6|exit code -6')
 PHASE_TEXT = {'stopped': '已停止', 'starting': '启动中', 'undocking': '离开充电座', 'localizing': '定位初始化',
               'nav2_starting': 'Nav2 启动中', 'ready': '就绪', 'executing': '执行中', 'stopping': '关闭中', 'failed': '失败'}
@@ -41,6 +39,21 @@ PHASE_SERVICE = {'starting': 'starting', 'undocking': 'starting', 'localizing': 
                  'ready': 'running', 'executing': 'running', 'stopping': 'stopping', 'failed': 'failed',
                  'stopped': 'stopping'}
 SERVICE_STATES = {'running', 'stopped', 'starting', 'stopping', 'ready', 'degraded', 'failed', 'unavailable'}
+
+
+def bridge_known_issues() -> list[str]:
+    option = os.environ.get('URP_BRIDGE_FIX', '1')
+    if option == '0':
+        return ['URP_BRIDGE_FIX=0：使用未修复的系统 parameter_bridge，关闭竞态仍存在；仅供隔离对照。']
+    if option != '1':
+        return ['URP_BRIDGE_FIX 必须是 0 或 1；当前配置会阻止仿真启动。']
+    return []
+
+
+def bridge_note() -> str:
+    return '；'.join(bridge_known_issues()) or (
+        '已选择 parameter_bridge 源码关闭修复，启动时校验源码与依赖指纹；'
+        '等待 ROS 信号线程结束后正常析构，不使用 _exit。')
 
 
 class ServiceError(Exception):
@@ -101,6 +114,25 @@ def processes_with_env(key: str, value: str) -> list[int]:
         except OSError:
             continue
     return found
+
+
+def session_identity(pid: int, sid: str, runtime: Path) -> int | None:
+    """Identify a live supervisor in this runtime, including its Linux start time."""
+    proc = Path('/proc') / str(pid)
+    try:
+        stat = (proc / 'stat').read_text()
+        fields = stat[stat.rfind(')') + 2:].split()
+        if fields[0] == 'Z' or f'URP_SIM_SESSION={sid}'.encode() not in (proc / 'environ').read_bytes().split(b'\0'):
+            return None
+        args = (proc / 'cmdline').read_bytes().decode().split('\0')
+        actual = Path(args[args.index('--runtime') + 1])
+        if not actual.is_absolute():
+            actual = (proc / 'cwd').resolve() / actual
+        if actual.resolve() != (runtime / 'sim' / sid).resolve():
+            return None
+        return int(fields[19])
+    except (OSError, ValueError, IndexError):
+        return None
 
 
 def tail_lines(path: Path, n: int) -> list[str]:
@@ -265,7 +297,8 @@ def ros_service() -> dict:
     state = 'degraded' if optional else 'ready'
     return _service('ros', 'ROS 2 Humble', 'check', state,
                     '；'.join(optional) or 'ROS 2 Humble + Gazebo Fortress + Nav2 + TurtleBot4 仿真可用',
-                    facts=facts, known_issues=[BRIDGE_ISSUE])
+                    facts=facts + [{'label': '桥接关闭', 'value': bridge_note()}],
+                    known_issues=optional + bridge_known_issues())
 
 
 def _service(sid, name, kind, state, detail, **kw) -> dict:
@@ -455,7 +488,11 @@ class ServiceManager:
         return _service('archive', '档案后端', 'process', 'stopped', '未运行；历史档案视图需要它', controls=['start'], **base)
 
     def sim_alive(self) -> bool:
-        return (self.sim is not None and self.sim.alive) or self.sim_adopted is not None
+        if self.sim is not None and self.sim.alive:
+            return True
+        adopted = self.sim_adopted
+        return bool(adopted and session_identity(adopted['pid'], adopted['session_id'], self.runtime)
+                    == adopted['start_ticks'])
 
     def _sim_services(self, ros: dict | None) -> list[dict]:
         state = self.sim_client.state if self.sim_client else None
@@ -469,7 +506,8 @@ class ServiceManager:
         for step in self.sim_stop_report:
             facts.append({'label': f"停止 {step['t'][11:19]}", 'value': step['text']})
         script = paths.REPO / SIM_SCRIPT_REL
-        common = dict(port=self.sim_port, log=log_name, facts=facts, known_issues=[BRIDGE_ISSUE])
+        facts.append({'label': '桥接关闭', 'value': bridge_note()})
+        common = dict(port=self.sim_port, log=log_name, facts=facts, known_issues=bridge_known_issues())
         pid = self.sim.proc.pid if self.sim is not None and self.sim.alive else (meta.get('pid') if self.sim_adopted else None)
         started = self.sim.started_utc if self.sim is not None else None
         busy = self._busy.get('sim')
@@ -701,10 +739,12 @@ class ServiceManager:
             if self.sim is not None and self.sim.alive:
                 return
             pid = pid_listening(self.sim_port)
-            if not pid or pid not in processes_with_env('URP_SIM_SESSION', str(state.get('session_id'))):
-                return  # Never signal an unknown process just because it answered HTTP.
+            ticks = session_identity(pid, str(state.get('session_id')), self.runtime) if pid else None
+            if ticks is None:
+                return  # Another runtime is not ours to adopt or stop.
+            self.sim = None  # A previous dead child cannot supply this owner's exit code.
             self.sim_adopted = {'session_id': state.get('session_id'), 'world': state.get('world'),
-                                'spawn': state.get('spawn'), 'pid': pid}
+                                'spawn': state.get('spawn'), 'pid': pid, 'start_ticks': ticks}
             self.sim_meta = None
             self.sim_exit = None
             log.warning('adopted running sim session %s (pid %s)', state.get('session_id'), pid)
@@ -718,7 +758,8 @@ class ServiceManager:
                 self.sim_exit = f'仿真会话进程意外退出（返回码 {rc}），见日志 sim-{self.sim_meta["session_id"]}'
                 self.sim.note(self.sim_exit)
                 log.warning(self.sim_exit)
-            if self.sim_adopted is not None:
+            if self.sim_adopted is not None and not self.sim_alive():
+                self.sim_exit = '接管的仿真会话已退出或身份改变；网关未持有原始退出码，请查看会话报告'
                 self.sim_adopted = None
 
     def _record(self, text: str):
@@ -789,9 +830,9 @@ class ServiceManager:
         if self.sim is not None and self.sim.alive:
             return self.sim.signal_group(sig)
         pid = (self.sim_adopted or {}).get('pid')
-        if pid:
+        if pid and self.sim_alive():
             try:
-                os.killpg(os.getpgid(pid), sig)
+                os.kill(pid, sig)  # The verified supervisor owns its child cleanup.
                 return True
             except OSError:
                 return False
@@ -806,7 +847,7 @@ class ServiceManager:
             if pid is None:
                 if http_json('GET', f'{self.sim_url}/state', timeout=0.5)[0] is None:
                     return True
-            elif not Path(f'/proc/{pid}').exists():
+            elif not self.sim_alive():
                 return True
             if self.hurry.is_set():
                 end = min(end, time.monotonic() + 1.0)
@@ -825,7 +866,8 @@ class ServiceManager:
             except OSError:
                 continue
         if hits:
-            self._record('检测到 ros_gz_bridge 退出时堆损坏/返回码 -6（已知未解决缺陷），见日志：' + ', '.join(hits))
+            self.sim_exit = '检测到桥接堆损坏/异常退出，本次关闭未通过，见日志：' + ', '.join(hits)
+            self._record(self.sim_exit)
 
     def stop_sim_async(self):
         return self._background('sim', 'stopping', self.stop_sim)

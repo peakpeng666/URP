@@ -1,0 +1,24 @@
+{
+  "upstream": "https://github.com/gazebosim/ros_gz/blob/0.244.26/ros_gz_bridge/src/parameter_bridge.cpp",
+  "upstream_sha256": "92c215bec11c013d403ae037b48b3aa670ca7e7aacc1d4904683e41ab017760d",
+  "scope": "parameter_bridge main scope: rclcpp::shutdown completes context shutdown and joins deferred signal handler before process finalization",
+  "evidence": "setup/2026-10-16/hardening",
+  "disable": "URP_BRIDGE_FIX=0",
+  "exit_guard": false,
+  "sources": {
+    "parameter_bridge.cpp": "2708c222589c6457b06637ddb6bf11da52556de0b722560706bfb17d45bb64a4",
+    "CMakeLists.txt": "a62fea29a84db55ee5c7ab66c682652f64298b317a7865a2603530dbe1248fc5",
+    "build.sh": "58aaf29b20e692b27acc3519220c485151e7114d67a96c62cad8eca194893c56"
+  },
+  "system_files": {
+    "/opt/ros/humble/lib/ros_gz_bridge/parameter_bridge": "19eb98d5c11facae2f7f7b4de9db006fc06e0e6836998c5d28f7d52ef2ff7acf",
+    "/opt/ros/humble/lib/libros_gz_bridge.so": "e685f231e51c9e406a0df9b02536b21c6408e3a2047b0b367c0364f17caca662",
+    "/opt/ros/humble/lib/librclcpp.so": "cd2a15b5df569fd66e7c9d0c336bff58d92b39932a701a670b6e02611b4f4119",
+    "/opt/ros/humble/lib/librcl_logging_spdlog.so": "ead77d2b8a383d1ce310136f44ef9a8551fe9b966353a900e8ecd88f04d098cb",
+    "/usr/lib/x86_64-linux-gnu/libspdlog.so.1.9.2": "1de96ba8296808433bf3ad601f2410c179a3e422a05ad012b49e4ad364f72bc0",
+    "/opt/ros/humble/lib/librcl.so": "43f86a53ec1a6c75e7330b216253d8497cdee1fc1674fdd678166c804cf1921c",
+    "/lib/x86_64-linux-gnu/libc.so.6": "b2cf6c33b74d2f22543b7a469a75b538911e690f769d0b238843a49465b83793",
+    "/usr/lib/x86_64-linux-gnu/libignition-transport11.so.11": "514f13b738c3d1a21e52c02a6175622a2e638f987eefee1a8213b409aa06a4b2"
+  },
+  "executable_sha256": "1a7fdb32269d384cd46eef7727e63d246256973fdaa2c664c89e400cf6a41ce0"
+}

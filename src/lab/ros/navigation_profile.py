@@ -31,13 +31,20 @@ def create_profile(runtime, localization='amcl'):
         for k, v in delta.items():
             if isinstance(v, dict): merge(base.setdefault(k,{}), v)
             else: base[k] = v
+    # The stock DWB controller repeatedly stalled when a new waypoint was behind
+    # the robot after a completed FollowPath goal. Reuse the already validated
+    # RPP controller, whose initial rotate-to-heading supports this transition.
+    # Nav2 still replans NavigateToPose; FollowPath still receives the URP path.
+    changes['nav2']['controller_server']['FollowPath'] = dict(changes['nav2']['controller_server']['FollowCoverage'])
     changes['localization']['amcl']['tf_broadcast']=localization=='amcl'
-    report = {'id': 'gazebo-precision-v1', 'scope': '仿真低噪声里程计；不适用于实机',
+    report = {'id': 'gazebo-precision-rpp-v2', 'scope': '仿真低噪声里程计；不适用于实机',
               'localization': localization,
               'feedback': 'Gazebo 真值 + odom → map TF；AMCL 仅旁路观测' if localization=='ground_truth' else 'AMCL + odometry；真值仅用于初始位姿和独立验收', 'files': {}}
     for name, delta in changes.items():
         source = root / (name + '.yaml')
         data = yaml.safe_load(source.read_text())
+        if name == 'nav2':
+            data['controller_server']['ros__parameters'].pop('FollowPath', None)
         for node, patch in delta.items(): merge(data[node]['ros__parameters'], patch)
         target = Path(runtime) / (name + '.yaml')
         target.write_text(yaml.safe_dump(data, sort_keys=False))

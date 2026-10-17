@@ -18,7 +18,7 @@ python3 scripts/test.py
 | [进程监督](execution/README.md) | 子进程回收、资源与退出状态记录 |
 | `configs/` | 输入清单、哈希和依赖 |
 
-完整结果在[experiments](../../experiments/README.md)。既有实验输入使用`../../data/research`，新运行输出使用`../../experiments/runs/<run_id>`。多问题生成循环是下一步工作，见[下一阶段](../../下一阶段.md)。
+完整结果在[experiments](../../experiments/README.md)。既有实验输入使用`../../data/research`，新运行输出使用`../../experiments/runs/<run_id>`。多问题生成循环是下一步工作，见[下一阶段](../../docs/下一阶段.md)。
 
 ## 独立 CVRPLIB 入口
 

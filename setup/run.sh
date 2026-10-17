@@ -23,6 +23,10 @@ case "$operation" in
     ;;
   navigation)
     source /opt/ros/humble/setup.bash
+    if [[ ${URP_BRIDGE_FIX:-1} == 1 ]]; then
+      bridge_prefix="$(/usr/bin/python3 src/lab/ros/bridge_runtime.py)"
+      export AMENT_PREFIX_PATH="$bridge_prefix:${AMENT_PREFIX_PATH:-/opt/ros/humble}"
+    fi
     navigation_flags=(--ordered-bridge-stop)
     case "${URP_TF_FIX:-1}" in
       1) navigation_flags+=(--tf-candidate) ;;
@@ -54,6 +58,9 @@ case "$operation" in
       printf '重建仿真修补库（TF2 / GUI，与验收二进制逐字节一致）…\n'
       bash src/lab/ros/native/rebuild-ros-overlays.sh || printf '仿真修补库重建失败；规划功能不受影响，仿真启动会提示原因。\n' >&2
     fi
+    if [[ ${URP_BRIDGE_FIX:-1} == 1 ]]; then
+      /usr/bin/python3 src/lab/ros/bridge_runtime.py >/dev/null || printf '桥接修复验证失败；规划仍可使用，仿真将报告具体原因。\n' >&2
+    fi
     cd src/lab
     exec .venv/bin/python -m urp_lab serve "$@"
     ;;
@@ -71,6 +78,7 @@ PY
     fi
     if [[ ! -d src/frontend/node_modules ]]; then (cd src/frontend && npm ci); fi
     bash src/lab/ros/native/rebuild-ros-overlays.sh
+    /usr/bin/python3 src/lab/ros/bridge_runtime.py
     exec bash setup/profile.sh frontend npm run build --prefix src/frontend
     ;;
   lab-stop)

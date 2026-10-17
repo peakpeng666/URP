@@ -174,9 +174,22 @@ def _profiles(algorithms, complete, mean_obj):
             'note': 'ρ(τ)：该算法成本不超过当期最好成本 τ 倍的实例比例（Dolan & Moré 2002）'}
 
 
+def trace_matches(run: dict) -> bool:
+    """A solver's progress trace is comparable with its objective only if it ends at that objective value.
+
+    Some adapters record their internal objective instead (e.g. PyVRP's distance while the task map asks for the
+    makespan); such traces must not be drawn on the same axis or turned into gaps."""
+    tr = run.get('trace') or []
+    v = (run.get('objective') or {}).get('value')
+    if not tr or not isinstance(v, (int, float)) or not math.isfinite(v):
+        return False
+    return abs(float(tr[-1][1]) - float(v)) <= 5e-3 * max(1.0, abs(float(v)))
+
+
 def _anytime(by_inst, reference, budgets):
     curves = defaultdict(list)
     horizon = 0.0
+    excluded = 0
     for k, rs in by_inst.items():
         ref = reference[k]
         if not ref:
@@ -185,10 +198,13 @@ def _anytime(by_inst, reference, budgets):
             tr = r.get('trace') or []
             if not tr or _value(r) is None:
                 continue
+            if not trace_matches(r):
+                excluded += 1
+                continue
             horizon = max(horizon, tr[-1][0], float(r['params'].get('time_limit_s') or 0))
             curves[_label(r, budgets)].append([(t, 100.0 * (v - ref) / ref) for t, v in tr])
     if not curves:
-        return {'grid': [], 'median': {}}
+        return {'grid': [], 'median': {}, 'excluded': excluded}
     grid = np.geomspace(1e-3, max(horizon, 1e-2), 48).tolist()
     med = {}
     for a, cs in curves.items():
@@ -201,7 +217,8 @@ def _anytime(by_inst, reference, budgets):
             finite = [v for v in vals if math.isfinite(v)]
             series.append(st.median(vals) if len(finite) * 2 > len(vals) else None)
         med[a] = series
-    return {'grid': grid, 'median': med, 'note': '各运行“当前最好解”相对参照的差距随时间变化的中位数；尚无可行解的运行按 +∞ 计。'}
+    return {'grid': grid, 'median': med, 'excluded': excluded,
+            'note': '各运行“当前最好解”相对参照的差距随时间变化的中位数；尚无可行解的运行按 +∞ 计；轨迹终值与目标值不一致（记录的是求解器内部目标）的运行不计入。'}
 
 
 def features(scenario: dict, instance: dict) -> tuple[list[str], list[float]] | None:

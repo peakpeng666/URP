@@ -18,4 +18,4 @@ bash src/start.sh backend        # 127.0.0.1:4180
 
 数据位于[../data](../data/README.md)。前端的`inputs`、`research`、`public/data`和后端的`packages`通过相对链接访问同一份数据。Python环境与Node依赖由对应项目维护。
 
-[下一阶段](../下一阶段.md) · [检查记录](checks.json) · [来源记录](sources.json)。
+[下一阶段](../docs/下一阶段.md) · [检查记录](checks.json) · [来源记录](sources.json)。
