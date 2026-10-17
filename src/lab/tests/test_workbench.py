@@ -670,3 +670,42 @@ def test_multi_depot_geojson_roundtrip_and_world_parking(tmp_path):
     for v, route in zip(plan['vehicles'], r['routes']):
         assert math.dist(v['start'][:2], inst['depots'][route['depot']]) < 8.0   # parked near its own depot
     assert len(homes) == len(r['routes'])
+
+
+def _wall_gap_scenario(free_gap, turn):
+    """Two walls with a single gap: curvature-constrained routes must thread it."""
+    inst = {'boundary': [[0, 0], [40, 0], [40, 32], [0, 32]],
+            'obstacles': [{'id': 'W1', 'kind': 'building',
+                           'polygon': [[18, 6 + free_gap / 2], [21, 6 + free_gap / 2], [21, 28], [18, 28]]},
+                          {'id': 'W2', 'kind': 'building',
+                           'polygon': [[18, 0], [21, 0], [21, 6 - free_gap / 2], [18, 6 - free_gap / 2]]}],
+            'depot': [2, 2],
+            'tasks': [{'id': 1, 'xy': [3, 28], 'demand': 1}, {'id': 2, 'xy': [36, 6], 'demand': 1},
+                      {'id': 3, 'xy': [36, 28], 'demand': 1}],
+            'vehicles': {'fleet': [{'count': 1, 'capacity': 3, 'min_turn_radius_m': turn}], 'travel': 'free'},
+            'robot_radius': 0.5}
+    sc = {'problem_class': 'fleet_routing', 'frame': {'kind': 'field'}, 'cost_unit': 'm'}
+    sc['instance'] = validate_instance('fleet_routing', inst)
+    return sc
+
+
+def test_curvature_fallback_threads_narrow_gap():
+    """Turn diameter wider than the gap needs a compound manoeuvre: the analytic realisation fails,
+    and the OMPL Dubins fallback must recover a check-valid route (critique item, 2026-10-17)."""
+    sc = _wall_gap_scenario(6.0, 3.5)
+    r = run_algorithm(sc, sc['instance'], 'pyvrp.fleet', {'time_limit_s': 1})
+    assert r['status'] == 'feasible' and r['check']['valid'], r['check']
+    attempts = r['raw_result']['curvature_realization_attempts']
+    assert [a['planner'] for a in attempts][-1] == 'ompl_rrt_connect' and attempts[-1]['valid']
+    assert not attempts[0]['valid']                      # the analytic realisation genuinely failed first
+    route = r['routes'][0]
+    assert route['curvature_radius_m'] >= route['min_turn_radius_m'] * 0.99
+    # honest cost: threading the gap with a 7 m turn circle needs the long way round
+    assert route['cost'] > 2 * r['metrics']['total_distance_m'] / r['metrics']['total_distance_m'] * 117
+
+
+def test_curvature_wide_gap_stays_analytic():
+    sc = _wall_gap_scenario(4.6, 3.5)                    # tight for the robot, easy for the turn
+    r = run_algorithm(sc, sc['instance'], 'pyvrp.fleet', {'time_limit_s': 1})
+    assert r['status'] == 'feasible' and r['check']['valid']
+    assert r['raw_result'].get('curvature_realization_attempts') is None   # first (analytic) attempt passed

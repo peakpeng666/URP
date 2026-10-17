@@ -19,6 +19,8 @@ import numpy as np
 from .. import lanes
 from ..lanes import free_space
 from ..path_geometry import arc_lengths, locate
+from .fleet_curvature import (  # curvature realisation stack (2026-10-17 拆分)
+    _circumradius, dubins_realize, min_curvature_radius, ompl_dubins_fallback, relax_corners)
 
 COLORS = ['#007aff', '#ff6b00', '#34a853', '#a142f4', '#e8336d', '#00a6a6', '#c49000', '#5856d6', '#8e5a2b', '#2f7d32',
           '#d81b60', '#1e88e5']
@@ -58,48 +60,6 @@ def depot_list(inst):
     return [inst['depot']]
 
 
-def _circumradius(a, b, c):
-    """Radius of the circle through three points (inf when collinear)."""
-    A, B, C = math.dist(a, b), math.dist(b, c), math.dist(a, c)
-    area = abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2
-    return A * B * C / (4 * area) if area > 1e-12 else math.inf
-
-
-def min_curvature_radius(pts):
-    """Smallest sampled turning radius of a polyline (consecutive triplets; exact on circular arcs)."""
-    return min((_circumradius(pts[i], pts[i + 1], pts[i + 2]) for i in range(len(pts) - 2)), default=math.inf)
-
-
-def dubins_realize(waypoints, min_radius, step=0.05):
-    """Curvature-bounded realisation of a waypoint sequence (Dubins, 1957; OMPL implementation).
-
-    The heading is carried between legs: each leg starts at the previous leg's end heading and ends
-    aligned with its own segment direction, so every heading change becomes a bounded-curvature
-    turn instead of a corner. Returns (dense polyline at ≈ `step` spacing, per-waypoint index in it)."""
-    from ompl import base as ob, geometric as og
-    clean, origin = [], []
-    for p in waypoints:
-        if not clean or math.dist(p, clean[-1]) > 1e-9:
-            clean.append(list(p))
-        origin.append(len(clean) - 1)
-    space = ob.DubinsStateSpace(float(min_radius))
-    si = ob.SpaceInformation(space)
-    theta = math.atan2(clean[1][1] - clean[0][1], clean[1][0] - clean[0][0])
-    pts, marks = [list(clean[0])], [0]
-    for a, b in zip(clean, clean[1:]):
-        heading = math.atan2(b[1] - a[1], b[0] - a[0])
-        s0, s1 = space.allocState(), space.allocState()
-        s0.setXY(*a); s0.setYaw(theta)
-        s1.setXY(*b); s1.setYaw(heading)
-        leg = og.PathGeometric(si, s0, s1)
-        leg.interpolate(max(2, int(leg.length() / step) + 1))
-        pts += [[s.getX(), s.getY()] for s in leg.getStates()[1:]]
-        marks.append(len(pts) - 1)
-        theta = heading
-    return pts, [marks[origin[i]] for i in range(len(waypoints))]
-
-
-# ----------------------------------------------------------------- geometry --
 class Graph:
     """Visibility graph between depot/tasks and obstacle/boundary corners, with all-pairs shortest paths."""
 
@@ -723,6 +683,28 @@ def assign_trips(trip_times, K):
     return out
 
 
+def dispatch_algorithm(inst, algorithm_id, D, demand, params, deadline, route_cap, K, multi, class_of):
+    """Run one fleet algorithm; returns (trips, owner, trip_class, trip_depot, trace)."""
+    trace, owner, trip_class, trip_depot = [], None, None, None
+    trips = None
+    if algorithm_id == 'pyvrp.fleet':
+        trips, trip_class, trip_depot, trace = metaheuristic('pyvrp', inst, D, demand, params, route_cap)
+    elif algorithm_id == 'ortools.fleet' and inst.get('objective') == 'makespan':
+        trips, owner, trace = ortools_makespan(inst, D, demand, params, K, multi)
+        trip_class = [class_of[v] for v in owner] if owner is not None else None
+    elif algorithm_id == 'ortools.fleet':
+        trips, trip_class, trip_depot, trace = metaheuristic('ortools', inst, D, demand, params, route_cap)
+    elif algorithm_id == 'panel.sweep':
+        trips = sweep(inst, D, demand, deadline)
+    elif algorithm_id == 'panel.cluster_first':
+        trips, owner = cluster_first(inst, D, demand, deadline, int(params.get('seed', 42)))
+    elif algorithm_id == 'panel.savings_fleet':
+        trips = [two_opt(D, [0] + r + [0], deadline)[1:-1] for r in savings(inst, D, demand)]
+    else:
+        raise ValueError(f'未知算法 {algorithm_id}')
+    return trips, owner, trip_class, trip_depot, trace
+
+
 def solve(scenario, inst, algorithm_id, params):
     t0 = time.perf_counter()
     graph = travel_graph(inst)
@@ -739,7 +721,9 @@ def solve(scenario, inst, algorithm_id, params):
     classes = fleet_classes(inst)
     hetero = len(classes) > 1
     multi_depot = nd > 1
-    class_of = [ci for vi, ci, _cls, _di in vehicle_table(inst)]
+    vtable = vehicle_table(inst)
+    class_of = [ci for vi, ci, _cls, _di in vtable]
+    depot_of = [di for vi, _ci, _cls, di in vtable]
     multi = inst['vehicles'].get('trips', 'multi') == 'multi'
     fleet_cap = sum(c['count'] * c['capacity'] for c in classes)
     if not multi and sum(demand) > fleet_cap:
@@ -754,22 +738,8 @@ def solve(scenario, inst, algorithm_id, params):
         raise ValueError('多车库当前支持 pyvrp.fleet / ortools.fleet 的总里程目标；构造基线与 makespan 的多车库建模尚未实现')
     deadline = time.perf_counter() + float(params.get('time_limit_s', 3))
     route_cap = n if multi else K
-    trace, owner, trip_class, trip_depot = [], None, None, None
-    if algorithm_id == 'pyvrp.fleet':
-        trips, trip_class, trip_depot, trace = metaheuristic('pyvrp', inst, D, demand, params, route_cap)
-    elif algorithm_id == 'ortools.fleet' and inst.get('objective') == 'makespan':
-        trips, owner, trace = ortools_makespan(inst, D, demand, params, K, multi)
-        trip_class = [class_of[v] for v in owner] if owner is not None else None
-    elif algorithm_id == 'ortools.fleet':
-        trips, trip_class, trip_depot, trace = metaheuristic('ortools', inst, D, demand, params, route_cap)
-    elif algorithm_id == 'panel.sweep':
-        trips = sweep(inst, D, demand, deadline)
-    elif algorithm_id == 'panel.cluster_first':
-        trips, owner = cluster_first(inst, D, demand, deadline, int(params.get('seed', 42)))
-    elif algorithm_id == 'panel.savings_fleet':
-        trips = [two_opt(D, [0] + r + [0], deadline)[1:-1] for r in savings(inst, D, demand)]
-    else:
-        raise ValueError(f'未知算法 {algorithm_id}')
+    trips, owner, trip_class, trip_depot, trace = dispatch_algorithm(
+        inst, algorithm_id, D, demand, params, deadline, route_cap, K, multi, class_of)
     if not trips:
         return [], None, {}, {'reason': '求解器没有返回可行方案'}, 'no_solution', trace
     if trip_class is None:
@@ -805,45 +775,74 @@ def solve(scenario, inst, algorithm_id, params):
     else:
         plan = [[i] for i in range(len(trips))]  # more single trips than vehicles: the checker reports it
     names = inst['vehicles'].get('names') or []
-    table = {vi: cls for vi, _ci, cls, _di in vehicle_table(inst)}
-    routes = []
-    for vi, mine in enumerate(plan):
-        if not mine:
+    table = {vi: cls for vi, _ci, cls, _di in vtable}
+    def build_routes(corner_shift=0.0, use_ompl=False):
+        routes = []
+        for vi, mine in enumerate(plan):
+          if not mine:
+              continue
+          cls = table.get(vi) or classes[0]
+          home = depot_of[vi] if multi_depot else 0
+          stops = [home] + [s for i in mine for s in trips[i] + [home]]
+          waypoints, service_waypoints = [], []
+          for a, b in zip(stops, stops[1:]):
+              seg = graph.path(a, b)
+              waypoints += seg if not waypoints else seg[1:]
+              if b != home:
+                  service_waypoints.append(len(waypoints) - 1)
+          turn = float(cls.get('min_turn_radius_m') or 0)
+          if turn > 0 and use_ompl:
+              stops_xy = [list(depots[home])] + [list(graph.points[s])[:2] for s in stops[1:-1]] + [list(depots[home])]
+              pts = ompl_dubins_fallback(inst, stops_xy, turn)
+              if pts is None:
+                  return None
+              service_positions = [min(range(len(pts)), key=lambda i: math.dist(pts[i], xy)) for xy in stops_xy[1:-1]]
+          elif turn > 0:
+              pts, marks = dubins_realize(relax_corners(waypoints, service_waypoints, corner_shift * turn), turn)
+              service_positions = [marks[wi] for wi in service_waypoints]
+          else:
+              pts, service_positions = waypoints, service_waypoints
+          length = sum(math.dist(a, b) for a, b in zip(pts, pts[1:]))
+          service_total = sum(inst['tasks'][s - nd]['service_s'] for i in mine for s in trips[i])
+          route = {'vehicle': vi, 'vehicle_name': names[vi] if vi < len(names) else f'车{vi + 1}', 'color': COLORS[vi % len(COLORS)],
+                   'nodes': None, 'sequence': [inst['tasks'][s - nd]['id'] for i in mine for s in trips[i]],
+                   'trips': [[inst['tasks'][s - nd]['id'] for s in trips[i]] for i in mine],
+                   'services': [{'task': inst['tasks'][s - nd]['id'], 'position': pos, 'stop': list(graph.points[s])}
+                                for s, pos in zip([s for i in mine for s in trips[i]], service_positions)],
+                   'polyline': pts, 'cost': length,
+                   'load': max(sum(demand[s] for s in trips[i]) for i in mine),
+                   'duration_s': length / cls['speed_mps'] + service_total}
+          if hetero:
+              route.update(fleet_class=cls['name'], capacity=cls['capacity'],
+                           speed_mps=cls['speed_mps'], robot_radius=cls['robot_radius'])
+          if turn > 0:
+              route.update(min_turn_radius_m=turn, curvature_radius_m=round(min_curvature_radius(pts), 4))
+          if multi_depot:
+              route.update(depot=home, depot_xy=[float(depots[home][0]), float(depots[home][1])])
+          routes.append(route)
+        return routes
+
+    any_curvature = any(float(c.get('min_turn_radius_m') or 0) > 0 for c in classes)
+    attempts = []
+    # analytic realisation first (fast, deterministic); the sampling fallback (OMPL RRT-Connect on
+    # DubinsStateSpace) can weave compound manoeuvres through gaps the waypoint scheme cannot.
+    ladder = ([('analytic', 0.0), ('analytic', 0.6), ('analytic', 1.2), ('ompl_rrt_connect', None)]
+              if any_curvature else [('analytic', 0.0)])
+    for planner, shift in ladder:
+        routes = build_routes(0.0 if shift is None else shift, use_ompl=planner != 'analytic')
+        if routes is None:
+            attempts.append({'planner': planner, 'corner_shift_m': shift, 'result': 'planner found no path'})
             continue
-        cls = table.get(vi) or classes[0]
-        home = [di for _vi, _ci, _cls, di in vehicle_table(inst)][vi] if multi_depot else 0
-        stops = [home] + [s for i in mine for s in trips[i] + [home]]
-        waypoints, service_waypoints = [], []
-        for a, b in zip(stops, stops[1:]):
-            seg = graph.path(a, b)
-            waypoints += seg if not waypoints else seg[1:]
-            if b != home:
-                service_waypoints.append(len(waypoints) - 1)
-        turn = float(cls.get('min_turn_radius_m') or 0)
-        if turn > 0:
-            pts, marks = dubins_realize(waypoints, turn)
-            service_positions = [marks[wi] for wi in service_waypoints]
-        else:
-            pts, service_positions = waypoints, service_waypoints
-        length = sum(math.dist(a, b) for a, b in zip(pts, pts[1:]))
-        service_total = sum(inst['tasks'][s - nd]['service_s'] for i in mine for s in trips[i])
-        route = {'vehicle': vi, 'vehicle_name': names[vi] if vi < len(names) else f'车{vi + 1}', 'color': COLORS[vi % len(COLORS)],
-                 'nodes': None, 'sequence': [inst['tasks'][s - nd]['id'] for i in mine for s in trips[i]],
-                 'trips': [[inst['tasks'][s - nd]['id'] for s in trips[i]] for i in mine],
-                 'services': [{'task': inst['tasks'][s - nd]['id'], 'position': pos, 'stop': list(graph.points[s])}
-                              for s, pos in zip([s for i in mine for s in trips[i]], service_positions)],
-                 'polyline': pts, 'cost': length,
-                 'load': max(sum(demand[s] for s in trips[i]) for i in mine),
-                 'duration_s': length / cls['speed_mps'] + service_total}
-        if hetero:
-            route.update(fleet_class=cls['name'], capacity=cls['capacity'],
-                         speed_mps=cls['speed_mps'], robot_radius=cls['robot_radius'])
-        if turn > 0:
-            route.update(min_turn_radius_m=turn, curvature_radius_m=round(min_curvature_radius(pts), 4))
-        if multi_depot:
-            route.update(depot=home, depot_xy=[float(depots[home][0]), float(depots[home][1])])
-        routes.append(route)
+        chk = check(inst, routes)
+        attempts.append({'planner': planner, 'corner_shift_m': shift,
+                         'valid': chk['valid'], 'length_m': round(sum(r['cost'] for r in routes), 3)})
+        if chk['valid']:
+            break
+    routes = routes or []
     chk = check(inst, routes)
+    if not routes:
+        return [], chk, {'total_distance_m': 0.0}, {'reason': '候选方案未通过独立检查，不能作为可行方案执行',
+                                                    'curvature_realization_attempts': attempts}, 'no_solution', trace
     lengths = [r['cost'] for r in routes]
     euclid = sum(float(graph.euclid[a, b]) for i, r in enumerate(trips)
                  for a, b in zip([trip_depot[i]] + r, r + [trip_depot[i]]))
@@ -867,6 +866,7 @@ def solve(scenario, inst, algorithm_id, params):
     model = ('沿作物行间通道、地头与机耕路的通行图最短路：作物行不可穿越，任务使用邻近通道停车访问代理；未验证作业具可达或农业作业质量'
              if graph.travel == 'rows' else '机器人半径膨胀障碍上的可视图最短路（候选图上的最短路；不保证连续空间全局最短）')
     raw = {'trips': trips, 'vehicle_plan': plan, 'distance_model': model, 'travel_network': graph.info or None,
+           'curvature_realization_attempts': attempts if len(attempts) > 1 else None,
            'search_scale': 'PyVRP / OR-Tools 用厘米取整距离搜索，结果按米复算', 'planning_s': time.perf_counter() - t0,
            'trip_assignment': ('OR-Tools 直接为各车安排往返（车库卸载点），时间维度跨度代价最小化最晚完成'
                                if algorithm_id == 'ortools.fleet' and inst.get('objective') == 'makespan'
