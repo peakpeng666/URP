@@ -122,11 +122,11 @@ def ortools_makespan(inst, D, demand, params, K, multi):
     service = [0.0] * nd + [float(t.get('service_s', 0) or 0) for t in inst['tasks']]
     nu = len(inst.get('unload_points') or [])
     cap_ref = min(caps) if hetero else inst['vehicles']['capacity']
-    per_depot = max(0, math.ceil(sum(demand) / cap_ref)) if multi else 0
+    per_depot = min(n, max(0, math.ceil(sum(demand) / cap_ref))) if multi else 0
     reloads = (nd + nu) * per_depot
-    # nodes: 0..nd-1 depots, nd..nd+n-1 tasks, nd+n..nd+n+nu-1 unload points,
-    # then per-depot reload copies (home vehicles only) and per-unload-point copies (any vehicle)
-    task_end = nd + n + nu
+    # Only tasks are mandatory. Supply coordinates enter through optional reload copies,
+    # never as mandatory zero-demand clients. orig maps model indices to graph indices.
+    task_end = nd + n
     orig = list(range(task_end)) + [d for d in range(nd) for _ in range(per_depot)] \
         + [nd + n + u for u in range(nu) for _ in range(per_depot)]
     serv = np.array([service[o] if o < nd + n else 0.0 for o in orig])
@@ -138,7 +138,7 @@ def ortools_makespan(inst, D, demand, params, K, multi):
         speed = inst['vehicles'].get('speed_mps') or 1.0
         T = {0: np.rint(10 * (D[np.ix_(orig, orig)] / speed + serv[:, None])).astype(np.int64)}
         np.fill_diagonal(T[0], 0)
-    load = [0] * nd + list(demand[nd:]) + [0] * nu + [-max(caps)] * reloads
+    load = [0] * nd + list(demand[nd:]) + [-max(caps)] * reloads
     manager = pywrapcp.RoutingIndexManager(task_end + reloads, K, home_of, home_of)
     routing = pywrapcp.RoutingModel(manager)
     cbs = [routing.RegisterTransitCallback(lambda i, j, m=T[table[v][1]]: int(m[manager.IndexToNode(i), manager.IndexToNode(j)]))
@@ -158,6 +158,11 @@ def ortools_makespan(inst, D, demand, params, K, multi):
         idx = manager.NodeToIndex(node)
         cap_dim.SlackVar(idx).SetRange(0, max(caps))  # unloading resets the load to zero for any class
         routing.AddDisjunction([idx], 0)               # reloads are optional and free
+        routing.solver().Add(cap_dim.CumulVar(idx) >= routing.ActiveVar(idx))
+        # A reload separates nonempty trips. Inactive copies may self-loop; active
+        # copies must lead to a task, excluding empty reload chains and terminal detours.
+        routing.solver().Add(routing.NextVar(idx).Member(
+            [idx] + [manager.NodeToIndex(t) for t in range(nd, nd + n)]))
         source = orig[node]
         if source < nd and nd > 1:                     # MDVRP: a depot's reloads serve only its home vehicles
             routing.solver().Add(routing.VehicleVar(idx).Member([-1] + [v for v in range(K) if home_of[v] == source]))
@@ -184,7 +189,7 @@ def ortools_makespan(inst, D, demand, params, K, multi):
         return None, None, None, trace
     trips, owner, reload_at = [], [], []
     for v in range(K):
-        idx, cur, boundary = routing.Start(v), [], 0
+        idx, cur = routing.Start(v), []
         while True:
             idx = sol.Value(routing.NextVar(idx))
             node = manager.IndexToNode(idx)
@@ -192,8 +197,7 @@ def ortools_makespan(inst, D, demand, params, K, multi):
                 if cur:
                     trips.append(cur)
                     owner.append(v)
-                    reload_at.append(boundary if node < task_end else 0)   # real unload point vs depot copy
-                    boundary = node if node < task_end else 0
+                    reload_at.append(orig[node])  # this trip ends at this reload or home
                 cur = []
                 if routing.IsEnd(idx):
                     break

@@ -11,16 +11,22 @@ from __future__ import annotations
 import math
 
 def _circumradius(a, b, c):
-    """Radius of the circle through three points (inf when collinear)."""
+    """Sampled circle radius; a cusp/reversal is not a straight forward segment."""
     A, B, C = math.dist(a, b), math.dist(b, c), math.dist(a, c)
     area = abs((b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1])) / 2
+    if area <= 1e-12 and (b[0] - a[0]) * (c[0] - b[0]) + (b[1] - a[1]) * (c[1] - b[1]) < 0:
+        return 0.0  # Collinear reversal, including return to the previous sample.
     return A * B * C / (4 * area) if area > 1e-12 else math.inf
 
 
 
 def min_curvature_radius(pts):
     """Smallest sampled turning radius of a polyline (consecutive triplets; exact on circular arcs)."""
-    return min((_circumradius(pts[i], pts[i + 1], pts[i + 2]) for i in range(len(pts) - 2)), default=math.inf)
+    clean = []
+    for p in pts:
+        if not clean or math.dist(clean[-1], p) > 1e-10:
+            clean.append(p)
+    return min((_circumradius(clean[i], clean[i + 1], clean[i + 2]) for i in range(len(clean) - 2)), default=math.inf)
 
 
 

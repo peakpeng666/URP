@@ -17,7 +17,7 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 p = argparse.ArgumentParser()
 p.add_argument('--out', type=Path, required=True)
-p.add_argument('--cases', default='free,rows,cancel,clock_stall,bridge_exit,contact,restart,web')
+p.add_argument('--cases', default='free,rows,supply,cancel,clock_stall,bridge_exit,contact,restart,web')
 p.add_argument('--physics', type=json.loads, default=None, help='Explicit physical-model overrides as JSON')
 args = p.parse_args()
 out = args.out.resolve()
@@ -27,6 +27,7 @@ os.environ['URP_ROS_DOMAIN_ID'] = '141'
 
 from fastapi.testclient import TestClient
 from urp_lab.gateway import Config, create_app
+from urp_lab.scenarios.validate import validate_instance
 
 
 def save(name, data):
@@ -70,27 +71,38 @@ try:
         sc = sc_resp.json()
         save('scenario.json', sc)
         runs = {}
-        for travel in ('free', 'rows'):
+        for travel in ('free', 'rows', *(['supply'] if 'supply' in args.cases.split(',') else [])):
             inst = json.loads(json.dumps(sc['instance']))
-            inst['vehicles'].update(travel=travel, speed_mps=1.0)
+            algorithm = 'pyvrp.fleet'
+            if travel == 'supply':
+                inst = {'boundary': [[0, 0], [60, 0], [60, 30], [0, 30]],
+                        'depot': [3, 15], 'unload_points': [[38, 15]], 'objective': 'makespan',
+                        'tasks': [{'id': i + 1, 'xy': [45 + 4 * (i % 3), 8 + 12 * (i % 2)], 'demand': 8} for i in range(8)],
+                        'vehicles': {'count': 2, 'capacity': 16, 'trips': 'multi'}, 'robot_radius': .5}
+                algorithm = 'ortools.fleet'
+            inst['vehicles'].update(travel='free' if travel == 'supply' else travel, speed_mps=1.0)
             for t in inst['tasks']:
                 t['service_s'] = 2.0
+            inst = validate_instance('fleet_routing', inst)
             rec = c.post(api + '/recommend', json={'scenario_id': sc['id'], 'instance': inst})
             assert rec.status_code == 200, rec.text
             save(f'recommend-{travel}.json', rec.json())
             submitted = c.post(api + '/solve', json={'scenario_id': sc['id'], 'instance': inst,
-                               'algorithms': [{'id': 'pyvrp.fleet', 'params': {'time_limit_s': 1, 'seed': 42}}]})
+                               'algorithms': [{'id': algorithm, 'params': {'time_limit_s': 1, 'seed': 42}}]})
             assert submitted.status_code == 202, submitted.text
             rid = submitted.json()['runs'][0]
             r = wait_for(lambda: c.get(api + '/runs/' + rid).json(), lambda r: r['state'] not in ('queued', 'running'), 20)
             assert r['state'] == 'done' and r['status'] == 'feasible' and r['check']['valid'], r
+            if travel == 'supply':
+                assert r['raw_result']['model_contract']['schema'] == 'urp.fleet-model/2'
+                assert any([38., 15.] in route['reload_stops'] for route in r['routes']), r
             exported = c.get(api + f'/runs/{rid}/export').json()
             assert exported['routes'] == r['routes'] and exported['instance'] == inst
             save(f'planning-{travel}.json', exported)
             runs[travel] = rid
         for case in args.cases.split(','):
             begin = time.monotonic()
-            started = c.post(api + '/fieldsim', json={'run_id': runs['rows' if case == 'rows' else 'free'],
+            started = c.post(api + '/fieldsim', json={'run_id': runs[case if case in ('rows', 'supply') else 'free'],
                                                      'real_time_factor': 8, 'web': case == 'web', 'physics': args.physics})
             assert started.status_code == 202, started.text
             sid = started.json()['session_id']

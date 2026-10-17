@@ -31,9 +31,9 @@
   overflow: hidden;
   box-shadow: 0 0 0 0.5px var(--mac-separator-strong);
 }
-.dockview-theme-light .dv-split-view-container > .dv-view-container > .dv-view {
-  padding: 3px;
-}
+/* Dockview owns split-view dimensions. Padding here causes nested overflow and
+   scrolling that displaces persistent render overlays over adjacent tabs. */
+.dockview-theme-light .dv-split-view-container > .dv-view-container > .dv-view { padding: 0; }
 .dockview-theme-light .dv-tab {
   padding: 0 12px;
   font-weight: 500;

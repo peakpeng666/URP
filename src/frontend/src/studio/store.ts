@@ -81,12 +81,12 @@ let saveInFlight: Promise<void> | null = null;
 
 const message = (e: unknown) => (e instanceof LabApiError || e instanceof Error ? e.message : String(e));
 
-function withB6Explanation(text: string, inst: FleetInstance): string {
+function withFleetContext(text: string, inst: FleetInstance): string {
   const classes = inst.vehicles.fleet ?? [];
   if (classes.length < 2 || !/容量|需求|capacity|demand|服务任何任务/i.test(text)) return text;
   const capacities = classes.map((item) => item.capacity);
   const demands = inst.tasks.map((item) => item.demand);
-  return `${text}\nB6：后端当前按最大单点需求限制每个车型，可能拒绝本可分配的异构组合。类别容量 [${capacities.join(', ')}]、任务需求 [${demands.join(', ')}] 均保留；未自动抬高容量或改派任务。`;
+  return `${text}\n提交被后端拒绝，请核对容量与任务需求。类别容量 [${capacities.join(', ')}]、任务需求 [${demands.join(', ')}] 均保留；未自动抬高容量或改派任务。`;
 }
 
 const draftOf = (scenario: Scenario): Instance => scenario.problem_class === 'fleet_routing'
@@ -245,7 +245,7 @@ export const useStudio = create<StudioState>((set, get) => ({
       const raw = current.save === 'error'
         ? `场景尚未保存，未提交求解：${current.saveError ?? '请重试保存'}`
         : '最新草稿仍在保存，未提交求解；保存完成后可重试';
-      const detail = fleet ? withB6Explanation(raw, fleet) : raw;
+      const detail = fleet ? withFleetContext(raw, fleet) : raw;
       set({ solveError: detail });
       get().notify('error', detail);
       return;
@@ -280,7 +280,7 @@ export const useStudio = create<StudioState>((set, get) => ({
       for (const id of job.runs) void pollRun(id);
     } catch (e) {
       const detail = current.scenario.problem_class === 'fleet_routing'
-        ? withB6Explanation(message(e), submitted as unknown as FleetInstance)
+        ? withFleetContext(message(e), submitted as unknown as FleetInstance)
         : message(e);
       set({ busy: null, solveError: detail });
       get().notify('error', detail);

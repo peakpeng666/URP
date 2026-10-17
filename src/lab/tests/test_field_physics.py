@@ -107,11 +107,11 @@ def test_wheel_odom_alignment_preserves_drift_and_checks_physical_domain():
     assert not verify(r)['valid']
     r['truth_timing']['latest_clock_samples'] = 10
     assert any('源仿真时间' in e for e in verify(r)['errors'])
-    # stationary gaps (parked, identical poses) are interpolation-safe; motion across a gap is not
+    # Equal endpoints do not prove the robot remained stationary in the unobserved interval.
     parked = {'vehicles':[{'name':'v'}], 'truth_timing':{'latest_clock_samples':0,'tf_header_samples':3},
               'rigid_body_poses':{'v':[[0,5,3,0,0,0,1],[.5,5,3,0,0,0,1],[1,5,3,0,0,0,1]]},
               'wheel_odometry':{'v':[[0,0,0,0,1,0],[.5,0,0,0,1,0],[1,0,0,0,1,0]]}}
-    assert verify(parked)['valid']
+    assert not verify(parked)['valid']
     parked['rigid_body_poses']['v'][1] = [.5,6,3,0,0,0,1]     # the robot moved across the 0.5 s gap
     assert not verify(parked)['valid']
 

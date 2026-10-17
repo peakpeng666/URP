@@ -25,6 +25,7 @@ import { studio } from './api';
 import { flushSave, useStudio, type Workspace } from './store';
 import { removeDepot } from './fleet';
 import { useAssets } from './assets/store';
+import { useFieldSim } from './ros/live';
 import { ReplayPanel } from './experiment/ReplayPanel';
 import type { FleetInstance, ParseResult } from './types';
 import { AdvisorPanel, ComparePanel, InspectorPanel, MapPanel, VerifyPanel } from './panels/PlanPanels';
@@ -409,6 +410,10 @@ function ComposeBar() {
 function StatusBar() {
   const connected = useGatewayConnected();
   const sim = useLabResource('studio-sim', () => lab.simState(), { event: 'sim_state', pollMs: 5000 });
+  const field = useFieldSim();
+  const fieldLabel = field.error ? '断连' : field.state
+    ? ({ idle: '未运行', starting: '启动中', ready: '就绪', running: '执行中', finished: '已完成', failed: '失败', stopped: '已停止' }[field.state.phase] ?? '未知')
+    : '未知';
   const cursor = useStudio((x) => x.cursor);
   const scenario = useStudio((x) => x.scenario);
   const runs = useStudio((x) => x.runs);
@@ -420,7 +425,7 @@ function StatusBar() {
     <footer className={s.status}>
       <span className={s.statusItem}><StatusDot tone={connected ? 'ok' : 'error'} /> {connected ? '已连接' : '服务断开'}</span>
       <span className={s.statusItem}>{running ? <><Spinner /> 求解 {running}</> : '求解空闲'}</span>
-      <span className={s.statusItem}><Bot size={12} /> {sim.data ? simPhaseLabel(sim.data.phase) : '仿真'}</span>
+      <span className={s.statusItem}><Bot size={12} /> 田间：{fieldLabel} · TB4：{sim.data ? simPhaseLabel(sim.data.phase) : '未知'}</span>
       <span className={s.statusGrow}>{scenario ? `${scenario.title}` : ''}</span>
       {selection && <span className={s.statusItem}>选中：{selection.type === 'task' ? `任务 ${selection.id}` : selection.type === 'obstacle' ? `障碍 ${selection.id}` : selection.type === 'plot' ? `地块 ${selection.id}` : selection.type === 'depot' ? '车库' : '边界'}</span>}
       <span className={s.statusMono}>{cursor ? `x ${cursor[0].toFixed(1)}  y ${cursor[1].toFixed(1)} ${units}` : ''}</span>

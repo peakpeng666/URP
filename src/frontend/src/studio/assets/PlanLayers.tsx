@@ -97,7 +97,7 @@ export function FleetAssetSection() {
           <span>规划参数</span><span>车体半径 {b.robot_radius_m} m（足迹外接圆）· 容量 {b.capacity ?? '不载货'} · {b.speed_mps} m/s{b.kinematics ? ` · ${b.kinematics}` : ''}</span>
           <span>仿真</span><span>{b.adapter ? '可在 Gazebo 田间仿真中执行（车体与资产一致）' : `不能在工作台仿真中执行：${b.adapter_note ?? '缺仿真适配'}`}</span>
           {b.ignored.length > 0 && <><span>未参与规划</span><span>{b.ignored.join('；')}</span></>}
-          {b.min_turn_radius_m ? <><span>转弯半径</span><span>{b.min_turn_radius_m} m：Dubins 规划已接入；B3 反向漏检未修复，田间执行返回 422</span></> : null}
+          {b.min_turn_radius_m ? <><span>转弯半径</span><span>{b.min_turn_radius_m} m：Dubins 规划与采样几何检查；当前田间差速模型不支持执行</span></> : null}
         </div>
       ) : (
         <p className={p.hint}>车队参数目前是手工设置的。选一种车辆资产，车体半径、容量和车速会写入任务地图并随方案记录资产版本。</p>

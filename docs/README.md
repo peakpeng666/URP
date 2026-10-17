@@ -13,6 +13,8 @@
 
 源码与第三方代码在 `src/`，输入在 `data/`，论文原文在 `papers/`，笔记与教材在 `literature/`，教师材料在 `materials/`，研究输出在 `experiments/`。`acceptance/`、`audits/`、`evidence/`、`patches/` 和 `runtime/cvrplib/` 是已有研究记录与复现合同，保留原路径和原始字节。`baseline-worker/` 是独立本机实验工作区，不纳入应用缓存清理。
 
-应用运行数据、SQLite、会话、缓存与本地构建在 `src/lab/runtime/`，依赖环境保留在各项目的 `.venv/` / `node_modules/`。日期目录 `setup/YYYY-MM-DD/` 存放部署与测试证据，不作为新业务模块存放位置。隐藏工具配置与 Git 历史由对应工具管理。
+CVRP 数值任务及可写档案库在 `.local-state/`，工程门禁默认输出在 `user-runs/`；原始 `data/backend/` 档案不作为新任务写库。正式基线协议在 `protocol/`，独立验证器在 `independent/`，已有重审结论保留各自日期。
+
+田间应用运行数据、SQLite、会话、缓存与本地构建在 `src/lab/runtime/`，依赖环境保留在各项目的 `.venv/` / `node_modules/`。日期目录 `setup/YYYY-MM-DD/` 存放部署与测试证据，不作为新业务模块存放位置。隐藏工具配置与 Git 历史由对应工具管理。
 
 目录维护：`python3 tools/project_audit.py` 只读盘点；加 `--clean-cache` 只清理白名单内的后端 Python 缓存，保留数据库、日志、证据、环境和模型。两种操作均可用 `--output 路径.json` 保存清单。

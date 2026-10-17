@@ -770,10 +770,12 @@ def test_unload_point_shortens_makespan_and_is_verified():
     assert base['status'] == 'feasible' and supp['status'] == 'feasible'
     assert base['check']['valid'] and supp['check']['valid']
     route = supp['routes'][0]
-    if len(route['trips']) > 1:                    # when a mid-route supply was used it is declared and checked
-        stops = route.get('reload_stops') or []
-        assert all(any(math.dist(s, p) < 1e-6 for p in supp['instance']['unload_points']) or
-                   math.dist(s, supp['instance']['depot']) < 1e-6 for s in stops)
+    assert len(route['trips']) > 1
+    stops = route['reload_stops']
+    instance = _unload_scenario(True)
+    assert stops and any(s in instance['unload_points'] for s in stops)
+    assert all(any(math.dist(s, p) < 1e-6 for p in instance['unload_points']) or
+               math.dist(s, instance['depot']) < 1e-6 for s in stops)
     assert supp['metrics']['makespan_s'] <= base['metrics']['makespan_s'] * 1.05 + 1e-6
 
 
@@ -784,10 +786,10 @@ def test_unload_point_tampering_is_rejected():
     assert r['status'] == 'feasible' and r['check']['valid']
     routes = r['routes']
     victim = routes[0]
-    if victim.get('reload_stops'):
-        victim['reload_stops'][0] = [55.0, 27.0]          # not an unload point nor the home depot
-        chk = fleet_check(_unload_scenario(True), routes)
-        assert not chk['valid'] and any('补给点' in e for e in chk['errors'])
+    assert victim['reload_stops']
+    victim['reload_stops'][0] = [55.0, 27.0]          # not an unload point nor the home depot
+    chk = fleet_check(_unload_scenario(True), routes)
+    assert not chk['valid'] and any('补给点' in e for e in chk['errors'])
 
 
 def test_unload_point_geojson_roundtrip_and_validation():

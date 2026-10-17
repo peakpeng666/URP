@@ -261,8 +261,6 @@ def _vehicle_fleet(veh: dict, tasks: list[dict], radius: float) -> list[dict]:
         if payload not in ('load', 'none'):
             raise ValueError(f'fleet[{i}].payload 只能是 load（载货）或 none（不载货）')
         capacity = total_demand if payload == 'none' else _int(c.get('capacity'), f'fleet[{i}].capacity', 1)
-        if capacity < max_demand:
-            raise ValueError(f'fleet[{i}] 容量 {capacity} 小于最大单点需求 {max_demand}，该类车无法服务任何任务')
         name = str(c.get('name') or f'车型{i + 1}')[:24]
         if name in seen_names:
             raise ValueError(f'车型类别名重复：{name}')
@@ -298,6 +296,8 @@ def _vehicle_fleet(veh: dict, tasks: list[dict], radius: float) -> list[dict]:
                         **({'footprint': fp} if fp is not None else {}),
                         **({'asset': asset} if asset is not None else {})})
     total = sum(c['count'] for c in classes)
+    if max(c['capacity'] for c in classes) < max_demand:
+        raise ValueError(f'最大单点需求 {max_demand} 超过所有车型容量，没有可服务该任务的车辆')
     if total > 60:
         raise ValueError(f'车队总台数 {total} 超过 60')
     derived_names = _fleet_names(classes)

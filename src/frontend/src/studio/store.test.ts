@@ -111,7 +111,7 @@ describe('serialized draft saving before solve', () => {
     expect((useStudio.getState().draft as unknown as FleetInstance).depot).toEqual([10, 15]);
   });
 
-  it('keeps B6 capacity and demand input unchanged and blocks solve after a 422', async () => {
+  it('keeps rejected capacity and demand input unchanged and blocks solve after a 422', async () => {
     const hetero = structuredClone(instance);
     hetero.vehicles.fleet = [
       { name: '小型', count: 1, capacity: 1, payload: 'load' },
@@ -126,7 +126,7 @@ describe('serialized draft saving before solve', () => {
     expect(mocks.solve).not.toHaveBeenCalled();
     const current = useStudio.getState();
     expect(current.save).toBe('error');
-    expect(current.solveError).toContain('B6');
+    expect(current.solveError).toContain('提交被后端拒绝');
     expect(current.solveError).toContain('类别容量 [1, 10]');
     expect(current.solveError).toContain('任务需求 [1, 10]');
     expect((current.draft as unknown as FleetInstance).vehicles.fleet?.map((item) => item.capacity)).toEqual([1, 10]);

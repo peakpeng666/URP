@@ -13,7 +13,10 @@ def test_proxy_retargets_host_and_validated_origin(tmp_path):
         assert request.headers['host'] == '127.0.0.1:4188'
         assert request.headers.get('origin') == 'http://127.0.0.1:4188'
         assert request.url.query == b'limit=3'
-        return httpx.Response(200, json={'received': request.content.decode()})
+        class ResponseBody(httpx.AsyncByteStream):
+            async def __aiter__(self):
+                yield request.content
+        return httpx.Response(200, stream=ResponseBody(), headers={'Content-Type': 'application/json'})
 
     app = create_app(Config(runtime=tmp_path, background=False,
                             archive_url='http://127.0.0.1:4188', extra_hosts={'testserver'}))

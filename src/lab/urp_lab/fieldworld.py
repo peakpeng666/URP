@@ -285,7 +285,10 @@ def plan_vehicles(inst: dict, routes: list[dict], net: lanes.Network | None = No
         home_xy = depots[r.get('depot', 0) if len(depots) > 1 else 0]
         approach_s = math.dist(spot, tuple(home_xy))
         cursor, offsets = approach_s, {}
-        returns = {sum(len(t) for t in r['trips'][:i]) for i in range(1, len(r['trips']))}
+        returns = {sum(len(t) for t in r['trips'][:i]): i - 1 for i in range(1, len(r['trips']))}
+        reloads = r.get('reload_stops') or [home_xy] * len(returns)
+        if len(reloads) != len(returns):
+            raise ValueError('补给停靠清单与分趟清单不一致')
         for served, sv in enumerate(r['services'], 1):
             stop = stops.get(sv['task']) or tasks[sv['task']]['xy']
             pos = sv.get('position')
@@ -294,9 +297,9 @@ def plan_vehicles(inst: dict, routes: list[dict], net: lanes.Network | None = No
                 raise ValueError('任务作业位置不在有序执行路径上')
             offsets[sv['task']] = cursor = at
             if served in returns:
-                cursor = locate(clean, tuple(home_xy), cursor)
+                cursor = locate(clean, tuple(reloads[returns[served]]), cursor)
                 if cursor is None:
-                    raise ValueError('执行路径在分趟之间没有返回车库')
+                    raise ValueError('执行路径在分趟之间没有经过声明的补给点或家库')
         out.append(Vehicle(name=f'vehicle_{i + 1}', label=r.get('vehicle_name') or f'车{i + 1}', color=r.get('color') or '#0a84ff',
                            start=(spot[0], spot[1], yaw), path=clean,
                            tasks=[{'id': t['id'], 'label': str(t.get('label', t['id'])), 'xy': t['xy'],

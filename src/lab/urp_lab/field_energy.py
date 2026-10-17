@@ -31,7 +31,7 @@ def account(samples: list, physics: dict, corridors: list | None = None) -> dict
     polygon use the hard-surface coefficient, the rest the firm-soil one (ASAE D497 ranges)."""
     import numpy as np
     p = np.asarray(samples, dtype=float)
-    if p.ndim != 2 or len(p) < 3 or not np.isfinite(p).all() or (np.diff(p[:, 0]) <= 0).any():
+    if p.ndim != 2 or p.shape[1] < 3 or len(p) < 3 or not np.isfinite(p).all() or (np.diff(p[:, 0]) <= 0).any():
         return None
     model = (physics or {}).get('energy_model') or {}
     crr_field = float(model.get('rolling_resistance', .06))
@@ -43,13 +43,13 @@ def account(samples: list, physics: dict, corridors: list | None = None) -> dict
     # Central-difference velocity; a short moving average keeps the second derivative usable
     # at 50 Hz without inventing dynamics the controller did not command.
     dt = np.gradient(t)
-    v = np.hypot(np.gradient(x) / dt, np.gradient(y) / dt)
+    v = np.hypot(np.gradient(x, t), np.gradient(y, t))
     if len(v) > 10:
-        kernel = max(3, 2 * round(len(v) * 0.01) | 1)      # ~1% of the run, odd length
+        kernel = min(len(v) // 2 * 2 - 1, max(3, round(.2 / float(np.median(dt))) | 1))
         pad = kernel // 2
         padded = np.concatenate((np.full(pad, v[0]), v, np.full(pad, v[-1])))
         v = np.convolve(padded, np.ones(kernel) / kernel, mode='valid')
-    a = np.gradient(v) / dt
+    a = np.gradient(v, t)
     moving = v > 1e-3
     roads = [(min(px for px, _py in c), min(py for _px, py in c), max(px for px, _py in c), max(py for _px, py in c), c)
              for c in (corridors or [])]
@@ -62,9 +62,9 @@ def account(samples: list, physics: dict, corridors: list | None = None) -> dict
     energy_j = trapz(power, t)
     field_j = trapz(np.where(~on_road, power, 0.0), t)
     peak_force = float(np.max(np.abs(force))) if len(force) else 0.0
-    return {'schema': 'urp.field-energy.post_hoc/2',
-            'distance_m': trapz(v, t),
-            'moving_s': float(moving.sum() * float(np.median(dt))),
+    return {'schema': 'urp.field-energy.post_hoc/3',
+            'distance_m': float(np.hypot(np.diff(x), np.diff(y)).sum()),
+            'moving_s': trapz(moving.astype(float), t),
             'energy_j': energy_j, 'energy_wh': energy_j / 3600.0,
             'energy_field_j': field_j, 'energy_corridor_j': max(0.0, energy_j - field_j),
             'mean_power_w': energy_j / max(t[-1] - t[0], 1e-9),
@@ -74,6 +74,7 @@ def account(samples: list, physics: dict, corridors: list | None = None) -> dict
             'model': {'rolling_resistance_field': crr_field, 'rolling_resistance_corridor': crr_road,
                       'drive_efficiency': eta, 'mass_kg': mass, 'wheel_radius_m': wheel_r, 'recuperation': False,
                       'surfaces': (physics or {}).get('energy_model', {}).get('surfaces'),
-                      'derivation': 'central differences on 50 Hz truth poses; velocity smoothed over ~1% of the run; '
+                      'velocity_filter_window_s': .2,
+                      'derivation': 'time-aware central differences; velocity smoothed over fixed 0.2 s (rounded to odd sample count); '
                                     'per-sample surface by point-in-corridor test',
                       'scope': 'kinematic accounting on simulator truth; not motor current, battery state, thermal or terrain-deformation physics'}}

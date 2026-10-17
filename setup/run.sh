@@ -66,6 +66,8 @@ case "$operation" in
     ;;
   lab-setup)
     lab_node_path
+    # The archive / CVRP jobs service uses its own locked root environment.
+    UV_CACHE_DIR="$urp_root/setup/2026-10-15/cache/uv" uv sync --locked --extra solvers
     (cd src/lab && UV_CACHE_DIR="$urp_root/setup/2026-10-15/cache/uv" uv sync --locked --inexact)
     # Reuse the optional, locally built wheel only after checking its pinned bytes.
     if [[ -f src/lab/vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl ]]; then

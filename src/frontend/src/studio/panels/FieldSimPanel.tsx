@@ -9,7 +9,7 @@ import { Badge, Button, EmptyState, Input, Notice, Select, Switch } from '../../
 import { studio, urls, type FieldPhysicsResponse } from '../api';
 import { useStudio } from '../store';
 import { refreshFieldSim, setFieldSimActionError, useFieldSim } from '../ros/live';
-import { executionErrorMessage, unacceptedPlanReason } from '../execution';
+import { executionErrorMessage, planModelSchema, unacceptedPlanReason } from '../execution';
 import type { FieldSimState, FieldSimSummary, FieldVehicleState, FleetInstance } from '../types';
 import type { SimResult } from '../experiment/replay';
 import { SessionEvidence } from '../experiment/SessionEvidence';
@@ -35,7 +35,7 @@ export async function startFieldSim(runId: string, opts: { gui?: boolean; rviz?:
   try {
     const run = st.runs[runId] ?? (await lab.run(runId));
     const instance = run.instance as unknown as (FleetInstance & { fleet?: { asset?: { name?: string; id: string }; adapter?: string | null; adapter_note?: string } }) | undefined;
-    const blocked = unacceptedPlanReason(instance);
+    const blocked = unacceptedPlanReason(instance, planModelSchema(run));
     if (blocked) {
       setFieldSimActionError(blocked);
       st.notify('error', blocked);

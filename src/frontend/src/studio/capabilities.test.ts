@@ -36,7 +36,7 @@ function recommendation(): Recommendation {
   } as Recommendation & { compare: string[] };
 }
 
-describe('B7 temporary capability filter', () => {
+describe('fleet capability preflight', () => {
   it('removes constructive baselines from defaults and admission for heterogeneous fleets', () => {
     const hetero = structuredClone(instance);
     hetero.vehicles = { travel: 'free', fleet: [{ count: 1, capacity: 4, payload: 'load' }, { count: 1, capacity: 8, payload: 'load' }] };
@@ -44,14 +44,14 @@ describe('B7 temporary capability filter', () => {
     expect(filtered.compare).toEqual(['pyvrp.fleet']);
     expect(filtered.recommended).toBe('pyvrp.fleet');
     expect(filtered.ranking.find((item) => item.algorithm_id === 'panel.sweep')?.applicable).toBe(false);
-    expect(planningBlockReason(hetero, 'panel.sweep')).toContain('B7');
+    expect(planningBlockReason(hetero, 'panel.sweep')).toContain('只支持同构单库');
     expect(planningBlockReason(hetero, 'pyvrp.fleet')).toBeNull();
   });
 
   it('blocks multi-depot constructive baselines but keeps homogeneous single-depot inputs available', () => {
     const multi = structuredClone(instance);
     multi.depots = [[0, 0], [5, 5]];
-    expect(planningBlockReason(multi, 'panel.cluster_first')).toContain('B7');
+    expect(planningBlockReason(multi, 'panel.cluster_first')).toContain('只支持同构单库');
     expect(planningBlockReason(instance, 'panel.cluster_first')).toBeNull();
   });
 });

@@ -11,6 +11,8 @@ export function SessionEvidence({ result }: { result: SimResult }) {
   const finalDrift = vehicles.map((item) => item.odom_position_final_m).filter((value): value is number => typeof value === 'number');
   const maxDrift = vehicles.map((item) => item.odom_position_max_m).filter((value): value is number => typeof value === 'number');
   const runtimeLibraries = (result.physics_runtime?.loaded_library_sha256 ?? {}) as Record<string, string>;
+  const energy = Object.values(result.energy ?? {});
+  const fixedEnergy = energy.length > 0 && energy.every((item) => item && typeof item === 'object' && (item as { schema?: string }).schema === 'urp.field-energy.post_hoc/3');
   return (
     <section className={s.sessionEvidence} aria-label="逐会话物理证据">
       <div className={s.kv}>
@@ -20,8 +22,8 @@ export function SessionEvidence({ result }: { result: SimResult }) {
         <span>采样质量</span><b>{gaps.length ? `最大真值间隔 ${fmt.num(Math.max(...gaps), 3)} s；动力学检查 ${evidenceState(dynamics?.valid)}` : '未知（不能按连续时间安全证明处理）'}</b>
         <span>轮式里程计漂移</span><b>{finalDrift.length ? `末端最大 ${fmt.num(Math.max(...finalDrift), 3)} m${maxDrift.length ? ` · 全轨迹最大 ${fmt.num(Math.max(...maxDrift), 3)} m` : ''}；只在首个共同姿态对齐` : '历史记录未提供'}</b>
       </div>
-      <p className={s.hint}>平地刚体、轮胎接触、理想关节速度伺服与真值定位；不代表真实土壤 / 轮胎校准。B4：后端 valid 不扩大为未知遥测区间的连续时间物理安全证明。</p>
-      {result.energy && <p className={s.hint}><strong className={s.warn}>B5：</strong>energy 仅为后验纵向运动学代理，停车尾段可改变估值；不用于能效排行榜。</p>}
+      <p className={s.hint}>接触模型：{result.physics?.wheel_contact === 'tyre' ? '有限宽轮胎' : result.physics?.wheel_contact === 'sphere' ? '球面滚动对照' : '未记录，见原始假设'}；平地刚体、理想速度伺服与真值定位，不代表真实土壤 / 轮胎校准。采样检查不扩大为连续时间物理安全证明。</p>
+      {result.energy && <p className={s.hint}>能耗为后验纵向运动学代理，不是实测电耗。{fixedEnergy ? '本记录使用固定 0.2 s 滤波窗，仍未纳入电池和转向摩擦耗能。' : '历史版本存在停车尾段影响或缺少版本证据，不用于能效排序；历史值保留。'}</p>}
       <details>
         <summary>详细物理证据、假设与关闭报告</summary>
         <div className={s.kv}>

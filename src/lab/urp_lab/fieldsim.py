@@ -101,6 +101,8 @@ class FieldSimManager:
             raise ServiceError(400, 'invalid_rtf', '仿真倍速需在 0.5–20 之间')
         if run.get('status') not in ('feasible', 'optimal') or (run.get('check') or {}).get('valid') is not True:
             raise ServiceError(422, 'unchecked_plan', '方案未通过独立检查，不能进入仿真')
+        if (run.get('instance') or {}).get('unload_points') and (run.get('raw_result') or {}).get('model_contract', {}).get('schema') != 'urp.fleet-model/2':
+            raise ServiceError(422, 'obsolete_resupply_model', '补给方案来自旧模型或缺少版本证据，请重新求解并验算；原记录保留')
         try:
             inst = validate_instance('fleet_routing', run['instance'])
             checked = check_fleet(inst, run['routes'])
@@ -140,6 +142,7 @@ class FieldSimManager:
                        paths.LAB / 'urp_lab/field_records.py',
                        paths.LAB / 'urp_lab/field_physics.py',
                        paths.LAB / 'urp_lab/field_dynamics.py',
+                       paths.LAB / 'urp_lab/field_energy.py',
                        paths.LAB / 'urp_lab/fieldworld.py', paths.LAB / 'urp_lab/lanes.py',
                        paths.LAB / 'ros/processes.py', paths.LAB / 'ros/physics_runtime.py', paths.LAB / 'ros/bridge_runtime.py',
                        paths.LAB / 'ros/native/bridge/manifest.json']

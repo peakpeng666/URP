@@ -12,6 +12,13 @@ const passed: TrafficEvidence = {
 };
 
 describe('traffic evidence presentation', () => {
+  it('does not infer collision enablement or full success from partial metadata', () => {
+    const partial = structuredClone(passed);
+    delete partial.traffic!.robot_collisions;
+    expect(trafficStatus(partial).tone).toBe('warn');
+    expect(trafficStatus({ ...passed, robot_contact_events: null }).tone).toBe('warn');
+    expect(trafficStatus({ ...passed, robot_contact_events: 1 }).tone).toBe('bad');
+  });
   it('describes the serial baseline without claiming parallel collision avoidance', () => {
     const status = trafficStatus(passed);
     expect(status.value).toBe('串行交通检查通过');

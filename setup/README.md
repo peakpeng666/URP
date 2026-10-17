@@ -10,7 +10,7 @@ bash setup/run.sh lab --open
 
 浏览器（Chrome 应用窗口）打开 **http://127.0.0.1:4100/**。第一次或依赖变化后先运行 `bash setup/run.sh lab-setup`。关闭：在启动终端按 Ctrl+C，或运行 `bash setup/run.sh lab-stop`。
 
-**当前验收状态（2026-10-17）**：基础田间闭环、取消与故障恢复已独立复验；新增补给/曲率能力及部分前端对接仍有阻塞，不能视为全部通过。问题、原始证据及适用范围见 [集成报告最上方](2026-10-15/integration/REPORT.md)，前端实现任务见 [KIMI 提示词](2026-10-17/KIMI-前端任务提示词.md)。
+**当前版本（2026-10-18 合并收尾）**：本地 KIMI 工作台与 GitHub 科研、CVRP 数值任务已整合；当前验收范围、原始日志及剩余限制统一见 [集成报告最上方](2026-10-15/integration/REPORT.md)。旧提示词与历史失败记录保留作追溯材料。
 
 恢复：先在仿真面板关闭失败会话，再启动新会话；网关异常时执行 `bash setup/run.sh lab-stop`，待退出后重新运行上面的入口。失败结果与日志保留，不删除 `runtime/`，也不使用按名称批量杀进程的命令。
 
@@ -25,6 +25,10 @@ bash setup/run.sh lab --open
 4. **求解对比**：点「对比 N 个算法」或按 ⌘Enter。地图上每台车一种颜色，箭头标方向，点上的数字是访问顺序；右上角图例可隐藏某台车，底部可播放各车同时作业的过程。「方案对比」列出总里程、最晚完成时间、车辆 / 趟数、均衡度、计算时间，最优值高亮，并画出求解过程中最好解的变化。
 5. **验算**：「验算」逐项检查每个任务点是否恰好服务一次、每趟载重、车辆数、路线是否避开障碍且不出场地、是否从车库出发并返回、里程复算是否一致，并给出每台车的任务顺序。每个方案都能导出 JSON / CSV / GeoJSON。
 6. **田间仿真**：方案对比表里点某个多车方案的「Gazebo」。工作台按任务地图生成 Gazebo Fortress 世界（田块、按作物行方向排布的作物行、池塘 / 温室 / 建筑等障碍、车库、按车辆着色的任务标记），每台车一台差速机器人停在车库旁，经 ROS 2 沿各自规划路线行驶、逐点到达任务（有作业时间就原地停留），结束后给出「规划 vs 执行」的最晚完成时间、总里程、到达任务数和横向偏差。可选 1–10 倍速，也可同时打开原生 Gazebo 窗口和 RViz2。
+
+## CVRP 数值任务
+
+底栏或命令面板打开「CVRP 数值任务」（`#/jobs`），载入六点工程示例 → 运行并独立验算 → 查看路线、状态与成本 → 导出记录。刷新或重启后按任务 ID 恢复。其坐标未经米制标定，路线是访问顺序，不送入 Gazebo；工程任务不自动计入正式科研基线。档案 / Jobs 写入 `.local-state/research.sqlite3`，首次由既有档案库安全备份初始化，原始 `data/backend/` 库保留。
 
 ## 工作区
 
@@ -66,13 +70,13 @@ bash setup/run.sh lab --open
 
 当前田间执行模型要求规划半径至少 0.4883 m、最多 15 台实际执行车辆，且车库附近有足够安全停车空间；数量上限不代表所有布局均能执行。后端核对车型资产版本、哈希、足迹、速度与容量；目前只支持内置田间差速模型，未适配的导入车型返回明确错误。规划或实际轨迹检查失败、取消都会保留记录；停留作业完成后才进入下一任务。实际里程/用时包含往返停车接驳、转向和排队，规划值从车库算起。
 
-**物理模型与研究口径**：当前田间默认模型为 `urp.field-diffdrive.rigid/4`，采用轮胎接触的差速刚体（25 kg、车体 0.8×0.56 m、含轮总宽 0.96 m），球面接触可作对照；运行 DART 物理引擎，驱动仍为理想关节速度伺服。记录源仿真时间、3D 姿态、轮式里程计漂移、质量/惯量/摩擦及实际加载库哈希。直行、制动、转向及参数对照不等于真实轮胎/松软土壤校准，真值定位下跟踪成功也不代表轮式里程计准确。`energy` 是后验纵向运动学代理，不是环内电机、电池或实测能耗；本轮还发现停车尾段会影响估值，修复前不用于可靠能效排名。任务完成指到达通道停车位并停留，不能据此认定采样或喷施质量合格。规划时间是匀速代理，含加速/转向的解析参考也不是实测工期。旧绑定车型需在检查器重新选择当前内置车型后重新求解，历史结果保留原版本。
+**物理模型与研究口径**：当前田间默认模型为 `urp.field-diffdrive.rigid/4`，采用轮胎接触的差速刚体（25 kg、车体 0.8×0.56 m、含轮总宽 0.96 m），球面接触可作对照；运行 DART 物理引擎，驱动仍为理想关节速度伺服。记录源仿真时间、3D 姿态、轮式里程计漂移、质量/惯量/摩擦及实际加载库哈希。直行、制动、转向及参数对照不等于真实轮胎/松软土壤校准，真值定位下跟踪成功也不代表轮式里程计准确。`energy` 是后验纵向运动学代理，不是环内电机、电池或实测能耗；`urp.field-energy.post_hoc/3` 使用固定 0.2 s 平滑窗口，已修复停车尾段改变估值的问题；旧版本估值不可直接混合排名，新版本仍需物理校准才能解释为实际能效。任务完成指到达通道停车位并停留，不能据此认定采样或喷施质量合格。规划时间是匀速代理，含加速/转向的解析参考也不是实测工期。旧绑定车型需在检查器重新选择当前内置车型后重新求解，历史结果保留原版本。
 
 默认物理参数可查 `GET /lab/api/fieldsim/physics`。复验物理协议：在 `src/lab` 执行 `.venv/bin/python e2e/physics_backend.py --out /一个新的绝对路径 --repeats 3`；更高速度及反向转弯用 `--protocol holdout --cases step4ms,step1ms,loaded`。每场保存原始日志和结构化结果，勿与其他仿真验收脚本同时运行；低摩擦偏差是敏感性结果，不会改判成无滑移成功。证据与可复现图见 [模型验证汇总](2026-10-17/modeling/analysis/summary.json)。
 
 **本次后端短演示**：描述「60×40米果园，2台车，8个采样点，每车容量4，1个池塘」→ 对比三算法 → 验算 → PyVRP 的 Gazebo 按钮 → 等两车完成并停止。每车应回独立车位，状态依次出现“等待 / 行驶 / 完成”。固定种子的接口复验：在 `src/lab` 执行 `.venv/bin/python e2e/field_backend.py --out /一个尚不存在的绝对路径`，覆盖成功、取消、故障注入和恢复；使用隔离数据、端口及 ROS 域，不占用正式数据目录。结果和当前限制见 [集成报告](2026-10-15/integration/REPORT.md)。
 
-完整服务端记录：`GET /lab/api/runs/<run_id>/record`，包含求解输入快照、资产版本、推荐、各次仿真、控制误差、作业时长和关闭报告；`integrity.sha256` 校验 `record` 对象内容，不是数字签名。现有页面的“导出实验记录”仍采用前端拼装，服务端端点可直接访问。科研图表使用运行保存的输入，后续编辑地图不会改写历史图表。
+完整服务端记录：`GET /lab/api/runs/<run_id>/record`，包含求解输入快照、资产版本、推荐、各次仿真、控制误差、作业时长和关闭报告；`integrity.sha256` 校验 `record` 对象内容，不是数字签名。页面“导出实验记录”直接下载该端点的原始 JSON，保留完整 envelope 与数字表示，不在浏览器中重新组装。科研图表使用运行保存的输入，后续编辑地图不会改写历史图表。
 
 两种仿真不同时运行。ROS 视图和 Gazebo 场景依赖的 Foxglove Bridge 用 `bash src/lab/ros/native/install-ros-extras.sh` 免 sudo 安装（`apt download` 官方 .deb 后解包到 `setup/2026-10-15/deployment/runtime/ros-extras/`，不改 `/opt/ros`）；Gazebo 的 WebSocket 服务是 Fortress 自带的 ign-launch 插件。
 
@@ -80,9 +84,13 @@ bash setup/run.sh lab --open
 
 - 组播路由（ign-transport 发现用）：网络管理器重置后若丢失，仿真会大量报 `Exception sending a multicast message:Network is unreachable` 并可能遥测中断。恢复：`sudo ip link set lo multicast on && sudo ip route add 239.255.0.0/16 dev lo`；验证 `ip route get 239.255.0.1` 显示 `dev lo`（2026-10-17 已恢复，探针复验组播错误归零）。
 - 运行记录：`src/lab/runtime/lab.sqlite3`；我的场景：`src/lab/runtime/scenarios/`；田间仿真（世界、计划、结果、各组件日志）：`src/lab/runtime/fieldsim/<会话>/`；TurtleBot4 仿真日志：`src/lab/runtime/sim/<会话>/`；资料缓存：`src/lab/runtime/library/`。
-- 依赖：求解器用 `src/lab/.venv`（uv，Python 3.12）；ROS 用系统 Python 3.10，互不替换。仿真修补库被清理后，入口会自动按原命令重建（`src/lab/ros/native/rebuild-ros-overlays.sh`），产物与验收时逐字节一致。
+- 依赖：田间求解器用 `src/lab/.venv`，档案 / CVRP 数值任务用根目录 `.venv`（均为 uv 锁定的 Python 3.12）；ROS 用系统 Python 3.10，互不替换。`lab-setup` 同时准备两个求解环境。仿真修补库被清理后，入口会自动按原命令重建（`src/lab/ros/native/rebuild-ros-overlays.sh`），产物与验收时逐字节一致。
 - `parameter_bridge` 退出竞态已用源码修复：等待 ROS 信号线程完成日志关闭后正常析构，不再使用 `_exit` 垫片。源码修复自动构建并校验指纹，详见 [集成报告](2026-10-15/integration/REPORT.md)；`URP_BRIDGE_FIX=0`、`URP_TF_FIX=0`、`URP_GUI_FIX=0` 可分别关闭对应修补做对照。
 - 桥接源码修复：`src/lab/ros/native/bridge/`，本地产物：`src/lab/runtime/native/bridge/`；依赖或源码指纹改变会明确拒绝，不能静默回退。目录说明与缓存维护见 [文档目录](../docs/README.md)。
 - 历史 BPP 数据未恢复时，「#/bpp」页面显示无历史数据。
 
 开发接口见 [CONTRACT](../src/lab/CONTRACT.md)；部署与验收记录见 [集成报告](2026-10-15/integration/REPORT.md)、[部署报告](2026-10-15/deployment/REPORT.md)。
+
+## 云端 Agent 接续
+
+云端从最新 `main` 开始，先读根目录 [AGENTS.md](../AGENTS.md)。普通工程验证使用根 uv 锁文件与前端 npm 锁文件，`tools/check_project.py` 汇集 15 项门禁；无 ROS/Gazebo 的环境只报告代码与数值验证，不推断本机物理执行成功。运行目录和模型缓存不会上传为源码，所需资源按 [按需取用](../docs/按需取用.md) 恢复。

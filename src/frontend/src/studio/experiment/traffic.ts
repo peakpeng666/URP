@@ -61,9 +61,16 @@ export function trafficStatus(result: TrafficEvidence): TrafficStatus {
   if (!trafficCheck || trafficCheck.valid !== true) {
     return { value: '交通检查未知', tone: 'warn', note: `接触观测已记录，但缺少独立车间距检查；${scope}；${counts}` };
   }
+  if (result.traffic.robot_collisions !== true || result.check.valid !== true || result.state !== 'succeeded'
+      || result.row_collisions == null || result.robot_contact_events == null) {
+    return { value: '交通证据不完整', tone: 'warn', note: `执行状态、物理碰撞开关、总检查或接触计数尚未完整确认；${scope}；${counts}` };
+  }
+  if (result.row_collisions > 0 || result.robot_contact_events > 0) {
+    return { value: '存在接触事件', tone: 'bad', note: `${scope}；${counts}` };
+  }
   return {
     value: exclusive ? '串行交通检查通过' : '交通检查通过',
     tone: 'good',
-    note: `${scope}；车间碰撞${result.traffic.robot_collisions === false ? '未开启' : '已开启'}；${trafficCheck.method ?? '独立检查已记录'}；${counts}`,
+    note: `${scope}；车间碰撞已开启；${trafficCheck.method ?? '独立检查已记录'}；${counts}`,
   };
 }

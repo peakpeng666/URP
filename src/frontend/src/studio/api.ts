@@ -38,7 +38,7 @@ export interface FieldPhysicsResponse {
   scope?: string;
 }
 
-async function call<T>(method: string, path: string, body?: unknown, options: CallOptions = {}): Promise<T> {
+async function call<T>(method: string, path: string, body?: unknown, options: CallOptions & { preserveJsonText?: boolean } = {}): Promise<T> {
   const controller = new AbortController();
   const onAbort = () => controller.abort(options.signal?.reason);
   if (options.signal?.aborted) onAbort();
@@ -81,7 +81,7 @@ async function call<T>(method: string, path: string, body?: unknown, options: Ca
     const message = e.message ?? (typeof e.detail === 'string' ? e.detail : `请求失败（HTTP ${response.status}）`);
     throw new LabApiError(message, e.error ?? 'http_error', response.status);
   }
-  return data as T;
+  return (options.preserveJsonText ? text : data) as T;
 }
 
 export const studio = {
@@ -137,6 +137,8 @@ export const studio = {
     call<SimResult>('GET', `/fieldsim/results/${encodeURIComponent(sessionId)}`, undefined, options),
   runRecord: (runId: string, options: CallOptions = {}) =>
     call<ExperimentRecordEnvelope>('GET', `/runs/${encodeURIComponent(runId)}/record`, undefined, { timeoutMs: 60_000, ...options }),
+  runRecordText: (runId: string, options: CallOptions = {}) =>
+    call<string>('GET', `/runs/${encodeURIComponent(runId)}/record`, undefined, { timeoutMs: 60_000, ...options, preserveJsonText: true }),
 };
 
 export const urls = {

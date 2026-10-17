@@ -26,12 +26,14 @@ afterEach(() => {
 
 describe('server record download', () => {
   it('downloads the exact server envelope without reassembly', async () => {
-    const fetchMock = vi.fn().mockResolvedValue(json(envelope));
+    const raw = JSON.stringify(envelope).replace('"seed":7', '"seed":7,"float":1.0,"large":9007199254740993,"tiny":1e-09');
+    const fetchMock = vi.fn().mockResolvedValue(new Response(raw, { headers: { 'Content-Type': 'application/json' } }));
     vi.stubGlobal('fetch', fetchMock);
     const onDownload = vi.fn();
     const result = await downloadServerRecord('run_test', { onDownload });
     expect(fetchMock).toHaveBeenCalledWith('/lab/api/runs/run_test/record', expect.objectContaining({ method: 'GET' }));
-    expect(JSON.parse(result.serialized)).toEqual(envelope);
+    expect(result.serialized).toBe(raw);
+    expect(await onDownload.mock.calls[0]?.[0]?.text?.()).toBe(raw);
     expect(result.envelope.integrity).toEqual(envelope.integrity);
     expect(onDownload).toHaveBeenCalledOnce();
     expect(onDownload.mock.calls[0][1]).toBe('experiment-run_test.json');

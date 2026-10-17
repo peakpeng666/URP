@@ -2,7 +2,30 @@
 
 唯一使用入口为 [setup/README](../../README.md)。本报告按日期保留验收范围与原始证据；最新结论在最上方，历史通过不自动覆盖之后的模型或代码。迷宫巡检、仓库五任务、Fields2Cover 的限定闭环及 CVRP 学习原型评估见下方历史记录，不等于新车队功能、推荐增益或真实农业环境已验证。
 
-## GLM 增量独立验收（2026-10-17，当前）
+## GitHub + KIMI 全量集成收尾（2026-10-17—18，当前）
+
+**结论：现有工作台与云端数值/科研改动已整合，限定仿真闭环通过；`main` 作为后续云端 Agent 的完整工作基线。** 启动、停止与恢复仍只维护在 [setup/README](../../README.md)，云端环境和模块边界见根目录 [AGENTS](../../../AGENTS.md)。接手时先备份全部本地未提交文件，提交为 `1700deb4`，再以正常 merge `2c89150f` 纳入 GitHub 分支 `483d3d95`。原 main、cvrp-baselines、experiments-handoff、optimize 分支及本地 workbench 都在合并祖先链中；历史 backup 分支保留原指向，不作为滚动工作分支。[合并来源](../../2026-10-17/integration-closeout/integration-lineage.json)
+
+保留 KIMI 的 macOS 工作台、编辑与输入失效处理，并接入 `#/jobs`。修复网关与新档案后端的 Host/Origin 代理冲突；根 Python 环境按锁文件准备，不替换田间或 ROS 环境。实际操作还发现 Dockview 嵌套 padding 使地图覆盖相邻标签，已取消该布局干预；底栏分别显示田间与 TB4 状态，避免田间执行时显示“未运行”。实验按钮下载服务端原始 JSON，保留浮点字面量和完整 envelope。
+
+建模修复包括：统一车库→任务→补给点的图编号；补给副本不再误作必访任务，修正分趟边界和路线提取；执行转换使用声明补给点；识别重复点间的瞬时折返；任意超过 0.25 s 的真值/里程计缺口均拒绝验收；固定 0.2 s 能耗滤波窗；允许小容量车承担小需求；构造基线不再推荐给异构/多库输入。新方案标记 `urp.fleet-model/2`，旧补给方案在服务端也必须重求解。能耗标记 `urp.field-energy.post_hoc/3`，旧记录不改写。[独立缺陷复验](../../2026-10-17/integration-closeout/reproductions-after/reproductions.json)
+
+| 验收 | 结果与证据 |
+|---|---|
+| 云端工程体系 | **15 门禁通过**：档案/Jobs、研究、生成器、进程管理、独立验证器、机器人核心、前端与 BPP 历史读回等；不包含物理仿真。[汇总](../../2026-10-17/integration-closeout/engineering/summary.json) |
+| 田间 Python 回归 | **242 passed**；随后仿真转换修复的 80 项及其消费者 81 项复验通过，最终建模回归通过。首次测试夹具错误与日志保留，不改判。[全量](../../2026-10-17/integration-closeout/pytest-final.log)、[转换](../../2026-10-17/integration-closeout/fieldworld-regressions-pass.log)、[消费者](../../2026-10-17/integration-closeout/fieldworld-consumers.log)、[最终模型](../../2026-10-17/integration-closeout/model-regressions-final.log) |
+| 前端 | 类型检查、**78 tests**、最终生产构建通过。仍有已有大 chunk / 重复静动态导入警告。[测试](../../2026-10-17/integration-closeout/frontend-tests-release.log)、[构建](../../2026-10-17/integration-closeout/build-release.log) |
+| 7 场真实 Gazebo 回归 | free、rows、restart 成功；cancel 为 canceled/0；时钟停滞、桥接退出、实体接触为 failed/1。全部清理 PASS、无所属残留；未把故障归零。[逐场结果](../../2026-10-17/integration-closeout/live-summary.json) |
+| 中途补给真实执行 | 两车 8/8，**250.76 m / 293.49 s**，最大横向偏差 0.0675 m；执行检查及关闭 PASS。首次世界转换失败保留，修复后重新完整运行。[通过](../../2026-10-17/integration-closeout/supply-summary.json)、[首次失败](../../2026-10-17/integration-closeout/supply-first-failure.json) |
+| 网页完整流程 | 生成 60×40 m 果园→车库 X 改为 3→保存/刷新→三算法→独立检查→PyVRP Gazebo→8/8→关闭→下载实验。**297.84 m / 342.21 s**，最大横向偏差 **0.0899 m**。浏览器下载与 API record 相同，SHA256 重算相符，清理 PASS。[核验](../../2026-10-17/integration-closeout/ui-verification.json)、[完成截图](../../2026-10-17/integration-closeout/ui-completed.png)、[会话汇总](../../2026-10-17/integration-closeout/ui-session-summary.json) |
+| CVRP 数值任务网页 | 通过正式 4100 代理提交六点示例，独立成本 **123**、两条路线，导出成功，刷新及网关重启后记录保留；不混入正式基线。[原始导出](../../2026-10-17/integration-closeout/ui-jobs-export.json)、[截图](../../2026-10-17/integration-closeout/ui-jobs.png) |
+| 重复启停与目录 | 正式网关多次有序关闭；可观测的网关及其档案子进程退出码均为 0，随后统一入口恢复服务，仿真保持关闭。只读盘点未删除数据，唯一断链为旧独立 JDK 的可选源码包。[关闭日志](../../2026-10-17/integration-closeout/gateway-release.log)、[盘点](../../2026-10-17/integration-closeout/folder-audit.json) |
+
+范围限制仍然有效：规划曲率检查是采样几何检查；异构、正最小转弯半径或未适配车辆仅可做规划研究，执行如实拒绝。补给是零处理时间、抽象容量重置，不含真实卸载机构或动态载荷。执行为真值定位、平地刚体和串行交通基线；本次网页两车的轮式里程计最大末端漂移约 **26.585 m**，已在页面和原记录显示，**不能声称里程计/轮胎校准通过**。能耗仍为后验纵向代理，缺少电机/电池/转向摩擦模型。并行避碰、可变形土壤、通用导入车辆执行和学习推荐增益尚未交付；这轮未重跑旧 TB4 压力试验或证明论文级算法优越性。
+
+证据统一在 `setup/2026-10-17/integration-closeout/`；[源码指纹](../../2026-10-17/integration-closeout/source-fingerprints.json) 对应测试字节。Git 保留代码、协议、摘要、日志和截图；大体积原始世界/遥测仍在本机 `live/`、`live-supply-fixed/` 与 `src/lab/runtime/fieldsim/field_20261017T145457_3ba96a/`，浏览器原始 envelope 为本机 `ui-browser-record.json`，按 `.gitignore` 不上传。重新运行 `src/lab/e2e/field_backend.py --out /全新绝对目录` 可复验新增 supply 在内的场景；不要与其他物理测试并发。
+
+## GLM 增量独立验收（2026-10-17，合并前快照）
 
 **结论：基础田间闭环复验通过，新增能力不予整体通过。** 基线 `056b857c302b7a04775336630c317bf84eda0ae7`，接手时工作区干净；本轮只增加独立验收证据、前端交接提示词并修正文档，未修改应用源码。354 个后端/前端源码和配置文件的起始指纹见 [takeover.json](../../2026-10-17/glm-acceptance/takeover.json)，最终核对见 [结构化汇总](../../2026-10-17/glm-acceptance/summary.json)。正式 4100 网关保持运行；仿真测试使用隔离存储、端口和 ROS 域，不覆盖用户实验。
 

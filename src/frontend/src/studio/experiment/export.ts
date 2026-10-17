@@ -11,7 +11,10 @@ export async function downloadServerRecord(
   runId: string,
   options: CallOptions & { onDownload?: (blob: Blob, fileName: string) => void } = {},
 ): Promise<RecordDownloadResult> {
-  const envelope = await studio.runRecord(runId, { signal: options.signal, timeoutMs: options.timeoutMs });
+  // Keep the server bytes: parsing + JSON.stringify changes 1.0 to 1, large integers,
+  // and exponent spelling, which can invalidate the server's canonical record digest.
+  const serialized = await studio.runRecordText(runId, { signal: options.signal, timeoutMs: options.timeoutMs });
+  const envelope = JSON.parse(serialized) as ExperimentRecordEnvelope;
   if (
     envelope?.record?.schema !== 'agri-workbench.experiment-record/2'
     || envelope.record.run_id !== runId
@@ -23,7 +26,6 @@ export async function downloadServerRecord(
     throw new LabApiError('服务端 record envelope 的 schema、run_id、integrity 或 assembled_utc 不完整；未触发下载', 'bad_response', 200);
   }
   const fileName = `experiment-${runId}.json`;
-  const serialized = `${JSON.stringify(envelope, null, 2)}\n`;
   const blob = new Blob([serialized], { type: 'application/json' });
   if (options.onDownload) {
     options.onDownload(blob, fileName);

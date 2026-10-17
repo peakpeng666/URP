@@ -30,18 +30,9 @@ def verify(result):
         if not valid:
             errors.append(f'{name} 刚体真值或轮式里程计数据缺失/时间无效')
             continue
-        # A sample gap only invalidates interpolation when motion could have happened across
-        # it; gaps spanned without displacement or rotation (parked/waiting vehicles, skipped
-        # identical poses) are exact to interpolate and do not hide anything.
-        def moving_gaps(rows, yaw_col):
-            gaps = np.diff(rows[:, 0])
-            idx = np.where(gaps > .25)[0]
-            return [i for i in idx
-                    if math.hypot(rows[i + 1, 1] - rows[i, 1], rows[i + 1, 2] - rows[i, 2]) > .05
-                    or abs((rows[i + 1, yaw_col] - rows[i, yaw_col] + math.pi) % (2 * math.pi) - math.pi) > .05]
-        bad_truth, bad_odom = moving_gaps(p, 6), moving_gaps(o, 3)
-        if bad_truth or bad_odom:
-            errors.append(f'{name} 真值或里程计在运动中出现超过 0.25 s 的采样间断（静止期缺口不计），不能依靠跨缺口插值验收')
+        # Equal endpoints do not establish stationarity throughout an unobserved interval.
+        if (np.diff(p[:, 0]) > .25).any() or (np.diff(o[:, 0]) > .25).any():
+            errors.append(f'{name} 真值或里程计出现超过 0.25 s 的采样间断，不能依靠跨缺口插值验收')
         if 'trails' in result:
             trail = np.asarray(result['trails'].get(name, []), dtype=float)
             if trail.shape != (len(p),4) or not np.allclose(trail, p[:,[0,1,2,6]], atol=1e-9, rtol=0):
@@ -70,5 +61,4 @@ def verify(result):
                      'max_truth_gap_s':float(np.max(np.diff(p[:,0])))})
     return {'valid':not errors, 'errors':errors, 'vehicles':rows,
             'scope':'flat-world attitude/data checks; wheel odometry aligned only at first common timestamp; drift reported, not calibrated or suppressed',
-            'thresholds':{'tilt_rad':.35, 'absolute_model_origin_z_m':.5, 'max_moving_sample_gap_s':.25,
-                          'stationary_gap_displacement_m':.05, 'stationary_gap_rotation_rad':.05}}
+            'thresholds':{'tilt_rad':.35, 'absolute_model_origin_z_m':.5, 'max_sample_gap_s':.25}}

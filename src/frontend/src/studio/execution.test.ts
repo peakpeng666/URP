@@ -22,7 +22,8 @@ describe('execution admission recovery', () => {
 
   it('retains blocked resupply input while withholding execution promotion', () => {
     const instance = { unload_points: [[4, 5]] } as FleetInstance;
-    expect(unacceptedPlanReason(instance)).toContain('B1/B2');
+    expect(unacceptedPlanReason(instance)).toContain('旧模型');
+    expect(unacceptedPlanReason(instance, 'urp.fleet-model/2')).toBeNull();
     expect(instance.unload_points).toEqual([[4, 5]]);
   });
 });

@@ -91,6 +91,9 @@ def recommend(scenario, instance):
     blocked: dict[str, str] = {}
     if pc == 'fleet_routing':
         feats, score, why, params_hint = _fleet(instance)
+        if len(instance['vehicles'].get('fleet') or []) > 1 or len(instance.get('depots') or [instance['depot']]) > 1:
+            for aid in ('panel.savings_fleet', 'panel.sweep', 'panel.cluster_first'):
+                blocked[aid] = '构造基线仅支持同构单车库；请使用 PyVRP 或 OR-Tools'
     else:
         feats, score, why = [], {a['id']: 0.0 for a in algs}, {a['id']: [] for a in algs}
         n = len(instance.get('customers', [])) if pc == 'turn_routing' else max(0, len(instance.get('demands', [])) - 1)

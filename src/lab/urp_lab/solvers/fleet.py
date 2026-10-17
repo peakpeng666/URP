@@ -129,9 +129,6 @@ class LaneGraph(Graph):
         for d in depot_list(inst)[1:]:
             special.append(len(nodes))
             nodes.append(tuple(d))
-        for p in inst.get('unload_points') or []:
-            special.append(len(nodes))
-            nodes.append(tuple(p))
         for t in inst['tasks']:
             stop, lane, d = net.attach(t['xy'])
             if d > net.max_reach:
@@ -140,6 +137,9 @@ class LaneGraph(Graph):
             (on_lane[lane] if lane is not None else special).append(len(nodes))
             nodes.append(stop)
             self.offsets.append(d)
+        for p in inst.get('unload_points') or []:
+            special.append(len(nodes))
+            nodes.append(tuple(p))
         self.points = list(nodes)
         k = len(nodes)
         edges: dict[tuple[int, int], float] = {}
@@ -570,7 +570,7 @@ def solve(scenario, inst, algorithm_id, params):
     n = len(inst['tasks'])
     depots = depot_list(inst)
     nd = len(depots)
-    unreachable = [inst['tasks'][i - 1]['label'] for i in range(1, n + 1)
+    unreachable = [inst['tasks'][i - nd]['label'] for i in range(nd, nd + n)
                    if not any(np.isfinite(D[d0, i]) for d0 in range(nd))]
     if unreachable:
         raise ValueError(f'有任务点与所有车库不连通（被障碍{"或作物行" if graph.travel == "rows" else ""}隔断）：{unreachable[:6]}')
@@ -599,7 +599,7 @@ def solve(scenario, inst, algorithm_id, params):
         inst, algorithm_id, D, demand, params, deadline, route_cap, K, multi, class_of)
     if not trips:
         return [], None, {}, {'reason': '求解器没有返回可行方案'}, 'no_solution', trace
-    reload_at = reload_at or [0] * len(trips)              # distance mode reloads at home only
+    reload_at = reload_at if reload_at is not None else [None] * len(trips)
     if trip_class is None:
         trip_class = [0] * len(trips)          # constructive baselines run on homogeneous fleets only
     if trip_depot is None:
@@ -641,7 +641,7 @@ def solve(scenario, inst, algorithm_id, params):
               continue
           cls = table.get(vi) or classes[0]
           home = depot_of[vi] if multi_depot else 0
-          boundaries = [reload_at[i] or home for i in mine]
+          boundaries = [home if reload_at[i] is None else reload_at[i] for i in mine]
           # between-trip supply stops; the mission always ends back at the home depot
           stops = [home] + [s for i, bnd in zip(mine, boundaries) for s in trips[i] + [bnd]] + [home]
           waypoints, service_waypoints = [], []
@@ -681,9 +681,9 @@ def solve(scenario, inst, algorithm_id, params):
               route.update(min_turn_radius_m=turn, curvature_radius_m=round(min_curvature_radius(pts), 4))
           if multi_depot:
               route.update(depot=home, depot_xy=[float(depots[home][0]), float(depots[home][1])])
-          if any(bnd and bnd != home for bnd in boundaries[:-1]):
-              route.update(reload_stops=[[float(graph.points[b][0]), float(graph.points[b][1])]
-                                         for bnd in boundaries[:-1] if bnd])
+          if any(bnd != home for bnd in boundaries[:-1]):
+              route.update(reload_stops=[[float(graph.points[bnd][0]), float(graph.points[bnd][1])]
+                                         for bnd in boundaries[:-1]])
           routes.append(route)
         return routes
 
@@ -737,7 +737,7 @@ def solve(scenario, inst, algorithm_id, params):
                                if algorithm_id == 'ortools.fleet' and inst.get('objective') == 'makespan'
                                else '多趟：先求各趟路线，再按最长处理时间优先分配到各车' if multi else '单趟：每车一条路线')}
     raw['model_contract'] = {
-        'schema': 'urp.fleet-model/1', 'frame': 'local planar metres',
+        'schema': 'urp.fleet-model/2', 'frame': 'local planar metres',
         'geometry': {'footprint': 'circumscribed circle', 'radius_m': inst['robot_radius'],
                      'path': ('piecewise Dubins shortest paths between carried-heading waypoints, curvature bounded by each '
                               "class's min_turn_radius_m (Dubins 1957; OMPL DubinsStateSpace); forward motion only, no "
@@ -748,8 +748,8 @@ def solve(scenario, inst, algorithm_id, params):
                      'curvature_bounded': any(float(c.get('min_turn_radius_m') or 0) > 0 for c in classes)},
         'fleet': {'type': 'heterogeneous' if hetero else 'homogeneous',
                   **({'depots': [{'index': i, 'xy': [float(d[0]), float(d[1])]} for i, d in enumerate(depots)],
-                      'depot_assignment': 'vehicles round-robin over depots in table order; start, reload and return at the home depot',
-                      'unsupported': 'makespan objective and constructive baselines reject multi-depot instances'}
+                      'depot_assignment': 'vehicles round-robin over depots in table order; start and finish at home; optional supply stops in makespan mode',
+                      'unsupported': 'constructive baselines reject multi-depot instances'}
                      if multi_depot else {}),
                   **({'classes': [{'name': c['name'], 'count': c['count'], 'capacity': c['capacity'],
                                    'speed_mps': c['speed_mps'], 'robot_radius': c['robot_radius'], 'payload': c['payload']}
@@ -757,7 +757,7 @@ def solve(scenario, inst, algorithm_id, params):
                       'note': '通行图与障碍膨胀按车队最大足迹半径；独立检查器按各车自身足迹复算净空'}
                      if hetero else {}),
                   'capacity_unit': 'abstract demand units, not kg',
-                  'reload': 'instantaneous at depot between trips; no handling duration or payload dynamics'},
+                  'reload': 'instantaneous at home or declared supply points in OR-Tools makespan; distance mode uses home only; no handling duration or payload dynamics'},
         'task': {'success': 'visit assigned access location and dwell; no tool, crop interaction or work-quality model',
                  'access': 'nearest lane/headland proxy' if graph.travel == 'rows' else 'task coordinate',
                  'physical_reach_verified': False, 'max_geometric_offset_m': max(getattr(graph, 'offsets', [0]) or [0])},

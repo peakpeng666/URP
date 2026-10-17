@@ -182,6 +182,7 @@ export interface MapCheck {
 }
 
 export interface Solution {
+  raw_result?: { model_contract?: { schema?: string; [key: string]: unknown }; [key: string]: unknown };
   instance?: Instance;
   scenario_snapshot?: Scenario;
   run_id: string;

@@ -12,7 +12,7 @@ import { studio } from '../api';
 import { isFleet, useStudio } from '../store';
 import type { FieldSimSummary, FleetInstance, PerVehicle } from '../types';
 import { fleetClassFor, fleetClasses, fleetSize } from '../fleet';
-import { researchAcceptanceIssues } from '../execution';
+import { planModelSchema, researchAcceptanceIssues } from '../execution';
 import type { AssetRef } from '../assets/api';
 import type { FleetAssetBinding } from '../assets/planBridge';
 import { derive, useReplay, type Derived, type SimResult } from './replay';
@@ -101,7 +101,7 @@ function FleetMetrics({ run, sim, simLoading, hasSims, simError }: { run: Run; s
   return (
     <>
       <h3>规划（求解器输出，经独立验算）</h3>
-      {researchAcceptanceIssues(inst).map((issue) => <Notice key={issue} tone="warn">{issue} 独立 check 仍按原结果展示，不据此宣称这些能力已验收。</Notice>)}
+      {researchAcceptanceIssues(inst, planModelSchema(run)).map((issue) => <Notice key={issue} tone="warn">{issue}</Notice>)}
       <div className={a.metricGrid}>
         <Cell label="任务完成率（规划）" value={total ? `${fmt.num((100 * served) / total, 1)}%` : '—'} note={`${served} / ${total}，分母：任务地图中的全部任务点；不表示喷施 / 采样质量`} tone={served === total ? 'good' : 'bad'} />
         <Cell label="总里程" value={`${fmt.num(run.metrics.total_distance_m as number, 1)} m`} note="各车几何路径长度之和（验算复算），不等于实际轨迹" />
@@ -126,7 +126,6 @@ function FleetMetrics({ run, sim, simLoading, hasSims, simError }: { run: Run; s
             <Cell label="交通与接触" value={traffic!.value} tone={traffic!.tone} note={`${sep ? `记录轨迹最近车距 ${sep.d.toFixed(2)} m（t=${sep.t.toFixed(0)} s）；` : ''}${traffic!.note}`} />
             <Cell label="异常" value={String(sim.d.anomalies.length)} note={sim.d.anomalies.slice(0, 2).map((x) => x.text).join('；') || '无'} tone={sim.d.anomalies.some((x) => x.tone === 'error') ? 'bad' : sim.d.anomalies.length ? 'warn' : 'good'} />
           </div>
-          {sim.r.energy && <p className={p.hint}><strong className={p.warn}>B5：</strong>energy 是后验纵向运动学代理，停车尾段可改变估值；修复复验前不用于“能效最佳”排名或论文级结论。</p>}
           <div className={p.row}>
             <span className={p.meta} style={{ margin: 0 }}>执行：URP 纯追踪（非 Nav2 重规划）· 定位：Gazebo 真值 · 会话 {sim.r.session_id} · 状态 {sim.r.state} · 清理 {sim.r.session_report?.cleanup_status ?? '未记录'}</span>
             <span className={p.spacer} />

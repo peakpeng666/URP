@@ -33,7 +33,7 @@ import { asFleet, isFleet, retrySave, useStudio } from '../store';
 import { studio, urls } from '../api';
 import type { FleetInstance, FleetRoute, FleetScenario, ObstacleKind, PerVehicle } from '../types';
 import { addDepot, depotsOf, fleetClassFor, fleetClasses, fleetSize, fleetSpeed, planningFingerprint, removeDepot, setDepot } from '../fleet';
-import { researchAcceptanceIssues } from '../execution';
+import { planModelSchema, researchAcceptanceIssues, unacceptedPlanReason } from '../execution';
 import { MapCanvas } from '../../lab/canvas/MapCanvas';
 import { baseScene, solutionPaths, violationMarkers } from '../../lab/views/plan/planModel';
 import type { Instance, Scenario } from '../../lab/types';
@@ -80,7 +80,7 @@ const TOOLS = [
   { value: 'obstacle', label: '障碍', icon: Shapes, title: '拖动绘制障碍 (O)' },
   { value: 'plot', label: '地块', icon: Sprout, title: '拖动绘制地块 (P)' },
   { value: 'depot', label: '车库', icon: Home, title: '点击放置车库；多库时追加车库 (D)' },
-  { value: 'unload', label: '补给点', icon: Plus, title: '点击添加补给 / 卸载点（B1/B2 未验收）' },
+  { value: 'unload', label: '补给点', icon: Plus, title: '点击添加补给 / 卸载点（makespan 目标）' },
   { value: 'corridor', label: '机耕道', icon: Shapes, title: '拖动绘制机耕道 / 地头走廊' },
 ] as const;
 
@@ -393,8 +393,8 @@ function FleetForm() {
             <Button size="sm" icon={Plus} disabled={classes.length >= 8} onClick={() => set((i) => ({ ...i, vehicles: { ...i.vehicles, fleet: [...fleetClasses(i), { ...fleetClasses(i)[0], name: `车型 ${classes.length + 1}`, count: 1 }] } }))}>添加车型</Button>
             <Button size="sm" variant="plain" onClick={() => set((i) => { const first = fleetClasses(i)[0]; return { ...i, robot_radius: first.robot_radius ?? i.robot_radius, vehicles: { ...i.vehicles, fleet: undefined, count: first.count, capacity: first.capacity, speed_mps: first.speed_mps ?? 1, names: undefined } }; })}>返回同构设置</Button>
           </div>
-          {classes.some((item) => (item.min_turn_radius_m ?? 0) > 0) && <p className={s.hint}><strong className={s.warn}>B3 未验收：</strong>曲率结果可保存、求解和查看，但反向漏检尚未修复；rows 不支持，Gazebo 执行会返回 422 curvature_constrained_execution。</p>}
-          {classes.length > 1 && <p className={s.hint}>异构方案仅 PyVRP / OR-Tools 可提交；Gazebo 当前返回 422 heterogeneous_fleet_execution。B6 容量分配限制由后端如实返回，不会自动抬高小车容量。</p>}
+          {classes.some((item) => (item.min_turn_radius_m ?? 0) > 0) && <p className={s.hint}><strong className={s.warn}>执行限制：</strong>曲率结果可保存、求解和查看，采样几何检查不代表动力学验证；rows 不支持，Gazebo 执行会返回 422 curvature_constrained_execution。</p>}
+          {classes.length > 1 && <p className={s.hint}>异构方案仅 PyVRP / OR-Tools 可提交；Gazebo 当前返回 422 heterogeneous_fleet_execution。容量分配错误由后端如实返回，不会自动抬高小车容量。</p>}
         </>
       )}
       <label className={s.field}>
@@ -429,7 +429,7 @@ function FleetForm() {
       </div>
       <h3>地图元素</h3>
       <p className={s.hint}>{inst.plots.length} 块地 · {inst.obstacles.length} 处障碍 · {depotsOf(inst).length} 个车库 · {(inst.unload_points ?? []).length} 个补给点 · {(inst.corridors ?? []).length} 条走廊 · 场地 {fmt.num(area(inst.boundary) / 10000, 2)} 公顷</p>
-      {!!inst.unload_points?.length && <p className={s.hint}><strong className={s.warn}>B1/B2 未验收：</strong>补给输入会无损保存；新实验标记为未验收，不把补给路线作为已验收可执行方案。</p>}
+      {!!inst.unload_points?.length && <p className={s.hint}><strong className={s.warn}>补给语义：</strong>补给输入无损保存；OR-Tools makespan 使用中途补给，总里程目标仍按家库分趟。</p>}
     </div>
   );
 }
@@ -542,7 +542,7 @@ function SelectionForm() {
           <Num label="X" value={xy[0]} step={0.5} unit="m" onChange={(n) => set((i) => ({ ...i, unload_points: (i.unload_points ?? []).map((q, k) => k === index ? [n, xy[1]] : q) }))} />
           <Num label="Y" value={xy[1]} step={0.5} unit="m" onChange={(n) => set((i) => ({ ...i, unload_points: (i.unload_points ?? []).map((q, k) => k === index ? [xy[0], n] : q) }))} />
         </div>
-        <p className={s.hint}><strong className={s.warn}>B1/B2 未验收：</strong>补给路线与 rows 节点映射后端尚未修复；仅无损保存和查看，不作为已验收可执行方案。</p>
+        <p className={s.hint}><strong className={s.warn}>补给语义：</strong>在声明的补给点瞬时卸载后继续任务，最终返回家库；不包含补给作业具和处理时长。</p>
         <Button variant="destructive" icon={Trash2} onClick={() => { set((i) => ({ ...i, unload_points: (i.unload_points ?? []).filter((_, k) => k !== index) })); select(null); }}>删除补给点</Button>
       </div>
     );
@@ -740,7 +740,7 @@ export function ComparePanel() {
               const differentParams = (supportsBudget && r.params.time_limit_s !== st.budget) || (supportsSeed && r.params.seed !== st.seed);
               const frozenParams = [supportsBudget ? `预算 ${String(r.params.time_limit_s ?? '默认/未记录')} s` : '', supportsSeed ? `种子 ${String(r.params.seed ?? '默认/未记录')}` : ''].filter(Boolean).join(' · ');
               const instance = r.instance as unknown as FleetInstance | undefined;
-              const blocked = [instance?.unload_points?.length ? 'B1/B2' : '', instance?.vehicles.fleet?.some((item) => (item.min_turn_radius_m ?? 0) > 0) ? 'B3' : ''].filter(Boolean).join(' / ');
+              const blocked = unacceptedPlanReason(instance, planModelSchema(r)) ?? (instance?.vehicles.fleet?.some((item) => (item.min_turn_radius_m ?? 0) > 0) ? '仅规划，未适配执行' : '');
               return (
                 <tr key={r.run_id} aria-selected={st.focusRun === r.run_id} onClick={() => st.focus(r.run_id)}>
                   <td>
@@ -749,7 +749,7 @@ export function ComparePanel() {
                     <div className={s.row}>
                       {historicalInput && <Badge tone="orange" >历史输入</Badge>}
                       {differentParams && <Badge tone="gray">当前参数不同</Badge>}
-                      {blocked && <Badge tone="orange">{blocked} 未验收</Badge>}
+                      {blocked && <Badge tone="orange">{blocked}</Badge>}
                     </div>
                   </td>
                   <td title={state.title}>{state.text === '计算中' ? <span className={s.running}><Spinner /> 计算中</span> : state.text}{state.title ? ' ⓘ' : ''}</td>
@@ -852,7 +852,7 @@ export function VerifyPanel() {
           <h3>{run.algorithm.name} 的验算</h3>
           {check?.valid ? <Badge tone="green">全部通过</Badge> : <Badge tone="red">{errors.length} 项未通过</Badge>}
         </div>
-        {fleet && researchAcceptanceIssues(run.instance as unknown as FleetInstance).map((issue) => <Notice key={issue} tone="warn">{issue} 绿色验算徽标不覆盖该限制。</Notice>)}
+        {fleet && researchAcceptanceIssues(run.instance as unknown as FleetInstance, planModelSchema(run)).map((issue) => <Notice key={issue} tone="warn">{issue} 绿色验算徽标不覆盖该限制。</Notice>)}
         <ul className={s.checks}>
           {items.map((it) => (
             <li key={it.label} data-bad={it.bad.length > 0 || undefined}>
@@ -903,7 +903,7 @@ function PerVehicleTable({ run }: { run: Solution }) {
               <td className={s.num}>{fmt.sec(v.duration_s)}</td>
               <td className={s.seq}>
                 <div>{(route?.trips ?? [route?.sequence ?? []]).map((t) => t.join('→')).join(' ｜ ')}</div>
-                {!!route?.reload_stops?.length && <div title="原始 reload_stops 坐标；B1/B2 未验收，不由前端推断补给节点">中途停靠：{route.reload_stops.map((xy) => `(${fmt.num(xy[0], 2)}, ${fmt.num(xy[1], 2)})`).join('；')}</div>}
+                {!!route?.reload_stops?.length && <div title="原始 reload_stops 坐标；按运行时冻结的补给顺序显示">中途停靠：{route.reload_stops.map((xy) => `(${fmt.num(xy[0], 2)}, ${fmt.num(xy[1], 2)})`).join('；')}</div>}
               </td>
             </tr>
           );
