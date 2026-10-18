@@ -95,6 +95,11 @@ export function AlgorithmsPanel() {
         <div key={a.id} className={s.algCard}>
           <h5>{a.name} <LibraryBadge library={a.library} />{!a.available && <Badge tone="red">不可用</Badge>}</h5>
           <p>{a.summary ?? a.description}</p>
+          <p className={s.meta} style={{ overflowWrap: 'anywhere' }}>
+            实现：{a.origin}
+            {a.version && !a.origin.includes(a.version) ? ` · ${a.origin.startsWith('src/') ? '源码 SHA256' : '版本'} ${a.version}` : ''}
+          </p>
+          {!a.available && <p className={s.meta}>不可用原因：{a.unavailable_reason ?? '后端未提供原因'}</p>}
           <p className={s.meta}>
             {{ exact: '精确算法', relaxation: '松弛下界', metaheuristic: '元启发式', heuristic: '构造启发式', baseline: '基线', coverage: '覆盖规划', graph_search: '图搜索', sampling: '采样规划' }[a.family] ?? a.family}
             {' · '}{{ optimal: '保证最优', optimal_for_relaxation: '松弛问题最优', none: '无最优性保证', resolution_optimal: '分辨率最优', asymptotically_optimal: '渐近最优', probabilistically_complete: '概率完备' }[a.guarantee] ?? a.guarantee}

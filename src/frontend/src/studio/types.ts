@@ -104,6 +104,7 @@ export interface FleetRoute extends Route {
   color: string;
   trips: number[][];
   duration_s: number;
+  speed_mps?: number;
   fleet_class?: string | number;
   depot?: number;
   depot_xy?: XY;

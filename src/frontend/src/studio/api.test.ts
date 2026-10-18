@@ -89,4 +89,14 @@ describe('API failure boundaries', () => {
     await expect(promise).rejects.toBeInstanceOf(LabApiError);
     await expect(promise).rejects.toMatchObject({ code: 'curvature_constrained_execution' });
   });
+
+  it('posts solver cancellation and adopts the returned terminal state', async () => {
+    const { lab } = await import('../lab/api');
+    const canceled = { run_id: 'run_cancel', state: 'canceled', status: null };
+    const fetchMock = vi.fn().mockResolvedValue(json(canceled));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await expect(lab.cancelRun('run_cancel')).resolves.toEqual(canceled);
+    expect(fetchMock).toHaveBeenCalledWith('/lab/api/runs/run_cancel/cancel', expect.objectContaining({ method: 'POST', body: '{}' }));
+  });
 });

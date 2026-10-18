@@ -11,7 +11,20 @@ import { trafficStatus, type TrafficEvidence } from './traffic';
 
 export type TrailPoint = [number, number, number, number]; // t (sim s), x, y, yaw
 
-export interface SimTask { vehicle: string; stop: XY | null; id: number; label: string; xy: XY; state: string; t_sim: number | null; distance_m: number | null }
+export interface SimTask {
+  vehicle: string;
+  stop: XY | null;
+  id: number;
+  label: string;
+  xy: XY;
+  state: string;
+  t_sim: number | null;
+  distance_m: number | null;
+  requested_service_s?: number | null;
+  actual_service_s?: number | null;
+  serviced_at?: number | null;
+  service_complete?: boolean;
+}
 export interface SimPlanVehicle { name: string; label: string; color: string; start: [number, number, number]; path: XY[]; planned_length_m: number; planned_duration_s: number }
 export interface SimResult extends TrafficEvidence {
   session_id: string; run_id: string; scenario_id: string; algorithm: string | null; world: string; finished_utc: string;
@@ -39,9 +52,10 @@ export function simBody(result: SimResult): { length_m: number; width_m: number 
 
 export function poseAt(trail: TrailPoint[], t: number): [number, number, number] | null {
   if (!trail.length) return null;
-  if (t <= trail[0][0]) return [trail[0][1], trail[0][2], trail[0][3]];
   const last = trail[trail.length - 1];
-  if (t >= last[0]) return [last[1], last[2], last[3]];
+  if (t < trail[0][0] || t > last[0]) return null;
+  if (t === trail[0][0]) return [trail[0][1], trail[0][2], trail[0][3]];
+  if (t === last[0]) return [last[1], last[2], last[3]];
   let lo = 0, hi = trail.length - 1;
   while (hi - lo > 1) {
     const mid = (lo + hi) >> 1;
@@ -76,6 +90,60 @@ function distToPath(p: XY, path: XY[]): number {
     d = Math.min(d, Math.hypot(p[0] - ax - t * dx, p[1] - ay - t * dy));
   }
   return d;
+}
+
+export interface ReplayMetric {
+  distance_m: number;
+  elapsed_s: number;
+  tasks_reached: number;
+  tasks_completed: number | null;
+  cross_track_mean_m: number | null;
+  cross_track_max_m: number | null;
+}
+
+export function metricsAt(r: SimResult, vehicle: string, t: number): ReplayMetric {
+  const trail = r.trails[vehicle] ?? [];
+  const index = indexAt(trail, t);
+  let distance = 0;
+  for (let i = 1; i <= index; i++) distance += Math.hypot(trail[i][1] - trail[i - 1][1], trail[i][2] - trail[i - 1][2]);
+  const pose = poseAt(trail, t);
+  if (pose && index >= 0) distance += Math.hypot(pose[0] - trail[index][1], pose[1] - trail[index][2]);
+  const start = trail[0]?.[0] ?? 0;
+  const end = trail.at(-1)?.[0] ?? start;
+  const elapsed = trail.length ? Math.max(0, Math.min(end, Math.max(start, t)) - start) : 0;
+  const tasks = r.tasks.filter((task) => task.vehicle === vehicle);
+  const reached = tasks.filter((task) => task.state === 'reached' && task.t_sim != null && task.t_sim <= t).length;
+  const hasCompletion = tasks.some((task) => 'serviced_at' in task || task.service_complete !== undefined);
+  const completed = hasCompletion ? tasks.filter((task) => task.service_complete !== false && task.serviced_at != null && task.serviced_at <= t).length : null;
+  const path = (r.execution_plan?.vehicles ?? []).find((item) => item.name === vehicle)?.path;
+  const deviations = path && path.length > 1 && index >= 0
+    ? trail.slice(0, index + 1).map((point) => distToPath([point[1], point[2]], path)).filter(Number.isFinite)
+    : [];
+  return {
+    distance_m: distance,
+    elapsed_s: elapsed,
+    tasks_reached: reached,
+    tasks_completed: completed,
+    cross_track_mean_m: deviations.length ? deviations.reduce((sum, value) => sum + value, 0) / deviations.length : null,
+    cross_track_max_m: deviations.length ? Math.max(...deviations) : null,
+  };
+}
+
+export interface SimTaskEvent {
+  key: string;
+  kind: 'reached' | 'completed';
+  t: number;
+  xy: XY;
+  task: SimTask;
+}
+
+export function taskEvents(r: SimResult): SimTaskEvent[] {
+  return r.tasks.flatMap((task) => {
+    const events: SimTaskEvent[] = [];
+    if (task.state === 'reached' && task.t_sim != null) events.push({ key: `${task.id}-reached`, kind: 'reached', t: task.t_sim, xy: task.stop ?? task.xy, task });
+    if (task.service_complete !== false && task.serviced_at != null) events.push({ key: `${task.id}-completed`, kind: 'completed', t: task.serviced_at, xy: task.stop ?? task.xy, task });
+    return events;
+  }).sort((a, b) => a.t - b.t || (a.kind === b.kind ? 0 : a.kind === 'reached' ? -1 : 1));
 }
 
 export interface Derived {

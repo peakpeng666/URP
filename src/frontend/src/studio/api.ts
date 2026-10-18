@@ -129,7 +129,7 @@ export const studio = {
   fieldsimPhysics: () => call<FieldPhysicsResponse>('GET', '/fieldsim/physics'),
   startFieldsim: (run_id: string, opts: { gui?: boolean; rviz?: boolean; real_time_factor?: number; physics?: Record<string, unknown> } = {}) =>
     call<FieldSimState>('POST', '/fieldsim', { run_id, ...opts }),
-  stopFieldsim: () => call<FieldSimState>('POST', '/fieldsim/stop', {}),
+  stopFieldsim: (options: CallOptions = {}) => call<FieldSimState>('POST', '/fieldsim/stop', {}, { timeoutMs: 90_000, ...options }),
   fieldsimWindow: (kind: 'gui' | 'rviz', on: boolean) => call<FieldSimState>('POST', '/fieldsim/window', { kind, on }),
   fieldsimResults: (run_id?: string) =>
     call<{ results: FieldSimSummary[] }>('GET', `/fieldsim/results${run_id ? `?run_id=${encodeURIComponent(run_id)}` : ''}`),

@@ -26,4 +26,11 @@ describe('execution admission recovery', () => {
     expect(unacceptedPlanReason(instance, 'urp.fleet-model/2')).toBeNull();
     expect(instance.unload_points).toEqual([[4, 5]]);
   });
+
+  it('uses shutdown-specific timeout recovery instead of claiming a start may have happened', () => {
+    const error = new LabApiError('关闭超时', 'timeout', 0);
+    expect(executionErrorMessage(error, 'stop')).toContain('关闭请求');
+    expect(executionErrorMessage(error, 'stop')).not.toContain('启动请求');
+    expect(executionErrorMessage(error)).toContain('启动请求');
+  });
 });

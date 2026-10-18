@@ -67,8 +67,14 @@ export function ExperimentPanel() {
 
   if (!st.scenario) return <EmptyState icon={FlaskConical} title="未打开场景" />;
   if (!run) return <EmptyState icon={FlaskConical} title="选择一个方案" detail="求解后在「方案对比」里点一个方案，这里汇总它的规划指标、验算、仿真执行与可导出的实验记录。" />;
-  if (run.state !== 'done') return <EmptyState title={run.error ?? (run.state === 'canceled' ? '方案已取消' : '方案还在计算')} />;
   const fleet = run.problem_class === 'fleet_routing';
+  const stateDetail = {
+    queued: { text: '方案仍在队列中，尚无最终解。', tone: 'info' as const },
+    running: { text: '方案正在计算，尚无最终解。', tone: 'info' as const },
+    error: { text: `方案计算错误：${run.error ?? '后端未提供错误明细'}`, tone: 'error' as const },
+    timeout: { text: `方案计算超时：${run.error ?? '超过提交预算'}`, tone: 'error' as const },
+    canceled: { text: '方案已取消；不会把它计为成功或可行解。', tone: 'warn' as const },
+  };
   return (
     <div className={p.scroll}>
       <div className={p.form}>
@@ -76,7 +82,9 @@ export function ExperimentPanel() {
           <h3>{run.algorithm.name} · 实验结果</h3>
           <ExportButton run={run} />
         </div>
-        {fleet ? <FleetMetrics run={run} sim={sim} simLoading={simLoading} hasSims={!!sims?.length} simError={simError} /> : <GenericMetrics run={run} />}
+        {run.state !== 'done'
+          ? <Notice tone={stateDetail[run.state].tone}>{stateDetail[run.state].text} 可下载当前服务端记录以保留失败、超时或取消的分母。</Notice>
+          : fleet ? <FleetMetrics run={run} sim={sim} simLoading={simLoading} hasSims={!!sims?.length} simError={simError} /> : <GenericMetrics run={run} />}
         <AssetBinding run={run} />
       </div>
     </div>
@@ -140,11 +148,15 @@ function FleetMetrics({ run, sim, simLoading, hasSims, simError }: { run: Run; s
 function GenericMetrics({ run }: { run: Run }) {
   const m = run.metrics;
   const cov = m.coverage_fraction as number | null | undefined;
+  const working = m.working_area_fraction as number | null | undefined;
+  const turnEnforced = m.turn_radius_enforced as boolean | null | undefined;
   return (
     <div className={a.metricGrid}>
       <Cell label="目标值" value={`${fmt.num(run.objective.value, 2)} ${run.objective.unit}`} note={run.objective.lower_bound != null ? `下界 ${fmt.num(run.objective.lower_bound, 2)}` : ''} />
-      <Cell label="验算" value={run.check ? (run.check.valid ? '通过' : `${run.check.errors.length} 项未通过`) : '未验算'} tone={run.check?.valid ? 'good' : 'bad'} note={run.check?.errors.slice(0, 2).join('；')} />
-      {cov != null && <Cell label="覆盖率" value={`${fmt.num(cov * 100, 1)}%`} note={`覆盖面积 ${fmt.num(m.coverage_area_m2 as number, 1)} m² / 田块面积 ${fmt.num(m.field_area_m2 as number, 1)} m²`} />}
+      <Cell label="验算" value={run.check ? (run.check.valid ? '通过' : `${run.check.errors.length} 项未通过`) : '未验算'} tone={run.check ? (run.check.valid ? 'good' : 'bad') : 'warn'} note={run.check?.errors.slice(0, 2).join('；')} />
+      {cov != null && <Cell label="全田块覆盖率" value={`${fmt.num(cov * 100, 1)}%`} note={`覆盖面积 ${fmt.num(m.coverage_area_m2 as number, 1)} m² / 田块面积 ${fmt.num(m.field_area_m2 as number, 1)} m²`} />}
+      {working != null && <Cell label="内缩作业区覆盖率" value={`${fmt.num(working * 100, 1)}%`} note={`覆盖口径：${String(m.coverage_scope ?? '未记录')}；按声明幅宽与作业状态计算，不按路线涂色估算`} />}
+      {turnEnforced != null && <Cell label="转弯半径约束" value={turnEnforced ? '已约束' : '未约束'} note={turnEnforced ? '按求解器声明的转弯模型与独立采样检查展示' : '该算法允许原地转向或未施加曲率约束'} />}
       <Cell label="计算时间" value={fmt.sec(m.wall_s)} />
     </div>
   );

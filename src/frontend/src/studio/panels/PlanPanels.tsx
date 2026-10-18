@@ -27,15 +27,16 @@ import { exportUrl, fmt } from '../../lab/api';
 import { Badge, Button, EmptyState, Input, Notice, Segmented, Select, Spinner } from '../../lab/ui';
 import type { Solution } from '../../lab/types';
 import { FieldEditor } from '../editor/FieldEditor';
-import { OBSTACLE_STYLE, area, routeLength } from '../editor/geometry';
+import { OBSTACLE_STYLE, area } from '../editor/geometry';
 import { useLanes } from '../editor/lanes';
 import { asFleet, isFleet, retrySave, useStudio } from '../store';
 import { studio, urls } from '../api';
 import type { FleetInstance, FleetRoute, FleetScenario, ObstacleKind, PerVehicle } from '../types';
-import { addDepot, depotsOf, fleetClassFor, fleetClasses, fleetSize, fleetSpeed, planningFingerprint, removeDepot, setDepot } from '../fleet';
+import { addDepot, depotsOf, fleetClassFor, fleetClasses, fleetSize, planningFingerprint, removeDepot, setDepot } from '../fleet';
+import { playbackDuration } from '../planningPlayback';
 import { planModelSchema, researchAcceptanceIssues, unacceptedPlanReason } from '../execution';
 import { MapCanvas } from '../../lab/canvas/MapCanvas';
-import { baseScene, solutionPaths, violationMarkers } from '../../lab/views/plan/planModel';
+import { baseScene, instanceKey, routeColor, solutionPaths, violationMarkers } from '../../lab/views/plan/planModel';
 import type { Instance, Scenario } from '../../lab/types';
 import { logTimeAxis, unitSuffix } from '../chart';
 import { BackgroundControl, FleetAssetSection, PlanBackground } from '../assets/PlanLayers';
@@ -94,7 +95,7 @@ export function MapPanel() {
         detail="在上方输入任务描述并生成地图，或从左侧场景库打开一个场景。" />
     );
   }
-  if (!isFleet(st.scenario)) return <GenericMap scenario={st.scenario} draft={st.draft} run={focus} />;
+  if (!isFleet(st.scenario)) return <GenericMap scenario={st.scenario} draft={st.draft} run={focus} runs={st.runIds.map((id) => st.runs[id]).filter(Boolean) as Solution[]} />;
   const inst = asFleet(st.draft);
   return <FleetMap inst={inst} focus={focus} />;
 }
@@ -167,15 +168,16 @@ function FleetMap({ inst, focus }: { inst: FleetInstance; focus?: Solution }) {
           </div>
         )}
         {showResult && focus && focus.state === 'done' && <VehicleLegend run={focus} />}
-        {showResult && focus && focus.state === 'done' && <Playback run={focus} speed={fleetSpeed(shownInst)} />}
+        {showResult && focus && focus.state === 'done' && <Playback run={focus} inst={shownInst} />}
       </div>
     </div>
   );
 }
 
 /** Read-only scenario canvas for routing, coverage and motion-planning problems, following the focused solution. */
-function GenericMap({ scenario, draft, run }: { scenario: Scenario; draft: Instance; run?: Solution }) {
-  const scene = useMemo(() => {
+function GenericMap({ scenario, draft, run, runs }: { scenario: Scenario; draft: Instance; run?: Solution; runs: Solution[] }) {
+  const focusSolution = useStudio((st) => st.focus);
+  const { scene, entries, stale } = useMemo(() => {
     const out = baseScene(scenario, draft);
     if (scenario.problem_class === 'point_to_point') {
       const inst = draft as unknown as { start: [number, number, number]; goal: [number, number, number] };
@@ -183,13 +185,19 @@ function GenericMap({ scenario, draft, run }: { scenario: Scenario; draft: Insta
         { id: 'start', xy: [inst.start[0], inst.start[1]], kind: 'start', label: '起点' },
         { id: 'goal', xy: [inst.goal[0], inst.goal[1]], kind: 'task', label: '终点' }];
     }
-    if (run?.state === 'done' && run.routes.length) {
+    const current = !!run && run.state === 'done' && run.routes.length > 0 && !!run.instance
+      && run.scenario_id === scenario.id && instanceKey(run.instance) === instanceKey(draft);
+    const comparable = current && run ? runs.filter((candidate) => candidate.state === 'done' && candidate.routes.length > 0
+      && candidate.job_id === run.job_id && candidate.instance_sha256 === run.instance_sha256
+      && !!candidate.instance && instanceKey(candidate.instance) === instanceKey(draft)) : [];
+    const entries = comparable.map((solution, colorIndex) => ({ solution, colorIndex, current: true, focused: solution.run_id === run?.run_id }));
+    if (entries.length) {
       const swath = scenario.problem_class === 'coverage' ? (draft as { swath_width?: number }).swath_width ?? null : null;
-      out.paths = solutionPaths([{ solution: run, colorIndex: 0, current: true, focused: true }], scenario.problem_class, run.instance ?? draft, swath);
-      out.markers = violationMarkers([run]);
+      out.paths = solutionPaths(entries, scenario.problem_class, draft, swath);
+      out.markers = violationMarkers(entries.map((entry) => entry.solution));
     }
-    return out;
-  }, [scenario, draft, run]);
+    return { scene: out, entries, stale: !!run && run.state === 'done' && run.routes.length > 0 && !current };
+  }, [scenario, draft, run, runs]);
   return (
     <div className={s.mapPanel}>
       <div className={s.mapBar}>
@@ -199,7 +207,20 @@ function GenericMap({ scenario, draft, run }: { scenario: Scenario; draft: Insta
       </div>
       <div className={s.mapStage}>
         <MapCanvas scene={scene} fitKey={scenario.id} ariaLabel="场景地图"
-          overlay={run?.state === 'done' ? <span className={s.saveChip}>{run.algorithm.name} · {fmt.num(run.objective.value, 2)} {run.objective.unit === 'euc_2d_rounded' ? '' : run.objective.unit}</span> : undefined} />
+          overlay={entries.length && run ? <span className={s.saveChip}>{run.algorithm.name} · {fmt.num(run.objective.value, 2)} {run.objective.unit === 'euc_2d_rounded' ? '' : run.objective.unit}</span> : undefined} />
+        {entries.length > 0 && (
+          <div className={s.legend}>
+            <div className={s.legendHead}><span>同一输入指纹 · {entries.length} 个方案</span></div>
+            {entries.map((entry) => (
+              <button key={entry.solution.run_id} type="button" className={s.legendRow} aria-pressed={entry.focused} onClick={() => focusSolution(entry.solution.run_id)}>
+                <span className={s.swatch} style={{ background: routeColor(entry.colorIndex) }} />
+                <span className={s.legendName}>{entry.solution.algorithm.name}<div className={s.legendMeta}>{entry.solution.run_id.slice(0, 13)}</div></span>
+                <span className={s.legendMeta}>{fmt.num(entry.solution.objective.value, 2)} {entry.solution.objective.unit}</span>
+              </button>
+            ))}
+          </div>
+        )}
+        {stale && <div className={s.staleBadge}><RefreshCw size={12} /> 历史输入或来源未知，未将路线叠加到当前草稿</div>}
       </div>
     </div>
   );
@@ -264,12 +285,12 @@ function clock(t: number): string {
   return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
 }
 
-function Playback({ run, speed }: { run: Solution; speed: number }) {
+function Playback({ run, inst }: { run: Solution; inst: FleetInstance }) {
   const t = useStudio((st) => st.playback);
   const set = useStudio((st) => st.setPlayback);
   const [playing, setPlaying] = useState(false);
   const routes = run.routes as FleetRoute[];
-  const total = Math.max(...routes.map((r) => routeLength(r.polyline) / (speed || 1)), 1);
+  const total = playbackDuration(inst, routes);
   const raf = useRef(0);
   useEffect(() => {
     if (!playing) return;
@@ -292,12 +313,13 @@ function Playback({ run, speed }: { run: Solution; speed: number }) {
   }, [playing, total, set]);
   return (
     <div className={s.playback}>
-      <Button size="sm" icon={playing ? Pause : Play} title={playing ? '暂停' : '播放各车同时作业的过程'}
+      <span className={s.meta}>规划预览 · 匀速代理，非仿真</span>
+      <Button size="sm" icon={playing ? Pause : Play} title={playing ? '暂停规划预览' : '播放规划预览（含逐车速度与任务停留，非仿真）'}
         onClick={() => { if (!playing && (t === null || t >= total)) set(0); setPlaying(!playing); }} />
-      <input type="range" min={0} max={total} step={total / 400} value={t ?? 0} aria-label="回放时间"
+      <input type="range" min={0} max={total} step={total / 400} value={t ?? 0} aria-label="规划预览时间"
         onChange={(e) => { setPlaying(false); set(Number(e.target.value)); }} />
       <span className={s.mono}>{clock(t ?? 0)} / {clock(total)}</span>
-      {t !== null && <Button size="sm" icon={X} title="结束回放" onClick={() => { setPlaying(false); set(null); }} />}
+      {t !== null && <Button size="sm" icon={X} title="关闭规划预览" onClick={() => { setPlaying(false); set(null); }} />}
     </div>
   );
 }
@@ -598,6 +620,12 @@ export function AdvisorPanel() {
   const st = useStudio();
   const rec = st.recommendation;
   const algos = useMemo(() => Object.fromEntries(st.algorithms.map((a) => [a.id, a])), [st.algorithms]);
+  const budgetParams = st.chosen.flatMap((id) => (algos[id]?.params ?? []).filter((p) => p.name === 'time_limit_s'));
+  const seedParams = st.chosen.flatMap((id) => (algos[id]?.params ?? []).filter((p) => p.name === 'seed'));
+  const minBudget = Math.max(0.05, ...budgetParams.map((p) => p.min ?? 0.05));
+  const maxBudget = Math.min(600, ...budgetParams.map((p) => p.max ?? 600));
+  const maxSeed = Math.min(2147483647, ...seedParams.map((p) => p.max ?? 2147483647));
+  const paramsValid = st.budget >= minBudget && st.budget <= maxBudget && st.seed >= 0 && st.seed <= maxSeed;
   if (!st.scenario) return <EmptyState title="未打开场景" />;
   return (
     <div className={s.scroll}>
@@ -634,18 +662,25 @@ export function AdvisorPanel() {
                 </label>
                 <p>{r.reasons[0]}</p>
                 {r.reasons.length > 1 && <p className={s.meta}>{r.reasons.slice(1).join('；')}</p>}
+                {on && <AlgorithmParameterFields algorithmId={r.algorithm_id} />}
               </li>
             );
           })}
         </ul>
         <div className={s.solveBar}>
-          <label className={s.field}><span>时间预算</span>
-            <span className={s.inputUnit}><Input type="number" min={0.2} step={0.5} value={st.budget} onChange={(e) => st.setBudget(Number(e.target.value) || 1)} /><em>秒/算法</em></span>
+          <label className={s.field} title={`允许范围 ${minBudget}–${maxBudget} s`}><span>时间预算</span>
+            <span className={s.inputUnit}><Input type="number" min={minBudget} max={maxBudget} step={0.05} value={st.budget} onChange={(e) => {
+              const n = e.target.valueAsNumber;
+              if (Number.isFinite(n)) st.setBudget(Math.min(maxBudget, Math.max(minBudget, n)));
+            }} /><em>秒/算法</em></span>
           </label>
-          <label className={s.field}><span>随机种子</span>
-            <span className={s.inputUnit}><Input type="number" min={0} step={1} value={st.seed} onChange={(e) => st.setSeed(Math.max(0, Math.round(Number(e.target.value) || 0)))} /><em>提交时冻结</em></span>
+          <label className={s.field} title={`允许范围 0–${maxSeed}`}><span>随机种子</span>
+            <span className={s.inputUnit}><Input type="number" min={0} max={maxSeed} step={1} value={st.seed} onChange={(e) => {
+              const n = e.target.valueAsNumber;
+              if (Number.isFinite(n)) st.setSeed(Math.min(maxSeed, Math.max(0, Math.round(n))));
+            }} /><em>提交时冻结</em></span>
           </label>
-          <Button variant="primary" size="lg" icon={Play} loading={st.busy === '求解中'} disabled={!st.chosen.length}
+          <Button variant="primary" size="lg" icon={Play} loading={st.busy === '求解中'} disabled={!st.chosen.length || !paramsValid}
             onClick={() => void st.solve()}>
             {st.chosen.length > 1 ? `对比 ${st.chosen.length} 个算法` : '求解'}
           </Button>
@@ -655,9 +690,59 @@ export function AdvisorPanel() {
   );
 }
 
+function AlgorithmParameterFields({ algorithmId }: { algorithmId: string }) {
+  const algorithm = useStudio((st) => st.algorithms.find((a) => a.id === algorithmId));
+  const suggested = useStudio((st) => st.recommendation?.ranking.find((r) => r.algorithm_id === algorithmId)?.suggested_params);
+  const overrides = useStudio((st) => st.paramOverrides[algorithmId]) ?? {};
+  const setAlgorithmParam = useStudio((st) => st.setAlgorithmParam);
+  const params = (algorithm?.params ?? []).filter((p) => !['time_limit_s', 'seed'].includes(p.name));
+  if (!algorithm || !params.length) return null;
+  return (
+    <div className={s.grid2}>
+      {params.map((p) => {
+        const recommended = suggested?.[p.name];
+        const value = overrides[p.name] ?? recommended ?? p.default;
+        const provenance = `默认 ${String(p.default ?? '后端决定')}${recommended !== undefined ? ` · 推荐 ${String(recommended)}` : ''}`;
+        const range = p.min !== undefined || p.max !== undefined ? ` · 范围 ${p.min ?? '−∞'}–${p.max ?? '+∞'}` : '';
+        const label = `${algorithm.name} ${p.label}`;
+        return (
+          <label key={p.name} className={s.field} title={`${provenance}${range}`}>
+            <span>{p.label}</span>
+            {p.type === 'boolean' ? (
+              <input aria-label={label} type="checkbox" checked={value === true} onChange={(e) => setAlgorithmParam(algorithmId, p.name, e.target.checked)} />
+            ) : p.type === 'select' ? (
+              <Select aria-label={label} value={String(value ?? '')} onChange={(e) => setAlgorithmParam(algorithmId, p.name, e.target.value)}>
+                {(p.options ?? []).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+              </Select>
+            ) : p.type === 'number' || p.type === 'integer' ? (
+              <Input aria-label={label} type="number" value={typeof value === 'number' ? value : ''} min={p.min} max={p.max} step={p.type === 'integer' ? 1 : 'any'} onChange={(e) => {
+                const n = e.target.valueAsNumber;
+                if (Number.isFinite(n) && (p.min === undefined || n >= p.min) && (p.max === undefined || n <= p.max)) {
+                  setAlgorithmParam(algorithmId, p.name, p.type === 'integer' ? Math.round(n) : n);
+                }
+              }} />
+            ) : (
+              <Input aria-label={label} value={String(value ?? '')} onChange={(e) => setAlgorithmParam(algorithmId, p.name, e.target.value)} />
+            )}
+            <small className={s.meta}>{provenance}{range}</small>
+          </label>
+        );
+      })}
+    </div>
+  );
+}
+
 /* -------------------------------------------------------------- compare -- */
-type Col = { label: string; get: (r: Solution) => number | null | undefined; digits?: number; unit?: string; better?: 'min' | 'max'; pct?: boolean };
-const metric = (k: string) => (r: Solution) => r.metrics[k] as number | null | undefined;
+type Col = {
+  label: string;
+  get: (r: Solution) => number | string | boolean | null | undefined;
+  digits?: number;
+  unit?: string | ((r: Solution) => string);
+  better?: 'min' | 'max';
+  pct?: boolean;
+};
+const metric = (k: string) => (r: Solution) => r.metrics[k] as number | string | boolean | null | undefined;
+const objectiveUnit = (r: Solution) => ` ${r.objective.unit}`;
 const COLUMNS: Record<string, Col[]> = {
   fleet_routing: [
     { label: '总里程', get: (r) => metric('total_distance_m')(r), digits: 1, unit: ' m', better: 'min' },
@@ -667,27 +752,30 @@ const COLUMNS: Record<string, Col[]> = {
     { label: '均衡度', get: metric('balance_cv'), digits: 2, better: 'min' },
   ],
   euclidean_cvrp: [
-    { label: '目标值', get: (r) => r.objective.value, digits: 2, better: 'min' },
+    { label: '目标值', get: (r) => r.objective.value, digits: 2, unit: objectiveUnit, better: 'min' },
     { label: '与 BKS 差距', get: metric('gap_to_bks_pct'), digits: 2, unit: '%', better: 'min' },
     { label: '路线数', get: metric('n_routes'), digits: 0 },
   ],
   coverage: [
-    { label: '总长度', get: (r) => r.objective.value, digits: 1, unit: ' m', better: 'min' },
+    { label: '总长度', get: (r) => r.objective.value, digits: 1, unit: objectiveUnit, better: 'min' },
     { label: '作业距离', get: metric('working_length_m'), digits: 1, unit: ' m' },
     { label: '非作业距离', get: metric('non_working_length_m'), digits: 1, unit: ' m', better: 'min' },
     { label: '作业效率', get: metric('efficiency'), digits: 1, pct: true, better: 'max' },
-    { label: '覆盖率', get: metric('coverage_fraction'), digits: 1, pct: true, better: 'max' },
+    { label: '全田块覆盖率', get: metric('coverage_fraction'), digits: 1, pct: true, better: 'max' },
+    { label: '内缩作业区覆盖率', get: metric('working_area_fraction'), digits: 1, pct: true, better: 'max' },
+    { label: '覆盖口径', get: metric('coverage_scope') },
+    { label: '转弯半径约束', get: metric('turn_radius_enforced') },
   ],
   point_to_point: [
-    { label: '路径长度', get: (r) => r.objective.value, digits: 2, unit: ' m', better: 'min' },
+    { label: '路径长度', get: (r) => r.objective.value, digits: 2, unit: objectiveUnit, better: 'min' },
     { label: '最大曲率', get: metric('max_curvature_per_m'), digits: 2, unit: ' /m', better: 'min' },
     { label: '最小净空', get: metric('min_clearance_m'), digits: 3, unit: ' m', better: 'max' },
     { label: '拐点', get: metric('turns'), digits: 0, better: 'min' },
   ],
   turn_routing: [
-    { label: '成本', get: (r) => r.objective.value, digits: 0, better: 'min' },
-    { label: '长度', get: (r) => r.metrics.length, digits: 2 },
-    { label: '转弯惩罚', get: metric('turn_penalty_total'), digits: 0 },
+    { label: '成本', get: (r) => r.objective.value, digits: 0, unit: objectiveUnit, better: 'min' },
+    { label: '长度', get: (r) => r.metrics.length, digits: 2, unit: (r) => ` ${r.metrics.length_unit}` },
+    { label: '转弯惩罚', get: metric('turn_penalty_total'), digits: 0, unit: objectiveUnit },
     { label: '违规转弯', get: metric('forbidden_turn_violations'), digits: 0, better: 'min' },
   ],
 };
@@ -738,14 +826,19 @@ export function ComparePanel() {
               const supportsBudget = !!algorithm?.params.some((param) => param.name === 'time_limit_s');
               const supportsSeed = !!algorithm?.params.some((param) => param.name === 'seed');
               const differentParams = (supportsBudget && r.params.time_limit_s !== st.budget) || (supportsSeed && r.params.seed !== st.seed);
-              const frozenParams = [supportsBudget ? `预算 ${String(r.params.time_limit_s ?? '默认/未记录')} s` : '', supportsSeed ? `种子 ${String(r.params.seed ?? '默认/未记录')}` : ''].filter(Boolean).join(' · ');
+              const frozenParams = [
+                supportsBudget ? `预算 ${String(r.params.time_limit_s ?? '默认/未记录')} s` : '',
+                supportsSeed ? `种子 ${String(r.params.seed ?? '默认/未记录')}` : '',
+                ...Object.entries(r.params).filter(([key]) => !['time_limit_s', 'seed'].includes(key))
+                  .map(([key, value]) => `${key}=${typeof value === 'object' ? JSON.stringify(value) : String(value)}`),
+              ].filter(Boolean).join(' · ');
               const instance = r.instance as unknown as FleetInstance | undefined;
               const blocked = unacceptedPlanReason(instance, planModelSchema(r)) ?? (instance?.vehicles.fleet?.some((item) => (item.min_turn_radius_m ?? 0) > 0) ? '仅规划，未适配执行' : '');
               return (
                 <tr key={r.run_id} aria-selected={st.focusRun === r.run_id} onClick={() => st.focus(r.run_id)}>
                   <td>
-                    <span className={s.algName}>{r.algorithm.name}</span>
-                    <div className={s.meta} title={`冻结 run_id：${r.run_id}`}>{r.run_id.slice(0, 8)} · {frozenParams || '参数见原始记录'}</div>
+                    <span className={s.algName} title={`${r.algorithm.origin}${r.algorithm.version ? ` · 版本/源码 ${r.algorithm.version}` : ''}`}>{r.algorithm.name}</span>
+                    <div className={s.meta} title={`冻结 run_id：${r.run_id}；${frozenParams || '参数见原始记录'}`}>{r.run_id.slice(0, 8)} · {frozenParams || '参数见原始记录'}</div>
                     <div className={s.row}>
                       {historicalInput && <Badge tone="orange" >历史输入</Badge>}
                       {differentParams && <Badge tone="gray">当前参数不同</Badge>}
@@ -755,11 +848,17 @@ export function ComparePanel() {
                   <td title={state.title}>{state.text === '计算中' ? <span className={s.running}><Spinner /> 计算中</span> : state.text}{state.title ? ' ⓘ' : ''}</td>
                   {cols.map((c, i) => {
                     const v = r.state === 'done' && r.routes.length ? c.get(r) : null;
-                    const isBest = v != null && bests[i] != null && Math.abs(v - (bests[i] as number)) < 1e-9 && valid.length > 1;
-                    return <td key={c.label} className={s.num} data-best={isBest || undefined}>{v == null ? '—' : `${fmt.num(c.pct ? v * 100 : v, c.digits ?? 2)}${c.pct ? '%' : c.unit ?? ''}`}</td>;
+                    const isBest = typeof v === 'number' && bests[i] != null && Math.abs(v - (bests[i] as number)) < 1e-9 && valid.length > 1;
+                    const unit = typeof c.unit === 'function' ? c.unit(r) : c.unit ?? '';
+                    const text = v == null
+                      ? (r.state === 'done' && r.routes.length ? '未记录' : '—')
+                      : typeof v === 'number'
+                        ? `${fmt.num(c.pct ? v * 100 : v, c.digits ?? 2)}${c.pct ? '%' : unit}`
+                        : typeof v === 'boolean' ? (v ? '是' : '否') : v;
+                    return <td key={c.label} className={s.num} data-best={isBest || undefined}>{text}</td>;
                   })}
                   <td className={s.num}>{fmt.sec(r.metrics.wall_s)}</td>
-                  <td>{r.check ? (r.check.valid ? <span className={s.ok}><Check size={13} /> 通过</span> : <span className={s.bad} title={r.check.errors.join('；')}><X size={13} /> {r.check.errors.length} 项</span>) : '—'}</td>
+                  <td>{r.check ? (r.check.valid ? <span className={s.ok}><Check size={13} /> 通过</span> : <span className={s.bad} title={r.check.errors.join('；')}><X size={13} /> 未通过{r.check.errors.length ? ` ${r.check.errors.length} 项` : ''}</span>) : '未检查'}</td>
                   <td className={s.rowActions} onClick={(e) => e.stopPropagation()}>
                     <a href={exportUrl.run(r.run_id, 'json')} download title="求解结果 JSON（路线与指标）">JSON</a>
                     <a href={exportUrl.run(r.run_id, 'csv')} download title="路线 CSV">CSV</a>
@@ -827,9 +926,13 @@ export function VerifyPanel() {
   const st = useStudio();
   const run = st.focusRun ? st.runs[st.focusRun] : undefined;
   if (!run) return <EmptyState icon={Check} title="选择一个方案" detail="求解完成后，这里逐项列出独立验算结果。" />;
-  if (run.state !== 'done') return <EmptyState title={run.error ?? (run.state === 'canceled' ? '方案已取消' : run.state === 'timeout' ? '方案计算超时' : '方案还在计算')} />;
+  if (run.state !== 'done') {
+    const label = { queued: '方案排队中', running: '方案计算中', error: '方案计算出错', timeout: '方案计算超时', canceled: '方案已取消' }[run.state] ?? '方案未完成';
+    return <EmptyState title={run.error ?? label} detail="没有可供独立验算的最终解。" />;
+  }
   const check = run.check;
-  const errors = check?.errors ?? [];
+  if (!check) return <EmptyState icon={CircleDashed} title="未检查" detail="后端未提供独立检查结果；不能据此判定方案可行。" />;
+  const errors = check.errors;
   const fleet = isFleet(st.scenario);
   const rows = (run.instance as unknown as FleetInstance | undefined)?.vehicles?.travel === 'rows';
   const has = (re: RegExp) => errors.filter((e) => re.test(e));
@@ -842,41 +945,49 @@ export function VerifyPanel() {
     { label: '路线经过每个任务的作业位置', bad: has(/作业位置/) },
     { label: '从车库出发并返回', bad: has(/车库/) },
   ] : [{ label: '独立检查器', bad: errors }];
-  const computed = check?.computed_cost;
+  const explained = new Set(items.flatMap((item) => item.bad));
+  const unexplained = errors.filter((error) => !explained.has(error));
+  const computed = check.computed_cost;
   const reported = (run.metrics.total_distance_m as number | undefined) ?? run.metrics.length;
-  const same = computed != null && reported != null && Math.abs(computed - reported) <= 1e-6 * Math.max(1, Math.abs(reported));
+  const costState = computed == null || reported == null
+    ? 'unknown'
+    : Math.abs(computed - reported) <= 1e-6 * Math.max(1, Math.abs(reported)) ? 'pass' : 'fail';
   return (
     <div className={s.scroll}>
       <div className={s.form}>
         <div className={s.rowSpace}>
           <h3>{run.algorithm.name} 的验算</h3>
-          {check?.valid ? <Badge tone="green">全部通过</Badge> : <Badge tone="red">{errors.length} 项未通过</Badge>}
+          {check.valid ? <Badge tone="green">全部通过</Badge> : <Badge tone="red">未通过{errors.length ? ` · ${errors.length} 项` : ''}</Badge>}
         </div>
         {fleet && researchAcceptanceIssues(run.instance as unknown as FleetInstance, planModelSchema(run)).map((issue) => <Notice key={issue} tone="warn">{issue} 绿色验算徽标不覆盖该限制。</Notice>)}
+        {!!unexplained.length && <Notice tone="error">其他检查失败：{unexplained.join('；')}</Notice>}
         <ul className={s.checks}>
-          {items.map((it) => (
-            <li key={it.label} data-bad={it.bad.length > 0 || undefined}>
-              {it.bad.length ? <X size={14} /> : <Check size={14} />}
-              <span>{it.label}</span>
-              {it.bad.length > 0 && <small>{it.bad.join('；')}</small>}
-            </li>
-          ))}
+          {items.map((it) => {
+            const failed = !check.valid && it.bad.length > 0;
+            return (
+              <li key={it.label} data-bad={failed || undefined}>
+                {failed ? <X size={14} /> : check.valid ? <Check size={14} /> : <CircleDashed size={14} />}
+                <span>{it.label}</span>
+                {failed ? <small>{it.bad.join('；')}</small> : !check.valid && <small>未确认</small>}
+              </li>
+            );
+          })}
           {fleet && (
-            <li data-bad={!same || undefined}>
-              {same ? <Check size={14} /> : <X size={14} />}
-              <span>里程复算一致</span>
+            <li data-bad={costState === 'fail' || undefined}>
+              {costState === 'pass' ? <Check size={14} /> : costState === 'fail' ? <X size={14} /> : <CircleDashed size={14} />}
+              <span>里程复算{costState === 'pass' ? '一致' : costState === 'fail' ? '不一致' : '未记录'}</span>
               <small>{fmt.num(computed, 2)} m（验算） vs {fmt.num(reported, 2)} m（求解器）</small>
             </li>
           )}
           {run.map_check && (
-            <li data-bad={!run.map_check.collision_free || undefined}>
-              {run.map_check.collision_free ? <Check size={14} /> : <X size={14} />}
-              <span>地图净空</span>
+            <li data-bad={run.map_check.collision_free === false || undefined}>
+              {run.map_check.checked && run.map_check.collision_free === true ? <Check size={14} /> : run.map_check.collision_free === false ? <X size={14} /> : <CircleDashed size={14} />}
+              <span>地图净空{run.map_check.checked && run.map_check.collision_free !== null ? '' : '未确认'}</span>
               <small>最小 {fmt.num(run.map_check.min_clearance_m, 3)} m</small>
             </li>
           )}
         </ul>
-        <p className={s.meta}>验算方：{check?.checker ?? '—'}。数据来源：{run.algorithm.origin}</p>
+        <p className={s.meta}>验算方：{check.checker}。数据来源：{run.algorithm.origin}</p>
         {fleet && <PerVehicleTable run={run} />}
       </div>
     </div>

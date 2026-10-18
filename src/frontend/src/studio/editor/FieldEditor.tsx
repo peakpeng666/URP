@@ -3,7 +3,8 @@ import { useElementSize } from '../../lib/useElementSize';
 import { fitView, toScreen, toWorld, worldTransform, zoomAt, type View } from '../../lab/canvas/view';
 import type { XY } from '../../lab/types';
 import type { FleetInstance, FleetRoute, ObstacleKind, Selection, Tool } from '../types';
-import { addDepot, depotsOf, fleetSpeed, setDepot } from '../fleet';
+import { addDepot, depotsOf, setDepot } from '../fleet';
+import { playbackDistanceAtTime } from '../planningPlayback';
 import {
   OBSTACLE_STYLE,
   along,
@@ -292,7 +293,7 @@ export function FieldEditor(props: FieldEditorProps) {
   const [bx0, by0, bx1, by1] = boundsOf(shown);
   const playbackPos = useMemo(() => {
     if (playback === null) return [];
-    return visibleRoutes.map((r) => ({ r, ...along(r.polyline, playback * fleetSpeed(inst)) }));
+    return visibleRoutes.map((r) => ({ r, ...along(r.polyline, playbackDistanceAtTime(inst, r, playback)) }));
   }, [playback, visibleRoutes, inst]);
 
   const selPoly =

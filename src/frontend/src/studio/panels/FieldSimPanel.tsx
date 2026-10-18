@@ -93,9 +93,10 @@ export function FieldSimPanel() {
       await studio.stopFieldsim();
       setFieldSimActionError(null);
     } catch (e) {
-      setFieldSimActionError(executionErrorMessage(e));
+      setFieldSimActionError(executionErrorMessage(e, 'stop'));
     } finally {
       await refreshFieldSim();
+      results.reload();
       setBusy(false);
     }
   };
@@ -211,7 +212,7 @@ function PhysicsSetup({ data, error, overrides, onChange }: { data: FieldPhysics
 function RunningView({ state, busy, onStop, onWindow }: { state: FieldSimState; busy: boolean; onStop: () => void; onWindow: (k: 'gui' | 'rviz', on: boolean) => void }) {
   const m = state.metrics ?? {};
   const done = state.phase === 'finished' || state.phase === 'failed';
-  const evidence = useLabResource<SimResult | null>(`fieldsim-evidence-${state.session_id ?? 'none'}-${state.phase}`, (signal) => {
+  const evidence = useLabResource<SimResult | null>(`fieldsim-evidence-${state.session_id ?? 'none'}-${state.phase}-${state.running}`, (signal) => {
     if (!state.result || !state.session_id) return Promise.resolve(null);
     return studio.fieldsimResult(state.session_id, { signal });
   });
@@ -263,7 +264,7 @@ function RunningView({ state, busy, onStop, onWindow }: { state: FieldSimState; 
         )}
       </div>
       {state.running && (
-        <p className={s.hint}><MonitorPlay size={12} style={{ verticalAlign: -2 }} /> 中间是 ROS 2 实时视图（Foxglove Bridge），旁边标签页是 Gazebo 场景（gzweb）；底部是遥测曲线。</p>
+        <p className={s.hint}><MonitorPlay size={12} style={{ verticalAlign: -2 }} /> 中间是 ROS 2 实时视图（Foxglove Bridge），旁边标签页是 Gazebo 场景（gzweb）；底部是遥测曲线。停止 / 关闭是有序关闭并保存记录；后端尚未提供暂停物理或取消任务但保留会话的接口。</p>
       )}
     </div>
   );
@@ -277,12 +278,15 @@ function travelText(travel: unknown): string {
 function ResultsTable({ rows }: { rows: FieldSimSummary[] }) {
   return (
     <table className={s.table}>
-      <thead><tr><th>方案</th><th className={s.num}>完成</th><th className={s.num}>最晚完成</th><th className={s.num}>与规划</th><th /></tr></thead>
+      <thead><tr><th>方案</th><th className={s.num}>状态 / 任务</th><th className={s.num}>最晚完成</th><th className={s.num}>与规划</th><th /></tr></thead>
       <tbody>
         {rows.slice(0, 12).map((r) => (
           <tr key={r.session_id} title={`${r.scenario_id} · ${r.world}`}>
             <td>{r.algorithm ?? r.run_id}<div className={s.meta}>{fmt.time(r.finished_utc)}{travelText(r.travel)}</div></td>
-            <td className={s.num}>{r.state === 'succeeded' ? <Badge tone="green">{r.metrics.tasks_reached}/{r.metrics.tasks_total}</Badge> : <Badge tone="red">{r.metrics.tasks_reached}/{r.metrics.tasks_total}</Badge>}</td>
+            <td className={s.num}>{r.state === 'succeeded'
+              ? <Badge tone="green">完成 {r.metrics.tasks_reached}/{r.metrics.tasks_total}</Badge>
+              : r.state === 'canceled' ? <Badge tone="orange">已取消 {r.metrics.tasks_reached}/{r.metrics.tasks_total}</Badge>
+                : <Badge tone="red">失败 {r.metrics.tasks_reached}/{r.metrics.tasks_total}</Badge>}</td>
             <td className={s.num}>{fmt.sec(r.metrics.makespan_s)}</td>
             <td className={s.num}>{pct(r.metrics.makespan_s, r.metrics.planned_makespan_s)}</td>
             <td><a className={s.link} href={urls.fieldsimResult(r.session_id)} download><Box size={12} /></a></td>

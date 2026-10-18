@@ -21,7 +21,7 @@ export function unacceptedPlanReason(instance: FleetInstance | undefined, modelS
   return null;
 }
 
-export function executionErrorMessage(error: unknown): string {
+export function executionErrorMessage(error: unknown, operation: 'start' | 'stop' = 'start'): string {
   const e = error instanceof Error ? error : new Error(String(error));
   const code = error instanceof LabApiError ? error.code : '';
   const status = error instanceof LabApiError ? error.status : 0;
@@ -29,6 +29,7 @@ export function executionErrorMessage(error: unknown): string {
   if (code === 'curvature_constrained_execution') return `${e.message}（422 curvature_constrained_execution）。恢复：保留曲率输入和结果；如需执行，请新建最小转弯半径为 0 的同构差速方案，不由界面静默改写`;
   if (code === 'unsupported_vehicle_asset') return `${e.message}（422 unsupported_vehicle_asset）。恢复：在检查器选择当前内置田间差速车型并重新求解；不会替换成其他车体`;
   if (status === 409) return `${e.message}（409 资产版本 / 哈希冲突）。恢复：核对资产当前版本，显式重新绑定并求解；历史方案仍按原快照保存`;
+  if (code === 'timeout' && operation === 'stop') return `${e.message}。关闭请求可能已到达后端：先刷新会话与关闭报告，确认进程回收状态后再操作；不要重复关闭或用强杀掩盖结果`;
   if (code === 'timeout') return `${e.message}。启动请求可能已到达后端：先刷新当前会话状态，确认 idle 后再重试，避免重复启动`;
   if (code === 'network') return `${e.message}。未把窗口打开或请求发出当作实验成功；服务恢复后先刷新会话状态`;
   return e.message;

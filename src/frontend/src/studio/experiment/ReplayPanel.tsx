@@ -10,7 +10,7 @@ import { Badge, Button, EmptyState, Notice, Select, Spinner } from '../../lab/ui
 import { studio } from '../api';
 import { useStudio } from '../store';
 import { useFieldSim } from '../ros/live';
-import { indexAt, poseAt, simBody, useReplay, type Anomaly } from './replay';
+import { indexAt, metricsAt, poseAt, simBody, taskEvents, useReplay, type Anomaly } from './replay';
 import { trafficStatus } from './traffic';
 import { SessionEvidence } from './SessionEvidence';
 import p from '../panels/panels.module.css';
@@ -45,11 +45,15 @@ export function ReplayOverlay({ view }: { view: View }) {
         return <polyline key={`a-${v.name}`} points={pts.join(' ')} fill="none" stroke={v.color} strokeWidth={3.2} strokeLinejoin="round" vectorEffect="non-scaling-stroke" opacity={0.5} />;
       })}
       {show.tasks && result.tasks.filter((tk) => !hidden.includes(tk.vehicle)).map((tk) => {
-        const done = tk.state === 'reached' && tk.t_sim != null && tk.t_sim <= t;
+        const reached = tk.state === 'reached' && tk.t_sim != null && tk.t_sim <= t;
+        const hasCompletion = 'serviced_at' in tk || tk.service_complete !== undefined;
+        const completed = hasCompletion ? tk.service_complete !== false && tk.serviced_at != null && tk.serviced_at <= t : reached;
         const missed = tk.state !== 'reached' && t >= derived.duration - 1e-6;
         const at = tk.stop ?? tk.xy;
-        return <circle key={`t-${tk.id}`} cx={at[0]} cy={at[1]} r={px(done ? 7 : 6)} fill={done ? 'rgba(48,177,88,0.85)' : 'none'}
-          stroke={missed ? '#ff453a' : done ? '#fff' : '#8e8e93'} strokeWidth={missed ? 2.4 : 1.4} vectorEffect="non-scaling-stroke" />;
+        return <circle key={`t-${tk.id}`} cx={at[0]} cy={at[1]} r={px(completed ? 7 : 6)} fill={completed ? 'rgba(48,177,88,0.85)' : reached ? 'rgba(255,159,10,0.7)' : 'none'}
+          stroke={missed ? '#ff453a' : completed || reached ? '#fff' : '#8e8e93'} strokeWidth={missed ? 2.4 : 1.4} vectorEffect="non-scaling-stroke">
+          <title>{`${tk.label} · ${completed ? '已完成停留' : reached ? '已到点，停留未完成' : '尚未到点'}`}</title>
+        </circle>;
       })}
       {show.body && vehicles.map((v) => {
         const pose = poseAt(result.trails[v.name] ?? [], t);
@@ -166,6 +170,7 @@ export function ReplayPanel() {
             </div>
             {r.provenance_warning && <Notice tone="warn">{r.provenance_warning}</Notice>}
             <SessionEvidence result={r} />
+            <p className={p.meta}>以上物理证据与独立检查是全程终检，不随回放时刻改写；下方时间轴只重放已记录样本。</p>
             <div className={a.timeline}>
               <Button size="sm" icon={rp.playing ? Pause : Play} onClick={() => { if (!rp.playing && rp.t >= d.duration) rp.setT(0); rp.setPlaying(!rp.playing); }} />
               <input type="range" min={0} max={d.duration} step={d.duration / 600 || 1} value={rp.t} aria-label="回放时间"
@@ -186,24 +191,33 @@ export function ReplayPanel() {
               ))}
             </div>
             <table className={p.table}>
-              <thead><tr><th>车辆</th><th className={p.num}>任务</th><th className={p.num}>里程（实际/规划）</th><th className={p.num}>用时（实际/规划）</th><th className={p.num}>横向偏差 均/最大</th></tr></thead>
+              <thead><tr><th>车辆</th><th className={p.num}>任务（截至时刻）</th><th className={p.num}>里程（实际/规划）</th><th className={p.num}>用时（实际/规划）</th><th className={p.num}>横向偏差 均/最大</th></tr></thead>
               <tbody>
                 {r.vehicles.map((v) => {
                   const off = rp.hidden.includes(v.name);
-                  const ct = d.crossTrack[v.name];
+                  const current = metricsAt(r, v.name, rp.t);
                   return (
                     <tr key={v.name} onClick={() => rp.toggleVehicle(v.name)} style={{ opacity: off ? 0.45 : 1 }} title={off ? '点击显示' : '点击隐藏'}>
                       <td><span className={p.swatch} style={{ background: v.color }} /> {v.label} {v.state === 'failed' && <Badge tone="red">受阻</Badge>}</td>
-                      <td className={p.num}>{v.tasks_done}/{v.tasks_total}</td>
-                      <td className={p.num}>{fmt.num(v.distance_m, 0)} / {fmt.num(v.planned_length_m, 0)} m</td>
-                      <td className={p.num}>{fmt.sec(v.duration_s)} / {fmt.sec(v.planned_duration_s)}</td>
-                      <td className={p.num}>{fmt.num(ct?.mean ?? v.cross_track_mean_m, 3)} / {fmt.num(ct?.max ?? v.cross_track_max_m, 2)} m</td>
+                      <td className={p.num}>{current.tasks_completed != null ? `${current.tasks_completed} 完成 / ` : ''}{current.tasks_reached}/{v.tasks_total} 到点</td>
+                      <td className={p.num}>{fmt.num(current.distance_m, 0)} / {fmt.num(v.planned_length_m, 0)} m</td>
+                      <td className={p.num}>{fmt.sec(current.elapsed_s)} / {fmt.sec(v.planned_duration_s)}</td>
+                      <td className={p.num}>{fmt.num(current.cross_track_mean_m, 3)} / {fmt.num(current.cross_track_max_m, 2)} m</td>
                     </tr>
                   );
                 })}
               </tbody>
             </table>
-            <p className={p.meta}>横向偏差：真值位置到该车被要求跟踪的路线的距离（每个记录点，约 0.5 s 一个）。</p>
+            <p className={p.meta}>里程、用时、任务和横向偏差均截至当前回放时刻；里程按实际轨迹几何累计，用时按该车源时间范围。缺少完成停留字段的历史记录只显示到点，不把到点冒充作业完成。</p>
+            <h3>任务事件（截至 {clock(rp.t)}）</h3>
+            {!taskEvents(r).some((event) => event.t <= rp.t) && <p className={p.hint}>当前时刻之前还没有到点或完成停留记录。</p>}
+            {taskEvents(r).filter((event) => event.t <= rp.t).slice(-10).reverse().map((event) => (
+              <button key={event.key} type="button" className={a.anomaly} onClick={() => { rp.setPlaying(false); rp.setT(event.t); centerMap(event.xy); }}>
+                <Badge tone={event.kind === 'completed' ? 'green' : 'gray'}>{event.kind === 'completed' ? '完成停留' : '到点'}</Badge>
+                <span>{clock(event.t)} · {event.task.label} · {event.task.vehicle}</span>
+                <Crosshair size={12} />
+              </button>
+            ))}
             <h3>异常定位（{d.anomalies.length}）</h3>
             {!d.anomalies.length && <p className={p.hint}>没有发现未到达任务、受阻、停滞、偏离 &gt; 0.3 m 或车体接近的情况。</p>}
             {d.anomalies.map((an) => (

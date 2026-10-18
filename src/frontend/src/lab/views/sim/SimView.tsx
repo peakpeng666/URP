@@ -22,6 +22,9 @@ export function SimView({ route }: { route: Route }) {
   const [historyId,setHistoryId]=useState('');
   const st=session.data;const sol=solution.data;const sc=sol?.scenario_snapshot;
   const latest=historyId?history.data?.sim_runs.find(r=>r.sim_run_id===historyId&&r.run_id===rid):(st?.execution?.run_id===rid?st.execution:history.data?.sim_runs.find(r=>r.run_id===rid));
+  const executionLocalization=latest?.localization;
+  const localizationAnalysis=executionLocalization&&typeof executionLocalization==='object'?executionLocalization:null;
+  const localizationMode=localizationAnalysis?.mode??(typeof executionLocalization==='string'?executionLocalization:undefined);
   const scene=useMemo<CanvasScene|null>(()=>{
     if(!sc||!sol)return null;const out=baseScene(sc,sol.instance??sc.instance);
     out.paths=sol.routes.map((r,i)=>({id:'plan'+i,points:r.polyline,color:'#007aff',width:3,chevrons:true}));
@@ -58,7 +61,12 @@ export function SimView({ route }: { route: Route }) {
       <Card title="实际执行结果"><div className={s.pad}>{latest?<>
         <label className={s.field}>执行记录<Select aria-label="执行记录" value={historyId} onChange={e=>setHistoryId(e.target.value)}><option value="">当前 / 最近一次执行</option>{history.data?.sim_runs.filter(r=>r.run_id===rid).map(r=><option key={r.sim_run_id} value={r.sim_run_id}>{fmt.time(r.created_utc)} · {r.mode} · {r.state}</option>)}</Select></label>
         <div className={s.row}><strong data-testid="sim-result">{({succeeded:'执行成功',failed:'执行失败',canceled:'已取消',queued:'排队中',approach:'前往起点',executing:'执行中'})[latest.state]}</strong><span className={s.meta}>{latest.sim_run_id}</span></div>
-        <p>{latest.mode==='follow_path'?'沿规划路径行驶':'逐点导航'} · {latest.localization==='ground_truth'?'真值定位':'AMCL 定位'} · 统计不含前往起点的一段</p>
+        <p>{latest.mode==='follow_path'?'沿规划路径行驶':'逐点导航'} · {localizationMode==='ground_truth'?'真值定位':localizationMode==='amcl'?'AMCL 定位':'定位方式未记录'} · 统计不含前往起点的一段</p>
+        <p className={s.meta}>规划：{latest.sources.route_plan}<br/>接驳：{latest.sources.approach}<br/>跟踪：{latest.sources.tracking}</p>
+        {localizationAnalysis?.estimate_error&&typeof localizationAnalysis.estimate_error==='object'&&<p>AMCL 位置 RMSE {fmt.num(localizationAnalysis.estimate_error.position_rmse_m,3)} m · 最大 {fmt.num(localizationAnalysis.estimate_error.position_max_m,3)} m · 配对 {localizationAnalysis.estimate_error.paired_samples??'—'} 点；仅为仿真估计证据，不是定位标定</p>}
+        {typeof localizationAnalysis?.estimate_error==='string'&&<p>AMCL 对照：{localizationAnalysis.estimate_error}</p>}
+        {localizationAnalysis?.replans&&<p>Nav2 全局规划消息 {localizationAnalysis.replans.count} 次{localizationAnalysis.replans.first_t_sim!=null?` · ${fmt.sec(localizationAnalysis.replans.first_t_sim)}–${fmt.sec(localizationAnalysis.replans.last_t_sim)}`:''}；不推断重规划原因</p>}
+        {localizationAnalysis?.error&&<Notice tone="error">定位对照分析失败：{localizationAnalysis.error}</Notice>}
         {latest.progress&&<p>路径段 {latest.progress.leg} / {latest.progress.legs_total}</p>}
         {sc?.problem_class==='coverage'&&<Notice>作业区实际覆盖 {latest.metrics.actual_working_coverage_fraction==null?'—':fmt.num(latest.metrics.actual_working_coverage_fraction*100)+'%'} · 全田块 {latest.metrics.actual_field_coverage_fraction==null?'—':fmt.num(latest.metrics.actual_field_coverage_fraction*100)+'%'}</Notice>}
         {latest.metrics.actual_map_check&&<Notice tone={latest.metrics.actual_map_check.collision_free?'ok':'error'}>实际轨迹{latest.metrics.actual_map_check.collision_free?'未碰撞':'有碰撞风险'} · 最小净空 {fmt.num(latest.metrics.actual_map_check.min_clearance_m,3)} m</Notice>}

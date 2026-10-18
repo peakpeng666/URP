@@ -31,6 +31,7 @@ interface StudioState {
   chosen: string[];
   budget: number;
   seed: number;
+  paramOverrides: Record<string, Record<string, number | string | boolean>>;
   runIds: string[];
   runs: Record<string, Solution>;
   focusRun: string | null;
@@ -57,6 +58,7 @@ interface StudioState {
   setChosen: (ids: string[]) => void;
   setBudget: (s: number) => void;
   setSeed: (seed: number) => void;
+  setAlgorithmParam: (algorithmId: string, name: string, value: number | string | boolean) => void;
   refreshRecommendation: () => Promise<void>;
   solve: (ids?: string[]) => Promise<void>;
   cancelRun: (runId: string) => Promise<void>;
@@ -113,6 +115,7 @@ export const useStudio = create<StudioState>((set, get) => ({
   chosen: [],
   budget: 3,
   seed: 42,
+  paramOverrides: {},
   runIds: [],
   runs: {},
   focusRun: null,
@@ -150,7 +153,7 @@ export const useStudio = create<StudioState>((set, get) => ({
     window.clearTimeout(saveTimer);
     window.clearTimeout(recommendTimer);
     set({ scenarioId: id, loadError: null, busy: '载入场景', selection: null, past: [], future: [], save: 'idle', saveError: null, solveError: null, chosen: [],
-          runIds: [], runs: {}, focusRun: null, manualFocus: false, recommendation: null, playback: null, hiddenVehicles: [] });
+          runIds: [], runs: {}, focusRun: null, manualFocus: false, recommendation: null, playback: null, hiddenVehicles: [], paramOverrides: {} });
     try {
       const sc = await lab.scenario(id);
       if (get().scenarioId !== id) return;
@@ -205,6 +208,9 @@ export const useStudio = create<StudioState>((set, get) => ({
   setChosen: (chosen) => set({ chosen }),
   setBudget: (budget) => set({ budget }),
   setSeed: (seed) => set({ seed }),
+  setAlgorithmParam: (algorithmId, name, value) => set((current) => ({
+    paramOverrides: { ...current.paramOverrides, [algorithmId]: { ...current.paramOverrides[algorithmId], [name]: value } },
+  })),
 
   async refreshRecommendation() {
     const { scenario, draft } = get();
@@ -269,7 +275,13 @@ export const useStudio = create<StudioState>((set, get) => ({
     try {
       const specs = list.map((id) => {
         const a = current.algorithms.find((x) => x.id === id);
+        const suggested = current.recommendation?.ranking.find((r) => r.algorithm_id === id)?.suggested_params;
+        const overridden = current.paramOverrides[id] ?? {};
         const params: Record<string, unknown> = {};
+        for (const p of a?.params ?? []) {
+          if (overridden[p.name] !== undefined) params[p.name] = overridden[p.name];
+          else if (suggested?.[p.name] !== undefined) params[p.name] = suggested[p.name];
+        }
         if (a?.params.some((p) => p.name === 'time_limit_s')) params.time_limit_s = current.budget;
         if (a?.params.some((p) => p.name === 'seed')) params.seed = current.seed;
         return { id, params };

@@ -111,6 +111,7 @@ export interface Algorithm {
   family: 'exact' | 'metaheuristic' | 'heuristic' | 'baseline' | 'coverage' | 'relaxation' | 'graph_search' | 'sampling';
   source: Source;
   origin: string;
+  version: string | null;
   turn_aware: boolean;
   guarantee: 'optimal' | 'optimal_for_relaxation' | 'none' | 'resolution_optimal' | 'asymptotically_optimal' | 'probabilistically_complete';
   limits: { max_tasks?: number | null };
@@ -260,8 +261,32 @@ export type SimPhase =
 export type SimRunState = 'queued' | 'approach' | 'executing' | 'succeeded' | 'failed' | 'canceled';
 export type SimMode = 'follow_path' | 'nav2_waypoints';
 
+export interface LocalizationAnalysis {
+  mode: 'ground_truth' | 'amcl';
+  scope?: string;
+  error?: string;
+  estimate_error?: string | null | {
+    paired_samples?: number;
+    position_rmse_m?: number;
+    position_mean_m?: number;
+    position_p50_m?: number;
+    position_p95_m?: number;
+    position_max_m?: number;
+    position_final_m?: number;
+    yaw_rmse_rad?: number;
+  };
+  replans?: {
+    count: number;
+    first_t_sim: number | null;
+    last_t_sim: number | null;
+    path_length_first_m: number | null;
+    path_length_last_m: number | null;
+    note?: string;
+  };
+}
+
 export interface SimRun {
-  localization?: 'ground_truth' | 'amcl';
+  localization?: 'ground_truth' | 'amcl' | LocalizationAnalysis;
   progress?: {leg:number;legs_total:number};
   sim_run_id: string;
   run_id: string;

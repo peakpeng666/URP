@@ -66,7 +66,7 @@ beforeEach(() => {
     scenario,
     draft: structuredClone(instance) as unknown as Instance,
     past: [], future: [], save: 'dirty', saveError: null, solveError: null,
-    algorithms: [algorithm], chosen: [algorithm.id], budget: 3, seed: 42,
+    algorithms: [algorithm], chosen: [algorithm.id], budget: 3, seed: 42, paramOverrides: {},
     runIds: [], runs: {}, focusRun: null, manualFocus: false,
     recommendation: null, recommending: false, busy: null, toast: null,
   });
@@ -140,5 +140,43 @@ describe('serialized draft saving before solve', () => {
     expect(useStudio.getState().draft).not.toBeNull();
     expect(mocks.scenario).not.toHaveBeenCalled();
     expect(mocks.navigate).toHaveBeenCalledWith('#/plan/scenario-a', { replace: true });
+  });
+
+  it('submits recommended schema parameters and explicit overrides in addition to budget and seed', async () => {
+    const full = {
+      id: 'f2c.full',
+      params: [
+        { name: 'time_limit_s' }, { name: 'decomposition' },
+        { name: 'swath_objective' }, { name: 'turn_model' },
+      ],
+    } as unknown as Algorithm;
+    useStudio.setState({
+      scenario: { ...scenario, problem_class: 'coverage' } as Scenario,
+      draft: {} as Instance,
+      algorithms: [full], chosen: [full.id], save: 'saved', budget: 3,
+      paramOverrides: { 'f2c.full': { turn_model: 'reeds_shepp' } },
+      recommendation: {
+        ranking: [{ algorithm_id: full.id, suggested_params: {
+          time_limit_s: 30, decomposition: 'boustrophedon', swath_objective: 'n_swath', turn_model: 'dubins',
+        } }],
+      } as never,
+    });
+
+    await useStudio.getState().solve();
+
+    expect(mocks.solve.mock.calls[0][1]).toEqual([{
+      id: 'f2c.full',
+      params: { time_limit_s: 3, decomposition: 'boustrophedon', swath_objective: 'n_swath', turn_model: 'reeds_shepp' },
+    }]);
+  });
+
+  it('stores the canceled state returned by the server', async () => {
+    const canceled = { run_id: 'run_cancel', state: 'canceled', status: null };
+    mocks.cancelRun.mockResolvedValue(canceled);
+
+    await useStudio.getState().cancelRun('run_cancel');
+
+    expect(mocks.cancelRun).toHaveBeenCalledWith('run_cancel');
+    expect(useStudio.getState().runs.run_cancel).toEqual(canceled);
   });
 });
