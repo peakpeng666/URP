@@ -1,0 +1,10 @@
+{
+  "command": [
+    "/home/peakpeng/Desktop/URP/src/lab/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-q"
+  ],
+  "returncode": 0,
+  "wall_s": 85.811
+}

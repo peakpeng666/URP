@@ -103,3 +103,10 @@ setup/2026-10-17/critique/mu2-study/*/
 /setup/2026-10-18/nonideal-execution/round2/*-result.json
 /setup/2026-10-18/nonideal-execution/ui-session-result.json
 /setup/2026-10-18/nonideal-execution/field-regression/experiment-*.json
+
+# Full non-ideal audit runs remain local; retain compact evidence and regressions.
+/setup/2026-10-18/nonideal-audit/**/runtime/
+/setup/2026-10-18/nonideal-audit/**/*-result.json
+/setup/2026-10-18/nonideal-audit/private/
+/setup/2026-10-18/nonideal-audit/field-regression*/experiment-*.json
+/setup/2026-10-18/nonideal-audit/gateway-final.log

@@ -13,9 +13,12 @@ export interface TrafficEvidence {
       method?: string;
       pairs?: { min_center_distance_m?: number; min_footprint_gap_m?: number; t_sim?: number; valid?: boolean }[];
     } | null;
+    nonideal_observations?: { valid?: boolean; chain_replay?: { valid?: boolean } | null } | null;
+    task_truth?: { valid?: boolean } | null;
     dynamics?: {
       valid?: boolean;
       scope?: string;
+      execution_mode?: 'ideal' | 'nonideal';
       thresholds?: { max_sample_gap_s?: number };
       odometry_contract?: { schema: string; max_position_error_m: number; max_yaw_error_rad: number } | null;
       vehicles?: {

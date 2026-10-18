@@ -148,12 +148,12 @@ class FieldSimManager:
                        paths.LAB / 'urp_lab/field_records.py',
                        paths.LAB / 'urp_lab/field_physics.py',
                        paths.LAB / 'urp_lab/field_dynamics.py',
-                       paths.LAB / 'urp_lab/field_nonideal.py',
+                       paths.LAB / 'urp_lab/field_nonideal.py', paths.LAB / 'urp_lab/field_localization.py', paths.LAB / 'urp_lab/field_observation_check.py',
                        paths.LAB / 'urp_lab/field_energy.py',
                        paths.LAB / 'urp_lab/fieldworld.py', paths.LAB / 'urp_lab/lanes.py',
                        paths.LAB / 'ros/processes.py', paths.LAB / 'ros/physics_runtime.py', paths.LAB / 'ros/bridge_runtime.py',
                        paths.LAB / 'ros/native/bridge/manifest.json']
-            localization_note = ('Gazebo ground truth (ideal localization)' if not execution else
+            localization_note = ('Gazebo ground truth (ideal localization)' if not execution or execution['localization']['gnss'] is None else
                                  'wheel odometry fused with synthetic absolute fixes under a declared error model; '
                                  'truth recorded separately for independent evaluation only')
             plan['execution_provenance'] = {

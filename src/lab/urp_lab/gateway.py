@@ -495,7 +495,7 @@ def create_app(config: Config | None = None) -> FastAPI:
             # The live panel needs the verdict, not megabytes of sampled trajectories.
             # Keep the full endpoint unchanged for replay, download and independent checks.
             keys = ('session_id', 'run_id', 'state', 'check', 'physics', 'physics_audit', 'physics_runtime',
-                    'truth_timing', 'energy', 'session_report')
+                    'truth_timing', 'energy', 'session_report', 'execution', 'execution_report', 'ground_contact_observations')
             result = {key: result.get(key) for key in keys}
         # Already JSON-native evidence. Serialize in this worker, avoiding FastAPI's
         # recursive encoder on the event loop while other clients control the session.

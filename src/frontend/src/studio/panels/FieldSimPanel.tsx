@@ -228,7 +228,7 @@ function ExecutionSetup({ data, ground, loc, seed, protection, onGround, onLoc, 
   return (
     <details className={s.physics} open={nonideal}>
       <summary>执行条件：{nonideal ? '非理想实验' : '理想参考'}</summary>
-      <p className={s.hint}>{data?.execution?.scope ?? '非理想执行：地面摩擦分区 + 定位误差模型（若后端未返回预设说明则以下为本地展示）'}。求解器不知道这些条件；真值只作独立评价。</p>
+      <p className={s.hint}>{data?.execution?.scope ?? '非理想执行：地面摩擦分区 + 定位误差模型（若后端未返回预设说明则以下为本地展示）'}。地面分区固定于地图；求解器未使用其代价。选择误差定位时控制使用估计，真值仅生成观测与验算；真值定位是显式对照。</p>
       <div className={s.row}>
         <label className={s.meta}>地面</label>
         <Select aria-label="地面预设" value={ground} onChange={(e) => onGround(e.target.value)}>
@@ -242,7 +242,7 @@ function ExecutionSetup({ data, ground, loc, seed, protection, onGround, onLoc, 
       <div className={s.row}>
         <label className={s.meta}>随机种子</label>
         <Input aria-label="观测模型种子" type="number" min={0} value={seed} onChange={(e) => Number.isFinite(e.target.valueAsNumber) && onSeed(Math.trunc(e.target.valueAsNumber))} />
-        <Switch checked={protection} onChange={onProtection} label="在线滑移/失锁保护" />
+        <Switch checked={protection} onChange={onProtection} label="定位新息保护（失锁停车始终启用）" />
       </div>
       {nonideal && (
         <p className={s.meta}>
@@ -270,6 +270,7 @@ function RunningView({ state, busy, onStop, onWindow }: { state: FieldSimState; 
       </div>
       {state.errors.map((e) => <Notice key={e} tone="error">{e}</Notice>)}
       {state.warnings.map((w) => <Notice key={w} tone="info">{w}</Notice>)}
+      {state.execution?.localization && state.execution.localization !== 'truth' && <p className={s.hint}>车辆位置、到点进度与在线速度来自定位估计 / 轮式输入；最终是否完成由真值轨迹与停留检查决定。</p>}
       <div className={s.vehicleList}>
         {state.vehicles.map((v) => (
           <div key={v.name} className={s.vehicleRow}>
@@ -288,12 +289,13 @@ function RunningView({ state, busy, onStop, onWindow }: { state: FieldSimState; 
           <tbody>
             <tr><td>最晚完成</td><td className={s.num}>{fmt.sec(m.planned_makespan_s)}</td><td className={s.num}>{fmt.sec(m.makespan_s)}</td><td className={s.num}>{pct(m.makespan_s, m.planned_makespan_s)}</td></tr>
             <tr><td>总里程</td><td className={s.num}>{fmt.num(m.planned_total_distance_m, 1)} m</td><td className={s.num}>{fmt.num(m.total_distance_m, 1)} m</td><td className={s.num}>{pct(m.total_distance_m, m.planned_total_distance_m)}</td></tr>
-            <tr><td>到达任务</td><td className={s.num}>{m.tasks_total}</td><td className={s.num}>{m.tasks_reached}</td><td /></tr>
+            <tr><td>控制器到点</td><td className={s.num}>{m.tasks_total}</td><td className={s.num}>{m.tasks_reached}</td><td /></tr>
+            {m.tasks_verified != null && <tr><td>真值作业通过</td><td className={s.num}>{m.tasks_total}</td><td className={s.num}>{m.tasks_verified}</td><td /></tr>}
             <tr><td>横向偏差</td><td className={s.num} /><td className={s.num}>均 {fmt.num(m.cross_track_mean_m, 3)} m</td><td className={s.num}>最大 {fmt.num(m.cross_track_max_m, 2)} m</td></tr>
-            {m.localization_position_error_mean_m != null && (
+            {(m.localization_position_error_mean_m != null || m.odom_divergence_max_m != null) && (
               <>
                 <tr><td>定位误差（估计-真值）</td><td className={s.num} /><td className={s.num}>均 {fmt.num(m.localization_position_error_mean_m, 3)} m</td><td className={s.num}>最大 {fmt.num(m.localization_position_error_max_m, 2)} m</td></tr>
-                <tr><td>滑移（里程计-真值）</td><td className={s.num} /><td className={s.num}>路径超出 {fmt.num(m.odom_excess_total_m, 2)} m</td><td className={s.num}>最大发散 {fmt.num(m.odom_divergence_max_m, 1)} m</td></tr>
+                <tr><td>运动学偏离（里程计-真值）</td><td className={s.num} /><td className={s.num}>路径超出 {fmt.num(m.odom_excess_total_m, 2)} m</td><td className={s.num}>最大发散 {fmt.num(m.odom_divergence_max_m, 1)} m</td></tr>
                 <tr><td>在线干预</td><td className={s.num} /><td className={s.num}>{fmt.num(m.interventions, 0)} 次</td><td className={s.num}>失锁暴露 {fmt.num(m.localization_outage_total_s, 0)} s</td></tr>
               </>
             )}

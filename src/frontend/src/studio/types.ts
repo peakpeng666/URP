@@ -312,6 +312,7 @@ export interface FieldSimMetrics {
   tasks_total: number;
   tasks_reached: number;
   tasks_completed?: number | null;
+  tasks_verified?: number | null;
   vehicles_done: number;
   makespan_s: number | null;
   planned_makespan_s: number | null;

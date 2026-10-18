@@ -17,6 +17,7 @@ import type { AssetRef } from '../assets/api';
 import type { FleetAssetBinding } from '../assets/planBridge';
 import { derive, useReplay, type Derived, type SimResult } from './replay';
 import { trafficStatus } from './traffic';
+import { SessionEvidence } from './SessionEvidence';
 import { downloadServerRecord } from './export';
 import { requiresCoverageRecheck } from '../comparison';
 import p from '../panels/panels.module.css';
@@ -109,7 +110,8 @@ function FleetMetrics({ run, sim, simLoading, hasSims, simError }: { run: Run; s
   const sep = sim?.d.separation;
   const traffic = sim ? trafficStatus(sim.r) : null;
   const completed = m?.tasks_completed ?? null;
-  const simNumerator = completed ?? m?.tasks_reached ?? 0;
+  const verified = m?.tasks_verified ?? null;
+  const simNumerator = verified ?? completed ?? m?.tasks_reached ?? 0;
   return (
     <>
       <h3>规划（求解器输出，经独立验算）</h3>
@@ -131,7 +133,7 @@ function FleetMetrics({ run, sim, simLoading, hasSims, simError }: { run: Run; s
       {sim && m && (
         <>
           <div className={a.metricGrid}>
-            <Cell label={completed != null ? '任务完成率（到点并停留）' : '任务到达率（仿真）'} value={`${fmt.num((100 * simNumerator) / Math.max(1, m.tasks_total), 1)}%`} note={`${simNumerator} / ${m.tasks_total}${completed != null ? `；到达 ${m.tasks_reached}` : '；历史记录未区分完成停留'}；不表示作业质量`} tone={sim.r.state === 'canceled' ? 'warn' : simNumerator === m.tasks_total && sim.r.state === 'succeeded' ? 'good' : 'bad'} />
+            <Cell label={verified != null ? '任务完成率（真值位置与停留）' : completed != null ? '控制器停留完成率' : '控制器到达率'} value={`${fmt.num((100 * simNumerator) / Math.max(1, m.tasks_total), 1)}%`} note={`${simNumerator} / ${m.tasks_total}；控制器到达 ${m.tasks_reached}${completed != null ? `、停留完成 ${completed}` : '；历史记录未区分完成停留'}；不表示作业质量`} tone={sim.r.state === 'canceled' ? 'warn' : simNumerator === m.tasks_total && sim.r.state === 'succeeded' ? 'good' : 'bad'} />
             <Cell label="实际总里程" value={`${fmt.num(m.total_distance_m, 1)} m`} note={`规划 ${fmt.num(m.planned_total_distance_m, 1)} m；实际轨迹独立显示，含接驳与转向`} />
             <Cell label="实际最晚完成" value={fmt.sec(m.makespan_s)} note={`规划 ${fmt.sec(m.planned_makespan_s)}（匀速代理）；实际含交通等待、接驳与转向`} />
             <Cell label="路径跟踪误差" value={`${fmt.num(m.cross_track_mean_m, 3)} m`} note={`最大 ${fmt.num(m.cross_track_max_m, 2)} m；真值位置到跟踪路线的横向距离；URP 跟踪，不是 Nav2 逐点重规划`} tone={m.cross_track_max_m > 0.5 ? 'warn' : 'good'} />
@@ -139,10 +141,11 @@ function FleetMetrics({ run, sim, simLoading, hasSims, simError }: { run: Run; s
             <Cell label="异常" value={String(sim.d.anomalies.length)} note={sim.d.anomalies.slice(0, 2).map((x) => x.text).join('；') || '无'} tone={sim.d.anomalies.some((x) => x.tone === 'error') ? 'bad' : sim.d.anomalies.length ? 'warn' : 'good'} />
           </div>
           <div className={p.row}>
-            <span className={p.meta} style={{ margin: 0 }}>执行：URP 纯追踪（非 Nav2 重规划）· 定位：Gazebo 真值 · 会话 {sim.r.session_id} · 状态 {sim.r.state} · 清理 {sim.r.session_report?.cleanup_status ?? '未记录'}</span>
+            <span className={p.meta} style={{ margin: 0 }}>执行：URP 纯追踪（非 Nav2 重规划）· 控制定位：{sim.r.execution?.localization?.gnss ? '轮式输入与合成位置观测融合估计' : 'Gazebo 真值对照'} · 会话 {sim.r.session_id} · 状态 {sim.r.state} · 清理 {sim.r.session_report?.cleanup_status ?? '未记录'}</span>
             <span className={p.spacer} />
             <Button size="sm" onClick={() => { void useReplay.getState().load(sim.r.session_id); window.dispatchEvent(new CustomEvent('studio:open-panel', { detail: 'replay' })); }}>在地图上回放</Button>
           </div>
+          <SessionEvidence result={sim.r} />
         </>
       )}
     </>

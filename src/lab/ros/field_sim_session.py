@@ -36,7 +36,8 @@ EXTRAS = DEPLOY / 'runtime/ros-extras/root/opt/ros/humble'
 sys.path[:0] = [str(DEPLOY), str(LAB / 'ros'), str(LAB)]
 from urp_lab.field_tracking import Driver, truth_time  # noqa: E402
 from urp_lab.field_traffic import MissionQueue, POLICY
-from urp_lab.field_nonideal import Estimator, LocalizationModel, slip_experiment  # noqa: E402
+from urp_lab.field_nonideal import (Estimator, LocalizationModel, slip_experiment,
+                                   advance_innovation_guard, reset_guard_evidence)  # noqa: E402
 from bridge_runtime import bridge_environment, bridge_provenance
 from processes import OwnedProcesses  # noqa: E402
 from physics_runtime import audit as audit_physics_runtime, selection as physics_selection
@@ -150,7 +151,7 @@ class Session:
         self.nonideal_loc = self.exec_cfg is not None and not self.truth_loc
         # Slip-observable sessions (non-ideal execution OR physics outside the frozen
         # no-slip reference) get the evaluation report; the reference gate stays ideal-only.
-        self.slip_observable = slip_experiment(self.exec_cfg, self.plan.get('physics'))
+        self.slip_observable = bool(self.exec_cfg) or slip_experiment(None, self.plan.get('physics'))
         if self.slip_observable:
             self.execution_events = []
             self.interventions = 0
@@ -163,6 +164,9 @@ class Session:
             self.hold = {d.name: False for d in self.drivers}
             self.slip = {d.name: {'since': None, 'creep_since': None, 'clear_since': None} for d in self.drivers}
             for i, d in enumerate(self.drivers):
+                d.strict_service = True
+                d.terminal_radius = .10
+                for task in d.tasks: task['radius'] = min(task['radius'], .05)
                 seed = int(self.exec_cfg['seed']) + i
                 self.loc_models[d.name] = LocalizationModel(gnss, seed)
                 start = self.plan_by_name[d.name].get('start') or [0.0, 0.0, 0.0]
@@ -181,6 +185,7 @@ class Session:
                        'contacts': {d.name: 0 for d in self.drivers}}
         self.contact_wall = {}
         self.contacts, self.contact_examples = [], []
+        self.ground_contact_observations = {}
         self.ground_contact_samples = []  # diagnostic probes only; never filtered into mission success
         self.control_traces = {d.name: [] for d in self.drivers}
         self.rigid_poses = {d.name: [] for d in self.drivers}
@@ -252,6 +257,8 @@ class Session:
             # for the controller-side pose, which in this mode comes from the estimator.
             est = self.estimators[name]
             est.on_odom(msg.twist.twist.linear.x, msg.twist.twist.angular.z, stamp)
+            for fix in self.loc_models[name].deliver(stamp):
+                est.on_fix(fix['x'], fix['y'], fix['t_measure'], stamp)
             ex, ey, eyaw = est.pose(stamp)
             drv = self.driver_by_name[name]
             drv.observe((ex, ey, eyaw), stamp, record_distance=False)
@@ -259,6 +266,12 @@ class Session:
             # the wheel-derived twist, not differentiated noisy poses.
             drv.speed_now = abs(msg.twist.twist.linear.x)
             drv.angular_speed_now = abs(msg.twist.twist.angular.z)
+            tf = TransformStamped()
+            tf.header.stamp = msg.header.stamp
+            tf.header.frame_id, tf.child_frame_id = 'map', f'{name}/base_link'
+            tf.transform.translation.x, tf.transform.translation.y = ex, ey
+            tf.transform.rotation.z, tf.transform.rotation.w = math.sin(eyaw/2), math.cos(eyaw/2)
+            self.tf.sendTransform(tf)
             if self.st['phase'] == 'running':
                 gap = est.since_fix(stamp)
                 source = 'dead_reckoning' if (gap is None or gap > 3.0) else 'fused'
@@ -279,7 +292,20 @@ class Session:
                 self.contact_examples.append(pair)
             # Wheel/caster contacts with the ground plane or its friction zones are expected;
             # every other external contact is a failure.
-            if any(ground_collision(n) for n in pair) or all(f'{name}::' in n for n in pair):
+            if any(ground_collision(n) for n in pair):
+                surface = next(n for n in pair if ground_collision(n))
+                robot = next((n for n in pair if not ground_collision(n)), '')
+                if self.st['phase'] == 'running':
+                    key = name + '|' + surface
+                    stamp = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
+                    entry = self.ground_contact_observations.setdefault(key, {'vehicle': name, 'surface': surface,
+                        'contact_entries': 0, 'first_t_sim': stamp, 'last_t_sim': stamp, 'robot_collisions': []})
+                    entry['contact_entries'] += 1
+                    entry['last_t_sim'] = stamp
+                    if robot not in entry['robot_collisions']: entry['robot_collisions'].append(robot)
+                if '::chassis::' not in robot:
+                    continue
+            if all(f'{name}::' in n for n in pair):
                 continue
             stamp = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
             self.contacts.append({'t_sim': stamp, 'vehicle': name, 'collisions': pair,
@@ -318,15 +344,13 @@ class Session:
                 # synthetic absolute-position sensor and the independent evaluation records.
                 self.truth_pose[d.name] = pose
                 prev = getattr(d, '_truth_prev', None)
-                if prev is not None and stamp > prev[1]:
+                if self.st['phase'] == 'running' and prev is not None and stamp > prev[1]:
                     step = math.dist(prev[0][:2], pose[:2])
                     if step < 2.0:
                         self.truth_distance[d.name] += step
                 d._truth_prev = (pose, stamp)
             if self.nonideal_loc:
                 self.loc_models[d.name].on_truth(p.x, p.y, stamp)
-                for fix in self.loc_models[d.name].deliver(stamp):
-                    self.estimators[d.name].on_fix(fix['x'], fix['y'], fix['t_measure'])
             else:
                 d.observe(pose, stamp, record_distance=self.st['phase'] == 'running')
             self.truth_wall[d.name] = time.monotonic()
@@ -338,7 +362,7 @@ class Session:
             tf = TransformStamped()
             tf.header.stamp = t.header.stamp
             tf.header.frame_id = 'map'
-            tf.child_frame_id = f'{d.name}/base_link'
+            tf.child_frame_id = f'{d.name}/ground_truth' if self.nonideal_loc else f'{d.name}/base_link'
             tf.transform = t.transform
             out.append(tf)
         if out:
@@ -675,6 +699,14 @@ Window Geometry:
         self.pub_tasks.publish(arr)
         self.published_tasks = self.task_version
 
+    def vehicle_summary(self, d):
+        row = d.summary(self.plan_by_name.get(d.name))
+        if self.slip_observable:
+            row['distance_m'] = round(self.truth_distance.get(d.name, 0.0), 2)
+        row['pose_source'] = 'estimated' if self.nonideal_loc else 'ground_truth'
+        row['speed_source'] = 'wheel_odometry' if self.nonideal_loc else 'ground_truth'
+        return row
+
     def publish_live(self, trails=False):
         arr = MarkerArray()
         status = []
@@ -692,7 +724,7 @@ Window Geometry:
             label.scale.z = 1.0
             label.text = d.label
             arr.markers.append(label)
-            status.append(d.summary(self.plan_by_name.get(d.name)))
+            status.append(self.vehicle_summary(d))
         self.pub_vehicles.publish(arr)
         self.pub_status.publish(String(data=json.dumps({'t': self.clock, 'vehicles': status}, ensure_ascii=False)))
         if trails:
@@ -712,20 +744,24 @@ Window Geometry:
         self.execution_events.append({'t_sim': round(t, 3), 'vehicle': vehicle, 'kind': kind,
                                       'detail': detail or {}, 'intervention': kind in ('localization_hold', 'slip_creep', 'slip_protection_stop')})
 
-    def protect(self, d, t, v, w):
+    def protect(self, d, t, v=0.0, w=0.0):
         """Online protections that use only controller-side signals: fix availability
         (localization hold) and estimator innovation (slip suspicion). No truth here."""
         loc = self.exec_cfg['localization']
         est = self.estimators[d.name]
         gap = est.since_fix(t)
+        if gap is None:
+            gap = t - (self.traffic.started if self.traffic else t)
         if self.hold[d.name]:
+            reset_guard_evidence(self.slip[d.name])
             if gap is not None and gap <= loc['max_fix_gap_s']:
                 self.hold[d.name] = False
                 self.event(t, d.name, 'localization_resume', {'fix_gap_s': round(gap, 2)})
             else:
                 return 0.0, 0.0
-        elif gap is not None and gap > loc['max_fix_gap_s'] and d.state == 'driving':
+        elif gap is not None and gap > loc['max_fix_gap_s'] and d.state in ('driving', 'servicing'):
             self.hold[d.name] = True
+            reset_guard_evidence(self.slip[d.name])
             self.interventions += 1
             self.event(t, d.name, 'localization_hold', {'fix_gap_s': round(gap, 2)})
             return 0.0, 0.0
@@ -734,30 +770,20 @@ Window Geometry:
         stale_after = float(loc['gnss']['latency_s']) + 2.0 / float(loc['gnss']['fix_hz'])
         fresh = est.last_innovation is not None and gap is not None and gap <= stale_after
         st = self.slip[d.name]
-        if fresh and est.last_innovation > loc['slip_gate_m']:
-            if st['since'] is None:
-                st['since'] = t
-            st['clear_since'] = None
-            if st['creep_since'] is None and t - st['since'] >= loc['slip_sustain_s'] and d.state == 'driving':
-                st['creep_since'] = t
-                d.speed = self.base_speed[d.name] * loc['slip_creep_scale']
-                self.interventions += 1
-                self.event(t, d.name, 'slip_creep', {'innovation_m': round(est.last_innovation, 3)})
-        elif st['creep_since'] is not None and (not fresh or est.last_innovation < loc['slip_clear_m']):
-            if st['clear_since'] is None:
-                st['clear_since'] = t
-            if not fresh or t - st['clear_since'] >= loc['slip_clear_s']:
-                self.event(t, d.name, 'slip_recovered', {'innovation_m': round(est.last_innovation, 3) if est.last_innovation is not None else None})
-                st.update(since=None, creep_since=None, clear_since=None)
-                d.speed = self.base_speed[d.name]
-        elif fresh:
-            st['since'] = st['clear_since'] = None
-        if st['creep_since'] is not None:
-            if t - st['creep_since'] > loc['slip_creep_max_s']:
-                d.state = 'failed'
-                d.failure = f'打滑保护：爬行 {t - st["creep_since"]:.0f} s 后估计新息仍超限，停车'
-                self.event(t, d.name, 'slip_protection_stop', {'innovation_m': round(est.last_innovation, 3)})
-                return 0.0, 0.0
+        transition = advance_innovation_guard(st, est.last_innovation, fresh, d.state == 'driving', t, loc)
+        if transition == 'creep':
+            d.speed = self.base_speed[d.name] * loc['slip_creep_scale']
+            self.interventions += 1
+            self.event(t, d.name, 'slip_creep', {'innovation_m': round(est.last_innovation, 3)})
+        elif transition == 'recovered':
+            self.event(t, d.name, 'slip_recovered', {'innovation_m': round(est.last_innovation, 3)})
+            d.speed = self.base_speed[d.name]
+        elif transition == 'stop':
+            d.state = 'failed'
+            d.failure = f'新息异常保护：进入降速后 {t - st["creep_since"]:.0f} s 未满足恢复条件，停车'
+            self.interventions += 1
+            self.event(t, d.name, 'slip_protection_stop', {'innovation_m': round(est.last_innovation, 3)})
+            return 0.0, 0.0
         return v, w
 
     def execute(self):
@@ -779,16 +805,25 @@ Window Geometry:
                 self.traffic.step(t)
                 for d in self.drivers:
                     previous_cte_count = len(d.cte)
-                    v, w = d.step(t)
                     if self.nonideal_loc:
-                        v, w = self.protect(d, t, v, w)
+                        self.protect(d, t)  # before progress/service bookkeeping
+                    if self.nonideal_loc and self.hold[d.name]:
+                        if d.state == 'servicing':
+                            d.stationary_since = None
+                            d.dwell_until = t + d.servicing_task['service_s']
+                            d.servicing_task['service_started_at'] = None
+                        d.last_progress = (d.s, t)
+                        v, w = 0.0, 0.0
+                    else:
+                        v, w = d.step(t)
                     d.v_cmd, d.w_cmd = v, w
                     msg = Twist()
                     msg.linear.x, msg.angular.z = float(v), float(w)
                     self.cmd[d.name].publish(msg)
                     measured_cte = d.cte[-1] if len(d.cte) > previous_cte_count else None
                     self.control_traces[d.name].append([t, d.s, measured_cte, v, w, d.state,
-                                                       t - d.pose_stamp if d.pose_stamp is not None else None])
+                                                       t - d.pose_stamp if d.pose_stamp is not None else None,
+                                                       list(d.pose) if d.pose else None, d.pose_stamp])
                     trail_pose = self.truth_pose.get(d.name) if self.slip_observable else d.pose
                     if trail_pose is not None and (not d.trail or t - d.trail[-1][0] >= 0.5):
                         d.trail.append([round(t, 2), round(trail_pose[0], 3), round(trail_pose[1], 3), round(trail_pose[2], 4)])
@@ -801,10 +836,8 @@ Window Geometry:
                 if t - last_trail >= 1.0:
                     last_trail = t
                 with self.lock:
-                    self.st['vehicles'] = [d.summary(self.plan_by_name.get(d.name)) for d in self.drivers]
+                    self.st['vehicles'] = [self.vehicle_summary(d) for d in self.drivers]
             if all(d.state in ('done', 'failed') for d in self.drivers):
-                if any(d.state == 'failed' for d in self.drivers):
-                    break
                 if terminal_since is None:
                     terminal_since = t
                 # Keep observing deceleration and contacts before certifying a final
@@ -821,6 +854,8 @@ Window Geometry:
                 break
         for d in self.drivers:
             self.cmd[d.name].publish(Twist())
+            if d.failure:
+                self.st['errors'].append(f'{d.label}: {d.failure}')
         self.publish_live(trails=True)
         self.finish('canceled' if self.stop.is_set() else None)
 
@@ -865,7 +900,7 @@ Window Geometry:
             est = self.pose_estimates.get(d.name) or []
             pos_err, yaw_err = [], []
             if self.nonideal_loc:
-                for row in est[::2]:                  # 10 Hz is plenty for error statistics
+                for row in est:
                     tp = self._interp_pose(truth, row[0])
                     if tp is None:
                         continue
@@ -883,7 +918,7 @@ Window Geometry:
                 o0 = common[0]
                 ang = a0[2] - o0[3]
                 c, s = math.cos(ang), math.sin(ang)
-                for r in common[::2]:
+                for r in common:
                     tp = self._interp_pose(truth, r[0])
                     if tp is None:
                         continue
@@ -897,10 +932,11 @@ Window Geometry:
             if self.nonideal_loc:
                 obs = self.loc_models[d.name].observations
                 dropped = sum(1 for o in obs if not o[4])
+                outage_drops = sum(1 for o in obs if o[5] == 'outage')
                 fixes_hz = float((self.exec_cfg['localization']['gnss'] or {}).get('fix_hz', 0) or 0)
                 per_vehicle[d.name] = {
                     'fixes_generated': len(obs), 'fixes_delivered': len(obs) - dropped, 'fixes_dropped': dropped,
-                    'outage_exposure_s': round(dropped / fixes_hz, 2) if fixes_hz else 0.0,
+                    'outage_exposure_s': round(outage_drops / fixes_hz, 2) if fixes_hz else 0.0,
                     'position_error_mean_m': round(sum(pos_err) / len(pos_err), 4) if pos_err else None,
                     'position_error_max_m': round(max(pos_err), 4) if pos_err else None,
                     'yaw_error_max_rad': round(max(yaw_err), 4) if yaw_err else None,
@@ -915,10 +951,10 @@ Window Geometry:
             localization_block['note'] = '真值定位对照：控制使用真值，仅物理扰动生效'
         truth_cte = []
         for d in self.drivers:
-            for row in (self.rigid_poses.get(d.name) or [])[::5]:
+            for row in (self.rigid_poses.get(d.name) or []):
                 truth_cte.append(self._point_polyline_distance(row[1], row[2], d.path))
         events = self.execution_events
-        return {'schema': 'urp.field-execution-report/1',
+        return {'schema': 'urp.field-execution-report/2',
                 'localization': localization_block,
                 'slip': {'note': 'odom_excess = 轮式里程计路径长 − 真值路径长；物理接触滑移的后验观测量',
                          'per_vehicle': slip_rows},
@@ -940,7 +976,7 @@ Window Geometry:
                 if self.nonideal_loc:
                     self.loc_models[d.name].finalize(self.clock or 0.0)
             exec_report = self.execution_report()
-        vehicles = [d.summary(self.plan_by_name.get(d.name)) for d in self.drivers]
+        vehicles = [self.vehicle_summary(d) for d in self.drivers]
         durations = [v['duration_s'] for v in vehicles if v['duration_s'] is not None]
         planned = self.plan.get('planned', {})
         from urp_lab.field_energy import account
@@ -982,7 +1018,9 @@ Window Geometry:
                       algorithm=self.plan.get('algorithm'), world=self.world, finished_utc=now(), sim_time=self.clock,
                       real_time_factor=self.st.get('real_time_factor'), metrics=metrics, vehicles=vehicles,
                       tasks=[dict(vehicle=d.name, stop=list(t['goal']), requested_service_s=t['service_s'],
-                                  actual_service_s=t['serviced_at'] - t['t_sim'] if t['serviced_at'] is not None else None,
+                                  service_started_at=t.get('service_started_at', t['t_sim']),
+                                  actual_service_s=(t['serviced_at'] - (t.get('service_started_at') if t.get('service_started_at') is not None else t['t_sim'])
+                                                    if t['serviced_at'] is not None else None),
                                   service_complete=t['serviced_at'] is not None,
                                   **{k: t[k] for k in ('id', 'label', 'xy', 'state', 't_sim', 'distance_m', 'serviced_at')})
                              for d in self.drivers for t in d.tasks],
@@ -992,8 +1030,9 @@ Window Geometry:
                       execution_provenance=self.plan.get('execution_provenance'),
                       traffic={**self.plan.get('traffic', {}), 'events': self.traffic.events if self.traffic else []},
                       contacts=self.contacts, contact_examples=self.contact_examples,
+                      ground_contact_observations=list(self.ground_contact_observations.values()),
                       control_traces=self.control_traces,
-                      control_trace_columns=['t_sim', 'path_s_m', 'cross_track_m', 'cmd_v_mps', 'cmd_w_radps', 'state', 'pose_age_s'],
+                      control_trace_columns=['t_sim', 'path_s_m', 'cross_track_m', 'cmd_v_mps', 'cmd_w_radps', 'state', 'pose_age_s', 'controller_pose', 'controller_pose_stamp'],
                       truth_timing=self.truth_timing,
                       telemetry_contract=self.report.get('telemetry_contract'),
                       replay_contract={'schema': 'urp.replay/1', 'clock': 'simulation_source_time',
@@ -1013,8 +1052,11 @@ Window Geometry:
                       execution_events=(self.execution_events if self.slip_observable else None),
                       localization_observations=({d.name: self.loc_models[d.name].observations for d in self.drivers}
                                                  if self.nonideal_loc else None),
-                      localization_observation_columns=['t_measure_s', 't_available_s', 'x_obs_m', 'y_obs_m', 'delivered', 'drop_reason'],
+                      localization_observation_columns=['t_measure_s', 't_available_s', 'x_obs_m', 'y_obs_m', 'delivered', 'drop_reason', 't_delivered_s', 'truth_before_s', 'truth_after_s'],
                       pose_estimates=(self.pose_estimates if self.nonideal_loc else None),
+                      localization_inputs=({d.name: {'odometry': self.estimators[d.name].inputs,
+                          'truth_sensor': self.loc_models[d.name].truth_inputs, 'updates': self.estimators[d.name].updates}
+                          for d in self.drivers} if self.nonideal_loc else None),
                       pose_estimate_columns=['t_sim', 'x_est_m', 'y_est_m', 'yaw_est_rad', 'source'],
                       execution_started_sim_s=self.traffic.started if self.traffic else None,
                       vehicle_asset=self.plan.get('vehicle_asset'),
@@ -1024,7 +1066,7 @@ Window Geometry:
         if outcome is not None:
             result['state'] = outcome
         save(self.runtime / 'result-candidate.json', result)
-        if result['state'] == 'succeeded':
+        if self.execution_started:
             try:
                 # Geometry libraries stay in the locked Python 3.12 solver environment, outside ROS Python.
                 checked = subprocess.run([str(LAB / '.venv/bin/python'), '-m', 'urp_lab.fieldcheck', str(self.runtime)],
@@ -1034,11 +1076,13 @@ Window Geometry:
                 if checked.returncode:
                     raise RuntimeError(f'轨迹检查进程退出码 {checked.returncode}')
                 result['check'] = json.loads(checked.stdout)
-                if not result['check']['valid']:
+                if result['check'].get('task_truth') is not None:
+                    result['metrics']['tasks_verified'] = sum(t['valid'] for t in result['check']['task_truth']['tasks'])
+                if not result['check']['valid'] and result['state'] == 'succeeded':
                     result['state'] = 'failed'
                     self.st['errors'].extend(result['check']['errors'])
             except Exception as exc:
-                result['state'] = 'failed'
+                if result['state'] == 'succeeded': result['state'] = 'failed'
                 self.st['errors'].append(f'实际轨迹未通过独立检查：{exc}')
         result['errors'] = list(self.st['errors'])
         self.result = result
@@ -1096,7 +1140,7 @@ Window Geometry:
             st = copy.deepcopy(self.st)
         st['telemetry'] = copy.deepcopy(self.counts)
         if not st['vehicles']:
-            st['vehicles'] = [d.summary(self.plan_by_name.get(d.name)) for d in self.drivers]
+            st['vehicles'] = [self.vehicle_summary(d) for d in self.drivers]
         return st
 
     def run(self):

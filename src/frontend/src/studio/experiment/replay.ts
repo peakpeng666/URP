@@ -34,6 +34,7 @@ export interface SimResult extends TrafficEvidence {
   vehicles: FieldVehicleState[]; tasks: SimTask[]; trails: Record<string, TrailPoint[]>;
   execution_plan?: { vehicles?: SimPlanVehicle[]; instance?: import('../types').FleetInstance; robot_radius_m?: number; travel?: string; world?: string; bounds?: number[] };
   execution_provenance?: Record<string, unknown> | null; planning_solution?: Record<string, unknown> | null; provenance_warning?: string;
+  execution?: { schema?: string; mode?: string; localization?: { preset?: string; gnss?: Record<string, unknown> | null } } | null;
   physics?: FieldPhysics | null;
   physics_audit?: FieldPhysicsEvidence | null;
   physics_runtime?: FieldPhysicsEvidence | null;

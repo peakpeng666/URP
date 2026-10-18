@@ -122,27 +122,11 @@ def test_estimator_dead_reckoning_fusion_and_smoothing():
     x, y, _ = est.pose(20.0)
     err = math.hypot(x - truth_x, y)
     assert 0.02 < err < 0.16                        # converged to the biased fix, not to truth and not lost
-    # display continuity: corrections are ramped, never a per-sample teleport
-    est = ni.Estimator((0, 0), 0.0, gnss)
-    prev, worst = est.pose(0.0), 0.0
-    for i in range(1, 401):
-        t = i * 0.05
-        truth_x = t * 0.5
-        est.on_odom(0.5, 0.0, t)
-        if i % 10 == 0:
-            est.on_fix(truth_x + 0.3, 0.0, t)       # big bias to force large corrections
-        cur = est.pose(t)
-        worst = max(worst, math.hypot(cur[0] - prev[0], cur[1] - prev[1]))
-        prev = cur
-    assert worst < 0.15                             # ~0.3 m correction spread over a 0.4 s ramp
-    # wheelspin: odom outruns truth → large innovation (the online slip signal)
-    est = ni.Estimator((0, 0), 0.0, gnss)
-    for i in range(1, 121):
-        t = i * 0.05
-        est.on_odom(0.5, 0.0, t)
-        if i % 10 == 0:
-            est.on_fix(t * 0.2, 0.0, t)
-    assert est.last_innovation > ni.SLIP_GATE_M
+    # Delayed measurements must update their own time, not pull a moving state back.
+    est = ni.Estimator((0,0), 0, {'noise_std_m': 0})
+    for i in range(41): est.on_odom(1,0,i*.05)
+    assert est.on_fix(1,0,1,2)
+    assert est.pose(2)[0] == pytest.approx(2, abs=1e-8)
 
 
 def test_slip_experiment_predicate_branches_gates():
@@ -153,7 +137,7 @@ def test_slip_experiment_predicate_branches_gates():
     assert slip_experiment(None, {'ground_friction': 0.3}) is True
     assert slip_experiment(None, {'wheel_friction': 0.05}) is True
     assert slip_experiment(None, {'wheel_contact': 'tyre'}) is True
-    assert slip_experiment({'mode': 'nonideal'}, None) is True
+    assert slip_experiment({'mode': 'nonideal'}, None) is False
     base = {
         'physics': {'schema': 'urp.field-diffdrive.rigid/5',
                     'odometry_contract': __import__('urp_lab.field_physics', fromlist=['ODOMETRY_CONTRACT']).ODOMETRY_CONTRACT},
@@ -182,7 +166,8 @@ def test_dynamics_gate_branches_on_execution_mode():
     }
     ideal = verify(base)
     assert not ideal['valid'] and any('不一致' in e for e in ideal['errors'])
-    drifted = dict(base, execution={'mode': 'nonideal'})
+    assert not verify(dict(base, execution={'mode':'nonideal'}))['valid']
+    drifted = dict(base, execution={'mode': 'nonideal', 'ground': {'zones': [{'mu':.2}]}})
     nonideal = verify(drifted)
     assert nonideal['valid'] and nonideal['execution_mode'] == 'nonideal'
     row = nonideal['vehicles'][0]

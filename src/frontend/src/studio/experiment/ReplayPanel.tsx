@@ -144,7 +144,7 @@ export function ReplayPanel() {
           {r && <Button size="sm" variant="plain" icon={X} onClick={rp.clear}>关闭回放</Button>}
         </div>
         <p className={p.meta}>
-          田间仿真的执行方式是<b>路径跟踪</b>：每台车用纯追踪控制器沿规划路线行驶，不调用 Nav2 重规划；轨迹与位姿取自 <b>Gazebo 真值</b>，不是估计定位。
+          田间仿真的执行方式是<b>路径跟踪</b>：每台车用纯追踪控制器沿规划路线行驶，不调用 Nav2 重规划；回放图层显示 <b>Gazebo 真值</b>，控制器实际使用的定位来源见会话证据。
           TurtleBot4 + Nav2 在「仿真」工作区单独记录，可选 AMCL / 真值定位及几何路径跟踪 / Nav2 逐点重规划；以具体运行的来源为准。
         </p>
         {liveHere && <Notice tone="info">这张任务地图的仿真正在运行（{live?.phase}），结束后会出现在下面的列表里。</Notice>}
@@ -213,7 +213,7 @@ export function ReplayPanel() {
                 })}
               </tbody>
             </table>
-            <p className={p.meta}>历史回放 · 仿真源时钟 s。里程、用时、任务和横向偏差截至所选时刻；位置只在 ≤{gapLimit(r)} s 的连续样本间插值。跨缺口不连线，里程显示可观测下界。旧记录缺少完成停留证据时只显示到点。地图输入不同或缺少冻结输入时不叠加历史轨迹。</p>
+            <p className={p.meta}>历史回放 · 仿真源时钟 s。到点与停留事件来自控制器判定，独立真值验收另列。里程、用时、任务和横向偏差截至所选时刻；位置只在 ≤{gapLimit(r)} s 的连续样本间插值。跨缺口不连线，里程显示可观测下界。旧记录缺少完成停留证据时只显示到点。地图输入不同或缺少冻结输入时不叠加历史轨迹。</p>
             <h3>任务事件（截至 {clock(rp.t)}）</h3>
             {!taskEvents(r).some((event) => event.t <= rp.t) && <p className={p.hint}>当前时刻之前还没有到点或完成停留记录。</p>}
             {taskEvents(r).filter((event) => event.t <= rp.t).slice(-10).reverse().map((event) => (

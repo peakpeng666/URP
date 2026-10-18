@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Non-ideal field execution acceptance: tire slip (friction), ground friction zones and
+"""Legacy exploratory protocol: tire slip (friction), ground friction zones and
 localization error, in single-factor, combined and should-fail conditions.
 
 Run from src/lab: .venv/bin/python e2e/nonideal_backend.py --out /absolute/evidence/path
 Requires the existing ROS/Gazebo installation. Isolated store, ROS domain and runtime;
 never controls foreign sessions and never writes production records.
 
-Pre-declared directional assertions (fixed before the runs, not tuned afterwards):
+Historical directional assertions (retained to reproduce earlier expectations):
 - ideal: mission succeeds; no-slip reference still consistent; odom excess < 0.3 m.
 - slip_uniform (μ=0.3 everywhere, truth localization): mission completes; odom-truth
   divergence grows beyond 0.5 m (ideal reference: ≤0.10 m by contract, observed ~0.006)
@@ -24,7 +24,11 @@ Pre-declared directional assertions (fixed before the runs, not tuned afterwards
 - extreme (μ=0.05 mud + severe localization): NOT a clean success — either an honest
   failure or at least one recorded online intervention.
 
-Amendment history (thresholds never changed; metric choice corrected with reasons):
+These expectations were revised during GLM debugging, not independently preregistered.
+Current acceptance is e2e/nonideal_audit.py. The current stricter truth dwell gate may
+reject outcomes that this old protocol expected to succeed; keep those failures.
+
+Amendment history (metric choices corrected after observed results):
 - Round 1 found two integration defects, fixed before the rerun: (1) zone-box contacts
   were misclassified as foreign collisions; (2) physics-deviated sessions still ran the
   ideal no-slip gate. The extreme case's "20 s outage triggers hold" assertion moved to
@@ -49,6 +53,8 @@ p.add_argument('--out', type=Path, required=True)
 p.add_argument('--cases', default='ideal,slip_uniform,ground_zones,loc_error,outage,outage_hold,combined,extreme')
 p.add_argument('--rtf', type=float, default=8.0)
 args = p.parse_args()
+if not args.out.is_absolute():
+    p.error('--out must be absolute')
 out = args.out.resolve()
 out.mkdir(parents=True, exist_ok=False)
 os.environ['URP_LAB_RUNTIME'] = str(out / 'runtime')
@@ -125,8 +131,8 @@ try:
                 return c.get(api + '/fieldsim').json()
 
             final = wait_for(state, lambda s: s['phase'] in ('finished', 'failed') or not s['running'], 700)
-            c.post(api + '/fieldsim/stop', json={})
-            wait_for(state, lambda s: not s['running'], 120)
+            c.post(api + '/fieldsim/stop', json={}).raise_for_status()
+            closed = wait_for(state, lambda s: not s['running'], 120)
             result = c.get(api + f'/fieldsim/results/{sid}').json()
             report = json.loads((runtime / 'session-report.json').read_text()) if (runtime / 'session-report.json').is_file() else None
             m = result.get('metrics', {})
@@ -200,7 +206,7 @@ try:
                 expect('极端条件不是干净成功（失败或干预）', not clean)
                 expect('估计器模式下无真值直连', result.get('pose_estimates') is not None)
             results[case] = {
-                'session_id': sid, 'state': result.get('state'), 'returncode': (report or {}).get('cleanup_status'),
+                'session_id': sid, 'state': result.get('state'), 'returncode': closed.get('returncode'), 'cleanup_status': (report or {}).get('cleanup_status'),
                 'metrics': {k: m.get(k) for k in ('tasks_reached', 'tasks_total', 'makespan_s', 'total_distance_m',
                                                   'cross_track_mean_m', 'cross_track_max_m', 'odom_excess_total_m',
                                                   'odom_divergence_max_m', 'localization_position_error_mean_m',
@@ -224,7 +230,7 @@ try:
     summary = {'schema': 'urp.nonideal-execution-acceptance/1', 'generated_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
                'run_id': run_id, 'rtf': args.rtf, 'cases': results,
                'status': 'PASS' if overall else 'FAIL',
-               'scope': '非理想执行验收：单因素方向性 + 组合 + 应失败/保护；估计误差与滑移为观测量，不是门槛',
+               'scope': '历史探索协议复跑：保留原期望及失败，不代表当前非理想独立验收；当前入口为 nonideal_audit.py',
                'thresholds': {'ideal_odom_divergence_m': 0.3, 'slip_uniform_odom_divergence_m': 0.5,
                               'ground_zones_divergence_m': [0.5, 0.3], 'loc_error_band_m': [0.03, 0.4],
                               'hold_threshold_s': 15}}

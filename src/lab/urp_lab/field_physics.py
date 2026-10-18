@@ -162,8 +162,8 @@ def audit_sdf(path, expected):
         errors.append('SDF 碰撞检测器与冻结配置不一致')
     if world.findtext('physics/dart/solver/solver_type') != 'dantzig':
         errors.append('SDF 约束求解器不是声明的 dantzig')
-    ground = world.find("model[@name='ground']/link/collision/surface/friction/ode")
-    if ground is None or any(float(ground.findtext(k, 'nan')) != expected['ground_friction'] for k in ('mu','mu2')):
+    ground = world.findall("model[@name='ground']/link/collision")
+    if not ground or any(float(g.findtext(f'surface/friction/ode/{k}', 'nan')) != expected['ground_friction'] for g in ground for k in ('mu','mu2')):
         errors.append('SDF 地面摩擦与冻结配置不一致')
     engines = world.findall("plugin[@name='gz::sim::systems::Physics']/engine/filename")
     if len(engines) != 1 or engines[0].text != expected['engine']:

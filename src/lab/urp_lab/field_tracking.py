@@ -64,6 +64,10 @@ class Driver:
         for t in self.tasks:  # where the route turns at a stop, drive onto it before turning
             t['radius'] = CORNER_RADIUS if any(abs(c - t['s']) < 0.05 for c in self.corners) else TASK_RADIUS
         self.servicing_task = None
+        self.strict_service = False
+        self.stationary_since = None
+        self.stationary_confirmation_s = 1.0
+        self.terminal_radius = .35
         self.failure = None
         self.samples = []
         self.s = 0.0
@@ -156,6 +160,22 @@ class Driver:
         if self.t_start is None:
             self.t_start = t_sim
         if self.state == 'servicing':
+            if self.strict_service:
+                if self.speed_now >= .02 or self.angular_speed_now >= .05:
+                    self.stationary_since = None
+                    self.servicing_task['service_started_at'] = None
+                    self.dwell_until = t_sim + self.servicing_task['service_s']
+                    return 0.0, 0.0
+                if self.stationary_since is None:
+                    self.stationary_since = t_sim
+                # Wheel stop alone cannot establish body stop under slip. Wait for
+                # a continuous quiet interval before counting work; the independent
+                # truth gate still rejects sliding throughout any credited dwell.
+                if t_sim - self.stationary_since < self.stationary_confirmation_s:
+                    return 0.0, 0.0
+                if self.servicing_task.get('service_started_at') is None:
+                    self.servicing_task['service_started_at'] = t_sim
+                    self.dwell_until = t_sim + self.servicing_task['service_s']
             if t_sim < self.dwell_until:
                 return 0.0, 0.0
             self.servicing_task['serviced_at'] = t_sim
@@ -172,11 +192,12 @@ class Driver:
             self.s = max(self.s, task['s'])
             if task.get('service_s', 0) > 0:
                 self.state, self.dwell_until = 'servicing', t_sim + task['service_s']
+                self.stationary_since = None
                 self.servicing_task = task
                 return 0.0, 0.0
             task['serviced_at'] = t_sim
             task = self.next_task()
-        if not task and self.length - self.s < 0.35 and math.dist((x, y), self.path[-1]) < 0.35:
+        if not task and self.length - self.s < self.terminal_radius and math.dist((x, y), self.path[-1]) < self.terminal_radius:
             self.state, self.t_done = 'done', t_sim
             return 0.0, 0.0
         # never look past the next task stop or sharp corner

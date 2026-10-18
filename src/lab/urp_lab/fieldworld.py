@@ -397,6 +397,9 @@ def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_f
     <model name="ground_zones"><static>true</static><link name="link">
       {''.join(field_nonideal.zone_sdf(z, i) for i, z in enumerate(zones))}
     </link></model>""" if zones else '')
+    ground_collision = (field_nonideal.ground_collisions(zones, boundary.bounds, physical['ground_friction']) if zones else
+        f'<collision name="collision"><geometry><plane><normal>0 0 1</normal><size>{w:.1f} {h:.1f}</size></plane></geometry>'
+        f'<surface><friction><ode><mu>{physical["ground_friction"]}</mu><mu2>{physical["ground_friction"]}</mu2></ode></friction></surface></collision>')
     sdf = f"""<?xml version="1.0"?>
 <sdf version="1.8">
   <world name="{world}">
@@ -420,9 +423,8 @@ def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_f
       <specular>0.2 0.2 0.2 1</specular>
       <direction>-0.35 0.25 -0.9</direction>
     </light>
-    <model name="ground"><static>true</static><pose>{(minx + maxx) / 2:.3f} {(miny + maxy) / 2:.3f} -0.01 0 0 0</pose><link name="link">
-      <collision name="collision"><geometry><plane><normal>0 0 1</normal><size>{w:.1f} {h:.1f}</size></plane></geometry>
-        <surface><friction><ode><mu>{physical['ground_friction']}</mu><mu2>{physical['ground_friction']}</mu2></ode></friction></surface></collision>
+    <model name="ground"><static>true</static><pose>{(minx + maxx) / 2:.9f} {(miny + maxy) / 2:.9f} -0.01 0 0 0</pose><link name="link">
+      {ground_collision}
       <visual name="visual"><geometry><plane><normal>0 0 1</normal><size>{w:.1f} {h:.1f}</size></plane></geometry>{_material(GRASS)}</visual>
     </link></model>
     <model name="field"><static>true</static><link name="link">

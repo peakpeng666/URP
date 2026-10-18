@@ -27,6 +27,11 @@ def verify_nonideal_observations(plan, result):
     pass conditions."""
     errors, details = [], []
     exec_cfg = plan.get('execution') or {}
+    replay = None
+    if exec_cfg.get('schema') == 'urp.field-execution/2':
+        from .field_observation_check import verify as replay_verify
+        replay = replay_verify(plan, result)
+        errors.extend(replay['errors'])
     gnss = (exec_cfg.get('localization') or {}).get('gnss')
     for v in plan['vehicles']:
         name = v['name']
@@ -73,7 +78,7 @@ def verify_nonideal_observations(plan, result):
                 if not r[4] and not r[5]:
                     errors.append(f'{v["label"]} 观测被丢弃但没有声明原因')
                     break
-                details.append({'vehicle': name, 'fixes_generated': len(obs), 'fixes_delivered': int(len(delivered)),
+            details.append({'vehicle': name, 'fixes_generated': len(obs), 'fixes_delivered': int(len(delivered)),
                                 'fixes_dropped': int(dropped), 'observation_span_s': round(span, 1)})
     report = result.get('execution_report') or {}
     if not report.get('localization') or not report.get('slip'):
@@ -82,13 +87,13 @@ def verify_nonideal_observations(plan, result):
     counted = sum(1 for e in events if e.get('intervention'))
     if (report.get('interventions') or 0) != counted:
         errors.append('干预计数与事件记录不一致')
-    return {'valid': not errors, 'errors': errors, 'observations': details,
+    return {'valid': not errors, 'errors': errors, 'observations': details, 'chain_replay': replay,
             'scope': '观测模型一致性（频率/延迟/丢弃/覆盖）与真值隔离检查；误差大小是实验结果，不是门槛'}
 
 
 def verify_motion_metrics(result):
     """Cross-check online integration with the independently saved pose sequence."""
-    errors, details = [], []
+    errors, details, data_errors = [], [], []
     for v in result.get('vehicles', []):
         trail = result.get('trails', {}).get(v['name'], [])
         traced = sum(math.dist(a[1:3], b[1:3]) for a, b in zip(trail, trail[1:]))
@@ -97,7 +102,7 @@ def verify_motion_metrics(result):
         valid = (isinstance(measured, (int, float)) and math.isfinite(measured)
                  and measured >= 0 and abs(measured - traced) <= tolerance)
         if not valid:
-            errors.append(f"{v['name']} 在线累计里程与保存的真值轨迹不一致")
+            data_errors.append(f"{v['name']} 在线累计里程与保存的真值轨迹不一致")
         stopped = isinstance(speed, (int, float)) and math.isfinite(speed) and 0 <= speed < .02
         if not stopped:
             errors.append(f"{v['name']} 终点实测速度未稳定停止")
@@ -106,8 +111,48 @@ def verify_motion_metrics(result):
     total = result.get('metrics', {}).get('total_distance_m')
     if (not isinstance(total, (int, float)) or not math.isfinite(total)
             or abs(total - sum(v.get('distance_m') or 0 for v in result.get('vehicles', []))) > .02 * max(1, len(details))):
-        errors.append('总实测里程与各车里程之和不一致')
-    return {'valid': not errors, 'errors': errors, 'vehicles': details}
+        data_errors.append('总实测里程与各车里程之和不一致')
+    errors.extend(data_errors)
+    return {'valid': not errors, 'data_valid': not data_errors, 'errors': errors, 'vehicles': details}
+
+
+def verify_task_truth(plan, result):
+    from .field_tracking import Driver
+    errors, details = [], []
+    for vehicle in plan['vehicles']:
+        name = vehicle['name']
+        trail = np.asarray((result.get('trails') or {}).get(name, []), dtype=float)
+        if trail.ndim != 2 or len(trail) < 2 or trail.shape[1] < 4:
+            errors.append(f'{name} 缺少任务真值证据')
+            continue
+        observed = {r['id']:r for r in result.get('tasks',[]) if r['vehicle']==name}
+        for task in Driver(vehicle, 1.0).tasks:
+            r = observed.get(task['id'], {})
+            begin, end = r.get('service_started_at'), r.get('serviced_at')
+            if task['service_s'] <= 0: begin = r.get('t_sim')
+            if begin is None or end is None or not all(isinstance(t,(int,float)) and math.isfinite(t) for t in (begin,end)):
+                errors.append(f'{name} 任务 {task["id"]} 无真实停留区间')
+                continue
+            valid = end-begin+1e-6 >= task['service_s'] and begin >= trail[0,0] and end <= trail[-1,0]
+            times = np.r_[begin, trail[(trail[:,0]>begin)&(trail[:,0]<end),0], end]
+            xy = np.column_stack([np.interp(times,trail[:,0],trail[:,c]) for c in (1,2)])
+            yaw = np.interp(times,trail[:,0],np.unwrap(trail[:,3]))
+            distances = np.linalg.norm(xy-np.asarray(task['goal']),axis=1)
+            valid = valid and float(distances.max()) <= task['radius'] + .005
+            speeds = np.linalg.norm(np.diff(xy,axis=0),axis=1)/np.maximum(np.diff(times),1e-9)
+            yaw_rates = np.abs(np.diff(yaw))/np.maximum(np.diff(times),1e-9)
+            valid = valid and (task['service_s']<=0 or (float(speeds.max()) <= .03 and float(yaw_rates.max()) <= .05))
+            details.append({'vehicle':name,'task':task['id'],'truth_radius_m':task['radius'],
+                'max_distance_m':float(distances.max()),'max_speed_mps':float(speeds.max()),
+                'max_yaw_rate_radps':float(yaw_rates.max()),'valid':bool(valid)})
+            if not valid: errors.append(f'{name} 任务 {task["id"]} 真值位置或静止停留不满足声明条件')
+        # A wheel-derived zero velocity is not evidence that a slipping body stopped.
+        start = max(trail[0,0],trail[-1,0]-.5)
+        p = trail[trail[:,0]>=start]
+        if (len(p)<2 or np.max(np.linalg.norm(np.diff(p[:,1:3],axis=0),axis=1)/np.diff(p[:,0])) >= .02
+                or np.max(np.abs(np.diff(np.unwrap(p[:,3])))/np.diff(p[:,0])) >= .05):
+            errors.append(f'{name} 终点刚体真值未稳定静止')
+    return {'valid':not errors,'errors':errors,'tasks':details,'scope':'truth position and stop/dwell, distinct from estimated arrival'}
 
 
 def verify(plan, result):
@@ -120,8 +165,10 @@ def verify(plan, result):
     radius = plan['robot_radius_m']
     errors, details = [], []
     motion_metrics = verify_motion_metrics(result) if 'truth_timing' in result else None
-    if motion_metrics:
-        errors.extend(motion_metrics['errors'])
+    if result.get('execution') != plan.get('execution'):
+        errors.append('执行配置与冻结计划不一致；不得用结果标志改变验收分支')
+    if plan.get('execution') and not (plan.get('ground_zones_audit') or {}).get('valid'):
+        errors.append('缺少冻结地面分区的 SDF 审计')
     dynamics = None
     if plan.get('physics') or result.get('physics'):
         if result.get('physics') != plan.get('physics') or not (plan.get('physics_audit') or {}).get('valid'):
@@ -129,12 +176,19 @@ def verify(plan, result):
         if (result.get('physics_runtime') or {}).get('valid') is not True:
             errors.append('缺少物理实现加载及配置核验，不能认证执行结果')
         from .field_dynamics import verify as verify_dynamics
-        dynamics = verify_dynamics(result)
+        dynamics = verify_dynamics({**result, 'execution': plan.get('execution')})
         errors.extend(dynamics['errors'])
+    frozen_valid = not errors and (motion_metrics is None or motion_metrics['data_valid'])
+    if motion_metrics:
+        errors.extend(motion_metrics['errors'])
     nonideal = None
     if (plan.get('execution') or {}).get('mode') == 'nonideal':
         nonideal = verify_nonideal_observations(plan, result)
         errors.extend(nonideal['errors'])
+    task_truth = None
+    if (plan.get('execution') or {}).get('schema') == 'urp.field-execution/2':
+        task_truth = verify_task_truth(plan, result)
+        errors.extend(task_truth['errors'])
     for v in plan['vehicles']:
         trail = result.get('trails', {}).get(v['name'], [])
         if not trail or any(len(p) < 4 or not all(math.isfinite(x) for x in p[:4]) for p in trail):
@@ -187,9 +241,9 @@ def verify(plan, result):
             errors.append('Gazebo 记录到车辆与实体障碍或其他车辆接触')
         if not all(result.get('telemetry', {}).get('contacts', {}).get(v['name'], 0) > 0 for v in plan['vehicles']):
             errors.append('缺少接触传感器消息，不能把未观测到的接触判为零')
-    return {'valid': not errors, 'errors': errors, 'vehicles': details, 'radius_m': radius,
+    return {'valid': not errors, 'data_valid': frozen_valid and (nonideal is None or nonideal['valid']), 'errors': errors, 'vehicles': details, 'radius_m': radius,
             'traffic': traffic, 'motion_metrics': motion_metrics, 'dynamics': dynamics,
-            'nonideal_observations': nonideal,
+            'nonideal_observations': nonideal, 'task_truth': task_truth,
             'track_tolerance_m': TRACK_LIMIT_M, 'distance_sampling_m': 0.1, 'distance_error_bound_m': 0.05,
             'scope': '实测轨迹线段的圆足迹、完整路径；有交通策略时另检车间同步距离与接触记录；非理想模式另检观测模型一致性'}
 
