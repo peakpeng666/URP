@@ -13,6 +13,7 @@ lab_node_path() {
   return 0
 }
 case "$operation" in
+  reproduce) exec python3 tools/platform_deploy.py "$@" ;;
   build) exec bash setup/profile.sh frontend npm run build --prefix src/frontend -- "$@" ;;
   frontend) exec bash setup/profile.sh frontend bash src/start.sh frontend "$@" ;;
   backend) exec bash src/start.sh backend "$@" ;;
@@ -86,5 +87,5 @@ PY
   lab-stop)
     exec curl --fail-with-body -sS -X POST -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:4100/lab/api/shutdown
     ;;
-  *) printf 'Usage: bash setup/run.sh lab|lab-stop|lab-setup|build|frontend|backend|research|numpy|solver-check|navigation [ARGS...]\n' ;;
+  *) printf 'Usage: bash setup/run.sh reproduce|lab|lab-stop|lab-setup|build|frontend|backend|research|numpy|solver-check|navigation [ARGS...]\n' ;;
 esac

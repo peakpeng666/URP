@@ -1,0 +1,10 @@
+{
+  "public_unauthenticated_downloads": true,
+  "assets_catalog": "setup/platform-snapshot.json",
+  "archive_members": 116543,
+  "files": 114845,
+  "symlinks": 1698,
+  "database_snapshots": 60,
+  "all_file_hashes_and_links_match": true,
+  "all_database_integrity_and_row_counts_match": true
+}

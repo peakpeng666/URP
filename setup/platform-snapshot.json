@@ -1,0 +1,145 @@
+{
+  "base_commit": "ddb5113e641ba63846431d4e3114efaf85f2fc89",
+  "created_utc": "2026-10-18T12:50:48.957316+00:00",
+  "release_tag": "platform-snapshot-20261018-ddb5113e",
+  "repository": "peakpeng666/URP",
+  "repository_visibility": "public",
+  "scope": "Project runtime and full numerical evidence, dependencies and native installed artifacts; no host credentials, browser profiles, operating system or drivers.",
+  "compatibility": "Ubuntu 22.04 x86_64, ROS 2 Humble, Gazebo Fortress; raw venv/ELF snapshots are path/ABI dependent.",
+  "licenses": "Per-file/package upstream terms apply; some Fuel models are NC/ND. See metadata/NOTICES.txt and fuel-licenses.json.",
+  "redaction": "Only publication copies are scrubbed; scientific numbers, states and failed runs remain. Each transformed file is identified in files.jsonl.zst.",
+  "restore_policy": "Fresh directory only. Never automatically install host files or overwrite runtime.",
+  "schema": "urp.platform-snapshot/1",
+  "assets": [
+    {
+      "name": "project-runtime.tar.zst",
+      "sha256": "f4242c7904218f132f2c6461d51bb62c4428e056e8f0b6c33d46f26541b8a6bd",
+      "bytes": 326147402,
+      "files": 4942,
+      "uncompressed_bytes": 1218058804,
+      "redactions": 113
+    },
+    {
+      "name": "project-local-state.tar.zst",
+      "sha256": "c1c1ea6a634942c514676bba07398088054c7a9f81cbf115bd3e569b1ecd8c28",
+      "bytes": 4059853,
+      "files": 229,
+      "uncompressed_bytes": 61438848,
+      "redactions": 0
+    },
+    {
+      "name": "evidence-2026-10-15.tar.zst",
+      "sha256": "7d202bd7ec960b675b8190aab03884d280ed8ec1211d24f3744169e1aaf89a68",
+      "bytes": 25526091,
+      "files": 5873,
+      "uncompressed_bytes": 130154989,
+      "redactions": 4
+    },
+    {
+      "name": "evidence-2026-10-16.tar.zst",
+      "sha256": "740700f6ac3f463f6127dd064d471a141dc28250a93a2c8901645989bcebfba9",
+      "bytes": 27983820,
+      "files": 3713,
+      "uncompressed_bytes": 72386478,
+      "redactions": 62
+    },
+    {
+      "name": "evidence-2026-10-17.tar.zst",
+      "sha256": "78b8a547761139e8984c7ad6ed1292b1599e29866c77bebb1000c2ca09343c49",
+      "bytes": 107378224,
+      "files": 2373,
+      "uncompressed_bytes": 721288730,
+      "redactions": 33
+    },
+    {
+      "name": "evidence-2026-10-18.tar.zst",
+      "sha256": "ac51de4137d645112b3e0be2e4aaff3d5c8f615dc90b10b7dedc8964ec26186c",
+      "bytes": 448321148,
+      "files": 4620,
+      "uncompressed_bytes": 2771401648,
+      "redactions": 134
+    },
+    {
+      "name": "compiled-and-wheels.tar.zst",
+      "sha256": "5b90b8c95d8ad9dfb82382ac9bfba7005254004f5209156b71929a0e4be2af3c",
+      "bytes": 55249092,
+      "files": 150,
+      "uncompressed_bytes": 110540114,
+      "redactions": 0
+    },
+    {
+      "name": "fuel-cache.tar.zst",
+      "sha256": "ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d",
+      "bytes": 144263245,
+      "files": 197,
+      "uncompressed_bytes": 174825180,
+      "redactions": 0
+    },
+    {
+      "name": "download-caches.tar.zst",
+      "sha256": "af193d56559b1e0837e1bca2f43efcda38918906566ceb37c510d54b2db58569",
+      "bytes": 157435220,
+      "files": 1679,
+      "uncompressed_bytes": 478338288,
+      "redactions": 0
+    },
+    {
+      "name": "python-environments.tar.zst",
+      "sha256": "ddcd69456155739457dbec11aa4c32749491005f68359339a00bf46e9060b08c",
+      "bytes": 321373486,
+      "files": 18192,
+      "uncompressed_bytes": 1109728507,
+      "redactions": 0
+    },
+    {
+      "name": "frontend-environment.tar.zst",
+      "sha256": "5ab47e62b8567fc1ed04ad081f679826692e3feac414840509d3390b6eccc99f",
+      "bytes": 105831105,
+      "files": 25710,
+      "uncompressed_bytes": 534411217,
+      "redactions": 0
+    },
+    {
+      "name": "ros-gazebo-installed.tar.zst",
+      "sha256": "fdb09217cabf0ee2b87103b13f7e9528a5a6cd2f0a69100bfda815fe3fdc78e4",
+      "bytes": 97141474,
+      "files": 29885,
+      "uncompressed_bytes": 520354657,
+      "redactions": 0
+    },
+    {
+      "name": "metadata.tar.zst",
+      "sha256": "54b6b4e48a816ae03c90c02e68ac7328365728f74739ec9d90db0d0dc93b9ae7",
+      "bytes": 10264041,
+      "files": 13,
+      "uncompressed_bytes": 11640488,
+      "redactions": 0
+    },
+    {
+      "name": "files.jsonl.zst",
+      "bytes": 5736042,
+      "sha256": "5afd3d492d9a2c5872592f767ab9b686c6c3a8305090ce7131aeac9ecc333792"
+    },
+    {
+      "name": "exclusions.json",
+      "bytes": 1524960,
+      "sha256": "2f5cdbd462f76cca4f151943ee000f66a8b5599854af04a83037756617a0227d"
+    },
+    {
+      "name": "platform_snapshot.py",
+      "bytes": 18658,
+      "sha256": "49e9b2c47773b25e8dd18c48cf181a4f2f5a837f009526d78d41b91bb733a165"
+    },
+    {
+      "name": "additional-project.tar.gz",
+      "sha256": "cb602cbbfc17e4dc85507072d5d225859496885ff3a0441f85eac9e7b8ec2b8c",
+      "bytes": 492860756,
+      "files": 18967,
+      "uncompressed_bytes": 1553303188,
+      "redactions": 0
+    }
+  ],
+  "exclusions_count": 7397,
+  "archive_layout": "project/, host/, python/, metadata/; unpack in a new directory only",
+  "additional_scope": "Includes all ignored baseline-worker source/JDK/environment/batches/deliverables, old backend/research environments and legacy backend database."
+}

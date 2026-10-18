@@ -19,6 +19,7 @@ p = argparse.ArgumentParser()
 p.add_argument('--out', type=Path, required=True)
 p.add_argument('--cases', default='free,rows,supply,cancel,clock_stall,bridge_exit,contact,restart,web')
 p.add_argument('--physics', type=json.loads, default=None, help='Explicit physical-model overrides as JSON')
+p.add_argument('--headless', action='store_true', help='Verify real web bridges without claiming native RViz window acceptance')
 args = p.parse_args()
 out = args.out.resolve()
 out.mkdir(parents=True, exist_ok=False)
@@ -144,13 +145,16 @@ try:
                     worlds = ws.recv(timeout=5)
                     assert ready['world'].encode() in (worlds.encode() if isinstance(worlds, str) else worlds)
                     save('gazebo-web.json', {'world': ready['world'], 'protobuf_schema_bytes': len(proto), 'world_response_bytes': len(worlds)})
-                for _ in range(2):
-                    assert c.post(api + '/fieldsim/window', json={'kind': 'rviz', 'on': True}).status_code == 200
-                    wait_for(state, lambda s: s['components'].get('rviz') == 'running', 10)
-                    time.sleep(1)
-                    assert c.post(api + '/fieldsim/window', json={'kind': 'rviz', 'on': False}).status_code == 200
-                    wait_for(state, lambda s: s['components'].get('rviz') == 'off', 15)
-                assert (runtime / 'logs/rviz.log').exists() and (runtime / 'logs/rviz-1.log').exists()
+                save('native-window-scope.json', {'tested': not args.headless,
+                     'reason': 'explicit headless acceptance' if args.headless else 'two RViz open/close cycles'})
+                if not args.headless:
+                    for _ in range(2):
+                        assert c.post(api + '/fieldsim/window', json={'kind': 'rviz', 'on': True}).status_code == 200
+                        wait_for(state, lambda s: s['components'].get('rviz') == 'running', 10)
+                        time.sleep(1)
+                        assert c.post(api + '/fieldsim/window', json={'kind': 'rviz', 'on': False}).status_code == 200
+                        wait_for(state, lambda s: s['components'].get('rviz') == 'off', 15)
+                    assert (runtime / 'logs/rviz.log').exists() and (runtime / 'logs/rviz-1.log').exists()
             if case == 'contact':
                 # Fault only our own world: overlap the waiting robot with the active one.
                 # This tests the actual physics -> bridge -> contact fail-stop chain.

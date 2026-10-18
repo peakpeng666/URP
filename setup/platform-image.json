@@ -1,0 +1,277 @@
+{
+  "schema": "urp.platform-image/1",
+  "source_commit": "ddb5113e641ba63846431d4e3114efaf85f2fc89",
+  "release_tag": "platform-snapshot-20261018-ddb5113e",
+  "image_id": "sha256:560989d78e37b2fcbde64561be343975779a29798037c202519c5157187e27ad",
+  "image_tag": "urp-platform:20261018-ddb5113e",
+  "architecture": "linux/amd64",
+  "assets": [
+    {
+      "name": "platform-image.tar.zst.chunk000",
+      "bytes": 134217728,
+      "sha256": "e426431625b0d4f3b96d72645b757f912ac315131e145d6bf3cfd1e086299773"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk001",
+      "bytes": 134217728,
+      "sha256": "350c90efd5d45605a01f0d091700147374a99fcf6b6f233d89ce023f9bf99924"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk002",
+      "bytes": 134217728,
+      "sha256": "bf74661d28151360a1fd33e818b835be391104a75a0b406fe16abc7ec9bdd29b"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk003",
+      "bytes": 134217728,
+      "sha256": "f0ffdbfb7414ab9303ca81748b758d51a9832a9ff4c2c258dae66c3f8e14e695"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk004",
+      "bytes": 134217728,
+      "sha256": "6e0ef9147373e9a4c17ed1681da5f6e6eee398d8f04f22e762a983f3abdd352a"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk005",
+      "bytes": 134217728,
+      "sha256": "8356441fd3bb655880685094c166ca9d079a7bab42d9803eefeef80f5d66e9c7"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk006",
+      "bytes": 134217728,
+      "sha256": "8ee655e8fe2d1aec1408e5581669ac45da3fe67af763c00f6d6cd0739876f271"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk007",
+      "bytes": 134217728,
+      "sha256": "b7150ad17e920f832414d94ed7f386ec49384d61826213d458470f12b6174cc3"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk008",
+      "bytes": 134217728,
+      "sha256": "a1b6e85d98daef35d7f228c93a8a1be160381bb9a3a19934c4e1e892bd66d955"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk009",
+      "bytes": 134217728,
+      "sha256": "674b530d9d6030ba6403713f5e20bda84732078a98bab9aa1ec9c009be5bbe19"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk010",
+      "bytes": 134217728,
+      "sha256": "079ea4e36d1ca015a82b8b0e295508111298fc5697f36496eaecab21c2b39298"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk011",
+      "bytes": 134217728,
+      "sha256": "530230dde66f094b070fcd4f3ceca54646cd8f4d7a05b8602ec0f9a1ededcaad"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk012",
+      "bytes": 134217728,
+      "sha256": "bec323126db7c8be17807f5dbb7d90410f76d607585a916d258936855fed3bdf"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk013",
+      "bytes": 134217728,
+      "sha256": "a9849bbdba8135e932ef6f6cf0a83d6f8e551cb76c859f9cdc6365e6919f0d3a"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk014",
+      "bytes": 134217728,
+      "sha256": "9eb5c83844b8ac3bfdc42e1b08a19f2b966f72e56975394c009124b6f7407a9f"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk015",
+      "bytes": 134217728,
+      "sha256": "77ff64c523af1cd095da3abe5c2ce2de9bfc97754ae2370a0086f55075b03b11"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk016",
+      "bytes": 134217728,
+      "sha256": "b1b6ee5b8da9f892f635f7dbff080d9056e3c165182e062fcce96f656f93f7e9"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk017",
+      "bytes": 134217728,
+      "sha256": "0917001055391aca987e7f53e1f5c53d200f4212d067d1f5a1670652e9767403"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk018",
+      "bytes": 134217728,
+      "sha256": "4f105db106f20e276056fa7d9366a88056828de61f4a9c879deeafeeec396615"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk019",
+      "bytes": 134217728,
+      "sha256": "c2a3b3855beeaa43f047be96d5dcd7f5d30c2eb3eb1040f49b7bfefd676ade72"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk020",
+      "bytes": 134217728,
+      "sha256": "31004305eb264eb8195efd1e9e59288beb932d372e88a5ce037ee74dd7fe02d4"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk021",
+      "bytes": 134217728,
+      "sha256": "78a1739902fe6b496fd287bda46de0891365af6128bb7ae760b9745ef0dd7208"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk022",
+      "bytes": 134217728,
+      "sha256": "a06d94a66e7994d7a8ead84b741eeebb533dac157e6b61c0f3a2f0cc70cd2781"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk023",
+      "bytes": 134217728,
+      "sha256": "f2b95ff909c26223093bdfd13657bc428f90a3bbfa1055079462e4aaea669789"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk024",
+      "bytes": 134217728,
+      "sha256": "0cf82fbf7173264556a42888ca597d6af21481a0a5cf3e6309b3506c1c622a9b"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk025",
+      "bytes": 134217728,
+      "sha256": "7e83aade499f72ea766809a1ac7b74cc26666c8898347f1b8fd8c6a094a19b83"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk026",
+      "bytes": 134217728,
+      "sha256": "b349d76729429080410455c1193ac587ee4ae73af37af4df02cb543e71efcd1e"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk027",
+      "bytes": 134217728,
+      "sha256": "b98ac9e8acb858ba6e104cd3063c66b4b86f8f4bcb46d9e410ffc6969948a45e"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk028",
+      "bytes": 134217728,
+      "sha256": "37278ddbbac2dcff463b6ef0437cda1fd8b5100c8f10986bba420e779c35f214"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk029",
+      "bytes": 134217728,
+      "sha256": "820ca6591e3f25519abcfda1c9ef8404131773acc422b3ad5dc59bdf9c97c88a"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk030",
+      "bytes": 134217728,
+      "sha256": "04026bac6e5378fdaee2554603b1c275545bf899c017c0ce0acd8ce031679924"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk031",
+      "bytes": 134217728,
+      "sha256": "0fb9ffa6d697fc8c072b4e65230e899e9dc0f79942aa3cd7f765b517d6bf418f"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk032",
+      "bytes": 134217728,
+      "sha256": "85c589715cb23189fe5eeec6620c78c5221ad95e8bd5b011298fc82228fa7817"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk033",
+      "bytes": 134217728,
+      "sha256": "ceb24d886e27a226bf638953ca50931ffc2be28dee13e5c65eb81a86effa321a"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk034",
+      "bytes": 134217728,
+      "sha256": "bc9aa2d9a56a62db60a6c631e0aef42f61c74337fc568b00b2076f3f4d5f7f93"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk035",
+      "bytes": 134217728,
+      "sha256": "0ab9eab2bf3a382572d25065f236acb79a383e199fec6c7f74e88a518ed6b24a"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk036",
+      "bytes": 134217728,
+      "sha256": "de8bf21cf9c4f63a7e1c9aa60752caefb04132963788677483e5a530c6ad6f46"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk037",
+      "bytes": 134217728,
+      "sha256": "fa97a8ccc8ff77a2cd0220e39181ab311b39722e35e8d5fbf2a4b0765d6e6457"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk038",
+      "bytes": 134217728,
+      "sha256": "05e4ebca060a5716398935b0545dfbe6e5466bf44df4f76069130de130c174be"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk039",
+      "bytes": 134217728,
+      "sha256": "75f7bb4358d2859b9d84c57ebc2e569575c9404d385e7511073232ed8bb7c3dd"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk040",
+      "bytes": 134217728,
+      "sha256": "e99e5878e39958a565ab7602c2cdc56d3f8a65b16df3fac9b08aeb71c5ed4931"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk041",
+      "bytes": 134217728,
+      "sha256": "1f405ecb422723faa044882eb8b977b5ef2b552552c250392d1ef0e4b94c9dd2"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk042",
+      "bytes": 134217728,
+      "sha256": "0c9e417bde58b9d6836e67a1cfd359cddff824408dade30fea2e9270e7db451e"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk043",
+      "bytes": 134217728,
+      "sha256": "cb177f0000e54cac4dbc4c0fb5ca10bcbaed53ab68b4f6a5a23d0da924c6ebc2"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk044",
+      "bytes": 134217728,
+      "sha256": "48708a5343f9721abe1002443610e419347235ca202aedf6acbcafcf970cc998"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk045",
+      "bytes": 134217728,
+      "sha256": "c5be4080b54f7f0ccc432c5227abae7191150bac51e994908f924664bad75fe0"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk046",
+      "bytes": 134217728,
+      "sha256": "9ef4dae3870831ff00507863becf45fd8e27c0dce505f91ff38737a1d102c0ce"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk047",
+      "bytes": 134217728,
+      "sha256": "a65f502178a902440f68dc5651af6519dd5161e626e075bc6814ad4d496418d2"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk048",
+      "bytes": 134217728,
+      "sha256": "bb15ac13965a78a45aea47ff9e4410e4ed1dab1c3626f308a0707516befdf410"
+    },
+    {
+      "name": "platform-image.tar.zst.chunk049",
+      "bytes": 122061842,
+      "sha256": "9e46a2c1ada3cf2a021c8c4e0492fe41e71bd1873ee05fea1bd31784206c0504"
+    }
+  ],
+  "packaging_overlays": {
+    "setup/platform/container_entry.py": "af60994699570595086a2cdf861201d458db0fd2563a6dfb4faf26e7f73bdba5",
+    "src/lab/e2e/field_backend.py": "51acdb8473b4ff59dc291b1f5d98427d65362a9c83ce61418381c295f9ef7c6f"
+  },
+  "userspace": "Ubuntu 22.04 x86_64; 1,571 installed package versions; Node 24.14.0; Python 3.12.13; ROS Humble; Gazebo 6.18.0",
+  "source_scope": "ddb5113e + headless acceptance flag and container networking entry; physics/controller sources unchanged",
+  "runtime": "Docker private bridge network; loopback multicast configured only inside it; application UID/GID 1000; host ports bound to 127.0.0.1",
+  "licenses": "Upstream licenses included; Fuel NC/ND restrictions apply. Not a blanket permissive license.",
+  "supplement": {
+    "name": "additional-project.tar.gz",
+    "sha256": "cb602cbbfc17e4dc85507072d5d225859496885ff3a0441f85eac9e7b8ec2b8c",
+    "bytes": 492860756,
+    "files": 18967,
+    "uncompressed_bytes": 1553303188,
+    "redactions": 0
+  },
+  "supplement_installation": "SHA256-verified archive copied into the owned, stopped container before its first startup; project paths only; image ID pins the base filesystem, supplement SHA pins the additional baseline environment and records."
+}

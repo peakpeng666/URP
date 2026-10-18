@@ -2,6 +2,35 @@
 
 面向农业机器人的路径规划算法库与智能推荐研究工作台。以多车任务访问为主线，同时支持点到点运动规划、转弯约束路网与覆盖任务：编辑问题、查看算法适用条件、同口径比较、独立验算，再把已适配的几何路径交给 ROS 2 / Gazebo，核对实际执行与原始记录。
 
+## 搭档从 GitHub 复现完整平台
+
+支持 **Linux x86_64 + 可用的本地 Docker Engine + Python 3**，本轮 Docker Engine 为 29.9.0。发布包封装本机 Ubuntu 22.04 用户空间、ROS 2 Humble / Gazebo Fortress、固定版本 Python/Node、求解环境与编译库、Fuel 模型、自建场景和运行数据库；补充包还包含旧数值基线的独立环境、JDK、原始批次及历史库。宿主机不必预装 ROS。为源码、镜像、下载缓存与实验留出至少 45 GB 空间。Docker Engine 需由搭档预先安装并能运行 `docker info`；入口不自动提权、不改系统 Python 或驱动。
+
+```bash
+git clone https://github.com/peakpeng666/URP.git
+cd URP
+bash setup/run.sh reproduce --acceptance
+```
+
+入口从同仓库 Release 下载约 7.2 GB 的镜像分卷及补充包，用 **main 中固定的 SHA256 和镜像 ID** 校验后载入、创建独立数据卷，并在新容器首次启动前恢复旧基线，再启动 **http://127.0.0.1:4100/**。镜像 ID 固定基底，补充包 SHA256 固定额外的环境和历史文件；重复启动会核对恢复标记，保留已有数据。`--acceptance` 进一步实际运行路径求解、独立验算、Gazebo 跟踪及网页桥接（双车、8 个任务，free/web 两例）；首次建议保留。重复启动用 `bash setup/run.sh reproduce`。如果同机原生平台已占用 4100，先正常关闭，入口不会抢占或终止未知进程。
+
+```bash
+bash setup/run.sh reproduce status
+bash setup/run.sh reproduce logs
+bash setup/run.sh reproduce stop
+bash setup/run.sh reproduce
+```
+
+关闭会等待会话清理并报告真实退出码。数据库、资产及新轨迹保存在 `urp-platform-runtime` / `urp-platform-state` Docker 命名卷；停止与重启不删除它们。更换镜像版本时用新的 `--name` 创建独立部署，旧容器及数据保留。`docker cp urp-platform:/home/peakpeng/Desktop/URP/src/lab/runtime ./urp-runtime-export` 可完整导出运行数据；导出前先停止。验收原始日志在容器 `.local-state/container-acceptance-*`，也可用 `docker cp` 导出。
+
+默认使用浏览器的二维视图、ROS 视图和 Gazebo 场景，物理引擎仍是真实 Gazebo。Linux X11 桌面如需原生 RViz2/Gazebo 窗口，在**首次创建**时加 `--gui`，并提供当前有效的 `DISPLAY` / `XAUTHORITY`；仅给容器传入本次显示授权，不执行 `xhost +`。Wayland/远程无桌面机器优先使用网页视图。
+
+组播配置只写容器独立网络命名空间，临时初始化完成后以非 root 账户运行；仅向宿主机 `127.0.0.1` 发布 4100、8765、9002。不会修改宿主机组播路由。镜像内保持原绝对路径，使既有 Python editable 安装和原生库指纹一致；宿主机项目可放任意目录。临时目录使用独立内存文件系统，每次重启重新生成显示授权与临时进程文件。网络中断后支持断点续传与重试，完整分卷按 SHA256 验证；也可以先 `reproduce download`，把下载目录带到另一台机器后用 `--assets-dir` 离线载入。
+
+**复现范围**：软件版本、模型、场景、配置和已保存结果固定；镜像基于 `ddb5113e641ba63846431d4e3114efaf85f2fc89`，后续源码更新不会自动混入旧镜像。硬件、内核、调度和基于时间预算的求解器仍可造成新运行数值差异，不承诺跨机器逐位相同。ARM/macOS/Windows 原生环境未验收，可先准备符合条件的 Linux 虚拟机。所有验收范围与结果见[集成报告](2026-10-15/integration/REPORT.md)。
+
+**已知容器限制**：田间双车的正常、取消、故障及重启用例、网页桥接和 TB4 迷宫 2/2 已实跑。仓库场景的真值定位模式在容器内出现 TF 超前并中止，本机原生对照完成 5/5；原生 GUI 在容器内还出现渲染错误，不计为已验收。默认网页流程可用，但这两项不能宣称与本机表现完全相同，详见报告中的失败记录。容器默认用软件渲染，没有打包宿主机显卡驱动或保证 GPU 加速。
+
 ## 打开
 
 ```bash
@@ -117,4 +146,24 @@ Gazebo 场景中「已连接」表示通信握手完成；资源计数达到完�
 
 ## 云端 Agent 接续
 
-云端从最新 `main` 开始，先读根目录 [AGENTS.md](../AGENTS.md)。普通工程验证使用根 uv 锁文件与前端 npm 锁文件，`tools/check_project.py` 汇集 15 项门禁；无 ROS/Gazebo 的环境只报告代码与数值验证，不推断本机物理执行成功。GitHub CI 另运行田间物理配置、非理想观测与因果重建的纯代码回归（`nonideal-model-contracts`），不会启动 ROS。需要田间全量测试时在 `src/lab` 运行 `uv sync --locked --inexact`、`.venv/bin/python -m pytest -q`；可选 Fields2Cover 与现场资源缺项如实报告。运行目录和模型缓存不会上传为源码，所需资源按 [按需取用](../docs/按需取用.md) 恢复。
+云端从最新 `main` 开始，先读根目录 [AGENTS.md](../AGENTS.md)。普通工程验证使用根 uv 锁文件与前端 npm 锁文件，`tools/check_project.py` 汇集 15 项门禁；无 ROS/Gazebo 的环境只报告代码与数值验证，不推断本机物理执行成功。GitHub CI 另运行田间物理配置、非理想观测与因果重建的纯代码回归（`nonideal-model-contracts`），不会启动 ROS。需要田间全量测试时在 `src/lab` 运行 `uv sync --locked --inexact`、`.venv/bin/python -m pytest -q`；可选 Fields2Cover 与现场资源缺项如实报告。运行目录和模型缓存不进入 Git 历史；完整平台附件的下载与验证见下文。
+
+## 平台快照下载与恢复
+
+[2026-10-18 平台快照](https://github.com/peakpeng666/URP/releases/tag/platform-snapshot-20261018-ddb5113e)以 `ddb5113e` 为仿真源码基线。源码仍从 `main` 获取；Release 附件包含运行数据库、自建场景、资产库、完整逐点轨迹及历轮失败日志、Fuel 缓存、Fields2Cover wheel、原生编译产物、Python 环境及解释器、前端依赖与构建、ROS/Gazebo 已安装包文件和版本清单。附件不随普通 `git clone` 自动下载。
+
+如需单独研究和还原原始文件（不是启动容器），在安装有 Python 3.10+ 和 `zstd` 的机器执行以下命令。下载目录可断点续用，解包目标目录必须尚不存在：
+
+```sh
+bash setup/run.sh reproduce download --catalog setup/platform-snapshot.json --assets-dir ../urp-snapshot-assets-20261018
+python3 tools/platform_snapshot.py verify --catalog setup/platform-snapshot.json --assets-dir ../urp-snapshot-assets-20261018
+python3 tools/platform_snapshot.py restore --catalog setup/platform-snapshot.json --assets-dir ../urp-snapshot-assets-20261018 --destination ../urp-snapshot-restored-20261018
+```
+
+校验清单同时保存在 [platform-snapshot.json](platform-snapshot.json)。`snapshot.json` 列出每个分包的 SHA256 和体积；`files.jsonl.zst` 给出逐文件原始/发布哈希、数据库备份与脱敏记录；`exclusions.json` 列出浏览器配置、认证文件和临时文件等排除项。下载后应先与仓库清单核对，不能只相信同一下载目录里未经核实的校验文件。
+
+恢复只写新目录：`project/` 对应原项目相对路径，`host/` 为隔离的 ROS/Gazebo 安装文件，`python/` 为解释器。可在 `restore` 后加 `--components project-runtime project-local-state fuel-cache compiled-and-wheels` 只解包所需数据。查看完成后，将所需运行目录迁入一个**全新源码检出**；保留原路径关系，不覆盖正在使用的数据库。主运行库通过 SQLite 备份接口合并已提交 WAL，再检查完整性；发布副本移除认证字段，数值与失败状态保留，原始副本继续留在本机。脱敏后的文件哈希不应冒充原始文件哈希。
+
+环境快照对应 Ubuntu 22.04 x86_64、ROS 2 Humble、Gazebo Fortress，不含操作系统、驱动和个人登录信息。`host/` 不会自动安装到 `/usr` 或 `/opt/ros`；系统依赖及精确版本见解包后的 `metadata/ros-gazebo-packages.json`、`metadata/system-dependencies.json`。虚拟环境的部分启动脚本、editable 路径及本机 `.so` 受路径/ABI 限制；换路径或平台时优先用现有锁文件重建，再按 wheel 指纹补齐 Fields2Cover。没有把解包校验称为新机器完整物理验收。
+
+第三方许可随包保留。Fuel 有 13 个缓存目录（含名称编码别名），逐模型作者和许可见 `metadata/fuel-licenses.json`；其中有非商业、禁止衍生分发条款，不可视为任意商用资产。上游原包及本地技术性格式/资源 URI 规范化对照一并保存。Fields2Cover wheel 的既有构建来源缺口仍如其 manifest 所述，未宣称源码逐位重建。
