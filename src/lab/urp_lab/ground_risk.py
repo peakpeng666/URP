@@ -7,7 +7,7 @@ Semantics (versioned, one policy this round):
   ``knowledge`` tag. This is *the map the planner is allowed to read* — a declared
   known-map condition, not a prediction of execution.
 - With ``ground_policy='risk_adjust'`` a visible edge's solver weight becomes the
-  *risk-adjusted length*:  geometric length × (1 + w · Σ fraction_in_zone · (1 - μ/μ_ref)).
+  *risk-adjusted length*:  geometric length + w times the integral of max(0, 1 - mu_worst/mu_ref).
   Units stay metres (equivalent metres); the geometric length is still computed and
   reported separately. This is a declared cost preference — NOT a failure
   probability and NOT an energy value.
@@ -23,101 +23,36 @@ from __future__ import annotations
 
 import math
 
-from shapely.geometry import LineString, Polygon
+from shapely.geometry import LineString
 
-SCHEMA = 'urp.ground-risk/1'
-# Planning exposure is computed over the zone grown by the robot's half track + wheel
-# radius (spherical-wheel footprint ~0.48 m): a centre line just outside a low-mu patch
-# still puts wheels on it. The physics partition itself stays the declared rectangle.
-RISK_MARGIN_M = 0.5
-SPEED_POLICY = {'mu_threshold': 0.5, 'v_limit_mps': 0.35,
-                'note': '工程假设：μ<0.5 的分区按低附着限速 0.35 m/s 通过（加减速/转向摩擦裕量），未标定'}
+from .ground_map import SCHEMA, SPEED_POLICY, digest, normalize_ground, number
 
 
-def normalize_ground(inst: dict) -> dict | None:
-    """Validate and normalize an instance-level ground declaration (known map).
+def exposure_line(seg, zones, footprint_aware=True, mu_reference=1.0):
+    """Integral of max(0, mu_ref-mu) over the worst overlapping footprint zone.
 
-    Idempotent: an already-normalized declaration (from validate_instance) passes
-    through unchanged so solver and checker share one normalized form."""
-    ground = inst.get('ground')
-    if not ground:
-        return None
-    if not isinstance(ground, dict):
-        raise ValueError('ground 须为对象')
-    if ground.get('schema') == SCHEMA and isinstance(ground.get('zones'), list):
-        return ground
-    unknown = set(ground) - {'zones', 'mu_reference', 'knowledge'}
-    if unknown:
-        raise ValueError(f'ground 含未知字段：{sorted(unknown)}')
-    zones = ground.get('zones')
-    if not isinstance(zones, list) or not zones:
-        raise ValueError('ground.zones 须为非空数组')
-    if len(zones) > 16:
-        raise ValueError('ground.zones 至多 16 个分区')
-    mu_ref = float(ground.get('mu_reference', 1.0))
-    if not math.isfinite(mu_ref) or not 0.05 <= mu_ref <= 2.0:
-        raise ValueError('ground.mu_reference 须在 0.05–2.0')
-    bounds = Polygon(inst['boundary']).bounds
-    rects = []
-    for i, z in enumerate(zones):
-        if not isinstance(z, dict) or set(z) - {'rect', 'mu', 'label'}:
-            raise ValueError(f'ground.zones[{i}] 仅接受 rect/mu/label')
-        rect = z.get('rect')
-        if (not isinstance(rect, (list, tuple)) or len(rect) != 4
-                or not all(isinstance(c, (int, float)) and math.isfinite(c) for c in rect)):
-            raise ValueError(f'ground.zones[{i}].rect 须为 4 个有限数字 [x0,y0,x1,y1]')
-        x0, y0, x1, y1 = (float(c) for c in rect)
-        if x1 - x0 < 0.5 or y1 - y0 < 0.5:
-            raise ValueError(f'ground.zones[{i}] 尺寸过小（每边至少 0.5 m）')
-        mu = z.get('mu')
-        if isinstance(mu, bool) or not isinstance(mu, (int, float)) or not math.isfinite(mu) or not 0.03 <= mu <= 1.0:
-            raise ValueError(f'ground.zones[{i}].mu 须在 0.03–1.0')
-        if not (bounds[0] <= x0 and bounds[1] <= y0 and x1 <= bounds[2] and y1 <= bounds[3]):
-            raise ValueError(f'ground.zones[{i}] 超出田块边界')
-        rect_n = [min(x0, x1), min(y0, y1), max(x0, x1), max(y0, y1)]
-        for other in rects:
-            if not (rect_n[2] <= other[0] or other[2] <= rect_n[0] or rect_n[3] <= other[1] or other[3] <= rect_n[1]):
-                raise ValueError('ground.zones 之间不允许重叠')
-        depot = inst['depot']
-        if x0 < depot[0] + 2.5 and x1 > depot[0] - 2.5 and y0 < depot[1] + 2.5 and y1 > depot[1] - 2.5:
-            raise ValueError(f'ground.zones[{i}] 须避开车库周围 2.5 m')
-        rects.append(rect_n)
-    knowledge = str(ground.get('knowledge') or 'known_map_v1')
-    return {'schema': SCHEMA, 'zones': [{'rect': r,
-                                         'risk_rect': [r[0] - RISK_MARGIN_M, r[1] - RISK_MARGIN_M,
-                                                       r[2] + RISK_MARGIN_M, r[3] + RISK_MARGIN_M],
-                                         'mu': float(z['mu']),
-                                         'label': str(z.get('label') or f'ground_{i + 1}')}
-                                        for z, r in zip(zones, rects)],
-            'mu_reference': mu_ref, 'knowledge': knowledge,
-            'speed_policy': dict(SPEED_POLICY),
-            'declared_as': '规划器可读的已知地面图（声明条件）；风险成本为当量米，不是失败概率'}
-
-
-def exposure_line(seg, zones, footprint_aware=True):
-    """In-zone length of a segment and the friction deficit. With footprint_aware,
-    exposure uses the zone grown by RISK_MARGIN_M (wheels reach beyond the centre line);
-    the reported `inside` stays on the physical rectangle."""
+    Physical zones do not overlap, but their conservative square expansions can.
+    Their overlap uses the lowest mu, never a double-counted penalty. Physical
+    centre-line exposure is a union length, distinct from footprint exposure.
+    """
+    from shapely.geometry import box
+    from shapely.ops import unary_union
     line = LineString(seg)
-    inside = 0.0
-    deficit = 0.0
-    for z in zones:
-        x0, y0, x1, y1 = z.get('risk_rect') if footprint_aware and z.get('risk_rect') else z['rect']
-        x0p, y0p, x1p, y1p = z['rect']
-        part = line.intersection(Polygon([(x0, y0), (x1, y0), (x1, y1), (x0, y1)]))
-        if not part.is_empty:
-            inside += line.intersection(Polygon([(x0p, y0p), (x1p, y0p), (x1p, y1p), (x0p, y1p)])).length
-            deficit += part.length * (1.0 - z['mu'])
+    inside = line.intersection(unary_union([box(*z['rect']) for z in zones])).length
+    covered, deficit = LineString(), 0.
+    for zone in sorted(zones, key=lambda z: z['mu']):
+        rect = zone.get('risk_rect', zone['rect']) if footprint_aware else zone['rect']
+        part = line.intersection(box(*rect))
+        deficit += part.difference(covered).length * max(0., mu_reference-zone['mu'])
+        covered = covered.union(part)
     return inside, deficit
 
 
 def risk_factor(seg, zones, mu_reference):
-    """Per-metre multiplicative risk factor of a segment (>= 1 zone fraction × μ deficit)."""
-    length = math.hypot(seg[1][0] - seg[0][0], seg[1][1] - seg[0][1])
+    length = math.dist(*seg)
     if length < 1e-9:
-        return 0.0
-    _inside, deficit = exposure_line(seg, zones)
-    return deficit / length / max(mu_reference, 1e-6)
+        return 0.
+    return exposure_line(seg, zones, mu_reference=mu_reference)[1] / length / mu_reference
 
 
 def speed_profile(path, zones, speed_policy, base_speed):
@@ -150,19 +85,19 @@ def speed_profile(path, zones, speed_policy, base_speed):
     return merged
 
 
-def route_ground_stats(path, zones, mu_reference):
+def route_ground_stats(path, zones, mu_reference, weight=1.0):
     """Geometric exposure and average friction deficit of a finished polyline."""
     inside = deficit = total = 0.0
     for a, b in zip(path, path[1:]):
         seg = math.dist(a, b)
         total += seg
-        i, d = exposure_line([a, b], zones)
+        i, d = exposure_line([a, b], zones, mu_reference=mu_reference)
         inside += i
         deficit += d
     return {'geo_length_m': round(total, 3),
             'in_zone_length_m': round(inside, 3),
             'mean_mu_deficit': round(deficit / total, 4) if total > 1e-6 else 0.0,
-            'risk_adjusted_length_m': round(total + deficit / max(mu_reference, 1e-6), 3)}
+            'risk_adjusted_length_m': round(total + weight * deficit / mu_reference, 3)}
 
 
 def resolve_policy(inst, params):
@@ -172,50 +107,61 @@ def resolve_policy(inst, params):
     policy = str(params.get('ground_policy', 'ignore'))
     if policy not in ('ignore', 'risk_adjust'):
         raise ValueError('ground_policy 仅支持 ignore、risk_adjust')
-    weight = params.get('ground_risk_weight', 1.0)
-    try:
-        weight = float(weight)
-    except (TypeError, ValueError):
-        raise ValueError('ground_risk_weight 须为数值')
-    if not math.isfinite(weight) or not 0 <= weight <= 10:
-        raise ValueError('ground_risk_weight 须为 0–10 的有限数值')
+    weight = number(params.get('ground_risk_weight', 1.0), 'ground_risk_weight', 0, 10)
     ground = normalize_ground(inst) if inst.get('ground') else None
     if policy == 'risk_adjust':
         if ground is None:
             raise ValueError('ground_policy=risk_adjust 需要 instance 声明 ground（已知地面图）')
         if str(inst.get('objective') or 'total_distance') == 'makespan':
             raise ValueError('ground_policy=risk_adjust 本轮仅支持 total_distance 目标；当量米未定义时间口径，makespan 请用 ignore')
+        if any(c.get('min_turn_radius_m', 0) > 0 for c in inst['vehicles'].get('fleet', [])):
+            raise ValueError('ground_policy=risk_adjust 暂不支持曲率约束车队：曲线实现未参与风险优化')
         if inst['vehicles'].get('travel') == 'rows':
             raise ValueError('ground_policy=risk_adjust 暂只支持自由通行；沿行间模式的边为固定通道，不支持绕行风险调整')
     return policy, weight, ground
 
 
-def check_route_ground(route, inst, pts, errors):
-    """Independent recomputation of a route's ground-risk fields for the fleet checker.
-    Appends human-readable errors; returns None."""
-    if not route.get('ground_risk'):
-        return
-    if not inst.get('ground'):
-        errors.append('路线声明地面风险成本但 instance 缺少 ground 声明')
-        return
-    gnd = normalize_ground(inst)
-    stats = route_ground_stats(pts, gnd['zones'], gnd['mu_reference'])
-    for key, expected in (('geo_length_m', stats['geo_length_m']),
-                          ('risk_cost', stats['risk_adjusted_length_m'])):
-        value = route.get(key)
-        import math as _m
-        if not isinstance(value, (int, float)) or not _m.isclose(float(value), float(expected), abs_tol=5e-3):
-            errors.append(f'路线的地面风险口径 {key} 与独立复算不一致')
+def route_metadata(ground, policy_active, weight):
+    return {'schema': SCHEMA, 'policy': 'risk_adjust' if policy_active else 'ignore',
+            'weight': weight, 'mu_reference': ground['mu_reference'], 'knowledge': ground['knowledge'],
+            'ground_sha256': digest(ground),
+            'cost_scope': 'declared weighted exposure, counterfactual score when policy=ignore'}
 
 
-def attach_route_ground(route, pts, ground, policy_active, base_speed):
-    """Attach ground exposure stats (always, for evaluation) and the executed speed
-    profile (only when the policy actually used the declared map) to a built route."""
-    stats = route_ground_stats(pts, ground['zones'], ground['mu_reference'])
+def check_route_ground(route, inst, pts, errors, base_speed, params=None):
+    """Recompute every ground field; absence is an error on a ground-map instance.
+
+    When available, frozen solver params bind policy and weight to the original
+    request. Legacy records without this contract must be re-solved for execution.
+    """
+    if inst.get('ground') is None:
+        if any(route.get(k) for k in ('ground_risk', 'ground_stats', 'speed_profile')):
+            errors.append('路线声明地面风险但 instance 没有 ground')
+        return
+    try:
+        meta = route.get('ground_risk')
+        if not isinstance(meta, dict) or meta.get('schema') != SCHEMA:
+            raise ValueError('缺少当前版本 ground_risk；历史路线须重求解')
+        candidate = {'ground_policy': meta.get('policy'), 'ground_risk_weight': meta.get('weight')}
+        policy, weight, ground = resolve_policy(inst, candidate)
+        if params is not None and (policy, weight) != resolve_policy(inst, params)[:2]:
+            raise ValueError('策略或权重与原求解请求不一致')
+        stats = route_ground_stats(pts, ground['zones'], ground['mu_reference'], weight)
+        expected = {'geo_length_m': stats['geo_length_m'], 'risk_cost': stats['risk_adjusted_length_m'],
+                    'ground_stats': stats, 'ground_risk': route_metadata(ground, policy == 'risk_adjust', weight),
+                    'speed_profile': (speed_profile(pts, ground['zones'], ground['speed_policy'], base_speed)
+                                      if policy == 'risk_adjust' else [])}
+        for key, value in expected.items():
+            if route.get(key) != value:
+                raise ValueError(f'{key} 与冻结输入/独立复算不一致')
+    except (ValueError, TypeError, KeyError) as exc:
+        errors.append(f'路线的地面风险口径无效：{exc}')
+
+
+def attach_route_ground(route, pts, ground, policy_active, base_speed, weight=1.0):
+    stats = route_ground_stats(pts, ground['zones'], ground['mu_reference'], weight)
     route.update(geo_length_m=stats['geo_length_m'], risk_cost=stats['risk_adjusted_length_m'],
-                 ground_stats=stats, ground_risk={'policy': 'risk_adjust' if policy_active else 'ignore',
-                                                  'weight': 1.0, 'mu_reference': ground['mu_reference'],
-                                                  'knowledge': ground['knowledge']})
-    if policy_active:
-        route['speed_profile'] = speed_profile(pts, ground['zones'], ground['speed_policy'], base_speed)
+                 ground_stats=stats, ground_risk=route_metadata(ground, policy_active, weight),
+                 speed_profile=(speed_profile(pts, ground['zones'], ground['speed_policy'], base_speed)
+                                if policy_active else []))
     return route

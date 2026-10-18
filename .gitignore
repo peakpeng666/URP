@@ -110,3 +110,11 @@ setup/2026-10-17/critique/mu2-study/*/
 /setup/2026-10-18/nonideal-audit/private/
 /setup/2026-10-18/nonideal-audit/field-regression*/experiment-*.json
 /setup/2026-10-18/nonideal-audit/gateway-final.log
+
+# Independent ground-risk / actuator audit: retain compact evidence, keep raw runs local.
+/setup/2026-10-18/ground-risk-audit/private/
+/setup/2026-10-18/ground-risk-audit/**/runtime/
+/setup/2026-10-18/ground-risk-audit/**/*-result.json
+/setup/2026-10-18/ground-risk-audit/probe-*/
+
+/setup/2026-10-18/ground-risk-audit/**/experiment-*.json

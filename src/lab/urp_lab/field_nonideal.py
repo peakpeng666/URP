@@ -186,7 +186,7 @@ def validate_execution(body, inst, routes):
 
     bounds = tuple(inst['boundary'] and _bounds(inst['boundary']))
     depot = inst['depot']
-    keep_clear = [(float(depot[0]), float(depot[1]), 2.5)]
+    keep_clear = [(float(d[0]), float(d[1]), 2.5) for d in inst.get('depots') or [depot]]
     from shapely.geometry import Polygon, box, Point
     boundary = Polygon(inst['boundary'])
     zones = []
@@ -218,7 +218,7 @@ def validate_execution(body, inst, routes):
                 raise ValueError('地面分区坐标或摩擦无效')
             if r[2] - r[0] < .1 or r[3] - r[1] < .1 or not boundary.covers(box(*r)):
                 raise ValueError('地面分区须位于任务边界内且尺寸为正')
-            if any(_rects_overlap(r, z['rect']) for z in zones) or box(*r).distance(Point(depot)) < 2.5:
+            if any(_rects_overlap(r, z['rect']) for z in zones) or any(box(*r).distance(Point(d)) < 2.5 for d in inst.get('depots') or [depot]):
                 raise ValueError('地面分区重叠或过于接近车库')
             zones.append({'label': f'固定分区 {i+1}', 'rect': list(r), 'mu': float(mu), 'provenance': PROVENANCE['ground']})
         ground_key = 'custom'

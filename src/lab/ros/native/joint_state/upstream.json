@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/gazebosim/gz-sim",
+  "tag": "ignition-gazebo6_6.18.0",
+  "tag_ref": "b90cd2c41a193102d6951857c2d83e13f59bb64b",
+  "sources": {
+    "JointStatePublisher.cc": {
+      "url": "https://raw.githubusercontent.com/gazebosim/gz-sim/ignition-gazebo6_6.18.0/src/systems/joint_state_publisher/JointStatePublisher.cc",
+      "sha256": "d86c636f9315e752a349a0ae1940883822d7eb5234310d5c37290080437f0e52"
+    },
+    "JointStatePublisher.hh": {
+      "url": "https://raw.githubusercontent.com/gazebosim/gz-sim/ignition-gazebo6_6.18.0/src/systems/joint_state_publisher/JointStatePublisher.hh",
+      "sha256": "1f1ebe8a4d100c92aa555cb924c07933cca0c20172e4715778da406e5e1a3072"
+    }
+  },
+  "modifications": "50 Hz source-time publication backport; unique URP plugin alias and library; upstream mechanics unchanged"
+}

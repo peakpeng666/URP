@@ -35,7 +35,7 @@ def test_mass_inertia_and_collision_envelope():
 
 def test_tyre_model_and_legacy_sphere_profile():
     m = p.profile({'wheel_contact': 'tyre'})
-    assert m['schema'] == 'urp.field-diffdrive.rigid/5'
+    assert m['schema'] == 'urp.field-diffdrive.rigid/6'
     assert m['wheel'] == {'geometry': 'cylinder', 'radius_m': p.WHEEL_RADIUS, 'width_m': p.TYRE_WIDTH,
                           'separation_m': p.WHEEL_SEPARATION, 'mass_kg': 2,
                           'inertia_kgm2': pytest.approx(p.cylinder_inertia(2, p.WHEEL_RADIUS, p.TYRE_WIDTH))}

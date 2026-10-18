@@ -60,12 +60,11 @@ _TABLE = [
     ('panel.boustrophedon', '平行往复（面板实现）', 'coverage', '基线', 'baseline', 'none',
      '按固定方向切出平行作业行并往复连接，转弯允许原地掉头，用作覆盖规划的参照下限。', ['choset2000boustrophedon', 'galceran2013cpp'], 'shapely', {}),
 ]
-GROUND_POLICY = {'name': 'ground_policy', 'type': 'enum', 'values': ['ignore', 'risk_adjust'], 'default': 'ignore',
-                 'label': '地面风险策略',
+GROUND_POLICY = {**SELECT('ground_policy', '地面风险策略', 'ignore', [('ignore', '忽略地面风险'), ('risk_adjust', '风险加权与限速')]),
                  'description': 'risk_adjust：用 instance 声明的已知地面图（ground.zones）给低附着区加当量米风险成本并允许绕行；需自由通行与总里程目标'}
 GROUND_WEIGHT = {'name': 'ground_risk_weight', 'type': 'number', 'default': 1.0, 'min': 0.0, 'max': 10.0,
                  'label': '地面风险权重（当量米/米）',
-                 'description': '每米低附着 μ 缺口折算的当量米成本；仅 ground_policy=risk_adjust 时生效'}
+                 'description': '每米低附着 μ 缺口折算的当量米成本；risk_adjust 时参与搜索；ignore 时仅作事后同口径评分'}
 FLEET_PARAMS = [dict(TIME, default=5), SEED, GROUND_POLICY, GROUND_WEIGHT]
 _TABLE += [
     ('pyvrp.fleet', 'PyVRP 固定车队', 'fleet_routing', 'PyVRP', 'metaheuristic', 'none',
@@ -76,10 +75,10 @@ _TABLE += [
      ['ortools', 'voudouris1999gls', 'lozanoperez1979visibility', 'dubins1957curvature', 'leny2007dubins', 'sucan2012ompl'], 'ortools', {'params': FLEET_PARAMS}),
     ('panel.savings_fleet', '节约算法 + 2-opt', 'fleet_routing', '基线', 'heuristic', 'none',
      'Clarke–Wright 节约算法在绕障距离上合并路线，再逐车 2-opt 改进；确定性、速度快。',
-     ['clarke1964savings', 'croes1958twoopt'], 'src/lab/urp_lab/solvers/fleet.py', {'params': [dict(TIME, default=5)]}),
+     ['clarke1964savings', 'croes1958twoopt'], 'src/lab/urp_lab/solvers/fleet.py', {'params': [dict(TIME, default=5), GROUND_POLICY, GROUND_WEIGHT]}),
     ('panel.sweep', '扫描算法', 'fleet_routing', '基线', 'heuristic', 'none',
      '以车库为中心按极角扫过任务点，按容量切分给各车，再逐车 2-opt；适合任务围绕车库分布的场景。',
-     ['gillett1974sweep', 'croes1958twoopt'], 'src/lab/urp_lab/solvers/fleet.py', {'params': [dict(TIME, default=5)]}),
+     ['gillett1974sweep', 'croes1958twoopt'], 'src/lab/urp_lab/solvers/fleet.py', {'params': [dict(TIME, default=5), GROUND_POLICY, GROUND_WEIGHT]}),
     ('panel.cluster_first', '先聚类后排程', 'fleet_routing', '基线', 'heuristic', 'none',
      '按车辆数做容量约束 k-means 分区，再分别构造与改进单车回路；不保证最优或路线互不交叉。',
      ['fisher1981gap', 'croes1958twoopt'], 'src/lab/urp_lab/solvers/fleet.py', {'params': FLEET_PARAMS}),

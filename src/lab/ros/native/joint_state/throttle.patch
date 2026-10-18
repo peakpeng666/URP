@@ -1,0 +1,165 @@
+--- a/JointStatePublisher.cc
++++ b/JointStatePublisher.cc
+@@ -19,6 +19,9 @@
+ 
+ #include <gz/msgs/model.pb.h>
+ 
++#include <chrono>
++#include <cmath>
++#include <stdexcept>
+ #include <string>
+ #include <vector>
+ 
+@@ -41,13 +44,13 @@
+ using namespace systems;
+ 
+ //////////////////////////////////////////////////
+-JointStatePublisher::JointStatePublisher()
++URPJointStatePublisher::URPJointStatePublisher()
+     : System()
+ {
+ }
+ 
+ //////////////////////////////////////////////////
+-void JointStatePublisher::Configure(
++void URPJointStatePublisher::Configure(
+     const Entity &_entity, const std::shared_ptr<const sdf::Element> &_sdf,
+     EntityComponentManager &_ecm, EventManager &)
+ {
+@@ -55,7 +58,7 @@
+   this->model = Model(_entity);
+   if (!this->model.Valid(_ecm))
+   {
+-    ignerr << "The JointStatePublisher system should be attached to a model "
++    ignerr << "The URPJointStatePublisher system should be attached to a model "
+       << "entity. Failed to initialize." << std::endl;
+     return;
+   }
+@@ -77,7 +80,7 @@
+       else
+       {
+         ignerr << "Joint with name[" << jointName << "] not found. "
+-          << "The JointStatePublisher will not publish this joint.\n";
++          << "The URPJointStatePublisher will not publish this joint.\n";
+       }
+ 
+       elem = elem->GetNextElement("joint_name");
+@@ -94,6 +97,12 @@
+     }
+   }
+ 
++  const double rate = _sdf->Get<double>("update_rate", 50.0).first;
++  if (!std::isfinite(rate) || rate < 1 || rate > 250)
++    throw std::runtime_error("URP joint update_rate must be in [1,250] Hz");
++  this->updatePeriod = std::chrono::duration_cast<std::chrono::steady_clock::duration>(
++      std::chrono::duration<double>(1.0 / rate));
++
+   // Advertise the state topic
+   // Sets to provided topic if available
+   if (_sdf->HasElement("topic"))
+@@ -104,7 +113,7 @@
+ }
+ 
+ //////////////////////////////////////////////////
+-void JointStatePublisher::CreateComponents(EntityComponentManager &_ecm,
++void URPJointStatePublisher::CreateComponents(EntityComponentManager &_ecm,
+     Entity _joint)
+ {
+   if (this->joints.find(_joint) != this->joints.end())
+@@ -137,9 +146,16 @@
+ }
+ 
+ //////////////////////////////////////////////////
+-void JointStatePublisher::PostUpdate(const UpdateInfo &_info,
++void URPJointStatePublisher::PostUpdate(const UpdateInfo &_info,
+                                 const EntityComponentManager &_ecm)
+ {
++  if (_info.paused)
++    return;
++  const auto elapsed = _info.simTime - this->lastUpdateTime;
++  if (elapsed > std::chrono::steady_clock::duration::zero() && elapsed < this->updatePeriod)
++    return;
++  this->lastUpdateTime = _info.simTime;
++
+   // Create the model state publisher. This can't be done in ::Configure
+   // because the World is not guaranteed to be accessible.
+   if (!this->modelPub)
+@@ -169,7 +185,7 @@
+       this->topic = validTopic(topics);
+       if (this->topic.empty())
+       {
+-        ignerr << "No valid topics for JointStatePublisher could be found."
++        ignerr << "No valid topics for URPJointStatePublisher could be found."
+           << "Make sure World/Model name does'nt contain invalid characters.\n";
+         return;
+       }
+@@ -312,14 +328,9 @@
+   this->modelPub->Publish(msg);
+ }
+ 
+-IGNITION_ADD_PLUGIN(JointStatePublisher,
++IGNITION_ADD_PLUGIN(URPJointStatePublisher,
+                     System,
+-                    JointStatePublisher::ISystemConfigure,
+-                    JointStatePublisher::ISystemPostUpdate)
+-
+-IGNITION_ADD_PLUGIN_ALIAS(JointStatePublisher,
+-    "gz::sim::systems::JointStatePublisher")
+-
+-// TODO(CH3): Deprecated, remove on version 8
+-IGNITION_ADD_PLUGIN_ALIAS(JointStatePublisher,
+-    "ignition::gazebo::systems::JointStatePublisher")
++                    URPJointStatePublisher::ISystemConfigure,
++                    URPJointStatePublisher::ISystemPostUpdate)
++
++IGNITION_ADD_PLUGIN_ALIAS(URPJointStatePublisher, "urp::systems::JointStatePublisher")
+--- a/JointStatePublisher.hh
++++ b/JointStatePublisher.hh
+@@ -18,6 +18,7 @@
+ #ifndef GZ_GAZEBO_SYSTEMS_STATE_PUBLISHER_HH_
+ #define GZ_GAZEBO_SYSTEMS_STATE_PUBLISHER_HH_
+ 
++#include <chrono>
+ #include <memory>
+ #include <set>
+ #include <string>
+@@ -37,7 +38,7 @@
+   /// a model. The published message type is gz::msgs::Model, and the
+   /// publication topic is determined by the `<topic>` parameter.
+   ///
+-  /// By default the JointStatePublisher will publish all joints for
++  /// By default the URPJointStatePublisher will publish all joints for
+   /// a model. Use the `<joint_name>` system parameter, described below, to
+   /// control which joints are published.
+   ///
+@@ -49,16 +50,16 @@
+   /// `<joint_name>`: Name of a joint to publish. This parameter can be
+   /// specified multiple times, and is optional. All joints in a model will
+   /// be published if joint names are not specified.
+-  class JointStatePublisher
++  class URPJointStatePublisher
+       : public System,
+         public ISystemConfigure,
+         public ISystemPostUpdate
+   {
+     /// \brief Constructor
+-    public: JointStatePublisher();
++    public: URPJointStatePublisher();
+ 
+     /// \brief Destructor
+-    public: ~JointStatePublisher() override = default;
++    public: ~URPJointStatePublisher() override = default;
+ 
+     // Documentation inherited
+     public: void Configure(const Entity &_entity,
+@@ -89,6 +90,10 @@
+ 
+     /// \brief The topic
+     private: std::string topic;
++
++    // URP: backport source-time throttling; no wheel mechanics are changed.
++    private: std::chrono::steady_clock::duration updatePeriod{std::chrono::milliseconds(20)};
++    private: std::chrono::steady_clock::duration lastUpdateTime{0};
+   };
+   }
+ }

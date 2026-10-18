@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(urp_joint_state LANGUAGES CXX)
+find_package(ignition-gazebo6 REQUIRED)
+add_library(urp_joint_state SHARED JointStatePublisher.cc)
+target_compile_features(urp_joint_state PRIVATE cxx_std_17)
+target_link_libraries(urp_joint_state PRIVATE ignition-gazebo6::core)

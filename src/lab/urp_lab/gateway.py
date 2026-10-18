@@ -433,7 +433,8 @@ def create_app(config: Config | None = None) -> FastAPI:
 
     @app.get(f'{api}/runs')
     def runs(scenario_id: str | None = None, limit: int = Query(100, ge=1, le=1000)):
-        return {'runs': lab.store.list_runs(scenario_id=scenario_id, limit=limit)}
+        return JSONResponse({'runs': lab.store.list_runs(scenario_id=scenario_id, limit=limit)},
+                            headers={'Cache-Control': 'no-store'})
 
     def run_or_404(run_id: str) -> dict:
         sol = lab.store.get_run(run_id)
@@ -443,7 +444,7 @@ def create_app(config: Config | None = None) -> FastAPI:
 
     @app.get(f'{api}/runs/{{run_id}}')
     def run(run_id: str):
-        return run_or_404(run_id)
+        return JSONResponse(run_or_404(run_id), headers={'Cache-Control': 'no-store'})
 
     @app.post(f'{api}/runs/{{run_id}}/cancel')
     def cancel_run(run_id: str, payload: Any = Body(None)):
@@ -456,7 +457,11 @@ def create_app(config: Config | None = None) -> FastAPI:
 
     @app.get(f'{api}/runs/{{run_id}}/record')
     def experiment_record(run_id: str):
-        return core('experiment').record(lab, run_or_404(run_id))
+        # Complete records are already JSON-native. Encode in this sync worker;
+        # recursive encoding on the event loop can starve controls and health
+        # requests when a history contains millions of trajectory samples.
+        return JSONResponse(core('experiment').record(lab, run_or_404(run_id)),
+                            headers={'Cache-Control': 'no-store'})
 
     @app.post(f'{api}/compare/export')
     def export_compare(payload: Any = Body(None)):
@@ -504,7 +509,7 @@ def create_app(config: Config | None = None) -> FastAPI:
     # ------------------------------------------------------- simulation --
     @app.get(f'{api}/sim/state')
     def sim_state():
-        return lab.sim.current_state()
+        return JSONResponse(lab.sim.current_state(), headers={'Cache-Control': 'no-store'})
 
     @app.post(f'{api}/sim/session', status_code=202)
     def sim_start(payload: Any = Body(None)):
@@ -539,7 +544,8 @@ def create_app(config: Config | None = None) -> FastAPI:
 
     @app.get(f'{api}/sim/runs')
     def sim_runs(run_id: str | None = None, limit: int = Query(100, ge=1, le=1000)):
-        return {'sim_runs': lab.store.list_sim_runs(run_id=run_id, limit=limit)}
+        return JSONResponse({'sim_runs': lab.store.list_sim_runs(run_id=run_id, limit=limit)},
+                            headers={'Cache-Control': 'no-store'})
 
     def sim_run_or_404(sim_run_id: str) -> dict:
         run = lab.sim.get_run(sim_run_id)
@@ -549,7 +555,7 @@ def create_app(config: Config | None = None) -> FastAPI:
 
     @app.get(f'{api}/sim/runs/{{sim_run_id}}')
     def sim_run(sim_run_id: str):
-        return sim_run_or_404(sim_run_id)
+        return JSONResponse(sim_run_or_404(sim_run_id), headers={'Cache-Control': 'no-store'})
 
     @app.post(f'{api}/sim/runs/{{sim_run_id}}/cancel')
     def sim_run_cancel(sim_run_id: str, payload: Any = Body(None)):

@@ -13,7 +13,7 @@ import math
 from xml.etree import ElementTree as ET
 from shapely.geometry import MultiPoint, Point, Polygon
 
-MODEL = 'urp.field-diffdrive.rigid/5'
+MODEL = 'urp.field-diffdrive.rigid/6'
 ENGINE = 'libignition-physics-dartsim-plugin.so'
 BODY = (.8, .56, .22)
 WHEEL_RADIUS, WHEEL_SEPARATION = .15, .66
@@ -104,6 +104,8 @@ def profile(overrides=None):
                          'inertia_kgm2': [.4 * .5 * .06**2] * 3},
               'total_mass_kg': body_mass + 5, 'collision_hull_m': copy.deepcopy(FOOTPRINT),
               'collision_radius_m': RADIUS, 'limits': dict(LIMITS), 'truth_hz': 50,
+              'limits_scope': ('DiffDrive body velocity/acceleration command limits' if values['actuator_mode'] == 'velocity_servo'
+                               else 'reference timing/controller settings only; force PID imposes torque bounds, not ideal acceleration bounds'),
               'energy_model': dict(ENERGY),
               'odometry_contract': dict(ODOMETRY_CONTRACT),
               'assumptions': {'ground': 'flat rigid plane; Coulomb friction; no deformable soil or terrain',
@@ -195,16 +197,8 @@ def audit_sdf(path, expected):
                     or joint.findtext('axis/xyz') != '0 0 1' or joint.find('pose') is not None):
                 errors.append('驱动轮关节坐标或轴与声明轮距运动学不一致')
         if expected.get('actuator_mode', 'velocity_servo') == 'torque_limited':
-            joints = [jc.findtext('joint_name') for jc in model.findall("plugin[@name='gz::sim::systems::JointController']")
-                      if jc.findtext('use_force_commands') in ('1', 'true')]
-            if sorted(joints) != ['left_wheel_joint', 'right_wheel_joint']:
-                errors.append('力矩实验缺少左右轮 force 模式 JointController，或存在多余驱动插件')
-            if model.find("plugin[@name='gz::sim::systems::DiffDrive']") is not None:
-                errors.append('力矩实验中不允许同时存在 DiffDrive 速度伺服（会绕过力矩限制）')
-            state_pub = model.find("plugin[@name='gz::sim::systems::JointStatePublisher']")
-            wanted_joints = ('left_wheel_joint,right_wheel_joint', 'right_wheel_joint,left_wheel_joint')
-            if state_pub is None or state_pub.findtext('joint_name', '') not in wanted_joints:
-                errors.append('力矩实验缺少双轮 JointStatePublisher（真实关节里程计来源）')
+            from .field_actuation import audit
+            errors.extend(audit(model, expected))
         else:
             drive = model.find("plugin[@name='gz::sim::systems::DiffDrive']")
             wanted_drive = {'wheel_radius':expected['wheel']['radius_m'], 'wheel_separation':expected['wheel']['separation_m'],

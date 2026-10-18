@@ -30,7 +30,7 @@ BUILTIN_VEHICLES = {
             'planning': {'footprint': {'type': 'polygon', 'points': FOOTPRINT}, 'capacity': 12, 'speed_mps': 1.0,
                          'kinematics': 'differential', 'min_turn_radius_m': 0.0, 'work_width_m': None},
             'simulation': {'adapter': 'fieldsim-diffdrive', 'collision': 'box 0.8×0.56×0.22 + 球面滚动轮（半径 0.15 m；差速无滑移参考）+ 球万向轮', 'inertial': True,
-                           'model': MODEL, 'drive': 'Gazebo DiffDrive（轮距 0.66 m，轮半径 0.15 m；理想速度伺服；源时间轮式运动学一致性门控）', 'ros': '/vehicle_i/cmd_vel, /vehicle_i/odom, TF map→vehicle_i/base_link',
+                           'model': MODEL, 'drive': '默认 Gazebo DiffDrive 速度伺服；可选双轮 force PID 有界力矩（轮距 0.66 m、轮半径 0.15 m；源时间关节里程计）', 'ros': '/vehicle_i/cmd_vel, /vehicle_i/odom, TF map→vehicle_i/base_link',
                            'sensors': [], 'localization': 'Gazebo 真值',
                            'energy': '真值轨迹后验能耗/力矩核算（滚动阻力 0.06、传动效率 0.8；非电池/电机模型）'},
         },

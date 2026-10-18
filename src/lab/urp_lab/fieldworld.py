@@ -181,24 +181,8 @@ def _robot(v: Vehicle, index: int, speed: float, physics=None) -> str:
       </link>"""
 
     if physics['actuator_mode'] == 'torque_limited':
-        # Bounded-torque experiment: no velocity-servo plugin may coexist. Each wheel gets
-        # a JointController in force mode: a wheel-speed target (Double on the joint
-        # cmd_vel topic) drives an in-engine PID whose output torque is clamped by the
-        # SDF joint effort limit — the physics-engine level saturation.
-        kp = physics['wheel_torque_kp']
-        drive_plugins = f"""
-      <plugin filename="ignition-gazebo-joint-controller-system" name="gz::sim::systems::JointController">
-        <joint_name>left_wheel_joint</joint_name><use_force_commands>true</use_force_commands>
-        <p_gain>{kp}</p_gain><i_gain>0</i_gain><d_gain>0</d_gain>
-      </plugin>
-      <plugin filename="ignition-gazebo-joint-controller-system" name="gz::sim::systems::JointController">
-        <joint_name>right_wheel_joint</joint_name><use_force_commands>true</use_force_commands>
-        <p_gain>{kp}</p_gain><i_gain>0</i_gain><d_gain>0</d_gain>
-      </plugin>
-      <plugin filename="ignition-gazebo-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
-        <joint_name>left_wheel_joint,right_wheel_joint</joint_name>
-        <update_rate>50</update_rate><topic>/model/{v.name}/joint_state</topic>
-      </plugin>"""
+        from .field_actuation import plugins
+        drive_plugins = plugins(v.name, physics)
     else:
         drive_plugins = f"""
       <plugin filename="ignition-gazebo-diff-drive-system" name="gz::sim::systems::DiffDrive">
@@ -338,7 +322,7 @@ def plan_vehicles(inst: dict, routes: list[dict], net: lanes.Network | None = No
 
 
 def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_factor: float = 4.0,
-          physics=None, execution=None) -> dict:
+          physics=None, execution=None, *, inherit_ground=True) -> dict:
     """Writes world.sdf and its meshes into out_dir; returns what the session needs to drive it."""
     if not routes or len(routes) > MAX_SIM_VEHICLES:
         raise ValueError(f'当前 Gazebo 差速模型验收范围为 1–{MAX_SIM_VEHICLES} 台执行车辆')
@@ -354,6 +338,9 @@ def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_f
     vehicles = plan_vehicles(inst, routes, net)
     hazards = [Polygon(o['polygon']) for o in inst.get('obstacles', [])] + (list(net.rows()) if solid_rows else [])
     speed = float(inst['vehicles'].get('speed_mps') or 1.0)
+    from . import ground_execution
+    if inherit_ground and execution is None and inst.get('ground'):
+        execution = ground_execution.resolve(None, inst, routes)
     physical = field_physics.profile(physics)
     if not 0 < speed <= physical['limits']['max_speed_mps']:
         raise ValueError(f"规划车速超过当前实体模型范围 (0, {physical['limits']['max_speed_mps']}] m/s；通用规划不受此执行范围限制")
@@ -491,14 +478,9 @@ def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_f
                         'parking': {v.name: list(v.start[:2]) for v in vehicles}},
             'vehicles': [{'name': v.name, 'label': v.label, 'color': v.color, 'start': list(v.start), 'path': v.path,
                           'tasks': v.tasks, 'hazard_s': hazard_s(v.path, hazards, boundary),
-                          # speed caps planned from the *declared* ground map travel with
-                          # the frozen route; a world that differs executes without new caps
-                          'speed_profile': list(routes[i].get('speed_profile') or []) if i < len(routes) else []}
+                          **ground_execution.vehicle_fields(inst, routes[i], v.path, speed)}
                          for i, v in enumerate(vehicles)],
-            'ground_knowledge': {'planner': ((inst.get('ground') or {}).get('zones')),
-                                 'world': ((execution or {}).get('ground') or {}).get('zones'),
-                                 'world_origin': ((execution or {}).get('ground') or {}).get('origin', 'execution_body'),
-                                 'scope': 'planner 声明的已知地面图 vs 世界实际摩擦分区；速度上限随冻结路线'}}
+            'ground_knowledge': ground_execution.knowledge(inst, execution)}
 
 
 def hazard_s(path, solids, boundary):

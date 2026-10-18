@@ -38,6 +38,7 @@ from urp_lab.field_tracking import Driver, truth_time  # noqa: E402
 from urp_lab.field_traffic import MissionQueue, POLICY
 from urp_lab.field_nonideal import (Estimator, LocalizationModel, slip_experiment,
                                    advance_innovation_guard, reset_guard_evidence)  # noqa: E402
+from urp_lab.field_actuation import WheelOdometry, MAX_FEEDBACK_GAP_S
 from bridge_runtime import bridge_environment, bridge_provenance
 from processes import OwnedProcesses  # noqa: E402
 from physics_runtime import audit as audit_physics_runtime, selection as physics_selection
@@ -179,16 +180,17 @@ class Session:
         phys = self.plan.get('physics') or {}
         self.torque_mode = phys.get('actuator_mode') == 'torque_limited'
         if self.torque_mode:
+            for driver in self.drivers:
+                driver.strict_service, driver.terminal_radius = True, .10
+                for task in driver.tasks:
+                    task['radius'] = min(task['radius'], .05)
             # geometry comes from the frozen plan profile; ROS python must not import solver libs
             self.wheel_r = float(phys['wheel']['radius_m'])
             self.wheel_sep = float(phys['wheel']['separation_m'])
-            self.tau_max = float(phys.get('wheel_torque_limit_nm', 8.0))
-            self.tau_kp = float(phys.get('wheel_torque_kp', 4.0))
-            self.wheels = {v['name']: {'t': None, 'pos': {}, 'omega': {'left_wheel': 0.0, 'right_wheel': 0.0}}
+            self.wheels = {v['name']: WheelOdometry(self.wheel_r, self.wheel_sep)
                            for v in self.plan['vehicles']}
             self.last_twist = {v['name']: (None, 0.0, 0.0) for v in self.plan['vehicles']}
             self.torque_traces = {v['name']: [] for v in self.plan['vehicles']}
-            self.odom_state = {v['name']: [0.0, 0.0, 0.0] for v in self.plan['vehicles']}
         self.clock = None
         self.clock_stamp = None
         self.input_generation = 0
@@ -225,18 +227,26 @@ class Session:
         self.node.create_subscription(Clock, '/clock', self.on_clock, clock_qos)
         self.node.create_subscription(TFMessage, '/ground_truth/poses', self.on_truth, streaming)
         for d in self.drivers:
-            self.node.create_subscription(Odometry, f'/{d.name}/odom',
-                                          lambda msg, name=d.name: self.on_odom(name, msg), streaming)
+            if not self.torque_mode:
+                self.node.create_subscription(Odometry, f'/{d.name}/odom',
+                                              lambda msg, name=d.name: self.on_odom(name, msg), streaming)
             self.node.create_subscription(Contacts, f'/model/{d.name}/contacts',
                                           lambda msg, name=d.name: self.on_contacts(name, msg), streaming)
         self.cmd = {d.name: self.node.create_publisher(Twist, f'/{d.name}/cmd_vel', 10) for d in self.drivers}
         if self.torque_mode:
+            self.wheel_odom_pub = {d.name: self.node.create_publisher(Odometry, f'/{d.name}/odom', streaming)
+                                   for d in self.drivers}
+            # Absolute continuous angles permit skipping intermediate deliveries.
+            # Prefer the newest source sample to queued stale feedback; the same
+            # 0.25 s evidence-gap gate remains mandatory (never interpolate across it).
+            joint_qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE)
+            self._last_wheel_pub = {}
             self.torque_pub = {}
             for d in self.drivers:
                 self.node.create_subscription(Twist, f'/{d.name}/cmd_vel',
                     lambda msg, name=d.name: self._note_twist(name, msg), 10)
                 self.node.create_subscription(JointState, f'/{d.name}/joint_state',
-                    lambda msg, name=d.name: self.on_joint_state(name, msg), streaming)
+                    lambda msg, name=d.name: self.on_joint_state(name, msg), joint_qos)
                 self.torque_pub[d.name] = (
                     self.node.create_publisher(Float64, f'/{d.name}/wheel_cmd/left', 10),
                     self.node.create_publisher(Float64, f'/{d.name}/wheel_cmd/right', 10))
@@ -254,45 +264,30 @@ class Session:
     def _note_twist(self, name, msg):
         self.last_twist[name] = (self.clock, msg.linear.x, msg.angular.z)
 
-    def on_joint_state(self, msg_state, msg):
-        """Real joint motion (torque mode): wheel speeds from the joint states, integrated
-        odometry and the same control-side pipeline as the plugin twist source."""
-        name = msg_state
+    def on_joint_state(self, name, msg):
+        t = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
+        sample = self.wheels[name].update(t, list(msg.name), list(msg.position))
+        if sample is None:
+            return
         self.input_generation += 1
         self.odom_wall[name] = time.monotonic()
         self.counts['odom'][name] += 1
-        state = self.wheels[name]
-        t = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
-        if t <= 0:
-            t = self.clock if self.clock is not None else t
-        if state['t'] is not None and t <= state['t']:
-            return                      # duplicate/stale sample: records must stay monotone
-        dt = (t - state['t']) if state['t'] is not None and t > state['t'] else 0.0
-        by_name = dict(zip(msg.name or [], msg.position or []))
-        for side in ('left_wheel', 'right_wheel'):
-            position = by_name.get(side + '_joint')
-            if position is None:
-                continue
-            position = float(position)
-            # the installed JointStatePublisher fills joint positions but not usable
-            # velocities: wheel speed always comes from wrapped position differencing
-            if dt > 0 and side in state['pos']:
-                dphi = (position - state['pos'][side] + math.pi) % (2 * math.pi) - math.pi
-                state['omega'][side] = dphi / dt
-            state['pos'][side] = position
-        state['t'] = t
-        v = self.wheel_r * (state['omega']['left_wheel'] + state['omega']['right_wheel']) / 2
-        w = self.wheel_r * (state['omega']['right_wheel'] - state['omega']['left_wheel']) / self.wheel_sep
-        if dt > 0:
-            x, y, yaw = self.odom_state[name]
-            self.odom_state[name] = [x + v * math.cos(yaw) * dt, y + v * math.sin(yaw) * dt,
-                                     (yaw + w * dt + math.pi) % (2 * math.pi) - math.pi]
-        x, y, yaw = self.odom_state[name]
+        x, y, yaw, v, w = sample
         self._ingest_wheel(name, t, x, y, yaw, v, w)
+        if t - self._last_wheel_pub.get(name, -1.) < .02 - 1e-9:
+            return
+        self._last_wheel_pub[name] = t
+        odom = Odometry()
+        odom.header.stamp = msg.header.stamp
+        odom.header.frame_id, odom.child_frame_id = f'{name}/odom', f'{name}/base_link'
+        odom.pose.pose.position.x, odom.pose.pose.position.y = x, y
+        odom.pose.pose.orientation.z, odom.pose.pose.orientation.w = math.sin(yaw/2), math.cos(yaw/2)
+        odom.twist.twist.linear.x, odom.twist.twist.angular.z = v, w
+        self.wheel_odom_pub[name].publish(odom)
 
     def _torque_tick(self, t):
         """20 Hz wheel-speed targets. The in-engine JointController PID converts each
-        target to torque, clamped by the SDF joint effort limit (physics-level saturation;
+        target to torque, clamped in the PID and SDF joint effort (physics-level saturation;
         commanded torque itself is not observable from ROS). Zero target = bounded braking.
         Joint feedback loss publishes zero targets (brake)."""
         for d in self.drivers:
@@ -304,13 +299,13 @@ class Session:
             state = self.wheels[d.name]
             wl_t = (v_t - w_t * self.wheel_sep / 2) / self.wheel_r
             wr_t = (v_t + w_t * self.wheel_sep / 2) / self.wheel_r
-            if state['t'] is None or (self.clock is not None and state['t'] < self.clock - 1.0):
+            if state.t is None or (self.clock is not None and state.t < self.clock - MAX_FEEDBACK_GAP_S):
                 wl_t = wr_t = 0.0
             self.torque_pub[d.name][0].publish(Float64(data=wl_t))
             self.torque_pub[d.name][1].publish(Float64(data=wr_t))
             if self.st['phase'] == 'running':
                 self.torque_traces[d.name].append([round(t, 3), round(wl_t, 4), round(wr_t, 4),
-                                                   round(state['omega']['left_wheel'], 4), round(state['omega']['right_wheel'], 4)])
+                                                   round(state.omega['left_wheel'], 4), round(state.omega['right_wheel'], 4)])
 
     def on_clock(self, msg):
         self.input_generation += 1
@@ -524,6 +519,9 @@ class Session:
 
     def startup(self):
         share = Path('/opt/ros/humble/share')
+        if self.torque_mode:
+            from joint_state_runtime import ensure
+            self.report['joint_feedback_plugin'] = ensure()
         # Selection diagnostics must be visible before readiness, not only when
         # Gazebo flushes its buffered stdout on exit.
         self.processes.start('gazebo', ['stdbuf', '-oL', '-eL', 'ign', 'gazebo', '-s', '-r', '-v', '3', self.plan['sdf']])
@@ -1161,6 +1159,7 @@ Window Geometry:
                                                  if self.nonideal_loc else None),
                       localization_observation_columns=['t_measure_s', 't_available_s', 'x_obs_m', 'y_obs_m', 'delivered', 'drop_reason', 't_delivered_s', 'truth_before_s', 'truth_after_s'],
                       pose_estimates=(self.pose_estimates if self.nonideal_loc else None),
+                      wheel_feedback=({name: enc.report() for name, enc in self.wheels.items()} if self.torque_mode else None),
                       torque_traces=(self.torque_traces if self.torque_mode else None),
                       torque_trace_columns=['t_sim', 'omega_left_target_radps', 'omega_right_target_radps',
                                             'omega_left_meas_radps', 'omega_right_meas_radps'],

@@ -105,7 +105,7 @@ class FieldSimManager:
             raise ServiceError(422, 'obsolete_resupply_model', '补给方案来自旧模型或缺少版本证据，请重新求解并验算；原记录保留')
         try:
             inst = validate_instance('fleet_routing', run['instance'])
-            checked = check_fleet(inst, run['routes'])
+            checked = check_fleet(inst, run['routes'], run.get('params') or {})
             if not checked['valid']:
                 raise ValueError('；'.join(checked['errors'][:5]))
         except (ValueError, TypeError, KeyError, IndexError) as exc:
@@ -113,20 +113,8 @@ class FieldSimManager:
         from .assets.bindings import field_vehicle
         vehicle_asset = field_vehicle(run, body.get('vehicle_asset'))
         try:
-            from .field_nonideal import validate_execution
-            execution = validate_execution(body.get('execution'), inst, run['routes'])
-            inst_ground = inst.get('ground')
-            if execution is None and inst_ground:
-                # Known-map ground declared by the instance: the world adopts it as
-                # actual physics even without an explicit execution body. The planner
-                # may or may not have used it (per-route ground_risk records which);
-                # truth localization keeps this a single-factor physical condition.
-                from .ground_risk import normalize_ground, speed_profile as _sp
-                gnd = normalize_ground(inst)
-                execution = validate_execution({'ground_zones': [{'rect': z['rect'], 'mu': z['mu']}
-                                                                 for z in gnd['zones']],
-                                                 'localization_preset': 'truth'}, inst, run['routes'])
-                execution['ground']['origin'] = 'instance_ground'
+            from .ground_execution import resolve
+            execution = resolve(body.get('execution'), inst, run['routes'])
         except ValueError as exc:
             raise ServiceError(422, 'invalid_execution', f'非理想执行配置无效：{exc}') from None
         with self._lock:
@@ -141,7 +129,7 @@ class FieldSimManager:
             out = self.runtime / 'fieldsim' / sid
             try:
                 world = fieldworld.build(inst, run['routes'], out, 'field_' + sid.rsplit('_', 1)[-1], rtf,
-                                         body.get('physics'), execution)
+                                         body.get('physics'), execution, inherit_ground=False)
             except ValueError as exc:
                 raise ServiceError(422, 'world_failed', str(exc)) from None
             for v, r in zip(world['vehicles'], run['routes']):
@@ -159,12 +147,17 @@ class FieldSimManager:
                        paths.LAB / 'urp_lab/field_traffic.py', paths.LAB / 'urp_lab/assets/bindings.py',
                        paths.LAB / 'urp_lab/field_records.py',
                        paths.LAB / 'urp_lab/field_physics.py',
+                       paths.LAB / 'urp_lab/field_actuation.py',
+                       paths.LAB / 'urp_lab/ground_risk.py',
+                       paths.LAB / 'urp_lab/ground_map.py',
+                       paths.LAB / 'urp_lab/ground_execution.py',
                        paths.LAB / 'urp_lab/field_dynamics.py',
                        paths.LAB / 'urp_lab/field_nonideal.py', paths.LAB / 'urp_lab/field_localization.py', paths.LAB / 'urp_lab/field_observation_check.py',
                        paths.LAB / 'urp_lab/field_energy.py',
                        paths.LAB / 'urp_lab/fieldworld.py', paths.LAB / 'urp_lab/lanes.py',
                        paths.LAB / 'ros/processes.py', paths.LAB / 'ros/physics_runtime.py', paths.LAB / 'ros/bridge_runtime.py',
-                       paths.LAB / 'ros/native/bridge/manifest.json']
+                       paths.LAB / 'ros/native/bridge/manifest.json', paths.LAB / 'ros/joint_state_runtime.py',
+                       *sorted((paths.LAB / 'ros/native/joint_state').glob('*'))]
             localization_note = ('Gazebo ground truth (ideal localization)' if not execution or execution['localization']['gnss'] is None else
                                  'wheel odometry fused with synthetic absolute fixes under a declared error model; '
                                  'truth recorded separately for independent evaluation only')

@@ -55,6 +55,12 @@ def context(scenario: dict, instance: dict, result: dict | None = None, *, resol
         environment = maps.fingerprint(frame['world'])
     identity = dict(problem_class=pc, instance_sha256=fingerprint(instance), frame=frame, environment_sha256=environment,
                     objective_rule=rule, objective_unit=unit, relaxed_constraints=relaxed)
+    if pc == 'fleet_routing' and instance.get('ground'):
+        policy = metrics.get('ground_policy', result.get('params', {}).get('ground_policy', 'ignore'))
+        weight = metrics.get('ground_risk_weight', result.get('params', {}).get('ground_risk_weight', 1.))
+        identity['ground_policy'] = {'policy': policy, **({'weight': weight} if policy == 'risk_adjust' else {})}
+        if policy == 'risk_adjust':
+            label += f'（地面风险偏好搜索，权重 {weight:g}；风险当量米另列）'
     if pc == 'coverage':
         identity['validation_policy'] = 'urp.coverage-interior90/2'
     return dict(schema='urp.planning/1', service_kind=service, comparison_key=fingerprint(identity),
@@ -68,6 +74,7 @@ def comparison_key(run: dict) -> str:
     instance = run.get('instance')
     frozen = run.get('planning') or {}
     if (isinstance(instance, dict) and frozen.get('schema') == 'urp.planning/1'
+            and not instance.get('ground')
             and frozen.get('instance_sha256') == fingerprint(instance)
             and frozen.get('objective_unit') == (run.get('objective') or {}).get('unit')):
         return frozen['comparison_key']

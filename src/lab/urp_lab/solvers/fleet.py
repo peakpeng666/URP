@@ -55,12 +55,11 @@ class Graph:
         # Known-map ground zones contribute inflated corner nodes so a detour around a
         # low-friction patch is representable in the graph. Zones stay traversable —
         # their edges just carry the risk weight; obstacles remain hard exclusions.
-        from ..ground_risk import RISK_MARGIN_M
-        for z in ((self.ground or {}).get('zones') or []):
+        for z in ground_zones or []:
             x0, y0, x1, y1 = z['rect']
             # Detour corners sit outside the footprint-aware risk band so a detour is
             # actually risk-free at wheel level, not just at centre-line level.
-            m = r + RISK_MARGIN_M
+            m = r + 0.5  # 0.5 m steering clearance beyond the footprint band
             corners += [(x0 - m, y0 - m), (x1 + m, y0 - m), (x1 + m, y1 + m), (x0 - m, y1 + m)]
         inner = Polygon(inst['boundary']).buffer(-(r + 0.05), join_style=2)
         if not inner.is_empty and inner.geom_type == 'Polygon' and inner.area < inner.convex_hull.area - 1e-6:
@@ -385,7 +384,7 @@ def oriented_clearance(inst, polyline, footprint, obstacles, boundary, crops=())
     return None if best is math.inf else float(best)
 
 
-def check(inst, routes):
+def check(inst, routes, params=None):
     """Recompute task order, actual depot reloads, capacity, metrics and swept-radius clearance.
 
     Sequence/trip/service metadata are cross-checked against one another and the ordered geometry;
@@ -532,9 +531,8 @@ def check(inst, routes):
             value = r.get(key)
             if not isinstance(value, (int, float)) or not math.isfinite(value) or not math.isclose(value, expected, rel_tol=1e-6, abs_tol=1e-5):
                 errors.append(f'车辆 {name} 的{label}与独立复算不一致')
-        if r.get('ground_risk'):
-            from ..ground_risk import check_route_ground
-            check_route_ground(r, inst, pts, errors)
+        from ..ground_risk import check_route_ground
+        check_route_ground(r, inst, pts, errors, cls['speed_mps'], params)
         total += length
         oriented = None
         if isinstance(cls.get('footprint'), dict):
@@ -728,7 +726,7 @@ def solve(scenario, inst, algorithm_id, params):
           if ground is not None:
               # exposure stats are evaluation evidence for every policy; speed caps
               # execute only when the policy actually used the declared map
-              ground_risk.attach_route_ground(route, pts, ground, ground_policy_active, cls['speed_mps'])
+              ground_risk.attach_route_ground(route, pts, ground, ground_policy_active, cls['speed_mps'], risk_weight)
           routes.append(route)
         return routes
 
@@ -743,13 +741,13 @@ def solve(scenario, inst, algorithm_id, params):
         if routes is None:
             attempts.append({'planner': planner, 'corner_shift_m': shift, 'result': 'planner found no path'})
             continue
-        chk = check(inst, routes)
+        chk = check(inst, routes, params)
         attempts.append({'planner': planner, 'corner_shift_m': shift,
                          'valid': chk['valid'], 'length_m': round(sum(r['cost'] for r in routes), 3)})
         if chk['valid']:
             break
     routes = routes or []
-    chk = check(inst, routes)
+    chk = check(inst, routes, params)
     if not routes:
         return [], chk, {'total_distance_m': 0.0}, {'reason': '候选方案未通过独立检查，不能作为可行方案执行',
                                                     'curvature_realization_attempts': attempts}, 'no_solution', trace
@@ -770,6 +768,9 @@ def solve(scenario, inst, algorithm_id, params):
                                 **({'min_turn_radius_m': r['min_turn_radius_m']} if r.get('min_turn_radius_m') else {}),
                                 'color': r['color'], 'tasks': len(r['sequence']), 'trips': len(r['trips']),
                                 'load': r['load'], 'length_m': r['cost'], 'duration_s': r['duration_s']} for r in routes]}
+    if ground:
+        metrics.update(ground_risk_total_cost=sum(r['risk_cost'] for r in routes), ground_policy=ground_policy,
+                       ground_risk_weight=risk_weight, search_objective='risk_adjusted_metres' if ground_policy_active else 'geometric_metres')
     if graph.travel == 'rows':
         metrics.update(lanes=graph.info['lanes'], service_offset_mean_m=graph.info['service_offset_mean_m'],
                        service_offset_max_m=graph.info['service_offset_max_m'])
@@ -810,7 +811,7 @@ def solve(scenario, inst, algorithm_id, params):
                  'turns': False, 'parking': False, 'traffic_conflicts': False,
                  'scope': 'constant-speed planning proxy, not physically predicted completion time'},
         'optimization': {'reported_objective': inst.get('objective', 'total_distance'),
-                         'search': 'weighted distance and route-span surrogate' if algorithm_id == 'ortools.fleet' and inst.get('objective') == 'makespan'
+                         'search': 'declared ground-risk equivalent metres' if ground_policy_active else 'weighted distance and route-span surrogate' if algorithm_id == 'ortools.fleet' and inst.get('objective') == 'makespan'
                          else 'distance routing then trip allocation',
                          'trip_allocation': 'OR-Tools assignment' if owner is not None else 'LPT heuristic' if multi else 'one trip per vehicle',
                          'optimality_proved': False}}

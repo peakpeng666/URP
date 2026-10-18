@@ -1,26 +1,13 @@
 #!/usr/bin/env python3
-"""Ground-risk-aware planning acceptance: a declared known-map ground zone changes the
-fleet route choice, the change survives independent checking, and physical execution
-shows the actual trade-off (slip exposure vs distance/time).
+"""Engineering replication of ground-aware planning, with an in-zone task.
 
-Pre-declared assertions (fixed before the runs):
-- Scenario: 34x26 m free-travel field, depot (3,3), two tasks at (30,22)/(28,24), one
-  1.0 m/s vehicle, capacity 2. Declared known map: one mu=0.12 band [8,8,24,18] across
-  the direct line. The world adopts the declared map as actual friction (origin
-  instance_ground, truth localization — single-factor physical condition).
-- Scene: task 1 sits INSIDE the mu=0.12 band [18,10,30,20] (in-zone dwell manoeuvres
-  are the slip source under this friction proxy — uniform straight crossing at 1 m/s
-  needs ~no tangential force), task 2 outside. Coplanar zones (no step artefact).
-- cross_ignore (policy=ignore): route crosses ~25 m inside; mission truth-verified;
-  wheel-vs-truth divergence > 0.5 m (in-zone manoeuvre slip appears).
-- cross_capped (risk_adjust w=0.2): same geometry, planned 0.35 m/s zone cap; truth
-  speed inside the band <= 0.41 m/s; divergence strictly below the uncapped crossing.
-- detour_risk (risk_adjust w=1.0): risk weight cuts in-zone exposure by > 5 m via
-  partial detour + the cap; divergence < 0.3 m; longer distance and makespan than the
-  crossing route (the honest cost); planner==world rect/mu (known-map condition).
-
-Run from src/lab: .venv/bin/python e2e/risk_planning.py --out /absolute/evidence/path
-Requires ROS/Gazebo; serial physics acceptance; fresh absolute output directory.
+Three fixed choices: ignore, risk_adjust weight .2 (same crossing plus speed cap),
+weight 1 (detour plus cap). Every mission must pass production truth/cap checks,
+exact exit status and cleanup. Directional trade-offs are separate assertions,
+not calibrated soil claims or evidence of algorithm superiority. The former
+exploratory protocol inconsistently claimed a <.3 m detour drift bound without
+asserting it; that historical result is retained, never called preregistration.
+Writes protocol.json before running. Requires sequential local ROS/Gazebo sessions.
 """
 import argparse
 import json
@@ -35,6 +22,7 @@ p = argparse.ArgumentParser()
 p.add_argument('--out', type=Path, required=True)
 p.add_argument('--rtf', type=float, default=6.0)
 args = p.parse_args()
+if not args.out.is_absolute(): p.error('--out must be absolute')
 out = args.out.resolve()
 out.mkdir(parents=True, exist_ok=False)
 os.environ['URP_LAB_RUNTIME'] = str(out / 'runtime')
@@ -71,17 +59,12 @@ def wait_for(read, predicate, seconds):
     raise TimeoutError(str(state)[:1500])
 
 
-def zone_speed_violation(truth, cap=0.35 + CAP_TOLERANCE):
-    """Max truth speed while the robot centre is inside the declared band."""
-    worst = 0.0
-    for a, b in zip(truth, truth[1:]):
-        dt = b[0] - a[0]
-        if dt <= 0:
-            continue
-        mx, my = (a[1] + b[1]) / 2, (a[2] + b[2]) / 2
-        if ZONE[0] <= mx <= ZONE[2] and ZONE[1] <= my <= ZONE[3]:
-            worst = max(worst, math.dist(a[1:3], b[1:3]) / dt)
-    return worst
+save('protocol.json', {'schema': 'urp.ground-risk-planning-acceptance/2', 'instance': INSTANCE,
+    'cases': CASES, 'rtf': args.rtf,
+    'engineering_gates': ['same crossing geometry for the speed-only comparison', 'production fieldcheck including footprint truth speed',
+                          'nonzero real wheel feedback', 'exact exit code and no residual owned processes'],
+    'directional_checks': {'uncapped_drift_m_min': .5, 'capped_drift': 'below uncapped', 'detour_exposure_reduction_m_min': 5},
+    'scope': 'engineering replication of an exploratory hypothesis; no fixed small detour-drift claim; no real soil calibration'})
 
 
 app = create_app(Config(runtime=out / 'runtime', port=4142, field_sim_port=4195,
@@ -105,6 +88,7 @@ try:
             runs[case] = rid
             save(f'{case}-planning.json', c.get(api + f"/runs/{rid['run_id']}/export").json())
 
+        assert runs['cross_ignore']['routes'][0]['polyline'] == runs['cross_capped']['routes'][0]['polyline'], 'speed-only comparison needs identical directed geometry'
         for case in CASES:
             began = time.monotonic()
             started = c.post(api + '/fieldsim', json={'run_id': runs[case]['run_id'],
@@ -116,9 +100,11 @@ try:
             def state():
                 return c.get(api + '/fieldsim').json()
 
-            wait_for(state, lambda s: s['phase'] in ('finished', 'failed') or not s['running'], 700)
-            c.post(api + '/fieldsim/stop', json={})
-            wait_for(state, lambda s: not s['running'], 120)
+            try:
+                wait_for(state, lambda s: s['phase'] in ('finished', 'failed') or not s['running'], 700)
+            finally:
+                c.post(api + '/fieldsim/stop', json={}).raise_for_status()
+                closed = wait_for(state, lambda s: not s['running'], 120)
             result = c.get(api + f'/fieldsim/results/{sid}').json()
             plan = json.loads((runtime / 'plan.json').read_text())
             report = json.loads((runtime / 'session-report.json').read_text()) if (runtime / 'session-report.json').is_file() else {}
@@ -139,7 +125,8 @@ try:
             expect('世界采用声明的已知地面图', gk.get('world_origin') == 'instance_ground'
                    and [[z['rect'], z['mu']] for z in (gk.get('planner') or [])]
                        == [[z['rect'], z['mu']] for z in (gk.get('world') or [])])
-            expect('会话清理 PASS', report.get('cleanup_status') == 'PASS')
+            expect('会话清理 PASS', report.get('cleanup_status') == 'PASS' and not report.get('remaining_owned_processes'))
+            expect('真实退出码', closed.get('returncode') == (0 if result.get('state') == 'succeeded' else 1))
             expect('任务真值验收通过', result.get('state') == 'succeeded' and m.get('tasks_reached') == m.get('tasks_total'))
             if case == 'cross_ignore':
                 expect('路线穿越低附着带 (>20 m，含区内任务停留)', stats.get('in_zone_length_m', 0) > 20)
@@ -148,7 +135,7 @@ try:
             if case == 'cross_capped':
                 expect('路线仍穿越 (>20 m)', stats.get('in_zone_length_m', 0) > 20)
                 expect('规划限速剖面存在', bool(route.get('speed_profile')))
-                expect('真值区内速度 ≤ 0.35+0.06 m/s', zone_speed_violation(result['rigid_body_poses']['vehicle_1']) <= 0.35 + CAP_TOLERANCE)
+                expect('正式后端足迹真值限速检查通过', (result.get('check', {}).get('ground_speed') or {}).get('valid') is True)
                 expect('限速降低滑移：发散 < 未限速穿越', divergence < results['cross_ignore']['divergence_m'])
             if case == 'detour_risk':
                 expect('风险权重显著减少区内暴露 (>5 m)', stats.get('in_zone_length_m', 99) + 5 < runs['cross_ignore']['routes'][0]['ground_stats']['in_zone_length_m'])
@@ -162,6 +149,8 @@ try:
                 'makespan_s': m.get('makespan_s'), 'total_distance_m': m.get('total_distance_m'),
                 'cross_track_max_m': m.get('cross_track_max_m'),
                 'divergence_m': round(divergence, 3), 'slip': slip,
+                'check': result.get('check'), 'errors': result.get('errors'), 'returncode': closed.get('returncode'),
+                'cleanup': report.get('cleanup_status'), 'remaining': report.get('remaining_owned_processes'),
                 'checks': checks, 'wall_s': round(time.monotonic() - began, 1),
                 'runtime_dir': str(runtime)}
             save(f'{case}-result.json', result)
@@ -169,21 +158,21 @@ try:
             print(f"[{case}] state={result.get('state')} div={divergence:.2f} checks={'OK' if not failures else failures}", flush=True)
 
     overall = all(c['ok'] for r in results.values() for c in r['checks'])
-    summary = {'schema': 'urp.ground-risk-planning-acceptance/1',
+    summary = {'schema': 'urp.ground-risk-planning-acceptance/2',
                'generated_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
                'status': 'PASS' if overall else 'FAIL',
                'cases': results,
                'zone': ZONE, 'cap_tolerance_mps': CAP_TOLERANCE,
                'scope': '已知地图条件下的风险规划：声明地面 → 风险边权/限速 → 独立检查 → 真值定位物理执行 → '
                         '滑移暴露与里程/时间代价对照；风险成本为当量米，不是失败概率',
-               'thresholds': {'cross_divergence_m': 0.5, 'capped_speed_mps': 0.41, 'detour_divergence_m': 0.3}}
+               'thresholds': {'cross_divergence_m': 0.5, 'capped_speed_mps': 0.41}}
     save('summary.json', summary)
     print(json.dumps({'status': summary['status'],
                       'cases': {k: {'div': v['divergence_m'], 'in_zone': v['in_zone_m'],
                                     'geo': v['route_geo_m'], 't': v['makespan_s']} for k, v in results.items()}},
                      ensure_ascii=False))
     sys.exit(0 if overall else 1)
-except AssertionError as exc:
+except Exception as exc:
     save('summary.json', {'status': 'ERROR', 'error': str(exc)[:2000], 'cases': results})
     print(f'ERROR: {exc}', file=sys.stderr)
     sys.exit(2)

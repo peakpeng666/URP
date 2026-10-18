@@ -422,9 +422,10 @@ def fleet_routing(inst: dict) -> dict:
                          'names': [str(n) for n in names][:count] if names else [f'车{i + 1}' for i in range(count)],
                          # per-class count / capacity / speed / footprint; absent for legacy homogeneous instances
                          **({'fleet': fleet} if fleet is not None else {})},
-               objective=objective, units='m',
-               **({'ground': __import__('urp_lab.ground_risk', fromlist=['normalize_ground']).normalize_ground(inst)}
-                  if inst.get('ground') else {}))
+               objective=objective, units='m')
+    if inst.get('ground') is not None:
+        from ..ground_map import normalize_ground
+        out['ground'] = normalize_ground(out)
     return out
 
 

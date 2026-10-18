@@ -185,8 +185,14 @@ def verify(plan, result):
     if (plan.get('execution') or {}).get('mode') == 'nonideal':
         nonideal = verify_nonideal_observations(plan, result)
         errors.extend(nonideal['errors'])
+    from .ground_execution import verify as verify_ground
+    ground_speed = verify_ground(plan, result)
+    if ground_speed:
+        errors.extend(ground_speed['errors'])
+        frozen_valid = frozen_valid and ground_speed['data_valid']
     task_truth = None
-    if (plan.get('execution') or {}).get('schema') == 'urp.field-execution/2':
+    if ((plan.get('execution') or {}).get('schema') == 'urp.field-execution/2'
+            or (plan.get('physics') or {}).get('actuator_mode') == 'torque_limited'):
         task_truth = verify_task_truth(plan, result)
         errors.extend(task_truth['errors'])
     for v in plan['vehicles']:
@@ -243,7 +249,7 @@ def verify(plan, result):
             errors.append('缺少接触传感器消息，不能把未观测到的接触判为零')
     return {'valid': not errors, 'data_valid': frozen_valid and (nonideal is None or nonideal['valid']), 'errors': errors, 'vehicles': details, 'radius_m': radius,
             'traffic': traffic, 'motion_metrics': motion_metrics, 'dynamics': dynamics,
-            'nonideal_observations': nonideal, 'task_truth': task_truth,
+            'nonideal_observations': nonideal, 'task_truth': task_truth, 'ground_speed': ground_speed,
             'track_tolerance_m': TRACK_LIMIT_M, 'distance_sampling_m': 0.1, 'distance_error_bound_m': 0.05,
             'scope': '实测轨迹线段的圆足迹、完整路径；有交通策略时另检车间同步距离与接触记录；非理想模式另检观测模型一致性'}
 
