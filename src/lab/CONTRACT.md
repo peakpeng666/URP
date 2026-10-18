@@ -370,3 +370,10 @@ POST `fieldsim.execution` 采用 `urp.field-execution/2`：`ground_preset`（non
 - **结果**：`execution_report/2` 从完整保存序列计算均值/最大值，不先抽稀；`tasks_reached/tasks_completed` 表示控制器判定，`tasks_verified` 表示独立真值位置及停留合格数，不能混用。里程计与真值只在首个共同姿态对齐，发散还可能来自接触几何/运动学失配，不自动等同轮胎滑移率。`localization_outage_total_s` 仅计实际失锁窗口暴露；历史结果不回写。求解器及路径跟踪器不读取地面分区或误差参数，当前是原规划在扰动下的可执行性实验，未实现风险感知重规划。
 
 当前验收入口：`.venv/bin/python e2e/nonideal_audit.py --out /全新绝对目录`，先写 protocol 再串行运行，同场景/同路线的物理及定位对照；`--seed` 可改变合成观测种子。`e2e/nonideal_backend.py` 保留旧探索协议和历轮失败，不能把迭代中修订的指标称为独立预注册。当前逐场结果、测试边界及证据统一见 setup 的集成报告最上方。
+
+## 8. 地面风险规划与有限驱动力（2026-10-18）
+
+- **instance `ground` 声明**（`scenarios/validate.py` 规范化，schema `urp.ground-risk/1`）：`zones[{rect:[x0,y0,x1,y1], mu(0.03–1.0), label?}]`（≤16、互不重叠、界内、避车库 2.5 m）+ `mu_reference`(默认 1.0) + `knowledge`(默认 known_map_v1)。这是**规划器可读的已知地图声明**；`speed_policy`（μ<0.5 → 0.35 m/s 限速，工程假设）随声明下发。
+- **求解参数**（fleet 算法目录注册）：`ground_policy`（ignore 默认 / risk_adjust）+ `ground_risk_weight`（0–10，默认 1.0）。risk_adjust 仅自由通行 + total_distance（rows/makespan 明确拒绝）；可视边权 = 几何长度 ×(1+w·μ缺口·区内分数)，区内分数按**足迹感知暴露**（分区外扩 `RISK_MARGIN_M`=0.5 m，中心线出区但轮压区仍计）；绕行节点来自分区外扩(r+0.5) 角点。路线附带 `geo_length_m`（几何）、`risk_cost`（当量米）、`ground_stats`（暴露统计，所有策略都记录）、`speed_profile`（[[s0,s1,v_limit]]，仅 risk_adjust 执行）；`check()` 独立复算 geo/risk 口径（不一致判无效）。**风险成本是声明偏好（当量米），不是失败概率**。
+- **执行**：`fieldworld.build` 把路线 `speed_profile` 传入冻结计划（世界与声明失配时上限随路线不随世界）；`fieldsim.start` 在无显式 execution 且 instance.ground 存在时合成 `urp.field-execution/2`（origin=instance_ground，truth 定位）；`plan.ground_knowledge` 记录 planner/world 分区对照。`Driver._speed_cap` 对当前及未来 0.8 m 弧长取最小限速。
+- **physics 执行器键**：`actuator_mode`（velocity_servo 默认 / torque_limited）、`wheel_torque_limit_nm`（0.1–40，默认 8）、`wheel_torque_kp`（0.1–40，默认 4）。torque_limited：SDF 移除 DiffDrive（audit 校验无速度伺服共存、双轮 JointController force 模式、JointStatePublisher），关节 `<limit><effort>` 上限做物理引擎级饱和；会话 20 Hz 发布轮速目标至 `/model/{name}/joint/{joint}/cmd_vel`（桥 Float64↔Double），零目标/反馈丢失/命令过期 0.25 s 均为制动；里程计由真实关节 position/velocity 积分（`sensor_msgs/JointState` ← gz Model 桥）；结果记录 `torque_traces`（目标 vs 实测轮速）与 `actuator_note`（指令力矩不可观测，饱和由运动响应判定）。

@@ -9,16 +9,18 @@ from pathlib import Path
 LAB = Path(__file__).resolve().parents[1] / 'urp_lab'
 
 CAPS = {  # module → max lines
-    'solvers/fleet.py': 800,
+    # 2026-10-18: ground-risk edges/detour corners + route ground stats raised this by
+    # ~40 lines after extracting resolve_policy/check_route_ground/attach_route_ground.
+    'solvers/fleet.py': 860,
     'solvers/fleet_curvature.py': 250,
     'solvers/fleet_engines.py': 260,
     'solvers/fleet_common.py': 60,
     'scenarios/validate.py': 480,
-    'fieldworld.py': 520,
+    'fieldworld.py': 560,   # 2026-10-18: torque-actuator plugin block + ground knowledge record
 }
 
 FUNCTION_CAPS = {  # (module, function) → max lines
-    ('solvers/fleet.py', 'solve'): 210,
+    ('solvers/fleet.py', 'solve'): 230,   # +policy resolution & risk-graph wiring, helpers extracted
     ('solvers/fleet.py', 'check'): 180,
     ('solvers/fleet_engines.py', 'metaheuristic'): 100,
     ('solvers/fleet_engines.py', 'ortools_makespan'): 120,

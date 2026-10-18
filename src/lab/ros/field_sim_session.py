@@ -47,6 +47,8 @@ from rclpy.executors import SingleThreadedExecutor  # noqa: E402
 from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy  # noqa: E402
 from rclpy.signals import SignalHandlerOptions  # noqa: E402
 from nav_msgs.msg import Odometry  # noqa: E402
+from sensor_msgs.msg import JointState  # noqa: E402
+from std_msgs.msg import Float64  # noqa: E402
 from geometry_msgs.msg import Point, Twist, TransformStamped  # noqa: E402
 from rosgraph_msgs.msg import Clock  # noqa: E402
 from ros_gz_interfaces.msg import Contacts
@@ -174,6 +176,19 @@ class Session:
         else:
             self.loc_models = self.estimators = None
         self.driver_by_name = {d.name: d for d in self.drivers}
+        phys = self.plan.get('physics') or {}
+        self.torque_mode = phys.get('actuator_mode') == 'torque_limited'
+        if self.torque_mode:
+            # geometry comes from the frozen plan profile; ROS python must not import solver libs
+            self.wheel_r = float(phys['wheel']['radius_m'])
+            self.wheel_sep = float(phys['wheel']['separation_m'])
+            self.tau_max = float(phys.get('wheel_torque_limit_nm', 8.0))
+            self.tau_kp = float(phys.get('wheel_torque_kp', 4.0))
+            self.wheels = {v['name']: {'t': None, 'pos': {}, 'omega': {'left_wheel': 0.0, 'right_wheel': 0.0}}
+                           for v in self.plan['vehicles']}
+            self.last_twist = {v['name']: (None, 0.0, 0.0) for v in self.plan['vehicles']}
+            self.torque_traces = {v['name']: [] for v in self.plan['vehicles']}
+            self.odom_state = {v['name']: [0.0, 0.0, 0.0] for v in self.plan['vehicles']}
         self.clock = None
         self.clock_stamp = None
         self.input_generation = 0
@@ -215,6 +230,16 @@ class Session:
             self.node.create_subscription(Contacts, f'/model/{d.name}/contacts',
                                           lambda msg, name=d.name: self.on_contacts(name, msg), streaming)
         self.cmd = {d.name: self.node.create_publisher(Twist, f'/{d.name}/cmd_vel', 10) for d in self.drivers}
+        if self.torque_mode:
+            self.torque_pub = {}
+            for d in self.drivers:
+                self.node.create_subscription(Twist, f'/{d.name}/cmd_vel',
+                    lambda msg, name=d.name: self._note_twist(name, msg), 10)
+                self.node.create_subscription(JointState, f'/{d.name}/joint_state',
+                    lambda msg, name=d.name: self.on_joint_state(name, msg), streaming)
+                self.torque_pub[d.name] = (
+                    self.node.create_publisher(Float64, f'/{d.name}/wheel_cmd/left', 10),
+                    self.node.create_publisher(Float64, f'/{d.name}/wheel_cmd/right', 10))
         self.pub_field = self.node.create_publisher(MarkerArray, '/workbench/field', latched)
         self.pub_routes = self.node.create_publisher(MarkerArray, '/workbench/routes', latched)
         self.pub_tasks = self.node.create_publisher(MarkerArray, '/workbench/tasks', latched)
@@ -226,6 +251,67 @@ class Session:
         self.published_tasks = -1
 
     # ------------------------------------------------------------ inputs --
+    def _note_twist(self, name, msg):
+        self.last_twist[name] = (self.clock, msg.linear.x, msg.angular.z)
+
+    def on_joint_state(self, msg_state, msg):
+        """Real joint motion (torque mode): wheel speeds from the joint states, integrated
+        odometry and the same control-side pipeline as the plugin twist source."""
+        name = msg_state
+        self.input_generation += 1
+        self.odom_wall[name] = time.monotonic()
+        self.counts['odom'][name] += 1
+        state = self.wheels[name]
+        t = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
+        if t <= 0:
+            t = self.clock if self.clock is not None else t
+        if state['t'] is not None and t <= state['t']:
+            return                      # duplicate/stale sample: records must stay monotone
+        dt = (t - state['t']) if state['t'] is not None and t > state['t'] else 0.0
+        by_name = dict(zip(msg.name or [], msg.position or []))
+        for side in ('left_wheel', 'right_wheel'):
+            position = by_name.get(side + '_joint')
+            if position is None:
+                continue
+            position = float(position)
+            # the installed JointStatePublisher fills joint positions but not usable
+            # velocities: wheel speed always comes from wrapped position differencing
+            if dt > 0 and side in state['pos']:
+                dphi = (position - state['pos'][side] + math.pi) % (2 * math.pi) - math.pi
+                state['omega'][side] = dphi / dt
+            state['pos'][side] = position
+        state['t'] = t
+        v = self.wheel_r * (state['omega']['left_wheel'] + state['omega']['right_wheel']) / 2
+        w = self.wheel_r * (state['omega']['right_wheel'] - state['omega']['left_wheel']) / self.wheel_sep
+        if dt > 0:
+            x, y, yaw = self.odom_state[name]
+            self.odom_state[name] = [x + v * math.cos(yaw) * dt, y + v * math.sin(yaw) * dt,
+                                     (yaw + w * dt + math.pi) % (2 * math.pi) - math.pi]
+        x, y, yaw = self.odom_state[name]
+        self._ingest_wheel(name, t, x, y, yaw, v, w)
+
+    def _torque_tick(self, t):
+        """20 Hz wheel-speed targets. The in-engine JointController PID converts each
+        target to torque, clamped by the SDF joint effort limit (physics-level saturation;
+        commanded torque itself is not observable from ROS). Zero target = bounded braking.
+        Joint feedback loss publishes zero targets (brake)."""
+        for d in self.drivers:
+            _t_cmd, v_cmd, w_cmd = self.last_twist.get(d.name, (None, 0.0, 0.0))
+            if self.st['phase'] == 'running' and _t_cmd is not None and t - _t_cmd <= 0.25:
+                v_t, w_t = v_cmd, w_cmd
+            else:
+                v_t, w_t = 0.0, 0.0
+            state = self.wheels[d.name]
+            wl_t = (v_t - w_t * self.wheel_sep / 2) / self.wheel_r
+            wr_t = (v_t + w_t * self.wheel_sep / 2) / self.wheel_r
+            if state['t'] is None or (self.clock is not None and state['t'] < self.clock - 1.0):
+                wl_t = wr_t = 0.0
+            self.torque_pub[d.name][0].publish(Float64(data=wl_t))
+            self.torque_pub[d.name][1].publish(Float64(data=wr_t))
+            if self.st['phase'] == 'running':
+                self.torque_traces[d.name].append([round(t, 3), round(wl_t, 4), round(wr_t, 4),
+                                                   round(state['omega']['left_wheel'], 4), round(state['omega']['right_wheel'], 4)])
+
     def on_clock(self, msg):
         self.input_generation += 1
         value = msg.clock.sec + msg.clock.nanosec / 1e9
@@ -252,11 +338,17 @@ class Session:
         self.counts['odom'][name] += 1
         p, q = msg.pose.pose.position, msg.pose.pose.orientation
         stamp = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
+        self._ingest_wheel(name, stamp, p.x, p.y, yaw_of(q),
+                           msg.twist.twist.linear.x, msg.twist.twist.angular.z)
+
+    def _ingest_wheel(self, name, stamp, x, y, yaw, v, w):
+        """Common pipeline for both odometry sources (plugin twist or integrated joint
+        angles in torque mode): estimator/control input, records, TF broadcast."""
         if self.nonideal_loc:
             # The estimator path must also run during startup: session readiness waits
             # for the controller-side pose, which in this mode comes from the estimator.
             est = self.estimators[name]
-            est.on_odom(msg.twist.twist.linear.x, msg.twist.twist.angular.z, stamp)
+            est.on_odom(v, w, stamp)
             for fix in self.loc_models[name].deliver(stamp):
                 est.on_fix(fix['x'], fix['y'], fix['t_measure'], stamp)
             ex, ey, eyaw = est.pose(stamp)
@@ -264,10 +356,10 @@ class Session:
             drv.observe((ex, ey, eyaw), stamp, record_distance=False)
             # Stop certification uses the velocity the controller can actually see:
             # the wheel-derived twist, not differentiated noisy poses.
-            drv.speed_now = abs(msg.twist.twist.linear.x)
-            drv.angular_speed_now = abs(msg.twist.twist.angular.z)
+            drv.speed_now = abs(v)
+            drv.angular_speed_now = abs(w)
             tf = TransformStamped()
-            tf.header.stamp = msg.header.stamp
+            tf.header.stamp = self.clock_stamp if self.clock_stamp is not None else Clock().clock
             tf.header.frame_id, tf.child_frame_id = 'map', f'{name}/base_link'
             tf.transform.translation.x, tf.transform.translation.y = ex, ey
             tf.transform.rotation.z, tf.transform.rotation.w = math.sin(eyaw/2), math.cos(eyaw/2)
@@ -277,7 +369,7 @@ class Session:
                 source = 'dead_reckoning' if (gap is None or gap > 3.0) else 'fused'
                 self.pose_estimates[name].append([round(stamp, 4), round(ex, 4), round(ey, 4), round(eyaw, 5), source])
         if self.st['phase'] == 'running':
-            self.odometry[name].append([stamp, p.x, p.y, yaw_of(q), msg.twist.twist.linear.x, msg.twist.twist.angular.z])
+            self.odometry[name].append([stamp, x, y, yaw, v, w])
 
     def on_contacts(self, name, msg):
         self.input_generation += 1
@@ -384,6 +476,10 @@ class Session:
             self.executor.spin_once(timeout_sec=0)
             if self.input_generation == before or time.monotonic() >= deadline:
                 break
+        if self.torque_mode and self.clock is not None:
+            if not hasattr(self, '_last_torque_t') or self.clock - self._last_torque_t >= 0.05:
+                self._last_torque_t = self.clock
+                self._torque_tick(self.clock)
         if self.stop.is_set():
             raise KeyboardInterrupt
         with self.lock:
@@ -436,12 +532,23 @@ class Session:
                         ros_type_name='rosgraph_msgs/msg/Clock', gz_type_name='ignition.msgs.Clock',
                         direction='GZ_TO_ROS', publisher_queue=1)]
         for d in self.drivers:
-            for topic, ros_topic, ros_type, gz_type, command in (
-                ('cmd_vel', f'/{d.name}/cmd_vel', 'geometry_msgs/msg/Twist', 'Twist', True),
-                ('pose', '/ground_truth/poses', 'tf2_msgs/msg/TFMessage', 'Pose_V', False),
-                ('odometry', f'/{d.name}/odom', 'nav_msgs/msg/Odometry', 'Odometry', False),
-                ('contacts', f'/model/{d.name}/contacts', 'ros_gz_interfaces/msg/Contacts', 'Contacts', False)):
-                bridges.append(dict(ros_topic_name=ros_topic, gz_topic_name=f'/model/{d.name}/{topic}',
+            rows = [('pose', '/ground_truth/poses', 'tf2_msgs/msg/TFMessage', 'Pose_V', False, f'/model/{d.name}/pose'),
+                    ('contacts', f'/model/{d.name}/contacts', 'ros_gz_interfaces/msg/Contacts', 'Contacts', False,
+                     f'/model/{d.name}/contacts')]
+            if self.torque_mode:
+                rows += [('left_cmd', f'/{d.name}/wheel_cmd/left', 'std_msgs/msg/Float64', 'Double', True,
+                          f'/model/{d.name}/joint/left_wheel_joint/cmd_vel'),
+                         ('right_cmd', f'/{d.name}/wheel_cmd/right', 'std_msgs/msg/Float64', 'Double', True,
+                          f'/model/{d.name}/joint/right_wheel_joint/cmd_vel'),
+                         ('joint_state', f'/{d.name}/joint_state', 'sensor_msgs/msg/JointState', 'Model', False,
+                          f'/model/{d.name}/joint_state')]
+            else:
+                rows += [('cmd_vel', f'/{d.name}/cmd_vel', 'geometry_msgs/msg/Twist', 'Twist', True,
+                          f'/model/{d.name}/cmd_vel'),
+                         ('odometry', f'/{d.name}/odom', 'nav_msgs/msg/Odometry', 'Odometry', False,
+                          f'/model/{d.name}/odometry')]
+            for _topic, ros_topic, ros_type, gz_type, command, gz_topic in rows:
+                bridges.append(dict(ros_topic_name=ros_topic, gz_topic_name=gz_topic,
                                     ros_type_name=ros_type, gz_type_name='ignition.msgs.' + gz_type,
                                     direction='ROS_TO_GZ' if command else 'GZ_TO_ROS',
                                     publisher_queue=1 if command else 200, subscriber_queue=1 if command else 200))
@@ -1054,6 +1161,11 @@ Window Geometry:
                                                  if self.nonideal_loc else None),
                       localization_observation_columns=['t_measure_s', 't_available_s', 'x_obs_m', 'y_obs_m', 'delivered', 'drop_reason', 't_delivered_s', 'truth_before_s', 'truth_after_s'],
                       pose_estimates=(self.pose_estimates if self.nonideal_loc else None),
+                      torque_traces=(self.torque_traces if self.torque_mode else None),
+                      torque_trace_columns=['t_sim', 'omega_left_target_radps', 'omega_right_target_radps',
+                                            'omega_left_meas_radps', 'omega_right_meas_radps'],
+                      actuator_note=('gz JointController force 模式：轮速目标→引擎内 PID→力矩，'
+                                     'SDF joint effort 限幅在物理引擎层饱和；指令力矩不可从 ROS 观测') if self.torque_mode else None,
                       localization_inputs=({d.name: {'odometry': self.estimators[d.name].inputs,
                           'truth_sensor': self.loc_models[d.name].truth_inputs, 'updates': self.estimators[d.name].updates}
                           for d in self.drivers} if self.nonideal_loc else None),

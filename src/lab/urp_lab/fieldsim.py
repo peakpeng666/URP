@@ -115,6 +115,18 @@ class FieldSimManager:
         try:
             from .field_nonideal import validate_execution
             execution = validate_execution(body.get('execution'), inst, run['routes'])
+            inst_ground = inst.get('ground')
+            if execution is None and inst_ground:
+                # Known-map ground declared by the instance: the world adopts it as
+                # actual physics even without an explicit execution body. The planner
+                # may or may not have used it (per-route ground_risk records which);
+                # truth localization keeps this a single-factor physical condition.
+                from .ground_risk import normalize_ground, speed_profile as _sp
+                gnd = normalize_ground(inst)
+                execution = validate_execution({'ground_zones': [{'rect': z['rect'], 'mu': z['mu']}
+                                                                 for z in gnd['zones']],
+                                                 'localization_preset': 'truth'}, inst, run['routes'])
+                execution['ground']['origin'] = 'instance_ground'
         except ValueError as exc:
             raise ServiceError(422, 'invalid_execution', f'非理想执行配置无效：{exc}') from None
         with self._lock:

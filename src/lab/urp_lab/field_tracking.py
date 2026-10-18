@@ -41,6 +41,8 @@ class Driver:
         self.speed = speed
         # path arc lengths flagged by the planner as running close to obstacles/crop/boundary
         self.hazard_s = sorted(v.get('hazard_s') or [])
+        # planned speed caps [[s0, s1, v_limit], ...] from the declared ground map
+        self.speed_profile = sorted([tuple(p) for p in v.get('speed_profile') or [] if p[2] > 0])
         # each task is served at its stop on the route (a lane or headland point; the task itself with free travel)
         self.tasks = [dict(t, goal=tuple(t.get('stop') or t['xy']), state='pending', t_sim=None, distance_m=None) for t in v['tasks']]
         # Explicit occurrences prevent a later visit to the same place being served early.
@@ -136,6 +138,15 @@ class Driver:
                 best_s, best_d = self.cum[i - 1] + uf * seg, d
         return best_s, cte
 
+    def _speed_cap(self, window=0.8):
+        """Planned cap over the next `window` metres of arc length (pre-entry slowdown)."""
+        cap = math.inf
+        for s0, s1, vmax in self.speed_profile:
+            if s1 < self.s - 1e-6 or s0 > self.s + window:
+                continue
+            cap = min(cap, vmax)
+        return cap
+
     def next_corner(self):
         i = bisect.bisect_right(self.corners, self.s + CORNER_PASS)
         return self.corners[i] if i < len(self.corners) else math.inf
@@ -214,6 +225,7 @@ class Driver:
             return 0.0, max(-1.6, min(1.6, 2.2 * alpha))
         v = self.speed * max(0.3, math.cos(alpha))
         v = min(v, 0.15 + 0.7 * to_stop)
+        v = min(v, self._speed_cap())
         look = max(0.4, math.dist((x, y), (tx, ty)))
         w = max(-1.8, min(1.8, 2 * v * math.sin(alpha) / look + 0.8 * alpha * (v < 0.3)))
         # stuck watchdog

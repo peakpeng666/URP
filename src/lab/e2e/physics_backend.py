@@ -77,7 +77,10 @@ def main():
              'lat03_yaw45':{'wheel_lateral_friction':.3,'__initial_yaw':math.pi/4},
              'lat03_yaw90':{'wheel_lateral_friction':.3,'__initial_yaw':math.pi/2},
              'lat06_yaw0':{'wheel_lateral_friction':.6,'__initial_yaw':0.0},
-             'low_grip':{'ground_friction':.05,'wheel_friction':.05},'loaded':{'payload_kg':20}}
+             'low_grip':{'ground_friction':.05,'wheel_friction':.05},'loaded':{'payload_kg':20},
+             'torque_rich':{'actuator_mode':'torque_limited','wheel_torque_limit_nm':8.0},
+             'torque_starved':{'actuator_mode':'torque_limited','wheel_torque_limit_nm':0.5},
+             'torque_loaded':{'actuator_mode':'torque_limited','wheel_torque_limit_nm':0.5,'payload_kg':20}}
     rows=[]
     def save(name,data):(out/name).write_text(json.dumps(data,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
     for case in args.cases.split(','):

@@ -35,7 +35,7 @@ class Graph:
     travel = 'free'
     info: dict = {}
 
-    def __init__(self, inst):
+    def __init__(self, inst, ground_zones=None, risk_weight=0.0):
         import shapely
         from shapely.geometry import Point, Polygon
         from shapely.prepared import prep
@@ -44,10 +44,24 @@ class Graph:
         self.points = ([tuple(d) for d in depot_list(inst)] + [tuple(t['xy']) for t in inst['tasks']]
                        + [tuple(p) for p in inst.get('unload_points') or []])
         r = inst['robot_radius']
+        from ..ground_risk import normalize_ground
+        _gnd = normalize_ground(inst) if inst.get('ground') else None
+        mu_ref = _gnd['mu_reference'] if _gnd else 1.0
+        self.ground = _gnd
         corners = []
         for o in inst.get('obstacles') or []:
             ring = Polygon(o['polygon']).buffer(r + 0.05, quad_segs=2, join_style=2).simplify(0.05)
             corners += list(ring.exterior.coords)[:-1]
+        # Known-map ground zones contribute inflated corner nodes so a detour around a
+        # low-friction patch is representable in the graph. Zones stay traversable —
+        # their edges just carry the risk weight; obstacles remain hard exclusions.
+        from ..ground_risk import RISK_MARGIN_M
+        for z in ((self.ground or {}).get('zones') or []):
+            x0, y0, x1, y1 = z['rect']
+            # Detour corners sit outside the footprint-aware risk band so a detour is
+            # actually risk-free at wheel level, not just at centre-line level.
+            m = r + RISK_MARGIN_M
+            corners += [(x0 - m, y0 - m), (x1 + m, y0 - m), (x1 + m, y1 + m), (x0 - m, y1 + m)]
         inner = Polygon(inst['boundary']).buffer(-(r + 0.05), join_style=2)
         if not inner.is_empty and inner.geom_type == 'Polygon' and inner.area < inner.convex_hull.area - 1e-6:
             corners += [p for p in list(inner.exterior.coords)[:-1]]
@@ -69,6 +83,20 @@ class Graph:
                 visible = shapely.covers(pfree.context, segments)
                 i, j = i[visible], j[visible]
             W[i, j] = W[j, i] = np.hypot(*(P[i] - P[j]).T)
+        if ground_zones and risk_weight > 0:
+            # Known-map ground risk: solver weight = geometric length × (1 + w·μ-deficit
+            # fraction). Units stay metres (equivalent metres); geometric D is recomputed
+            # downstream for reporting. Detours arise through pred from these weights.
+            from ..ground_risk import risk_factor
+            from shapely.geometry import LineString
+            geo = W.copy()
+            for i in range(n):
+                for j in range(i + 1, n):
+                    if not math.isfinite(W[i, j]) or W[i, j] < 1e-9:
+                        continue
+                    f = 1.0 + risk_weight * risk_factor((self.nodes[i], self.nodes[j]), ground_zones, mu_ref)
+                    W[i, j] = W[j, i] = geo[i, j] * f
+            self.geo = geo
         from scipy.sparse import csr_matrix
         from scipy.sparse.csgraph import dijkstra
         # Explicit sparse zero entries are real edges between co-located tasks/depot.
@@ -191,8 +219,9 @@ class LaneGraph(Graph):
                      'service_offset_max_m': float(np.max(self.offsets)) if self.offsets else 0.0,
                      'plots': net.summary()['plots']}
 
-def travel_graph(inst):
-    return LaneGraph(inst) if inst['vehicles'].get('travel') == 'rows' else Graph(inst)
+def travel_graph(inst, ground_zones=None, risk_weight=0.0):
+    return LaneGraph(inst) if inst['vehicles'].get('travel') == 'rows' \
+        else Graph(inst, ground_zones, risk_weight)
 
 
 # ----------------------------------------------------------------- solvers --
@@ -503,6 +532,9 @@ def check(inst, routes):
             value = r.get(key)
             if not isinstance(value, (int, float)) or not math.isfinite(value) or not math.isclose(value, expected, rel_tol=1e-6, abs_tol=1e-5):
                 errors.append(f'车辆 {name} 的{label}与独立复算不一致')
+        if r.get('ground_risk'):
+            from ..ground_risk import check_route_ground
+            check_route_ground(r, inst, pts, errors)
         total += length
         oriented = None
         if isinstance(cls.get('footprint'), dict):
@@ -563,15 +595,24 @@ def dispatch_algorithm(inst, algorithm_id, D, demand, params, deadline, route_ca
     return trips, owner, trip_class, trip_depot, reload_at, trace
 
 
+def unreachable_tasks(inst, D, nd):
+    """Task labels with no finite path from any depot."""
+    return [inst['tasks'][i - nd]['label'] for i in range(nd, nd + len(inst['tasks']))
+            if not any(np.isfinite(D[d0, i]) for d0 in range(nd))]
+
+
 def solve(scenario, inst, algorithm_id, params):
     t0 = time.perf_counter()
-    graph = travel_graph(inst)
+    from .. import ground_risk
+    ground_policy, risk_weight, ground = ground_risk.resolve_policy(inst, params)
+    ground_policy_active = ground_policy == 'risk_adjust'
+    graph = (travel_graph(inst, ground['zones'], risk_weight) if ground_policy_active
+             else travel_graph(inst))
     D = graph.D
     n = len(inst['tasks'])
     depots = depot_list(inst)
     nd = len(depots)
-    unreachable = [inst['tasks'][i - nd]['label'] for i in range(nd, nd + n)
-                   if not any(np.isfinite(D[d0, i]) for d0 in range(nd))]
+    unreachable = unreachable_tasks(inst, D, nd)
     if unreachable:
         raise ValueError(f'有任务点与所有车库不连通（被障碍{"或作物行" if graph.travel == "rows" else ""}隔断）：{unreachable[:6]}')
     demand = [0] * nd + [t['demand'] for t in inst['tasks']]
@@ -684,6 +725,10 @@ def solve(scenario, inst, algorithm_id, params):
           if any(bnd != home for bnd in boundaries[:-1]):
               route.update(reload_stops=[[float(graph.points[bnd][0]), float(graph.points[bnd][1])]
                                          for bnd in boundaries[:-1]])
+          if ground is not None:
+              # exposure stats are evaluation evidence for every policy; speed caps
+              # execute only when the policy actually used the declared map
+              ground_risk.attach_route_ground(route, pts, ground, ground_policy_active, cls['speed_mps'])
           routes.append(route)
         return routes
 

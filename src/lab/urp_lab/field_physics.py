@@ -64,21 +64,26 @@ def cylinder_inertia(mass, radius, width):
 def profile(overrides=None):
     values = {'max_step_size_s': .004, 'collision_detector': 'ode', 'ground_friction': 1.0,
               'wheel_friction': 1.0, 'payload_kg': 0.0, 'wheel_contact': 'sphere', 'tyre_width_m': TYRE_WIDTH,
-              'wheel_lateral_friction': None}
+              'wheel_lateral_friction': None, 'actuator_mode': 'velocity_servo',
+              'wheel_torque_limit_nm': 8.0, 'wheel_torque_kp': 4.0}
     if overrides is not None:
         if not isinstance(overrides, dict) or set(overrides) - set(values):
             raise ValueError('physics 仅接受 max_step_size_s、collision_detector、ground_friction、wheel_friction、payload_kg、'
-                             'wheel_contact、tyre_width_m；当前 Fortress 不支持显式引擎 seed')
+                             'wheel_contact、tyre_width_m、actuator_mode、wheel_torque_limit_nm、wheel_torque_kp；'
+                             '当前 Fortress 不支持显式引擎 seed')
         values.update(overrides)
     if values['collision_detector'] not in ('ode', 'bullet'):
         raise ValueError('physics.collision_detector 仅支持 ode、bullet')
     if values['wheel_contact'] not in ('tyre', 'sphere'):
         raise ValueError('physics.wheel_contact 仅支持 tyre（圆柱接触诊断）、sphere（球面滚动参考）')
+    if values['actuator_mode'] not in ('velocity_servo', 'torque_limited'):
+        raise ValueError('physics.actuator_mode 仅支持 velocity_servo（理想伺服参考）、torque_limited（有界力矩实验）')
     for k, (lo, hi) in {'max_step_size_s': (.0005, .01), 'ground_friction': (.01, 2),
                         'wheel_friction': (.01, 2), 'payload_kg': (0, 50),
                         # wider than the frozen hull is rejected, so collision_hull_m always covers the wheels
                         'tyre_width_m': (.04, TYRE_WIDTH_MAX),
-                        'wheel_lateral_friction': (.01, 2)}.items():
+                        'wheel_lateral_friction': (.01, 2),
+                        'wheel_torque_limit_nm': (.1, 40), 'wheel_torque_kp': (.1, 40)}.items():
         v = values[k]
         if v is None and k == 'wheel_lateral_friction':
             continue                     # unset means isotropic: mu2 follows wheel_friction
@@ -105,8 +110,12 @@ def profile(overrides=None):
                               'wheel_contact': ('rigid ring cylindrical tyres with finite contact width; no carcass flexibility, lugs or pressure effects; '
                                                 'diagnostic only: no-slip consistency must still pass; no widened acceptance bound'
                                                 if tyre else 'spherical rolling contacts as in the official differential-drive example; ideal no-slip reference, not pneumatic tyres'),
-                              'actuator': 'ideal wheel velocity servo with body speed/acceleration limits; no motor torque saturation in the loop; '
-                                          'wheel torque demand is post-hoc accounting, not an enforced motor limit',
+                              'actuator': ('ideal wheel velocity servo with body speed/acceleration limits; no motor torque saturation in the loop; '
+                                           'wheel torque demand is post-hoc accounting, not an enforced motor limit'
+                                           if values['actuator_mode'] == 'velocity_servo' else
+                                           f"bounded wheel torque experiment: per-wheel P controller on wheel speed with clamp "
+                                           f"±{values['wheel_torque_limit_nm']:g} N·m (Kp={values['wheel_torque_kp']:g} N·m·s/rad), "
+                                           f"no integral term; zero target = bounded active braking; synthetic actuator assumption, uncalibrated"),
                               'energy': 'post-hoc kinematic accounting from the truth trajectory: rolling resistance, longitudinal inertia and drive '
                                         'efficiency; no battery, motor current, thermal or terrain deformation model; braking recuperation not counted',
                               'payload': 'constant mass uniformly distributed in the chassis box; task demand is abstract capacity, not kg',
@@ -185,15 +194,27 @@ def audit_sdf(path, expected):
                     or joint.findtext('child') != joint_name.removesuffix('_joint')
                     or joint.findtext('axis/xyz') != '0 0 1' or joint.find('pose') is not None):
                 errors.append('驱动轮关节坐标或轴与声明轮距运动学不一致')
-        drive = model.find("plugin[@name='gz::sim::systems::DiffDrive']")
-        wanted_drive = {'wheel_radius':expected['wheel']['radius_m'], 'wheel_separation':expected['wheel']['separation_m'],
-            'max_linear_velocity':expected['limits']['max_speed_mps'],
-            'max_angular_velocity':expected['limits']['max_yaw_rate_radps'],
-            'max_linear_acceleration':expected['limits']['accel_mps2'],
-            'min_linear_acceleration':-expected['limits']['decel_mps2'],
-            'max_angular_acceleration':expected['limits']['yaw_accel_radps2']}
-        if drive is None or any(float(drive.findtext(k,'nan')) != val for k,val in wanted_drive.items()):
-            errors.append('SDF 驱动参数与冻结配置不一致')
+        if expected.get('actuator_mode', 'velocity_servo') == 'torque_limited':
+            joints = [jc.findtext('joint_name') for jc in model.findall("plugin[@name='gz::sim::systems::JointController']")
+                      if jc.findtext('use_force_commands') in ('1', 'true')]
+            if sorted(joints) != ['left_wheel_joint', 'right_wheel_joint']:
+                errors.append('力矩实验缺少左右轮 force 模式 JointController，或存在多余驱动插件')
+            if model.find("plugin[@name='gz::sim::systems::DiffDrive']") is not None:
+                errors.append('力矩实验中不允许同时存在 DiffDrive 速度伺服（会绕过力矩限制）')
+            state_pub = model.find("plugin[@name='gz::sim::systems::JointStatePublisher']")
+            wanted_joints = ('left_wheel_joint,right_wheel_joint', 'right_wheel_joint,left_wheel_joint')
+            if state_pub is None or state_pub.findtext('joint_name', '') not in wanted_joints:
+                errors.append('力矩实验缺少双轮 JointStatePublisher（真实关节里程计来源）')
+        else:
+            drive = model.find("plugin[@name='gz::sim::systems::DiffDrive']")
+            wanted_drive = {'wheel_radius':expected['wheel']['radius_m'], 'wheel_separation':expected['wheel']['separation_m'],
+                'max_linear_velocity':expected['limits']['max_speed_mps'],
+                'max_angular_velocity':expected['limits']['max_yaw_rate_radps'],
+                'max_linear_acceleration':expected['limits']['accel_mps2'],
+                'min_linear_acceleration':-expected['limits']['decel_mps2'],
+                'max_angular_acceleration':expected['limits']['yaw_accel_radps2']}
+            if drive is None or any(float(drive.findtext(k,'nan')) != val for k,val in wanted_drive.items()):
+                errors.append('SDF 驱动参数与冻结配置不一致')
         mass = 0.0
         for link in links:
             part = 'wheel' if link.get('name').endswith('wheel') else 'caster' if link.get('name').endswith('caster') else 'body'

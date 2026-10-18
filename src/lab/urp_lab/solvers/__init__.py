@@ -60,7 +60,13 @@ _TABLE = [
     ('panel.boustrophedon', '平行往复（面板实现）', 'coverage', '基线', 'baseline', 'none',
      '按固定方向切出平行作业行并往复连接，转弯允许原地掉头，用作覆盖规划的参照下限。', ['choset2000boustrophedon', 'galceran2013cpp'], 'shapely', {}),
 ]
-FLEET_PARAMS = [dict(TIME, default=5), SEED]
+GROUND_POLICY = {'name': 'ground_policy', 'type': 'enum', 'values': ['ignore', 'risk_adjust'], 'default': 'ignore',
+                 'label': '地面风险策略',
+                 'description': 'risk_adjust：用 instance 声明的已知地面图（ground.zones）给低附着区加当量米风险成本并允许绕行；需自由通行与总里程目标'}
+GROUND_WEIGHT = {'name': 'ground_risk_weight', 'type': 'number', 'default': 1.0, 'min': 0.0, 'max': 10.0,
+                 'label': '地面风险权重（当量米/米）',
+                 'description': '每米低附着 μ 缺口折算的当量米成本；仅 ground_policy=risk_adjust 时生效'}
+FLEET_PARAMS = [dict(TIME, default=5), SEED, GROUND_POLICY, GROUND_WEIGHT]
 _TABLE += [
     ('pyvrp.fleet', 'PyVRP 固定车队', 'fleet_routing', 'PyVRP', 'metaheuristic', 'none',
      '在绕障最短路距离上用 PyVRP 迭代局部搜索分配任务、安排顺序，车辆数不超过车队规模，目标总里程最短。',

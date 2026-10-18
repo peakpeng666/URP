@@ -134,6 +134,12 @@ def _robot(v: Vehicle, index: int, speed: float, physics=None) -> str:
     body = _rgba(v.color)
     bit = '0xffff'  # physical robot-robot contacts are enabled
     chassis_z = WHEEL_R + 0.1
+    if physics['actuator_mode'] == 'torque_limited':
+        eff = physics['wheel_torque_limit_nm']
+        wheel_limits = (f'<lower>-1.79769e+308</lower><upper>1.79769e+308</upper>'
+                        f'<effort>{eff}</effort><velocity>1e9</velocity>')
+    else:
+        wheel_limits = '<lower>-1.79769e+308</lower><upper>1.79769e+308</upper>'
 
     def inertia(part):
         p = physics[part]
@@ -174,27 +180,27 @@ def _robot(v: Vehicle, index: int, speed: float, physics=None) -> str:
         {contacts()}
       </link>"""
 
-    return f"""
-    <model name='{v.name}'>
-      <pose>{x:.3f} {y:.3f} 0.02 0 0 {yaw:.4f}</pose>
-      <link name='chassis'>
-        <pose>0 0 {chassis_z:.3f} 0 0 0</pose>
-        {inertia('body')}
-        <visual name='body'><geometry><box><size>0.8 0.56 0.22</size></box></geometry>{_material((0.93, 0.93, 0.92, 1))}</visual>
-        <visual name='top'><pose>0 0 0.12 0 0 0</pose><geometry><box><size>0.7 0.5 0.03</size></box></geometry>{_material(body)}</visual>
-        <visual name='mast'><pose>-0.25 0 0.45 0 0 0</pose><geometry><cylinder><radius>0.02</radius><length>0.7</length></cylinder></geometry>{_material((0.3, 0.3, 0.32, 1))}</visual>
-        <visual name='beacon'><pose>-0.25 0 0.82 0 0 0</pose><geometry><sphere><radius>0.09</radius></sphere></geometry>{_material(body)}</visual>
-        <visual name='front'><pose>0.41 0 0.02 0 0 0</pose><geometry><box><size>0.02 0.4 0.08</size></box></geometry>{_material((0.15, 0.15, 0.16, 1))}</visual>
-        <collision name='collision'><geometry><box><size>0.8 0.56 0.22</size></box></geometry>
-          <surface><contact><collide_bitmask>{bit}</collide_bitmask></contact></surface></collision>
-        {contacts()}
-      </link>{wheel('left_wheel', WHEEL_SEP / 2)}{wheel('right_wheel', -WHEEL_SEP / 2)}{caster('rear_caster', -0.3)}{caster('front_caster', 0.3)}
-      <joint name='left_wheel_joint' type='revolute'><parent>chassis</parent><child>left_wheel</child>
-        <axis><xyz>0 0 1</xyz><limit><lower>-1.79769e+308</lower><upper>1.79769e+308</upper></limit></axis></joint>
-      <joint name='right_wheel_joint' type='revolute'><parent>chassis</parent><child>right_wheel</child>
-        <axis><xyz>0 0 1</xyz><limit><lower>-1.79769e+308</lower><upper>1.79769e+308</upper></limit></axis></joint>
-      <joint name='rear_caster_joint' type='ball'><parent>chassis</parent><child>rear_caster</child></joint>
-      <joint name='front_caster_joint' type='ball'><parent>chassis</parent><child>front_caster</child></joint>
+    if physics['actuator_mode'] == 'torque_limited':
+        # Bounded-torque experiment: no velocity-servo plugin may coexist. Each wheel gets
+        # a JointController in force mode: a wheel-speed target (Double on the joint
+        # cmd_vel topic) drives an in-engine PID whose output torque is clamped by the
+        # SDF joint effort limit — the physics-engine level saturation.
+        kp = physics['wheel_torque_kp']
+        drive_plugins = f"""
+      <plugin filename="ignition-gazebo-joint-controller-system" name="gz::sim::systems::JointController">
+        <joint_name>left_wheel_joint</joint_name><use_force_commands>true</use_force_commands>
+        <p_gain>{kp}</p_gain><i_gain>0</i_gain><d_gain>0</d_gain>
+      </plugin>
+      <plugin filename="ignition-gazebo-joint-controller-system" name="gz::sim::systems::JointController">
+        <joint_name>right_wheel_joint</joint_name><use_force_commands>true</use_force_commands>
+        <p_gain>{kp}</p_gain><i_gain>0</i_gain><d_gain>0</d_gain>
+      </plugin>
+      <plugin filename="ignition-gazebo-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+        <joint_name>left_wheel_joint,right_wheel_joint</joint_name>
+        <update_rate>50</update_rate><topic>/model/{v.name}/joint_state</topic>
+      </plugin>"""
+    else:
+        drive_plugins = f"""
       <plugin filename="ignition-gazebo-diff-drive-system" name="gz::sim::systems::DiffDrive">
         <left_joint>left_wheel_joint</left_joint>
         <right_joint>right_wheel_joint</right_joint>
@@ -213,7 +219,29 @@ def _robot(v: Vehicle, index: int, speed: float, physics=None) -> str:
         <min_linear_velocity>-0.5</min_linear_velocity>
         <max_angular_velocity>2.0</max_angular_velocity>
         <min_angular_velocity>-2.0</min_angular_velocity>
-      </plugin>
+      </plugin>"""
+    return f"""
+    <model name='{v.name}'>
+      <pose>{x:.3f} {y:.3f} 0.02 0 0 {yaw:.4f}</pose>
+      <link name='chassis'>
+        <pose>0 0 {chassis_z:.3f} 0 0 0</pose>
+        {inertia('body')}
+        <visual name='body'><geometry><box><size>0.8 0.56 0.22</size></box></geometry>{_material((0.93, 0.93, 0.92, 1))}</visual>
+        <visual name='top'><pose>0 0 0.12 0 0 0</pose><geometry><box><size>0.7 0.5 0.03</size></box></geometry>{_material(body)}</visual>
+        <visual name='mast'><pose>-0.25 0 0.45 0 0 0</pose><geometry><cylinder><radius>0.02</radius><length>0.7</length></cylinder></geometry>{_material((0.3, 0.3, 0.32, 1))}</visual>
+        <visual name='beacon'><pose>-0.25 0 0.82 0 0 0</pose><geometry><sphere><radius>0.09</radius></sphere></geometry>{_material(body)}</visual>
+        <visual name='front'><pose>0.41 0 0.02 0 0 0</pose><geometry><box><size>0.02 0.4 0.08</size></box></geometry>{_material((0.15, 0.15, 0.16, 1))}</visual>
+        <collision name='collision'><geometry><box><size>0.8 0.56 0.22</size></box></geometry>
+          <surface><contact><collide_bitmask>{bit}</collide_bitmask></contact></surface></collision>
+        {contacts()}
+      </link>{wheel('left_wheel', WHEEL_SEP / 2)}{wheel('right_wheel', -WHEEL_SEP / 2)}{caster('rear_caster', -0.3)}{caster('front_caster', 0.3)}
+      <joint name='left_wheel_joint' type='revolute'><parent>chassis</parent><child>left_wheel</child>
+        <axis><xyz>0 0 1</xyz><limit>{wheel_limits}</limit></axis></joint>
+      <joint name='right_wheel_joint' type='revolute'><parent>chassis</parent><child>right_wheel</child>
+        <axis><xyz>0 0 1</xyz><limit>{wheel_limits}</limit></axis></joint>
+      <joint name='rear_caster_joint' type='ball'><parent>chassis</parent><child>rear_caster</child></joint>
+      <joint name='front_caster_joint' type='ball'><parent>chassis</parent><child>front_caster</child></joint>
+      {drive_plugins}
       <plugin filename="ignition-gazebo-pose-publisher-system" name="gz::sim::systems::PosePublisher">
         <publish_link_pose>false</publish_link_pose><publish_model_pose>true</publish_model_pose>
         <publish_nested_model_pose>true</publish_nested_model_pose><use_pose_vector_msg>true</use_pose_vector_msg>
@@ -462,7 +490,15 @@ def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_f
                         'scope': '整段任务互斥预约，完成后回独立车位；非并行多车路径规划',
                         'parking': {v.name: list(v.start[:2]) for v in vehicles}},
             'vehicles': [{'name': v.name, 'label': v.label, 'color': v.color, 'start': list(v.start), 'path': v.path,
-                          'tasks': v.tasks, 'hazard_s': hazard_s(v.path, hazards, boundary)} for v in vehicles]}
+                          'tasks': v.tasks, 'hazard_s': hazard_s(v.path, hazards, boundary),
+                          # speed caps planned from the *declared* ground map travel with
+                          # the frozen route; a world that differs executes without new caps
+                          'speed_profile': list(routes[i].get('speed_profile') or []) if i < len(routes) else []}
+                         for i, v in enumerate(vehicles)],
+            'ground_knowledge': {'planner': ((inst.get('ground') or {}).get('zones')),
+                                 'world': ((execution or {}).get('ground') or {}).get('zones'),
+                                 'world_origin': ((execution or {}).get('ground') or {}).get('origin', 'execution_body'),
+                                 'scope': 'planner 声明的已知地面图 vs 世界实际摩擦分区；速度上限随冻结路线'}}
 
 
 def hazard_s(path, solids, boundary):

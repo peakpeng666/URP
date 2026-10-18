@@ -66,7 +66,12 @@ def main():
                 'rigid_body_poses':session.rigid_poses, 'wheel_odometry':session.odometry,
                 'ground_contacts':session.ground_contact_samples,
                 'truth_timing':session.truth_timing, 'contacts':session.contacts,
-                'telemetry':session.counts, 'errors':session.report['errors']}
+                'telemetry':session.counts, 'errors':session.report['errors'],
+                **({'torque_traces': session.torque_traces,
+                    'torque_trace_columns': ['t_sim', 'omega_left_target_radps', 'omega_right_target_radps',
+                                             'omega_left_meas_radps', 'omega_right_meas_radps'],
+                    'actuator_note': '轮速目标与关节实测轮速；力矩由引擎内 PID 产生并受 SDF effort 限幅（指令力矩不可观测，饱和由运动响应判定）'}
+                   if getattr(session, 'torque_mode', False) else {})}
         save(Path(args.runtime)/'response.json', data)
         rc = session.shutdown()
     return rc
