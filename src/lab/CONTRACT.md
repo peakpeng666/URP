@@ -294,7 +294,7 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 | 方法 | 路径 | 说明 |
 |---|---|---|
 | GET | `fieldsim` | 当前田间仿真状态：`phase`（idle / starting / running / finished / failed / stopped）、`running`、`sim_time`、`real_time_factor`、`vehicles[]`（每车状态、位姿、速度、完成度、到达任务数、里程、横向偏差、规划里程 / 用时）、`metrics`（结束后：规划与执行的最晚完成时间、总里程、到达任务数、横向偏差）、`components`、`web`、`errors`、`warnings` |
-| POST | `fieldsim {run_id, real_time_factor?=4, gui?, rviz?, vehicle_asset?:{id,version,sha256}, physics?:{...}}` | 用已验算的 `fleet_routing` 运行生成世界；服务端核对绑定车型；与 TurtleBot4 会话互斥 |
+| POST | `fieldsim {run_id, real_time_factor?=4, gui?, rviz?, vehicle_asset?:{id,version,sha256}, physics?:{...}, execution?:{ground_preset, localization_preset, seed?, slip_protection?}}` | 用已验算的 `fleet_routing` 运行生成世界；服务端核对绑定车型；与 TurtleBot4 会话互斥；`execution` 为非理想执行配置（见 6.6），省略或全默认即理想参考模式 |
 | POST | `fieldsim/stop` | 有序关闭（会话写 `session-report.json`，含各组件返回码与残留进程检查） |
 | POST | `fieldsim/window {kind: gui\|rviz, on}` | 打开 / 关闭原生 Gazebo GUI 或 RViz2 窗口 |
 | GET | `fieldsim/results?run_id=`、`fieldsim/results/{session_id}` | 历次执行摘要 / 完整结果（含各车轨迹与任务到达时间） |
@@ -356,3 +356,14 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 网关启动会话后的响应必须携带新 `session_id`，未就绪时为 `starting`；旧会话的缓存、迟到响应和退出通知不能覆盖新会话。崩溃恢复时只接管同一运行目录、环境会话标识、PID 与启动时间均匹配的监督进程；接管进程消失时进入失败状态，原始退出码未知须明确记录，不能永远显示启动中。
 
 合并版本的验收口径：真值或里程计任意采样间隔超过 0.25 s 都使数据检查失败，端点相同不能证明缺口期间静止。曲率检查剔除重复 XY 点，并把前进路线瞬时折返的半径判为零；它仍是采样几何检查，不是完整 SE(2) 动力学可执行性证明。异构容量只要求至少一类车能承担最大单点需求，小车可承担小需求，分配可行性由求解器和独立检查决定；构造基线对异构及多库实例不参与推荐。
+
+## 7. 非理想执行（2026-10-18）
+
+POST `fieldsim` 的 `execution` 配置开启非理想实验层（`urp_lab.field_nonideal`，schema `urp.field-execution/1`）。字段：`ground_preset`（none/wet_patch/loose_strip/mud_extreme）、`localization_preset`（truth/light/drift_outage/severe）、`seed`（默认 20261018，观测模型与估计器按车辆序号派生独立种子）、`slip_protection`（默认 true）。未知字段拒绝；全部默认等价理想参考，不留隐式非理想。
+
+- **地面 = 摩擦分区代理**：静态 `ground_zones` 模型，每分区一块 2 mm 薄盒（轴对齐矩形），独立 μ，分区互不重叠且避开车库 2.5 m 圆；摆放由最长路线弧长分数确定（预设内置，确定性），记录于 `plan.json.execution.ground.zones` 并由 `audit_ground_zones` 独立复核位姿/尺寸/μ。这不是土壤力学模型：无沉陷、压实或剪切强度参数；μ 为文献范围（橡胶—湿/松地表约 0.05–0.35）内的工程假设，未标定。滑移本身不注入——它由 DART 库仑摩擦饱和自然产生，里程计按轮角积分自动携带该误差（非理想模式不加合成里程计噪声）。
+- **定位 = 估计器层**：`localization_preset=truth` 时控制器保持真值（单因素对照）；其余预设下真值只用于①生成合成绝对位置观测（偏置 + 有界随机游走漂移 + 高斯噪声 + 延迟 + 失锁窗口，全部参数随记录保存）②独立评价。估计器（`Estimator`）以车体系 twist 积分轮式里程计做预测、按标量增益融合位置观测、修正经 0.4 s 斜坡显示；里程计不确定度按 2% 里程 + 0.08 m/s 滑移底噪增长（工程假设）。控制器、在线保护只可见估计输出；`pose_estimates`（20 Hz，含 fused/dead_reckoning 来源）、`localization_observations`（含 t_measure/t_available/delivered/drop_reason）随结果导出。
+- **在线保护（仅用控制器侧信号）**：估计新息持续 >0.6 m 达 3 s → 疑似打滑，降速爬行（0.35×）；爬行 30 s 新息仍超限 → 该车失败停车；观测间隔 >15 s → 定位保持（零指令等待），恢复后续航。每类事件记入 `execution_events` 并计为干预（`interventions`）。`slip_protection=false` 可整体关闭做配对对照。真值除物理域保护（倾覆/高度）外不进入任何控制或保护路径。
+- **门禁分支**：非理想模式下 `field_dynamics` 不再要求轮式里程计与真值一致（该偏差即滑移观测量，照常记录），但数据有效性门禁（采样覆盖、时间单调、姿态域）不变；`fieldcheck.verify_nonideal_observations` 另查观测模型一致性（频率 ±30%、延迟不得早于声明、丢弃必须有因、估计覆盖真值区间）与真值隔离（估计与真值逐点一致判疑似真值直连）。任务可执行性门禁（足迹、双向偏差 0.5 m、终点 0.35 m、停留、接触、车间距离）不变，仍按真值轨迹判定。
+- **评价与记录**：`execution_report`（schema `urp.field-execution-report/1`）给出估计-真值误差统计（均值/最大/航向）、滑移观测量（`odom_excess` = 里程计路径长 − 真值路径长、比值、最大发散）、真值横向偏差与干预计数；`metrics` 相应增加 `localization_position_error_*`、`odom_excess_*`、`interventions`、`localization_outage_total_s`。横向偏差在非理想模式按真值计算（控制器视角保留在估计序列中）；里程按真值累计。误差数值是实验结果，不是验收门槛；门槛只针对模型/数据有效性与任务可执行性。求解与在线控制均不接收分区或误差参数（`execution.planner_knowledge`）。
+- `GET fieldsim/physics` 响应新增 `execution`（预设清单与 provenance 声明）；结果列表行新增 `execution`（mode/preset/seed）。历史记录无这些字段按理想参考解释，不改写。

@@ -15,6 +15,11 @@ def verify(result):
     physics = result.get('physics') or {}
     if physics.get('schema') == MODEL and physics.get('odometry_contract') != ODOMETRY_CONTRACT:
         errors.append('当前物理模型缺少或修改了必需的里程计一致性协议')
+    # Non-ideal execution deliberately allows wheel odometry to diverge from truth
+    # (that divergence *is* the slip observable). Data validity still gates; the
+    # no-slip reference bound applies only to the frozen reference configuration.
+    from .field_nonideal import slip_experiment
+    nonideal = slip_experiment(result.get('execution'), result.get('physics'))
     timing = result.get('truth_timing') or {}
     if timing.get('latest_clock_samples') != 0 or timing.get('tf_header_samples', 0) <= 0:
         errors.append('物理模型验收要求源仿真时间，不接受接收时间近似')
@@ -70,9 +75,11 @@ def verify(result):
             else:
                 consistency = (position_max <= contract['max_position_error_m']
                                and yaw_max <= contract['max_yaw_error_rad'])
-                if not consistency:
+                if not consistency and not nonideal:
                     errors.append(f'{name} 轮式运动学与真值不一致：最大位置误差 {position_max:.4f} m、'
                                   f'航向误差 {yaw_max:.4f} rad；超出无滑移模型有效域')
+                if nonideal:
+                    consistency = None        # not applicable: slip is expected and measured
         rows.append({'vehicle':name, 'truth_samples':len(p), 'odom_samples':len(o), 'paired_samples':len(times),
                      'max_roll_rad':float(roll), 'max_pitch_rad':float(pitch), 'max_abs_z_m':float(z),
                      'odom_position_rmse_m':float(np.sqrt(np.mean(distance**2))),
@@ -82,5 +89,8 @@ def verify(result):
                      'max_truth_gap_s':float(np.max(np.diff(p[:,0])))})
     return {'valid':not errors, 'errors':errors, 'vehicles':rows,
             'odometry_contract':(result.get('physics') or {}).get('odometry_contract'),
-            'scope':'flat-world attitude/data and versioned no-slip consistency; wheel odometry aligned only at first common timestamp; legacy records have no new success claim',
+            'execution_mode': 'nonideal' if nonideal else 'ideal',
+            'scope':('non-ideal mode: flat-world attitude/data gates; wheel-vs-truth divergence recorded as the slip observable, '
+                     'not gated; first-common-pose alignment only' if nonideal else
+                     'flat-world attitude/data and versioned no-slip consistency; wheel odometry aligned only at first common timestamp; legacy records have no new success claim'),
             'thresholds':{'tilt_rad':.35, 'absolute_model_origin_z_m':.5, 'max_sample_gap_s':.25}}

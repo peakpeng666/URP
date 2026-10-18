@@ -319,6 +319,24 @@ export interface FieldSimMetrics {
   planned_total_distance_m: number | null;
   cross_track_mean_m: number;
   cross_track_max_m: number;
+  /** non-ideal execution only: independent evaluation numbers, not gates */
+  localization_position_error_mean_m?: number | null;
+  localization_position_error_max_m?: number | null;
+  localization_yaw_error_max_rad?: number | null;
+  odom_excess_total_m?: number | null;
+  odom_excess_max_m?: number | null;
+  odom_divergence_max_m?: number | null;
+  interventions?: number | null;
+  localization_outage_total_s?: number | null;
+}
+/** what the controller actually relied on: ideal reference vs non-ideal experiment */
+export interface FieldExecutionInfo {
+  mode: 'ideal' | 'nonideal';
+  ground?: string | null;
+  ground_label?: string | null;
+  localization?: string | null;
+  localization_label?: string | null;
+  seed?: number | null;
 }
 export interface FieldPhysics {
   schema?: string;
@@ -370,6 +388,7 @@ export interface FieldSimState {
   physics?: FieldPhysics | null;
   physics_audit?: FieldPhysicsEvidence | null;
   physics_runtime?: FieldPhysicsEvidence | null;
+  execution?: FieldExecutionInfo | null;
 }
 export interface FieldSimSummary {
   session_id: string;
@@ -393,5 +412,6 @@ export interface FieldSimSummary {
   physics?: FieldPhysics | null;
   physics_audit?: FieldPhysicsEvidence | null;
   physics_runtime?: FieldPhysicsEvidence | null;
+  execution?: FieldExecutionInfo | null;
   vehicles: Pick<FieldVehicleState, 'name' | 'label' | 'color' | 'state' | 'distance_m' | 'duration_s' | 'planned_length_m' | 'planned_duration_s' | 'tasks_done' | 'tasks_total' | 'cross_track_mean_m' | 'cross_track_max_m'>[];
 }

@@ -10,7 +10,7 @@ import { studio, urls, type FieldPhysicsResponse } from '../api';
 import { useStudio } from '../store';
 import { refreshFieldSim, setFieldSimActionError, useFieldSim } from '../ros/live';
 import { executionErrorMessage, planModelSchema, unacceptedPlanReason } from '../execution';
-import type { FieldSimState, FieldSimSummary, FieldVehicleState, FleetInstance } from '../types';
+import type { FieldExecutionInfo, FieldSimState, FieldSimSummary, FieldVehicleState, FleetInstance } from '../types';
 import type { SimResult } from '../experiment/replay';
 import { SessionEvidence } from '../experiment/SessionEvidence';
 import s from './panels.module.css';
@@ -29,7 +29,7 @@ const STATE_TEXT: Record<FieldVehicleState['state'], string> = { waiting: '等�
 const pct = (a?: number | null, b?: number | null) => (a != null && b ? `${a >= b ? '+' : ''}${fmt.num(((a - b) / b) * 100, 1)}%` : '');
 
 /** Starts the field simulation for a fleet run and brings the simulation workspace forward. */
-export async function startFieldSim(runId: string, opts: { gui?: boolean; rviz?: boolean; real_time_factor?: number; physics?: Record<string, unknown> } = {}) {
+export async function startFieldSim(runId: string, opts: { gui?: boolean; rviz?: boolean; real_time_factor?: number; physics?: Record<string, unknown>; execution?: { ground_preset?: string; localization_preset?: string; seed?: number; slip_protection?: boolean } } = {}) {
   const st = useStudio.getState();
   setFieldSimActionError(null);
   try {
@@ -72,6 +72,10 @@ export function FieldSimPanel() {
   const [rviz, setRviz] = useState(false);
   const [busy, setBusy] = useState(false);
   const [overrides, setOverrides] = useState<Record<string, unknown>>({});
+  const [groundPreset, setGroundPreset] = useState('none');
+  const [locPreset, setLocPreset] = useState('truth');
+  const [seed, setSeed] = useState(20261018);
+  const [protection, setProtection] = useState(true);
   const recent = useLabResource('fieldsim-runs', () => lab.runs({ limit: 60 }), { pollMs: 15000 });
   const results = useLabResource('fieldsim-results', () => studio.fieldsimResults(), { pollMs: 5000 });
   const physics = useLabResource('fieldsim-physics', () => studio.fieldsimPhysics());
@@ -84,7 +88,10 @@ export function FieldSimPanel() {
     setBusy(true);
     const allowed = physics.data?.override_keys ?? [];
     const selected = Object.fromEntries(Object.entries(overrides).filter(([key]) => allowed.includes(key)));
-    await startFieldSim(runId, { gui, rviz, real_time_factor: rtf, physics: Object.keys(selected).length ? selected : undefined });
+    const execution = groundPreset !== 'none' || locPreset !== 'truth'
+      ? { ground_preset: groundPreset, localization_preset: locPreset, seed, slip_protection: protection }
+      : undefined;
+    await startFieldSim(runId, { gui, rviz, real_time_factor: rtf, physics: Object.keys(selected).length ? selected : undefined, execution });
     setBusy(false);
   };
   const stop = async () => {
@@ -138,6 +145,8 @@ export function FieldSimPanel() {
               <Switch checked={rviz} onChange={setRviz} label="RViz2" />
             </div>
             <PhysicsSetup data={physics.data} error={physics.error?.message ?? null} overrides={overrides} onChange={setOverrides} />
+            <ExecutionSetup data={physics.data} ground={groundPreset} loc={locPreset} seed={seed} protection={protection}
+              onGround={setGroundPreset} onLoc={setLocPreset} onSeed={setSeed} onProtection={setProtection} />
             {focused && (
               <button type="button" className={s.item} disabled={busy} onClick={() => void start(focused.run_id)}>
                 <span className={s.itemTitle}><Play size={12} /> 当前方案：{focused.algorithm.name}</span>
@@ -209,6 +218,41 @@ function PhysicsSetup({ data, error, overrides, onChange }: { data: FieldPhysics
   );
 }
 
+function ExecutionSetup({ data, ground, loc, seed, protection, onGround, onLoc, onSeed, onProtection }: {
+  data: FieldPhysicsResponse | null; ground: string; loc: string; seed: number; protection: boolean;
+  onGround: (v: string) => void; onLoc: (v: string) => void; onSeed: (v: number) => void; onProtection: (v: boolean) => void;
+}) {
+  const groundPresets = data?.execution?.ground_presets ?? {};
+  const locPresets = data?.execution?.localization_presets ?? {};
+  const nonideal = ground !== 'none' || loc !== 'truth';
+  return (
+    <details className={s.physics} open={nonideal}>
+      <summary>执行条件：{nonideal ? '非理想实验' : '理想参考'}</summary>
+      <p className={s.hint}>{data?.execution?.scope ?? '非理想执行：地面摩擦分区 + 定位误差模型（若后端未返回预设说明则以下为本地展示）'}。求解器不知道这些条件；真值只作独立评价。</p>
+      <div className={s.row}>
+        <label className={s.meta}>地面</label>
+        <Select aria-label="地面预设" value={ground} onChange={(e) => onGround(e.target.value)}>
+          {Object.entries(groundPresets).map(([k, v]) => <option key={k} value={k}>{v.label ?? k}</option>)}
+        </Select>
+        <label className={s.meta}>定位</label>
+        <Select aria-label="定位预设" value={loc} onChange={(e) => onLoc(e.target.value)}>
+          {Object.entries(locPresets).map(([k, v]) => <option key={k} value={k}>{v.label ?? k}</option>)}
+        </Select>
+      </div>
+      <div className={s.row}>
+        <label className={s.meta}>随机种子</label>
+        <Input aria-label="观测模型种子" type="number" min={0} value={seed} onChange={(e) => Number.isFinite(e.target.valueAsNumber) && onSeed(Math.trunc(e.target.valueAsNumber))} />
+        <Switch checked={protection} onChange={onProtection} label="在线滑移/失锁保护" />
+      </div>
+      {nonideal && (
+        <p className={s.meta}>
+          地面：{groundPresets[ground]?.label ?? ground} · 定位：{locPresets[loc]?.label ?? loc}。地面是低附着摩擦分区代理（非土壤力学），定位是合成误差模型（偏置/漂移/噪声/延迟/失锁）；两者均未标定。
+        </p>
+      )}
+    </details>
+  );
+}
+
 function RunningView({ state, busy, onStop, onWindow }: { state: FieldSimState; busy: boolean; onStop: () => void; onWindow: (k: 'gui' | 'rviz', on: boolean) => void }) {
   const m = state.metrics ?? {};
   const done = state.phase === 'finished' || state.phase === 'failed';
@@ -222,6 +266,7 @@ function RunningView({ state, busy, onStop, onWindow }: { state: FieldSimState; 
         <span>方案</span><b>{state.algorithm ?? '—'}</b>
         <span>场景</span><b>{state.scenario_id ?? '—'}</b>
         <span>仿真时间</span><b className={s.mono}>{fmt.sec(state.sim_time ?? 0)}{state.real_time_factor ? ` · ${fmt.num(state.real_time_factor, 1)}×` : ''}</b>
+        <span>执行条件</span><b><ExecutionBadge exec={state.execution ?? null} /></b>
       </div>
       {state.errors.map((e) => <Notice key={e} tone="error">{e}</Notice>)}
       {state.warnings.map((w) => <Notice key={w} tone="info">{w}</Notice>)}
@@ -245,6 +290,13 @@ function RunningView({ state, busy, onStop, onWindow }: { state: FieldSimState; 
             <tr><td>总里程</td><td className={s.num}>{fmt.num(m.planned_total_distance_m, 1)} m</td><td className={s.num}>{fmt.num(m.total_distance_m, 1)} m</td><td className={s.num}>{pct(m.total_distance_m, m.planned_total_distance_m)}</td></tr>
             <tr><td>到达任务</td><td className={s.num}>{m.tasks_total}</td><td className={s.num}>{m.tasks_reached}</td><td /></tr>
             <tr><td>横向偏差</td><td className={s.num} /><td className={s.num}>均 {fmt.num(m.cross_track_mean_m, 3)} m</td><td className={s.num}>最大 {fmt.num(m.cross_track_max_m, 2)} m</td></tr>
+            {m.localization_position_error_mean_m != null && (
+              <>
+                <tr><td>定位误差（估计-真值）</td><td className={s.num} /><td className={s.num}>均 {fmt.num(m.localization_position_error_mean_m, 3)} m</td><td className={s.num}>最大 {fmt.num(m.localization_position_error_max_m, 2)} m</td></tr>
+                <tr><td>滑移（里程计-真值）</td><td className={s.num} /><td className={s.num}>路径超出 {fmt.num(m.odom_excess_total_m, 2)} m</td><td className={s.num}>最大发散 {fmt.num(m.odom_divergence_max_m, 1)} m</td></tr>
+                <tr><td>在线干预</td><td className={s.num} /><td className={s.num}>{fmt.num(m.interventions, 0)} 次</td><td className={s.num}>失锁暴露 {fmt.num(m.localization_outage_total_s, 0)} s</td></tr>
+              </>
+            )}
           </tbody>
         </table>
       )}
@@ -275,14 +327,22 @@ function travelText(travel: unknown): string {
   return travel === 'rows' ? ' · 沿行间' : travel === 'free' ? ' · 自由通行' : '';
 }
 
+function ExecutionBadge({ exec }: { exec: FieldExecutionInfo | null | undefined }) {
+  if (!exec || exec.mode === 'ideal') {
+    return <Badge tone="gray">理想参考（真值定位 · 均匀地面）</Badge>;
+  }
+  const label = [exec.ground_label ?? exec.ground, exec.localization_label ?? exec.localization].filter(Boolean).join(' · ');
+  return <Badge tone="orange" title={`非理想执行 · 种子 ${exec.seed ?? '—'}`}>非理想：{label}</Badge>;
+}
+
 function ResultsTable({ rows }: { rows: FieldSimSummary[] }) {
   return (
     <table className={s.table}>
       <thead><tr><th>方案</th><th className={s.num}>状态 / 任务</th><th className={s.num}>最晚完成</th><th className={s.num}>与规划</th><th /></tr></thead>
-      <tbody>
+        <tbody>
         {rows.slice(0, 12).map((r) => (
-          <tr key={r.session_id} title={`${r.scenario_id} · ${r.world}`}>
-            <td>{r.algorithm ?? r.run_id}<div className={s.meta}>{fmt.time(r.finished_utc)}{travelText(r.travel)}</div></td>
+          <tr key={r.session_id} title={`${r.scenario_id} · ${r.world}${r.execution?.mode === 'nonideal' ? ` · 非理想种子 ${r.execution.seed}` : ''}`}>
+            <td>{r.algorithm ?? r.run_id}<div className={s.meta}>{fmt.time(r.finished_utc)}{travelText(r.travel)}{r.execution?.mode === 'nonideal' ? ' · 非理想' : ''}</div></td>
             <td className={s.num}>{r.state === 'succeeded'
               ? <Badge tone="green">完成 {r.metrics.tasks_reached}/{r.metrics.tasks_total}</Badge>
               : r.state === 'canceled' ? <Badge tone="orange">已取消 {r.metrics.tasks_reached}/{r.metrics.tasks_total}</Badge>

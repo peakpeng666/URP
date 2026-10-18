@@ -29,6 +29,7 @@ from . import lanes
 from .path_geometry import arc_lengths, locate
 from .field_traffic import POLICY, PARKING_MARGIN_M
 from . import field_physics
+from . import field_nonideal
 from .lanes import CROPS, DEFAULT_CROP  # noqa: F401 - re-exported for the field simulation layers
 
 GRASS = (0.47, 0.63, 0.36, 1)
@@ -308,7 +309,8 @@ def plan_vehicles(inst: dict, routes: list[dict], net: lanes.Network | None = No
     return out
 
 
-def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_factor: float = 4.0, physics=None) -> dict:
+def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_factor: float = 4.0,
+          physics=None, execution=None) -> dict:
     """Writes world.sdf and its meshes into out_dir; returns what the session needs to drive it."""
     if not routes or len(routes) > MAX_SIM_VEHICLES:
         raise ValueError(f'当前 Gazebo 差速模型验收范围为 1–{MAX_SIM_VEHICLES} 台执行车辆')
@@ -390,6 +392,11 @@ def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_f
     <model name="crop_rows"><static>true</static><link name="link">
       {''.join(row_collisions_sdf)}
     </link></model>""" if row_collisions_sdf else '')
+    zones = (execution or {}).get('ground', {}).get('zones') or []
+    ground_zones = (f"""
+    <model name="ground_zones"><static>true</static><link name="link">
+      {''.join(field_nonideal.zone_sdf(z, i) for i, z in enumerate(zones))}
+    </link></model>""" if zones else '')
     sdf = f"""<?xml version="1.0"?>
 <sdf version="1.8">
   <world name="{world}">
@@ -428,7 +435,7 @@ def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_f
     </link></model>
     <model name="tasks"><static>true</static><link name="link">
       {''.join(markers)}
-    </link></model>{crops}{''.join(obstacles)}{''.join(_robot(v, i, speed, physical) for i, v in enumerate(vehicles))}
+    </link></model>{crops}{ground_zones}{''.join(obstacles)}{''.join(_robot(v, i, speed, physical) for i, v in enumerate(vehicles))}
   </world>
 </sdf>
 """
@@ -436,12 +443,16 @@ def build(inst: dict, routes: list[dict], out_dir: Path, world: str, real_time_f
     audit = field_physics.audit_sdf(out_dir / 'world.sdf', physical)
     if not audit['valid']:
         raise ValueError('生成的物理模型未通过独立审计：' + '；'.join(audit['errors']))
+    zone_audit = field_nonideal.audit_ground_zones(out_dir / 'world.sdf', execution)
+    if not zone_audit['valid']:
+        raise ValueError('生成的地面分区未通过独立审计：' + '；'.join(zone_audit['errors']))
     references = {v.name: field_physics.timing_reference(v.path, speed, sum(t['service_s'] for t in v.tasks)) for v in vehicles}
     return {'world': world, 'sdf': str(out_dir / 'world.sdf'), 'triangles': triangles, 'speed_mps': speed,
             'real_time_factor': real_time_factor, 'bounds': [minx, miny, maxx, maxy], 'depot': [dx, dy],
             'travel': 'rows' if solid_rows else 'free', 'row_collision_shapes': len(row_collisions_sdf),
             'instance': inst, 'robot_radius_m': ROBOT_RADIUS,
             'physics': physical, 'physics_audit': audit,
+            'execution': execution, 'ground_zones_audit': zone_audit,
             'execution_timing_reference': {'vehicles': references,
                 'serial_makespan_s': sum(v['duration_s'] for v in references.values()) + max(0, len(vehicles)-1),
                 'queue_release_s': 1, 'scope': 'full missions including parking; stop/turn/go reference plus serial release waits; not a prediction'},

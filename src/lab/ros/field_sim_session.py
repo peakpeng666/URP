@@ -36,6 +36,7 @@ EXTRAS = DEPLOY / 'runtime/ros-extras/root/opt/ros/humble'
 sys.path[:0] = [str(DEPLOY), str(LAB / 'ros'), str(LAB)]
 from urp_lab.field_tracking import Driver, truth_time  # noqa: E402
 from urp_lab.field_traffic import MissionQueue, POLICY
+from urp_lab.field_nonideal import Estimator, LocalizationModel, slip_experiment  # noqa: E402
 from bridge_runtime import bridge_environment, bridge_provenance
 from processes import OwnedProcesses  # noqa: E402
 from physics_runtime import audit as audit_physics_runtime, selection as physics_selection
@@ -81,6 +82,11 @@ def rgba(hexcolor, a=1.0):
     return ColorRGBA(r=int(h[0:2], 16) / 255, g=int(h[2:4], 16) / 255, b=int(h[4:6], 16) / 255, a=a)
 
 
+def ground_collision(name: str) -> bool:
+    """Ground-plane and low-grip zone boxes are the expected running surface."""
+    return name.split('::')[0] in ('ground', 'ground_zones')
+
+
 class Processes(OwnedProcesses):
     def __init__(self, env, runtime):
         super().__init__(env, 'fieldsim')
@@ -115,7 +121,15 @@ class Session:
         self.st = dict(session_id=self.plan['session_id'], run_id=self.plan['run_id'], scenario_id=self.plan['scenario_id'],
                        algorithm=self.plan.get('algorithm'), world=self.world, phase='starting', components={}, web={},
                        errors=[], warnings=[], stages=[], sim_time=0.0, real_time_factor=None, vehicles=[], metrics={},
-                       result=None)
+                       result=None,
+                       execution=({'mode': 'nonideal',
+                                   'ground': self.plan.get('execution', {}).get('ground', {}).get('preset'),
+                                   'ground_label': self.plan.get('execution', {}).get('ground', {}).get('preset_label'),
+                                   'localization': self.plan.get('execution', {}).get('localization', {}).get('preset'),
+                                   'localization_label': self.plan.get('execution', {}).get('localization', {}).get('preset_label'),
+                                   'seed': self.plan.get('execution', {}).get('seed')}
+                                  if (self.plan.get('execution') or {}).get('mode') == 'nonideal'
+                                  else {'mode': 'ideal'}))
         self.env = dict(os.environ, ROS_HOME=str(self.runtime / 'ros'), ROS_LOG_DIR=str(self.runtime / 'ros-log'),
                         IGN_PARTITION='field_' + self.plan['session_id'], IGN_HOMEDIR=str(self.runtime / 'ignition'))
         Path(self.env['IGN_HOMEDIR']).mkdir(exist_ok=True)
@@ -126,6 +140,36 @@ class Session:
         self.report['bridge_runtime'] = bridge_provenance()
         self.drivers = [Driver(v, float(self.plan['speed_mps'])) for v in self.plan['vehicles']]
         self.plan_by_name = {v['name']: v for v in self.plan['vehicles']}
+        # Non-ideal execution: the controller localizes from wheel odometry fused with
+        # synthetic absolute fixes; truth is recorded for independent evaluation only.
+        exec_cfg = self.plan.get('execution') or {}
+        self.exec_cfg = exec_cfg if exec_cfg.get('mode') == 'nonideal' else None
+        # 'truth' localization inside a non-ideal run is the single-factor control: the
+        # ground zones still act, but the controller keeps ideal truth localization.
+        self.truth_loc = self.exec_cfg is None or self.exec_cfg['localization']['preset'] == 'truth'
+        self.nonideal_loc = self.exec_cfg is not None and not self.truth_loc
+        # Slip-observable sessions (non-ideal execution OR physics outside the frozen
+        # no-slip reference) get the evaluation report; the reference gate stays ideal-only.
+        self.slip_observable = slip_experiment(self.exec_cfg, self.plan.get('physics'))
+        if self.slip_observable:
+            self.execution_events = []
+            self.interventions = 0
+            self.truth_pose, self.truth_distance = {}, {d.name: 0.0 for d in self.drivers}
+            self.pose_estimates = {d.name: [] for d in self.drivers}
+        if self.exec_cfg:
+            gnss = self.exec_cfg['localization']['gnss']
+            self.loc_models, self.estimators = {}, {}
+            self.base_speed = {d.name: d.speed for d in self.drivers}
+            self.hold = {d.name: False for d in self.drivers}
+            self.slip = {d.name: {'since': None, 'creep_since': None, 'clear_since': None} for d in self.drivers}
+            for i, d in enumerate(self.drivers):
+                seed = int(self.exec_cfg['seed']) + i
+                self.loc_models[d.name] = LocalizationModel(gnss, seed)
+                start = self.plan_by_name[d.name].get('start') or [0.0, 0.0, 0.0]
+                self.estimators[d.name] = Estimator(start[:2], start[2], gnss)
+        else:
+            self.loc_models = self.estimators = None
+        self.driver_by_name = {d.name: d for d in self.drivers}
         self.clock = None
         self.clock_stamp = None
         self.input_generation = 0
@@ -201,9 +245,25 @@ class Session:
         self.input_generation += 1
         self.odom_wall[name] = time.monotonic()
         self.counts['odom'][name] += 1
+        p, q = msg.pose.pose.position, msg.pose.pose.orientation
+        stamp = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
+        if self.nonideal_loc:
+            # The estimator path must also run during startup: session readiness waits
+            # for the controller-side pose, which in this mode comes from the estimator.
+            est = self.estimators[name]
+            est.on_odom(msg.twist.twist.linear.x, msg.twist.twist.angular.z, stamp)
+            ex, ey, eyaw = est.pose(stamp)
+            drv = self.driver_by_name[name]
+            drv.observe((ex, ey, eyaw), stamp, record_distance=False)
+            # Stop certification uses the velocity the controller can actually see:
+            # the wheel-derived twist, not differentiated noisy poses.
+            drv.speed_now = abs(msg.twist.twist.linear.x)
+            drv.angular_speed_now = abs(msg.twist.twist.angular.z)
+            if self.st['phase'] == 'running':
+                gap = est.since_fix(stamp)
+                source = 'dead_reckoning' if (gap is None or gap > 3.0) else 'fused'
+                self.pose_estimates[name].append([round(stamp, 4), round(ex, 4), round(ey, 4), round(eyaw, 5), source])
         if self.st['phase'] == 'running':
-            p, q = msg.pose.pose.position, msg.pose.pose.orientation
-            stamp = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
             self.odometry[name].append([stamp, p.x, p.y, yaw_of(q), msg.twist.twist.linear.x, msg.twist.twist.angular.z])
 
     def on_contacts(self, name, msg):
@@ -212,13 +272,14 @@ class Session:
         self.counts['contacts'][name] += 1
         for contact in msg.contacts:
             pair = [contact.collision1.name, contact.collision2.name]
-            if self.plan.get('probe_ground_contacts') and self.st['phase'] == 'running' and any('ground::' in n for n in pair):
+            if self.plan.get('probe_ground_contacts') and self.st['phase'] == 'running' and any(ground_collision(n) for n in pair):
                 self.ground_contact_samples.append({'t_sim': msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9,
                     'collisions': pair, 'positions_m': [[p.x, p.y, p.z] for p in contact.positions]})
             if pair not in self.contact_examples and len(self.contact_examples) < 20:
                 self.contact_examples.append(pair)
-            # Wheel/caster-ground contacts are expected; every other external contact is a failure.
-            if any('ground::' in n for n in pair) or all(f'{name}::' in n for n in pair):
+            # Wheel/caster contacts with the ground plane or its friction zones are expected;
+            # every other external contact is a failure.
+            if any(ground_collision(n) for n in pair) or all(f'{name}::' in n for n in pair):
                 continue
             stamp = msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9
             self.contacts.append({'t_sim': stamp, 'vehicle': name, 'collisions': pair,
@@ -252,7 +313,22 @@ class Session:
             if stamp is None:
                 continue
             self.truth_timing[source] += 1
-            d.observe(pose, stamp, record_distance=self.st['phase'] == 'running')
+            if self.slip_observable:
+                # Truth never reaches the estimator-based controller: it only seeds the
+                # synthetic absolute-position sensor and the independent evaluation records.
+                self.truth_pose[d.name] = pose
+                prev = getattr(d, '_truth_prev', None)
+                if prev is not None and stamp > prev[1]:
+                    step = math.dist(prev[0][:2], pose[:2])
+                    if step < 2.0:
+                        self.truth_distance[d.name] += step
+                d._truth_prev = (pose, stamp)
+            if self.nonideal_loc:
+                self.loc_models[d.name].on_truth(p.x, p.y, stamp)
+                for fix in self.loc_models[d.name].deliver(stamp):
+                    self.estimators[d.name].on_fix(fix['x'], fix['y'], fix['t_measure'])
+            else:
+                d.observe(pose, stamp, record_distance=self.st['phase'] == 'running')
             self.truth_wall[d.name] = time.monotonic()
             self.counts['truth'] += 1
             if self.st['phase'] == 'running' and self.clock is not None:
@@ -632,6 +708,58 @@ Window Geometry:
             self.pub_trails.publish(tr)
 
     # ------------------------------------------------------------ execute --
+    def event(self, t, vehicle, kind, detail=None):
+        self.execution_events.append({'t_sim': round(t, 3), 'vehicle': vehicle, 'kind': kind,
+                                      'detail': detail or {}, 'intervention': kind in ('localization_hold', 'slip_creep', 'slip_protection_stop')})
+
+    def protect(self, d, t, v, w):
+        """Online protections that use only controller-side signals: fix availability
+        (localization hold) and estimator innovation (slip suspicion). No truth here."""
+        loc = self.exec_cfg['localization']
+        est = self.estimators[d.name]
+        gap = est.since_fix(t)
+        if self.hold[d.name]:
+            if gap is not None and gap <= loc['max_fix_gap_s']:
+                self.hold[d.name] = False
+                self.event(t, d.name, 'localization_resume', {'fix_gap_s': round(gap, 2)})
+            else:
+                return 0.0, 0.0
+        elif gap is not None and gap > loc['max_fix_gap_s'] and d.state == 'driving':
+            self.hold[d.name] = True
+            self.interventions += 1
+            self.event(t, d.name, 'localization_hold', {'fix_gap_s': round(gap, 2)})
+            return 0.0, 0.0
+        if not loc['protection'] or not loc['gnss']:
+            return v, w
+        stale_after = float(loc['gnss']['latency_s']) + 2.0 / float(loc['gnss']['fix_hz'])
+        fresh = est.last_innovation is not None and gap is not None and gap <= stale_after
+        st = self.slip[d.name]
+        if fresh and est.last_innovation > loc['slip_gate_m']:
+            if st['since'] is None:
+                st['since'] = t
+            st['clear_since'] = None
+            if st['creep_since'] is None and t - st['since'] >= loc['slip_sustain_s'] and d.state == 'driving':
+                st['creep_since'] = t
+                d.speed = self.base_speed[d.name] * loc['slip_creep_scale']
+                self.interventions += 1
+                self.event(t, d.name, 'slip_creep', {'innovation_m': round(est.last_innovation, 3)})
+        elif st['creep_since'] is not None and (not fresh or est.last_innovation < loc['slip_clear_m']):
+            if st['clear_since'] is None:
+                st['clear_since'] = t
+            if not fresh or t - st['clear_since'] >= loc['slip_clear_s']:
+                self.event(t, d.name, 'slip_recovered', {'innovation_m': round(est.last_innovation, 3) if est.last_innovation is not None else None})
+                st.update(since=None, creep_since=None, clear_since=None)
+                d.speed = self.base_speed[d.name]
+        elif fresh:
+            st['since'] = st['clear_since'] = None
+        if st['creep_since'] is not None:
+            if t - st['creep_since'] > loc['slip_creep_max_s']:
+                d.state = 'failed'
+                d.failure = f'打滑保护：爬行 {t - st["creep_since"]:.0f} s 后估计新息仍超限，停车'
+                self.event(t, d.name, 'slip_protection_stop', {'innovation_m': round(est.last_innovation, 3)})
+                return 0.0, 0.0
+        return v, w
+
     def execute(self):
         self.phase('running')
         self.execution_started = True
@@ -652,6 +780,8 @@ Window Geometry:
                 for d in self.drivers:
                     previous_cte_count = len(d.cte)
                     v, w = d.step(t)
+                    if self.nonideal_loc:
+                        v, w = self.protect(d, t, v, w)
                     d.v_cmd, d.w_cmd = v, w
                     msg = Twist()
                     msg.linear.x, msg.angular.z = float(v), float(w)
@@ -659,8 +789,9 @@ Window Geometry:
                     measured_cte = d.cte[-1] if len(d.cte) > previous_cte_count else None
                     self.control_traces[d.name].append([t, d.s, measured_cte, v, w, d.state,
                                                        t - d.pose_stamp if d.pose_stamp is not None else None])
-                    if d.pose is not None and (not d.trail or t - d.trail[-1][0] >= 0.5):
-                        d.trail.append([round(t, 2), round(d.pose[0], 3), round(d.pose[1], 3), round(d.pose[2], 4)])
+                    trail_pose = self.truth_pose.get(d.name) if self.slip_observable else d.pose
+                    if trail_pose is not None and (not d.trail or t - d.trail[-1][0] >= 0.5):
+                        d.trail.append([round(t, 2), round(trail_pose[0], 3), round(trail_pose[1], 3), round(trail_pose[2], 4)])
                 if sum(tk['state'] == 'reached' for d in self.drivers for tk in d.tasks) != self.task_version:
                     self.task_version = sum(tk['state'] == 'reached' for d in self.drivers for tk in d.tasks)
                     self.publish_tasks()
@@ -693,9 +824,122 @@ Window Geometry:
         self.publish_live(trails=True)
         self.finish('canceled' if self.stop.is_set() else None)
 
+    # ------------------------------------------------------------ report --
+    @staticmethod
+    def _interp_pose(rows, t):
+        """Linear truth interpolation (rows strictly increasing in time)."""
+        if not rows:
+            return None
+        lo, hi = 0, len(rows) - 1
+        if t <= rows[0][0] or t >= rows[-1][0]:
+            near = rows[0] if t <= rows[0][0] else rows[-1]
+            return (near[1], near[2], near[6])
+        while hi - lo > 1:
+            mid = (lo + hi) // 2
+            if rows[mid][0] <= t:
+                lo = mid
+            else:
+                hi = mid
+        a, b = rows[lo], rows[hi]
+        u = (t - a[0]) / (b[0] - a[0])
+        yaw = a[6] + u * ((b[6] - a[6] + math.pi) % (2 * math.pi) - math.pi)
+        return (a[1] + u * (b[1] - a[1]), a[2] + u * (b[2] - a[2]), yaw)
+
+    @staticmethod
+    def _point_polyline_distance(px, py, path):
+        best = math.inf
+        for (ax, ay), (bx, by) in zip(path, path[1:]):
+            dx, dy = bx - ax, by - ay
+            seg2 = dx * dx + dy * dy
+            u = 0.0 if seg2 < 1e-12 else max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / seg2))
+            best = min(best, math.hypot(px - ax - u * dx, py - ay - u * dy))
+        return best
+
+    def execution_report(self):
+        """Independent evaluation of the non-ideal run: localization quality (estimate
+        vs truth), slip exposure (wheel odometry vs truth), truth-based tracking error
+        and protection interventions. Pure bookkeeping; no gating."""
+        per_vehicle, errors_pos, yaw_errors, slip_rows = {}, [], [], []
+        for d in self.drivers:
+            truth = self.rigid_poses.get(d.name) or []
+            est = self.pose_estimates.get(d.name) or []
+            pos_err, yaw_err = [], []
+            if self.nonideal_loc:
+                for row in est[::2]:                  # 10 Hz is plenty for error statistics
+                    tp = self._interp_pose(truth, row[0])
+                    if tp is None:
+                        continue
+                    pos_err.append(math.hypot(row[1] - tp[0], row[2] - tp[1]))
+                    yaw_err.append(abs((row[3] - tp[2] + math.pi) % (2 * math.pi) - math.pi))
+                errors_pos.extend(pos_err)
+                yaw_errors.extend(yaw_err)
+            odom = self.odometry.get(d.name) or []
+            truth_len = sum(math.dist((a[1], a[2]), (b[1], b[2])) for a, b in zip(truth, truth[1:]))
+            odom_len = sum(math.dist((a[1], a[2]), (b[1], b[2])) for a, b in zip(odom, odom[1:]))
+            common = [r for r in odom if truth and truth[0][0] <= r[0] <= truth[-1][0]]
+            divergence = []
+            if common and truth:
+                a0 = self._interp_pose(truth, common[0][0])
+                o0 = common[0]
+                ang = a0[2] - o0[3]
+                c, s = math.cos(ang), math.sin(ang)
+                for r in common[::2]:
+                    tp = self._interp_pose(truth, r[0])
+                    if tp is None:
+                        continue
+                    rx, ry = r[1] - o0[1], r[2] - o0[2]
+                    mx, my = a0[0] + c * rx - s * ry, a0[1] + s * rx + c * ry
+                    divergence.append(math.hypot(mx - tp[0], my - tp[1]))
+            slip_rows.append({'vehicle': d.name, 'odom_path_m': round(odom_len, 3), 'truth_path_m': round(truth_len, 3),
+                              'odom_excess_m': round(odom_len - truth_len, 3),
+                              'odom_excess_ratio': round((odom_len - truth_len) / truth_len, 4) if truth_len > 1e-6 else None,
+                              'odom_truth_divergence_max_m': round(max(divergence), 4) if divergence else None})
+            if self.nonideal_loc:
+                obs = self.loc_models[d.name].observations
+                dropped = sum(1 for o in obs if not o[4])
+                fixes_hz = float((self.exec_cfg['localization']['gnss'] or {}).get('fix_hz', 0) or 0)
+                per_vehicle[d.name] = {
+                    'fixes_generated': len(obs), 'fixes_delivered': len(obs) - dropped, 'fixes_dropped': dropped,
+                    'outage_exposure_s': round(dropped / fixes_hz, 2) if fixes_hz else 0.0,
+                    'position_error_mean_m': round(sum(pos_err) / len(pos_err), 4) if pos_err else None,
+                    'position_error_max_m': round(max(pos_err), 4) if pos_err else None,
+                    'yaw_error_max_rad': round(max(yaw_err), 4) if yaw_err else None,
+                    'estimate_samples': len(est), 'truth_samples': len(truth)}
+        localization_block = ({'preset': self.exec_cfg['localization']['preset'],
+                               'position_error_mean_m': round(sum(errors_pos) / len(errors_pos), 4) if errors_pos else None,
+                               'position_error_max_m': round(max(errors_pos), 4) if errors_pos else None,
+                               'yaw_error_max_rad': round(max(yaw_errors), 4) if yaw_errors else None,
+                               'per_vehicle': per_vehicle} if self.exec_cfg is not None
+                              else {'preset': 'truth', 'note': '物理对照实验：控制使用真值，仅物理扰动生效'})
+        if self.truth_loc and self.exec_cfg is not None:
+            localization_block['note'] = '真值定位对照：控制使用真值，仅物理扰动生效'
+        truth_cte = []
+        for d in self.drivers:
+            for row in (self.rigid_poses.get(d.name) or [])[::5]:
+                truth_cte.append(self._point_polyline_distance(row[1], row[2], d.path))
+        events = self.execution_events
+        return {'schema': 'urp.field-execution-report/1',
+                'localization': localization_block,
+                'slip': {'note': 'odom_excess = 轮式里程计路径长 − 真值路径长；物理接触滑移的后验观测量',
+                         'per_vehicle': slip_rows},
+                'truth_cross_track_mean_m': round(sum(truth_cte) / len(truth_cte), 4) if truth_cte else None,
+                'truth_cross_track_max_m': round(max(truth_cte), 4) if truth_cte else None,
+                'interventions': self.interventions,
+                'events': [{'t_sim': e['t_sim'], 'vehicle': e['vehicle'], 'kind': e['kind']} for e in events],
+                'scope': '估计-真值与里程计-真值为独立评价；不改变任务可执行性判定'}
+
     def finish(self, outcome=None):
         if self.result is not None:
             return
+        exec_report = None
+        if self.slip_observable:
+            # Reported distance/cross-track stay truth-based (evaluation), while the
+            # controller-side views travel in their own labelled fields.
+            for d in self.drivers:
+                d.distance = self.truth_distance.get(d.name, d.distance)
+                if self.nonideal_loc:
+                    self.loc_models[d.name].finalize(self.clock or 0.0)
+            exec_report = self.execution_report()
         vehicles = [d.summary(self.plan_by_name.get(d.name)) for d in self.drivers]
         durations = [v['duration_s'] for v in vehicles if v['duration_s'] is not None]
         planned = self.plan.get('planned', {})
@@ -703,6 +947,12 @@ Window Geometry:
         corridors = [c.get('polygon') for c in (self.plan.get('instance') or {}).get('corridors') or []]
         energy = {d.name: account(self.rigid_poses.get(d.name) or [], self.plan.get('physics'), corridors)
                   for d in self.drivers}
+        cross_mean = round(sum(sum(d.cte) for d in self.drivers) / max(1, sum(len(d.cte) for d in self.drivers)), 4)
+        cross_max = round(max((max(d.cte) for d in self.drivers if d.cte), default=0.0), 4)
+        if exec_report is not None:
+            # Truth-based cross-track for evaluation; the estimate-based view is kept separately.
+            if exec_report['truth_cross_track_mean_m'] is not None:
+                cross_mean, cross_max = exec_report['truth_cross_track_mean_m'], exec_report['truth_cross_track_max_m']
         metrics = {
             'tasks_total': sum(len(d.tasks) for d in self.drivers),
             'tasks_reached': sum(t['state'] == 'reached' for d in self.drivers for t in d.tasks),
@@ -712,10 +962,22 @@ Window Geometry:
             'planned_makespan_s': planned.get('makespan_s'),
             'total_distance_m': round(sum(d.distance for d in self.drivers), 2),
             'planned_total_distance_m': planned.get('total_distance_m'),
-            'cross_track_mean_m': round(sum(sum(d.cte) for d in self.drivers) / max(1, sum(len(d.cte) for d in self.drivers)), 4),
-            'cross_track_max_m': round(max((max(d.cte) for d in self.drivers if d.cte), default=0.0), 4),
+            'cross_track_mean_m': cross_mean,
+            'cross_track_max_m': cross_max,
             'energy_wh': round(sum(e['energy_wh'] for e in energy.values() if e), 3),
         }
+        if exec_report is not None:
+            loc_block = exec_report['localization']
+            metrics.update({
+                'localization_position_error_mean_m': loc_block.get('position_error_mean_m'),
+                'localization_position_error_max_m': loc_block.get('position_error_max_m'),
+                'localization_yaw_error_max_rad': loc_block.get('yaw_error_max_rad'),
+                'odom_excess_total_m': round(sum(r['odom_excess_m'] for r in exec_report['slip']['per_vehicle']), 3),
+                'odom_excess_max_m': round(max((r['odom_excess_m'] for r in exec_report['slip']['per_vehicle']), default=0.0), 3),
+                'odom_divergence_max_m': round(max((r['odom_truth_divergence_max_m'] or 0 for r in exec_report['slip']['per_vehicle']), default=0.0), 3),
+                'interventions': exec_report['interventions'],
+                'localization_outage_total_s': round(sum(v.get('outage_exposure_s', 0) for v in loc_block.get('per_vehicle', {}).values()) / max(1, len(self.drivers)), 2),
+            })
         result = dict(session_id=self.plan['session_id'], run_id=self.plan['run_id'], scenario_id=self.plan['scenario_id'],
                       algorithm=self.plan.get('algorithm'), world=self.world, finished_utc=now(), sim_time=self.clock,
                       real_time_factor=self.st.get('real_time_factor'), metrics=metrics, vehicles=vehicles,
@@ -746,6 +1008,14 @@ Window Geometry:
                       energy=energy,
                       wheel_odometry=self.odometry,
                       wheel_odometry_columns=['t_sim', 'x_local_m', 'y_local_m', 'yaw_local_rad', 'v_mps', 'w_radps'],
+                      execution=(self.exec_cfg or self.plan.get('execution')),
+                      execution_report=exec_report,
+                      execution_events=(self.execution_events if self.slip_observable else None),
+                      localization_observations=({d.name: self.loc_models[d.name].observations for d in self.drivers}
+                                                 if self.nonideal_loc else None),
+                      localization_observation_columns=['t_measure_s', 't_available_s', 'x_obs_m', 'y_obs_m', 'delivered', 'drop_reason'],
+                      pose_estimates=(self.pose_estimates if self.nonideal_loc else None),
+                      pose_estimate_columns=['t_sim', 'x_est_m', 'y_est_m', 'yaw_est_rad', 'source'],
                       execution_started_sim_s=self.traffic.started if self.traffic else None,
                       vehicle_asset=self.plan.get('vehicle_asset'),
                       state='succeeded' if metrics['tasks_reached'] == metrics['tasks_total'] and metrics['vehicles_done'] == len(self.drivers) else 'failed')

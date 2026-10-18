@@ -20,6 +20,72 @@ from .field_traffic import separation
 TRACK_LIMIT_M = 0.5
 
 
+def verify_nonideal_observations(plan, result):
+    """Data-validity gates for the non-ideal localization chain. These check that what
+    was recorded is consistent with the declared observation model (schedule, latency,
+    drops, coverage) — the error magnitudes themselves are experiment outcomes, not
+    pass conditions."""
+    errors, details = [], []
+    exec_cfg = plan.get('execution') or {}
+    gnss = (exec_cfg.get('localization') or {}).get('gnss')
+    for v in plan['vehicles']:
+        name = v['name']
+        if gnss is None:
+            continue                      # truth-localization control: no estimator by design
+        est = (result.get('pose_estimates') or {}).get(name) or []
+        obs = (result.get('localization_observations') or {}).get(name) or []
+        truth = (result.get('rigid_body_poses') or {}).get(name) or []
+        if len(est) < 2:
+            errors.append(f'{v["label"]} 缺少定位估计序列')
+            continue
+        e = np.asarray([r[:4] for r in est], dtype=float)
+        p = np.asarray(truth, dtype=float)
+        if not np.isfinite(e[:, :4]).all() or np.any(np.diff(e[:, 0]) <= 0):
+            errors.append(f'{v["label"]} 估计序列含非有限值或时间倒退')
+            continue
+        if p.ndim == 2 and len(p) >= 2:
+            if e[0, 0] > p[0, 0] + 0.5 or e[-1, 0] < p[-1, 0] - 0.5:
+                errors.append(f'{v["label"]} 估计序列未覆盖真值观测区间')
+            if np.max(np.diff(e[:, 0])) > 0.25:
+                errors.append(f'{v["label"]} 估计序列采样缺口超过 0.25 s')
+            # Truth-leak guard: a real estimator never reproduces truth bit-for-bit.
+            if float(gnss.get('noise_std_m', 0)) > 0:
+                tx = np.interp(e[:, 0], p[:, 0], p[:, 1])
+                ty = np.interp(e[:, 0], p[:, 0], p[:, 2])
+                if float(np.max(np.hypot(e[:, 1] - tx, e[:, 2] - ty))) < 1e-6:
+                    errors.append(f'{v["label"]} 估计轨迹与真值逐点一致，疑似真值直连')
+        if not obs:
+            errors.append(f'{v["label"]} 声明了绝对定位观测模型但没有观测记录')
+        else:
+            o = np.asarray([[r[0], r[1], r[4]] for r in obs], dtype=float)
+            delivered = o[o[:, 2] == 1]
+            dropped = len(obs) - len(delivered)
+            latency = float(gnss['latency_s'])
+            if len(delivered):
+                if float(np.min(delivered[:, 1] - delivered[:, 0])) < latency - 0.05:
+                    errors.append(f'{v["label"]} 存在早于声明延迟送达的观测')
+            span = float(o[-1, 0] - o[0, 0]) if len(o) > 1 else 0.0
+            if span > 20:
+                want = float(gnss['fix_hz']) * span
+                if not 0.7 * want <= len(obs) <= 1.3 * want:
+                    errors.append(f'{v["label"]} 观测生成频率与声明模型不符')
+            for r in obs:
+                if not r[4] and not r[5]:
+                    errors.append(f'{v["label"]} 观测被丢弃但没有声明原因')
+                    break
+                details.append({'vehicle': name, 'fixes_generated': len(obs), 'fixes_delivered': int(len(delivered)),
+                                'fixes_dropped': int(dropped), 'observation_span_s': round(span, 1)})
+    report = result.get('execution_report') or {}
+    if not report.get('localization') or not report.get('slip'):
+        errors.append('缺少非理想执行的评价报告（定位/滑移）')
+    events = result.get('execution_events') or []
+    counted = sum(1 for e in events if e.get('intervention'))
+    if (report.get('interventions') or 0) != counted:
+        errors.append('干预计数与事件记录不一致')
+    return {'valid': not errors, 'errors': errors, 'observations': details,
+            'scope': '观测模型一致性（频率/延迟/丢弃/覆盖）与真值隔离检查；误差大小是实验结果，不是门槛'}
+
+
 def verify_motion_metrics(result):
     """Cross-check online integration with the independently saved pose sequence."""
     errors, details = [], []
@@ -65,6 +131,10 @@ def verify(plan, result):
         from .field_dynamics import verify as verify_dynamics
         dynamics = verify_dynamics(result)
         errors.extend(dynamics['errors'])
+    nonideal = None
+    if (plan.get('execution') or {}).get('mode') == 'nonideal':
+        nonideal = verify_nonideal_observations(plan, result)
+        errors.extend(nonideal['errors'])
     for v in plan['vehicles']:
         trail = result.get('trails', {}).get(v['name'], [])
         if not trail or any(len(p) < 4 or not all(math.isfinite(x) for x in p[:4]) for p in trail):
@@ -119,8 +189,9 @@ def verify(plan, result):
             errors.append('缺少接触传感器消息，不能把未观测到的接触判为零')
     return {'valid': not errors, 'errors': errors, 'vehicles': details, 'radius_m': radius,
             'traffic': traffic, 'motion_metrics': motion_metrics, 'dynamics': dynamics,
+            'nonideal_observations': nonideal,
             'track_tolerance_m': TRACK_LIMIT_M, 'distance_sampling_m': 0.1, 'distance_error_bound_m': 0.05,
-            'scope': '实测轨迹线段的圆足迹、完整路径；有交通策略时另检车间同步距离与接触记录'}
+            'scope': '实测轨迹线段的圆足迹、完整路径；有交通策略时另检车间同步距离与接触记录；非理想模式另检观测模型一致性'}
 
 
 if __name__ == '__main__':

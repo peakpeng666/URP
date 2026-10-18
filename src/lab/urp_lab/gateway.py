@@ -286,7 +286,11 @@ def create_app(config: Config | None = None) -> FastAPI:
     @app.get(f'{api}/fieldsim/physics')
     def field_physics_profile():
         from .field_physics import profile
+        from .field_nonideal import GROUND_PRESETS, LOCALIZATION_PRESETS, PROVENANCE
         return {'default': profile(), 'override_keys': ['max_step_size_s', 'collision_detector', 'ground_friction', 'wheel_friction', 'payload_kg'],
+                'execution': {'ground_presets': GROUND_PRESETS, 'localization_presets': LOCALIZATION_PRESETS,
+                              'provenance': PROVENANCE,
+                              'scope': '非理想执行：地面为摩擦分区代理、定位为合成误差模型；均未标定，不构成真实土壤或传感器结论'},
                 'scope': 'synthetic rigid-ground simulation verification; not real-machine calibration'}
 
     @app.post(f'{api}/shutdown', status_code=202)

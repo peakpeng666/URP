@@ -112,6 +112,11 @@ class FieldSimManager:
             raise ServiceError(422, 'invalid_plan', f'仿真前重新验算失败：{exc}') from None
         from .assets.bindings import field_vehicle
         vehicle_asset = field_vehicle(run, body.get('vehicle_asset'))
+        try:
+            from .field_nonideal import validate_execution
+            execution = validate_execution(body.get('execution'), inst, run['routes'])
+        except ValueError as exc:
+            raise ServiceError(422, 'invalid_execution', f'非理想执行配置无效：{exc}') from None
         with self._lock:
             if self.alive:
                 raise ServiceError(409, 'fieldsim_running', '已有田间仿真在运行，请先停止')
@@ -123,7 +128,8 @@ class FieldSimManager:
             sid = new_id('field')
             out = self.runtime / 'fieldsim' / sid
             try:
-                world = fieldworld.build(inst, run['routes'], out, 'field_' + sid.rsplit('_', 1)[-1], rtf, body.get('physics'))
+                world = fieldworld.build(inst, run['routes'], out, 'field_' + sid.rsplit('_', 1)[-1], rtf,
+                                         body.get('physics'), execution)
             except ValueError as exc:
                 raise ServiceError(422, 'world_failed', str(exc)) from None
             for v, r in zip(world['vehicles'], run['routes']):
@@ -142,15 +148,19 @@ class FieldSimManager:
                        paths.LAB / 'urp_lab/field_records.py',
                        paths.LAB / 'urp_lab/field_physics.py',
                        paths.LAB / 'urp_lab/field_dynamics.py',
+                       paths.LAB / 'urp_lab/field_nonideal.py',
                        paths.LAB / 'urp_lab/field_energy.py',
                        paths.LAB / 'urp_lab/fieldworld.py', paths.LAB / 'urp_lab/lanes.py',
                        paths.LAB / 'ros/processes.py', paths.LAB / 'ros/physics_runtime.py', paths.LAB / 'ros/bridge_runtime.py',
                        paths.LAB / 'ros/native/bridge/manifest.json']
+            localization_note = ('Gazebo ground truth (ideal localization)' if not execution else
+                                 'wheel odometry fused with synthetic absolute fixes under a declared error model; '
+                                 'truth recorded separately for independent evaluation only')
             plan['execution_provenance'] = {
                 'source_sha256': {paths.rel(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
                 'world_sha256': hashlib.sha256(Path(world['sdf']).read_bytes()).hexdigest(),
                 'coordinates': 'task map = Gazebo world = ROS map, metres',
-                'localization': 'Gazebo ground truth (ideal localization)',
+                'localization': localization_note,
                 'physics_model_sha256': world['physics']['sha256'],
                 'mission_success_semantics': 'geometric path/access-stop/dwell verification; no agricultural work quality or tool reach validation',
                 'controller': 'URP field path follower; not Nav2 replanning',
@@ -167,7 +177,11 @@ class FieldSimManager:
                                        self.runtime / 'logs' / f'fieldsim-{sid}.log', env=dict(os.environ))
             self.proc.start()
             self.meta = {'session_id': sid, 'run_id': run['run_id'], 'scenario_id': run['scenario_id'], 'world': world['world'],
-                         'vehicles': len(world['vehicles']), 'real_time_factor': rtf, 'dir': str(out)}
+                         'vehicles': len(world['vehicles']), 'real_time_factor': rtf, 'dir': str(out),
+                         'execution': ({'mode': execution['mode'],
+                                        'ground': execution['ground']['preset'],
+                                        'localization': execution['localization']['preset'],
+                                        'seed': execution['seed']} if execution else {'mode': 'ideal'})}
             self.last = None
             log.info('field sim %s started for run %s (%d vehicles)', sid, run['run_id'], len(world['vehicles']))
         return self.state()
@@ -270,7 +284,7 @@ class FieldSimManager:
                 continue
             row = ({k: r.get(k) for k in ('session_id', 'run_id', 'scenario_id', 'algorithm', 'world', 'finished_utc',
                                                'state', 'metrics', 'real_time_factor', 'sim_time', 'travel', 'row_collisions',
-                                               'row_collision_shapes', 'robot_contact_events', 'contact_observation')}
+                                               'row_collision_shapes', 'robot_contact_events', 'contact_observation', 'execution')}
                         | {'vehicles': [{k: v.get(k) for k in ('name', 'label', 'color', 'state', 'distance_m', 'duration_s',
                                                                 'planned_length_m', 'planned_duration_s', 'tasks_done',
                                                                 'tasks_total', 'cross_track_mean_m', 'cross_track_max_m')}
