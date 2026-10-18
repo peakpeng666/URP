@@ -52,6 +52,7 @@ def _run(rid, alg, scale=1.0, valid=True):
             'algorithm': {'id': alg, 'name': alg, 'version': None}, 'params': {'time_limit_s': 1, 'seed': 1}, 'state': 'done', 'status': 'feasible',
             'objective': {'value': total, 'unit': 'm', 'lower_bound': None}, 'routes': routes, 'check': {'valid': valid, 'errors': [] if valid else ['x']},
             'map_check': None, 'trace': [[0.01, total * 1.2], [0.1, total * 1.05], [0.5, total]],
+            'trace_contract': {'semantic': 'reported_objective'},
             'metrics': {'total_distance_m': total, 'makespan_s': max(r['duration_s'] for r in routes), 'vehicles_used': 2, 'trips': 2,
                         'balance_cv': 0.1, 'wall_s': 0.6, 'per_vehicle': per},
             'created_utc': '2026-10-16T00:00:00Z', 'finished_utc': '2026-10-16T00:00:01Z'}

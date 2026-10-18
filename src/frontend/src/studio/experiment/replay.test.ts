@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { derive, metricsAt, poseAt, taskEvents, type SimResult, type TrailPoint } from './replay';
 
-const trail: TrailPoint[] = [[10, 0, 0, 0], [20, 10, 0, 0], [30, 20, 0, 0]];
+const trail: TrailPoint[] = Array.from({ length: 201 }, (_, i) => [10 + i / 10, i / 10, 0, 0]);
 const result = {
   tasks: [{ vehicle: 'vehicle_0', id: 1, label: 'T1', xy: [10, 0], stop: [10, 0], state: 'reached', t_sim: 20, distance_m: null, serviced_at: 25, service_complete: true }],
   trails: { vehicle_0: trail },
@@ -25,8 +25,27 @@ describe('recorded replay time boundaries', () => {
   it('aligns cumulative metrics with arrival and service-completion events', () => {
     expect(taskEvents(result).map((event) => [event.kind, event.t])).toEqual([['reached', 20], ['completed', 25]]);
     const atArrival = metricsAt(result, 'vehicle_0', 20);
-    expect(atArrival).toMatchObject({ distance_m: 10, elapsed_s: 10, tasks_reached: 1, tasks_completed: 0, cross_track_mean_m: 0, cross_track_max_m: 0 });
+    expect(atArrival).toMatchObject({ distance_m: 10, elapsed_s: 10, tasks_reached: 1, tasks_completed: 0 });
+    expect(atArrival.cross_track_mean_m).toBeCloseTo(0, 12);
+    expect(atArrival.cross_track_max_m).toBeCloseTo(0, 12);
     const atCompletion = metricsAt(result, 'vehicle_0', 25);
     expect(atCompletion).toMatchObject({ distance_m: 15, elapsed_s: 15, tasks_reached: 1, tasks_completed: 1 });
+  });
+
+  it('does not bridge missing samples or clock resets, even with equal endpoints', () => {
+    const missing: TrailPoint[] = [[0, 0, 0, 0], [0.1, 1, 0, 0], [10, 1, 0, 0], [10.1, 2, 0, 0]];
+    expect(poseAt(missing, 5)).toBeNull();
+    const record = { ...result, trails: { vehicle_0: missing } } as SimResult;
+    expect(metricsAt(record, 'vehicle_0', 10.1)).toMatchObject({ distance_m: 2, distance_complete: false, missing_s: 9.9 });
+    expect(derive(record).anomalies.some((item) => item.key.startsWith('gap-'))).toBe(true);
+    expect(poseAt([[0, 0, 0, 0], [2, 2, 0, 0], [1, 1, 0, 0]], 1.5)).toBeNull();
+  });
+  it('an enormous missing time interval does not expand the replay computation', () => {
+    const sparse = { ...result, tasks: [], trails: {
+      a: [[0, 0, 0, 0], [1e9, 0, 0, 0]], b: [[0, 10, 0, 0], [1e9, 10, 0, 0]],
+    } } as unknown as SimResult;
+    expect(derive(sparse).separation?.d).toBe(10);
+    expect(metricsAt(sparse, 'a', 1e9).distance_m).toBe(0);
+    expect(metricsAt(sparse, 'a', 1e9).distance_complete).toBe(false);
   });
 });

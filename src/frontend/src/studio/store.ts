@@ -6,6 +6,7 @@ import { studio } from './api';
 import type { FleetInstance, ParseResult, Selection, Tool, ObstacleKind } from './types';
 import { normalizeFleetInstance } from './fleet';
 import { filterRecommendation, planningBlockReason } from './capabilities';
+import { comparable, verifiedPlan } from './comparison';
 
 export type Workspace = 'plan' | 'assets' | 'experiments' | 'sim' | 'library' | 'system';
 
@@ -14,6 +15,7 @@ type SaveState = 'idle' | 'dirty' | 'saving' | 'saved' | 'error';
 interface StudioState {
   workspace: Workspace;
   scenarioId: string | null;
+  editorSession: string | null;
   scenario: Scenario | null;
   loadError: string | null;
   draft: Instance | null;
@@ -79,6 +81,7 @@ const HISTORY = 120;
 let saveTimer: number | undefined;
 let recommendTimer: number | undefined;
 let draftRevision = 0;
+let loadSequence = 0;
 let saveInFlight: Promise<void> | null = null;
 
 const message = (e: unknown) => (e instanceof LabApiError || e instanceof Error ? e.message : String(e));
@@ -98,6 +101,7 @@ const draftOf = (scenario: Scenario): Instance => scenario.problem_class === 'fl
 export const useStudio = create<StudioState>((set, get) => ({
   workspace: 'plan',
   scenarioId: null,
+  editorSession: null,
   scenario: null,
   loadError: null,
   draft: null,
@@ -150,23 +154,24 @@ export const useStudio = create<StudioState>((set, get) => ({
       }
     }
     draftRevision += 1;
+    const loadToken = ++loadSequence;
     window.clearTimeout(saveTimer);
     window.clearTimeout(recommendTimer);
-    set({ scenarioId: id, loadError: null, busy: '载入场景', selection: null, past: [], future: [], save: 'idle', saveError: null, solveError: null, chosen: [],
+    set({ scenarioId: id, scenario: null, draft: null, editorSession: id, loadError: null, busy: '载入场景', selection: null, past: [], future: [], save: 'idle', saveError: null, solveError: null, chosen: [],
           runIds: [], runs: {}, focusRun: null, manualFocus: false, recommendation: null, playback: null, hiddenVehicles: [], paramOverrides: {} });
     try {
       const sc = await lab.scenario(id);
-      if (get().scenarioId !== id) return;
+      if (get().scenarioId !== id || loadSequence !== loadToken) return;
       set({ scenario: sc, draft: draftOf(sc), busy: null });
       void get().refreshRecommendation();
       const recent = await lab.runs({ scenario_id: id, limit: 30 });
-      if (get().scenarioId !== id) return;
+      if (get().scenarioId !== id || loadSequence !== loadToken || get().runIds.length || get().busy === '求解中') return;
       const runs = Object.fromEntries(recent.runs.map((r) => [r.run_id, r]));
       const latestJob = recent.runs[0]?.job_id;
       const ids = recent.runs.filter((r) => r.job_id === latestJob).map((r) => r.run_id);
       set({ runs, runIds: ids, focusRun: pickBest(ids.map((i) => runs[i])) });
     } catch (e) {
-      if (get().scenarioId === id) set({ loadError: message(e), busy: null });
+      if (get().scenarioId === id && loadSequence === loadToken) set({ loadError: message(e), busy: null });
     }
   },
 
@@ -348,8 +353,11 @@ export const useStudio = create<StudioState>((set, get) => ({
 
 export function pickBest(runs: (Solution | undefined)[]): string | null {
   const done = runs.filter((r): r is Solution => !!r && r.state === 'done' && !!r.routes.length);
-  done.sort((a, b) => Number(!a.check?.valid) - Number(!b.check?.valid) || (a.objective.value ?? Infinity) - (b.objective.value ?? Infinity));
-  return done[0]?.run_id ?? null;
+  const anchor = done.find(verifiedPlan) ?? done[0];
+  if (!anchor) return null;
+  const group = done.filter((r) => comparable(r, anchor));
+  group.sort((a, b) => Number(!verifiedPlan(a)) - Number(!verifiedPlan(b)) || (a.objective.value ?? Infinity) - (b.objective.value ?? Infinity));
+  return group[0]?.run_id ?? anchor.run_id;
 }
 
 async function pollRun(id: string) {
@@ -408,7 +416,7 @@ export async function flushSave(): Promise<void> {
         const origin = (scenario as Scenario & { origin?: string }).origin;
         let stored: Scenario;
         if (origin === 'user') {
-          stored = (await studio.saveScenario(originalId, { instance: submitted })) as unknown as Scenario;
+          stored = (await studio.saveScenario(originalId, { instance: submitted, base_revision: scenario.revision ?? 0 })) as unknown as Scenario;
         } else {
           stored = await studio.forkScenario(originalId, { instance: submitted });
         }
@@ -456,6 +464,20 @@ export async function retrySave(): Promise<void> {
   if (!scenario || !draft) return;
   useStudio.setState({ save: 'dirty' });
   await flushSave();
+}
+
+/** Explicit recovery for a conflicting draft: preserve both server and local work. */
+export async function saveDraftCopy(): Promise<void> {
+  const { scenario, draft } = useStudio.getState();
+  if (!scenario || !draft) return;
+  const revision = draftRevision;
+  const copy = await studio.forkScenario(scenario.id, { instance: draft, title: `${scenario.title}（草稿副本）` });
+  if (useStudio.getState().scenarioId !== scenario.id) return;
+  useStudio.setState({ scenarioId: copy.id, scenario: copy, saveError: null,
+    ...(draftRevision === revision ? { draft: draftOf(copy), save: 'saved' as const } : { save: 'dirty' as const }) });
+  navigate(`#/plan/${encodeURIComponent(copy.id)}`, { replace: true });
+  useStudio.getState().notify('info', '已另存草稿副本；服务器上的较新场景保留');
+  if (useStudio.getState().save === 'dirty') scheduleSave();
 }
 
 export const isFleet = (sc: Scenario | null): boolean => sc?.problem_class === 'fleet_routing';

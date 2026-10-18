@@ -81,6 +81,7 @@ export interface CoverageInstance {
 export type Instance = TurnRoutingInstance | EuclideanCvrpInstance | CoverageInstance | Record<string, unknown>;
 
 export interface Scenario extends ScenarioSummary {
+  revision?: number;
   provenance: { generator: string; params?: Record<string, unknown>; seed?: number | null; note?: string };
   instance: Instance;
   editable: { tasks?: boolean; depot?: boolean; capacity?: boolean; demands?: boolean };
@@ -105,6 +106,7 @@ export interface AlgorithmParam {
 }
 
 export interface Algorithm {
+  randomness?: { uses_seed: boolean; note: string };
   id: string;
   name: string;
   problem_classes: ProblemClass[];
@@ -183,6 +185,8 @@ export interface MapCheck {
 }
 
 export interface Solution {
+  planning?: PlanningContext;
+  trace_contract?: { schema?: string; semantic: 'reported_objective' | 'solver_search_proxy'; note: string; independent_check_at_each_sample?: boolean };
   raw_result?: { model_contract?: { schema?: string; [key: string]: unknown }; [key: string]: unknown };
   instance?: Instance;
   scenario_snapshot?: Scenario;
@@ -193,7 +197,7 @@ export interface Solution {
   instance_sha256: string;
   frame: Frame;
   cost_unit: string;
-  algorithm: { id: string; name: string; source: Source; origin: string; version: string | null };
+  algorithm: { id: string; name: string; source: Source; origin: string; version: string | null; randomness?: { uses_seed: boolean; note: string } | null };
   params: Record<string, unknown>;
   state: RunState;
   status: SolveStatus;
@@ -219,6 +223,22 @@ export interface Solution {
   created_utc: string;
   finished_utc: string | null;
   label: string | null;
+}
+
+export interface PlanningContext {
+  schema: 'urp.planning/1';
+  service_kind: 'point_visit' | 'area_coverage' | 'navigation';
+  comparison_key: string;
+  environment_sha256?: string | null;
+  validation_policy?: string;
+  instance_sha256: string;
+  objective_rule: string;
+  objective_label: string;
+  objective_unit: string;
+  relaxed_constraints: string[];
+  axes: string;
+  angle_unit: 'rad';
+  metric_scope: string;
 }
 
 export type ServiceState =
@@ -314,12 +334,18 @@ export interface SimRun {
     cross_track_max_m: number | null;
     cross_track_p95_m: number | null;
     final_error_m: number | null;
+    goal_tolerance_m?: number;
+    independent_goal_error_m?: number | null;
+    goal_reached_within_tolerance?: boolean;
     tasks_reached: number | null;
     tasks_total: number | null;
     actual_working_coverage_fraction?: number;
     actual_field_coverage_fraction?: number;
     actual_footprint_in_field?: boolean;
     actual_map_check?: MapCheck;
+    actual_coverage_basis?: string;
+    actual_coverage_kind?: string;
+    operation_state_observed?: boolean;
   };
   error: string | null;
   report: string | null;

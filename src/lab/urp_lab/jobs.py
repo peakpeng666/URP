@@ -21,6 +21,7 @@ from pathlib import Path
 from . import paths
 from .events import EventBus, utc_now
 from .store import Store
+from .planning import context, without_stale_reference
 
 log = logging.getLogger('urp_lab.jobs')
 
@@ -28,7 +29,7 @@ GRACE_S = 2.0
 DEFAULT_TIME_LIMIT_S = 60.0
 LOG_TAIL_BYTES = 4096
 FINAL = ('done', 'error', 'timeout', 'canceled')
-_RESULT_KEYS = ('status', 'objective', 'routes', 'check', 'map_check', 'raw_result', 'trace')
+_RESULT_KEYS = ('status', 'objective', 'routes', 'check', 'map_check', 'raw_result', 'trace', 'planning', 'trace_contract')
 
 
 def new_id(prefix: str) -> str:
@@ -60,6 +61,8 @@ def resolve_params(algorithm: dict, given: dict | None) -> dict:
             out[name] = None
             continue
         if kind in ('number', 'integer'):
+            if isinstance(value, bool):
+                raise ValueError(f'参数 {name} 应为数值，不能为布尔值')
             if isinstance(value, bool) or not isinstance(value, (int, float)):
                 try:
                     value = float(value)
@@ -92,21 +95,25 @@ def wall_budget(params: dict, algorithm: dict, grace_s: float) -> float:
 
 def skeleton(job_id: str, scenario: dict, instance: dict, algorithm: dict, params: dict, label: str | None) -> dict:
     from .recommend import recommend
+    scenario = without_stale_reference(scenario, instance)
     advice=recommend(scenario,instance)
     frame = scenario.get('frame') or {}
     cost_unit = scenario.get('cost_unit')
+    snapshot = copy.deepcopy(scenario)
+    snapshot['source_instance_sha256'] = instance_sha256(scenario.get('instance') or {})
+    snapshot['instance'] = copy.deepcopy(instance)
     return {
         'run_id': new_id('run'), 'job_id': job_id, 'scenario_id': scenario['id'],
-        'problem_class': scenario['problem_class'], 'instance_sha256': instance_sha256(instance),
-        'frame': copy.deepcopy(frame), 'cost_unit': cost_unit, 'instance': copy.deepcopy(instance), 'scenario_snapshot': copy.deepcopy(scenario),
+        'problem_class': scenario['problem_class'], 'instance_sha256': instance_sha256(instance), 'planning': context(scenario, instance),
+        'frame': copy.deepcopy(frame), 'cost_unit': cost_unit, 'instance': copy.deepcopy(instance), 'scenario_snapshot': snapshot,
         'reproducibility': {
             'python': sys.version, 'packages': {name: importlib.metadata.version(name) for name in ('pyvrp','ortools','numpy','scipy','shapely')},
             'source_sha256': {paths.rel(p): hashlib.sha256(p.read_bytes()).hexdigest() for folder in (paths.LAB/'urp_lab',paths.RESEARCH_SRC/'urp_research/turn_modes') for p in folder.rglob('*.py')},
             'stopping_rule': '墙钟上限；固定种子不保证不同硬件/负载下得到逐位相同的元启发式结果',
-            'seed_usage': 'PyVRP 使用 seed；精确 DP/Oracle 与覆盖排序无随机性；当前 OR-Tools GLS 无随机种子设置',
+            'seed_usage': algorithm.get('randomness', {}).get('note', '历史目录未声明；需核对适配器实现'),
         },
         'algorithm': {'id': algorithm['id'], 'name': algorithm.get('name'), 'source': algorithm.get('source'),
-                      'origin': algorithm.get('origin'), 'version': algorithm.get('version')},
+                      'origin': algorithm.get('origin'), 'version': algorithm.get('version'), 'randomness': algorithm.get('randomness')},
         'params': params, 'state': 'queued', 'status': None,
         'recommendation_at_submission':dict(advice=advice,submitted_algorithm=algorithm['id'],
             budget_matches_learned_profile=advice['policy']!='knn-crc-local-v1' or params.get('time_limit_s')==.25,
@@ -220,9 +227,10 @@ class JobManager:
         if self._stopping:
             raise RuntimeError('网关正在退出，不再接受求解任务')
         job_id = new_id('job')
+        scenario = without_stale_reference(scenario, instance)
         run_ids = []
         from .assets.bindings import snapshot
-        assets = snapshot(instance)  # validate once before any run in the batch is enqueued
+        assets = snapshot(instance, problem_class=scenario['problem_class'])  # validate before any run is enqueued
         for algorithm, params in algorithms:
             sol = skeleton(job_id, scenario, instance, algorithm, params, label)
             sol['asset_snapshot'] = copy.deepcopy(assets)

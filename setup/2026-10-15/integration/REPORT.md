@@ -2,7 +2,40 @@
 
 唯一使用入口为 [setup/README](../../README.md)。本报告按日期保留验收范围与原始证据；最新结论在最上方，历史通过不自动覆盖之后的模型或代码。迷宫巡检、仓库五任务、Fields2Cover 的限定闭环及 CVRP 学习原型评估见下方历史记录，不等于新车队功能、推荐增益或真实农业环境已验证。
 
-## GitHub + KIMI 全量集成收尾（2026-10-17—18，当前）
+## 路径规划工作台前后端验收（2026-10-18，当前）
+
+**结论：接续 KIMI 未完成的工作，现有 4100 工作台的编辑、求解比较、独立检查、真实执行、回放、导出与关闭流程已实测；保留限定模型范围。** 未另建前端或替换系统 Python。接手基线为 `4efc6771`，KIMI 的 20 个前端文件先保存为 `caf7120d`，再集成修复；原未提交文献/PDF 工作未覆盖或混入提交。后续使用仍只看 [setup/README](../../README.md)。结构化结论为 [summary.json](../../2026-10-18/planning-integration/summary.json)，源码指纹与证据索引同目录。
+
+本轮实质修复：
+
+- 点到点等非车队模型进入比较表时读取 `vehicles.fleet` 导致整页白屏；实验面板也曾把抽象车队字符串当资产对象读取。两处按问题类型/字段形状处理，并将面板置于错误边界；实验仿真数据按 run_id 隔离。实际错误截图与修复后浏览器证据均保留。
+- 固定完整输入、坐标、单位、目标、地图内容和覆盖检查协议；冻结实际提交实例，编辑后不沿用原 BKS。比较不混合预算/模型，内部代理搜索曲线不冒充验算目标。算法种子是否实际生效随目录和记录显示。
+- 通用资产检查误拒合法 CVRP 的 `unlimited_identical_vehicles` 字符串；现在按明确的问题类型区分抽象车队与资产绑定，非法资产引用仍拒绝。真实 API 复现、修复后正常求解及取消均已验证。
+- Fields2Cover 全流程把 PathState 起点当作全部路径，漏掉最后约 4.4 m 的作业段。新版包含 `path.atEnd()`，保留完整几何，统一 ≥90% 内缩作业区、实际作业行归属、严格扫掠足迹和采样曲率检查。示例 **23.343 → 27.742 m**，作业行距离 **17.6 → 22.0 m**，全田块覆盖 **36.7% → 45.8%**、内缩作业区 **100%**。旧全流程记录原样保留、标为须重求解、退出统计排序及执行；倒车切换未独立适配的尖点不通过，含倒车段的覆盖结果不交给 TB4。
+- 场景 revision 冲突返回 409，页面保留草稿并支持另存副本；同 ID 的迟到加载与旧历史响应不覆盖新状态。JSON 输入先校验，未支持的时间窗等约束明确拒绝。前端 HTTP 请求有边界时间，断连和失败保留原因。
+- 回放按源时间计算当前时刻的指标，区分到点与完成停留；跨缺流不插值、不计跨口里程，不单调时钟拒绝单轴重放。索引缓存与显示抽稀不改原始数据。TB4 按声明终点容差独立判定成功，拒绝把点到点 Dubins/Reeds–Shepp 丢失方向语义后执行。
+
+| 本轮验收 | 结果与证据 |
+|---|---|
+| 工程与软件回归 | 工程 **15 门禁通过**，田间 Python **270 passed**，前端 **101 passed**、类型检查及生产构建通过。保留 3 条既有 Python 弃用警告及既有构建 chunk/重复导入警告；不声称零警告。[工程](../../2026-10-18/planning-integration/project-delivery/summary.json)、[后端](../../2026-10-18/planning-integration/backend-delivery.log)、[前端](../../2026-10-18/planning-integration/frontend-history.log)、[构建](../../2026-10-18/planning-integration/build-history.log) |
+| 正式页面田间闭环 | 页面生成 60×40 m 果园，2 车 8 点；车库 X=3 经保存、刷新及 API 核对；规则推荐、三算法求解/验算、PyVRP 行间执行。**8/8、297.81 m / 342.06 s，最大横向偏差 0.0915 m**；关闭 rc=0、清理 PASS、无所属残留。[核验](../../2026-10-18/planning-integration/ui-field-verification.json)、[页面](../../2026-10-18/planning-integration/ui-field-completed.png)、[日志](../../2026-10-18/planning-integration/ui-field-logs/) |
+| 回放与完整导出 | 浏览器起点为 0 完成/0 m，终点为 8 完成/约 298 m；与冻结 PyVRP 方案叠加。下载执行结果的指标和轨迹与 API 相同；完整实验 `record` 与 API 相同，内容 SHA256 重算相符。envelope 的 `assembled_utc` 随请求变化，不要求不同请求的整文件字节相同。[导出核对](../../2026-10-18/planning-integration/ui-experiment-export.json)、[起点](../../2026-10-18/planning-integration/ui-replay-start.png)、[终点](../../2026-10-18/planning-integration/ui-replay-end.png) |
+| TB4 + Nav2 实际页面执行 | 新建 1.15 m 迷宫短路径、声明容差 0.06 m、显式真值定位、follow_path。实际误差 **0.05795 m**；取消为 canceled，Nav2 明确接受；取消后重试 succeeded、误差 **0.05736 m**。会话 PASS，全部所属启动组退出码 0，无异常退出与残留。[首次](../../2026-10-18/planning-integration/tb4-success-run.json)、[取消](../../2026-10-18/planning-integration/tb4-canceled-run.json)、[恢复](../../2026-10-18/planning-integration/tb4-recovered-run.json)、[关闭](../../2026-10-18/planning-integration/tb4-session-report.json)、[页面](../../2026-10-18/planning-integration/ui-tb4-goal-tolerance.png) |
+| 消息与退出范围 | 本次 TB4 的 clock、真值、scan、odom、cmd_vel 和 map→base TF 均实际收到；另读出 640 束激光及安装 TF。桥接记录为 `source_shutdown_join`，`exit_guard=false`，没有用 `_exit` 垫片把本次结果归零。仅本次一个 TB4 会话/三次执行，未重跑历史 560/400 压力计数，也不据退出检测位置证明内存安全根因全部解决。[状态计数](../../2026-10-18/planning-integration/tb4-success-state.json)、[激光快照](../../2026-10-18/planning-integration/tb4-sensor-snapshot.json)、[原始日志](../../2026-10-18/planning-integration/tb4-logs/) |
+| 五场真实故障/恢复 | cancel 为 canceled/0；clock_stall、bridge_exit、实体车间接触分别 failed/1；随后 restart succeeded/0。每场清理 PASS、所属残留为空。意外桥接即使自身收到 SIGTERM 后返回 0，也由会话判作失败并返回 1。[逐场汇总](../../2026-10-18/planning-integration/field-fault-summary.json)、[原始日志](../../2026-10-18/planning-integration/field-faults.log) |
+| 无解、超时与异常 | 正式 API 的不可行结果没有路线/目标，精确算法真实超时、求解取消、工作进程异常分别 timeout/canceled/error；异常工作进程真实非零退出。[结构化结果](../../2026-10-18/planning-integration/software-api-acceptance.json) |
+| 四类规划页面与恢复 | 点到点 3 解；CVRP 3 解恢复正常提交；覆盖新版 3 解；转弯 DP 与原图搜索均 46，松弛 45 因 2 处违规被排除。时间窗拒绝保留输入；实际制造 409 后另存草稿，服务器新标题/0.06 与草稿副本/0.07 分别保留。[覆盖](../../2026-10-18/planning-integration/ui-coverage-runs.json)、[CVRP](../../2026-10-18/planning-integration/ui-cvrp-runs.json)、[路网](../../2026-10-18/planning-integration/ui-turn-runs.json)、[冲突恢复](../../2026-10-18/planning-integration/ui-conflict-recovery.json) |
+| 网关重复启停 | 3 次真实网关进程有序退出均 0，其中 2 次保持 SSE 连接，关闭约 0.315 s；不以 HTTP 200 代替进程退出证据。[原始结果](../../2026-10-18/planning-integration/gateway-lifecycle/summary.json) |
+
+执行与模型边界：田间仍为同构差速车、真值定位、平地刚体及串行整段交通预约。网页场次轮式里程计末端漂移 **27.051 m**，不能声称定位/轮胎校准通过；能耗仍为版本化后验代理。TB4 激光快照的原始真值 TF stamp 为 0，保留原值；本轮未把该快照称为完成真值源时间标定。Fields2Cover 全流程本轮复验规划与检查，未重跑该新版完整覆盖路径的物理执行；正向曲率/异构规划通过也不扩大为车辆可执行证明。时间窗、优先关系、混合线/面任务和动态障碍等没有实现，明确拒绝，不用 JSON 字段伪装支持。学习推荐仍是先前限定范围的小样本原型，未新增训练或证明推荐增益。
+
+最终历史实验切换与回放复验未新增控制台 error；整轮原始控制台仍包含已修复的两处类型错误，以及一次 gzweb `Protobuf root has not been created` 诊断。第三方 SDK 的异步读包在断连后可遇到已清理的 protobuf root，源码存在这一先后顺序；本次没有据此单条日志断言唯一原因，也没有修改依赖或宣称网页 3D 嵌入视图全部稳定。原生 Gazebo/RViz 与规划执行链独立；该嵌入视图诊断列为剩余问题。[原始控制台](../../2026-10-18/planning-integration/ui-console-history.json)、[最终复验](../../2026-10-18/planning-integration/ui-console-final.json)
+
+回放性能使用本轮真实 **34,305** 个轨迹样本做单次本地 Node 量测：冷索引约 **40 ms**，10,000 次已缓存时刻指标查询合计约 **13.6 ms**；只含数据运算，不含网络/渲染，不是统计性性能结论。[输入与测量范围](../../2026-10-18/planning-integration/replay-performance.json)
+
+原始大型会话/世界/轨迹保留在本机 `planning-integration/live/`、`src/lab/runtime/fieldsim/field_20261018T043031_bd0849/`、`src/lab/runtime/sim/sim_20261018T043621_c2b11c/`，完整 envelope 为本机 `ui-field-record.json`；源码、摘要、日志、截图及独立回归进入 Git。KIMI 的未完成验收、首次 CVRP 409、测试夹具错误和旧覆盖短路径均保留，不改判成通过。本轮没有安装新依赖、付费、使用凭证、修改驱动/系统 Python/ROS，也没有删除历史数据。
+
+## GitHub + KIMI 全量集成收尾（2026-10-17—18，前一轮）
 
 **结论：现有工作台与云端数值/科研改动已整合，限定仿真闭环通过；`main` 作为后续云端 Agent 的完整工作基线。** 启动、停止与恢复仍只维护在 [setup/README](../../README.md)，云端环境和模块边界见根目录 [AGENTS](../../../AGENTS.md)。接手时先备份全部本地未提交文件，提交为 `1700deb4`，再以正常 merge `2c89150f` 纳入 GitHub 分支 `483d3d95`。原 main、cvrp-baselines、experiments-handoff、optimize 分支及本地 workbench 都在合并祖先链中；历史 backup 分支保留原指向，不作为滚动工作分支。[合并来源](../../2026-10-17/integration-closeout/integration-lineage.json)
 

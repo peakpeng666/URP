@@ -431,5 +431,17 @@ def validate_instance(problem_class: str, instance: dict) -> dict:
         raise ValueError(f'未知问题类别 {problem_class!r}')
     if not isinstance(instance, dict):
         raise ValueError('instance 应为 JSON 对象')
+    unsupported = {
+        'time_windows': '时间窗', 'precedence': '任务先后约束', 'line_tasks': '线服务任务',
+        'area_tasks': '混合面服务任务', 'mixed_tasks': '混合作业', 'dynamic_obstacles': '动态障碍约束',
+        'energy_constraints': '能源约束', 'resource_capacities': '补给并发容量',
+    }
+    for key, label in unsupported.items():
+        if instance.get(key):
+            raise ValueError(f'当前 {problem_class} 适配器尚未实现{label}（{key}）；输入保留，请勿将其作为已生效约束提交')
+    tasks = instance.get('tasks') or instance.get('customers') or []
+    for task in (tasks if isinstance(tasks, list) else []):
+        if isinstance(task, dict) and (task.get('time_window') or task.get('time_windows')):
+            raise ValueError('当前任务访问模型尚未实现时间窗，不能静默忽略该约束')
     return {'turn_routing': turn_routing, 'euclidean_cvrp': euclidean_cvrp, 'coverage': coverage,
             'point_to_point': point_to_point, 'fleet_routing': fleet_routing}[problem_class](instance)

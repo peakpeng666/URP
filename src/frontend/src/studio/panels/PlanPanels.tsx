@@ -29,18 +29,20 @@ import type { Solution } from '../../lab/types';
 import { FieldEditor } from '../editor/FieldEditor';
 import { OBSTACLE_STYLE, area } from '../editor/geometry';
 import { useLanes } from '../editor/lanes';
-import { asFleet, isFleet, retrySave, useStudio } from '../store';
+import { asFleet, isFleet, retrySave, saveDraftCopy, useStudio } from '../store';
 import { studio, urls } from '../api';
 import type { FleetInstance, FleetRoute, FleetScenario, ObstacleKind, PerVehicle } from '../types';
 import { addDepot, depotsOf, fleetClassFor, fleetClasses, fleetSize, planningFingerprint, removeDepot, setDepot } from '../fleet';
 import { playbackDuration } from '../planningPlayback';
 import { planModelSchema, researchAcceptanceIssues, unacceptedPlanReason } from '../execution';
 import { MapCanvas } from '../../lab/canvas/MapCanvas';
-import { baseScene, instanceKey, routeColor, solutionPaths, violationMarkers } from '../../lab/views/plan/planModel';
+import { baseScene, routeColor, solutionPaths, violationMarkers } from '../../lab/views/plan/planModel';
 import type { Instance, Scenario } from '../../lab/types';
 import { logTimeAxis, unitSuffix } from '../chart';
 import { BackgroundControl, FleetAssetSection, PlanBackground } from '../assets/PlanLayers';
-import { ReplayOverlay } from '../experiment/ReplayPanel';
+import { centerMap, ReplayOverlay } from '../experiment/ReplayPanel';
+import { comparable, comparisonKey, currentInput, inputIdentity, requiresCoverageRecheck, resultState, verifiedPlan } from '../comparison';
+import { ProblemEditor } from './ProblemEditor';
 import s from './panels.module.css';
 
 const LIB_TONE: Record<string, 'blue' | 'purple' | 'teal' | 'orange' | 'gray' | 'green'> = {
@@ -103,6 +105,7 @@ export function MapPanel() {
 function FleetMap({ inst, focus }: { inst: FleetInstance; focus?: Solution }) {
   const st = useStudio();
   const [snapshot, setSnapshot] = useState(false);
+  const [overlayIds, setOverlayIds] = useState<string[]>([]);
   const stale = !!focus && signature(focus.instance as unknown as FleetInstance) !== signature(inst);
   useEffect(() => setSnapshot(false), [focus?.run_id, st.scenario?.id]);
   const frozen = snapshot && stale && focus?.state === 'done' && focus.instance ? focus.instance as unknown as FleetInstance : null;
@@ -111,6 +114,9 @@ function FleetMap({ inst, focus }: { inst: FleetInstance; focus?: Solution }) {
   if (!st.scenario) return null;
   const routes = focus?.state === 'done' ? (focus.routes as FleetRoute[]) : [];
   const showResult = !stale || !!frozen;
+  const otherPlans = focus && showResult ? st.runIds.map((id) => st.runs[id]).filter((r): r is Solution =>
+    !!r && r.run_id !== focus.run_id && verifiedPlan(r) && comparable(r, focus)
+      && signature(r.instance as unknown as FleetInstance) === signature(shownInst)) : [];
   return (
     <div className={s.mapPanel}>
       {frozen ? (
@@ -151,7 +157,13 @@ function FleetMap({ inst, focus }: { inst: FleetInstance; focus?: Solution }) {
           fitKey={`${st.scenario.id}:${frozen ? focus?.run_id : 'draft'}`}
           lanes={lanes?.lanes}
           background={frozen ? undefined : <PlanBackground />}
-          overlay={(view) => <ReplayOverlay view={view} />}
+          overlay={(view) => <>
+            {otherPlans.map((plan, color) => overlayIds.includes(plan.run_id) ? <g key={plan.run_id} pointerEvents="none">
+              {plan.routes.map((route, index) => <polyline key={index} points={route.polyline.map((xy) => xy.join(',')).join(' ')}
+                fill="none" stroke={routeColor(color + 1)} strokeDasharray="7 4" strokeWidth={2} opacity={0.7} vectorEffect="non-scaling-stroke" />)}
+            </g> : null)}
+            <ReplayOverlay view={view} instance={shownInst} />
+          </>}
           onEdit={(fn) => st.edit((i) => fn(i as unknown as FleetInstance) as unknown as typeof i)}
           onSelect={frozen ? () => undefined : st.select}
           onCursor={st.setCursor}
@@ -165,10 +177,12 @@ function FleetMap({ inst, focus }: { inst: FleetInstance; focus?: Solution }) {
           <div className={s.saveBanner} role="alert">
             <span>未保存：{st.saveError}。{/连接不上|无法连接/.test(st.saveError) ? '断连时会自动重试；' : ''}草稿仍保留在当前页面。</span>
             <Button size="sm" onClick={() => void retrySave()}>重试保存</Button>
+            <Button size="sm" onClick={() => void saveDraftCopy().catch((error) => st.notify('error', (error as Error).message))}>另存草稿副本</Button>
           </div>
         )}
-        {showResult && focus && focus.state === 'done' && <VehicleLegend run={focus} />}
-        {showResult && focus && focus.state === 'done' && <Playback run={focus} inst={shownInst} />}
+        {showResult && focus && focus.state === 'done' && <VehicleLegend run={focus} comparisons={otherPlans} overlayIds={overlayIds}
+          toggleOverlay={(id) => setOverlayIds((ids) => ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id])} />}
+        {showResult && focus && verifiedPlan(focus) && <Playback run={focus} inst={shownInst} />}
       </div>
     </div>
   );
@@ -177,50 +191,70 @@ function FleetMap({ inst, focus }: { inst: FleetInstance; focus?: Solution }) {
 /** Read-only scenario canvas for routing, coverage and motion-planning problems, following the focused solution. */
 function GenericMap({ scenario, draft, run, runs }: { scenario: Scenario; draft: Instance; run?: Solution; runs: Solution[] }) {
   const focusSolution = useStudio((st) => st.focus);
+  const [frozen, setFrozen] = useState(false);
+  const [legendOpen, setLegendOpen] = useState(true);
+  const [hiddenRuns, setHiddenRuns] = useState<string[]>([]);
+  const [center, setCenter] = useState<{ xy: [number, number]; span?: number; token: number }>();
+  const shownDraft = frozen && run?.instance ? run.instance : draft;
+  const shownScenario = frozen && run?.scenario_snapshot ? run.scenario_snapshot : scenario;
+  useEffect(() => { setFrozen(false); setHiddenRuns([]); }, [scenario.id]);
+  useEffect(() => {
+    const onCenter = (event: Event) => {
+      const detail = (event as CustomEvent<{ xy: [number, number]; span?: number; expectedInput?: string }>).detail;
+      if (detail?.expectedInput && detail.expectedInput !== inputIdentity(shownScenario.problem_class, shownDraft)) return;
+      if (detail?.xy?.length === 2 && detail.xy.every(Number.isFinite)) setCenter({ ...detail, token: performance.now() });
+    };
+    window.addEventListener('studio:center', onCenter);
+    return () => window.removeEventListener('studio:center', onCenter);
+  }, [shownScenario.problem_class, shownDraft]);
   const { scene, entries, stale } = useMemo(() => {
-    const out = baseScene(scenario, draft);
-    if (scenario.problem_class === 'point_to_point') {
-      const inst = draft as unknown as { start: [number, number, number]; goal: [number, number, number] };
+    const out = baseScene(shownScenario, shownDraft);
+    if (shownScenario.problem_class === 'point_to_point') {
+      const inst = shownDraft as unknown as { start: [number, number, number]; goal: [number, number, number] };
       out.nodes = [...(out.nodes ?? []),
         { id: 'start', xy: [inst.start[0], inst.start[1]], kind: 'start', label: '起点' },
         { id: 'goal', xy: [inst.goal[0], inst.goal[1]], kind: 'task', label: '终点' }];
     }
-    const current = !!run && run.state === 'done' && run.routes.length > 0 && !!run.instance
-      && run.scenario_id === scenario.id && instanceKey(run.instance) === instanceKey(draft);
-    const comparable = current && run ? runs.filter((candidate) => candidate.state === 'done' && candidate.routes.length > 0
-      && candidate.job_id === run.job_id && candidate.instance_sha256 === run.instance_sha256
-      && !!candidate.instance && instanceKey(candidate.instance) === instanceKey(draft)) : [];
-    const entries = comparable.map((solution, colorIndex) => ({ solution, colorIndex, current: true, focused: solution.run_id === run?.run_id }));
+    const current = !!run && run.state === 'done' && run.routes.length > 0 && !!run.instance && (frozen || currentInput(run, scenario, draft));
+    const available = run && !runs.some((r) => r.run_id === run.run_id) ? [run, ...runs] : runs;
+    const candidates = current && run ? available.filter((candidate) => candidate.state === 'done' && candidate.routes.length > 0
+      && comparable(candidate, run) && !!candidate.instance && inputIdentity(candidate.problem_class, candidate.instance) === inputIdentity(shownScenario.problem_class, shownDraft)) : [];
+    const entries = candidates.map((solution, colorIndex) => ({ solution, colorIndex, current: true, focused: solution.run_id === run?.run_id }));
     if (entries.length) {
-      const swath = scenario.problem_class === 'coverage' ? (draft as { swath_width?: number }).swath_width ?? null : null;
-      out.paths = solutionPaths(entries, scenario.problem_class, draft, swath);
-      out.markers = violationMarkers(entries.map((entry) => entry.solution));
+      const swath = shownScenario.problem_class === 'coverage' ? (shownDraft as { swath_width?: number }).swath_width ?? null : null;
+      const visible = entries.filter((entry) => !hiddenRuns.includes(entry.solution.run_id));
+      out.paths = solutionPaths(visible, shownScenario.problem_class, shownDraft, swath);
+      out.markers = violationMarkers(visible.map((entry) => entry.solution));
     }
     return { scene: out, entries, stale: !!run && run.state === 'done' && run.routes.length > 0 && !current };
-  }, [scenario, draft, run, runs]);
+  }, [scenario, draft, run, runs, shownDraft, shownScenario, frozen, hiddenRuns]);
   return (
     <div className={s.mapPanel}>
       <div className={s.mapBar}>
-        <span className={s.hint} style={{ margin: 0 }}>{scenario.summary}</span>
+        <span className={s.hint} style={{ margin: 0 }}>{frozen ? '历史运行冻结输入 · 只读' : scenario.summary}</span>
         <span className={s.spacer} />
+        {frozen ? <Button size="sm" onClick={() => setFrozen(false)}>返回当前草稿</Button> : <SaveChip />}
         <Button size="sm" title="打开经典视图：可编辑 JSON、逐项调整任务" onClick={() => window.dispatchEvent(new CustomEvent('studio:open-panel', { detail: 'classic' }))}>经典视图</Button>
       </div>
       <div className={s.mapStage}>
-        <MapCanvas scene={scene} fitKey={scenario.id} ariaLabel="场景地图"
+        <MapCanvas scene={scene} fitKey={`${scenario.id}:${frozen ? run?.run_id : 'draft'}`} centerRequest={center} ariaLabel="场景地图"
           overlay={entries.length && run ? <span className={s.saveChip}>{run.algorithm.name} · {fmt.num(run.objective.value, 2)} {run.objective.unit === 'euc_2d_rounded' ? '' : run.objective.unit}</span> : undefined} />
         {entries.length > 0 && (
-          <div className={s.legend}>
-            <div className={s.legendHead}><span>同一输入指纹 · {entries.length} 个方案</span></div>
-            {entries.map((entry) => (
-              <button key={entry.solution.run_id} type="button" className={s.legendRow} aria-pressed={entry.focused} onClick={() => focusSolution(entry.solution.run_id)}>
+          <div className={`${s.legend} ${s.algorithmLegend}`} data-collapsed={!legendOpen || undefined}>
+            <button type="button" className={s.legendHead} aria-expanded={legendOpen} title={legendOpen ? '收起算法图例' : '展开算法图例'} onClick={() => setLegendOpen(!legendOpen)}><span>同一输入 · {entries.length} 个方案</span><ChevronDown size={12} /></button>
+            {legendOpen && entries.map((entry) => (
+              <div key={entry.solution.run_id} className={s.legendRow} data-off={hiddenRuns.includes(entry.solution.run_id) || undefined}>
                 <span className={s.swatch} style={{ background: routeColor(entry.colorIndex) }} />
-                <span className={s.legendName}>{entry.solution.algorithm.name}<div className={s.legendMeta}>{entry.solution.run_id.slice(0, 13)}</div></span>
+                <button type="button" className={s.legendFocus} aria-pressed={entry.focused} onClick={() => focusSolution(entry.solution.run_id)}>{entry.solution.algorithm.name}</button>
                 <span className={s.legendMeta}>{fmt.num(entry.solution.objective.value, 2)} {entry.solution.objective.unit}</span>
-              </button>
+                <button type="button" className={s.simLink} aria-label={`显示 ${entry.solution.algorithm.name} 路线`} aria-pressed={!hiddenRuns.includes(entry.solution.run_id)}
+                  onClick={() => setHiddenRuns((ids) => ids.includes(entry.solution.run_id) ? ids.filter((id) => id !== entry.solution.run_id) : [...ids, entry.solution.run_id])}>{hiddenRuns.includes(entry.solution.run_id) ? <EyeOff size={12} /> : <Eye size={12} />}</button>
+              </div>
             ))}
           </div>
         )}
-        {stale && <div className={s.staleBadge}><RefreshCw size={12} /> 历史输入或来源未知，未将路线叠加到当前草稿</div>}
+        {stale && <div className={s.staleBadge}><RefreshCw size={12} /> 历史输入或来源未知，未将路线叠加到当前草稿
+          {run?.instance && <Button size="sm" onClick={() => setFrozen(true)}>查看冻结输入</Button>}</div>}
       </div>
     </div>
   );
@@ -248,7 +282,7 @@ function vehicleFacts(run: Solution, vehicle: PerVehicle, index: number) {
   return { className, home };
 }
 
-function VehicleLegend({ run }: { run: Solution }) {
+function VehicleLegend({ run, comparisons = [], overlayIds = [], toggleOverlay }: { run: Solution; comparisons?: Solution[]; overlayIds?: string[]; toggleOverlay?: (id: string) => void }) {
   const hidden = useStudio((st) => st.hiddenVehicles);
   const toggle = useStudio((st) => st.toggleVehicle);
   const per = (run.metrics.per_vehicle as unknown as PerVehicle[] | undefined) ?? [];
@@ -275,6 +309,11 @@ function VehicleLegend({ run }: { run: Solution }) {
           </button>
         );
       })}
+      {open && comparisons.length > 0 && <div style={{ padding: '6px' }}>
+        <p className={s.meta}>叠加其他同组方案（虚线 · 全部车辆）</p>
+        {comparisons.map((plan, color) => <Button key={plan.run_id} size="sm" aria-pressed={overlayIds.includes(plan.run_id)}
+          onClick={() => toggleOverlay?.(plan.run_id)} icon={overlayIds.includes(plan.run_id) ? Eye : EyeOff}><span className={s.swatch} style={{ background: routeColor(color + 1) }} />叠加 {plan.algorithm.name}</Button>)}
+      </div>}
     </div>
   );
 }
@@ -334,7 +373,7 @@ export function InspectorPanel() {
     if (selection) setTab('selection');
   }, [selection]);
   if (!sc || !draft) return <EmptyState title="未打开场景" />;
-  if (!isFleet(sc)) return <ScenarioInfo />;
+  if (!isFleet(sc)) return <div className={s.scroll}><ProblemEditor key={useStudio.getState().editorSession ?? sc.id} scenario={sc} draft={draft} /><ScenarioInfo /></div>;
   return (
     <div className={s.inspector}>
       <div className={s.tabs}>
@@ -621,7 +660,7 @@ export function AdvisorPanel() {
   const rec = st.recommendation;
   const algos = useMemo(() => Object.fromEntries(st.algorithms.map((a) => [a.id, a])), [st.algorithms]);
   const budgetParams = st.chosen.flatMap((id) => (algos[id]?.params ?? []).filter((p) => p.name === 'time_limit_s'));
-  const seedParams = st.chosen.flatMap((id) => (algos[id]?.params ?? []).filter((p) => p.name === 'seed'));
+  const seedParams = st.chosen.flatMap((id) => algos[id]?.randomness?.uses_seed === false ? [] : (algos[id]?.params ?? []).filter((p) => p.name === 'seed'));
   const minBudget = Math.max(0.05, ...budgetParams.map((p) => p.min ?? 0.05));
   const maxBudget = Math.min(600, ...budgetParams.map((p) => p.max ?? 600));
   const maxSeed = Math.min(2147483647, ...seedParams.map((p) => p.max ?? 2147483647));
@@ -675,10 +714,10 @@ export function AdvisorPanel() {
             }} /><em>秒/算法</em></span>
           </label>
           <label className={s.field} title={`允许范围 0–${maxSeed}`}><span>随机种子</span>
-            <span className={s.inputUnit}><Input type="number" min={0} max={maxSeed} step={1} value={st.seed} onChange={(e) => {
+            <span className={s.inputUnit}><Input type="number" disabled={!seedParams.length} min={0} max={maxSeed} step={1} value={st.seed} onChange={(e) => {
               const n = e.target.valueAsNumber;
               if (Number.isFinite(n)) st.setSeed(Math.min(maxSeed, Math.max(0, Math.round(n))));
-            }} /><em>提交时冻结</em></span>
+            }} /><em>{seedParams.length ? '提交时冻结' : '所选算法不使用'}</em></span>
           </label>
           <Button variant="primary" size="lg" icon={Play} loading={st.busy === '求解中'} disabled={!st.chosen.length || !paramsValid}
             onClick={() => void st.solve()}>
@@ -780,24 +819,15 @@ const COLUMNS: Record<string, Col[]> = {
   ],
 };
 
-function stateText(r: Solution): { text: string; title?: string } {
-  if (['queued', 'running'].includes(r.state)) return { text: '计算中' };
-  if (r.state === 'timeout') return { text: '超时', title: r.error ?? undefined };
-  if (r.state === 'canceled') return { text: '已取消', title: r.error ?? undefined };
-  if (r.state !== 'done') return { text: '出错', title: r.error ?? undefined };
-  if (r.status === 'infeasible' || r.status === 'no_solution') {
-    const why = ((r as Solution & { raw_result?: { reason?: string } }).raw_result)?.reason ?? r.check?.errors?.[0] ?? r.error ?? undefined;
-    return { text: r.status === 'infeasible' ? '不可行' : '无解', title: why };
-  }
-  return { text: '完成' };
-}
-
 export function ComparePanel() {
   const st = useStudio();
   const [canceling, setCanceling] = useState<string | null>(null);
   const rows = st.runIds.map((id) => st.runs[id]).filter(Boolean) as Solution[];
   const cols = COLUMNS[st.scenario?.problem_class ?? ''] ?? COLUMNS.euclidean_cvrp;
-  const valid = rows.filter((r) => r.state === 'done' && r.check?.valid);
+  const anchor = rows.find((r) => r.run_id === st.focusRun) ?? rows[0];
+  const group = anchor ? rows.filter((r) => comparable(r, anchor)) : [];
+  const valid = group.filter(verifiedPlan);
+  const groups = new Set(rows.map(comparisonKey).filter(Boolean));
   const bests = cols.map((c) => {
     if (!c.better) return null;
     const vals = valid.map(c.get).filter((v): v is number => typeof v === 'number' && Number.isFinite(v));
@@ -808,6 +838,11 @@ export function ComparePanel() {
   }
   return (
     <div className={s.compare}>
+      <div className={s.pad} style={{ paddingBottom: 4 }}>
+        <p className={s.meta}>本批 {rows.length} 次运行 · {rows.filter(verifiedPlan).length} 个已验算可行解。最佳值仅在相同输入、目标、单位和时间预算内标记。</p>
+        {anchor?.planning && <p className={s.meta}>{anchor.planning.objective_label} · {anchor.planning.objective_unit} · 输入 {anchor.instance_sha256.slice(0, 12)}</p>}
+        {groups.size > 1 && <Notice tone="warn">存在 {groups.size} 种比较口径；当前最佳值只针对选中方案所在组，不跨组排名。</Notice>}
+      </div>
       <div className={s.tableWrap}>
         <table className={s.table}>
           <thead>
@@ -819,12 +854,11 @@ export function ComparePanel() {
           </thead>
           <tbody>
             {rows.map((r) => {
-              const state = stateText(r);
-              const fleetInput = r.problem_class === 'fleet_routing' && st.draft ? asFleet(st.draft) : null;
-              const historicalInput = !!fleetInput && signature(r.instance as unknown as FleetInstance) !== signature(fleetInput);
+              const state = resultState(r);
+              const historicalInput = !!st.scenario && !!st.draft && !currentInput(r, st.scenario, st.draft);
               const algorithm = st.algorithms.find((a) => a.id === r.algorithm.id);
               const supportsBudget = !!algorithm?.params.some((param) => param.name === 'time_limit_s');
-              const supportsSeed = !!algorithm?.params.some((param) => param.name === 'seed');
+              const supportsSeed = !!algorithm?.params.some((param) => param.name === 'seed') && algorithm.randomness?.uses_seed !== false;
               const differentParams = (supportsBudget && r.params.time_limit_s !== st.budget) || (supportsSeed && r.params.seed !== st.seed);
               const frozenParams = [
                 supportsBudget ? `预算 ${String(r.params.time_limit_s ?? '默认/未记录')} s` : '',
@@ -832,8 +866,8 @@ export function ComparePanel() {
                 ...Object.entries(r.params).filter(([key]) => !['time_limit_s', 'seed'].includes(key))
                   .map(([key, value]) => `${key}=${typeof value === 'object' ? JSON.stringify(value) : String(value)}`),
               ].filter(Boolean).join(' · ');
-              const instance = r.instance as unknown as FleetInstance | undefined;
-              const blocked = unacceptedPlanReason(instance, planModelSchema(r)) ?? (instance?.vehicles.fleet?.some((item) => (item.min_turn_radius_m ?? 0) > 0) ? '仅规划，未适配执行' : '');
+              const instance = r.problem_class === 'fleet_routing' ? r.instance as unknown as FleetInstance | undefined : undefined;
+              const blocked = instance ? unacceptedPlanReason(instance, planModelSchema(r)) ?? (instance.vehicles?.fleet?.some((item) => (item.min_turn_radius_m ?? 0) > 0) ? '仅规划，未适配执行' : '') : '';
               return (
                 <tr key={r.run_id} aria-selected={st.focusRun === r.run_id} onClick={() => st.focus(r.run_id)}>
                   <td>
@@ -842,13 +876,14 @@ export function ComparePanel() {
                     <div className={s.row}>
                       {historicalInput && <Badge tone="orange" >历史输入</Badge>}
                       {differentParams && <Badge tone="gray">当前参数不同</Badge>}
+                      {anchor && !comparable(r, anchor) && <Badge tone="gray">独立口径</Badge>}
                       {blocked && <Badge tone="orange">{blocked}</Badge>}
                     </div>
                   </td>
                   <td title={state.title}>{state.text === '计算中' ? <span className={s.running}><Spinner /> 计算中</span> : state.text}{state.title ? ' ⓘ' : ''}</td>
                   {cols.map((c, i) => {
                     const v = r.state === 'done' && r.routes.length ? c.get(r) : null;
-                    const isBest = typeof v === 'number' && bests[i] != null && Math.abs(v - (bests[i] as number)) < 1e-9 && valid.length > 1;
+                    const isBest = verifiedPlan(r) && group.includes(r) && typeof v === 'number' && bests[i] != null && Math.abs(v - (bests[i] as number)) < 1e-9 && valid.length > 1;
                     const unit = typeof c.unit === 'function' ? c.unit(r) : c.unit ?? '';
                     const text = v == null
                       ? (r.state === 'done' && r.routes.length ? '未记录' : '—')
@@ -858,7 +893,7 @@ export function ComparePanel() {
                     return <td key={c.label} className={s.num} data-best={isBest || undefined}>{text}</td>;
                   })}
                   <td className={s.num}>{fmt.sec(r.metrics.wall_s)}</td>
-                  <td>{r.check ? (r.check.valid ? <span className={s.ok}><Check size={13} /> 通过</span> : <span className={s.bad} title={r.check.errors.join('；')}><X size={13} /> 未通过{r.check.errors.length ? ` ${r.check.errors.length} 项` : ''}</span>) : '未检查'}</td>
+                  <td>{requiresCoverageRecheck(r) ? '旧版检查 · 待重验' : r.check ? (r.check.valid ? <span className={s.ok}><Check size={13} /> 通过</span> : <span className={s.bad} title={r.check.errors.join('；')}><X size={13} /> 未通过{r.check.errors.length ? ` ${r.check.errors.length} 项` : ''}</span>) : '未检查'}</td>
                   <td className={s.rowActions} onClick={(e) => e.stopPropagation()}>
                     <a href={exportUrl.run(r.run_id, 'json')} download title="求解结果 JSON（路线与指标）">JSON</a>
                     <a href={exportUrl.run(r.run_id, 'csv')} download title="路线 CSV">CSV</a>
@@ -884,6 +919,12 @@ export function ComparePanel() {
                         <Tractor size={12} /> Gazebo
                       </button>
                     )}
+                    {r.problem_class !== 'fleet_routing' && r.frame.kind === 'map' && verifiedPlan(r) && (
+                      <button type="button" className={s.simLink} title="将此方案交给独立的 TurtleBot4 仿真；执行方式在仿真面板确认"
+                        onClick={() => { st.focus(r.run_id); window.dispatchEvent(new CustomEvent('studio:open-panel', { detail: 'sim' })); }}>
+                        <Tractor size={12} /> TB4 仿真
+                      </button>
+                    )}
                   </td>
                 </tr>
               );
@@ -892,14 +933,16 @@ export function ComparePanel() {
         </table>
         {rows.some((r) => r.error) && <Notice tone="error">{rows.filter((r) => r.error).map((r) => `${r.algorithm.name}：${r.error}`).join('；')}</Notice>}
       </div>
-      <Convergence runs={rows} />
+      <Convergence runs={group} />
     </div>
   );
 }
 
 function Convergence({ runs }: { runs: Solution[] }) {
   const ref = useRef<HTMLDivElement>(null);
-  const data = runs.flatMap((r) => ((r as Solution & { trace?: [number, number][] }).trace ?? []).map(([t, v]) => ({ t: Math.max(t, 1e-3), v, alg: r.algorithm.name })));
+  const eligible = runs.filter((r) => r.trace_contract?.semantic === 'reported_objective');
+  const excluded = runs.filter((r) => r.trace_contract?.semantic !== 'reported_objective' && ((r as Solution & { trace?: [number, number][] }).trace?.length ?? 0) > 0);
+  const data = eligible.flatMap((r) => ((r as Solution & { trace?: [number, number][] }).trace ?? []).map(([t, v]) => ({ t: Math.max(t, 1e-3), v, alg: r.algorithm.name })));
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -912,7 +955,7 @@ function Convergence({ runs }: { runs: Solution[] }) {
     });
     el.append(chart);
   }, [data]);
-  if (data.length < 2) return null;
+  if (data.length < 2) return excluded.length ? <div className={s.pad}><p className={s.meta}>内部搜索曲线保留在原始记录；其成本含量化、松弛或加权目标，未将它作为最终验算目标绘制。</p></div> : null;
   return (
     <div className={s.convergence}>
       <h4>求解过程中最好解的变化</h4>
@@ -933,6 +976,7 @@ export function VerifyPanel() {
   const check = run.check;
   if (!check) return <EmptyState icon={CircleDashed} title="未检查" detail="后端未提供独立检查结果；不能据此判定方案可行。" />;
   const errors = check.errors;
+  const recheck = requiresCoverageRecheck(run);
   const fleet = isFleet(st.scenario);
   const rows = (run.instance as unknown as FleetInstance | undefined)?.vehicles?.travel === 'rows';
   const has = (re: RegExp) => errors.filter((e) => re.test(e));
@@ -957,8 +1001,9 @@ export function VerifyPanel() {
       <div className={s.form}>
         <div className={s.rowSpace}>
           <h3>{run.algorithm.name} 的验算</h3>
-          {check.valid ? <Badge tone="green">全部通过</Badge> : <Badge tone="red">未通过{errors.length ? ` · ${errors.length} 项` : ''}</Badge>}
+          {recheck ? <Badge tone="orange">旧版检查 · 须重求解</Badge> : check.valid ? <Badge tone="green">全部通过</Badge> : <Badge tone="red">未通过{errors.length ? ` · ${errors.length} 项` : ''}</Badge>}
         </div>
+        {recheck && <Notice tone="warn">以下为历史原始检查记录。旧全流程适配漏掉最后作业段，不代表通过新版覆盖验收；请重新求解。</Notice>}
         {fleet && researchAcceptanceIssues(run.instance as unknown as FleetInstance, planModelSchema(run)).map((issue) => <Notice key={issue} tone="warn">{issue} 绿色验算徽标不覆盖该限制。</Notice>)}
         {!!unexplained.length && <Notice tone="error">其他检查失败：{unexplained.join('；')}</Notice>}
         <ul className={s.checks}>
@@ -987,6 +1032,16 @@ export function VerifyPanel() {
             </li>
           )}
         </ul>
+        {!!run.map_check?.violations?.length && <div>
+          <h4>地图违规定位</h4>
+          {!st.scenario || !st.draft || !currentInput(run, st.scenario, st.draft)
+            ? <p className={s.hint}>这是历史输入。请先在地图查看冻结输入，再定位检查点。</p> : null}
+          {run.map_check.violations.slice(0, 30).map((violation, i) => <Button key={i} size="sm"
+            onClick={() => centerMap(violation.point, 24, inputIdentity(run.problem_class, run.instance))} title={`坐标 (${violation.point.join(', ')}) m；净空 ${violation.clearance_m} m`}>
+            定位 路线 {violation.route + 1} · 段 {violation.segment + 1}
+          </Button>)}
+          {run.map_check.violations.length > 30 && <p className={s.meta}>此处显示前 30 项，完整检查点保留在记录中。</p>}
+        </div>}
         <p className={s.meta}>验算方：{check.checker}。数据来源：{run.algorithm.origin}</p>
         {fleet && <PerVehicleTable run={run} />}
       </div>

@@ -1,5 +1,5 @@
 import { LabApiError } from '../lab/api';
-import type { Scenario } from '../lab/types';
+import type { Instance, PlanningContext, Scenario } from '../lab/types';
 import type {
   Analysis,
   CvrplibInstance,
@@ -89,7 +89,8 @@ export const studio = {
   parse: (text: string) => call<ParseResult>('POST', '/compose/parse', { text }),
   compose: (text: string, opts: { seed?: number; field_id?: string; overrides?: Record<string, unknown> } = {}) =>
     call<FleetScenario>('POST', '/compose', { text, ...opts }),
-  saveScenario: (id: string, body: { instance?: FleetInstance | unknown; title?: string; summary?: string; layers?: Record<string, unknown> }) =>
+  validateInstance: (scenario_id: string, instance: Instance) => call<{ instance: Instance; planning: PlanningContext }>('POST', '/planning/validate', { scenario_id, instance }),
+  saveScenario: (id: string, body: { instance?: FleetInstance | unknown; title?: string; summary?: string; layers?: Record<string, unknown>; base_revision?: number }) =>
     call<FleetScenario>('PUT', `/scenarios/${encodeURIComponent(id)}`, body),
   forkScenario: (id: string, body: { instance?: unknown; title?: string } = {}) =>
     call<Scenario>('POST', `/scenarios/${encodeURIComponent(id)}/fork`, body),

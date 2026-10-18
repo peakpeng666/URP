@@ -51,8 +51,8 @@ def resolve(ref, verify_files=False):
     return data
 
 
-def snapshot(instance):
-    refs, fleet = references(instance)
+def snapshot(instance, *, problem_class=None):
+    refs, fleet = references(instance, problem_class=problem_class)
     refs = refs + ([fleet['asset']] if 'asset' in fleet else [])
     unique = {}
     for ref in refs:
@@ -65,11 +65,15 @@ def snapshot(instance):
     return list(unique.values())
 
 
-def references(instance):
+def references(instance, *, problem_class=None):
     refs = instance.get('asset_refs', [])
     if not isinstance(refs, list):
         raise ServiceError(409, 'invalid_asset_reference', 'asset_refs 必须是数组')
     fleet = instance.get('fleet', {})
+    # CVRP uses this legacy field for the abstract fleet model, not an asset.
+    # Require its problem context so a field execution binding stays strict.
+    if problem_class == 'euclidean_cvrp' and fleet == 'unlimited_identical_vehicles':
+        fleet = {}
     if not isinstance(fleet, dict):
         raise ServiceError(409, 'invalid_asset_reference', 'fleet 必须是资产绑定对象')
     veh = instance.get('vehicles')

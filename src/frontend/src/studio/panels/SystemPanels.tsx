@@ -3,6 +3,7 @@ import { parseHash, useRoute } from '../../app/router';
 import { lab } from '../../lab/api';
 import { Spinner, Select } from '../../lab/ui';
 import { ViewErrorBoundary } from '../../lab/shell/Page';
+import { useStudio } from '../store';
 import s from './panels.module.css';
 
 const PlanView = lazy(() => import('../../lab/views/plan/PlanView').then((m) => ({ default: m.PlanView })));
@@ -30,7 +31,10 @@ export function LegacyPlan({ id }: { id: string }) {
 
 export function SimPanel() {
   const route = useRoute();
-  const simRoute = useMemo(() => (route.view === 'sim' ? route : parseHash('#/sim')), [route]);
+  const focus = useStudio((st) => st.focusRun ? st.runs[st.focusRun] : null);
+  const rid = focus?.frame.kind === 'map' ? focus.run_id : null;
+  const simRoute = useMemo(() => (route.view === 'sim' && route.params.has('run') ? route
+    : parseHash(`#/sim${rid ? `?run=${encodeURIComponent(rid)}` : ''}`)), [route, rid]);
   return <Embed name="仿真">{<SimView route={simRoute} />}</Embed>;
 }
 

@@ -21,6 +21,7 @@ import type { Route } from '../app/router';
 import { lab, useGatewayConnected, useLabResource } from '../lab/api';
 import { Button, Segmented, Spinner, StatusDot } from '../lab/ui';
 import { simPhaseLabel } from '../lab/shell/labels';
+import { ViewErrorBoundary } from '../lab/shell/Page';
 import { studio } from './api';
 import { flushSave, useStudio, type Workspace } from './store';
 import { removeDepot } from './fleet';
@@ -95,7 +96,7 @@ function ClassicPanel() {
 }
 
 const COMPONENTS = Object.fromEntries(Object.entries(PANELS).map(([id, p]) => [id, () => (
-  <Suspense fallback={<div style={{ padding: 14 }}><Spinner /></div>}><p.C /></Suspense>
+  <ViewErrorBoundary name={p.title}><Suspense fallback={<div style={{ padding: 14 }}><Spinner /></div>}><p.C /></Suspense></ViewErrorBoundary>
 )]));
 
 const WORKSPACES: { value: Workspace; label: string; icon: typeof MapIcon }[] = [

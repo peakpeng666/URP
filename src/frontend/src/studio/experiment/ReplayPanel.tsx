@@ -12,19 +12,24 @@ import { useStudio } from '../store';
 import { useFieldSim } from '../ros/live';
 import { indexAt, metricsAt, poseAt, simBody, taskEvents, useReplay, type Anomaly } from './replay';
 import { trafficStatus } from './traffic';
+import { displaySegments, gapLimit, replayIndex } from './replayIndex';
+import { planningFingerprint } from '../fleet';
+import type { FleetInstance } from '../types';
 import { SessionEvidence } from './SessionEvidence';
 import p from '../panels/panels.module.css';
 import a from '../assets/assets.module.css';
 
-export const centerMap = (xy: [number, number], span = 24) =>
-  window.dispatchEvent(new CustomEvent('studio:center', { detail: { xy, span } }));
+export const centerMap = (xy: [number, number], span = 24, expectedInput?: string) =>
+  window.dispatchEvent(new CustomEvent('studio:center', { detail: { xy, span, expectedInput } }));
 
 /** Drawn inside the task-map editor's world group (metres, y up). */
-export function ReplayOverlay({ view }: { view: View }) {
+export function ReplayOverlay({ view, instance }: { view: View; instance?: FleetInstance }) {
   const { result, derived, t, show, hidden, focus } = useReplay();
   const scenarioId = useStudio((x) => x.scenarioId);
   const focusRun = useStudio((x) => x.focusRun);
   if (!result || !derived || result.scenario_id !== scenarioId || (focusRun && result.run_id !== focusRun)) return null;
+  const recorded = result.execution_plan?.instance;
+  if (instance && (!recorded || planningFingerprint(instance) !== planningFingerprint(recorded))) return null;
   const k = view.k || 1;
   const px = (n: number) => n / k;
   const vehicles = result.vehicles.filter((v) => !hidden.includes(v.name));
@@ -39,24 +44,24 @@ export function ReplayOverlay({ view }: { view: View }) {
         const tr = result.trails[v.name] ?? [];
         const i = indexAt(tr, t);
         if (i < 0) return null;
-        const pose = poseAt(tr, t);
-        const pts = tr.slice(0, i + 1).map((q) => `${q[1]},${q[2]}`);
-        if (pose) pts.push(`${pose[0]},${pose[1]}`);
-        return <polyline key={`a-${v.name}`} points={pts.join(' ')} fill="none" stroke={v.color} strokeWidth={3.2} strokeLinejoin="round" vectorEffect="non-scaling-stroke" opacity={0.5} />;
+        const pose = poseAt(tr, t, gapLimit(result));
+        const segments = displaySegments(replayIndex(result, v.name), t);
+        if (pose && segments.length && (segments.at(-1)?.at(-1)?.[0] ?? t) < t) segments[segments.length - 1].push([t, ...pose]);
+        return segments.map((segment, j) => <polyline key={`a-${v.name}-${j}`} points={segment.map((q) => `${q[1]},${q[2]}`).join(' ')} fill="none" stroke={v.color} strokeWidth={3.2} strokeLinejoin="round" vectorEffect="non-scaling-stroke" opacity={0.5} />);
       })}
       {show.tasks && result.tasks.filter((tk) => !hidden.includes(tk.vehicle)).map((tk) => {
         const reached = tk.state === 'reached' && tk.t_sim != null && tk.t_sim <= t;
         const hasCompletion = 'serviced_at' in tk || tk.service_complete !== undefined;
-        const completed = hasCompletion ? tk.service_complete !== false && tk.serviced_at != null && tk.serviced_at <= t : reached;
+        const completed = hasCompletion && tk.service_complete !== false && tk.serviced_at != null && tk.serviced_at <= t;
         const missed = tk.state !== 'reached' && t >= derived.duration - 1e-6;
         const at = tk.stop ?? tk.xy;
         return <circle key={`t-${tk.id}`} cx={at[0]} cy={at[1]} r={px(completed ? 7 : 6)} fill={completed ? 'rgba(48,177,88,0.85)' : reached ? 'rgba(255,159,10,0.7)' : 'none'}
           stroke={missed ? '#ff453a' : completed || reached ? '#fff' : '#8e8e93'} strokeWidth={missed ? 2.4 : 1.4} vectorEffect="non-scaling-stroke">
-          <title>{`${tk.label} · ${completed ? '已完成停留' : reached ? '已到点，停留未完成' : '尚未到点'}`}</title>
+          <title>{`${tk.label} · ${completed ? '已完成停留' : reached ? (hasCompletion ? '已到点，停留未完成' : '已到点，未记录作业完成') : '尚未到点'}`}</title>
         </circle>;
       })}
       {show.body && vehicles.map((v) => {
-        const pose = poseAt(result.trails[v.name] ?? [], t);
+        const pose = poseAt(result.trails[v.name] ?? [], t, gapLimit(result));
         if (!pose) return null;
         const deg = (pose[2] * 180) / Math.PI;
         const body = simBody(result);
@@ -140,7 +145,7 @@ export function ReplayPanel() {
         </div>
         <p className={p.meta}>
           田间仿真的执行方式是<b>路径跟踪</b>：每台车用纯追踪控制器沿规划路线行驶，不调用 Nav2 重规划；轨迹与位姿取自 <b>Gazebo 真值</b>，不是估计定位。
-          TurtleBot4 + Nav2（AMCL 估计定位、在线重规划）在「仿真」工作区单独运行与记录。
+          TurtleBot4 + Nav2 在「仿真」工作区单独记录，可选 AMCL / 真值定位及几何路径跟踪 / Nav2 逐点重规划；以具体运行的来源为准。
         </p>
         {liveHere && <Notice tone="info">这张任务地图的仿真正在运行（{live?.phase}），结束后会出现在下面的列表里。</Notice>}
         {!r && (
@@ -165,15 +170,15 @@ export function ReplayPanel() {
             <div className={a.kv}>
               <span>方案</span><span>{r.algorithm ?? '—'} <button type="button" className={p.link} style={{ border: 0, background: 'none' }} onClick={() => void focusRun(r.run_id)}>{runs[r.run_id] ? '在地图上对照此方案' : '载入此方案对照'}</button></span>
               <span>结果</span><span>{r.state === 'succeeded' ? '全部车辆完成' : r.state === 'canceled' ? '执行已取消' : '执行失败'} · 到达 {r.metrics.tasks_reached}/{r.metrics.tasks_total} 个任务点{r.metrics.tasks_completed != null ? ` · 完成停留 ${r.metrics.tasks_completed}` : ''}</span>
-              <span>仿真</span><span>{r.world} · 仿真时长 {fmt.sec(d.duration)}{r.real_time_factor ? ` · 实际倍速 ${fmt.num(r.real_time_factor, 1)}×` : ''}{r.travel === 'rows' ? ' · 作物行为实体' : ''}</span>
+              <span>仿真</span><span>{r.world} · 记录时间跨度 {fmt.sec(d.duration - d.startTime)}{r.real_time_factor ? ` · 实际倍速 ${fmt.num(r.real_time_factor, 1)}×` : ''}{r.travel === 'rows' ? ' · 作物行为实体' : ''}</span>
               <span>会话</span><span className={a.mono}>{r.session_id} · 清理 {r.session_report?.cleanup_status ?? '未记录'}</span>
             </div>
             {r.provenance_warning && <Notice tone="warn">{r.provenance_warning}</Notice>}
             <SessionEvidence result={r} />
             <p className={p.meta}>以上物理证据与独立检查是全程终检，不随回放时刻改写；下方时间轴只重放已记录样本。</p>
             <div className={a.timeline}>
-              <Button size="sm" icon={rp.playing ? Pause : Play} onClick={() => { if (!rp.playing && rp.t >= d.duration) rp.setT(0); rp.setPlaying(!rp.playing); }} />
-              <input type="range" min={0} max={d.duration} step={d.duration / 600 || 1} value={rp.t} aria-label="回放时间"
+              <Button size="sm" title={rp.playing ? '暂停历史回放' : '播放历史记录（不控制仿真）'} icon={rp.playing ? Pause : Play} onClick={() => { if (!rp.playing && rp.t >= d.duration) rp.setT(d.startTime); rp.setPlaying(!rp.playing); }} />
+              <input type="range" min={d.startTime} max={d.duration} step={(d.duration - d.startTime) / 600 || 1} value={rp.t} aria-label="回放时间"
                 onChange={(e) => { rp.setPlaying(false); rp.setT(Number(e.target.value)); }} />
               <span className={a.mono}>{clock(rp.t)} / {clock(d.duration)}</span>
             </div>
@@ -181,7 +186,7 @@ export function ReplayPanel() {
               <Select aria-label="回放倍速" value={String(rp.speed)} onChange={(e) => rp.setSpeed(Number(e.target.value))}>
                 {[1, 5, 10, 20, 50, 100].map((x) => <option key={x} value={x}>{x}× 仿真时间</option>)}
               </Select>
-              <Button size="sm" variant="plain" icon={RotateCcw} onClick={() => { rp.setPlaying(false); rp.setT(0); }}>回到开始</Button>
+              <Button size="sm" variant="plain" icon={RotateCcw} onClick={() => { rp.setPlaying(false); rp.setT(d.startTime); }}>回到开始</Button>
             </div>
             <div className={p.row}>
               {([['planned', '规划路线'], ['actual', '实际轨迹'], ['body', '车体足迹'], ['tasks', '任务状态'], ['anomalies', '异常']] as const).map(([key, label]) => (
@@ -200,7 +205,7 @@ export function ReplayPanel() {
                     <tr key={v.name} onClick={() => rp.toggleVehicle(v.name)} style={{ opacity: off ? 0.45 : 1 }} title={off ? '点击显示' : '点击隐藏'}>
                       <td><span className={p.swatch} style={{ background: v.color }} /> {v.label} {v.state === 'failed' && <Badge tone="red">受阻</Badge>}</td>
                       <td className={p.num}>{current.tasks_completed != null ? `${current.tasks_completed} 完成 / ` : ''}{current.tasks_reached}/{v.tasks_total} 到点</td>
-                      <td className={p.num}>{fmt.num(current.distance_m, 0)} / {fmt.num(v.planned_length_m, 0)} m</td>
+                      <td className={p.num} title={current.missing_s ? `缺流 ${current.missing_s.toFixed(2)} s，距离仅含可观测连续片段` : undefined}>{!current.distance_complete && current.distance_m != null ? '≥ ' : ''}{fmt.num(current.distance_m, 0)} / {fmt.num(v.planned_length_m, 0)} m</td>
                       <td className={p.num}>{fmt.sec(current.elapsed_s)} / {fmt.sec(v.planned_duration_s)}</td>
                       <td className={p.num}>{fmt.num(current.cross_track_mean_m, 3)} / {fmt.num(current.cross_track_max_m, 2)} m</td>
                     </tr>
@@ -208,7 +213,7 @@ export function ReplayPanel() {
                 })}
               </tbody>
             </table>
-            <p className={p.meta}>里程、用时、任务和横向偏差均截至当前回放时刻；里程按实际轨迹几何累计，用时按该车源时间范围。缺少完成停留字段的历史记录只显示到点，不把到点冒充作业完成。</p>
+            <p className={p.meta}>历史回放 · 仿真源时钟 s。里程、用时、任务和横向偏差截至所选时刻；位置只在 ≤{gapLimit(r)} s 的连续样本间插值。跨缺口不连线，里程显示可观测下界。旧记录缺少完成停留证据时只显示到点。地图输入不同或缺少冻结输入时不叠加历史轨迹。</p>
             <h3>任务事件（截至 {clock(rp.t)}）</h3>
             {!taskEvents(r).some((event) => event.t <= rp.t) && <p className={p.hint}>当前时刻之前还没有到点或完成停留记录。</p>}
             {taskEvents(r).filter((event) => event.t <= rp.t).slice(-10).reverse().map((event) => (

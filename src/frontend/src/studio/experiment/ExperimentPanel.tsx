@@ -18,6 +18,7 @@ import type { FleetAssetBinding } from '../assets/planBridge';
 import { derive, useReplay, type Derived, type SimResult } from './replay';
 import { trafficStatus } from './traffic';
 import { downloadServerRecord } from './export';
+import { requiresCoverageRecheck } from '../comparison';
 import p from '../panels/panels.module.css';
 import a from '../assets/assets.module.css';
 
@@ -38,6 +39,7 @@ export function ExperimentPanel() {
   useEffect(() => {
     setSims(null);
     setSim(null);
+    setSimLoading(false);
     setSimError(null);
     if (!run || run.problem_class !== 'fleet_routing' || run.state !== 'done') return;
     let alive = true;
@@ -49,7 +51,9 @@ export function ExperimentPanel() {
     });
     return () => { alive = false; };
   }, [run?.run_id, run?.state]); // eslint-disable-line react-hooks/exhaustive-deps
-  const latest = sims?.[0];
+  const simsHere = sims?.filter((item) => item.run_id === run?.run_id);
+  const latest = simsHere?.[0];
+  const simHere = sim?.r.run_id === run?.run_id ? sim : null;
   useEffect(() => {
     if (!latest) return;
     const controller = new AbortController();
@@ -84,7 +88,7 @@ export function ExperimentPanel() {
         </div>
         {run.state !== 'done'
           ? <Notice tone={stateDetail[run.state].tone}>{stateDetail[run.state].text} 可下载当前服务端记录以保留失败、超时或取消的分母。</Notice>
-          : fleet ? <FleetMetrics run={run} sim={sim} simLoading={simLoading} hasSims={!!sims?.length} simError={simError} /> : <GenericMetrics run={run} />}
+          : fleet ? <FleetMetrics run={run} sim={simHere} simLoading={simLoading} hasSims={!!simsHere?.length} simError={simError} /> : <GenericMetrics run={run} />}
         <AssetBinding run={run} />
       </div>
     </div>
@@ -150,10 +154,11 @@ function GenericMetrics({ run }: { run: Run }) {
   const cov = m.coverage_fraction as number | null | undefined;
   const working = m.working_area_fraction as number | null | undefined;
   const turnEnforced = m.turn_radius_enforced as boolean | null | undefined;
+  const recheck = requiresCoverageRecheck(run);
   return (
     <div className={a.metricGrid}>
       <Cell label="目标值" value={`${fmt.num(run.objective.value, 2)} ${run.objective.unit}`} note={run.objective.lower_bound != null ? `下界 ${fmt.num(run.objective.lower_bound, 2)}` : ''} />
-      <Cell label="验算" value={run.check ? (run.check.valid ? '通过' : `${run.check.errors.length} 项未通过`) : '未验算'} tone={run.check ? (run.check.valid ? 'good' : 'bad') : 'warn'} note={run.check?.errors.slice(0, 2).join('；')} />
+      <Cell label="验算" value={recheck ? '旧覆盖记录 · 须重求解' : run.check ? (run.check.valid ? '通过' : `${run.check.errors.length} 项未通过`) : '未验算'} tone={recheck ? 'warn' : run.check ? (run.check.valid ? 'good' : 'bad') : 'warn'} note={recheck ? '保留原始检查结果作追溯，不作为新版可行解或执行依据' : run.check?.errors.slice(0, 2).join('；')} />
       {cov != null && <Cell label="全田块覆盖率" value={`${fmt.num(cov * 100, 1)}%`} note={`覆盖面积 ${fmt.num(m.coverage_area_m2 as number, 1)} m² / 田块面积 ${fmt.num(m.field_area_m2 as number, 1)} m²`} />}
       {working != null && <Cell label="内缩作业区覆盖率" value={`${fmt.num(working * 100, 1)}%`} note={`覆盖口径：${String(m.coverage_scope ?? '未记录')}；按声明幅宽与作业状态计算，不按路线涂色估算`} />}
       {turnEnforced != null && <Cell label="转弯半径约束" value={turnEnforced ? '已约束' : '未约束'} note={turnEnforced ? '按求解器声明的转弯模型与独立采样检查展示' : '该算法允许原地转向或未施加曲率约束'} />}
@@ -163,8 +168,10 @@ function GenericMetrics({ run }: { run: Run }) {
 }
 
 function AssetBinding({ run }: { run: Run }) {
-  const inst = run.instance as unknown as { asset_refs?: AssetRef[]; fleet?: FleetAssetBinding } | undefined;
+  const inst = run.instance as unknown as { asset_refs?: AssetRef[]; fleet?: FleetAssetBinding | string } | undefined;
   const refs = inst?.asset_refs ?? [];
+  const binding = inst?.fleet && typeof inst.fleet === 'object' ? inst.fleet : null;
+  const ignored = Array.isArray(binding?.ignored) ? binding.ignored : null;
   return (
     <>
       <h3>绑定的场景与资产版本</h3>
@@ -177,7 +184,7 @@ function AssetBinding({ run }: { run: Run }) {
           </span>
         ))}
         {!refs.length && <><span>资产</span><span>这个方案的任务地图没有绑定资产（文字生成或手工绘制的地图）</span></>}
-        {inst?.fleet && <><span>未参与规划</span><span>{inst.fleet.ignored.length ? inst.fleet.ignored.join('；') : '无'}</span></>}
+        {binding && <><span>未参与规划</span><span>{ignored ? (ignored.length ? ignored.join('；') : '无') : '旧绑定未记录忽略字段'}</span></>}
       </div>
     </>
   );

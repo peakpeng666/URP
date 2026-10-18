@@ -27,21 +27,32 @@ export class LabApiError extends Error {
 
 const BASE = '/lab/api';
 
-async function request<T>(method: 'GET' | 'POST' | 'DELETE', path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
+async function request<T>(method: 'GET' | 'POST' | 'DELETE', path: string, body?: unknown, signal?: AbortSignal, timeoutMs = 30_000): Promise<T> {
   let response: Response;
+  let text: string;
+  const controller = new AbortController();
+  const abort = () => controller.abort(signal?.reason);
+  if (signal?.aborted) abort(); else signal?.addEventListener('abort', abort, { once: true });
+  let timedOut = false;
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, timeoutMs);
   try {
     response = await fetch(`${BASE}${path}`, {
       method,
-      signal,
+      signal: controller.signal,
       cache: 'no-store',
       headers: body === undefined ? { Accept: 'application/json' } : { Accept: 'application/json', 'Content-Type': 'application/json' },
       body: body === undefined ? undefined : JSON.stringify(body),
     });
+    text = await response.text();
   } catch (cause) {
+    if (signal?.aborted) throw cause;
+    if (timedOut) throw new LabApiError(`网关请求超时（${timeoutMs} ms）：${path}。操作可能已到达后端，请先刷新状态再重试。`, 'timeout', 0);
     if ((cause as Error)?.name === 'AbortError') throw cause;
     throw new LabApiError('无法连接工作台网关（127.0.0.1:4100），请运行 bash setup/run.sh lab。', 'network', 0);
+  } finally {
+    clearTimeout(timer);
+    signal?.removeEventListener('abort', abort);
   }
-  const text = await response.text();
   let data: unknown = null;
   if (text) {
     try {
@@ -90,7 +101,7 @@ export const lab = {
   simState: () => request<SimState>('GET', '/sim/state'),
   simStart: (body: { world: string; spawn?: { x: number; y: number; yaw: number }; gui: boolean; rviz: boolean; localization?: 'ground_truth'|'amcl' }) =>
     request<SimState>('POST', '/sim/session', body),
-  simStop: () => request<SimState>('DELETE', '/sim/session'),
+  simStop: () => request<SimState>('DELETE', '/sim/session', undefined, undefined, 90_000),
   simGui: (on: boolean) => request<SimState>('POST', '/sim/gui', { on }),
   simRviz: (on: boolean) => request<SimState>('POST', '/sim/rviz', { on }),
   simExecute: (run_id: string, mode: SimMode) => request<SimRun>('POST', '/sim/runs', { run_id, mode }),

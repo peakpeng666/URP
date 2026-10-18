@@ -144,6 +144,11 @@ def scenario_or_404(scenario_id: str) -> dict:
 
 
 def instance_for(scenario: dict, instance: Any) -> dict:
+    from .planning import validate_frame
+    try:
+        validate_frame(scenario['problem_class'], scenario.get('frame') or {})
+    except ValueError as exc:
+        raise ApiError(400, 'invalid_frame', str(exc)) from None
     if instance is None:
         return scenario['instance']
     if not isinstance(instance, dict):
@@ -362,6 +367,18 @@ def create_app(config: Config | None = None) -> FastAPI:
         body = body_dict(payload)
         sc = scenario_or_404(body.get('scenario_id'))
         return core('recommend').recommend(sc, instance_for(sc, body.get('instance')))
+
+    @app.post(f'{api}/planning/validate')
+    def validate_planning_input(payload: Any = Body(None)):
+        body = body_dict(payload)
+        sc = scenario_or_404(body.get('scenario_id'))
+        instance = instance_for(sc, body.get('instance'))
+        from .planning import context, validate_frame
+        try:
+            validate_frame(sc['problem_class'], sc['frame'])
+        except ValueError as exc:
+            raise ApiError(400, 'invalid_frame', str(exc)) from None
+        return {'instance': instance, 'planning': context(sc, instance)}
 
     @app.post(f'{api}/solve', status_code=202)
     def solve(payload: Any = Body(None)):
@@ -583,22 +600,30 @@ def create_app(config: Config | None = None) -> FastAPI:
     def update_scenario(scenario_id: str, payload: Any = Body(None)):
         body = body_dict(payload)
         sc = user_scenario_or_403(scenario_id)
+        revision = body.get('base_revision')
+        if revision is not None and (isinstance(revision, bool) or not isinstance(revision, int) or revision < 0):
+            raise ApiError(400, 'invalid_revision', 'base_revision 须为非负整数')
         for key in ('title', 'summary', 'instance', 'layers'):
             if key in body:
                 sc[key] = body[key]
         try:
-            return core('scenarios').save_user_scenario(sc, overwrite=True)
+            return core('scenarios').save_user_scenario(sc, overwrite=True, expected_revision=revision)
         except ValueError as exc:
+            if isinstance(exc, core('scenarios').ScenarioConflict):
+                raise ApiError(409, 'scenario_conflict', str(exc)) from None
             raise ApiError(400, 'invalid_instance', str(exc)) from None
 
     @app.post(f'{api}/scenarios/{{scenario_id}}/fork', status_code=201)
     def fork_scenario(scenario_id: str, payload: Any = Body(None)):
         body = body_dict(payload) if payload is not None else {}
         sc = scenario_or_404(scenario_id)
+        from .planning import without_stale_reference
+        sc = without_stale_reference(sc, body.get('instance') or sc['instance'])
         import re as _re
         from datetime import datetime as _dt, timezone as _tz
         stamp = _dt.now(_tz.utc).strftime('%m%d%H%M%S')
-        sc['id'] = _re.sub(r'[^a-z0-9_.-]', '-', f"{scenario_id[:40]}-my-{stamp}".lower())
+        import secrets
+        sc['id'] = _re.sub(r'[^a-z0-9_.-]', '-', f"{scenario_id[:36]}-my-{stamp}-{secrets.token_hex(2)}".lower())
         sc['title'] = str(body.get('title') or f"{sc.get('title', scenario_id)}（我的）")[:60]
         if body.get('instance') is not None:
             sc['instance'] = body['instance']

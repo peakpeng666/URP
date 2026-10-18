@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import io
 import math
+import hashlib
+import json
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -95,6 +97,25 @@ def load(world: str) -> MapGrid:
     clearance = (ndimage.distance_transform_edt(np.pad(free, 1))[1:-1, 1:-1] * res - math.sqrt(2)*res).clip(min=0).astype(np.float32)
     h, w = pixels.shape
     return MapGrid(world, yaml, image_path, res, tuple(meta['origin']), w, h, pixels, free, clearance)
+
+
+_SIGNATURES = {}
+
+
+def fingerprint(world: str) -> str:
+    """Fingerprint the grid actually used by this process, including trinary interpretation."""
+    grid = load(world)
+    previous = _SIGNATURES.get(world)
+    if previous and previous[0] is grid:
+        return previous[1]
+    digest = hashlib.sha256(json.dumps({'world': world, 'resolution': grid.resolution,
+        'origin': list(grid.origin), 'shape': [grid.height, grid.width],
+        'clearance_rule': 'padded occupied exterior; subtract sqrt(2) cells'}, sort_keys=True).encode())
+    digest.update(grid.pixels.tobytes())
+    digest.update(grid.free.tobytes())
+    value = digest.hexdigest()
+    _SIGNATURES[world] = (grid, value)
+    return value
 
 
 def world_map(world: str) -> dict:

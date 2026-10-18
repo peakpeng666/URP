@@ -20,6 +20,7 @@ export interface MapCanvasProps {
   layers?: Partial<Record<LayerKey, boolean>>;
   /** Changing this re-fits the view to the content once content exists. */
   fitKey?: string;
+  centerRequest?: { xy: XY; span?: number; token: number };
   onNodeClick?: (node: CanvasNode, mods: CanvasClick) => void;
   onBackgroundClick?: (xy: XY, mods: CanvasClick) => void;
   cursor?: 'default' | 'crosshair';
@@ -49,6 +50,7 @@ export function MapCanvas({
   scene,
   layers: layerProp,
   fitKey,
+  centerRequest,
   onNodeClick,
   onBackgroundClick,
   cursor = 'default',
@@ -106,6 +108,13 @@ export function MapCanvas({
     touched.current = false;
     if (size.width && size.height) animateTo(V.fitView(bounds, size.width, size.height, 44));
   }, [animateTo, bounds, size.width, size.height]);
+  useEffect(() => {
+    if (!centerRequest || !size.width || !size.height) return;
+    const { xy, span = 24 } = centerRequest;
+    touched.current = true;
+    animateTo(V.fitView({ minX: xy[0] - span / 2, minY: xy[1] - span / 2,
+      maxX: xy[0] + span / 2, maxY: xy[1] + span / 2 }, size.width, size.height, 28));
+  }, [centerRequest, animateTo, size.width, size.height]);
 
   const pendingFit = useRef(true);
   const lastFitKey = useRef(fitKey);

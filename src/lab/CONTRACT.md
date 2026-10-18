@@ -7,7 +7,7 @@
 | 进程 | 解释器 / 环境 | 端口 | 说明 |
 |---|---|---|---|
 | 网关 `urp_lab` | `src/lab/.venv`（uv，CPython 3.12） | 127.0.0.1:4100 | 托管面板（`src/frontend/dist`）、`/lab/api/*`、反向代理 `/api/*` → 4180、SSE |
-| 档案后端 | `src/backend/.venv`（3.10） | 127.0.0.1:4180 | 既有只读实验档案 API，不改其契约；由网关按需启动/停止 |
+| 档案与数值任务后端 | 根目录 `.venv`（uv，CPython 3.12） | 127.0.0.1:4180 | 档案查询与有界 CVRP Jobs；应用数据库为 `.local-state/research.sqlite3`，保留冻结原库；由网关启动/停止 |
 | 求解工作进程 | `src/lab/.venv` 子进程 | — | 每次求解独立子进程，带墙钟预算；项目模块通过 `sys.path` 引入 `src/research/src`，不修改研究源码 |
 | 仿真会话 `urp_sim_session.py` | 系统 `/usr/bin/python3`（3.10）+ ROS 2 Humble rclpy | 127.0.0.1:4191 | 官方 TB4 + Gazebo Fortress + Nav2 + 可选 GUI/RViz；复用 `setup/2026-10-15/deployment` 的 TF 修补、GUI 插件保护、有序桥接关闭 |
 
@@ -145,7 +145,7 @@ Solution（`GET /lab/api/runs/{run_id}`）：
  "world": "warehouse"|null, "spawn": {…}|null, "components": {"sim": "running", "gui": "off"|"running", "rviz": "off"|"running", "localization": "active", "nav2": "active"},
  "robot": {"t_sim": 123.4, "ground_truth": [x,y,yaw]|null, "amcl": [x,y,yaw]|null, "speed": 0.2} | null,
  "execution": SimRun|null, "errors": ["…"], "warnings": ["…"], "stages": [{"name":"…","wall_s":12.3}],
- "known_issues": ["ros_gz_bridge 0.244.26 退出时间歇堆损坏（-6），见 setup/2026-10-15/deployment/REPORT.md"]}
+ "known_issues": [ /* 当前会话实际适用的问题；不从历史报告硬编码成功或失败 */ ]}
 ```
 - `POST /lab/api/sim/session {"world": "warehouse", "spawn": {...}?, "gui": false, "rviz": true, "localization":"amcl"}` 启动；localization 默认为 amcl，可选 ground_truth（显式的理想定位实验，AMCL 仅旁路观测，不能用于证明传感器定位能力）。`DELETE /lab/api/sim/session` 有序关闭；`POST /lab/api/sim/gui {"on": true}`，`POST /lab/api/sim/rviz {"on": true}`。
 - `POST /lab/api/sim/runs {"run_id": "run_…", "mode": "follow_path"|"nav2_waypoints"}` → 202 SimRun；`GET /lab/api/sim/runs`、`GET /lab/api/sim/runs/{sim_run_id}`、`POST /lab/api/sim/runs/{id}/cancel`。不适用（基准坐标、世界不一致、地图检查不通过且模式为 follow_path）返回 422 `{"error":"not_simulatable","message":"…"}`；已运行世界不一致为 409 `world_mismatch`。
@@ -165,6 +165,18 @@ Solution（`GET /lab/api/runs/{run_id}`）：
  "error": null, "report": "src/lab/runtime/sim/<session>/runs/<id>.json", "created_utc": "…", "finished_utc": "…"}
 ```
 任务"到达"判定：真值位置进入任务点 `task_radius_m`（默认 0.35 m）且按计划顺序；缺失数据填 null，不插值伪造。终态必须同时含 `finished_utc` 和最终指标才写入数据库，取消状态过渡期间继续轮询。metrics 额外包含 actual_map_check 和 planned_to_actual_max_m（计划几何到实际轨迹的最大距离）；覆盖任务含 actual_working_coverage_fraction、actual_field_coverage_fraction、actual_footprint_in_field、coverage_required_fraction（0.90），不以 0/0 访问任务作为成功依据。
+
+点到点任务使用其声明的 `goal_tolerance`（米），而非上述默认任务半径。终态独立从跟踪段末条真值复算 `independent_goal_error_m`，给出 `goal_tolerance_m`、`goal_reached_within_tolerance` 和检查依据；超差不允许 succeeded。当前 TB4 适配全向 XY 几何路径，拒绝 Dubins/Reeds–Shepp 执行，避免丢失 SE(2)/倒车语义。覆盖执行指标另带 `actual_coverage_kind: "trajectory_swath_proxy"`、`operation_state_observed: false`，代表作业具连续开启假设下的轨迹扫掠，不能证明真实农业作业质量。
+
+### 2.10 规划身份、编辑与回放（2026-10-18）
+
+- 新 Solution 的 `planning` 使用 `urp.planning/1`，固定完整输入 SHA256、米制/基准坐标、目标规则与单位、任务类型、松弛约束及 `comparison_key`。原生地图还固定栅格、自由空间、分辨率、原点和净空规则的 `environment_sha256`；读取历史记录不拿当前地图补写未知环境。不同模型、单位、预算或约束不得混合选优。统计比较另按算法版本与非预算/种子参数区分配置。
+- 覆盖规划固定 `validation_policy: "urp.coverage-interior90/2"`：至少覆盖 90% 的内缩作业区，作业行须包含于导出路径，检查完整足迹与采样曲率。全流程适配 `raw_result.adapter_contract: "urp.f2c-full/2"` 包含最后 PathState 的实际终点，不对受检/执行几何抽稀；全田块覆盖率与内缩作业区覆盖率分列。旧全流程结果不改写，但不再作为通过结果排序或执行，必须重求解。倒车切换朝向尚未独立适配的尖点拒绝通过；含倒车段的覆盖结果拒绝 TB4 执行。这些采样检查不构成连续 SE(2) 可行性证明。
+- `scenario_snapshot.instance` 固定实际提交输入。编辑后原 BKS 不再适用时，移至 `provenance.reference_invalidated`，不能继续计算原算例差距。目录 `algorithm.randomness` 与运行 `reproducibility.seed_usage` 明确种子是否实际生效；改变被忽略的种子不等于独立随机重复。
+- `trace_contract` 使用 `urp.search-trace/1`。只有明确声明 `reported_objective` 的轨迹可画最终目标收敛曲线；内部量化、方向松弛或加权成本标为 `solver_search_proxy`，不拿它证明最终目标增益。每个样本未经独立检查这一限制保留在记录中。
+- `POST /lab/api/planning/validate {scenario_id, instance}` 返回规范化 instance 与 planning，不保存。现有求解器未实现的时间窗、优先关系、混合线/面任务、动态障碍和能量约束显式拒绝，不能保存后静默忽略。Fleet、覆盖与点到点几何规划必须声明米制；当前点到点需要已知仿真地图。
+- 用户场景 PUT 支持 `base_revision`；保存成功返回递增 `revision`，过期为 409 `scenario_conflict`。前端保留未保存草稿，提供重试与另存副本，不覆盖并发新版本。锁适用于当前单网关进程，旧客户端不传版本的兼容接口不构成跨主机事务保证。
+- 田间结果增加 `replay_contract`（`urp.replay/1`），声明源仿真时钟、真值位置、米/弧度及最大插值间隔 0.25 s。前端不跨缺流插值或累计跨缺口里程；不单调时间戳拒绝单轴重放。回放里程/偏差随选定时刻计算，完整终态证据另列；任务到达与作业停留完成分开。显示抽稀不改原始遥测和实验导出。
 
 ### 2.8 SSE `GET /lab/api/events`
 `event:` 类型与 `data:` JSON：`services`（完整 services 列表，状态变化时）、`job`（`{job_id, run_id, state}`）、`run`（完整 Solution，完成时）、`sim_state`（SimState，≤ 4 Hz，当前为完整状态与轨迹快照）、`sim_run`（SimRun 完成或状态变化）、`log`（`{log, lines}`；当前前端通过日志接口轮询）。心跳 `event: ping` 每 15 s。

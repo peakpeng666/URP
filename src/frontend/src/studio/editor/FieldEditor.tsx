@@ -3,7 +3,7 @@ import { useElementSize } from '../../lib/useElementSize';
 import { fitView, toScreen, toWorld, worldTransform, zoomAt, type View } from '../../lab/canvas/view';
 import type { XY } from '../../lab/types';
 import type { FleetInstance, FleetRoute, ObstacleKind, Selection, Tool } from '../types';
-import { addDepot, depotsOf, setDepot } from '../fleet';
+import { addDepot, depotsOf, planningFingerprint, setDepot } from '../fleet';
 import { playbackDistanceAtTime } from '../planningPlayback';
 import {
   OBSTACLE_STYLE,
@@ -94,14 +94,15 @@ export function FieldEditor(props: FieldEditorProps) {
   // Centre on a point (e.g. an anomaly in a replay), showing about `span` metres across.
   useEffect(() => {
     const onCenter = (e: Event) => {
-      const { xy, span = 24 } = (e as CustomEvent<{ xy: XY; span?: number }>).detail ?? {};
+      const { xy, span = 24, expectedInput } = (e as CustomEvent<{ xy: XY; span?: number; expectedInput?: string }>).detail ?? {};
+      if (expectedInput && expectedInput !== planningFingerprint(inst)) return;
       if (!xy || !size.width || !size.height) return;
       touched.current = true;
       setView(fitView({ minX: xy[0] - span / 2, minY: xy[1] - span / 2, maxX: xy[0] + span / 2, maxY: xy[1] + span / 2 }, size.width, size.height, 28));
     };
     window.addEventListener('studio:center', onCenter);
     return () => window.removeEventListener('studio:center', onCenter);
-  }, [size.width, size.height]);
+  }, [size.width, size.height, inst]);
 
   const issues = useMemo(() => taskIssues(shown), [shown]);
   const visibleRoutes = useMemo(() => routes.filter((r) => !hidden.includes(r.vehicle_name)), [routes, hidden]);

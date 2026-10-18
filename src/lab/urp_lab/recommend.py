@@ -147,7 +147,7 @@ def recommend(scenario, instance):
                 for aid in ('f2c.boustrophedon', 'f2c.snake'):
                     blocked[aid] = f'田块凸性 {convexity:.2f}：此变体只处理凸作业区，请用全流程'
             score['f2c.boustrophedon'] += 2 if frame == 'map' else 0.5
-            why['f2c.boustrophedon'].append('凸作业区的标准往复作业，Dubins 转弯可直接交给机器人跟踪')
+            why['f2c.boustrophedon'].append('凸作业区的往复作业候选；须通过足迹、覆盖率与采样曲率检查，仿真适配另检')
             score['f2c.snake'] += 1
             why['f2c.snake'].append('隔行跳跃减少急转弯，适合转弯半径较大的机具')
             why['panel.boustrophedon'].append('允许原地掉头的参照下限')

@@ -8,6 +8,7 @@ import time
 
 from .. import paths
 from ..scenarios import maps
+from ..planning import context, trace_context, without_stale_reference
 from . import f2c_coverage, fleet, motion, routing
 
 TIME = {'name': 'time_limit_s', 'type': 'number', 'default': 3, 'min': 0.05, 'max': 600, 'label': '时间预算 (s)'}
@@ -40,7 +41,7 @@ _TABLE = [
     ('ortools.gls+urp.layered', 'OR-Tools GLS + 转弯分层补全', 'turn_routing', 'OR-Tools', 'metaheuristic', 'none',
      'OR-Tools 引导局部搜索给出分配与顺序，项目分层 DP 补全转弯可行路径。', ['ortools', 'voudouris1999gls', 'vidal2017turn'], 'ortools', {}),
     ('pyvrp.hgs', 'PyVRP 迭代局部搜索', 'euclidean_cvrp', 'PyVRP', 'metaheuristic', 'none',
-     'PyVRP 0.14 的迭代局部搜索（含 SWAP* 邻域），当前开源 CVRP 求解中最强的基线之一。', ['wouda2024pyvrp', 'vidal2022hgs', 'lourenco2003ils'], 'pyvrp', {}),
+     'PyVRP 0.14 的迭代局部搜索（含 SWAP* 邻域）；改进幅度以相同输入、预算与独立复算为准。', ['wouda2024pyvrp', 'vidal2022hgs', 'lourenco2003ils'], 'pyvrp', {}),
     ('ortools.gls', 'OR-Tools 引导局部搜索', 'euclidean_cvrp', 'OR-Tools', 'metaheuristic', 'none',
      'Google OR-Tools 路由求解器：最便宜弧构造 + 引导局部搜索。', ['ortools', 'voudouris1999gls'], 'ortools', {}),
     ('urp.js.savings', 'Clarke–Wright 节约算法', 'euclidean_cvrp', '本项目', 'heuristic', 'none',
@@ -50,10 +51,10 @@ _TABLE = [
      '每次走向最近的可装载客户，满载返回；最朴素的构造基线。', ['toth2014vrp'],
      'src/frontend/core/routing/cvrp-solver.js', {'limits': {'max_tasks': 100}, 'params': [dict(TIME, default=10)]}),
     ('f2c.full', 'Fields2Cover 全流程', 'coverage', 'Fields2Cover', 'coverage', 'none',
-     '地头生成 → 单元分解 → 每个单元选最优作业行方向 → 经地头跨单元排序 → Dubins/Reeds–Shepp 转弯，适用于任意形状的真实农田。',
+     '地头生成、单元分解、作业行与跨单元连接；候选路径须通过足迹、覆盖率和采样曲率检查，不保证任意田块可解。',
      ['mier2023f2c', 'choset2000boustrophedon', 'dubins1957', 'reeds1990'], 'fields2cover', {'params': F2C_FULL_PARAMS}),
     ('f2c.boustrophedon', 'Fields2Cover 往复行', 'coverage', 'Fields2Cover', 'coverage', 'none',
-     '凸作业区内的往复（boustrophedon）作业行顺序 + Dubins 转弯，几何逐段可执行，适合仿真跟踪。', ['mier2023f2c', 'dubins1957'], 'fields2cover', {}),
+     '凸作业区内的往复作业行与 Dubins 连接；独立检查足迹、覆盖率与采样曲率，执行能力另行验证。', ['mier2023f2c', 'dubins1957'], 'fields2cover', {}),
     ('f2c.snake', 'Fields2Cover 蛇形行', 'coverage', 'Fields2Cover', 'coverage', 'none',
      '隔行跳跃的蛇形作业顺序，减少急转弯；凸作业区，Dubins 转弯。', ['mier2023f2c', 'dubins1957'], 'fields2cover', {}),
     ('panel.boustrophedon', '平行往复（面板实现）', 'coverage', '基线', 'baseline', 'none',
@@ -74,7 +75,7 @@ _TABLE += [
      '以车库为中心按极角扫过任务点，按容量切分给各车，再逐车 2-opt；适合任务围绕车库分布的场景。',
      ['gillett1974sweep', 'croes1958twoopt'], 'src/lab/urp_lab/solvers/fleet.py', {'params': [dict(TIME, default=5)]}),
     ('panel.cluster_first', '先聚类后排程', 'fleet_routing', '基线', 'heuristic', 'none',
-     '按车辆数做容量约束 k-means 分区，每台车负责一个区域并求单车最短回路；分工直观、区域不交叉。',
+     '按车辆数做容量约束 k-means 分区，再分别构造与改进单车回路；不保证最优或路线互不交叉。',
      ['fisher1981gap', 'croes1958twoopt'], 'src/lab/urp_lab/solvers/fleet.py', {'params': FLEET_PARAMS}),
 ]
 for _aid, (_name, _mode, _refs) in motion.GRID_PLANNERS.items():
@@ -113,6 +114,9 @@ def catalog():
         if pc == 'turn_routing' and not origin.startswith('src/'):
             label += ' + src/research/src/urp_research/turn_modes/evaluate_candidate.py'
         source = 'project' if library == '本项目' else 'panel_baseline' if library == '基线' else 'third_party'
+        uses_seed = aid.startswith(('pyvrp.', 'ompl.')) or aid == 'panel.cluster_first'
+        seed_note = ('使用 seed；墙钟终止仍可能影响跨硬件重现' if uses_seed else
+                     '此适配器不使用 seed；更换 seed 不构成独立随机重复')
         available, reason = True, None
         if aid.startswith('f2c.') and not f2c['available']:
             available, reason = False, f2c['reason']
@@ -121,7 +125,8 @@ def catalog():
         out.append(dict(id=aid, name=name, problem_classes=[pc], problem_label=PROBLEM_LABEL[pc], family=family, source=source,
                         library=library, origin=label, version=version, turn_aware=pc == 'turn_routing' and aid != 'urp.reset_dp',
                         guarantee=guarantee, limits=extra.get('limits', {}), available=available, unavailable_reason=reason,
-                        params=extra.get('params', PARAMS), description=summary, summary=summary, refs=refs))
+                        params=extra.get('params', PARAMS), description=summary, summary=summary, refs=refs,
+                        randomness={'uses_seed': uses_seed, 'note': seed_note}))
     return out
 
 
@@ -169,17 +174,22 @@ def coverage(inst):
     if len(points) < 2:
         return [], {'valid': False, 'errors': ['没有作业行']}, {}
     path = LineString(points)
-    valid = area.covers(path.buffer(inst['robot_width'] / 2))
+    footprint_valid = area.covers(path.buffer(inst['robot_width'] / 2))
     covered = unary_union(strips).intersection(area).area
+    working_fraction = unary_union(strips).intersection(interior).area / interior.area
+    errors = ([] if footprint_valid else ['连接段或机器人足迹超出田块/穿越障碍'])
+    if working_fraction < .90:
+        errors.append('内缩作业区覆盖率低于 90%')
     return [dict(vehicle=0, nodes=None, sequence=[], services=[], polyline=points, cost=path.length, load=0)], \
-        dict(valid=valid, errors=[] if valid else ['连接段或机器人足迹超出田块/穿越障碍'], computed_cost=path.length,
+        dict(valid=not errors, errors=errors, computed_cost=path.length,
              checker='urp_lab.solvers.coverage · Shapely 扫掠足迹', source='panel_baseline'), \
         dict(coverage_area_m2=covered, field_area_m2=area.area, coverage_fraction=covered / area.area,
-             working_area_fraction=unary_union(strips).intersection(interior).area / interior.area,
+             working_area_fraction=working_fraction, coverage_required_fraction=.90,
              turn_radius_enforced=False, coverage_scope='内缩作业区；地头不作业；不约束转弯半径')
 
 
 def run_algorithm(scenario, instance, algorithm_id, params):
+    scenario = without_stale_reference(scenario, instance)
     start, cpu = time.perf_counter(), time.process_time()
     alg = next(a for a in catalog() if a['id'] == algorithm_id)
     pc = scenario['problem_class']
@@ -223,10 +233,13 @@ def run_algorithm(scenario, instance, algorithm_id, params):
         unit = 's' if instance.get('objective') == 'makespan' else 'm'
     n_tasks = (len(instance.get('customers', [])) if pc == 'turn_routing' else len(instance['tasks']) if pc == 'fleet_routing' else
                len(instance['coordinates']) - 1 if pc == 'euclidean_cvrp' else 1 if pc == 'point_to_point' else 0)
-    return dict(status=status, objective=dict(value=objective, unit=unit, lower_bound=objective if algorithm_id == 'urp.reset_dp' else None),
+    result = dict(status=status, objective=dict(value=objective, unit=unit, lower_bound=objective if algorithm_id == 'urp.reset_dp' else None),
                 routes=routes, check=check, map_check=mc, trace=trace,
-                algorithm={k: alg[k] for k in ('id', 'name', 'source', 'origin', 'version')}, raw_result=raw,
+                algorithm={k: alg[k] for k in ('id', 'name', 'source', 'origin', 'version', 'randomness')}, raw_result=raw,
                 metrics=dict(cost=objective, length=length if routes else None,
                              length_unit='unitless' if frame['kind'] == 'benchmark' else 'm',
                              n_routes=len(routes), n_tasks=n_tasks, wall_s=time.perf_counter() - start,
                              cpu_s=time.process_time() - cpu, **extra))
+    result['planning'] = context(scenario, instance, result)
+    result['trace_contract'] = trace_context(pc, instance)
+    return result

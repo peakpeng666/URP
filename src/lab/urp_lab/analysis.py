@@ -8,21 +8,35 @@ from collections import defaultdict
 
 import numpy as np
 from scipy import stats
+from .planning import comparison_key
 
 SUCCESS_STATUS = ('optimal', 'feasible')
 
 
 def _value(run) -> float | None:
+    from .planning import requires_coverage_recheck
+    if requires_coverage_recheck(run):
+        return None
     if run.get('state') != 'done' or run.get('status') not in SUCCESS_STATUS:
         return None
     if not (run.get('check') or {}).get('valid'):
         return None
+    mc = run.get('map_check')
+    if mc is not None and (not mc.get('checked') or mc.get('collision_free') is not True):
+        return None
     v = (run.get('objective') or {}).get('value')
-    return float(v) if isinstance(v, (int, float)) and math.isfinite(v) else None
+    return float(v) if not isinstance(v, bool) and isinstance(v, (int, float)) and math.isfinite(v) else None
 
 
 def _label(run, budgets: set) -> str:
     alg = run['algorithm']['id']
+    version = run['algorithm'].get('version')
+    if version and run.get('_analysis_version_split'):
+        alg += f' v{version[:12]}'
+    extra = {k: v for k, v in run.get('params', {}).items() if k not in ('seed', 'time_limit_s')}
+    if extra and run.get('_analysis_parameter_split'):
+        import json
+        alg += ' ' + json.dumps(extra, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
     if len(budgets) > 1:
         return f"{alg} @{run['params'].get('time_limit_s')}s"
     return alg
@@ -30,7 +44,11 @@ def _label(run, budgets: set) -> str:
 
 def _reference(runs_for_instance: list[dict]) -> tuple[float | None, str]:
     for r in runs_for_instance:
-        bks = ((r.get('scenario_snapshot') or {}).get('reference') or {}).get('bks')
+        from .planning import without_stale_reference
+        snapshot = r.get('scenario_snapshot') or {}
+        if isinstance(r.get('instance'), dict):
+            snapshot = without_stale_reference(snapshot, r['instance'])
+        bks = (snapshot.get('reference') or {}).get('bks')
         if bks:
             return float(bks), 'BKS'
     vals = [v for v in (_value(r) for r in runs_for_instance) if v is not None]
@@ -38,14 +56,23 @@ def _reference(runs_for_instance: list[dict]) -> tuple[float | None, str]:
 
 
 def analyze(runs: list[dict], alpha: float = 0.05) -> dict:
-    runs = [r for r in runs if r.get('state') in ('done', 'error', 'timeout', 'canceled')]
+    runs = [dict(r) for r in runs if r.get('state') in ('done', 'error', 'timeout', 'canceled')]
     if not runs:
         return {'empty': True, 'n_runs': 0}
     budgets = {r['params'].get('time_limit_s') for r in runs}
+    from .planning import fingerprint
+    versions, parameters = defaultdict(set), defaultdict(set)
+    for r in runs:
+        aid = r['algorithm']['id']
+        versions[aid].add(r['algorithm'].get('version'))
+        parameters[aid].add(fingerprint({k: v for k, v in r.get('params', {}).items() if k not in ('seed', 'time_limit_s')}))
+    for r in runs:
+        r['_analysis_version_split'] = len(versions[r['algorithm']['id']]) > 1
+        r['_analysis_parameter_split'] = len(parameters[r['algorithm']['id']]) > 1
     names = {}
     by_inst: dict[str, list] = defaultdict(list)
     for r in runs:
-        key = f"{r['scenario_id']}#{r['instance_sha256'][:10]}"
+        key = f"{r['scenario_id']}#{comparison_key(r)}"
         by_inst[key].append(r)
         names[_label(r, budgets)] = r['algorithm']
     algorithms = sorted(names)
@@ -118,6 +145,7 @@ def analyze(runs: list[dict], alpha: float = 0.05) -> dict:
                      'gap': (100.0 * (_value(r) - reference[k]) / reference[k]) if _value(r) is not None and reference[k] else None,
                      'instance': k, 'run_id': r['run_id']} for k, rs in by_inst.items() for r in rs],
         'reference_note': 'CVRPLIB 算例以最优已知解（BKS）为参照，其余以本组所有算法的最好可行解为参照；失败或未通过检查的运行不计差距，按最差排序。',
+        'comparison_note': '按完整输入、坐标系、目标定义、单位及约束松弛分组；算法版本和非 seed 参数分列。内部代理搜索曲线不作为验算目标曲线。',
     }
 
 
@@ -175,10 +203,12 @@ def _profiles(algorithms, complete, mean_obj):
 
 
 def trace_matches(run: dict) -> bool:
-    """A solver's progress trace is comparable with its objective only if it ends at that objective value.
+    """An explicitly declared reported-objective trace must also end at its objective value.
 
     Some adapters record their internal objective instead (e.g. PyVRP's distance while the task map asks for the
     makespan); such traces must not be drawn on the same axis or turned into gaps."""
+    if (run.get('trace_contract') or {}).get('semantic') != 'reported_objective':
+        return False
     tr = run.get('trace') or []
     v = (run.get('objective') or {}).get('value')
     if not tr or not isinstance(v, (int, float)) or not math.isfinite(v):

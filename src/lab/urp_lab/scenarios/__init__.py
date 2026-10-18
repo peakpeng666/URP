@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import json
 import re
+import threading
 from functools import lru_cache
 
 from .. import paths
@@ -14,6 +15,11 @@ __all__ = ['list_scenarios', 'get_scenario', 'validate_instance', 'world_map', '
            'summary', 'task_count', 'node_count']
 
 ID_RE = re.compile(r'^[a-z0-9][a-z0-9_.-]{1,63}$')
+_WRITE_LOCK = threading.RLock()
+
+
+class ScenarioConflict(ValueError):
+    """The caller edited an older revision; its draft must not overwrite newer work."""
 
 
 @lru_cache(maxsize=None)
@@ -163,6 +169,8 @@ def import_scenario(obj: dict) -> dict:
         note = '用户导入的实地坐标（米）场景。'
     else:
         raise ValueError('frame.kind 须为 benchmark / map / field')
+    from ..planning import validate_frame
+    validate_frame(pc, frame)
     default_unit = {'turn_routing': 'cm_equivalent' if frame['kind'] == 'map' else 'synthetic_integer_cost',
                     'point_to_point': 'm', 'coverage': 'm' if frame['kind'] != 'benchmark' else 'unitless'}.get(pc, 'euclidean')
     scenario = {
@@ -184,7 +192,29 @@ def import_scenario(obj: dict) -> dict:
     return summary(scenario)
 
 
-def save_user_scenario(scenario: dict, overwrite: bool = True) -> dict:
+def save_user_scenario(scenario: dict, overwrite: bool = True, expected_revision: int | None = None) -> dict:
+    from ..planning import without_stale_reference
+    with _WRITE_LOCK:
+        sid = str(scenario.get('id') or '').strip().lower() if isinstance(scenario, dict) else ''
+        target = paths.USER_SCENARIOS / f'{sid}.json'
+        old = json.loads(target.read_text()) if ID_RE.match(sid) and target.is_file() else None
+        current = (old or {}).get('revision', 0)
+        if expected_revision is not None and expected_revision != current:
+            raise ScenarioConflict(f'场景已更新：当前版本 {current}，草稿基于 {expected_revision}；草稿已保留，请先另存副本或重新载入')
+        if not isinstance(scenario, dict):
+            raise ValueError('场景应为 JSON 对象')
+        stored = copy.deepcopy(scenario)
+        if old and old.get('reference'):
+            checked = without_stale_reference(old, stored.get('instance') or {})
+            if 'reference' not in checked:
+                stored.pop('reference', None)
+                stored['provenance'] = {**stored.get('provenance', {}),
+                                         'reference_invalidated': checked['provenance']['reference_invalidated']}
+        stored['revision'] = current + 1
+        return _save_user_scenario(stored, overwrite)
+
+
+def _save_user_scenario(scenario: dict, overwrite: bool = True) -> dict:
     """Validate and store a complete user scenario (composer output or an edited copy); returns the stored scenario."""
     if not isinstance(scenario, dict):
         raise ValueError('场景应为 JSON 对象')
@@ -204,6 +234,8 @@ def save_user_scenario(scenario: dict, overwrite: bool = True) -> dict:
     stored.setdefault('title', sid)
     stored.setdefault('summary', '')
     stored.setdefault('frame', {'kind': 'benchmark', 'units': 'unitless'})
+    from ..planning import validate_frame
+    validate_frame(pc, stored['frame'])
     stored.setdefault('cost_unit', 'm')
     stored.setdefault('sim', {'supported': False, 'world': None, 'spawn': None, 'reason': '非仿真地图'})
     stored.setdefault('editable', {'tasks': True, 'depot': True, 'capacity': True, 'demands': True})

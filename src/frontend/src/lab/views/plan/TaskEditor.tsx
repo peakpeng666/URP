@@ -10,7 +10,7 @@ export function TaskEditor({scenario,instance,onChange}:{scenario:Scenario;insta
   if(pc==='coverage'){
     const v=asCoverage(instance);
     const fields=[['headland_width','地头宽度 (m)',.1],['swath_width','作业幅宽 (m)',.05],['turn_radius','最小转弯半径 (m)',.05],['robot_width','机器人宽度 (m)',.01],['angle_deg','作业行角度 (°)',1]] as const;
-    return <div className={s.formGrid}>{fields.map(([k,label,step])=><label className={s.field} key={k}>{label}<Input aria-label={label} type="number" step={step} min={k==='angle_deg'?0:.01} value={v[k]??0} onChange={e=>onChange({...v,[k]:Number(e.target.value)})}/></label>)}</div>;
+    return <div className={s.formGrid}>{fields.map(([k,label,step])=><label className={s.field} key={k}>{label}<Input aria-label={label} type="number" step={step} min={k==='angle_deg'?undefined:k==='headland_width'||k==='turn_radius'?0:.01} placeholder={k==='angle_deg'?'自动':undefined} value={v[k]??''} onChange={e=>{const n=e.target.valueAsNumber;if(k==='angle_deg'&&e.target.value==='')onChange({...v,[k]:null});else if(Number.isFinite(n))onChange({...v,[k]:n});}}/></label>)}</div>;
   }
   const rows=taskRows(pc,instance);
   const t=asTurn(instance);

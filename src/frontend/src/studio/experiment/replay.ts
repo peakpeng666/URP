@@ -8,6 +8,7 @@ import type { XY } from '../../lab/types';
 import { studio } from '../api';
 import type { FieldPhysics, FieldPhysicsEvidence, FieldSimMetrics, FieldVehicleState } from '../types';
 import { trafficStatus, type TrafficEvidence } from './traffic';
+import { DEFAULT_MAX_GAP_S, gapLimit, orderedTrail, replayIndex } from './replayIndex';
 
 export type TrailPoint = [number, number, number, number]; // t (sim s), x, y, yaw
 
@@ -31,12 +32,13 @@ export interface SimResult extends TrafficEvidence {
   sim_time: number | null; real_time_factor: number | null; state: 'succeeded' | 'failed' | 'canceled';
   metrics: FieldSimMetrics; travel?: 'rows' | 'free';
   vehicles: FieldVehicleState[]; tasks: SimTask[]; trails: Record<string, TrailPoint[]>;
-  execution_plan?: { vehicles?: SimPlanVehicle[]; robot_radius_m?: number; travel?: string; world?: string; bounds?: number[] };
+  execution_plan?: { vehicles?: SimPlanVehicle[]; instance?: import('../types').FleetInstance; robot_radius_m?: number; travel?: string; world?: string; bounds?: number[] };
   execution_provenance?: Record<string, unknown> | null; planning_solution?: Record<string, unknown> | null; provenance_warning?: string;
   physics?: FieldPhysics | null;
   physics_audit?: FieldPhysicsEvidence | null;
   physics_runtime?: FieldPhysicsEvidence | null;
   truth_timing?: { scope?: string; [key: string]: unknown } | null;
+  replay_contract?: { schema?: string; max_interpolation_gap_s: number; clock?: string; source?: string };
   energy?: Record<string, unknown> | null;
   errors?: string[];
   session_report?: { status?: string; cleanup_status?: string; execution_state?: string; remaining_owned_processes?: unknown[]; errors?: string[] } | null;
@@ -50,8 +52,8 @@ export function simBody(result: SimResult): { length_m: number; width_m: number 
   return size?.length === 3 ? { length_m: size[0], width_m: size[1] } : SIM_BODY;
 }
 
-export function poseAt(trail: TrailPoint[], t: number): [number, number, number] | null {
-  if (!trail.length) return null;
+export function poseAt(trail: TrailPoint[], t: number, maxGap = DEFAULT_MAX_GAP_S): [number, number, number] | null {
+  if (!trail.length || !orderedTrail(trail) || !Number.isFinite(t)) return null;
   const last = trail[trail.length - 1];
   if (t < trail[0][0] || t > last[0]) return null;
   if (t === trail[0][0]) return [trail[0][1], trail[0][2], trail[0][3]];
@@ -62,6 +64,9 @@ export function poseAt(trail: TrailPoint[], t: number): [number, number, number]
     if (trail[mid][0] <= t) lo = mid; else hi = mid;
   }
   const a = trail[lo], b = trail[hi];
+  if (t === a[0]) return [a[1], a[2], a[3]];
+  if (t === b[0]) return [b[1], b[2], b[3]];
+  if (b[0] - a[0] > maxGap + 1e-9) return null;
   const f = (t - a[0]) / Math.max(1e-9, b[0] - a[0]);
   let dyaw = b[3] - a[3];
   if (dyaw > Math.PI) dyaw -= 2 * Math.PI;
@@ -72,7 +77,7 @@ export function poseAt(trail: TrailPoint[], t: number): [number, number, number]
 /** Index of the last trail sample at or before t. */
 export function indexAt(trail: TrailPoint[], t: number): number {
   let lo = 0, hi = trail.length - 1;
-  if (!trail.length || t < trail[0][0]) return -1;
+  if (!trail.length || !orderedTrail(trail) || t < trail[0][0]) return -1;
   if (t >= trail[hi][0]) return hi;
   while (hi - lo > 1) {
     const mid = (lo + hi) >> 1;
@@ -81,19 +86,10 @@ export function indexAt(trail: TrailPoint[], t: number): number {
   return lo;
 }
 
-function distToPath(p: XY, path: XY[]): number {
-  let d = Infinity;
-  for (let i = 0; i + 1 < path.length; i++) {
-    const [ax, ay] = path[i], [bx, by] = path[i + 1];
-    const dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
-    const t = L ? Math.max(0, Math.min(1, ((p[0] - ax) * dx + (p[1] - ay) * dy) / L)) : 0;
-    d = Math.min(d, Math.hypot(p[0] - ax - t * dx, p[1] - ay - t * dy));
-  }
-  return d;
-}
-
 export interface ReplayMetric {
-  distance_m: number;
+  distance_m: number | null;
+  distance_complete: boolean;
+  missing_s: number;
   elapsed_s: number;
   tasks_reached: number;
   tasks_completed: number | null;
@@ -104,28 +100,31 @@ export interface ReplayMetric {
 export function metricsAt(r: SimResult, vehicle: string, t: number): ReplayMetric {
   const trail = r.trails[vehicle] ?? [];
   const index = indexAt(trail, t);
-  let distance = 0;
-  for (let i = 1; i <= index; i++) distance += Math.hypot(trail[i][1] - trail[i - 1][1], trail[i][2] - trail[i - 1][2]);
-  const pose = poseAt(trail, t);
+  const indexed = replayIndex(r, vehicle);
+  let distance = indexed.distance[index] ?? 0;
+  const pose = poseAt(trail, t, indexed.gapLimit);
   if (pose && index >= 0) distance += Math.hypot(pose[0] - trail[index][1], pose[1] - trail[index][2]);
   const start = trail[0]?.[0] ?? 0;
   const end = trail.at(-1)?.[0] ?? start;
   const elapsed = trail.length ? Math.max(0, Math.min(end, Math.max(start, t)) - start) : 0;
   const tasks = r.tasks.filter((task) => task.vehicle === vehicle);
   const reached = tasks.filter((task) => task.state === 'reached' && task.t_sim != null && task.t_sim <= t).length;
-  const hasCompletion = tasks.some((task) => 'serviced_at' in task || task.service_complete !== undefined);
+  const hasCompletion = tasks.every((task) => 'serviced_at' in task || task.service_complete !== undefined);
   const completed = hasCompletion ? tasks.filter((task) => task.service_complete !== false && task.serviced_at != null && task.serviced_at <= t).length : null;
-  const path = (r.execution_plan?.vehicles ?? []).find((item) => item.name === vehicle)?.path;
-  const deviations = path && path.length > 1 && index >= 0
-    ? trail.slice(0, index + 1).map((point) => distToPath([point[1], point[2]], path)).filter(Number.isFinite)
-    : [];
+  let missing = indexed.missing[index] ?? 0;
+  if (index >= 0 && index + 1 < trail.length && trail[index + 1][0] - trail[index][0] > indexed.gapLimit) {
+    missing += Math.max(0, Math.min(t, trail[index + 1][0]) - trail[index][0]);
+  }
+  const measured = indexed.deviationCount[index] ?? 0;
   return {
-    distance_m: distance,
+    distance_m: indexed.ordered && index >= 0 ? distance : null,
+    distance_complete: indexed.ordered && index >= 0 && missing === 0,
+    missing_s: missing,
     elapsed_s: elapsed,
     tasks_reached: reached,
     tasks_completed: completed,
-    cross_track_mean_m: deviations.length ? deviations.reduce((sum, value) => sum + value, 0) / deviations.length : null,
-    cross_track_max_m: deviations.length ? Math.max(...deviations) : null,
+    cross_track_mean_m: measured ? indexed.deviationSum[index] / measured : null,
+    cross_track_max_m: measured ? indexed.deviationMax[index] : null,
   };
 }
 
@@ -140,13 +139,14 @@ export interface SimTaskEvent {
 export function taskEvents(r: SimResult): SimTaskEvent[] {
   return r.tasks.flatMap((task) => {
     const events: SimTaskEvent[] = [];
-    if (task.state === 'reached' && task.t_sim != null) events.push({ key: `${task.id}-reached`, kind: 'reached', t: task.t_sim, xy: task.stop ?? task.xy, task });
-    if (task.service_complete !== false && task.serviced_at != null) events.push({ key: `${task.id}-completed`, kind: 'completed', t: task.serviced_at, xy: task.stop ?? task.xy, task });
+    if (task.state === 'reached' && task.t_sim != null) events.push({ key: `${task.vehicle}-${task.id}-reached`, kind: 'reached', t: task.t_sim, xy: task.stop ?? task.xy, task });
+    if (task.service_complete !== false && task.serviced_at != null) events.push({ key: `${task.vehicle}-${task.id}-completed`, kind: 'completed', t: task.serviced_at, xy: task.stop ?? task.xy, task });
     return events;
   }).sort((a, b) => a.t - b.t || (a.kind === b.kind ? 0 : a.kind === 'reached' ? -1 : 1));
 }
 
 export interface Derived {
+  startTime: number;
   duration: number;
   crossTrack: Record<string, { max: number; at: TrailPoint | null; mean: number }>;
   separation: { d: number; t: number; a: string; b: string; xy: XY } | null;
@@ -156,7 +156,10 @@ export interface Derived {
 
 export function derive(r: SimResult): Derived {
   const names = Object.keys(r.trails);
-  const duration = Math.max(0, ...names.map((n) => r.trails[n].at(-1)?.[0] ?? 0));
+  const timedNames = names.filter((n) => orderedTrail(r.trails[n]));
+  const duration = Math.max(0, ...timedNames.map((n) => r.trails[n].at(-1)?.[0] ?? 0));
+  const starts = timedNames.map((n) => r.trails[n][0]?.[0]).filter((t): t is number => Number.isFinite(t));
+  const startTime = starts.length ? Math.min(...starts) : 0;
   const plan = new Map((r.execution_plan?.vehicles ?? []).map((v) => [v.name, v]));
   const label = (n: string) => r.vehicles.find((v) => v.name === n)?.label ?? n;
 
@@ -165,20 +168,27 @@ export function derive(r: SimResult): Derived {
   for (const n of names) {
     const path = plan.get(n)?.path;
     if (!path || path.length < 2) continue;
-    let max = 0, sum = 0, at: TrailPoint | null = null;
-    for (const p of r.trails[n]) {
-      const d = distToPath([p[1], p[2]], path);
-      sum += d;
-      if (d > max) { max = d; at = p; }
-    }
-    crossTrack[n] = { max, at, mean: r.trails[n].length ? sum / r.trails[n].length : 0 };
+    const indexed = replayIndex(r, n);
+    if (!indexed.ordered || !r.trails[n].length) continue;
+    const max = indexed.deviationMax.at(-1) ?? 0;
+    const where = indexed.deviationMax.findIndex((v) => v === max);
+    crossTrack[n] = { max, at: max > 0 ? r.trails[n][where] : null,
+      mean: (indexed.deviationSum.at(-1) ?? 0) / Math.max(1, indexed.deviationCount.at(-1) ?? 0) };
   }
 
   // closest approach between any two vehicles on a common 0.5 s clock
   let separation: Derived['separation'] = null;
   if (names.length > 1) {
-    for (let t = 0; t <= duration; t += 0.5) {
-      const ps = names.map((n) => poseAt(r.trails[n], t));
+    // Sample observed intervals only. A clock jump must not create billions of
+    // iterations across missing data or freeze the workbench.
+    const observationTimes = new Set<number>();
+    for (const name of timedNames) for (const segment of replayIndex(r, name).segments) {
+      const first = segment[0][0], last = segment.at(-1)![0];
+      observationTimes.add(first); observationTimes.add(last);
+      for (let t = first + 0.5; t < last; t += 0.5) observationTimes.add(t);
+    }
+    for (const t of [...observationTimes].sort((a, b) => a - b)) {
+      const ps = names.map((n) => poseAt(r.trails[n], t, gapLimit(r)));
       for (let i = 0; i < names.length; i++) {
         for (let j = i + 1; j < names.length; j++) {
           const a = ps[i], b = ps[j];
@@ -195,11 +205,12 @@ export function derive(r: SimResult): Derived {
   const stops = r.tasks.map((t) => t.stop ?? t.xy);
   for (const n of names) {
     const tr = r.trails[n];
+    if (!orderedTrail(tr)) continue;
     const start = plan.get(n)?.start;
     let i = 0;
     while (i < tr.length) {
       let j = i;
-      while (j + 1 < tr.length && Math.hypot(tr[j + 1][1] - tr[i][1], tr[j + 1][2] - tr[i][2]) < 0.05) j++;
+      while (j + 1 < tr.length && tr[j + 1][0] - tr[j][0] <= gapLimit(r) + 1e-9 && Math.hypot(tr[j + 1][1] - tr[i][1], tr[j + 1][2] - tr[i][2]) < 0.05) j++;
       const span = tr[j][0] - tr[i][0];
       const xy: XY = [tr[i][1], tr[i][2]];
       const atStop = stops.some((s) => Math.hypot(s[0] - xy[0], s[1] - xy[1]) < 1.2) || (start && Math.hypot(start[0] - xy[0], start[1] - xy[1]) < 1.2);
@@ -209,6 +220,12 @@ export function derive(r: SimResult): Derived {
   }
 
   const anomalies: Anomaly[] = [];
+  for (const n of names) {
+    const indexed = replayIndex(r, n);
+    if (!indexed.ordered) anomalies.push({ key: `clock-${n}`, tone: 'error', text: `${label(n)} 时间戳不递增或样本无效，无法用一个时间轴重放`, xy: null, t: null, vehicle: n });
+    for (const gap of indexed.gaps) anomalies.push({ key: `gap-${n}-${gap.start}`, tone: 'warn',
+      text: `${label(n)} 在 ${gap.start.toFixed(2)}–${gap.end.toFixed(2)} s 缺流；不插值、不累计跨缺口里程`, xy: null, t: gap.start, vehicle: n });
+  }
   for (const t of r.tasks) {
     if (t.state !== 'reached') anomalies.push({ key: `task-${t.id}`, tone: 'error', text: `任务 ${t.label} 未到达（${label(t.vehicle)}）`, xy: t.stop ?? t.xy, t: null, vehicle: t.vehicle });
   }
@@ -235,7 +252,7 @@ export function derive(r: SimResult): Derived {
   if (traffic.tone !== 'good') {
     anomalies.push({ key: 'traffic-evidence', tone: traffic.tone === 'bad' ? 'error' : 'warn', text: `${traffic.value}：${traffic.note}`, xy: null, t: null });
   }
-  return { duration, crossTrack, separation, stalls, anomalies };
+  return { startTime, duration, crossTrack, separation, stalls, anomalies };
 }
 
 interface ReplayStore {

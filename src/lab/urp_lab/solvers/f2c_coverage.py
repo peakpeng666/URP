@@ -43,6 +43,9 @@ def check_path(instance, points, swaths):
     errors = []
     if len(points) < 2 or not all(math.isfinite(v) for p in points for v in p):
         return dict(valid=False, errors=['没有有限的可执行路径']), {}
+    points = [p for i, p in enumerate(points) if not i or math.dist(p, points[i - 1]) > 1e-8]
+    if len(points) < 2:
+        return dict(valid=False, errors=['路径没有有效长度']), {}
     line = LineString(points)
     # Chord sagitta bound for circular arcs at this sampling resolution.
     margin = STEP * STEP / (8 * instance['turn_radius']) + 1e-6
@@ -54,13 +57,22 @@ def check_path(instance, points, swaths):
         if product > 1e-12:
             curvatures.append(2*abs((b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]))/product)
     max_curvature = max(curvatures, default=0.)
+    if any(abs((b[0]-a[0])*(c[1]-b[1])-(b[1]-a[1])*(c[0]-b[0])) < 1e-12
+           and (b[0]-a[0])*(c[0]-b[0])+(b[1]-a[1])*(c[1]-b[1]) < 0
+           for a, b, c in zip(points, points[1:], points[2:])):
+        errors.append('覆盖路径含折返尖点；当前独立检查未适配该倒车切换的朝向语义')
     if max_curvature > (1/instance['turn_radius'])*(1+1e-3):
         errors.append('采样三点曲率超过最小转弯半径约束')
     swept = unary_union([LineString(s).buffer(instance['swath_width']/2, cap_style=2) for s in swaths])
     covered = swept.intersection(area).area
+    working_fraction = swept.intersection(interior).area / interior.area if interior.area else 0
+    if working_fraction < .90:
+        errors.append('内缩作业区覆盖率低于 90%，不能把缺失作业行的短路径作为可行覆盖解')
+    if any(not line.buffer(1e-6).covers(LineString(swath)) for swath in swaths):
+        errors.append('声明的作业行不在实际导出路径上')
     metrics = dict(coverage_area_m2=covered, field_area_m2=area.area,
         coverage_fraction=covered/area.area, working_area_m2=interior.area,
-        working_area_fraction=swept.intersection(interior).area/interior.area if interior.area else 0,
+        working_area_fraction=working_fraction, coverage_required_fraction=.90,
         turn_radius_enforced=not errors, max_sampled_curvature_per_m=max_curvature,
         min_turn_radius_m=instance['turn_radius'], curvature_relative_tolerance=1e-3,
         geometry_sampling_m=STEP, footprint_sampling_margin_m=margin,
@@ -166,12 +178,17 @@ def solve_full(instance, params):
         swaths = generator.generateBestSwaths(objective, robot.getCovWidth(), inner)
     route = f2c.RP_RoutePlannerBase().genRoute(mid_hl, swaths)
     turner = getattr(f2c, TURN_MODELS[params.get('turn_model', 'dubins')])()
+    turner.setDiscretization(STEP)
     path = f2c.PP_PathPlanning().planPath(robot, route, turner)
     elapsed = time.perf_counter() - t0
     if path.size() < 2:
         return [], dict(valid=False, errors=['Fields2Cover 没有生成路径']), {}, None
     states = [path.getState(i) for i in range(path.size())]
     full = [[s.point.getX(), s.point.getY()] for s in states]
+    # A PathState stores its start plus length. The final state may be an entire
+    # working swath; its endpoint is not another state in the native container.
+    end = path.atEnd()
+    full.append([end.getX(), end.getY()])
     kinds = [SECTION.get(int(s.type), 'other') for s in states]
     # A state's type labels the section that starts at it (a swath is a single state followed by its end point).
     lengths = {'swath': 0.0, 'turn': 0.0, 'headland': 0.0, 'other': 0.0}
@@ -182,24 +199,25 @@ def solve_full(instance, params):
             swath_lines.append(LineString([a, b]))
     reverse = sum(1 for s in states if s.dir == f2c.PathDirection_BACKWARD)
     field = Polygon(instance['field'], instance.get('obstacles') or [])
-    covered = unary_union([s.buffer(instance['swath_width'] / 2, cap_style=2) for s in swath_lines]).intersection(field).area if swath_lines else 0.0
     outside = LineString(full).buffer(instance['robot_width'] / 2).difference(field).area
-    step = max(1, len(full) // 6000)
-    pts = full[::step] + ([full[-1]] if (len(full) - 1) % step else [])
+    # Keep the checked geometry. Display decimation belongs in the renderer and
+    # must never create new chords for collision checking or execution.
+    step, pts = 1, full
     total = sum(lengths.values())
-    errors = [] if outside < 0.01 * field.area else ['机器人足迹有明显部分越出田块边界']
-    check = dict(valid=not errors, errors=errors, computed_cost=total, source='panel_baseline',
-                 checker='urp_lab.solvers.f2c_coverage.solve_full · Shapely 足迹与覆盖复算')
-    metrics = dict(coverage_area_m2=covered, field_area_m2=field.area, coverage_fraction=covered / field.area if field.area else None,
+    check, checked_metrics = check_path(instance, full, [list(s.coords) for s in swath_lines])
+    metrics = dict(checked_metrics,
                    working_length_m=lengths['swath'], turning_length_m=lengths['turn'], headland_length_m=lengths['headland'],
                    non_working_length_m=lengths['turn'] + lengths['headland'] + lengths['other'],
                    efficiency=lengths['swath'] / total if total else None, n_swaths=len(swath_lines), n_cells=inner.size(),
                    reverse_states=reverse, footprint_outside_m2=outside, planning_s=elapsed,
-                   coverage_scope='作业行覆盖面积 / 全田块；转弯与地头行驶计为非作业距离')
+                   coverage_scope='内缩作业区覆盖须 ≥90%；地头不计作业；完整足迹与采样曲率独立检查')
     raw = dict(implementation='Fields2Cover HG_Const_gen → ' + (DECOMPOSITIONS.get(decomposition) or '不分解') +
                f" → SG_BruteForce({SWATH_OBJECTIVES[params.get('swath_objective', 'n_swath')]}) → RP_RoutePlannerBase → PP_PathPlanning({TURN_MODELS[params.get('turn_model', 'dubins')]})",
-               states=len(full), decimation=step, binding=available())
+               adapter_contract='urp.f2c-full/2', states=len(states), endpoint_included=True, native_path_length_m=path.length(),
+               last_state_length_m=states[-1].len, decimation=step, binding=available())
+    if not check['valid']:
+        raw['rejected_polyline'] = full
     route_out = dict(vehicle=0, nodes=None, sequence=[], services=[], polyline=pts, cost=total, load=0,
                      sections=[[i // step, k] for i, k in enumerate(kinds) if i == 0 or k != kinds[i - 1]])
-    return [route_out], check, metrics, raw
+    return [route_out] if check['valid'] else [], check, metrics, raw
 

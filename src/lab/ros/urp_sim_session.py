@@ -425,6 +425,8 @@ class Session:
                     input=json.dumps(dict(plan=plan,execution=ex,world=self.args.world)),text=True,capture_output=True,timeout=30)
                 if checked.returncode:raise RuntimeError(checked.stderr)
                 ex['metrics'].update(json.loads(checked.stdout))
+                if ex['state']=='succeeded' and plan.get('goal_tolerance_m') is not None and not ex['metrics'].get('goal_reached_within_tolerance'):
+                    ex.update(state='failed',error=f"实际终点未满足声明容差 {plan['goal_tolerance_m']} m；独立误差 {ex['metrics'].get('independent_goal_error_m')}")
                 mc=ex['metrics'].get('actual_map_check')
                 if ex['state']=='succeeded' and (not mc or not mc['collision_free']):
                     ex.update(state='failed',error='实际轨迹的整段地图/足迹检查未通过')

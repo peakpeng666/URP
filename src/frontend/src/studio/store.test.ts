@@ -179,4 +179,34 @@ describe('serialized draft saving before solve', () => {
     expect(mocks.cancelRun).toHaveBeenCalledWith('run_cancel');
     expect(useStudio.getState().runs.run_cancel).toEqual(canceled);
   });
+
+  it('a late response from an earlier open of the same scene cannot replace a newer revision', async () => {
+    const first = deferred<Scenario>(), second = deferred<Scenario>();
+    useStudio.setState({ save: 'saved' });
+    mocks.scenario.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+    mocks.runs.mockResolvedValue({ runs: [] });
+    mocks.recommend.mockResolvedValue({ ranking: [], recommended: null, policy: 'rules-v1' });
+    const a = useStudio.getState().open('shared');
+    const b = useStudio.getState().open('shared');
+    expect(useStudio.getState().draft).toBeNull();
+    second.resolve({ ...scenario, id: 'shared', revision: 2 });
+    await b;
+    first.resolve({ ...scenario, id: 'shared', revision: 1 });
+    await a;
+    expect(useStudio.getState().scenario?.revision).toBe(2);
+  });
+
+  it('a late history response cannot replace a newly submitted comparison', async () => {
+    const history = deferred<{ runs: unknown[] }>();
+    useStudio.setState({ save: 'saved' });
+    mocks.scenario.mockResolvedValue({ ...scenario, id: 'next' });
+    mocks.runs.mockReturnValueOnce(history.promise);
+    mocks.recommend.mockResolvedValue({ ranking: [], recommended: null, policy: 'rules-v1' });
+    const opening = useStudio.getState().open('next');
+    await microtasks();
+    useStudio.setState({ runIds: ['new-comparison'], busy: null });
+    history.resolve({ runs: [{ run_id: 'old', job_id: 'past', state: 'done', routes: [] }] });
+    await opening;
+    expect(useStudio.getState().runIds).toEqual(['new-comparison']);
+  });
 });
