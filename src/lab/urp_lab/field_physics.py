@@ -11,15 +11,14 @@ import hashlib
 import json
 import math
 from xml.etree import ElementTree as ET
-from shapely.geometry import MultiPoint
+from shapely.geometry import MultiPoint, Point, Polygon
 
-MODEL = 'urp.field-diffdrive.rigid/4'
+MODEL = 'urp.field-diffdrive.rigid/5'
 ENGINE = 'libignition-physics-dartsim-plugin.so'
 BODY = (.8, .56, .22)
 WHEEL_RADIUS, WHEEL_SEPARATION = .15, .66
-# Finite-width rigid ring tyres (v4). The frozen hull is built from the widest supported
-# tyre so collision_hull_m covers every allowed width; the projected rectangles plus the
-# chassis stay inside the planner's circumscribed circle: hypot(.15, .33 + TYRE_WIDTH_MAX/2) < RADIUS.
+# The reference platform uses spherical rolling contacts (the official DiffDrive abstraction).
+# Flat cylindrical contacts remain an explicit slip diagnostic, not a calibrated tyre.
 TYRE_WIDTH = .10
 TYRE_WIDTH_MAX = .16
 WHEEL_WIDTH = TYRE_WIDTH
@@ -27,7 +26,15 @@ RADIUS = math.hypot(BODY[0] / 2, BODY[1] / 2)
 _points = [[x, y] for x in (-BODY[0]/2, BODY[0]/2) for y in (-BODY[1]/2, BODY[1]/2)]
 _points += [[x, side * WHEEL_SEPARATION/2 + y]
             for side in (-1, 1) for x in (-WHEEL_RADIUS, WHEEL_RADIUS) for y in (-TYRE_WIDTH_MAX/2, TYRE_WIDTH_MAX/2)]
+# Circumscribed polygons contain the *entire* spherical projection, including between vertices.
+# v4's tyre-only hull incorrectly excluded the wider optional spherical wheels.
+_points += [[WHEEL_RADIUS / math.cos(math.pi / 64) * math.cos(i * 2 * math.pi / 64),
+             side * WHEEL_SEPARATION / 2 + WHEEL_RADIUS / math.cos(math.pi / 64) * math.sin(i * 2 * math.pi / 64)]
+            for side in (-1, 1) for i in range(64)]
 FOOTPRINT = [list(p) for p in MultiPoint(_points).convex_hull.exterior.coords[:-1]]
+ODOMETRY_CONTRACT = {'schema': 'urp.no-slip-consistency/1', 'max_position_error_m': .10,
+                     'max_yaw_error_rad': .03, 'max_sample_gap_s': .25,
+                     'scope': 'simulation no-slip reference validity; first-common-pose alignment only; not real localization accuracy'}
 LIMITS = {'max_speed_mps': 2.0, 'max_yaw_rate_radps': 2.0,
           'accel_mps2': 1.5, 'decel_mps2': 2.0, 'yaw_accel_radps2': 4.0}
 # Post-hoc kinematic energy accounting (no battery/motor/thermal model in the loop).
@@ -56,7 +63,7 @@ def cylinder_inertia(mass, radius, width):
 
 def profile(overrides=None):
     values = {'max_step_size_s': .004, 'collision_detector': 'ode', 'ground_friction': 1.0,
-              'wheel_friction': 1.0, 'payload_kg': 0.0, 'wheel_contact': 'tyre', 'tyre_width_m': TYRE_WIDTH,
+              'wheel_friction': 1.0, 'payload_kg': 0.0, 'wheel_contact': 'sphere', 'tyre_width_m': TYRE_WIDTH,
               'wheel_lateral_friction': None}
     if overrides is not None:
         if not isinstance(overrides, dict) or set(overrides) - set(values):
@@ -66,7 +73,7 @@ def profile(overrides=None):
     if values['collision_detector'] not in ('ode', 'bullet'):
         raise ValueError('physics.collision_detector 仅支持 ode、bullet')
     if values['wheel_contact'] not in ('tyre', 'sphere'):
-        raise ValueError('physics.wheel_contact 仅支持 tyre（有限宽圆柱轮胎）、sphere（球面滚动，旧模型）')
+        raise ValueError('physics.wheel_contact 仅支持 tyre（圆柱接触诊断）、sphere（球面滚动参考）')
     for k, (lo, hi) in {'max_step_size_s': (.0005, .01), 'ground_friction': (.01, 2),
                         'wheel_friction': (.01, 2), 'payload_kg': (0, 50),
                         # wider than the frozen hull is rejected, so collision_hull_m always covers the wheels
@@ -93,10 +100,11 @@ def profile(overrides=None):
               'total_mass_kg': body_mass + 5, 'collision_hull_m': copy.deepcopy(FOOTPRINT),
               'collision_radius_m': RADIUS, 'limits': dict(LIMITS), 'truth_hz': 50,
               'energy_model': dict(ENERGY),
+              'odometry_contract': dict(ODOMETRY_CONTRACT),
               'assumptions': {'ground': 'flat rigid plane; Coulomb friction; no deformable soil or terrain',
                               'wheel_contact': ('rigid ring cylindrical tyres with finite contact width; no carcass flexibility, lugs or pressure effects; '
-                                                'in-place rotation involves tyre scrub slip and is measured against a widened bound, not ideal rolling'
-                                                if tyre else 'spherical rolling contacts as in the official differential-drive example (legacy v3 model)'),
+                                                'diagnostic only: no-slip consistency must still pass; no widened acceptance bound'
+                                                if tyre else 'spherical rolling contacts as in the official differential-drive example; ideal no-slip reference, not pneumatic tyres'),
                               'actuator': 'ideal wheel velocity servo with body speed/acceleration limits; no motor torque saturation in the loop; '
                                           'wheel torque demand is post-hoc accounting, not an enforced motor limit',
                               'energy': 'post-hoc kinematic accounting from the truth trajectory: rolling resistance, longitudinal inertia and drive '
@@ -105,6 +113,8 @@ def profile(overrides=None):
                               'localization': 'exact simulator world pose with source simulation timestamp; no sensor noise or estimator',
                               'randomness': 'Fortress 6.18 CLI/control has no supported seed setter; no stochastic sensors configured; bitwise determinism is not claimed',
                               'calibration': 'synthetic parameters; no real-machine calibration; simulation verification only'}}
+    if not tyre:
+        result['wheel']['width_m'] = 2 * WHEEL_RADIUS
     result['sha256'] = digest(result)
     return result
 
@@ -164,6 +174,17 @@ def audit_sdf(path, expected):
         links = model.findall('link')
         if {l.get('name') for l in links} != {'chassis','left_wheel','right_wheel','rear_caster','front_caster'}:
             errors.append('SDF 车辆 link 集合与声明模型不一致')
+        expected_poses = {'chassis': [0, 0, WHEEL_RADIUS + .1, 0, 0, 0],
+                          'left_wheel': [0, WHEEL_SEPARATION / 2, WHEEL_RADIUS, -math.pi / 2, 0, 0],
+                          'right_wheel': [0, -WHEEL_SEPARATION / 2, WHEEL_RADIUS, -math.pi / 2, 0, 0],
+                          'rear_caster': [-.3, 0, .06, 0, 0, 0], 'front_caster': [.3, 0, .06, 0, 0, 0]}
+        hull = Polygon(expected['collision_hull_m'])
+        for joint_name in ('left_wheel_joint', 'right_wheel_joint'):
+            joint = model.find(f"joint[@name='{joint_name}']")
+            if (joint is None or joint.get('type') != 'revolute' or joint.findtext('parent') != 'chassis'
+                    or joint.findtext('child') != joint_name.removesuffix('_joint')
+                    or joint.findtext('axis/xyz') != '0 0 1' or joint.find('pose') is not None):
+                errors.append('驱动轮关节坐标或轴与声明轮距运动学不一致')
         drive = model.find("plugin[@name='gz::sim::systems::DiffDrive']")
         wanted_drive = {'wheel_radius':expected['wheel']['radius_m'], 'wheel_separation':expected['wheel']['separation_m'],
             'max_linear_velocity':expected['limits']['max_speed_mps'],
@@ -176,6 +197,24 @@ def audit_sdf(path, expected):
         mass = 0.0
         for link in links:
             part = 'wheel' if link.get('name').endswith('wheel') else 'caster' if link.get('name').endswith('caster') else 'body'
+            name = link.get('name')
+            pose = list(map(float, link.findtext('pose', '').split()))
+            wanted_pose = expected_poses.get(name, [])
+            if len(pose) != 6 or len(wanted_pose) != 6 or any(abs(a-b) > 1e-9 for a,b in zip(pose, wanted_pose)):
+                errors.append(f'{name} 位置/朝向与冻结模型不一致')
+            wanted_geometry = ({'box/size': list(BODY)} if part == 'body' else
+                               {'cylinder/radius': [WHEEL_RADIUS], 'cylinder/length': [expected['tyre_width_m']]}
+                               if part == 'wheel' and expected['wheel_contact'] == 'tyre' else
+                               {'sphere/radius': [WHEEL_RADIUS if part == 'wheel' else .06]})
+            for tag in ('collision', 'visual'):
+                shape_node = link.find(tag + '/geometry')
+                if (shape_node is None or len(shape_node) != 1 or
+                        any(list(map(float, shape_node.findtext(k, 'nan').split())) != val for k,val in wanted_geometry.items())):
+                    errors.append(f'{name} {tag} 几何与冻结尺寸不一致')
+            if part == 'wheel' and expected['wheel_contact'] == 'sphere' and len(pose) == 6:
+                center = Point(*pose[:2])
+                if not hull.covers(center) or hull.exterior.distance(center) < WHEEL_RADIUS - 1e-9:
+                    errors.append('冻结足迹未完整包住球面轮投影')
             m = float(link.findtext('inertial/mass', 'nan'))
             diag = [float(link.findtext('inertial/inertia/'+k, 'nan')) for k in ('ixx', 'iyy', 'izz')]
             if (not all(math.isfinite(x) and x > 0 for x in [m, *diag])

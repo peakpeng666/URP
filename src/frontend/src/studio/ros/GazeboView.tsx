@@ -21,6 +21,8 @@ interface SceneManager {
   thirdPersonFollow(name: string): void;
   snapshot(): void;
   getConnectionStatus(): string;
+  getConnectionError(): string | null;
+  getResourceStatus(): { total: number; ready: number; failed: string[] };
 }
 
 export function GazeboView() {
@@ -32,6 +34,8 @@ export function GazeboView() {
   const [status, setStatus] = useState('disconnected');
   const [error, setError] = useState<string | null>(null);
   const [follow, setFollow] = useState<string | null>(null);
+  const [retry, setRetry] = useState(0);
+  const [resources, setResources] = useState<{ total: number; ready: number; failed: string[] }>({ total: 0, ready: 0, failed: [] });
   const bounds = gz?.bounds;
 
   /** Look at the whole field (gzweb's own reset view sits at the world origin). */
@@ -59,6 +63,8 @@ export function GazeboView() {
     let Manager: (new (c: object) => SceneManager) | null = null;
     setStatus('connecting');
     setError(null);
+    setFollow(null);
+    setResources({ total: 0, ready: 0, failed: [] });
     // gzweb looks its element up by id, so it can only start once the dock has attached this panel.
     const create = () => {
       if (!alive || manager.current || !Manager || !el.isConnected || el.clientWidth === 0) return;
@@ -92,6 +98,9 @@ export function GazeboView() {
       try {
         const st = manager.current?.getConnectionStatus() ?? 'disconnected';
         setStatus(st);
+        const assets = manager.current?.getResourceStatus();
+        if (assets) setResources(assets);
+        if (st === 'error') setError(manager.current?.getConnectionError() ?? 'Gazebo 通信失败');
         if (st === 'ready' && framed < 6 && overview()) framed++;
       } catch (cause) {
         setStatus('error');
@@ -102,11 +111,11 @@ export function GazeboView() {
       alive = false;
       ro.disconnect();
       window.clearInterval(t);
-      manager.current?.destroy();
+      const owned = manager.current;
       manager.current = null;
-      el.replaceChildren();
+      try { owned?.destroy(); } finally { el.replaceChildren(); }
     };
-  }, [gz?.url, gz?.key, id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [gz?.url, gz?.key, id, retry]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const vehicles = live.kind === 'field' ? live.field?.vehicles ?? [] : [];
   const robots = live.kind === 'robot' ? [{ name: 'turtlebot4', label: 'TurtleBot4', color: '#1d1d1f' }] : vehicles;
@@ -138,11 +147,14 @@ export function GazeboView() {
       <div id={id} ref={box} className={s.gz} />
       <div className={s.hud}>
         <div className={s.hudRow}>
-          <span className={s.dot} data-s={status === 'ready' && !error ? 'connected' : status === 'error' || status === 'disconnected' || error ? 'closed' : 'connecting'} />
+          <span className={s.dot} data-s={status === 'ready' && !error && !resources.failed.length ? 'connected' : status === 'error' || status === 'disconnected' || error || resources.failed.length ? 'closed' : 'connecting'} />
           <span className={s.hudTitle}>Gazebo · {gz.world}</span>
           <span className={s.hudMeta}>gzweb · {statusText}</span>
+          {resources.total > 0 && <span className={s.hudMeta} role={resources.failed.length ? 'alert' : undefined}
+            title={resources.failed.join('\n')}>资源 {resources.ready}/{resources.total}{resources.failed.length ? ` · ${resources.failed.length} 项失败或超时，场景不完整` : resources.ready < resources.total ? ' · 加载中' : ''}</span>}
         </div>
         <div className={s.chips}>
+          {(status === 'error' || status === 'disconnected' || resources.failed.length > 0) && <Button size="sm" onClick={() => setRetry(n => n + 1)}>重新连接</Button>}
           <Button size="sm" icon={Maximize2} onClick={() => { setFollow(null); overview(); }}>全景</Button>
           <Button size="sm" icon={Camera} onClick={() => manager.current?.snapshot()}>截图</Button>
           {robots.map((v) => (

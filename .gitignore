@@ -76,5 +76,19 @@ setup/2026-10-17/critique/mu2-study/*/
 /setup/2026-10-17/integration-closeout/*-record.json
 /.local-state/
 /user-runs/
+# Source-stamped raw physical probes remain local; summaries, logs and checks are committed.
+/setup/2026-10-18/physics-consistency/baseline/*-0/
+/setup/2026-10-18/physics-consistency/contact-diagnosis/*-0/
+/setup/2026-10-18/physics-consistency/reference-primary/*-*/
+/setup/2026-10-18/physics-consistency/reference-holdout/*-*/
+/setup/2026-10-18/physics-consistency/reference-holdout-serial/*-*/
+/setup/2026-10-18/physics-consistency/live/
+/setup/2026-10-18/physics-consistency/ui-*-record.json
+/setup/2026-10-18/physics-consistency/private/
+/setup/2026-10-18/physics-consistency/gateway-release.log
+/setup/2026-10-18/physics-consistency/profiling/
+/setup/2026-10-18/physics-consistency/profiling-transport/
+/setup/2026-10-18/physics-consistency/live-transport/
+/setup/2026-10-18/physics-consistency/reference-transport/
 /cohort_b/ails/build/
 /cohort_b/sisr/build/

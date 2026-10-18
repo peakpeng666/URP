@@ -24,3 +24,27 @@ def test_index_caches_compact_data_and_invalidates_replacements_and_deletions(tm
     assert service.results()[0]['metrics']['value'] == 2
     p.unlink()
     assert service.results() == [] and service._result_cache == {}
+
+
+def test_live_evidence_omits_traces_but_full_export_preserves_them(tmp_path):
+    from fastapi.testclient import TestClient
+    from urp_lab.gateway import Config, create_app
+    p = tmp_path / 'fieldsim' / 'large' / 'result.json'
+    p.parent.mkdir(parents=True)
+    original = {'session_id': 'large', 'run_id': 'r', 'state': 'failed', 'check': {'valid': False},
+                'physics': {'schema': 'test'}, 'trails': {'v': [[0, 0, 0, 0]] * 10000},
+                'wheel_odometry': {'v': [[0, 0, 0, 0, 0, 0]] * 10000}}
+    p.write_text(json.dumps(original))
+    (p.parent / 'plan.json').write_text('{}')
+    (p.parent / 'session-report.json').write_text('{"status":"FAIL","cleanup_status":"PASS"}')
+    with TestClient(create_app(Config(runtime=tmp_path, background=False, archive_autostart=False,
+                                      extra_hosts={'testserver'}))) as client:
+        full = client.get('/lab/api/fieldsim/results/large')
+        thin = client.get('/lab/api/fieldsim/results/large?evidence=true')
+        assert full.status_code == thin.status_code == 200
+        assert full.json()['trails'] == original['trails'] and full.json()['wheel_odometry'] == original['wheel_odometry']
+        assert len(thin.content) < len(full.content) / 100
+        assert thin.json()['check'] == {'valid': False} and thin.json()['session_report']['status'] == 'FAIL'
+        assert 'trails' not in thin.json() and thin.headers['cache-control'] == 'no-store'
+        assert client.get('/lab/api/fieldsim/results/missing?evidence=true').status_code == 404
+    assert json.loads(p.read_text()) == original

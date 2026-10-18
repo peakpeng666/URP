@@ -57,7 +57,9 @@ def verify(plan, result):
     if motion_metrics:
         errors.extend(motion_metrics['errors'])
     dynamics = None
-    if result.get('physics'):
+    if plan.get('physics') or result.get('physics'):
+        if result.get('physics') != plan.get('physics') or not (plan.get('physics_audit') or {}).get('valid'):
+            errors.append('执行结果物理模型与冻结计划或 SDF 核验不一致')
         if (result.get('physics_runtime') or {}).get('valid') is not True:
             errors.append('缺少物理实现加载及配置核验，不能认证执行结果')
         from .field_dynamics import verify as verify_dynamics

@@ -13,8 +13,10 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from field_sim_session import Session, Twist, save
+from physical_session_lock import exclusive_physics
 
 
+@exclusive_physics
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--runtime', required=True)
@@ -62,6 +64,7 @@ def main():
                 'physics_audit':session.plan['physics_audit'], 'stages':stages, 'commands':commands,
                 'physics_runtime':session.report.get('physics_runtime'),
                 'rigid_body_poses':session.rigid_poses, 'wheel_odometry':session.odometry,
+                'ground_contacts':session.ground_contact_samples,
                 'truth_timing':session.truth_timing, 'contacts':session.contacts,
                 'telemetry':session.counts, 'errors':session.report['errors']}
         save(Path(args.runtime)/'response.json', data)

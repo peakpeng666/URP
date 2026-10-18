@@ -196,7 +196,7 @@ function PhysicsSetup({ data, error, overrides, onChange }: { data: FieldPhysics
               <div key={key} className={s.row}>
                 <label className={s.meta}><input type="checkbox" checked={enabled} onChange={toggle} /> 覆盖 {labels[key] ?? key}</label>
                 {enabled && key === 'collision_detector' && <Select aria-label="覆盖碰撞检测器" value={String(value)} onChange={(e) => set(e.target.value)}><option value="ode">ODE</option><option value="bullet">Bullet</option></Select>}
-                {enabled && key === 'wheel_contact' && <Select aria-label="覆盖轮胎接触" value={String(value)} onChange={(e) => set(e.target.value)}><option value="tyre">有限宽轮胎</option><option value="sphere">球面接触对照</option></Select>}
+                {enabled && key === 'wheel_contact' && <Select aria-label="覆盖轮胎接触" value={String(value)} onChange={(e) => set(e.target.value)}><option value="sphere">球面滚动参考（默认）</option><option value="tyre">圆柱接触诊断（可能失配）</option></Select>}
                 {enabled && !['collision_detector', 'wheel_contact'].includes(key) && (
                   <Input aria-label={`覆盖${labels[key] ?? key}`} type="number" value={Number(value ?? 0)} min={key === 'max_step_size_s' ? 0.0005 : key === 'tyre_width_m' ? 0.04 : key.includes('friction') ? 0.01 : 0} max={key === 'max_step_size_s' ? 0.01 : key === 'payload_kg' ? 50 : key.includes('friction') ? 2 : key === 'tyre_width_m' ? 0.16 : undefined} step={key === 'max_step_size_s' ? 0.0005 : key === 'tyre_width_m' ? 0.01 : 0.1} onChange={(e) => Number.isFinite(e.target.valueAsNumber) && set(e.target.valueAsNumber)} />
                 )}
@@ -214,7 +214,7 @@ function RunningView({ state, busy, onStop, onWindow }: { state: FieldSimState; 
   const done = state.phase === 'finished' || state.phase === 'failed';
   const evidence = useLabResource<SimResult | null>(`fieldsim-evidence-${state.session_id ?? 'none'}-${state.phase}-${state.running}`, (signal) => {
     if (!state.result || !state.session_id) return Promise.resolve(null);
-    return studio.fieldsimResult(state.session_id, { signal });
+    return studio.fieldsimEvidence(state.session_id, { signal });
   });
   return (
     <div className={s.form} style={{ padding: 0 }}>

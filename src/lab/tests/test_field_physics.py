@@ -16,6 +16,11 @@ def test_mass_inertia_and_collision_envelope():
     assert m['total_mass_kg'] == 25
     from shapely.geometry import Polygon, Point
     hull = Polygon(p.FOOTPRINT)
+    # Analytic polygon-edge distance bounds the complete disks, not just sampled corners.
+    for side in (-1, 1):
+        center = Point(0, side * p.WHEEL_SEPARATION / 2)
+        assert hull.covers(center) and hull.exterior.distance(center) >= p.WHEEL_RADIUS - 1e-12
+    assert m['wheel_contact'] == 'sphere' and m['wheel']['width_m'] == .30
     # the hull must contain every projected rigid-ring tyre rectangle up to the widest supported tyre
     for side in (-1, 1):
         for cx in (-p.WHEEL_RADIUS, p.WHEEL_RADIUS):
@@ -29,17 +34,17 @@ def test_mass_inertia_and_collision_envelope():
 
 
 def test_tyre_model_and_legacy_sphere_profile():
-    m = p.profile()
-    assert m['schema'] == 'urp.field-diffdrive.rigid/4'
+    m = p.profile({'wheel_contact': 'tyre'})
+    assert m['schema'] == 'urp.field-diffdrive.rigid/5'
     assert m['wheel'] == {'geometry': 'cylinder', 'radius_m': p.WHEEL_RADIUS, 'width_m': p.TYRE_WIDTH,
                           'separation_m': p.WHEEL_SEPARATION, 'mass_kg': 2,
                           'inertia_kgm2': pytest.approx(p.cylinder_inertia(2, p.WHEEL_RADIUS, p.TYRE_WIDTH))}
-    assert 'scrub' in m['assumptions']['wheel_contact'] and 'post-hoc' in m['assumptions']['actuator']
+    assert 'diagnostic' in m['assumptions']['wheel_contact'] and 'post-hoc' in m['assumptions']['actuator']
     sphere = p.profile({'wheel_contact': 'sphere'})
     assert sphere['wheel']['geometry'] == 'sphere'
     assert sphere['wheel']['inertia_kgm2'] == pytest.approx([.4*2*p.WHEEL_RADIUS**2]*3)
     assert sphere['sha256'] != m['sha256']
-    narrow = p.profile({'tyre_width_m': p.TYRE_WIDTH_MAX})
+    narrow = p.profile({'wheel_contact': 'tyre', 'tyre_width_m': p.TYRE_WIDTH_MAX})
     assert narrow['wheel']['width_m'] == p.TYRE_WIDTH_MAX and narrow['collision_hull_m'] == m['collision_hull_m']
 
 
@@ -121,6 +126,10 @@ def test_wheel_odom_alignment_preserves_drift_and_checks_physical_domain():
     (".//model[@name='ground']/link/collision/surface/friction/ode/mu",'0.001'),
     (".//plugin[@name='gz::sim::systems::DiffDrive']/wheel_separation",'1.4'),
     ('./world/physics/dart/collision_detector','bullet'),
+    (".//link[@name='left_wheel']/pose", '0 0.28 0.15 -1.570796326795 0 0'),
+    (".//link[@name='left_wheel']/collision/geometry/sphere/radius", '0.16'),
+    (".//link[@name='left_wheel']/visual/geometry/sphere/radius", '0.16'),
+    (".//joint[@name='left_wheel_joint']/axis/xyz", '1 0 0'),
 ])
 def test_frozen_model_rejects_sdf_parameter_drift(tmp_path, selector, value):
     inst = instance()
@@ -128,6 +137,29 @@ def test_frozen_model_rejects_sdf_parameter_drift(tmp_path, selector, value):
     plan = fieldworld.build(inst,routes,tmp_path,'audit_parameters')
     doc = ET.parse(plan['sdf']);doc.find(selector).text = value;doc.write(plan['sdf'])
     assert not p.audit_sdf(plan['sdf'],plan['physics'])['valid']
+
+
+def test_no_slip_consistency_is_a_gate_not_a_suppressed_drift_statistic():
+    import copy
+    from urp_lab.field_dynamics import verify
+    r = {'physics':p.profile(), 'vehicles':[{'name':'v'}],
+         'truth_timing':{'latest_clock_samples':0,'tf_header_samples':3},
+         'rigid_body_poses':{'v':[[0,5,3,0,0,0,0],[.1,5.05,3,0,0,0,0],[.2,5.1,3,0,0,0,0]]},
+         'wheel_odometry':{'v':[[0,0,0,0,.5,0],[.1,.05,0,0,.5,0],[.2,.1,0,0,.5,0]]}}
+    assert verify(r)['valid']
+    missing = copy.deepcopy(r); missing['physics'].pop('odometry_contract')
+    assert not verify(missing)['valid']
+    drift = copy.deepcopy(r); drift['wheel_odometry']['v'][1][1] += .11
+    checked = verify(drift)
+    assert not checked['valid'] and checked['vehicles'][0]['odom_position_final_m'] == pytest.approx(0)
+    assert checked['vehicles'][0]['odom_position_max_m'] == pytest.approx(.11)
+    drift = copy.deepcopy(r); drift['wheel_odometry']['v'][1][3] += .031
+    assert not verify(drift)['valid']
+    drift['physics']['odometry_contract']['max_yaw_error_rad'] = 1
+    assert any('协议' in e for e in verify(drift)['errors'])
+    short = copy.deepcopy(r)
+    short['rigid_body_poses']['v'].extend([[.3,5.15,3,0,0,0,0],[.4,5.2,3,0,0,0,0],[.5,5.25,3,0,0,0,0]])
+    assert any('完整' in e for e in verify(short)['errors'])
 
 
 def test_fleet_outputs_explicit_model_assumptions():

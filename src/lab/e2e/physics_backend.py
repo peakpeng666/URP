@@ -48,19 +48,12 @@ def analyse(data):
     values['brake'].update(reference_m=brake, absolute_error_m=abs(values['brake']['displacement_m']-brake))
     values['rotate'].update(reference_rad=spin, absolute_error_rad=abs(values['rotate']['rotation_rad']-spin))
     check = verify_dynamics({**data,'vehicles':[{'name':'vehicle_1'}]})
-    assert check['valid'] and not data['contacts'], check
-    # Finite-width rigid-ring tyres must scrub when spinning in place: the pure-rolling
-    # reference no longer bounds the spin tightly, so tyre models get a wider measured
-    # scrub allowance while straight/brake keep the ideal-rolling tolerances.
-    # Finite-width rigid-ring tyres must scrub when spinning in place: the pure-rolling
-    # reference no longer bounds the spin tightly, so tyre models are gated on in-place
-    # slip ratio (|truth rotation - rolling reference| / |reference| <= 20% of the commanded
-    # rotation at the default width) while straight/brake keep the ideal-rolling tolerances.
-    spin_bound = .15 if data['physics']['wheel_contact'] == 'sphere' else max(.20 * abs(spin), .30)
+    assert not data['contacts'], data['contacts']
+    # Identical no-slip reference for every shape; retain failed diagnostics as failed.
+    spin_bound = .15
     return {'stages':values,'dynamics':check,'spin_bound_rad':spin_bound,
             'spin_slip_ratio': abs(values['rotate']['rotation_rad'] - spin) / max(abs(spin), 1e-9),
-            'spin_bound_basis':('ideal rolling' if spin_bound == .15 else
-                                'in-place tyre scrub slip ratio <= 20% of commanded rotation; empirical rigid-ring envelope, not an ideal-servo claim'),
+            'spin_bound_basis':'same ideal rolling reference for every contact shape; no shape-specific relaxation',
             'reference_scope':'bounded ideal body-velocity acceleration; command transport latency is not subtracted or fitted; no real calibration'}
 
 
@@ -76,6 +69,9 @@ def main():
              'step4ms_bullet':{'collision_detector':'bullet'},
              'step1ms_bullet':{'collision_detector':'bullet','max_step_size_s':.001},
              'sphere_legacy':{'wheel_contact':'sphere'},
+             'cylinder_reference':{'wheel_contact':'tyre'},
+             'cylinder_width4':{'wheel_contact':'tyre', 'tyre_width_m':.04},
+             'cylinder_width16':{'wheel_contact':'tyre', 'tyre_width_m':.16},
              'tyre_narrow':{'tyre_width_m':.10},
              'lat03_yaw0':{'wheel_lateral_friction':.3,'__initial_yaw':0.0},
              'lat03_yaw45':{'wheel_lateral_friction':.3,'__initial_yaw':math.pi/4},
@@ -101,7 +97,8 @@ def main():
             doc.write(plan['sdf'])
             plan['vehicles'][0].update(start=[0,0,0],path=[[0,0],[10,0]],tasks=[])
             sid=f'physics_{case}_{repeat}_{time.time_ns()}'
-            plan.update(session_id=sid,run_id='physics-probe',scenario_id='physics-probe',field_layers=[],outlines=[],probe_protocol=args.protocol)
+            plan.update(session_id=sid,run_id='physics-probe',scenario_id='physics-probe',field_layers=[],outlines=[],probe_protocol=args.protocol,
+                        probe_ground_contacts=True)
             plan['physics_audit']=field_physics.audit_sdf(plan['sdf'],plan['physics'])
             (folder/'plan.json').write_text(json.dumps(plan,ensure_ascii=False,indent=2))
             root=Path(__file__).resolve().parents[3]
@@ -127,6 +124,7 @@ def main():
                 'straight_error_below_0.15_m': r['stages']['straight']['absolute_error_m'] < .15,
                 'brake_error_below_0.10_m': r['stages']['brake']['absolute_error_m'] < .10,
                 'rotation_error_within_bound_rad': r['stages']['rotate']['absolute_error_rad'] < r['spin_bound_rad'],
+                'odometry_consistent': r['dynamics']['valid'],
             }
             r['reference_conformance'] = all(r['reference_checks'].values())
             rows.append(r);save('summary.json',rows)

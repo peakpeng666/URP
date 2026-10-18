@@ -573,6 +573,9 @@ def handler(session):
             except Exception as exc:self.answer(400,{'message':f'{type(exc).__name__}: {exc}'})
     return Handler
 
+from physical_session_lock import exclusive_physics
+
+@exclusive_physics
 def main():
     p=argparse.ArgumentParser();p.add_argument('--session-id',required=True);p.add_argument('--world',choices=['maze','warehouse','depot'],required=True)
     p.add_argument('--localization',choices=['ground_truth','amcl'],default='amcl')

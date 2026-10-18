@@ -485,8 +485,17 @@ def create_app(config: Config | None = None) -> FastAPI:
         return {'results': lab.fieldsim.results(run_id)}
 
     @app.get(f'{api}/fieldsim/results/{{session_id}}')
-    def fieldsim_result(session_id: str):
-        return lab.fieldsim.result(session_id)
+    def fieldsim_result(session_id: str, evidence: bool = False):
+        result = lab.fieldsim.result(session_id)
+        if evidence:
+            # The live panel needs the verdict, not megabytes of sampled trajectories.
+            # Keep the full endpoint unchanged for replay, download and independent checks.
+            keys = ('session_id', 'run_id', 'state', 'check', 'physics', 'physics_audit', 'physics_runtime',
+                    'truth_timing', 'energy', 'session_report')
+            result = {key: result.get(key) for key in keys}
+        # Already JSON-native evidence. Serialize in this worker, avoiding FastAPI's
+        # recursive encoder on the event loop while other clients control the session.
+        return JSONResponse(result, headers={'Cache-Control': 'no-store'})
 
     # ------------------------------------------------------- simulation --
     @app.get(f'{api}/sim/state')

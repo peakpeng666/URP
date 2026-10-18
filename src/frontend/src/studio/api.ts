@@ -136,6 +136,8 @@ export const studio = {
     call<{ results: FieldSimSummary[] }>('GET', `/fieldsim/results${run_id ? `?run_id=${encodeURIComponent(run_id)}` : ''}`),
   fieldsimResult: (sessionId: string, options: CallOptions = {}) =>
     call<SimResult>('GET', `/fieldsim/results/${encodeURIComponent(sessionId)}`, undefined, options),
+  fieldsimEvidence: (sessionId: string, options: CallOptions = {}) =>
+    call<SimResult>('GET', `/fieldsim/results/${encodeURIComponent(sessionId)}?evidence=true`, undefined, options),
   runRecord: (runId: string, options: CallOptions = {}) =>
     call<ExperimentRecordEnvelope>('GET', `/runs/${encodeURIComponent(runId)}/record`, undefined, { timeoutMs: 60_000, ...options }),
   runRecordText: (runId: string, options: CallOptions = {}) =>

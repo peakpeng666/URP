@@ -12,6 +12,7 @@ HAZARD_WINDOW = 2.2         # m: tighten this far ahead of a hazard-marked path 
 CORNER = 0.6                # rad: path turns sharper than this are driven to and turned in place
 CORNER_PASS = 0.15          # m: a corner counts as reached this close (along the path)
 PROGRESS_M = 2.0            # m: progress and cross-track error look this far along the path around the progress
+MAX_CONTROL_POSE_AGE_S = 0.10  # source simulation time; never drive from a delayed pose
 
 
 def wrap(a):
@@ -146,6 +147,10 @@ class Driver:
     def step(self, t_sim: float):
         """Returns (v, w) for this control tick."""
         if self.pose is None or self.state in ('done', 'failed', 'waiting'):
+            return 0.0, 0.0
+        if self.pose_stamp is not None and abs(t_sim - self.pose_stamp) > MAX_CONTROL_POSE_AGE_S:
+            # A live callback is not necessarily a current pose: queued DDS samples can
+            # be seconds behind /clock. Hold without crediting progress or service.
             return 0.0, 0.0
         x, y, yaw = self.pose
         if self.t_start is None:

@@ -41,7 +41,7 @@ from processes import OwnedProcesses  # noqa: E402
 from physics_runtime import audit as audit_physics_runtime, selection as physics_selection
 
 import rclpy  # noqa: E402
-from rclpy.parameter import Parameter  # noqa: E402
+from rclpy.executors import SingleThreadedExecutor  # noqa: E402
 from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy  # noqa: E402
 from rclpy.signals import SignalHandlerOptions  # noqa: E402
 from nav_msgs.msg import Odometry  # noqa: E402
@@ -127,6 +127,8 @@ class Session:
         self.drivers = [Driver(v, float(self.plan['speed_mps'])) for v in self.plan['vehicles']]
         self.plan_by_name = {v['name']: v for v in self.plan['vehicles']}
         self.clock = None
+        self.clock_stamp = None
+        self.input_generation = 0
         self.clock_wall = None
         self.clock_progress_wall = None
         self.truth_wall = {}
@@ -135,6 +137,7 @@ class Session:
                        'contacts': {d.name: 0 for d in self.drivers}}
         self.contact_wall = {}
         self.contacts, self.contact_examples = [], []
+        self.ground_contact_samples = []  # diagnostic probes only; never filtered into mission success
         self.control_traces = {d.name: [] for d in self.drivers}
         self.rigid_poses = {d.name: [] for d in self.drivers}
         self.odometry = {d.name: [] for d in self.drivers}
@@ -144,13 +147,18 @@ class Session:
         self.result = None
         self.execution_started = False
         rclpy.init(signal_handler_options=SignalHandlerOptions.NO)
-        self.node = rclpy.create_node('field_fleet_session', parameter_overrides=[Parameter('use_sim_time', value=True)])
+        # One authoritative /clock subscription. All scheduling and published stamps
+        # below use its source time explicitly; no duplicate TimeSource subscription.
+        self.node = rclpy.create_node('field_fleet_session')
+        self.executor = SingleThreadedExecutor()
+        self.executor.add_node(self.node)
         latched = QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE, durability=DurabilityPolicy.TRANSIENT_LOCAL)
-        # depth 200: at real_time_factor 4 the bridged 50 Hz truth bursts overflow a depth-5
-        # sensor queue and the record grows spurious gaps; verify rejects moving gaps > 0.25 s.
-        streaming = QoSProfile(depth=200, reliability=ReliabilityPolicy.BEST_EFFORT,
+        # These are experiment/control records, not disposable visualization samples.
+        # The bridge's reliable publishers support retransmission of local DDS bursts.
+        streaming = QoSProfile(depth=200, reliability=ReliabilityPolicy.RELIABLE,
                                 durability=DurabilityPolicy.VOLATILE)
-        self.node.create_subscription(Clock, '/clock', self.on_clock, streaming)
+        clock_qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
+        self.node.create_subscription(Clock, '/clock', self.on_clock, clock_qos)
         self.node.create_subscription(TFMessage, '/ground_truth/poses', self.on_truth, streaming)
         for d in self.drivers:
             self.node.create_subscription(Odometry, f'/{d.name}/odom',
@@ -170,6 +178,7 @@ class Session:
 
     # ------------------------------------------------------------ inputs --
     def on_clock(self, msg):
+        self.input_generation += 1
         value = msg.clock.sec + msg.clock.nanosec / 1e9
         wall = time.monotonic()
         if self.clock is not None and value < self.clock - 1e-6:
@@ -177,6 +186,7 @@ class Session:
         if self.clock is None or value > self.clock:
             self.clock_progress_wall = wall
         self.clock = value
+        self.clock_stamp = msg.clock
         self.counts['clock'] += 1
         if self.clock_wall:
             (c0, w0) = self.clock_wall
@@ -188,6 +198,7 @@ class Session:
         self.st['sim_time'] = round(self.clock, 2)
 
     def on_odom(self, name, msg):
+        self.input_generation += 1
         self.odom_wall[name] = time.monotonic()
         self.counts['odom'][name] += 1
         if self.st['phase'] == 'running':
@@ -196,10 +207,14 @@ class Session:
             self.odometry[name].append([stamp, p.x, p.y, yaw_of(q), msg.twist.twist.linear.x, msg.twist.twist.angular.z])
 
     def on_contacts(self, name, msg):
+        self.input_generation += 1
         self.contact_wall[name] = time.monotonic()
         self.counts['contacts'][name] += 1
         for contact in msg.contacts:
             pair = [contact.collision1.name, contact.collision2.name]
+            if self.plan.get('probe_ground_contacts') and self.st['phase'] == 'running' and any('ground::' in n for n in pair):
+                self.ground_contact_samples.append({'t_sim': msg.header.stamp.sec + msg.header.stamp.nanosec / 1e9,
+                    'collisions': pair, 'positions_m': [[p.x, p.y, p.z] for p in contact.positions]})
             if pair not in self.contact_examples and len(self.contact_examples) < 20:
                 self.contact_examples.append(pair)
             # Wheel/caster-ground contacts are expected; every other external contact is a failure.
@@ -214,6 +229,7 @@ class Session:
             raise RuntimeError('Gazebo 检测到非地面接触，停止全部车辆；时间、位置及碰撞体已记录')
 
     def on_truth(self, msg):
+        self.input_generation += 1
         names = {d.name: d for d in self.drivers}
         out = []
         for t in msg.transforms:
@@ -259,7 +275,15 @@ class Session:
         print(name, flush=True)
 
     def spin(self, seconds=0.02):
-        rclpy.spin_once(self.node, timeout_sec=seconds)
+        # Keep the node registered and drain ready callbacks before control. Repeated
+        # global spin_once registers/removes the node for every single callback.
+        self.executor.spin_once(timeout_sec=seconds)
+        deadline = time.monotonic() + .002
+        for _ in range(96):
+            before = self.input_generation
+            self.executor.spin_once(timeout_sec=0)
+            if self.input_generation == before or time.monotonic() >= deadline:
+                break
         if self.stop.is_set():
             raise KeyboardInterrupt
         with self.lock:
@@ -308,17 +332,30 @@ class Session:
         # Gazebo flushes its buffered stdout on exit.
         self.processes.start('gazebo', ['stdbuf', '-oL', '-eL', 'ign', 'gazebo', '-s', '-r', '-v', '3', self.plan['sdf']])
         self.st['components']['gazebo'] = 'running'
-        topics = ['/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock']
-        remaps = []
+        bridges = [dict(ros_topic_name='/clock', gz_topic_name='/clock',
+                        ros_type_name='rosgraph_msgs/msg/Clock', gz_type_name='ignition.msgs.Clock',
+                        direction='GZ_TO_ROS', publisher_queue=1)]
         for d in self.drivers:
-            topics += [f'/model/{d.name}/cmd_vel@geometry_msgs/msg/Twist]ignition.msgs.Twist',
-                       f'/model/{d.name}/pose@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V',
-                       f'/model/{d.name}/odometry@nav_msgs/msg/Odometry[ignition.msgs.Odometry',
-                       f'/model/{d.name}/contacts@ros_gz_interfaces/msg/Contacts[ignition.msgs.Contacts']
-            remaps += ['-r', f'/model/{d.name}/cmd_vel:=/{d.name}/cmd_vel', '-r', f'/model/{d.name}/odometry:=/{d.name}/odom']
-            remaps += ['-r', f'/model/{d.name}/pose:=/ground_truth/poses']
+            for topic, ros_topic, ros_type, gz_type, command in (
+                ('cmd_vel', f'/{d.name}/cmd_vel', 'geometry_msgs/msg/Twist', 'Twist', True),
+                ('pose', '/ground_truth/poses', 'tf2_msgs/msg/TFMessage', 'Pose_V', False),
+                ('odometry', f'/{d.name}/odom', 'nav_msgs/msg/Odometry', 'Odometry', False),
+                ('contacts', f'/model/{d.name}/contacts', 'ros_gz_interfaces/msg/Contacts', 'Contacts', False)):
+                bridges.append(dict(ros_topic_name=ros_topic, gz_topic_name=f'/model/{d.name}/{topic}',
+                                    ros_type_name=ros_type, gz_type_name='ignition.msgs.' + gz_type,
+                                    direction='ROS_TO_GZ' if command else 'GZ_TO_ROS',
+                                    publisher_queue=1 if command else 200, subscriber_queue=1 if command else 200))
+        # JSON is a YAML subset accepted by this installed ros_gz_bridge release.
+        # CLI topic arguments otherwise silently leave publishers at depth 10.
+        config = self.runtime / 'bridge-config.json'
+        save(config, bridges)
+        self.report['telemetry_contract'] = {'schema': 'urp.field-transport/1',
+            'clock': 'latest source /clock, depth 1; no duplicate clock subscription',
+            'records': 'reliable ROS subscription and bridge history depth 200; no intentional contact decimation',
+            'control_max_abs_pose_age_s': .10, 'bridges': bridges}
         bridge_env = self.bridge_env
-        self.processes.start('bridge', ['ros2', 'run', 'ros_gz_bridge', 'parameter_bridge', *topics, '--ros-args', *remaps], bridge_env)
+        self.processes.start('bridge', ['ros2', 'run', 'ros_gz_bridge', 'parameter_bridge', '--ros-args',
+                                       '-p', f'config_file:={config}'], bridge_env)
         self.st['components']['bridge'] = 'running'
         self.wait(lambda: self.clock is not None and all(d.pose is not None and d.name in self.odom_wall
                   and d.name in self.contact_wall for d in self.drivers), 90, 'Gazebo 时钟、车辆真值、里程计或接触传感器未就绪')
@@ -502,7 +539,7 @@ Window Geometry:
     def marker(self, ns, mid, mtype, color, **kw):
         m = Marker()
         m.header.frame_id = 'map'
-        m.header.stamp = self.node.get_clock().now().to_msg()
+        m.header.stamp = self.clock_stamp if self.clock_stamp is not None else Clock().clock
         m.ns, m.id, m.type, m.action = ns, mid, mtype, Marker.ADD
         m.pose.orientation.w = 1.0
         m.color = color
@@ -620,7 +657,8 @@ Window Geometry:
                     msg.linear.x, msg.angular.z = float(v), float(w)
                     self.cmd[d.name].publish(msg)
                     measured_cte = d.cte[-1] if len(d.cte) > previous_cte_count else None
-                    self.control_traces[d.name].append([t, d.s, measured_cte, v, w, d.state])
+                    self.control_traces[d.name].append([t, d.s, measured_cte, v, w, d.state,
+                                                       t - d.pose_stamp if d.pose_stamp is not None else None])
                     if d.pose is not None and (not d.trail or t - d.trail[-1][0] >= 0.5):
                         d.trail.append([round(t, 2), round(d.pose[0], 3), round(d.pose[1], 3), round(d.pose[2], 4)])
                 if sum(tk['state'] == 'reached' for d in self.drivers for tk in d.tasks) != self.task_version:
@@ -693,8 +731,9 @@ Window Geometry:
                       traffic={**self.plan.get('traffic', {}), 'events': self.traffic.events if self.traffic else []},
                       contacts=self.contacts, contact_examples=self.contact_examples,
                       control_traces=self.control_traces,
-                      control_trace_columns=['t_sim', 'path_s_m', 'cross_track_m', 'cmd_v_mps', 'cmd_w_radps', 'state'],
+                      control_trace_columns=['t_sim', 'path_s_m', 'cross_track_m', 'cmd_v_mps', 'cmd_w_radps', 'state', 'pose_age_s'],
                       truth_timing=self.truth_timing,
+                      telemetry_contract=self.report.get('telemetry_contract'),
                       replay_contract={'schema': 'urp.replay/1', 'clock': 'simulation_source_time',
                                        'source': 'Gazebo PosePublisher; ground truth',
                                        'max_interpolation_gap_s': 0.25,
@@ -748,6 +787,7 @@ Window Geometry:
             except Exception:  # noqa: BLE001 - shutting down anyway
                 pass
         try:
+            self.executor.shutdown()
             self.node.destroy_node()
             rclpy.shutdown()
         except Exception as exc:  # noqa: BLE001
@@ -850,6 +890,10 @@ def handler(session: Session):
     return Handler
 
 
+from physical_session_lock import exclusive_physics
+
+
+@exclusive_physics
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--runtime', required=True)

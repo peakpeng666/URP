@@ -146,6 +146,18 @@ def test_later_visit_to_same_position_is_not_served_at_start():
     assert d.tasks[0]['state'] == 'pending' and d.s == 0
 
 
+def test_delayed_truth_cannot_drive_or_credit_a_task_and_fresh_truth_resumes():
+    d = driver([task(1, xy=[1, 0], path_s=1)], path=[[0, 0], [1, 0], [2, 0]])
+    d.observe((0, 0, 0), 1.0)
+    assert d.step(1.02)[0] > 0
+    d.observe((1, 0, 0), 1.1)
+    assert d.step(1.3) == (0, 0)
+    assert d.tasks[0]['state'] == 'pending' and d.s == 0
+    d.observe((1, 0, 0), 1.32)
+    d.step(1.34)
+    assert d.tasks[0]['state'] == 'reached'
+
+
 def test_unreachable_service_is_not_projected_to_nearest_vertex():
     with pytest.raises(ValueError):
         driver([task(1, xy=[0, 20])])

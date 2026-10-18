@@ -2,7 +2,34 @@
 
 唯一使用入口为 [setup/README](../../README.md)。本报告按日期保留验收范围与原始证据；最新结论在最上方，历史通过不自动覆盖之后的模型或代码。迷宫巡检、仓库五任务、Fields2Cover 的限定闭环及 CVRP 学习原型评估见下方历史记录，不等于新车队功能、推荐增益或真实农业环境已验证。
 
-## 路径规划工作台前后端验收（2026-10-18，当前）
+## 里程计、物理一致性与 gzweb 验收（2026-10-18，当前）
+
+**结论：默认田间模型的轮式运动学与真实 Gazebo 轨迹已通过限定范围验证；gzweb 的断连竞态、销毁和本地 STL 加载问题已修复并实际操作复验。** 接手基线 `5e333297`，保留原工作台和 4100 入口。最新步骤只维护在 [setup/README](../../README.md)，本轮[结构化汇总](../../2026-10-18/physics-consistency/summary.json)和[源码指纹](../../2026-10-18/physics-consistency/source-fingerprints.json)对应本次验收；历史数据不回写为新版通过。
+
+旧圆柱接触模型在原地旋转中存在明显侧向擦滑及转角偏差。此次同协议开环对照中，参考转角 2.32 rad，圆柱接触实测约 2.683 rad、组合运动末端里程计偏差约 1.576 m；球面滚动参考约 2.318 rad、末端约 0.00309 m。改变圆柱接触宽度时偏差随之显著变化，原始接触点支持有限宽接触与理想差速运动学不一致这一解释，**不据此宣称已证明 DART 内部的唯一根因或完成真实轮胎标定**。[原模型对照](../../2026-10-18/physics-consistency/baseline/summary.json)、[接触宽度诊断](../../2026-10-18/physics-consistency/contact-diagnosis/summary.json)
+
+默认执行改为 `urp.field-diffdrive.rigid/5` 的球面滚动参考，沿用已安装官方 DiffDrive 示例的抽象。圆柱轮保留为显式诊断选项，不能放宽验收门槛。修正 v4 足迹遗漏球面轮外侧投影的问题：可视几何、碰撞几何、轮轴/轮距、惯量与冻结足迹一起核验；规划外接圆半径仍为 0.4882622 m。新结果必须匹配冻结计划的物理模型与 SDF 核验，删除模型、修改轮距或删除协议均会拒绝。里程计仅对齐首个共同姿态；全程最大位置误差须 ≤0.10 m、航向误差 ≤0.03 rad，采样缺口 ≤0.25 s，且里程计须覆盖完整真值观测区间。[篡改负对照](../../2026-10-18/physics-consistency/frozen-result-negative.json)
+
+gzweb 保持锁定 3.0.2，用仓库中的安装补丁和原始/结果 SHA256 保证可复现：改为按 WebSocket 帧顺序同步解码，旧 socket 和旧资源回调不再修改新会话；按字节解析 UTF-8 帧头；正确释放 renderer 与 controls；服务端绝对 STL 路径直接通过认证资源通道加载，并适配该版本实际返回的 Mesh/字节类型。页面显示资源数量、缺失/超时和真实连接错误，提供重新连接；没有屏蔽 console 或把失败改为成功。实时物理证据改用轻量接口，完整原始轨迹仍用于导出/回放：本次记录响应 **8,371,704 → 17,411 字节**；5 个并发证据请求与健康检查均完成，量测范围见[原始数据](../../2026-10-18/physics-consistency/ui-field-summary.json)。
+
+| 本轮验收 | 结果与证据 |
+|---|---|
+| 物理参考与敏感性 | **21 个标称/载荷试验通过**：4/2/1 ms、+20 kg、独立的更高直行速度/反向旋转/圆弧协议。3 个低摩擦和 2 个有效圆柱负对照均未通过无滑移一致性，不计为成功。[primary](../../2026-10-18/physics-consistency/reference-primary/summary.json)、[串行 holdout](../../2026-10-18/physics-consistency/reference-holdout-serial/summary.json)；最终数据通路另复验标称/载荷通过、圆柱负对照失败，[3 场明细](../../2026-10-18/physics-consistency/reference-transport-summary.json)，不并入 21 次计数 |
+| 正式页面相同冻结路径 | 同一 PyVRP `run_20261018T043004_829b68`：最终数据通路下 **8/8、297.81 m、363.34 s**，最大横向偏差 0.096 m；轮式里程计全轨迹最大偏差 **9.68 mm**，真值最大间隔 **0.02 s**。控制输入曾延迟，每车记录的 356 个超时效周期均发零指令；没有删除这些周期或调整实际用时。上轮同方案旧模型末端约 **27.051 m**。新会话物理、源时间、轨迹和关闭检查通过，rc=0、无所属残留。[最终结果与关闭](../../2026-10-18/physics-consistency/ui-transport-final.json)、[页面](../../2026-10-18/physics-consistency/ui-transport-completed.png)、[首次对照](../../2026-10-18/physics-consistency/ui-field-summary.json) |
+| 9 场真实集成与故障 | free、rows、supply、restart、web 成功；cancel 为 canceled/0；clock_stall、bridge_exit、实体接触为 failed/1。全部清理 PASS、无所属残留。网页桥真实消息与 RViz 开关也复验。[最终数据通路逐场摘要](../../2026-10-18/physics-consistency/live-transport-summary.json)、[日志](../../2026-10-18/physics-consistency/live-transport.log)；调整前 9 场保留在同目录 `live-summary.json` |
+| 正式页面 gzweb | 最终安装补丁下连续 5 次规划/仿真工作区切换，均重新连接并显示 **10/10 资源**，正常窗口无新增 console error。定向终止本会话可选网页桥，页面报连接失败；任务继续 8/8、有序关闭后重新启动恢复完整场景。网页桥进程收到 SIGTERM 后真实退出码为 0，其异常离线仍保留为警告，不宣称网页桥成功。[切换](../../2026-10-18/physics-consistency/ui-gz-delivery.json)、[故障关闭](../../2026-10-18/physics-consistency/ui-web-fault-close.json)、[恢复截图](../../2026-10-18/physics-consistency/ui-gz-recovery.png) |
+| 实验导出 | 正式按钮实际下载约 56.5 MB，包含同一冻结方案的 6 次执行及其中 2 次失败；导出 `record` 与 API 逐值一致，SHA256 重算相符。原始大包保留本机。[导出核对](../../2026-10-18/physics-consistency/ui-export-verification.json) |
+| 软件与工程 | 最终田间全量 **278 passed**（包含冻结模型准入和控制时效回归）。前端 **110 passed**，锁定安装、类型/生产构建通过；工程 **15 门禁通过**。[后端](../../2026-10-18/physics-consistency/backend-transport.log)、[串行验收命令与退出码](../../2026-10-18/physics-consistency/transport-verification.json)、[前端](../../2026-10-18/physics-consistency/frontend-delivery.log)、[工程](../../2026-10-18/physics-consistency/project-delivery/summary.json) |
+
+末轮网页恢复还暴露了真实数据通路问题：`field_c5568a` 最大真值缺口 0.32 s、横向偏差 1.135 m；首次可靠订阅调整的 `field_3878e4` 仍有 0.98 s 缺口，均保留 failed/1。后者的源时间保护将偏差限制在 0.108 m，但不能因此判作通过。约 21 秒剖析中，执行器调度占约 19 秒；发现重复时钟消费、桥接默认深度 10 与订阅深度 200 不匹配。最终使用唯一的最新源时钟、显式源时间 Marker、桥接/订阅配套的可靠历史及常驻执行器；超过 0.10 s 的控制姿态时差只发零指令、不推进任务，逐周期 `pose_age_s` 随完整轨迹保存。不抽稀接触检测数据、不放宽缺口验收。[初次失败](../../2026-10-18/physics-consistency/ui-recovery-failure.json)、[中间失败](../../2026-10-18/physics-consistency/ui-reliable-intermediate.json)、[剖析](../../2026-10-18/physics-consistency/callback-profile.txt)、[最终传输复验](../../2026-10-18/physics-consistency/ui-transport-final.json)。
+
+测试中的失败同样保留：曾提前启动第二批物理试验造成 `/clock` 串流，明确排除两条受影响记录，后续串行重跑。现在田间、TB4、开环探针在初始化 ROS 前共用内核文件锁，跨网关/运行目录也拒绝并发，进程退出自动释放；真实并发拒绝与崩溃释放已有回归。[排除说明](../../2026-10-18/physics-consistency/overlap-exclusion.json)、[真实拒绝](../../2026-10-18/physics-consistency/live-concurrent-rejected.log)。另一次工程检查与 `npm ci` 并发导致临时缺失 tsc，原失败保留于 `project-release/`，顺序重跑 `project-delivery/` 全部通过。错误工作目录和错误 npm 脚本调用的日志不计入通过。正式网关在收到 SIGINT 后有序清理，旧 shell 包装进程返回 130，不能写作 rc=0。
+
+**验证边界：** 当前是平地刚体、理想轮速伺服、真值定位和串行任务预约；球面滚动模型解决本合成差速平台的一致性，有限宽轮胎、可变形土壤、定位估计器、执行器力矩限制、真实能耗仍未校准。0.10 m/0.03 rad 是版本化仿真验收门槛，不是农业作业精度认证；采样轨迹检查也不扩大为连续时间安全证明。未重新验收 TB4 的全部路线或历史桥接退出压力计数。Three.js 重复导入/Clock 弃用及已有构建告警保留，未作零告警承诺。无外部付费、系统 Python/ROS/驱动改动或历史证据删除；用户原未提交文献与 PDF 工作原样保留。
+
+大型世界、完整轨迹和接触数据留在本机 `physics-consistency/{baseline,contact-diagnosis,reference-primary,reference-holdout,reference-holdout-serial,live}/` 与 `src/lab/runtime/fieldsim/`，Git 保存源码、测试、摘要、日志和截图。含临时会话密钥的原始 API 包保留于忽略目录，提交副本仅脱敏该字段；证据文件和原始大文件的散列见[证据索引](../../2026-10-18/physics-consistency/evidence-manifest.json)。
+
+## 路径规划工作台前后端验收（2026-10-18，前一轮）
 
 **结论：接续 KIMI 未完成的工作，现有 4100 工作台的编辑、求解比较、独立检查、真实执行、回放、导出与关闭流程已实测；保留限定模型范围。** 未另建前端或替换系统 Python。接手基线为 `4efc6771`，KIMI 的 20 个前端文件先保存为 `caf7120d`，再集成修复；原未提交文献/PDF 工作未覆盖或混入提交。后续使用仍只看 [setup/README](../../README.md)。结构化结论为 [summary.json](../../2026-10-18/planning-integration/summary.json)，源码指纹与证据索引同目录。
 

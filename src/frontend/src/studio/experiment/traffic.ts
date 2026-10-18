@@ -17,6 +17,7 @@ export interface TrafficEvidence {
       valid?: boolean;
       scope?: string;
       thresholds?: { max_sample_gap_s?: number };
+      odometry_contract?: { schema: string; max_position_error_m: number; max_yaw_error_rad: number } | null;
       vehicles?: {
         vehicle: string;
         truth_samples?: number;
@@ -26,6 +27,8 @@ export interface TrafficEvidence {
         odom_position_rmse_m?: number;
         odom_position_final_m?: number;
         odom_position_max_m?: number;
+        odom_yaw_max_rad?: number;
+        no_slip_consistent?: boolean | null;
       }[];
     };
   } | null;

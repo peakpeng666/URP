@@ -21,8 +21,11 @@ export function SessionEvidence({ result }: { result: SimResult }) {
         <span>源时间</span><b>{result.truth_timing?.scope ?? '历史记录未提供源时间证据'}</b>
         <span>采样质量</span><b>{gaps.length ? `最大真值间隔 ${fmt.num(Math.max(...gaps), 3)} s；动力学检查 ${evidenceState(dynamics?.valid)}` : '未知（不能按连续时间安全证明处理）'}</b>
         <span>轮式里程计漂移</span><b>{finalDrift.length ? `末端最大 ${fmt.num(Math.max(...finalDrift), 3)} m${maxDrift.length ? ` · 全轨迹最大 ${fmt.num(Math.max(...maxDrift), 3)} m` : ''}；只在首个共同姿态对齐` : '历史记录未提供'}</b>
+        <span>无滑移模型一致性</span><b>{dynamics?.odometry_contract
+          ? `${vehicles.length && vehicles.every(v => v.no_slip_consistent === true) ? '通过' : '未通过'}；位置 ≤ ${dynamics.odometry_contract.max_position_error_m} m，航向 ≤ ${dynamics.odometry_contract.max_yaw_error_rad} rad`
+          : '历史记录未门控，原始漂移保留'}</b>
       </div>
-      <p className={s.hint}>接触模型：{result.physics?.wheel_contact === 'tyre' ? '有限宽轮胎' : result.physics?.wheel_contact === 'sphere' ? '球面滚动对照' : '未记录，见原始假设'}；平地刚体、理想速度伺服与真值定位，不代表真实土壤 / 轮胎校准。采样检查不扩大为连续时间物理安全证明。</p>
+      <p className={s.hint}>接触模型：{result.physics?.wheel_contact === 'tyre' ? '圆柱接触（滑移诊断）' : result.physics?.wheel_contact === 'sphere' ? '球面滚动参考' : '未记录，见原始假设'}；平地刚体、理想速度伺服与真值定位，不代表真实土壤 / 轮胎校准。采样检查不扩大为连续时间物理安全证明。</p>
       {result.energy && <p className={s.hint}>能耗为后验纵向运动学代理，不是实测电耗。{fixedEnergy ? '本记录使用固定 0.2 s 滤波窗，仍未纳入电池和转向摩擦耗能。' : '历史版本存在停车尾段影响或缺少版本证据，不用于能效排序；历史值保留。'}</p>}
       <details>
         <summary>详细物理证据、假设与关闭报告</summary>
