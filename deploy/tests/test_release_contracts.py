@@ -137,14 +137,24 @@ class ImageSmokeTests(unittest.TestCase):
         (self.root / 'bin').mkdir()
         self.output = self.root / 'evidence'
         self.env = {**os.environ, 'PATH': str(self.root / 'bin') + os.pathsep + os.environ['PATH'],
-                    'GITHUB_SHA': SHA, 'MOCK_HEALTH': 'running healthy', 'COHORT_EXIT': '0'}
+                    'GITHUB_SHA': SHA, 'MOCK_HEALTH': 'running healthy', 'COHORT_EXIT': '0',
+                    'MOCK_STATE': str(self.root / 'docker-state'),
+                    'REQUEST_LOG': str(self.root / 'curl-requests'),
+                    'PORT_BEFORE': '31410', 'PORT_AFTER': '31410', 'RESTART_CURL_EXIT': '0',
+                    'RESTART_ARCHIVE_STATUS': 'ok', 'RESTART_INDEX_EMPTY': '0'}
         self.command('docker', '''#!/usr/bin/env python3
 import json, os, pathlib, sys
 args = sys.argv[1:]
+restarted = pathlib.Path(os.environ['MOCK_STATE']).exists()
 if args[:2] == ['image', 'inspect']:
     print(os.environ.get('LABEL_REVISION', os.environ['GITHUB_SHA']) if '--format' in args else '[]')
 elif args[0] == 'run': print('container-id')
-elif args[0] == 'port': print('127.0.0.1:31410')
+elif args[0] == 'port':
+    port = os.environ['PORT_AFTER' if restarted else 'PORT_BEFORE']
+    if port: print('127.0.0.1:' + port)
+elif args[0] == 'restart':
+    pathlib.Path(os.environ['MOCK_STATE']).write_text('restarted')
+    print('container-id')
 elif args[0] == 'inspect': print(os.environ['MOCK_HEALTH'] if '--format' in args else '[]')
 elif args[0] == 'cp':
     target = pathlib.Path(args[-1]); target.mkdir(exist_ok=True)
@@ -154,8 +164,23 @@ elif args[0] == 'exec':
     if '/opt/urp/deploy/check-cohort.py' in args: sys.exit(int(os.environ['COHORT_EXIT']))
 ''')
         self.command('curl', '''#!/usr/bin/env python3
-import os, pathlib, sys
+import os, pathlib, sys, urllib.parse
 args = sys.argv[1:]
+restarted = pathlib.Path(os.environ['MOCK_STATE']).exists()
+url = args[-1]
+with open(os.environ['REQUEST_LOG'], 'a') as out:
+    out.write(('restart ' if restarted else 'start ') + url + '\\n')
+expected_port = os.environ['PORT_AFTER' if restarted else 'PORT_BEFORE']
+if str(urllib.parse.urlsplit(url).port) != expected_port:
+    print('Mock connection refused: stale published port', file=sys.stderr)
+    sys.exit(7)
+if restarted and os.environ['RESTART_CURL_EXIT'] != '0':
+    sys.exit(int(os.environ['RESTART_CURL_EXIT']))
+if restarted and urllib.parse.urlsplit(url).path == '/api/health':
+    print('{"status":"' + os.environ['RESTART_ARCHIVE_STATUS'] + '"}')
+    sys.exit(0)
+if restarted and urllib.parse.urlsplit(url).path == '/' and os.environ['RESTART_INDEX_EMPTY'] == '1':
+    sys.exit(0)
 if '-X' in args:
     pathlib.Path(args[args.index('-o') + 1]).write_text('{"code":"shutdown_forbidden"}')
     print('403', end='')
@@ -186,6 +211,49 @@ else: print('<html>URP</html>')
     def test_revision_mismatch_fails(self):
         result = self.run_smoke(LABEL_REVISION='b' * 40)
         self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.output / 'summary.txt').exists())
+
+    def test_restart_uses_new_published_port_and_preserves_both_mappings(self):
+        result = self.run_smoke(PORT_BEFORE='32768', PORT_AFTER='32769')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.output / 'ports-start.txt').read_text().strip(), '127.0.0.1:32768')
+        self.assertEqual((self.output / 'ports-restart.txt').read_text().strip(), '127.0.0.1:32769')
+        self.assertEqual((self.output / 'endpoint-start.txt').read_text().strip(), 'http://127.0.0.1:32768')
+        self.assertEqual((self.output / 'endpoint-restart.txt').read_text().strip(), 'http://127.0.0.1:32769')
+        requests = (self.root / 'curl-requests').read_text().splitlines()
+        self.assertIn('start http://127.0.0.1:32768/lab/api/health', requests)
+        self.assertEqual([line for line in requests if line.startswith('restart ')],
+                         ['restart http://127.0.0.1:32769/lab/api/health',
+                          'restart http://127.0.0.1:32769/api/health',
+                          'restart http://127.0.0.1:32769/'])
+        self.assertTrue((self.output / 'summary.txt').is_file())
+        self.assertEqual(json.loads((self.output / 'archive-health-after-restart.json').read_text())['status'], 'ok')
+        self.assertTrue((self.output / 'index-after-restart.html').read_text())
+
+    def test_restart_without_mapping_fails_instead_of_reusing_cached_port(self):
+        result = self.run_smoke(PORT_AFTER='')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.output / 'summary.txt').exists())
+        self.assertFalse((self.output / 'endpoint-restart.txt').exists())
+        self.assertIn('Cannot determine published port', result.stderr)
+
+    def test_restart_endpoint_failure_is_not_ignored(self):
+        result = self.run_smoke(PORT_AFTER='32769', RESTART_CURL_EXIT='7')
+        self.assertEqual(result.returncode, 7)
+        self.assertEqual((self.output / 'exit-code.txt').read_text().strip(), '7')
+        self.assertFalse((self.output / 'summary.txt').exists())
+
+    def test_restart_gateway_health_does_not_hide_unhealthy_archive(self):
+        result = self.run_smoke(PORT_AFTER='32769', RESTART_ARCHIVE_STATUS='failed')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(json.loads((self.output / 'health-after-restart.json').read_text())['status'], 'ok')
+        self.assertEqual(json.loads((self.output / 'archive-health-after-restart.json').read_text())['status'], 'failed')
+        self.assertFalse((self.output / 'summary.txt').exists())
+
+    def test_restart_empty_homepage_is_not_accepted(self):
+        result = self.run_smoke(PORT_AFTER='32769', RESTART_INDEX_EMPTY='1')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual((self.output / 'index-after-restart.html').stat().st_size, 0)
         self.assertFalse((self.output / 'summary.txt').exists())
 
     def test_crashed_container_fails_without_success_summary(self):

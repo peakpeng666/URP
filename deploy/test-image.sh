@@ -28,9 +28,17 @@ docker image inspect "$image" >"$output/image.json"
 actual="$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' "$image")"
 [[ "$actual" == "$revision" ]] || { echo "Image revision mismatch: $actual" >&2; exit 1; }
 docker run -d --name "$container" -p 127.0.0.1::4100 "$image" >"$output/container-id.txt"
-port="$(docker port "$container" 4100/tcp | sed -n 's/^127\.0\.0\.1://p')"
-[[ "$port" =~ ^[0-9]+$ ]] || { echo 'Cannot determine published port' >&2; exit 1; }
-base="http://127.0.0.1:${port}"
+
+resolve_endpoint() {
+  local phase="$1" port
+  # Docker can reassign an ephemeral host port when the container restarts.
+  # Retain the actual mapping for each lifecycle phase instead of caching it.
+  docker port "$container" 4100/tcp >"$output/ports-${phase}.txt"
+  port="$(sed -n 's/^127\.0\.0\.1://p' "$output/ports-${phase}.txt")"
+  [[ "$port" =~ ^[0-9]+$ ]] || { echo 'Cannot determine published port' >&2; return 1; }
+  base="http://127.0.0.1:${port}"
+  printf '%s\n' "$base" >"$output/endpoint-${phase}.txt"
+}
 
 wait_healthy() {
   local status
@@ -44,6 +52,7 @@ wait_healthy() {
   return 1
 }
 wait_healthy
+resolve_endpoint start
 curl --fail --silent --show-error --max-time 10 "$base/lab/api/health" >"$output/health.json"
 python3 - "$output/health.json" <<'PY'
 import json, sys
@@ -85,10 +94,15 @@ if [[ "$kind" == sim ]]; then
 fi
 docker restart "$container" >"$output/restart.txt"
 wait_healthy
+resolve_endpoint restart
 curl --fail --silent --show-error --max-time 10 "$base/lab/api/health" >"$output/health-after-restart.json"
-python3 - "$output/health-after-restart.json" <<'PY'
+curl --fail --silent --show-error --max-time 10 "$base/api/health" >"$output/archive-health-after-restart.json"
+python3 - "$output/health-after-restart.json" "$output/archive-health-after-restart.json" <<'PY'
 import json, sys
-with open(sys.argv[1]) as stream:
-    assert json.load(stream)['status'] == 'ok'
+for path in sys.argv[1:]:
+    with open(path) as stream:
+        assert json.load(stream)['status'] == 'ok'
 PY
+curl --fail --silent --show-error --max-time 10 "$base/" >"$output/index-after-restart.html"
+test -s "$output/index-after-restart.html"
 printf 'PASS: %s revision %s (deployment smoke, not a formal experiment)\n' "$kind" "$revision" | tee "$output/summary.txt"
