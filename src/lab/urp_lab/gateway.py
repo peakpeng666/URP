@@ -25,7 +25,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from . import paths
 from . import events as sse
 from .events import EventBus, LogFollower
-from .jobs import JobManager, resolve_params
+from .jobs import JobManager, SourceChangedError, resolve_params
 from .services import ARCHIVE_PORT, SIM_PORT, ServiceError, ServiceManager
 from .simclient import SimClient
 from .store import Store
@@ -85,15 +85,19 @@ class Lab:
         self.dist = Path(config.dist or paths.FRONTEND_DIST)
         self.bus = EventBus()
         self.store = Store(self.runtime / 'lab.sqlite3')
-        self.jobs = JobManager(self.store, self.bus, concurrency=config.concurrency, grace_s=config.grace_s,
-                               command=config.worker_command)
-        self.services = ServiceManager(self.bus, port=config.port, runtime=self.runtime,
-                                       archive_url=config.archive_url, sim_port=config.sim_port, jobs=self.jobs)
-        self.sim = SimClient(self.store, self.bus, self.services)
-        from .fieldsim import FieldSimManager
-        self.fieldsim = FieldSimManager(self.store, self.services, self.runtime, port=config.field_sim_port)
-        from .studies import StudyManager
-        self.studies = StudyManager(self.store, self.jobs, self.bus)
+        try:
+            self.jobs = JobManager(self.store, self.bus, concurrency=config.concurrency, grace_s=config.grace_s,
+                                   command=config.worker_command)
+            self.services = ServiceManager(self.bus, port=config.port, runtime=self.runtime,
+                                           archive_url=config.archive_url, sim_port=config.sim_port, jobs=self.jobs)
+            self.sim = SimClient(self.store, self.bus, self.services)
+            from .fieldsim import FieldSimManager
+            self.fieldsim = FieldSimManager(self.store, self.services, self.runtime, port=config.field_sim_port)
+            from .studies import StudyManager
+            self.studies = StudyManager(self.store, self.jobs, self.bus)
+        except BaseException:
+            self.store.close()
+            raise
         self._catalog: tuple[float, list[dict]] | None = None
         self._catalog_lock = threading.Lock()
         self.shutdown_event = threading.Event()
@@ -110,13 +114,15 @@ class Lab:
                 log.exception('archive autostart failed')
 
     def shutdown(self):
-        self.jobs.shutdown()
-        self.fieldsim.shutdown()
-        self.services.shutdown()
-        self.sim.stop()
-        for run in self.store.active_sim_runs():
-            self.sim._finish_local(run, 'failed', '网关退出时仿真会话已关闭，执行中断')
-        self.store.close()
+        try:
+            self.jobs.shutdown()
+            self.fieldsim.shutdown()
+            self.services.shutdown()
+            self.sim.stop()
+            for run in self.store.active_sim_runs():
+                self.sim._finish_local(run, 'failed', '网关退出时仿真会话已关闭，执行中断')
+        finally:
+            self.store.close()
 
     def catalog(self) -> list[dict]:
         with self._catalog_lock:
@@ -459,6 +465,8 @@ def create_app(config: Config | None = None) -> FastAPI:
                 raise ApiError(400, 'invalid_params', str(exc)) from None
         try:
             job_id, run_ids = lab.jobs.submit(sc, instance, resolved, label)
+        except SourceChangedError as exc:
+            raise ApiError(409, 'source_changed', str(exc)) from None
         except RuntimeError as exc:
             raise ApiError(503, 'shutting_down', str(exc)) from None
         return {'job_id': job_id, 'runs': run_ids}

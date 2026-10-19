@@ -18,6 +18,7 @@ type WithAdvice = Solution & { recommendation_at_submission?: { advice?: Advice;
 const SELECTOR: Record<string, { text: string; tone: 'green' | 'gray' | 'orange' }> = {
   available: { text: '已接入', tone: 'green' }, unavailable: { text: '未接入', tone: 'orange' },
   not_applicable: { text: '不适用于此问题类型', tone: 'gray' }, out_of_scope: { text: '超出训练范围', tone: 'orange' },
+  out_of_profile: { text: '预算未匹配评估条件，使用规则', tone: 'orange' },
 };
 
 export function DecisionPanel() {

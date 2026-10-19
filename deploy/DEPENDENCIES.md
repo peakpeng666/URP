@@ -1,8 +1,8 @@
 # 依赖清单
 
-这份清单以仓库 `main` 里的锁文件和源码为准，不是笔记本上的 `pip freeze`。笔记本当时离线，没有采集现场环境。下面凡是仓库推不出来的项目，都列在文末「需要在主人笔记本上确认」。
+这份清单适用于 `deploy/` 的协作者构建，以仓库锁文件和源码为准，不是笔记本上的 `pip freeze`。旧 `setup/platform/` 整机快照另见 `setup/README.md`；两种发布不能混为同一环境。笔记本当时离线，没有采集现场环境。下面凡是仓库推不出来的项目，都列在文末「需要在主人笔记本上确认」。
 
-工作台有两套互不替换的 Python 环境，版本故意不同，安装时必须分开：
+工作台有两套互不替换的 Python 环境，解释器同为 3.12，依赖版本不同，安装时必须分开：
 
 | 环境 | 解释器 | 锁文件 | 用途 |
 |---|---|---|---|
@@ -253,7 +253,7 @@ Python 轮子是 manylinux 包，数值库的 `.so` 在轮子里。仿真的共�
 | `src/lab/vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl` | 不在 Git 里。主人路径 `/home/peakpeng/Desktop/URP/src/lab/vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl`。SHA256 `0fe53e459024b282be455b2a4bdbca3d93efa029539ff87c88c1105361344c19`。字节数由 `pack-assets.sh` 在笔记本上打印。快照里包含轮子的 `compiled-and-wheels` 组件未压缩 110540114 字节（150 个文件，不只这一个轮子）。 |
 | `setup/2026-10-15/deployment/runtime/ros-extras` | 不在 Git 里。Foxglove 与 rosx 的 deb 解包。`bash src/lab/ros/native/install-ros-extras.sh` 可以用 apt 重新下载。 |
 | `setup/2026-10-15/deployment/runtime/tf-repro/liburp_tf_buffer.so`、`runtime/liburp_gui_lifetime.so`、`src/lab/runtime/native/bridge/parameter_bridge` | 主人笔记本上的验收二进制。别的机器运行 `python3 deploy/record-sim-profiles.py` 生成自己的产物和 profile，不要复制这些文件来通过检查。 |
-| Fuel 模型缓存 | 不在 Git 里，也不进公开镜像或公开 Release。主人路径 `/home/peakpeng/Desktop/URP/setup/2026-10-15/cache/ignition-fuel`。快照组件 `fuel-cache.tar.zst`：197 个文件，未压缩 174825180 字节，压缩包 144263245 字节，SHA256 `ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d`。这份快照混有不可再分发的模型，不能上传。`maze` 不引用 Fuel。`warehouse` 与 `depot` 由使用者执行 `urp fuel`，从 `https://fuel.gazebosim.org` 下载到本机。 |
+| Fuel 模型缓存 | 不在 Git 里，不进入新的 `deploy/` 协作者镜像；旧平台快照 Release 仍列有此附件，见 `deploy/THIRD_PARTY.md` 的待核对项。主人路径 `/home/peakpeng/Desktop/URP/setup/2026-10-15/cache/ignition-fuel`。快照组件 `fuel-cache.tar.zst`：197 个文件，未压缩 174825180 字节，压缩包 144263245 字节，SHA256 `ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d`。这份快照混有 NC/ND 条款模型；新协作者构建不再打包混合缓存。旧公开附件的实际许可、署名及使用条件需单独核对，不能声称它不存在。`maze` 不引用 Fuel。`warehouse` 与 `depot` 由使用者执行 `urp fuel`，从 `https://fuel.gazebosim.org` 下载到本机。 |
 | CVRPLIB 实例正文 | 目录 JSON 在 `src/lab/urp_lab/library/data/cvrplib-catalog.json`。单题按需从 `https://galgos.inf.puc-rio.br/cvrplib` 下载到运行目录，无密钥。 |
 
 不要把 `data/bpp`（约 206 MB）或 `data/cifar-training` 打进工作台镜像。历史 BPP 页在数据未恢复时显示无历史数据，这是现有行为。
@@ -310,5 +310,5 @@ Python 轮子是 manylinux 包，数值库的 `.so` 在轮子里。仿真的共�
 3. 笔记本仿真是否实际用了 NVIDIA GPU 或 CUDA。源码没有 CUDA 调用；容器文档写的是软件渲染。
 4. 主人日常使用的 Node 补丁号和 npm 版本。仓库只约束 `>=22.12.0`，CI 只写大版本 24。这里选用 24.22.0。
 5. `--open` 所用 Chrome / Chromium 的版本。
-6. 主人 Fuel 缓存的字节是否仍等于快照 SHA256 `ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d`。各模型许可已按 Fuel API 核对，见上面一节；缓存本身不公开分发。
+6. 主人 Fuel 缓存的字节是否仍等于快照 SHA256 `ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d`。各模型许可已按 Fuel API 核对，见上面一节；新的协作者构建不分发该缓存；旧平台快照附件仍需单独核对。
 7. Fields2Cover 轮子的原始编译命令。manifest 已写明接手时轮子就在，不能声称从源码逐位重建。

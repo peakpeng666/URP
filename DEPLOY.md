@@ -2,6 +2,8 @@
 
 仓库 `peakpeng666/URP` 是公开的。镜像和 Release 附件也按公开来用。默认路径不登录、不提示令牌。
 
+本页的一键命令固定读取 `deploy` 分支，镜像标签为 `deploy`，不会自动包含当前 `main` 或其他交付分支的修改。使用前需核对对应构建和匿名拉取结果；仓库中存在安装脚本不等于当前镜像已经发布并验收。已存整机快照的具体版本与验收范围另见 [工作台使用说明](setup/README.md)，本次云端源码回归见 [交付核查](setup/2026-10-19/delivery-review/REPORT.md)。
+
 三条路，都包含 ROS 2 Humble 和 Gazebo Fortress。没有纯 Windows 路径。
 
 | 你的电脑 | 安装器怎么做 |

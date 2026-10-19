@@ -3,6 +3,21 @@ from pathlib import Path
 from urp_research.turn_modes import checker,solver,oracle,evaluate_candidate
 from urp_research.turn_modes.generate_data import fixtures,grid
 class Tests(unittest.TestCase):
+    def test_exact_solvers_reject_finite_fleet_limit(self):
+        inst=fixtures()[1]
+        unrestricted,table=solver.solve(inst,'mode')
+        self.assertEqual(unrestricted['status'],'optimal')
+        self.assertEqual(oracle.solve(inst)['status'],'optimal')
+        for limit in (0,1,2):
+            limited=copy.deepcopy(inst);limited['fleet_limit']=limit
+            for kind in ('mode','reset'):
+                with self.subTest(limit=limit,method=kind), self.assertRaisesRegex(ValueError,'fleet_limit'):
+                    solver.solve(limited,kind)
+            with self.subTest(limit=limit,method='subset_dp'), self.assertRaisesRegex(ValueError,'fleet_limit'):
+                solver.subset_dp(limited,table)
+            with self.subTest(limit=limit,method='oracle'), self.assertRaisesRegex(ValueError,'fleet_limit'):
+                oracle.solve(limited)
+
     def test_known_counterexample_and_infeasible(self):
         dead,cycle,free=fixtures()
         for inst,expected in ((dead,None),(cycle,3)):

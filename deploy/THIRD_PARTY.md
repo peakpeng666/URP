@@ -1,8 +1,20 @@
 # Third-party notices for the collaborator images
 
 Checked on 2026-10-19 from the upstream project pages and the Gazebo Fuel API.
-The public images install ROS packages from apt. They do not contain a Fuel
-cache, a Fields2Cover wheel, or a copy of the owner's laptop fuel-cache tarball.
+This notice describes the collaborator images built from `deploy/`. They install
+ROS packages from apt and exclude the Fuel cache and Fields2Cover wheel.
+It does not describe the older `setup/platform/` snapshot image.
+
+## Published snapshot exception requiring review
+
+As checked on 2026-10-19, the existing
+[platform-snapshot-20261018-ddb5113e Release](https://github.com/peakpeng666/URP/releases/tag/platform-snapshot-20261018-ddb5113e)
+still publishes `fuel-cache.tar.zst` (144,263,245 bytes), and its description
+states that the snapshot includes Fuel models and a Fields2Cover wheel.
+The exclusion policy below must not be read as a claim that these historical
+assets have been removed. The actual asset licenses, attribution, unchanged
+content and permitted uses must be checked before further redistribution.
+This documentation correction does not remove or replace any published asset.
 
 ## Allowed inside the published images
 
@@ -12,7 +24,7 @@ cache, a Fields2Cover wheel, or a copy of the owner's laptop fuel-cache tarball.
 | `ros-humble-foxglove-bridge` | `apt download` in `src/lab/ros/native/install-ros-extras.sh`, unpacked under the image's runtime prefix | MIT. Source: https://github.com/foxglove/ros-foxglove-bridge | Copyright and the MIT notice stay with the unpacked package. The image does not strip license files out of the deb. |
 | `ros-humble-rosx-introspection` | same apt unpack | MPL-2.0. Source: https://github.com/facontidavide/rosx_introspection | The deb is redistributable when this notice and the public source offer stay available. License files from the package are not removed. |
 
-## Not in the images and not in public Releases
+## Excluded from new collaborator images and their asset uploads
 
 | Piece | Terms seen on 2026-10-19 | Decision |
 |---|---|---|
@@ -25,4 +37,5 @@ cache, a Fields2Cover wheel, or a copy of the owner's laptop fuel-cache tarball.
 
 `maze` starts with the TurtleBot4 world that apt installs. It does not need Fuel.
 
-The owner's snapshot `fuel-cache.tar.zst` (SHA256 `ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d`) mixes the models above. Do not publish that tarball.
+The owner's snapshot `fuel-cache.tar.zst` (SHA256 `ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d`) mixes the models above. Do not include that mixed tarball in new collaborator releases. The older
+public snapshot listed above remains a separate review item.

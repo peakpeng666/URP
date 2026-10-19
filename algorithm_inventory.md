@@ -1,6 +1,10 @@
 # 算法库完整登记与 CVRP 适用范围
 
-当前新增统一执行候选为17个配置，不是17个独立算法家族。历史试验、当前适配、实际新运行三者分别记账。正式通过数以独立验解后的运行账本为准。
+**2026-10-19 当前状态。** 统一主计划的 17 个配置不是 17 个独立算法家族；[主计划](protocol/formal_plan.json)的 4505 个唯一终态已完成，独立重审为 4316 可行、189 无有效解，详见 [基线入口](experiments/baselines/cvrp/README.md)和 [归档重审](protocol/audits/20261017/README.md)。53 个问题来自 51 个底本，但不能把正式分母改为 51。主计划、[AILS-II/SISR vendor120](experiments/baselines/cvrp/evidence/vendor_all120_audit.json)、[接手验收 742 与旧/新各 48 项](experiments/baselines/cvrp/handoff/20261016-liyueying/核验与接手.md)分开记账；下方源码接入段落记录当时准备过程，不应再读作当前“待运行”。导师现状见 [2026-10-19 交付索引](docs/导师查看.md)。
+
+当前基线是描述性质量证据，不是跨硬件速度排名。cloud seed0 的 901 项具备归档 VERIFIED 主机链；cloud seed2 的 901 项有未 VERIFIED 的 host manifest，本机 2703 项有结果哈希绑定的 FROZEN resource manifest，却缺原汇总引用的主机/环境包装。**3604 项并非无数据或无效路线**；已验证同条件耗时统计需按 [重审](protocol/audits/20261017/README.md)降级。
+
+算法选择器不是第 18 个求解器。[当前冻结模型](src/lab/models/cvrp-knn-v1.json)对应另一批 train60/cal30/test30：PyVRP 对 OR-Tools 严格成本比较为 51胜9平、23胜7平、27胜3平，OR-Tools 严格更优 0 次，测试无相对固定 PyVRP 的选择收益。下表 `cvrp_selector_crc` 的早期离线回放不能替代这批 120 项实验。
 
 ## 立即可接入的算法配置
 
@@ -12,23 +16,23 @@ GA/PSO/DE为本轮新明确命名的CVRP教学适配，不冒充原连续优化�
 
 | ID | 家族/角色 | 状态 | CVRP适用 | 说明 |
 |---|---|---|---|---|
-| savings | Clarke-Wright construction | historical adapter restored; new batch status in run ledger | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
-| T | VND | historical adapter restored; new batch status in run ledger | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
-| TRS | VND | historical adapter restored; new batch status in run ledger | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
-| TSR | VND | historical adapter restored; new batch status in run ledger | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
-| pyvrp | ILS | historical adapter restored; new batch status in run ledger | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
-| nearest_neighbor | nearest-neighbor construction | restored and integer-adapted; operator audit passed | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
-| seeded_sweep | sweep construction | restored and integer-adapted; operator audit passed | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
-| savings_vnd | VND | restored and integer-adapted; operator audit passed | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
-| multistart_vnd | VND | restored and integer-adapted; operator audit passed | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
-| random_cheapest | fixed destroy-repair LNS | restored adapter; unified-budget testing pending | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
-| random_regret2 | fixed destroy-repair LNS | restored adapter; unified-budget testing pending | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
-| worst_cheapest | fixed destroy-repair LNS | restored adapter; unified-budget testing pending | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
-| worst_regret2 | fixed destroy-repair LNS | restored adapter; unified-budget testing pending | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
-| ortools_gls | guided local search | historical CVRP adapter recovered; integration owned by execution lane | True | Historical9.14.6206 PCI+GLS lambda0.1,18/18 valid official3-case calls; not just VRPTW. New batch separately measured. |
-| ga_random_keys | GA | implemented; Split independent audit1080 cases passed; unified batch pending | True | New transparent random-key+Split implementation, population20 fixed parameters. Not same code/results as historical continuous optimizer, no claim paper reproduction/HGS. Split optimal only for fixed ordering; reference https://arxiv.org/abs/1508.02759 |
-| pso_random_keys | PSO | implemented; Split independent audit1080 cases passed; unified batch pending | True | New transparent random-key+Split implementation, population20 fixed parameters. Not same code/results as historical continuous optimizer, no claim paper reproduction/HGS. Split optimal only for fixed ordering; reference https://arxiv.org/abs/1508.02759 |
-| de_random_keys | DE | implemented; Split independent audit1080 cases passed; unified batch pending | True | New transparent random-key+Split implementation, population20 fixed parameters. Not same code/results as historical continuous optimizer, no claim paper reproduction/HGS. Split optimal only for fixed ordering; reference https://arxiv.org/abs/1508.02759 |
+| savings | Clarke-Wright construction | 主4505已完成；见归档重审 | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
+| T | VND | 主4505已完成；见归档重审 | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
+| TRS | VND | 主4505已完成；见归档重审 | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
+| TSR | VND | 主4505已完成；见归档重审 | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
+| pyvrp | ILS | 主4505已完成；见归档重审 | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
+| nearest_neighbor | nearest-neighbor construction | 主4505已完成；见归档重审 | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
+| seeded_sweep | sweep construction | 主4505已完成；见归档重审 | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
+| savings_vnd | VND | 主4505已完成；见归档重审 | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
+| multistart_vnd | VND | 主4505已完成；见归档重审 | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
+| random_cheapest | fixed destroy-repair LNS | 主4505已完成；见归档重审 | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
+| random_regret2 | fixed destroy-repair LNS | 主4505已完成；见归档重审 | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
+| worst_cheapest | fixed destroy-repair LNS | 主4505已完成；见归档重审 | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
+| worst_regret2 | fixed destroy-repair LNS | 主4505已完成；见归档重审 | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
+| ortools_gls | guided local search | 主4505已完成；见归档重审 | True | Historical9.14.6206 PCI+GLS lambda0.1,18/18 valid official3-case calls; not just VRPTW. New batch separately measured. |
+| ga_random_keys | GA | 主4505已完成；Split 独立审计1080例通过 | True | New transparent random-key+Split implementation, population20 fixed parameters. Not same code/results as historical continuous optimizer, no claim paper reproduction/HGS. Split optimal only for fixed ordering; reference https://arxiv.org/abs/1508.02759 |
+| pso_random_keys | PSO | 主4505已完成；Split 独立审计1080例通过 | True | New transparent random-key+Split implementation, population20 fixed parameters. Not same code/results as historical continuous optimizer, no claim paper reproduction/HGS. Split optimal only for fixed ordering; reference https://arxiv.org/abs/1508.02759 |
+| de_random_keys | DE | 主4505已完成；Split 独立审计1080例通过 | True | New transparent random-key+Split implementation, population20 fixed parameters. Not same code/results as historical continuous optimizer, no claim paper reproduction/HGS. Split optimal only for fixed ordering; reference https://arxiv.org/abs/1508.02759 |
 | held_karp_capacity_partition | exact dynamic programming | historically tested; small cases only | True | Held-Karp+capacity subset DP exponential; validation oracle not large-scale general baseline. |
 | capacity_partition_pruning | capacity initialization | historically tested | False | Initializer/pruning component, not independently a full routing optimizer. Preserve construction-failure vs proven infeasible distinction. |
 | cvrp_selector_crc | algorithm selection | implemented/historical experiment | False | Chooses solvers; not another path solver; must not receive evaluation reference values. |
@@ -45,7 +49,7 @@ GA/PSO/DE为本轮新明确命名的CVRP教学适配，不冒充原连续优化�
 | direct_generated_route | LLM generated route | implemented or historical report; see evidence | False | Generated outputs/admission tests not a fixed reproducible baseline unless frozen code recovered. |
 | turn_service_modes | turn-aware service routing | implemented or historical report; see evidence | False | Synthetic turn-service mode solver/checker, not CVRP. |
 | parent_selection | evolution control | implemented or historical report; see evidence | False | Evolution parent selection is component/control method, not CVRP solver. |
-| vendor:AILS-II | ILS | compiled, technical checks passed, separate cohort frozen; formal pending | True | Seeded Java adapter, complete incumbent stream; X12 unrestricted scope, original internal route bound retained. |
+| vendor:AILS-II | ILS | 独立vendor120已完成并审计 | True | Seeded Java adapter, complete incumbent stream; X12 unrestricted scope, original internal route bound retained. |
 | vendor:ASlibScenario | algorithm selection dataset interface | source-only for this benchmark; no new run evidence | False | algorithm selection dataset interface |
 | vendor:ADAS | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
 | vendor:APE | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
@@ -118,14 +122,14 @@ GA/PSO/DE为本轮新明确命名的CVRP教学适配，不冒充原连续优化�
 | vendor:lavoir | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
 | vendor:laya | decision model | source-only for this benchmark; no new run evidence | False | decision model |
 | vendor:rl4co | neural routing framework | source-only for this benchmark; no new run evidence | True | Many environments/models; not one solver. Need selected pretrained model/checkpoint and CVRP adapter. |
-| vendor:open-source-sisr-routing | SISR/LNS | compiled, technical checks passed, separate cohort frozen; formal pending | True | Seeded C++20 adapter, original schedule; X12 unrestricted scope and integer metrics verified. |
+| vendor:open-source-sisr-routing | SISR/LNS | 独立vendor120已完成并审计 | True | Seeded C++20 adapter, original schedule; X12 unrestricted scope and integer metrics verified. |
 | vendor:online_as | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
 | vendor:typesafe-router | typed model routing | source-only for this benchmark; no new run evidence | False | typed model routing |
 
 ## 边界与下一步
 
-- 76个外部源码目录全数列入JSON，含逐文件路径；它们不是76项成功复现。
-- AILS-II和SISR是下一批成熟CVRP集成优先项；需要构建、种子控制、时间/可行解流适配再公平比较。DR-ALNS、RouteFinder、RL4CO还需冻结模型/检查点及尺度适配。
+- `src/repos/` 的登记有 76 个目录项，其中 `notes` 是资料目录；按是否把它计入“源码目录”，口径为 75 或 76，均不是成功复现数。详见 [外部代码目录](src/repos/README.md)。
+- AILS-II 和 SISR 已完成独立 vendor120 对照及验算，但其并发验算、预算与主计划不同，不能追加到 17 配置主分母或直接混比时间。DR-ALNS、RouteFinder、RL4CO 仍需另冻结模型/检查点及尺度适配。
 - HGS-CARP/HGS-TDCARP是弧路径问题；不能当成HGS-CVRP。当前树未定位独立HGS-CVRP实现，不以PyVRP0.14冒充。
 - NN/Sweep可能在车辆上限下无解，必须保留失败分母；多起点同预算内不保证每个起点都执行。
 - 旧报告/原源码快照保留，新增原始结果另存；不混用连续欧氏与EUC2D，不混用固定车数与标准CVRP。
@@ -143,15 +147,17 @@ GA/PSO/DE为本轮新明确命名的CVRP教学适配，不冒充原连续优化�
 
 随机键编码来源：[Bean 1994](https://doi.org/10.1287/ijoc.6.2.154)。这里借用编码思想，GA算子及参数以本工程冻结定义为准，不称Bean算法逐字复现。
 
-## Cohort B 源码接入核查（独立于已冻结17配置）
+## Cohort B 源码接入核查（历史准备记录，独立于已冻结17配置）
+
+以下是正式批次启动前的接入检查，保留当时的时态与问题；当前完成状态以上文及 vendor 审计为准。
 
 - AILS-II：已读Java入口、配置与Solution。-best参与提前停止，禁止传BKS；默认0不可被报告为已知最优值。默认new Random()未暴露种子；CLI只输出成本/进度，需完整路线输出与初始化incumbent。JRE21存在，javac当前不在PATH。适配前须检查全部随机源和车辆上下界，不替换算法本体。
 - SISR：16个CVRP源码/配置/许可证已恢复，Apache2许可。g++可用，cmake未在PATH，可直接等价编译。原构造以random_device初始化，CLI没有seed/deadline；只在完整迭代结束后saveJson。须添加透明种子及incumbent观测接口，保留原迭代温度日程；退出/计时由独立主管管理。ProblemInstance使用float中间dx/dy，需逐边验证与统一整数EUC2D一致，否则不能混入同一榜单。
 - 上述两个属于可适配成熟CVRP源码，不是“不适用”，也尚不能标为已经完成公平运行。编译及数值测试安排在正式17配置计时窗口外，不用背景重载污染算法时间比较。
 
 
-## Cohort B 技术验收更新
+## Cohort B 技术验收更新（历史准备记录）
 
-AILS-II与SISR均已编译，toy完整路线验证通过；全部12个X实例整数距离逐边验证一致。AILS首次toy越界保留，采用公开参数varphi=min(40,n)修复（X12不改变默认40）。现有JVM内置编译器模块，无需安装JDK。两者正式120槽另立cohort、尚未运行，不能与17项主批混写完成状态。
+AILS-II与SISR均已编译，toy完整路线验证通过；全部12个X实例整数距离逐边验证一致。AILS首次toy越界保留，采用公开参数varphi=min(40,n)修复（X12不改变默认40）。现有JVM内置编译器模块，无需安装JDK。技术验收当时 120 项尚未运行；截至 2026-10-19，120 项已独立完成并审计，仍不能与17项主批混写。
 
-Cohort B 已独立复核并冻结120行计划：seed0云端24行，seed1–4本地96行。正式执行由主批结束后的独立窗口安排；源码交付包不含二进制/JDK，具体命令见 cohort_b/README.md。此状态不等于正式120行已完成。
+Cohort B 已独立复核并冻结120行计划：seed0云端24行，seed1–4本地96行。其后正式120行已经完成，当前结果见 [vendor 审计](experiments/baselines/cvrp/evidence/vendor_all120_audit.json)；源码交付包不含二进制/JDK，具体命令见 [cohort_b/README.md](cohort_b/README.md)。

@@ -52,23 +52,50 @@ def test_learned_split_isolation():
 
 def test_learned_model_integrity_and_scope(tmp_path,monkeypatch):
     import json
-    from urp_lab import learned
-    sc=get_scenario('bench-cvrp-uniform-n20')
-    result=learned.recommend(sc,sc['instance'])
+    from urp_lab import learned, recommend
+    from urp_lab.scenarios.benchmark import cvrp_scenarios
+    scenarios={s['id']:s for s in cvrp_scenarios()}
+    sc=scenarios['bench-cvrp-uniform-n20']
+    result=learned.recommend(sc,sc['instance'],budget_s=.25)
     assert result['status']=='available' and result['evaluation']['test_n']==30
-    large=get_scenario('bench-cvrp-uniform-n200')
-    assert learned.recommend(large,large['instance'])['status']=='out_of_scope'
+    assert result['profile_match'] and result['budget_match'] and result['objective_match']
+    assert result['scope_metadata']['evaluated_objective']=='sum_unrounded_euclidean_distance'
+    assert result['scope_metadata']['evaluated_repetitions_per_algorithm']==2
+    assert '未经验证' in result['scope_metadata']['caveat'] or '不证明' in result['scope_metadata']['caveat']
+    unknown=learned.recommend(sc,sc['instance'])
+    assert unknown['status']=='out_of_profile' and unknown['budget_match'] is None and not unknown['profile_match']
+    assert unknown['prediction'] is None and unknown['evaluation']['test_n']==30
+    mismatch=learned.recommend(sc,sc['instance'],budget_s=3)
+    assert mismatch['status']=='out_of_profile' and mismatch['budget_match'] is False
+    rounded=copy.deepcopy(sc['instance']);rounded['objective']='sum_rounded_euclidean_distance'
+    rounded_result=learned.recommend(sc,rounded,budget_s=.25)
+    assert rounded_result['status']=='out_of_scope' and not rounded_result['objective_match']
+    assert rounded_result['prediction'] is None
+    wrong_fleet=copy.deepcopy(sc['instance']);wrong_fleet['fleet']='limited_vehicles'
+    assert learned.recommend(sc,wrong_fleet,budget_s=.25)['status']=='out_of_scope'
+    advice=recommend.recommend(sc,sc['instance'])
+    assert advice['policy']=='rules-v2' and advice['learned_selector']['status']=='out_of_profile'
+    assert recommend.recommend(sc,sc['instance'],budget_s=.25)['policy']=='knn-crc-local-v1'
+    assert recommend.recommend(sc,rounded,budget_s=.25)['policy']=='rules-v2'
+    large=scenarios['bench-cvrp-uniform-n200']
+    assert learned.recommend(large,large['instance'],budget_s=.25)['status']=='out_of_scope'
     document=json.loads(learned.MODEL.read_text());document['artifact']['model']['sbs']='tampered'
     model=tmp_path/'model.json';model.write_text(json.dumps(document));monkeypatch.setattr(learned,'MODEL',model)
-    assert learned.recommend(sc,sc['instance'])['status']=='unavailable'
+    assert learned.recommend(sc,sc['instance'],budget_s=.25)['status']=='unavailable'
     model.unlink()
-    assert learned.recommend(sc,sc['instance'])['status']=='unavailable'
+    assert learned.recommend(sc,sc['instance'],budget_s=.25)['status']=='unavailable'
 
 def test_pre_http_simulator_failure_is_visible(tmp_path,monkeypatch):
     import sys,time
     from fastapi.testclient import TestClient
     from urp_lab.gateway import create_app,Config
     app=create_app(Config(runtime=tmp_path,background=True,sim_port=4197,extra_hosts={'testserver'}))
+    # This is a process-exit propagation test, not a ROS world/asset acceptance.
+    # Freeze valid preflight parameters so a missing system ROS install cannot
+    # prevent the deliberately failing child from ever being started.
+    monkeypatch.setattr(app.state.lab.services,'sim_params',lambda body: {
+        'world':'maze','spawn':{'x':0.,'y':0.,'yaw':0.},
+        'gui':False,'rviz':False,'localization':'ground_truth'})
     monkeypatch.setattr(app.state.lab.services,'ros',lambda:{'state':'ready'})
     monkeypatch.setattr(app.state.lab.services,'sim_command',lambda *args:[sys.executable,'-c','raise SystemExit(7)'])
     with TestClient(app) as c:

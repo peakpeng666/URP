@@ -14,6 +14,11 @@ from urp_research.cvrp_selection.experiment import features, crc, route
 ALGOS = ['pyvrp.hgs','ortools.gls']
 MODEL = paths.LAB/'models/cvrp-knn-v1.json'
 BUDGET = .25
+EVALUATED_OBJECTIVE = 'sum_unrounded_euclidean_distance'
+EVALUATED_SCOPE = (
+    '合成 benchmark：均匀/聚簇生成，20/50/100 客户、容量 50、需求 1–10；'
+    '未取整欧氏总距离；每算法 0.25 s、2 次重复。分布、种子或重复次数外推未经验证'
+)
 
 
 def fit(records):
@@ -42,20 +47,43 @@ def build(records):
     return dict(model=model,gate=crc(predictions,.1),calibration_predictions=predictions)
 
 
-def recommend(scenario,instance):
+def recommend(scenario,instance,budget_s=None):
     if scenario['problem_class']!='euclidean_cvrp':return None
-    unavailable=dict(id='lab.cvrp.knn_crc.v1',status='unavailable',reason='本地训练及独立评估产物尚未生成',prediction=None,required=[str(MODEL)])
+    objective_match=instance.get('objective',EVALUATED_OBJECTIVE)==EVALUATED_OBJECTIVE
+    budget_match=(None if budget_s is None else
+                  type(budget_s) in (int,float) and math.isfinite(budget_s) and budget_s==BUDGET)
+    n=len(instance['demands'])-1
+    instance_match=(scenario['frame']['kind']=='benchmark' and n in (20,50,100) and
+                    len(instance.get('coordinates',[]))==len(instance['demands']) and
+                    instance['capacity']==50 and instance['demands'][0]==0 and
+                    all(1<=d<=10 for d in instance['demands'][1:]) and
+                    instance.get('depot',0)==0 and instance.get('fleet','unlimited_identical_vehicles')=='unlimited_identical_vehicles')
+    scope_metadata=dict(evaluated_objective=EVALUATED_OBJECTIVE,evaluated_budget_s=BUDGET,
+        evaluated_repetitions_per_algorithm=2,evaluated_pyvrp_seeds=[11,29],
+        evaluated_distribution='synthetic uniform/clustered benchmark; n=20/50/100; capacity=50; demands=1..10',
+        objective_match=objective_match,budget_match=budget_match,instance_match=instance_match,
+        profile_match=bool(objective_match and budget_match and instance_match),
+        caveat='profile_match只核对可见的实例合同、目标与预算；不证明种子、重复次数或分布相同，也不是跨域风险校准')
+    unavailable=dict(id='lab.cvrp.knn_crc.v1',status='unavailable',reason='本地训练及独立评估产物尚未生成',
+        prediction=None,required=[str(MODEL)],scope=EVALUATED_SCOPE,scope_metadata=scope_metadata,
+        objective_match=objective_match,budget_match=budget_match,profile_match=scope_metadata['profile_match'])
     if not MODEL.is_file():return unavailable
     try:
         document=json.loads(MODEL.read_text())
         if document['status']!='evaluated':return unavailable
         payload=json.dumps(document['artifact'],sort_keys=True,separators=(',',':')).encode()
         if hashlib.sha256(payload).hexdigest()!=document['artifact_sha256']:raise ValueError('模型指纹不匹配')
-        n=len(instance['demands'])-1
-        if scenario['frame']['kind']!='benchmark' or n not in (20,50,100) or instance['capacity']!=50 or any(d<1 or d>10 for d in instance['demands'][1:]):
-            return dict(unavailable,status='out_of_scope',reason='已训练原型仅评估无量纲欧氏 CVRP：20/50/100 客户、容量 50、需求 1–10；当前实例回退规则')
+        evaluated=dict(unavailable,model_sha256=document['artifact_sha256'],evaluation=document['evaluation'],budget_s=BUDGET,required=[])
+        if not instance_match:
+            return dict(evaluated,status='out_of_scope',reason='实例超出合成 benchmark 评估范围；当前回退规则')
+        if not objective_match:
+            return dict(evaluated,status='out_of_scope',reason='该学习原型仅评估未取整欧氏距离目标；当前目标回退规则')
+        if budget_match is not True:
+            reason=('未提供实际求解预算，不能将 0.25 s 评估外推到当前请求' if budget_match is None else
+                    '实际求解预算不同于 0.25 s 评估预算')
+            return dict(evaluated,status='out_of_profile',reason=reason+'；当前回退规则')
         p=predict(document['artifact']['model'],instance);selected,accepted=route(p,document['artifact']['gate'])
-        return dict(id='lab.cvrp.knn_crc.v1',status='available',reason='独立合成样本评估的实验原型；0.25 s/算法、2 次重复（PyVRP 种子 11/29，OR-Tools 未使用种子）。测试集全部回退 PyVRP，未证明推荐增益。历史研究数据未恢复。',
+        return dict(evaluated,status='available',reason='独立合成样本评估的实验原型；0.25 s/算法、2 次重复（PyVRP 种子 11/29，OR-Tools 未使用种子）。测试集全部回退 PyVRP，未证明推荐增益。种子、重复次数和分布外推未经验证。历史研究数据未恢复。',
             prediction=dict(**p,selected=selected,accepted_alternative=accepted),model_sha256=document['artifact_sha256'],
-            evaluation=document['evaluation'],budget_s=BUDGET,required=[],scope='均匀/聚簇生成分布；同规模参数不等于同分布，外推未经验证')
+            evaluation=document['evaluation'],budget_s=BUDGET,required=[])
     except Exception as exc:return dict(unavailable,reason='模型不可用：'+str(exc))

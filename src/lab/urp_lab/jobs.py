@@ -10,6 +10,7 @@ import math
 import os
 import queue
 import secrets
+import shutil
 import signal
 import subprocess
 import sys
@@ -30,6 +31,62 @@ DEFAULT_TIME_LIMIT_S = 60.0
 LOG_TAIL_BYTES = 4096
 FINAL = ('done', 'error', 'timeout', 'canceled')
 _RESULT_KEYS = ('status', 'objective', 'routes', 'check', 'map_check', 'raw_result', 'trace', 'planning', 'trace_contract')
+
+
+class SourceChangedError(RuntimeError):
+    """The accepted execution identity no longer matches this gateway/worker tree."""
+
+
+def _execution_files() -> list[Path]:
+    """First-party code/data reachable by Lab execution, not the large frozen vendor tree."""
+    roots = (paths.LAB / 'urp_lab', paths.RESEARCH_SRC / 'urp_research' / 'turn_modes',
+             paths.RESEARCH_SRC / 'urp_research' / 'cvrp_selection')
+    optional = (paths.LAB / 'models' / 'cvrp-knn-v1.json',
+                paths.FRONTEND_ROUTING / 'cvrp-solver.js',
+                paths.FRONTEND_ROUTING / 'cvrp-problem.js',
+                paths.RESEARCH_SRC / 'urp_research' / '__init__.py',
+                paths.LAB / 'pyproject.toml', paths.LAB / 'uv.lock')
+    if any(not root.is_dir() for root in roots):
+        raise SourceChangedError('Lab 或研究执行源码目录缺失；拒绝求解。')
+    # A missing learned model legitimately makes recommendation fall back to
+    # rules. Its absence is an identity value, not a gateway startup failure.
+    return sorted({p for root in roots for p in root.rglob('*.py')} | set(optional))
+
+
+def execution_manifest() -> dict:
+    """A small, exact first-party execution manifest, including the learned and JS paths."""
+    try:
+        files = {paths.rel(p): hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None
+                 for p in _execution_files()}
+    except OSError as exc:
+        raise SourceChangedError(f'无法核对 Lab 执行依赖：{exc}') from exc
+    packages = {}
+    for name in ('pyvrp', 'ortools', 'numpy', 'scipy', 'shapely'):
+        try:
+            packages[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            packages[name] = None
+    node = shutil.which('node')
+    if node:
+        try:
+            node_version = subprocess.run([node, '--version'], capture_output=True, text=True,
+                                          timeout=2, check=True).stdout.strip()
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise SourceChangedError(f'无法核对 Node 执行版本：{exc}') from exc
+    else:
+        node_version = None
+    identity = {'files': files, 'python': sys.version, 'python_executable': str(Path(sys.executable).absolute()),
+                'python_prefix': str(Path(sys.prefix).resolve()),
+                'packages': packages, 'node_executable': node, 'node_version': node_version}
+    digest = hashlib.sha256(json.dumps(identity, sort_keys=True, ensure_ascii=False,
+                                       separators=(',', ':')).encode()).hexdigest()
+    return {**identity, 'sha256': digest}
+
+
+# jobs is loaded with the gateway, whereas worker modules are later loaded in a
+# fresh process. Keep the gateway's import-time tree identity, not just a hash
+# first calculated after another request has already hot-changed a module.
+_GATEWAY_IMPORT_MANIFEST = execution_manifest()
 
 
 def new_id(prefix: str) -> str:
@@ -93,10 +150,13 @@ def wall_budget(params: dict, algorithm: dict, grace_s: float) -> float:
     return float(limit if limit is not None else DEFAULT_TIME_LIMIT_S) + grace_s
 
 
-def skeleton(job_id: str, scenario: dict, instance: dict, algorithm: dict, params: dict, label: str | None) -> dict:
+def skeleton(job_id: str, scenario: dict, instance: dict, algorithm: dict, params: dict, label: str | None,
+             source: dict | None = None) -> dict:
     from .recommend import recommend
+    source = source or execution_manifest()
     scenario = without_stale_reference(scenario, instance)
-    advice=recommend(scenario,instance)
+    advice = recommend(scenario, instance, budget_s=params.get('time_limit_s'))
+    learned = advice.get('learned_selector') or {}
     frame = scenario.get('frame') or {}
     cost_unit = scenario.get('cost_unit')
     snapshot = copy.deepcopy(scenario)
@@ -107,8 +167,10 @@ def skeleton(job_id: str, scenario: dict, instance: dict, algorithm: dict, param
         'problem_class': scenario['problem_class'], 'instance_sha256': instance_sha256(instance), 'planning': context(scenario, instance),
         'frame': copy.deepcopy(frame), 'cost_unit': cost_unit, 'instance': copy.deepcopy(instance), 'scenario_snapshot': snapshot,
         'reproducibility': {
-            'python': sys.version, 'packages': {name: importlib.metadata.version(name) for name in ('pyvrp','ortools','numpy','scipy','shapely')},
-            'source_sha256': {paths.rel(p): hashlib.sha256(p.read_bytes()).hexdigest() for folder in (paths.LAB/'urp_lab',paths.RESEARCH_SRC/'urp_research/turn_modes') for p in folder.rglob('*.py')},
+            'python': source['python'], 'packages': source['packages'],
+            'python_executable': source['python_executable'], 'python_prefix': source['python_prefix'],
+            'node_executable': source['node_executable'], 'node_version': source['node_version'],
+            'source_sha256': source['files'], 'execution_sha256': source['sha256'],
             'stopping_rule': '墙钟上限；固定种子不保证不同硬件/负载下得到逐位相同的元启发式结果',
             'seed_usage': algorithm.get('randomness', {}).get('note', '历史目录未声明；需核对适配器实现'),
         },
@@ -116,7 +178,8 @@ def skeleton(job_id: str, scenario: dict, instance: dict, algorithm: dict, param
                       'origin': algorithm.get('origin'), 'version': algorithm.get('version'), 'randomness': algorithm.get('randomness')},
         'params': params, 'state': 'queued', 'status': None,
         'recommendation_at_submission':dict(advice=advice,submitted_algorithm=algorithm['id'],
-            budget_matches_learned_profile=advice['policy']!='knn-crc-local-v1' or params.get('time_limit_s')==.25,
+            budget_matches_learned_profile=learned.get('budget_match') is True,
+            learned_profile_match=learned.get('profile_match') is True,
             note='提交时的建议快照；实际算法选择与预算以 algorithm / params 为准，不据此推断用户接受了建议'),
         'objective': {'value': None, 'unit': cost_unit, 'lower_bound': None},
         'routes': [], 'check': None, 'map_check': None,
@@ -187,7 +250,15 @@ class JobManager:
                  grace_s: float = GRACE_S, command: list[str] | None = None, recover: bool = True):
         self.store, self.bus = store, bus
         self.grace_s = grace_s
-        self.command = command or worker_command()
+        self._custom_command = command is not None
+        self.command = command if command is not None else worker_command()
+        # The default worker must use the gateway's *venv*, not merely the
+        # same underlying python binary (different venvs often symlink it).
+        default_venv_python = paths.LAB / '.venv' / 'bin' / 'python'
+        if not self._custom_command and default_venv_python.exists() and (
+                Path(sys.prefix).resolve() != (paths.LAB / '.venv').resolve()):
+            raise SourceChangedError('网关与默认求解 worker 使用不同 Python 环境；请用 src/lab/.venv 启动网关。')
+        self._worker_env_verified = not self._custom_command
         self.concurrency = concurrency or default_concurrency()
         self._queue: queue.Queue = queue.Queue()
         self._procs: dict[str, subprocess.Popen] = {}
@@ -196,8 +267,31 @@ class JobManager:
         self._lock = threading.Lock()
         self._stopping = False
         self._threads: list[threading.Thread] = []
+        self._source = _GATEWAY_IMPORT_MANIFEST
+        self._check_source()  # before _recover: a stale loaded gateway cannot claim new disk code
         if recover:
             self._recover()
+
+    def _check_source(self, expected: str | None = None) -> dict:
+        current = execution_manifest()
+        if current['sha256'] != self._source['sha256'] or (
+                expected is not None and current['sha256'] != expected):
+            raise SourceChangedError('Lab 执行源码、模型、JS 基线或依赖版本已改变；请重启网关后重新提交。')
+        return current
+
+    def _stamp_worker_identity(self, sol: dict):
+        repro = sol.setdefault('reproducibility', {})
+        repro['worker_command'] = [str(x) for x in self.command]
+        repro['worker_environment_verified'] = self._worker_env_verified
+        if not self._worker_env_verified:
+            # A test/override command is allowed, but the gateway's package
+            # versions must not masquerade as that child's environment.
+            repro['gateway_python'] = repro.get('python')
+            repro['gateway_packages'] = repro.get('packages')
+            repro['python'] = None
+            repro['packages'] = None
+            repro['python_executable'] = None
+            repro['python_prefix'] = None
 
     def _recover(self):
         for sol in self.store.active_runs():
@@ -228,14 +322,20 @@ class JobManager:
             raise RuntimeError('网关正在退出，不再接受求解任务')
         job_id = new_id('job')
         scenario = without_stale_reference(scenario, instance)
-        run_ids = []
+        source = self._check_source()
+        prepared = []
         from .assets.bindings import snapshot
         assets = snapshot(instance, problem_class=scenario['problem_class'])  # validate before any run is enqueued
         for algorithm, params in algorithms:
-            sol = skeleton(job_id, scenario, instance, algorithm, params, label)
+            sol = skeleton(job_id, scenario, instance, algorithm, params, label, source=source)
+            self._stamp_worker_identity(sol)
             sol['asset_snapshot'] = copy.deepcopy(assets)
             request = {'run_id': sol['run_id'], 'scenario': scenario, 'instance': instance,
                        'algorithm_id': algorithm['id'], 'params': params}
+            prepared.append((algorithm, params, sol, request))
+        self._check_source(source['sha256'])  # source changed during recommendation: save nothing
+        run_ids = []
+        for algorithm, params, sol, request in prepared:
             self._save(sol)
             with self._lock:
                 self._pending[sol['run_id']] = (sol, request)
@@ -263,6 +363,14 @@ class JobManager:
                 self._save(sol)
 
     def execute(self, sol: dict, request: dict, budget: float) -> dict:
+        if 'worker_environment_verified' not in (sol.get('reproducibility') or {}):
+            self._stamp_worker_identity(sol)
+        try:
+            self._check_source((sol.get('reproducibility') or {}).get('execution_sha256'))
+        except SourceChangedError as exc:
+            sol.update(state='error', error=f'执行前来源身份核对失败：{exc}', finished_utc=utc_now())
+            self._save(sol)
+            return sol
         sol['state'] = 'running'
         self._save(sol)
         t0 = time.monotonic()
@@ -296,6 +404,22 @@ class JobManager:
         (evidence / 'stderr.log').write_bytes(err)
         sol['process'] = {'returncode': proc.returncode, 'budget_s': budget, 'evidence': str(evidence)}
         self._finish(sol, proc.returncode, out, err, wall, budget, timed_out)
+        try:
+            self._check_source((sol.get('reproducibility') or {}).get('execution_sha256'))
+            sol['process']['source_identity_verified'] = True
+        except SourceChangedError as exc:
+            # Keep raw process evidence, but never certify a result from a tree
+            # that changed while the child was running.
+            sol.update(state='error', error=f'执行期间来源身份核对失败：{exc}')
+            sol['routes'] = []
+            sol['status'] = None
+            sol['check'] = None
+            sol['map_check'] = None
+            if isinstance(sol.get('objective'), dict):
+                sol['objective']['value'] = None
+            for key in ('cost', 'length', 'n_routes'):
+                sol['metrics'][key] = None
+            sol['process']['source_identity_verified'] = False
         self._save(sol)
         return sol
 
