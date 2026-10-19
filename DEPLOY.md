@@ -44,7 +44,7 @@ urp fuel      # 可选。从 fuel.gazebosim.org 下载 warehouse / depot 模型
 
 浏览器打开 http://localhost:4100/ 。健康检查 http://localhost:4100/lab/api/health 应返回 `"status":"ok"`。Foxglove 和 Gazebo WebSocket 在 `127.0.0.1:8765` 和 `127.0.0.1:9002`。
 
-不要使用 `network_mode: host`。DDS 使用 `setup/cyclonedds.xml`：关闭组播，只在 `lo` 上向 `localhost` 做单播发现，并保留 `ROS_LOCALHOST_ONLY=1`。不需要 `NET_ADMIN`。
+不要使用 `network_mode: host`。`ROS_LOCALHOST_ONLY=1` 让 CycloneDDS 只用 `lo`。`lo` 不能做组播，所以发现是单播，不需要 `NET_ADMIN`，也不添加 `239.255.0.0/16`。`setup/cyclonedds.xml` 只把自动参与者序号上限设为 99，供官方 TB4 启动使用。不要在这份 XML 里再写网卡或 Peer。
 
 只要规划、不要 ROS 时，在已经克隆的仓库里：
 
@@ -83,11 +83,11 @@ bash deploy/upload-assets.sh vYYYYMMDD
 git clone --depth 1 --filter=blob:none --sparse --branch deploy https://github.com/peakpeng666/URP.git
 ```
 
-然后排除 `src/repos`、`data/bpp`、`data/cifar-training`。Docker 路径只下载 compose 文件到 `~/.local/share/urp`（Windows 是 `%LOCALAPPDATA%\urp`）。
+然后排除 `src/repos`、`data/bpp`、`data/cifar-training`、`experiments`、`papers`、`literature`、`materials`。这些目录不是工作台启动所需要的，留着会把检出撑到数 GB。Docker 路径只下载 compose 文件到 `~/.local/share/urp`（Windows 是 `%LOCALAPPDATA%\urp`）。
 
 ## GPU
 
-镜像默认 `LIBGL_ALWAYS_SOFTWARE=1`。要用 NVIDIA：
+无界面的 Gazebo 仍会为传感器初始化 GLX。容器入口在没有 `DISPLAY` 时启动 `Xvfb :99`。已有桌面或 WSLg 显示时不替换。镜像默认 `LIBGL_ALWAYS_SOFTWARE=1`。要用 NVIDIA：
 
 ```sh
 URP_GPU=1 urp up

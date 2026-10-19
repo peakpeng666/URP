@@ -142,7 +142,11 @@ clone_src() {
       '/*' \
       '!/src/repos/' \
       '!/data/bpp/' \
-      '!/data/cifar-training/' >&2
+      '!/data/cifar-training/' \
+      '!/experiments/' \
+      '!/papers/' \
+      '!/literature/' \
+      '!/materials/' >&2
   fi
   printf '%s\n' "$src"
 }

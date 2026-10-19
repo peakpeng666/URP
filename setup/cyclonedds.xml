@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CycloneDDS xmlns="https://cdds.io/config">
   <Domain Id="any">
-    <General>
-      <!-- Docker Desktop and WSL2 do not deliver 239.255.0.0/16. Discovery is unicast on lo. -->
-      <AllowMulticast>false</AllowMulticast>
-      <Interfaces>
-        <NetworkInterface name="lo" priority="default" multicast="false"/>
-      </Interfaces>
-    </General>
     <Discovery>
       <!-- The official TB4 launch uses more than the default 10 DDS participants. -->
+      <!-- Do not add a NetworkInterface here. ROS_LOCALHOST_ONLY=1 already selects
+           lo, and lo is not multicast-capable, so discovery stays unicast.
+           A second interface entry fails with "the same interface may not be
+           selected twice". AllowMulticast plus a Peer also stopped nodes on
+           the same host from seeing each other. -->
       <MaxAutoParticipantIndex>99</MaxAutoParticipantIndex>
-      <Peers>
-        <Peer address="localhost"/>
-      </Peers>
     </Discovery>
   </Domain>
 </CycloneDDS>

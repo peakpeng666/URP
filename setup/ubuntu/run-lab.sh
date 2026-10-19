@@ -16,6 +16,14 @@ fi
 if [[ -f src/lab/runtime/native/bridge/profile.json ]]; then
   export URP_SIM_PROFILE=image
 fi
+# Gazebo server mode still opens GLX for sensors. A desktop or WSLg display is used
+# as-is. Headless machines get a private Xvfb screen.
+if [[ -z "${DISPLAY:-}" ]] && command -v Xvfb >/dev/null 2>&1; then
+  export DISPLAY=:99
+  if [[ ! -e /tmp/.X99-lock ]]; then
+    Xvfb :99 -screen 0 1280x1024x24 -nolisten tcp >>/tmp/xvfb.log 2>&1 &
+  fi
+fi
 if [[ "$wsl" -eq 1 ]]; then
   export URP_BIND_HOST=0.0.0.0
   export URP_FOXGLOVE_BIND=0.0.0.0

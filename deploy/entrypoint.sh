@@ -1,9 +1,15 @@
 #!/bin/bash
-# Container start. DDS discovery is unicast on lo (setup/cyclonedds.xml);
-# this script does not add a multicast route.
+# Container start. ROS_LOCALHOST_ONLY selects lo, which is not multicast-capable.
+# This script does not add a multicast route.
 set -euo pipefail
-mkdir -p /data/lab /data/archive /data/lab/matplotlib /home/urp
+mkdir -p /data/lab /data/archive /data/lab/matplotlib /home/urp \
+  /opt/urp/setup/2026-10-15/cache/ignition-fuel
 chown -R urp:urp /data /home/urp
+# Server-mode Gazebo still initializes GLX for sensors. Loopback has no X server.
+if [[ -z "${DISPLAY:-}" ]] && command -v Xvfb >/dev/null 2>&1; then
+  export DISPLAY=:99
+  Xvfb :99 -screen 0 1280x1024x24 -nolisten tcp >/tmp/xvfb.log 2>&1 &
+fi
 cd /opt/urp/src/lab
 if [[ "$(id -u)" -eq 0 ]]; then
   # setpriv keeps the root environment, including HOME=/root, which matplotlib cannot write.

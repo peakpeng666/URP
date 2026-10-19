@@ -18,6 +18,7 @@ ignition-fortress
 libignition-gazebo6-dev
 libgl1
 libgl1-mesa-dri
+xvfb
 cmake
 ninja-build
 g++

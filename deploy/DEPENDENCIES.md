@@ -226,7 +226,7 @@ Python 轮子是 manylinux 包，数值库的 `.so` 在轮子里。仿真的共�
 
 ## DDS
 
-`setup/profile.sh simulation` 设置 `ROS_LOCALHOST_ONLY=1` 和 `CYCLONEDDS_URI=file://setup/cyclonedds.xml`。这份 XML 关闭组播，把网卡限定为 `lo`，发现对端是 `localhost`。Docker Desktop 和 WSL2 都不依赖 `239.255.0.0/16`。
+`setup/profile.sh simulation` 设置 `ROS_LOCALHOST_ONLY=1` 和 `CYCLONEDDS_URI=file://setup/cyclonedds.xml`。`ROS_LOCALHOST_ONLY=1` 选择 `lo`，这条接口不能组播，发现因此是单播。XML 只把 `MaxAutoParticipantIndex` 设为 99。不要在 XML 里再写 `NetworkInterface` 或 `Peer`：再写一次 `lo` 会报 “the same interface may not be selected twice”，再写 `AllowMulticast` 加 `Peer` 会让同一台机器上的节点互相看不见。Docker Desktop 和 WSL2 都不依赖 `239.255.0.0/16`。
 
 ## 桥接与覆盖指纹
 
