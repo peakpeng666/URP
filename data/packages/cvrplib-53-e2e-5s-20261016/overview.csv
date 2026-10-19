@@ -1,0 +1,6 @@
+﻿algorithm,scheduled,feasible_valid,success_rate,complete_cases,mean_case_gap_percent_complete_only,median_case_gap_percent_complete_only,statuses
+savings,53,53,1.0,53,24.278383,8.320726,"{""OK"": 53}"
+T,53,53,1.0,53,23.529709,7.564297,"{""OK"": 53}"
+TRS,53,53,1.0,53,13.393074,7.029703,"{""OK"": 52, ""TIMEOUT_WITH_FEASIBLE_INCUMBENT"": 1}"
+TSR,53,53,1.0,53,11.847302,7.029703,"{""OK"": 53}"
+pyvrp,530,530,1.0,53,0.312573,0.01638,"{""TIMEOUT_WITH_FEASIBLE_INCUMBENT"": 530}"

@@ -1,0 +1,113 @@
+{
+  "batches": {
+    "group_r1_20261009": {
+      "calls": 48,
+      "valid": 48,
+      "mean_reference_gap_percent": 0.14874690080787073,
+      "median_of_instance_means": 0.0,
+      "median_of_seed_gaps": 0.0
+    },
+    "bridge_20261016": {
+      "calls": 48,
+      "valid": 48,
+      "mean_reference_gap_percent": 0.0752071983356571,
+      "median_of_instance_means": 0.0,
+      "median_of_seed_gaps": 0.0
+    }
+  },
+  "identical_costs": 41,
+  "cost_differences": [
+    {
+      "instance_id": "A-n61-k9",
+      "seed": 0,
+      "old_cost": 1036,
+      "new_cost": 1034,
+      "old_gap_percent": 0.19342359767891681,
+      "new_gap_percent": 0.0,
+      "old_iterations": 2500,
+      "new_iterations": 4109,
+      "old_solver_loop_runtime": 1.0003085839998676,
+      "new_solver_loop_runtime": 1.0001846640000167,
+      "payload_sha256_equal": true
+    },
+    {
+      "instance_id": "A-n61-k9",
+      "seed": 1,
+      "old_cost": 1041,
+      "new_cost": 1035,
+      "old_gap_percent": 0.6769825918762089,
+      "new_gap_percent": 0.09671179883945841,
+      "old_iterations": 2337,
+      "new_iterations": 4287,
+      "old_solver_loop_runtime": 1.000561322995054,
+      "new_solver_loop_runtime": 1.0000657719999992,
+      "payload_sha256_equal": true
+    },
+    {
+      "instance_id": "A-n61-k9",
+      "seed": 2,
+      "old_cost": 1043,
+      "new_cost": 1034,
+      "old_gap_percent": 0.8704061895551257,
+      "new_gap_percent": 0.0,
+      "old_iterations": 2520,
+      "new_iterations": 4101,
+      "old_solver_loop_runtime": 1.000110663997475,
+      "new_solver_loop_runtime": 1.000160956000002,
+      "payload_sha256_equal": true
+    },
+    {
+      "instance_id": "A-n69-k9",
+      "seed": 2,
+      "old_cost": 1167,
+      "new_cost": 1159,
+      "old_gap_percent": 0.6902502157031924,
+      "new_gap_percent": 0.0,
+      "old_iterations": 2461,
+      "new_iterations": 3788,
+      "old_solver_loop_runtime": 1.000158046001161,
+      "new_solver_loop_runtime": 1.0002302240000063,
+      "payload_sha256_equal": true
+    },
+    {
+      "instance_id": "B-n63-k10",
+      "seed": 0,
+      "old_cost": 1506,
+      "new_cost": 1497,
+      "old_gap_percent": 0.6684491978609626,
+      "new_gap_percent": 0.06684491978609626,
+      "old_iterations": 2400,
+      "new_iterations": 3932,
+      "old_solver_loop_runtime": 1.000506709999172,
+      "new_solver_loop_runtime": 1.000743835999998,
+      "payload_sha256_equal": true
+    },
+    {
+      "instance_id": "P-n55-k7",
+      "seed": 1,
+      "old_cost": 570,
+      "new_cost": 568,
+      "old_gap_percent": 0.352112676056338,
+      "new_gap_percent": 0.0,
+      "old_iterations": 2257,
+      "new_iterations": 3848,
+      "old_solver_loop_runtime": 1.0001733479948598,
+      "new_solver_loop_runtime": 1.0000575560000016,
+      "payload_sha256_equal": true
+    },
+    {
+      "instance_id": "P-n70-k10",
+      "seed": 1,
+      "old_cost": 830,
+      "new_cost": 828,
+      "old_gap_percent": 0.36275695284159615,
+      "new_gap_percent": 0.12091898428053205,
+      "old_iterations": 2539,
+      "new_iterations": 4336,
+      "old_solver_loop_runtime": 1.0001511049995315,
+      "new_solver_loop_runtime": 1.0001219290000165,
+      "payload_sha256_equal": true
+    }
+  ],
+  "historical_tsr_mean": 11.992317722371023
+}

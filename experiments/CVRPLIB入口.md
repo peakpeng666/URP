@@ -2,6 +2,8 @@
 
 更新：2026年10月14日。状态：运行前验收通过，VND来源已闭环；正式实验计划尚未冻结，正式53例多种子比较尚未启动。
 
+2026-10-19 补充：上面两句仍是 2026-10-14 运行前验收入口，不改写成 G5 已签收。后来的冻结计划与 17 配置结果在 [protocol/formal_plan.json](../protocol/formal_plan.json) 和 [baselines/cvrp](baselines/cvrp/README.md)。李月莹 2026-10-16 的 5 算法补做是验收口径，核验见 [handoff/20261016-liyueying](baselines/cvrp/handoff/20261016-liyueying/核验与接手.md)。5 秒端到端和 1 秒搜索循环分开存放。
+
 ## 当前结果
 
 - 99项核心回归在最终测试夹具上连续三轮通过，另有主任务第四轮复核；15项独立故障检查通过。

@@ -2,6 +2,10 @@
 
 唯一使用入口为 [setup/README](../../README.md)。本报告按日期保留验收范围与原始证据；最新结论在最上方，历史通过不自动覆盖之后的模型或代码。迷宫巡检、仓库五任务、Fields2Cover 的限定闭环及 CVRP 学习原型评估见下方历史记录，不等于新车队功能、推荐增益或真实农业环境已验证。
 
+## 基线补做归档（2026-10-19）
+
+本段只记录数值基线交接的入库与独立复算，不替代下方的部署验收，也不签收 G5。李月莹 2026-10-16 交接包已按原校验和放入 `experiments/results/路线求解/李月莹_基线补做_20261016.zip`。独立复算：53 例 5 秒端到端 742/742，16 例 1 秒搜索循环两批各 48/48。两套计时分开。工作台在 `#/jobs?tab=archives` 与算法实验面板分别显示。细节与未完成项见 [核验与接手](../../../experiments/baselines/cvrp/handoff/20261016-liyueying/核验与接手.md)。
+
 ## GitHub 完整平台恢复与容器验收（2026-10-18，当前部署交付）
 
 **已发布完整环境和原始数据，并提供 `bash setup/run.sh reproduce --acceptance` 单一恢复入口。** 使用 Linux x86_64、本地 Docker Engine（本轮 29.9.0）和 Python 3，从 GitHub 拉取后自动下载、校验、载入并启动 4100；停止、重启及原始文件恢复只维护在 [setup/README](../../README.md)。[公开 Release](https://github.com/peakpeng666/URP/releases/tag/platform-snapshot-20261018-ddb5113e)、[结构化汇总](../../2026-10-18/platform-snapshot/summary.json)。源码基线为 `ddb5113e`；仅增加容器入口、归档/恢复工具和无桌面验收选项，没有改规划器、控制器或前端。

@@ -54,6 +54,12 @@ export interface ExperimentSummary {
   status: string;
   domain: string;
   routing?: unknown;
+  notes?: string[];
+  parameters?: {
+    timing_scope?: string;
+    headline?: string;
+    do_not_merge_with?: string;
+  };
 }
 
 export interface RouteScene {

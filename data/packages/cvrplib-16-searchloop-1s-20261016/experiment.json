@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "id": "cvrplib-16-searchloop-1s-20261016",
+  "title": "CVRPLIB 16 例同协议两批（1 秒搜索循环）",
+  "domain": "CVRP",
+  "kind": "cvrplib_search_loop_bridge",
+  "status": "completed",
+  "started_at": "2026-10-16T13:13:48.257590+00:00",
+  "finished_at": "2026-10-16T13:14:44.996472+00:00",
+  "counts": [
+    {
+      "unit": "call",
+      "value": 48,
+      "scope": "batch_group_r1_20261009",
+      "note": "owner r1 raw stdout, byte-identical in this handoff"
+    },
+    {
+      "unit": "call",
+      "value": 48,
+      "scope": "batch_bridge_20261016",
+      "note": "fresh-process bridge; same inputs, seeds and MaxRuntime"
+    },
+    {
+      "unit": "identical_cost_pair",
+      "value": 41,
+      "scope": "same_instance_same_seed",
+      "note": "7 costs differ; new batch is not a sixth seed"
+    }
+  ],
+  "failure_reason": null,
+  "failures": [],
+  "notes": [
+    "同协议两批并列（不是 6 个独立种子）：原 r1 批平均 gap 0.148747%，新批 0.075207%；41/48 同成本。计时是搜索循环 MaxRuntime(1.0)，不含启动。",
+    "两批使用相同的 seed 0/1/2，按批次并列。比较键的 cohort 不同，接口不会把它们并成 6 个独立种子。",
+    "1 秒是 PyVRP ILS 的 MaxRuntime，从搜索循环内的停止回调计时，不含启动、导入和建模。不能与 5 秒端到端墙钟合成。",
+    "历史 TSR 使用另一套算法和预算，只作解质量参照，比较键与这两批不同。",
+    "7 个成本差都出在墙钟停止之后：同一 payload 哈希、同一 PyVRP 0.14.0、搜索循环都约 1.000 秒，新批迭代更多。协议已写明墙钟停止不保证逐位相同。"
+  ],
+  "parameters": {
+    "timing_scope": "1s_search_loop",
+    "headline": "同协议两批并列（不是 6 个独立种子）：原 r1 批平均 gap 0.148747%，新批 0.075207%；41/48 同成本。计时是搜索循环 MaxRuntime(1.0)，不含启动。",
+    "do_not_merge_with": "cvrplib-53-e2e-5s-20261016",
+    "batches_are_not_six_independent_seeds": true,
+    "repo_commit_of_bridge_driver_inputs": "50b3b2c2cc7377e1f13dcaeebce09abf5619dbf8",
+    "pyvrp": "0.14.0",
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "g5_formal_batch": false
+  },
+  "provenance": {
+    "who": "李月莹",
+    "handoff_note": "交接说明.md",
+    "recorded_unix_home": "/home/blair/urp_baseline_v2",
+    "results_root": "/home/blair/urp_baseline_v2_results",
+    "home_directory_is_a_path_in_the_freeze_not_a_second_author_name": true,
+    "frozen_utc": "2026-10-16T04:19:15.251156+00:00",
+    "bridge_started_utc": "2026-10-16T13:13:48.257590+00:00",
+    "bridge_finished_utc": "2026-10-16T13:14:44.996472+00:00",
+    "r1_finished_utc": "2026-10-09T00:16:38.360802+00:00",
+    "repo_commit": "50b3b2c2cc7377e1f13dcaeebce09abf5619dbf8",
+    "repository_source_modified": false,
+    "pyvrp": "0.14.0",
+    "python": "3.12.3",
+    "package_sha256": "a45238ff7430302002dcd68ea5eaa9d006b71a542a897a99f1201a41ae258876",
+    "package_bytes": 12386339,
+    "package_entries": 2519,
+    "zip_relative_path": "experiments/results/路线求解/李月莹_基线补做_20261016.zip",
+    "purpose": "acceptance_only",
+    "g5_formal_batch": false
+  },
+  "artifacts": [
+    {
+      "id": "independent-scores",
+      "path": "independent_scores.json",
+      "media_type": "application/json"
+    },
+    {
+      "id": "her-summary",
+      "path": "汇总.json",
+      "media_type": "application/json"
+    },
+    {
+      "id": "per-instance",
+      "path": "逐例拼接_16行.csv",
+      "media_type": "text/csv"
+    },
+    {
+      "id": "per-call",
+      "path": "逐次拼接_96行.csv",
+      "media_type": "text/csv"
+    },
+    {
+      "id": "provenance",
+      "path": "provenance.json",
+      "media_type": "application/json"
+    }
+  ],
+  "metrics": [
+    {
+      "id": "batch-r1-mean-gap",
+      "label": "原 r1 批 16 例等权平均 reference gap",
+      "algorithm": "pyvrp",
+      "value": 0.14874690080787073,
+      "comparison": {
+        "metric": "mean_reference_gap_percent",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "batch_group_r1_20261009",
+        "protocol": "archived_r1_inputs_pyvrp_0.14.0_default_ILS_seeds_0_1_2_fresh_process",
+        "budget": "1s_search_loop_MaxRuntime_excludes_startup_import_model",
+        "aggregation": "mean_of_per_instance_mean_of_seeds_0_1_2",
+        "reference": "repo_cvrplib_cases_json_verified_sol_not_proved_optimal"
+      },
+      "source": {
+        "artifact_id": "independent-scores",
+        "locator": "/batches/group_r1_20261009/mean_reference_gap_percent"
+      }
+    },
+    {
+      "id": "batch-r1-median-gap",
+      "label": "原 r1 批实例平均 gap 的中位数",
+      "algorithm": "pyvrp",
+      "value": 0.0,
+      "comparison": {
+        "metric": "median_of_instance_mean_reference_gap_percent",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "batch_group_r1_20261009",
+        "protocol": "archived_r1_inputs_pyvrp_0.14.0_default_ILS_seeds_0_1_2_fresh_process",
+        "budget": "1s_search_loop_MaxRuntime_excludes_startup_import_model",
+        "aggregation": "median_of_16_instance_means",
+        "reference": "repo_cvrplib_cases_json_verified_sol_not_proved_optimal"
+      },
+      "source": {
+        "artifact_id": "independent-scores",
+        "locator": "/batches/group_r1_20261009/median_of_instance_means"
+      }
+    },
+    {
+      "id": "batch-bridge-mean-gap",
+      "label": "2026-10-16 新批 16 例等权平均 reference gap",
+      "algorithm": "pyvrp",
+      "value": 0.0752071983356571,
+      "comparison": {
+        "metric": "mean_reference_gap_percent",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "batch_bridge_20261016",
+        "protocol": "archived_r1_inputs_pyvrp_0.14.0_default_ILS_seeds_0_1_2_fresh_process",
+        "budget": "1s_search_loop_MaxRuntime_excludes_startup_import_model",
+        "aggregation": "mean_of_per_instance_mean_of_seeds_0_1_2",
+        "reference": "repo_cvrplib_cases_json_verified_sol_not_proved_optimal"
+      },
+      "source": {
+        "artifact_id": "independent-scores",
+        "locator": "/batches/bridge_20261016/mean_reference_gap_percent"
+      }
+    },
+    {
+      "id": "batch-bridge-median-gap",
+      "label": "新批实例平均 gap 的中位数",
+      "algorithm": "pyvrp",
+      "value": 0.0,
+      "comparison": {
+        "metric": "median_of_instance_mean_reference_gap_percent",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "batch_bridge_20261016",
+        "protocol": "archived_r1_inputs_pyvrp_0.14.0_default_ILS_seeds_0_1_2_fresh_process",
+        "budget": "1s_search_loop_MaxRuntime_excludes_startup_import_model",
+        "aggregation": "median_of_16_instance_means",
+        "reference": "repo_cvrplib_cases_json_verified_sol_not_proved_optimal"
+      },
+      "source": {
+        "artifact_id": "independent-scores",
+        "locator": "/batches/bridge_20261016/median_of_instance_means"
+      }
+    },
+    {
+      "id": "historical-tsr-mean-gap",
+      "label": "历史 TSR 16 例平均 reference gap（质量参照）",
+      "algorithm": "historical_TSR",
+      "value": 11.992317722371023,
+      "comparison": {
+        "metric": "mean_reference_gap_percent",
+        "unit": "%",
+        "direction": "min",
+        "cohort": "historical_tsr_16_quality_reference",
+        "protocol": "historical_TSR_different_algorithm_and_budget_quality_reference_only",
+        "budget": "not_the_1s_pyvrp_search_loop",
+        "aggregation": "mean_of_per_instance_historical_tsr_gap",
+        "reference": "repo_cvrplib_cases_json_verified_sol_not_proved_optimal"
+      },
+      "source": {
+        "artifact_id": "her-summary",
+        "locator": "/historical_TSR_mean_reference_gap_percent"
+      }
+    }
+  ]
+}

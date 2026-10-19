@@ -1,0 +1,16 @@
+﻿size_stratum,algorithm,cases,scheduled,feasible_valid,complete_cases,mean_case_gap_percent_complete_only
+small,savings,41,41,41,41,29.250306
+small,T,41,41,41,41,28.400179
+small,TRS,41,41,41,41,15.44982
+small,TSR,41,41,41,41,13.43686
+small,pyvrp,41,410,410,41,0.102548
+medium,savings,6,6,6,6,6.721134
+medium,T,6,6,6,6,6.357941
+medium,TRS,6,6,6,6,5.88883
+medium,TSR,6,6,6,6,5.904746
+medium,pyvrp,6,60,60,6,0.592548
+large,savings,6,6,6,6,7.860824
+large,T,6,6,6,6,7.419934
+large,TRS,6,6,6,6,6.842886
+large,TSR,6,6,6,6,6.927878
+large,pyvrp,6,60,60,6,1.467771

@@ -133,10 +133,24 @@ class StartupPathTests(unittest.TestCase):
             result = subprocess.run(['bash', str(ROOT / 'src/start.sh'), 'backend'], cwd=caller,
                                     env=env, text=True, capture_output=True, timeout=10)
             self.assertEqual(result.returncode, 0, result.stderr)
-            captured = json.loads(result.stdout)
-            self.assertEqual(captured['cwd'], str(ROOT / 'src/backend'))
-            self.assertEqual(captured['args'][:4],
-                             ['-m', 'backend', '--db', str(caller / 'state/custom.sqlite3')])
+            # backend imports packages, then replaces itself with serve. Both use the
+            # interpreter and database resolved before the directory change.
+            captured = [json.loads(line) for line in result.stdout.splitlines() if line.strip()]
+            self.assertEqual(len(captured), 2, result.stdout)
+            database = str((caller / 'state/custom.sqlite3').resolve())
+            package_root = (ROOT / 'data/packages').resolve()
+            for invocation in captured:
+                self.assertEqual(invocation['cwd'], str(ROOT / 'src/backend'))
+                self.assertEqual(invocation['args'][:4], ['-m', 'backend', '--db', database])
+            bootstrap, serve = captured
+            self.assertEqual(bootstrap['args'][4], 'bootstrap')
+            self.assertEqual(
+                Path(bootstrap['args'][bootstrap['args'].index('--package-root') + 1]).resolve(),
+                package_root)
+            self.assertEqual(serve['args'][4], 'serve')
+            self.assertEqual(
+                Path(serve['args'][serve['args'].index('--import-root') + 1]).resolve(),
+                package_root)
 
     def test_default_database_stays_local_when_historical_archive_appears(self):
         with tempfile.TemporaryDirectory() as temporary:

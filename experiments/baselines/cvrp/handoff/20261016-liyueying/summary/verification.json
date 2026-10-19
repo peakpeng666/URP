@@ -1,0 +1,11 @@
+{
+  "planned": 742,
+  "journal_entries": 742,
+  "scored": 742,
+  "valid_feasible": 742,
+  "interrupted_no_result": 0,
+  "run_registry_claims": 742,
+  "all_saved_hashes_match": true,
+  "source_and_manifest_match": true,
+  "pre_run_schedule_and_driver_match": true
+}

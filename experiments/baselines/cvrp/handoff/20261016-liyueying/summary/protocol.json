@@ -1,0 +1,44 @@
+{
+  "repo_url": "https://github.com/peakpeng666/URP",
+  "repo_commit": "50b3b2c2cc7377e1f13dcaeebce09abf5619dbf8",
+  "manifest_sha256": "84aef977eae1112dfdd8f5c280cbd6f45bb66b2b325335e5257cce1fb8ebf5df",
+  "solver_source_sha256_values": [
+    "32b7deaacb6f6bef2b7943214217aa47e557b804e36a5ab6be3b93f9bc53b09f"
+  ],
+  "platforms": [
+    "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  ],
+  "cpu_model": "13th Gen Intel Core i7-13650HX (WSL2)",
+  "python": "3.12.3",
+  "pyvrp": "0.14.0",
+  "budget_seconds": 5,
+  "budget_scope": "Linux supervisor wall time from before worker serialization/process launch through checkpoint receipt",
+  "algorithms": [
+    "savings",
+    "T",
+    "TRS",
+    "TSR",
+    "pyvrp"
+  ],
+  "deterministic_seeds": [
+    0
+  ],
+  "pyvrp_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "case_count": 53,
+  "scheduled_calls": 742,
+  "fleet": "Non-X fixed K; X original unlimited-fleet semantics, K=n_customers, fixed cost 0",
+  "metric": "EUC_2D integer per-edge ROUND_HALF_UP as original CLI and independent score",
+  "run_registry": "work\\formal_baseline_v2\\run_registry",
+  "source_tree_modified": false
+}
