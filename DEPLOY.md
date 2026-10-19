@@ -148,6 +148,24 @@ docker compose -f deploy/docker-compose.sim.yml -f deploy/docker-compose.sim-bui
 | 指纹不符 | 镜像里应已有 profile。源码被改过才会拒绝 |
 | Ubuntu 不是 22.04 | 没有 Docker 时安装器会停。Humble 只装在 22.04 |
 
+## RViz 和 Gazebo 窗口
+
+两条会话都会在你打开窗口时启动本机程序，浏览器里的 Foxglove 不代替它们：
+
+| 会话 | 命令 |
+|---|---|
+| TB4 | `rviz2 -d src/lab/ros/workbench.rviz`。配置使用 `rviz_default_plugins`（地图、激光、路径、机器人模型、TF）和 `nav2_rviz_plugins`（Navigation 2、粒子云、目标点）。Gazebo 窗口是 `ign gazebo -g --gui-config` 指向 TurtleBot4 的 `gui/standard/gui.config`，并加上 `turtlebot4_ignition_gui_plugins` 与 `irobot_create_ignition_plugins`。 |
+| 田间 | `rviz2` 读取当场生成的 `field.rviz`（`rviz_default_plugins` 的俯视、标记和 TF）。Gazebo 窗口是 `ign gazebo -g`。 |
+
+默认的一条命令不带 `rviz`。面板或 `POST /lab/api/sim/rviz`（田间是 `POST /lab/api/fieldsim/window`）才会拉起窗口。历史验收 `setup/2026-10-15/deployment/nav-smoke.py --rviz` 打开的是 `ros2 launch turtlebot4_viz view_robot.launch.py`，配置 `robot.rviz` 用的也是上面两组插件。仓库里的启动脚本不调用 `rqt`。镜像里有 `rqt` 可执行文件和 `rqt_gui`、`rqt_robot_monitor`，因为 ROS 包依赖它们，但没有入口去打开它们。
+
+| 路径 | RViz 会不会出现在你的屏幕上 |
+|---|---|
+| A. Docker，默认 | 不出现。容器用 Xvfb 只给 Gazebo 传感器提供 GL。浏览器看 Foxglove `ws://127.0.0.1:8765` 和 Gazebo `ws://127.0.0.1:9002`。 |
+| A. Docker，要看见窗口 | 在有显示的 Linux 上，或在已经有 WSLg 的 WSL 发行版里执行 Docker：`URP_DISPLAY=1 urp up`。这把 `/tmp/.X11-unix` 挂进容器，并把 `DISPLAY` 传进去。Windows PowerShell 直接调用的 Docker 看不到 WSLg 的套接字，那种情况请在 Ubuntu 22.04 发行版里执行上面的命令。 |
+| B. WSL2 + WSLg | 会打开。`setup/ubuntu/run-lab.sh` 发现已有 `DISPLAY` 就用它，不改成 Xvfb。在面板里打开 RViz 后，窗口出现在 Windows 桌面。没有 WSLg、`DISPLAY` 为空时，才用 Xvfb，窗口不可见。 |
+| C. 原生 Ubuntu | 会打开。脚本不设置 `LIBGL_ALWAYS_SOFTWARE`，已安装的 GPU 驱动直接画到本机 `DISPLAY`。 |
+
 ## 仿真怎么试
 
 工作台起来之后，TB4 用官方 `maze`（无 GUI）：

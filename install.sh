@@ -64,6 +64,7 @@ fetch_compose() {
   mkdir -p "$STATE/deploy"
   curl -fsSL "${RAW}/deploy/docker-compose.sim.yml" -o "$STATE/deploy/docker-compose.sim.yml"
   curl -fsSL "${RAW}/deploy/docker-compose.gpu.yml" -o "$STATE/deploy/docker-compose.gpu.yml"
+  curl -fsSL "${RAW}/deploy/docker-compose.display.yml" -o "$STATE/deploy/docker-compose.display.yml"
   curl -fsSL "${RAW}/deploy/docker-compose.fuel.yml" -o "$STATE/deploy/docker-compose.fuel.yml"
   curl -fsSL "${RAW}/deploy/fetch-fuel.sh" -o "$STATE/deploy/fetch-fuel.sh"
   chmod 755 "$STATE/deploy/fetch-fuel.sh"
@@ -77,6 +78,10 @@ compose_files() {
   local -a files=(-f "$STATE/deploy/docker-compose.sim.yml")
   if [[ "${URP_GPU:-0}" == "1" && -f "$STATE/deploy/docker-compose.gpu.yml" ]]; then
     files+=(-f "$STATE/deploy/docker-compose.gpu.yml")
+  fi
+  if [[ "${URP_DISPLAY:-0}" == "1" && -f "$STATE/deploy/docker-compose.display.yml" ]]; then
+    files+=(-f "$STATE/deploy/docker-compose.display.yml")
+    export DISPLAY="${DISPLAY:-:0}"
   fi
   if [[ -d "${URP_FUEL_DIR:-$STATE/fuel}/fuel.gazebosim.org" ]]; then
     files+=(-f "$STATE/deploy/docker-compose.fuel.yml")

@@ -39,7 +39,7 @@ function Test-DockerEngine {
 
 function Get-ComposeFile {
     New-Item -ItemType Directory -Force -Path (Join-Path $State 'deploy') | Out-Null
-    $names = @('docker-compose.sim.yml', 'docker-compose.gpu.yml', 'docker-compose.fuel.yml')
+    $names = @('docker-compose.sim.yml', 'docker-compose.gpu.yml', 'docker-compose.fuel.yml', 'docker-compose.display.yml')
     foreach ($name in $names) {
         $out = Join-Path $State "deploy\$name"
         Invoke-WebRequest -UseBasicParsing -Uri "$Raw/deploy/$name" -OutFile $out
@@ -63,6 +63,7 @@ function Invoke-Compose {
     param([string[]]$ComposeArgs)
     $files = @('-f', (Join-Path $State 'deploy\docker-compose.sim.yml'))
     if ($env:URP_GPU -eq '1') { $files += @('-f', (Join-Path $State 'deploy\docker-compose.gpu.yml')) }
+    if ($env:URP_DISPLAY -eq '1') { $files += @('-f', (Join-Path $State 'deploy\docker-compose.display.yml')) }
     $fuel = if ($env:URP_FUEL_DIR) { $env:URP_FUEL_DIR } else { Join-Path $State 'fuel' }
     if (Test-Path (Join-Path $fuel 'fuel.gazebosim.org')) {
         $env:URP_FUEL_DIR = $fuel

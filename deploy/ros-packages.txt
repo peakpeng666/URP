@@ -12,6 +12,9 @@ ros-humble-nav2-bringup
 ros-humble-ros-gz-bridge
 ros-humble-ros-gz-interfaces
 ros-humble-rviz2
+ros-humble-rviz-default-plugins
+ros-humble-nav2-rviz-plugins
+ros-humble-turtlebot4-viz
 ros-humble-foxglove-bridge
 ros-humble-xacro
 ignition-fortress

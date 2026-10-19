@@ -214,7 +214,7 @@ zustand@5.0.15
 | `ros-humble-turtlebot4-navigation` | 官方地图与 Nav2 参数 |
 | `ros-humble-nav2-bringup` | Nav2 |
 | `ros-humble-ros-gz-bridge` | `parameter_bridge` |
-| `ros-humble-rviz2` | 可选窗口 |
+| `ros-humble-rviz2`、`ros-humble-rviz-default-plugins`、`ros-humble-nav2-rviz-plugins`、`ros-humble-turtlebot4-viz` | 面板打开 RViz 时执行 `rviz2 -d src/lab/ros/workbench.rviz`（TB4）或会话写出的 `field.rviz`（田间）。这两份配置和官方 `turtlebot4_viz/rviz/robot.rviz` 都只用 `rviz_default_plugins` 与 `nav2_rviz_plugins`。默认启动不打开窗口。Gazebo 窗口用 `turtlebot4_ignition_gui_plugins` 与 `irobot_create_ignition_plugins`，随 `turtlebot4_ignition_bringup` 安装。 |
 | `ros-humble-foxglove-bridge` | 浏览器 ROS 视图。笔记本上的路径是 `bash src/lab/ros/native/install-ros-extras.sh`，用 `apt download` 把 `ros-humble-foxglove-bridge` 和 `ros-humble-rosx-introspection` 解到仓库内，不改 `/opt/ros` |
 | `ros-humble-xacro` | 车体 URDF |
 | `ignition-fortress` | `ign gazebo` |
