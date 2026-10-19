@@ -3,7 +3,7 @@ name: URP engineering checks
 on:
   pull_request:
   push:
-    branches: [main, cvrp-baselines, 'optimize/**']
+    branches: [main, cvrp-baselines, redo, 'optimize/**']
   workflow_dispatch:
 
 permissions:
