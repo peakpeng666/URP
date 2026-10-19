@@ -3,8 +3,9 @@ name: URP engineering checks
 on:
   pull_request:
   push:
-    branches: [main, cvrp-baselines, redo, 'optimize/**']
+    branches: [main, cvrp-baselines, redo, deploy, 'optimize/**']
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -81,3 +82,79 @@ jobs:
           path: .local-state/ci
           include-hidden-files: true
           if-no-files-found: warn
+
+
+  deployment-contracts:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            deploy
+            setup/ubuntu
+            cohort_b/ails
+            cohort_b/sisr
+            src/research
+      - name: Install native build and archive-test prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends openjdk-17-jdk-headless g++ zstd
+      - name: Check installer and publication contracts
+        run: |
+          for file in install.sh deploy/*.sh setup/ubuntu/*.sh; do bash -n "$file"; done
+          python3 -m unittest -v test_install_entrypoints
+          python3 -m unittest discover -s deploy/tests -p 'test_*.py' -v
+      - name: Validate a non-default published Compose port
+        run: |
+          for file in deploy/docker-compose.yml deploy/docker-compose.sim.yml; do
+            URP_PORT=4200 docker compose -f "$file" config --format json | python3 -c 'import json,sys; lab=json.load(sys.stdin)["services"]["lab"]; assert str(lab["environment"]["URP_PORT"]) == "4100"; assert any(str(p["published"]) == "4200" and p["target"] == 4100 for p in lab["ports"])'
+          done
+      - name: Build and minimally execute native CVRP adapters
+        run: |
+          bash deploy/build-cohort.sh
+          python3 deploy/check-cohort.py --output "$GITHUB_WORKSPACE/.local-state/cohort-smoke"
+      - name: Retain native adapter smoke evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: deployment-cohort-smoke
+          path: .local-state/cohort-smoke
+          include-hidden-files: true
+          if-no-files-found: warn
+
+  powershell-contracts:
+    # Parser and mocked launcher contracts on Windows, not a clean WSL installation.
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            deploy/windows
+      - name: Parse PowerShell installers without invoking WSL
+        shell: pwsh
+        run: |
+          $files = @('install.ps1') + @(Get-ChildItem deploy/windows -Filter *.ps1 -Recurse | ForEach-Object { $_.FullName })
+          foreach ($file in $files) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $file), [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count -gt 0) { $errors | Format-List; throw "PowerShell parse failed: $file" }
+          }
+      - name: Exercise PowerShell launcher and quoting contracts
+        shell: pwsh
+        env:
+          PYTHONUTF8: '1'
+          LANG: C.UTF-8
+        run: |
+          # Use the runner's Git Bash for literal roundtrips, never the WSL launcher.
+          $gitRoot = Split-Path (Split-Path (Get-Command git.exe -ErrorAction Stop).Source)
+          $gitBash = Join-Path $gitRoot 'bin/bash.exe'
+          if (-not (Test-Path -LiteralPath $gitBash)) { throw "Git Bash is required for quoting tests: $gitBash" }
+          $env:PATH = "$(Split-Path $gitBash);$env:PATH"
+          Get-Command pwsh -ErrorAction Stop | Out-Null
+          python -m unittest -v test_install_entrypoints.PowerShellStaticContractTests test_install_entrypoints.WindowsLauncherTests
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

@@ -1,24 +1,19 @@
-# 工作台与仿真部署
+# 工作台统一部署
 
-仓库 `peakpeng666/URP` 为公开仓库，安装入口使用匿名下载。
+`deploy` 和 `redo` 使用同一套安装脚本、依赖准备和镜像构建。默认入口是 `deploy`；需要固定版本时，安装器接受发布标签或完整提交号。
 
-安装命令读取 `deploy` 分支，镜像标签为 `deploy`。使用前核对构建版本和匿名拉取状态；`main`、`redo` 的更新需单独构建发布。完整平台快照见 [工作台使用说明](setup/README.md)，云端测试见 [测试报告](setup/2026-10-19/delivery-review/REPORT.md)。
+默认 `full` 安装工作台、ROS 2 Humble / Gazebo Fortress、CVRP 基线和 Fields2Cover。日常使用见 [工作台使用说明](setup/README.md)，具体版本见 [依赖清单](deploy/DEPENDENCIES.md)。
 
-三条路，都包含 ROS 2 Humble 和 Gazebo Fortress。没有纯 Windows 路径。
+## 安装
 
-| 你的电脑 | 安装器怎么做 |
+| 环境 | 安装方式 |
 |---|---|
-| Docker Desktop（Windows 的 WSL2 后端，或 Linux 上的 Docker） | A。不克隆仓库。拉取 `ghcr.io/peakpeng666/urp-sim:deploy` 后启动 |
-| WSL2 里的 Ubuntu 22.04，不用 Docker | B。浅克隆，排除 `src/repos`、`data/bpp`、`data/cifar-training` |
-| 原生 Ubuntu 22.04 | C。与 B 同一套 `setup/ubuntu/setup.sh` |
+| Windows x86_64 + Docker Desktop（WSL2 后端） | 直接拉取 `ghcr.io/peakpeng666/urp-sim`，不克隆仓库 |
+| Linux x86_64 + 可用的 Docker Engine | 使用同一镜像和 Compose 配置 |
+| WSL2 Ubuntu 22.04 x86_64，无 Docker | 浅克隆所选版本，安装系统依赖并构建 |
+| 原生 Ubuntu 22.04 x86_64，无 Docker | 与 WSL 使用同一套 `setup/ubuntu/setup.sh` |
 
-B 和 C 发现是 WSL 时才使用软件渲染和 `0.0.0.0` 监听。原生 Ubuntu 不设置 `LIBGL_ALWAYS_SOFTWARE`。本机的 `bash setup/run.sh lab` 仍然只监听 `127.0.0.1:4100`，也不设置 `URP_SIM_PROFILE`。
-
-依赖版本在 [deploy/DEPENDENCIES.md](deploy/DEPENDENCIES.md)。第三方许可在 [deploy/THIRD_PARTY.md](deploy/THIRD_PARTY.md)。
-
-## 一条命令
-
-Linux、WSL Ubuntu 或任何能跑 bash 和 Docker 的机器：
+Linux 或 WSL Ubuntu：
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/peakpeng666/URP/deploy/install.sh | bash
@@ -30,62 +25,117 @@ Windows PowerShell：
 irm https://raw.githubusercontent.com/peakpeng666/URP/deploy/install.ps1 | iex
 ```
 
-PowerShell 里 `docker info` 成功时，直接在 Windows 拉取镜像，不克隆约 3 GB 的仓库，也不进发行版。没有 Docker 时，它安装或使用 WSL 的 Ubuntu 22.04，再执行上面的 bash。第一次打开 Ubuntu 要先建一个 Linux 用户；建完后把同一条命令再执行一次。
+安装器优先使用已启动的 Docker。没有 Docker 时，Windows 入口检查 WSL2 与 Ubuntu 22.04；首次安装发行版后，按提示创建 Linux 用户，再运行同一命令。源码安装会预检 Ubuntu 版本、x86_64 架构及 WSL2；系统依赖通过 `sudo apt` 安装，Python 和 Node 使用独立目录，不替换系统 Python。用普通用户运行安装器，不要给整个脚本加 `sudo`。
 
-装好之后：
+PowerShell 的 WSL 路径与已下载的 Bash 脚本发现缺少基础工具时，会在交互终端提示安装；非交互运行需预先装好。Ubuntu 若还不能执行上面的 `curl` 命令，先运行 `sudo apt-get update && sudo apt-get install -y curl ca-certificates git`。Docker 必须能执行 `docker info`，并提供 `docker compose`。
 
-```sh
-urp up        # 已装过就再启动
-urp down      # 停止，保留数据卷
-urp update    # Docker：重新拉取。Ubuntu：更新浅克隆并重装后启动
-urp status    # 健康检查
-urp fuel      # 可选。从 fuel.gazebosim.org 下载 warehouse / depot 模型
-```
+## 版本与组件
 
-`~/.local/bin` 不在 PATH 里时，用完整路径 `~/.local/bin/urp`。Windows 上后来的命令是再执行一次 `install.ps1`，参数用 `status`、`down`、`update` 或 `fuel`。
-
-浏览器打开 http://localhost:4100/ 。健康检查 http://localhost:4100/lab/api/health 应返回 `"status":"ok"`。Foxglove 和 Gazebo WebSocket 在 `127.0.0.1:8765` 和 `127.0.0.1:9002`。
-
-不要使用 `network_mode: host`。`ROS_LOCALHOST_ONLY=1` 让 CycloneDDS 只用 `lo`。`lo` 不能做组播，所以发现是单播，不需要 `NET_ADMIN`，也不添加 `239.255.0.0/16`。`setup/cyclonedds.xml` 只把自动参与者序号上限设为 99，供官方 TB4 启动使用。不要在这份 XML 里再写网卡或 Peer。
-
-只要规划、不要 ROS 时，在已经克隆的仓库里：
+默认跟随 `deploy`。固定某次发布时，将 `URP_REF` 设为已发布的 `v*` 标签或完整 40 位提交号；镜像也使用该标签。完整 SHA 会与镜像的 OCI revision 核对，Compose 和 Fuel 脚本从镜像对应的源码提交下载。
 
 ```sh
-docker compose -f deploy/docker-compose.yml up -d
+# 将 <完整提交号> 换成已发布镜像的 40 位 SHA
+curl -fsSL https://raw.githubusercontent.com/peakpeng666/URP/deploy/install.sh \
+  | URP_REF='<完整提交号>' bash
+
+# 无 Docker 的 Ubuntu 源码部署也可以选择 redo
+curl -fsSL https://raw.githubusercontent.com/peakpeng666/URP/deploy/install.sh \
+  | URP_REF=redo bash
 ```
 
-这拉的是 `ghcr.io/peakpeng666/urp-bench`。默认那条命令拉的是带仿真的 `urp-sim`。
+已安装后可用 `urp --ref <版本> update`。PowerShell 用 `$env:URP_REF = '<版本>'` 后执行安装命令，或给脚本传 `-Ref <版本>`。安装器保存选择，后续启动和更新沿用它；不会在找不到某个版本时改装 `deploy`。
 
-## 镜像发布设置
+`--components` 与安装器的 `URP_COMPONENTS` 对应：
 
-Actions 用 `GITHUB_TOKEN` 推送的包默认是私有的，工作流里的接口经常返回 403，不能代替下面的点击。镜像推上去之后：
+| 组件 | 安装内容 |
+|---|---|
+| `workbench` | 两套 Python 环境、Node / 前端、ROS 2 Humble / Gazebo Fortress；Fields2Cover 仅在本地已有轮子时校验并安装 |
+| `research` | 两套 Python 环境、Node / 前端、JDK 17、AILS 与 SISR；不安装 ROS |
+| `full`（默认） | 合并上面两组，并下载、校验和安装 Fields2Cover 及其系统库 |
 
-1. 打开 https://github.com/users/peakpeng666/packages/container/urp-sim/settings
-2. **Package settings → Change package visibility → Public**
-3. 对 `urp-bench` 做同样的操作：https://github.com/users/peakpeng666/packages/container/urp-bench/settings
-4. 若页面写着没有关联仓库：**Connect repository → peakpeng666/URP**。工作流和 Dockerfile 都写了 `org.opencontainers.image.source=https://github.com/peakpeng666/URP`。
+`research` 是当前 CVRP 数值基线环境。Docker 的 `urp-sim` 包含完整运行栈，`urp-bench` 包含规划与 CVRP 基线，不含 ROS / Fields2Cover。
 
-推送发生在 `deploy` 分支和 `v*` 标签。`deploy` 得到 `:deploy` 和提交号；`v*` 得到版本号和 `:latest`。工作流是 `.github/workflows/images.yml`。
-
-在这一步完成之前，`docker pull` 会失败。安装器打印上面的地址然后退出。它不会执行 `docker login`，也不会要使用者的令牌。
-
-本部署流程仅上传附带 BSD 声明的 Fields2Cover 轮子，Fuel 模型由使用者从上游下载。旧平台快照的附件与许可见 [第三方说明](deploy/THIRD_PARTY.md)。
+源码安装通过 `URP_COMPONENTS` 选择，默认 `full`。Docker 入口使用完整 `urp-sim` 镜像，不按组件裁剪：
 
 ```sh
-bash deploy/upload-assets.sh vYYYYMMDD
+curl -fsSL https://raw.githubusercontent.com/peakpeng666/URP/deploy/install.sh \
+  | URP_COMPONENTS=full bash
 ```
 
-没有轮子时这条命令不上传任何东西。
+已检出的源码直接运行 `bash setup/ubuntu/setup.sh --components full`。PowerShell 用 `$env:URP_COMPONENTS = 'full'`，该值会传入 WSL 安装器。历史 NAS 训练环境、CIFAR/BPP 大数据和整机快照不在这套安装中；历史复现见 [工作台说明](setup/README.md#历史平台复现2026-10-18)。
 
-## 浅克隆里有什么
-
-没有 Docker 时，安装器把检出放在 `~/.local/share/urp/src`：
+## 启动、更新与停止
 
 ```sh
-git clone --depth 1 --filter=blob:none --sparse --branch deploy https://github.com/peakpeng666/URP.git
+urp up       # 启动
+urp status   # 健康检查
+urp update   # 更新所选发布；源码方式会重新准备依赖
+urp down     # 停止，保留数据
+urp fuel     # 按需下载 warehouse / depot 的上游模型
 ```
 
-然后排除 `src/repos`、`data/bpp`、`data/cifar-training`、`experiments`、`papers`、`literature`、`materials`。这些目录不是工作台启动所需要的，留着会把检出撑到数 GB。Docker 路径只下载 compose 文件到 `~/.local/share/urp`（Windows 是 `%LOCALAPPDATA%\urp`）。
+如果找不到 `urp`，使用 `~/.local/bin/urp`，或将 `~/.local/bin` 加入 PATH。PowerShell 可在当前窗口保存命令入口后调用：
+
+```powershell
+$urp = [scriptblock]::Create((irm https://raw.githubusercontent.com/peakpeng666/URP/deploy/install.ps1))
+& $urp status
+& $urp down
+& $urp update
+```
+
+浏览器打开 http://localhost:4100/ 。http://localhost:4100/lab/api/health 应返回 `"status":"ok"`；仿真运行时，Foxglove 和 Gazebo WebSocket 分别使用 `127.0.0.1:8765` 和 `127.0.0.1:9002`。
+
+Docker 的运行数据保存在 `urp-lab_lab-runtime` 和 `urp-lab_archive-data` 卷里，`urp down` 不删除它们。源码方式的场景和日志在 `src/lab/runtime`，可写档案库在 `.local-state`；`data/backend` 中的原始库保留。
+
+无 Docker 时，检出目录默认为 `~/.local/share/urp/src`；稀疏检出保留工作台和所需 CVRP 基线，排除大型原始仓库、训练数据及历史实验目录。Docker 只下载部署文件到 `~/.local/share/urp`，Windows 为 `%LOCALAPPDATA%\urp`。
+
+## 安装验载
+
+源码安装结束会自动检查所选组件，报告保存在 `.local-state/deploy/runtime-<时间>-<进程号>/runtime.json`。需要单独复核时，在源码根目录运行：
+
+```sh
+python3 deploy/check-runtime.py --components full \
+  --output "$PWD/.local-state/deploy/verify-$(date -u +%Y%m%dT%H%M%SZ)-$$"
+```
+
+检查覆盖 Python / Node 版本与模块加载、前端、Fields2Cover 绑定、AILS / SISR 合成算例，以及所选 ROS / Gazebo 命令。`research` / `full` 的基线结果另保存在报告目录的 `cohort/`。这是运行依赖验载；真实 Gazebo 任务按下方仿真流程检查。
+
+## 镜像发布与自建
+
+`.github/workflows/images.yml` 先运行工程检查，再为 `deploy` 和 `v*` 标签构建镜像；镜像检查通过后才推送。每个镜像同时标记完整提交 SHA，并记录 OCI revision 和 `/opt/urp/REVISION`；`deploy` 另有 `:deploy`，发布标签另有版本标签和 `:latest`。
+
+首次发布后，维护者需检查两个包的可见性与仓库关联：
+
+- [urp-sim 设置](https://github.com/users/peakpeng666/packages/container/urp-sim/settings)
+- [urp-bench 设置](https://github.com/users/peakpeng666/packages/container/urp-bench/settings)
+
+在 **Package settings → Change package visibility → Public** 设置公开，并关联 `peakpeng666/URP`。工作流会检查匿名拉取；使用者不需要 GitHub 或 Docker 登录。拉取失败也可能是所选标签尚未发布，先核对标签和构建状态。
+
+需要修改镜像时，在完整检出中构建：
+
+```sh
+docker compose -f deploy/docker-compose.sim.yml -f deploy/docker-compose.sim-build.yml build
+```
+
+只运行规划与数值工作台、不启动 ROS 时，可使用 `deploy/docker-compose.yml` 中的 `urp-bench` 镜像；同样通过 `URP_IMAGE_TAG` 选择已发布标签。
+
+## 资源与许可
+
+`maze` 不依赖 Fuel。`warehouse` 和 `depot` 先执行 `urp fuel`，再开启新会话；模型从 https://fuel.gazebosim.org 下载到使用者本机，安装与镜像构建不会自动下载它们。
+
+Fields2Cover 从固定 Release 资源获取，校验 SHA256 后安装；原生安装与镜像使用同一份清单。其 BSD 声明随资源保留。Fuel 的非商业和禁止衍生条款、ROS/Foxglove 等依赖的许可见 [第三方说明](deploy/THIRD_PARTY.md)。旧平台快照的模型和运行数据仍按原清单单独管理。
+
+维护者单独打包可再分发的 Fields2Cover 资源时使用 `bash deploy/upload-assets.sh vYYYYMMDD`；没有轮子时不会上传。
+
+## 平台与验收范围
+
+本安装面向 Linux x86_64；Windows 通过 Docker Desktop 的 WSL2 后端或 WSL2 Ubuntu 22.04 使用。新部署的 WSL2 / Windows 端到端实测与新镜像发布状态，以对应提交的测试记录和 Actions 结果为准。已有云端检查见 [测试报告](setup/2026-10-19/delivery-review/REPORT.md)，历史仿真记录不替代新机器验收。Fields2Cover 的既有构建来源记录保留在 manifest；原始编译命令尚未恢复。
+
+## 网络
+
+Docker 只向宿主机回环地址发布端口，不使用 `network_mode: host`。`ROS_LOCALHOST_ONLY=1` 配合 `setup/cyclonedds.xml` 使用回环单播，不需要 `NET_ADMIN` 或宿主机组播路由。XML 只设置参与者序号上限，不重复指定网卡或 Peer。
+
+WSL 启动器设置 `0.0.0.0` 监听与软件渲染，供 Windows 的 localhost 转发访问。原生 Ubuntu 仍只监听 `127.0.0.1`，不强制软件渲染。直接运行 `bash setup/run.sh lab` 的本机行为保持不变。
 
 ## GPU
 
@@ -97,22 +147,6 @@ URP_GPU=1 urp up
 
 Windows 使用支持 CUDA on WSL 的驱动，不要在 WSL 里再装 Linux 驱动。没有 NVIDIA 设备时不要加 `URP_GPU=1`。原生 Ubuntu 不走这个变量。
 
-## Fuel 与许可
-
-`maze` 不引用 Fuel，一条命令起来就能开这个世界。
-
-`warehouse` 和 `depot` 需要使用者自己向 https://fuel.gazebosim.org 下载。`urp fuel` 做这件事，并把缓存挂进容器或写到检出的 `setup/2026-10-15/cache/ignition-fuel`。这是使用者自己的副本，不是我们再分发。
-
-本部署流程不打包以下 Fuel 模型：
-
-| 模型 | 许可 |
-|---|---|
-| OpenRobotics Warehouse 5 | CC BY-NC-ND 4.0 |
-| MovAi shelf_big 2 | CC BY-NC-ND 4.0 |
-| MovAi shelf 1 | CC BY-NC 4.0 |
-
-Foxglove bridge 是 MIT，rosx_introspection 是 MPL-2.0，随镜像里的 apt 包安装，许可文件保留。Fields2Cover 是 BSD-3-Clause，轮子不在镜像里。细节在 `deploy/THIRD_PARTY.md`。
-
 ## 指纹
 
 笔记本验收文件不改。系统库与验收记录一致时，只接受原来的二进制。镜像和别的机器在 `URP_SIM_PROFILE=image` 时使用编译出来的 `profile.json`。`URP_BRIDGE_FIX=0`、`URP_TF_FIX=0`、`URP_GUI_FIX=0` 只是对照开关。
@@ -123,32 +157,21 @@ Foxglove bridge 是 MIT，rosx_introspection 是 MPL-2.0，随镜像里的 apt �
 
 `POST /lab/api/shutdown` 默认只接受回环地址。从 Windows 经 Docker 转发进来的连接会得到 403。关容器用 `urp down` 或 `docker compose stop`。关 WSL 或本机进程要在那个 Linux 里执行 `urp down`，这样连接才是回环。设置 `URP_ADMIN_TOKEN` 之后，所有关闭请求都要带 `X-URP-Admin-Token` 或 `Authorization: Bearer`。
 
-卷 `urp-lab_lab-runtime` 和 `urp-lab_archive-data` 在 `urp down` 之后还在。`docker compose down -v` 才删卷。
-
 Windows 上也可以双击 `启动实验台.bat`。它只调用 Docker 或 `wsl`，不在 Windows 里安装 Python。
-
-## 自己构建
-
-公开镜像还没推送，或要改 Dockerfile 时：
-
-```sh
-docker compose -f deploy/docker-compose.sim.yml -f deploy/docker-compose.sim-build.yml build
-```
-
-构建需要仓库，产物的名字就是 `ghcr.io/peakpeng666/urp-sim:deploy`。日常安装不要走这条。
 
 ## 排错
 
 | 现象 | 处理 |
 |---|---|
-| `docker pull` 要求登录或 403 | 由仓库维护者将镜像设为 Public；使用者无需登录 |
+| `docker pull` 要求登录或 403 | 核对标签是否已发布及包是否公开；使用者无需登录 |
 | 浏览器打不开 localhost:4100 | Docker 引擎是否已启动；WSL 里 `urp status` |
 | 页面 403，提示拒绝的 Host | 用 http://localhost:4100/ |
 | `sh` 脚本报 `$'\r'` | `*.sh` 在 `.gitattributes` 里是 LF |
 | WSL 里仿真被杀掉 | 把 `setup/ubuntu/wslconfig.example` 复制为 Windows 用户目录的 `.wslconfig`，然后 `wsl --shutdown` |
 | warehouse 或 depot 报世界资源不完整 | `urp fuel`。maze 不需要 |
-| 指纹不符 | 镜像里应已有 profile。源码被改过才会拒绝 |
-| Ubuntu 不是 22.04 | 没有 Docker 时安装器会停。Humble 只装在 22.04 |
+| 指纹不符 | 核对源码、系统库和构建 profile 是否来自同一版本；重新按所选版本构建 |
+| 平台预检未通过 | 无 Docker 时需要 Ubuntu 22.04 x86_64；Windows 内需 WSL2，不能使用 WSL1 |
+| full 安装停在 Fields2Cover | 查看网络、固定 Release 资源和哈希检查日志；不要跳过后继续当作完整安装 |
 
 ## RViz 和 Gazebo 窗口
 
@@ -179,3 +202,4 @@ curl -sS -X POST http://127.0.0.1:4100/lab/api/services/sim/start \
 ```
 
 等到 `GET /lab/api/services` 里仿真为运行，并且 `127.0.0.1:8765` 与 `127.0.0.1:9002` 能连上。田间仿真要先有一份已验算通过的多车方案，再 `POST /lab/api/fieldsim`。
+

@@ -1,0 +1,222 @@
+"""Release guard tests. All external commands are fakes; no images are published."""
+import importlib.util
+import io
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+import unittest
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parents[2]
+SHA = "a" * 40
+
+
+class PublicationTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name)
+        (self.root / "deploy").mkdir()
+        (self.root / "bin").mkdir()
+        shutil.copyfile(ROOT / "deploy/publish-image.sh", self.root / "deploy/publish-image.sh")
+        self.log = self.root / "calls.jsonl"
+        self.env = {
+            **os.environ,
+            "PATH": str(self.root / "bin") + os.pathsep + os.environ["PATH"],
+            "CALL_LOG": str(self.log),
+            "GITHUB_SHA": SHA,
+            "GITHUB_REPOSITORY_OWNER": "PeakPeng666",
+            "GITHUB_REF": "refs/heads/deploy",
+            "BUILD_EXIT": "0", "SMOKE_EXIT": "0",
+        }
+        self.command("git", "#!/bin/sh\nprintf '%s\\n' \"$GITHUB_SHA\"\n")
+        self.command("docker", """#!/usr/bin/env python3
+import json, os, sys
+with open(os.environ['CALL_LOG'], 'a') as out:
+    out.write(json.dumps(sys.argv[1:]) + '\\n')
+sys.exit(int(os.environ['BUILD_EXIT']) if sys.argv[1] == 'build' else 0)
+""")
+        (self.root / "deploy/test-image.sh").write_text(
+            "#!/bin/sh\nprintf '[\"smoke\"]\\n' >> \"$CALL_LOG\"\nexit \"$SMOKE_EXIT\"\n"
+        )
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def command(self, name, contents):
+        target = self.root / "bin" / name
+        target.write_text(contents)
+        target.chmod(0o755)
+
+    def run_publish(self, **env):
+        result = subprocess.run(
+            ["bash", "deploy/publish-image.sh", "bench", "deploy/Dockerfile"],
+            cwd=self.root, env={**self.env, **env}, capture_output=True, text=True
+        )
+        events = [json.loads(x) for x in self.log.read_text().splitlines()] if self.log.exists() else []
+        return result, events
+
+    def test_deploy_checks_before_any_push_and_passes_full_revision(self):
+        result, events = self.run_publish()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual([e[0] for e in events], ["build", "smoke", "push", "push"])
+        self.assertIn("URP_REVISION=" + SHA, events[0])
+        self.assertIn("org.opencontainers.image.revision=" + SHA, events[0])
+        self.assertEqual(events[2:], [
+            ["push", "ghcr.io/peakpeng666/urp-bench:" + SHA],
+            ["push", "ghcr.io/peakpeng666/urp-bench:deploy"],
+        ])
+
+    def test_smoke_failure_never_pushes(self):
+        result, events = self.run_publish(SMOKE_EXIT="9")
+        self.assertEqual(result.returncode, 9)
+        self.assertEqual([e[0] for e in events], ["build", "smoke"])
+
+    def test_build_failure_never_smokes_or_pushes(self):
+        result, events = self.run_publish(BUILD_EXIT="7")
+        self.assertEqual(result.returncode, 7)
+        self.assertEqual([e[0] for e in events], ["build"])
+
+    def test_redo_dispatch_does_not_replace_deploy(self):
+        result, events = self.run_publish(GITHUB_REF="refs/heads/redo")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual([e for e in events if e[0] == "push"], [
+            ["push", "ghcr.io/peakpeng666/urp-bench:" + SHA]
+        ])
+
+    def test_release_tag_preserves_version_and_sha(self):
+        result, events = self.run_publish(GITHUB_REF="refs/tags/v2.3.4")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual([e[1].rsplit(":", 1)[1] for e in events if e[0] == "push"],
+                         [SHA, "v2.3.4", "latest"])
+
+    def test_malformed_revision_fails_before_build(self):
+        result, events = self.run_publish(GITHUB_SHA="shortsha")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(events, [])
+
+    def test_checkout_mismatch_fails_before_build(self):
+        self.command("git", "#!/bin/sh\nprintf '%s\\n' " + "b" * 40 + "\n")
+        result, events = self.run_publish()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(events, [])
+
+
+class HealthCheckTests(unittest.TestCase):
+    def setUp(self):
+        spec = importlib.util.spec_from_file_location("image_healthcheck", ROOT / "deploy/image-healthcheck.py")
+        self.module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.module)
+
+    def response(self, data):
+        return patch.object(self.module.urllib.request, "urlopen", return_value=io.BytesIO(data))
+
+    def test_ok_json_passes(self):
+        with self.response(b'{"status":"ok"}'):
+            self.module.check("http://127.0.0.1/test")
+
+    def test_http_200_but_failed_status_is_unhealthy(self):
+        with self.response(b'{"status":"failed"}'), self.assertRaises(RuntimeError):
+            self.module.check("http://127.0.0.1/test")
+
+    def test_non_json_is_unhealthy(self):
+        with self.response(b'<html>not the gateway</html>'), self.assertRaises(ValueError):
+            self.module.check("http://127.0.0.1/test")
+
+    def test_wrong_json_shape_is_unhealthy(self):
+        with self.response(b'["ok"]'), self.assertRaises(RuntimeError):
+            self.module.check("http://127.0.0.1/test")
+
+
+class ImageSmokeTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name)
+        (self.root / 'bin').mkdir()
+        self.output = self.root / 'evidence'
+        self.env = {**os.environ, 'PATH': str(self.root / 'bin') + os.pathsep + os.environ['PATH'],
+                    'GITHUB_SHA': SHA, 'MOCK_HEALTH': 'running healthy', 'COHORT_EXIT': '0'}
+        self.command('docker', '''#!/usr/bin/env python3
+import json, os, pathlib, sys
+args = sys.argv[1:]
+if args[:2] == ['image', 'inspect']:
+    print(os.environ.get('LABEL_REVISION', os.environ['GITHUB_SHA']) if '--format' in args else '[]')
+elif args[0] == 'run': print('container-id')
+elif args[0] == 'port': print('127.0.0.1:31410')
+elif args[0] == 'inspect': print(os.environ['MOCK_HEALTH'] if '--format' in args else '[]')
+elif args[0] == 'cp':
+    target = pathlib.Path(args[-1]); target.mkdir(exist_ok=True)
+    (target / 'summary.json').write_text('{"passed":true}')
+elif args[0] == 'exec':
+    if 'cat' in args: print(os.environ.get('FILE_REVISION', os.environ['GITHUB_SHA']))
+    if '/opt/urp/deploy/check-cohort.py' in args: sys.exit(int(os.environ['COHORT_EXIT']))
+''')
+        self.command('curl', '''#!/usr/bin/env python3
+import os, pathlib, sys
+args = sys.argv[1:]
+if '-X' in args:
+    pathlib.Path(args[args.index('-o') + 1]).write_text('{"code":"shutdown_forbidden"}')
+    print('403', end='')
+elif args[-1].endswith('/api/health'): print('{"status":"ok"}')
+else: print('<html>URP</html>')
+''')
+
+    def command(self, name, contents):
+        path = self.root / 'bin' / name
+        path.write_text(contents)
+        path.chmod(0o755)
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def run_smoke(self, **env):
+        return subprocess.run(['bash', str(ROOT / 'deploy/test-image.sh'), 'test:sha', SHA,
+                               'bench', str(self.output)], env={**self.env, **env},
+                              capture_output=True, text=True)
+
+    def test_passing_smoke_retains_exit_status(self):
+        result = self.run_smoke()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.output / 'exit-code.txt').read_text().strip(), '0')
+        self.assertTrue((self.output / 'health-after-restart.json').is_file())
+        self.assertTrue((self.output / 'summary.txt').is_file())
+
+    def test_revision_mismatch_fails(self):
+        result = self.run_smoke(LABEL_REVISION='b' * 40)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.output / 'summary.txt').exists())
+
+    def test_crashed_container_fails_without_success_summary(self):
+        result = self.run_smoke(MOCK_HEALTH='exited unhealthy')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse((self.output / 'summary.txt').exists())
+
+    def test_cohort_failure_is_retained(self):
+        result = self.run_smoke(COHORT_EXIT='12')
+        self.assertEqual(result.returncode, 12)
+        self.assertEqual((self.output / 'exit-code.txt').read_text().strip(), '12')
+        self.assertFalse((self.output / 'summary.txt').exists())
+
+    def test_existing_evidence_directory_is_not_overwritten(self):
+        self.output.mkdir()
+        (self.output / 'preserve').write_text('old evidence')
+        result = self.run_smoke()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual((self.output / 'preserve').read_text(), 'old evidence')
+        self.assertFalse((self.output / 'exit-code.txt').exists())
+
+
+class ComposeContractTests(unittest.TestCase):
+    def test_host_port_does_not_change_container_listener(self):
+        for name in ('docker-compose.yml', 'docker-compose.sim.yml'):
+            with self.subTest(compose=name):
+                source = (ROOT / 'deploy' / name).read_text()
+                self.assertIn('${URP_PORT:-4100}:4100', source)
+                self.assertIn('      URP_PORT: "4100"', source)
+                self.assertNotIn('URP_PORT: "${URP_PORT', source)
+
+
+if __name__ == "__main__":
+    unittest.main()

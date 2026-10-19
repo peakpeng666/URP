@@ -1,0 +1,8 @@
+# Ubuntu 22.04 amd64 runtime libraries required by the pinned CPython 3.12 wheel.
+# Verified against ELF DT_NEEDED; OR-Tools 9.9 is bundled inside the wheel.
+libgdal30
+libgeos-c1v5
+libtinyxml2-9
+libjpeg8
+libtiff5
+libpng16-16

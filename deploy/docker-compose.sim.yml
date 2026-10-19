@@ -15,7 +15,8 @@ services:
       - "127.0.0.1:9002:9002"
     environment:
       URP_BIND_HOST: "0.0.0.0"
-      URP_PORT: "${URP_PORT:-4100}"
+      # URP_PORT configures the host port above; the container always serves 4100.
+      URP_PORT: "4100"
       URP_LAB_RUNTIME: /data/lab
       URP_API_DB: /data/archive/research.sqlite3
       URP_FOXGLOVE_BIND: "0.0.0.0"

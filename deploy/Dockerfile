@@ -1,6 +1,6 @@
+# syntax=docker/dockerfile:1
 # Workbench image: frontend, gateway and the archive backend it starts.
 # Simulation (ROS 2 / Gazebo) is deploy/Dockerfile.simulation.
-# syntax=docker/dockerfile:1
 
 ARG NODE_VERSION=24.22.0
 FROM node:${NODE_VERSION}-bookworm-slim AS frontend
@@ -12,9 +12,11 @@ FROM debian:bookworm-slim AS runtime
 ARG NODE_VERSION=24.22.0
 ARG NODE_SHA256=28ea0a438de9a13bd7891fd758eee6c7819ee8af5442dfd8d45bd65e56d4228c
 ARG PYTHON_VERSION=3.12.13
+ARG URP_REVISION=unknown
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      bash ca-certificates curl iproute2 tini util-linux \
+RUN test "$(dpkg --print-architecture)" = amd64 \
+    && apt-get update && apt-get install -y --no-install-recommends \
+      bash ca-certificates curl iproute2 tini util-linux openjdk-17-jdk-headless g++ \
     && rm -rf /var/lib/apt/lists/* \
     && curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" -o /tmp/node.tar.gz \
     && echo "${NODE_SHA256}  /tmp/node.tar.gz" | sha256sum -c - \
@@ -25,7 +27,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /usr/local/bin/uv
 
-ENV UV_PYTHON_INSTALL_DIR=/opt/uv-python \
+ENV URP_REVISION=${URP_REVISION} \
+    UV_PYTHON_INSTALL_DIR=/opt/uv-python \
     UV_LINK_MODE=copy \
     UV_PYTHON=3.12.13 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -43,6 +46,18 @@ COPY src/lab/pyproject.toml src/lab/uv.lock src/lab/
 RUN uv python install ${PYTHON_VERSION} \
     && uv sync --locked --extra solvers --no-dev --python ${PYTHON_VERSION} \
     && uv sync --locked --inexact --no-dev --python ${PYTHON_VERSION} --project src/lab
+
+# Cohort sources, adapters and licenses only; no formal runs or research archives.
+COPY cohort_b/ails/adapted ./cohort_b/ails/adapted
+COPY cohort_b/ails/build.sh ./cohort_b/ails/build.sh
+COPY cohort_b/sisr/adapted ./cohort_b/sisr/adapted
+COPY cohort_b/sisr/build.sh ./cohort_b/sisr/build.sh
+COPY cohort_b/sisr/cvrp/config.json ./cohort_b/sisr/cvrp/config.json
+COPY cohort_b/run_vendor.py ./cohort_b/run_vendor.py
+COPY deploy/build-cohort.sh deploy/check-cohort.py deploy/image-healthcheck.py ./deploy/
+COPY deploy/check-runtime.py deploy/check-fields2cover.py ./deploy/
+RUN bash deploy/build-cohort.sh \
+    && printf '%s\n' "${URP_REVISION}" > /opt/urp/REVISION
 
 COPY src/backend ./src/backend
 COPY src/research ./src/research
@@ -62,11 +77,13 @@ RUN chmod 755 deploy/entrypoint.sh src/start.sh setup/profile.sh \
     && mkdir -p /data/lab /data/archive \
     && chown -R urp:urp /opt/urp /opt/uv-python /data
 
-LABEL org.opencontainers.image.source="https://github.com/peakpeng666/URP" \
+LABEL org.opencontainers.image.revision="${URP_REVISION}" \
+      org.opencontainers.image.source="https://github.com/peakpeng666/URP" \
       org.opencontainers.image.title="urp-bench" \
       org.opencontainers.image.description="URP workbench without ROS"
 EXPOSE 4100
 HEALTHCHECK --interval=15s --timeout=5s --start-period=40s --retries=8 \
-    CMD ["/opt/urp/src/lab/.venv/bin/python", "-c", "import os,urllib.request; p=os.environ.get('URP_PORT','4100'); urllib.request.urlopen('http://127.0.0.1:%s/lab/api/health'%p, timeout=3)"]
+    CMD ["/opt/urp/src/lab/.venv/bin/python", "/opt/urp/deploy/image-healthcheck.py"]
 ENTRYPOINT ["/usr/bin/tini", "--", "/opt/urp/deploy/entrypoint.sh"]
 CMD ["/opt/urp/src/lab/.venv/bin/python", "-m", "urp_lab", "serve"]
+

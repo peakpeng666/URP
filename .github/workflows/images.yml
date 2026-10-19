@@ -19,7 +19,13 @@ env:
   SOURCE: https://github.com/peakpeng666/URP
 
 jobs:
+  checks:
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
   bench:
+    needs: checks
     runs-on: ubuntu-22.04
     timeout-minutes: 90
     steps:
@@ -42,8 +48,17 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
       - name: Build and push urp-bench
         run: bash deploy/publish-image.sh bench deploy/Dockerfile
+      - name: Retain bench image acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: image-bench-${{ github.sha }}
+          path: .local-state/image-bench
+          include-hidden-files: true
+          if-no-files-found: warn
 
   sim:
+    needs: checks
     runs-on: ubuntu-22.04
     timeout-minutes: 240
     steps:
@@ -70,41 +85,42 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
       - name: Build and push urp-sim
         run: bash deploy/publish-image.sh sim deploy/Dockerfile.simulation
+      - name: Retain sim image acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: image-sim-${{ github.sha }}
+          path: .local-state/image-sim
+          include-hidden-files: true
+          if-no-files-found: warn
 
-  visibility:
+  verify-public-pull:
     needs: [bench, sim]
     if: always() && (needs.bench.result == 'success' || needs.sim.result == 'success')
     runs-on: ubuntu-22.04
-    timeout-minutes: 10
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
-      - name: Ask GitHub to mark the packages public
+      - name: Verify anonymous pulls without changing package permissions
+        env:
+          BENCH_RESULT: ${{ needs.bench.result }}
+          SIM_RESULT: ${{ needs.sim.result }}
         run: |
-          set +e
-          owner="$(printf '%s' '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
-          for name in urp-bench urp-sim; do
-            code="$(curl -sS -o /tmp/vis.json -w '%{http_code}' -X PATCH \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              "https://api.github.com/user/packages/container/${name}" \
-              -d '{"visibility":"public"}')"
-            echo "${name} PATCH /user/packages HTTP ${code}"
-            cat /tmp/vis.json || true
-            echo
-            code="$(curl -sS -o /tmp/vis.json -w '%{http_code}' -X PATCH \
-              -H "Accept: application/vnd.github+json" \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              "https://api.github.com/users/${owner}/packages/container/${name}" \
-              -d '{"visibility":"public"}')"
-            echo "${name} PATCH /users/${owner}/packages HTTP ${code}"
-            cat /tmp/vis.json || true
-            echo
+          set -euo pipefail
+          owner="$(printf '%s' "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')"
+          export DOCKER_CONFIG="$(mktemp -d)"
+          trap 'rm -rf "$DOCKER_CONFIG"' EXIT
+          for name in bench sim; do
+            result="$BENCH_RESULT"
+            if [[ "$name" == sim ]]; then result="$SIM_RESULT"; fi
+            [[ "$result" == success ]] || continue
+            image="ghcr.io/${owner}/urp-${name}:${GITHUB_SHA}"
+            if ! docker pull "$image"; then
+              echo "::error::Anonymous pull failed for $image. Check registry availability and package visibility manually; this workflow does not change permissions."
+              exit 1
+            fi
+            actual="$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' "$image")"
+            [[ "$actual" == "$GITHUB_SHA" ]] || { echo "::error::Published revision mismatch: $actual"; exit 1; }
+            docker image inspect --format '{{json .RepoDigests}}' "$image" >> "$GITHUB_STEP_SUMMARY"
           done
-          echo "若上面不是 200：GITHUB_TOKEN 通常不能把包改成 Public。"
-          echo "主人打开一次： https://github.com/users/${owner}/packages/container/urp-sim/settings"
-          echo "Package settings → Change package visibility → Public"
-          echo "再对 urp-bench 做同样的操作。"
-          echo "若未关联仓库：Connect repository → ${{ github.repository }}。"
-          echo "工作流写入的标签是 org.opencontainers.image.source=${SOURCE}"
-          exit 0

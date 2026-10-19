@@ -1,8 +1,8 @@
+# syntax=docker/dockerfile:1
 # Linux container with ROS 2 Humble and Gazebo Fortress plus the same workbench as deploy/Dockerfile.
-# The bench image is the one `docker compose up` builds. Use this file only for the simulation overlay.
+# The root compose entry pulls this simulation image; explicit build overlays build from this file.
 # Exact apt revisions are whatever packages.ros.org and Ubuntu jammy serve at build time; they are not
 # the owner's laptop freeze. See deploy/DEPENDENCIES.md.
-# syntax=docker/dockerfile:1
 
 ARG NODE_VERSION=24.22.0
 FROM node:${NODE_VERSION}-bookworm-slim AS frontend
@@ -14,17 +14,20 @@ FROM ubuntu:22.04 AS runtime
 ARG NODE_VERSION=24.22.0
 ARG NODE_SHA256=28ea0a438de9a13bd7891fd758eee6c7819ee8af5442dfd8d45bd65e56d4228c
 ARG PYTHON_VERSION=3.12.13
+ARG URP_REVISION=unknown
 ENV DEBIAN_FRONTEND=noninteractive
 COPY deploy/ros-packages.txt /tmp/ros-packages.txt
+COPY deploy/fields2cover-packages.txt /tmp/fields2cover-packages.txt
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      bash ca-certificates curl gnupg iproute2 tini \
+RUN test "$(dpkg --print-architecture)" = amd64 \
+    && apt-get update && apt-get install -y --no-install-recommends \
+      bash ca-certificates curl gnupg iproute2 tini util-linux openjdk-17-jdk-headless g++ zstd \
     && curl -fsSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
          -o /usr/share/keyrings/ros-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu jammy main" \
          > /etc/apt/sources.list.d/ros2.list \
     && apt-get update && apt-get install -y --no-install-recommends \
-      $(grep -vE '^[[:space:]]*(#|$)' /tmp/ros-packages.txt) \
+      $(grep -hvE '^[[:space:]]*(#|$)' /tmp/ros-packages.txt /tmp/fields2cover-packages.txt) \
     && rm -rf /var/lib/apt/lists/* \
     && curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.gz" -o /tmp/node.tar.gz \
     && echo "${NODE_SHA256}  /tmp/node.tar.gz" | sha256sum -c - \
@@ -35,7 +38,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /usr/local/bin/uv
 
-ENV UV_PYTHON_INSTALL_DIR=/opt/uv-python \
+ENV URP_REVISION=${URP_REVISION} \
+    UV_PYTHON_INSTALL_DIR=/opt/uv-python \
     UV_LINK_MODE=copy \
     UV_PYTHON=3.12.13 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -56,6 +60,18 @@ RUN uv python install ${PYTHON_VERSION} \
     && uv sync --locked --extra solvers --no-dev --python ${PYTHON_VERSION} \
     && uv sync --locked --inexact --no-dev --python ${PYTHON_VERSION} --project src/lab
 
+# Cohort sources, adapters and licenses only; no formal runs or research archives.
+COPY cohort_b/ails/adapted ./cohort_b/ails/adapted
+COPY cohort_b/ails/build.sh ./cohort_b/ails/build.sh
+COPY cohort_b/sisr/adapted ./cohort_b/sisr/adapted
+COPY cohort_b/sisr/build.sh ./cohort_b/sisr/build.sh
+COPY cohort_b/sisr/cvrp/config.json ./cohort_b/sisr/cvrp/config.json
+COPY cohort_b/run_vendor.py ./cohort_b/run_vendor.py
+COPY deploy/build-cohort.sh deploy/check-cohort.py deploy/image-healthcheck.py ./deploy/
+COPY deploy/check-runtime.py deploy/check-fields2cover.py ./deploy/
+RUN bash deploy/build-cohort.sh \
+    && printf '%s\n' "${URP_REVISION}" > /opt/urp/REVISION
+
 COPY src/backend ./src/backend
 COPY src/research ./src/research
 COPY src/lab ./src/lab
@@ -63,13 +79,20 @@ COPY src/frontend/core ./src/frontend/core
 COPY src/frontend/package.json ./src/frontend/package.json
 COPY src/start.sh ./src/start.sh
 COPY tools/runtime_db.py ./tools/runtime_db.py
-COPY setup/profile.sh setup/cyclonedds.xml setup/
+COPY setup/profile.sh setup/cyclonedds.xml setup/platform-snapshot.json setup/
 COPY setup/2026-10-15/deployment ./setup/2026-10-15/deployment
 COPY data/backend/research.sqlite3 ./data/backend/research.sqlite3
 COPY data/packages ./data/packages
 COPY data/research ./data/research
 COPY --from=frontend /src/frontend/dist ./src/frontend/dist
-COPY deploy/entrypoint.sh deploy/record-sim-profiles.py deploy/THIRD_PARTY.md ./deploy/
+COPY deploy/entrypoint.sh deploy/record-sim-profiles.py deploy/fetch-fields2cover.py deploy/THIRD_PARTY.md ./deploy/
+
+# The verified wheel targets Ubuntu 22.04 amd64, not the Debian bench image.
+RUN python3 deploy/fetch-fields2cover.py \
+    && uv pip install --no-deps --python src/lab/.venv/bin/python \
+         src/lab/vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl \
+    && src/lab/.venv/bin/python deploy/check-fields2cover.py \
+    && rm -rf .local-state/deploy/downloads
 
 RUN chmod 755 deploy/entrypoint.sh src/start.sh setup/profile.sh \
     && mkdir -p /data/lab /data/archive \
@@ -79,11 +102,13 @@ RUN chmod 755 deploy/entrypoint.sh src/start.sh setup/profile.sh \
     && rm -rf /var/lib/apt/lists/* \
     && chown -R urp:urp /opt/urp /opt/uv-python /data
 
-LABEL org.opencontainers.image.source="https://github.com/peakpeng666/URP" \
+LABEL org.opencontainers.image.revision="${URP_REVISION}" \
+      org.opencontainers.image.source="https://github.com/peakpeng666/URP" \
       org.opencontainers.image.title="urp-sim" \
       org.opencontainers.image.description="URP workbench with ROS 2 Humble and Gazebo Fortress"
 EXPOSE 4100 8765 9002
 HEALTHCHECK --interval=15s --timeout=5s --start-period=40s --retries=8 \
-    CMD ["/opt/urp/src/lab/.venv/bin/python", "-c", "import os,urllib.request; p=os.environ.get('URP_PORT','4100'); urllib.request.urlopen('http://127.0.0.1:%s/lab/api/health'%p, timeout=3)"]
+    CMD ["/opt/urp/src/lab/.venv/bin/python", "/opt/urp/deploy/image-healthcheck.py"]
 ENTRYPOINT ["/usr/bin/tini", "--", "/opt/urp/deploy/entrypoint.sh"]
 CMD ["/opt/urp/src/lab/.venv/bin/python", "-m", "urp_lab", "serve"]
+
