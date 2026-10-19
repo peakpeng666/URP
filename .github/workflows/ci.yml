@@ -118,7 +118,7 @@ jobs:
           source setup/ubuntu/env.sh
           command -v java
           java -version
-          bash deploy/build-cohort.sh
+          LC_ALL=C LANG=C bash deploy/build-cohort.sh
           python3 deploy/check-cohort.py --output "$GITHUB_WORKSPACE/.local-state/cohort-smoke"
       - name: Retain native adapter smoke evidence
         if: always()

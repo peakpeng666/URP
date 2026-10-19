@@ -150,6 +150,13 @@ class CohortCheckerTests(unittest.TestCase):
 
 
 class EntryGuardTests(unittest.TestCase):
+    def test_fields2cover_probe_loads_other_native_solvers_first(self):
+        script = (ROOT / 'deploy/check-fields2cover.py').read_text()
+        for native in ('pywrapcp.Solver(', 'pyvrp_model.add_depot(', 'og.SimpleSetup('):
+            self.assertLess(script.index(native), script.index('import fields2cover as f2c'))
+        self.assertIn("manifest['binary_sha256']", script)
+        self.assertIn('f2c.Point(1.0, 2.0)', script)
+
     def test_runtime_missing_executable_is_failure(self):
         result = runtime.command_check('missing', ['/does-not-exist/urp-python'])
         self.assertFalse(result['passed'])

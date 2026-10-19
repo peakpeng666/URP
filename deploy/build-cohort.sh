@@ -20,7 +20,9 @@ if ! java -m jdk.compiler/com.sun.tools.javac.Main --release 17 -d "$probe" "$pr
   exit 1
 fi
 printf 'Rebuilding AILS and SISR from frozen adapted sources; do not run during timed experiments.\n'
-bash cohort_b/ails/build.sh
+# Keep the frozen build script byte-identical. JDK 17 otherwise decodes source
+# comments as US-ASCII in minimal images with LANG=C.
+JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:+$JAVA_TOOL_OPTIONS }-Dfile.encoding=UTF-8" bash cohort_b/ails/build.sh
 bash cohort_b/sisr/build.sh
 test -f cohort_b/ails/classes/Adapter/Main.class
 test -x cohort_b/sisr/build/sisr_adapter
