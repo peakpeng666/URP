@@ -259,9 +259,16 @@ function Invoke-WebRequest { param([switch]$UseBasicParsing, [string]$Uri, [stri
 try { Get-ComposeFile; throw 'expected download error' } catch {
     if ($_.Exception.Message -ne 'injected interruption') { throw }
 }
+# Catching the expected exception alone leaves $? false, so pwsh -Command
+# would return 1. Emit a positive outcome only after the exact error matched.
+[Console]::WriteLine('expected interruption caught')
 '''
-            subprocess.run(['pwsh', '-NoProfile', '-NonInteractive', '-Command', command],
-                           env=os.environ | {'URP_INSTALLER_TEST_PATH': str(PS), 'URP_TEST_STATE': temp}, check=True)
+            result = subprocess.run(['pwsh', '-NoProfile', '-NonInteractive', '-Command', command],
+                                    env=os.environ | {'URP_INSTALLER_TEST_PATH': str(PS), 'URP_TEST_STATE': temp},
+                                    text=True, capture_output=True)
+            self.assertEqual(result.returncode, 0,
+                             f'PowerShell fixture exited {result.returncode}\nstdout: {result.stdout}\nstderr: {result.stderr}')
+            self.assertEqual(result.stdout.strip(), 'expected interruption caught')
             for name in names:
                 self.assertEqual((deploy / name).read_text(), 'old:' + name)
             self.assertEqual(sorted(p.name for p in deploy.iterdir()), sorted(names))
@@ -394,11 +401,25 @@ $fn = $ast.Find({ param($node) $node -is [System.Management.Automation.Language.
 . ([scriptblock]::Create($fn.Extent.Text))
 [Console]::Write((ConvertTo-BashLiteral $env:URP_TEST_VALUE))
 '''
+        # Windows CreateProcess may resolve bare 'bash' to System32's WSL
+        # launcher before consulting PATH. CI provides the verified Git Bash
+        # executable; other hosts resolve it once and execute its absolute path.
+        selected_bash = os.environ.get('URP_TEST_BASH') or shutil.which('bash')
+        self.assertIsNotNone(selected_bash, 'Bash is required for the quoting contract')
+        bash = str(Path(selected_bash).resolve(strict=True))
+        version = subprocess.run([bash, '--version'], text=True, capture_output=True)
+        self.assertEqual(version.returncode, 0,
+                         f'Bash preflight: {bash}\nstdout: {version.stdout}\nstderr: {version.stderr}')
+        self.assertIn('GNU bash', version.stdout, f'Expected Git/GNU Bash, got {bash}: {version.stdout}')
         for value in ["C:\\用户 空格\\O'Brien\\URP", "literal'; printf bad; '", 'https://example.invalid/空 格']:
-            literal = subprocess.run(['pwsh', '-NoProfile', '-NonInteractive', '-Command', command],
-                                     env=os.environ | {'URP_INSTALLER_TEST_PATH': str(PS), 'URP_TEST_VALUE': value},
-                                     text=True, capture_output=True, check=True).stdout
-            actual = subprocess.run(['bash', '-c', 'printf %s ' + literal], text=True, capture_output=True, check=True)
+            quoted = subprocess.run(['pwsh', '-NoProfile', '-NonInteractive', '-Command', command],
+                                    env=os.environ | {'URP_INSTALLER_TEST_PATH': str(PS), 'URP_TEST_VALUE': value},
+                                    text=True, capture_output=True)
+            self.assertEqual(quoted.returncode, 0,
+                             f'PowerShell quote function exited {quoted.returncode}\nstdout: {quoted.stdout}\nstderr: {quoted.stderr}')
+            actual = subprocess.run([bash, '-c', 'printf %s ' + quoted.stdout], text=True, capture_output=True)
+            self.assertEqual(actual.returncode, 0,
+                             f'Bash quote roundtrip: {bash} exited {actual.returncode}\nstdout: {actual.stdout}\nstderr: {actual.stderr}')
             self.assertEqual(actual.stdout, value)
 
 

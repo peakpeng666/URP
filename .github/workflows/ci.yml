@@ -144,6 +144,16 @@ jobs:
             [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $file), [ref]$tokens, [ref]$errors) | Out-Null
             if ($errors.Count -gt 0) { $errors | Format-List; throw "PowerShell parse failed: $file" }
           }
+      - name: Parse installers with Windows PowerShell 5.1
+        shell: powershell
+        run: |
+          $files = @('install.ps1') + @(Get-ChildItem deploy/windows -Filter *.ps1 -Recurse | ForEach-Object { $_.FullName })
+          foreach ($file in $files) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile((Resolve-Path $file), [ref]$tokens, [ref]$errors) | Out-Null
+            if ($errors.Count -gt 0) { $errors | Format-List; throw "PowerShell parse failed: $file" }
+          }
       - name: Exercise PowerShell launcher and quoting contracts
         shell: pwsh
         env:
@@ -155,6 +165,12 @@ jobs:
           $gitBash = Join-Path $gitRoot 'bin/bash.exe'
           if (-not (Test-Path -LiteralPath $gitBash)) { throw "Git Bash is required for quoting tests: $gitBash" }
           $env:PATH = "$(Split-Path $gitBash);$env:PATH"
+          # Bare process names may search System32 before PATH on Windows.
+          # The Python fixture must launch this exact verified executable.
+          $env:URP_TEST_BASH = (Resolve-Path -LiteralPath $gitBash).ProviderPath
+          Write-Host "Quoted-value tests use $env:URP_TEST_BASH"
+          & $env:URP_TEST_BASH --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           Get-Command pwsh -ErrorAction Stop | Out-Null
           python -m unittest -v test_install_entrypoints.PowerShellStaticContractTests test_install_entrypoints.WindowsLauncherTests
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
