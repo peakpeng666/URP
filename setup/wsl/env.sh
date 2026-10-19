@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-# PATH for the pinned Node and uv used by the WSL setup. Source this; do not execute it.
-export PATH="${HOME}/.local/node-v24.22.0/bin:${HOME}/.local/bin:${PATH}"
+# Compatibility wrapper. The shared Ubuntu 22.04 setup lives in setup/ubuntu/.
+# shellcheck source=../ubuntu/env.sh
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)/../ubuntu/env.sh"

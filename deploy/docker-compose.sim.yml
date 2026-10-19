@@ -1,14 +1,13 @@
-# Same service as docker-compose.yml, built with ROS 2 Humble and Gazebo Fortress.
-# `docker compose -f deploy/docker-compose.sim.yml up -d --build`
-# Ports 8765 and 9002 are published on the host loopback so the Windows browser can open the views.
+# Pull the published simulation image. This file has no build context, so a
+# collaborator does not need the git checkout.
+#   docker compose -f deploy/docker-compose.sim.yml up -d
+# Local builds use deploy/docker-compose.sim-build.yml.
 name: urp-lab
 
 services:
   lab:
-    build:
-      context: ..
-      dockerfile: deploy/Dockerfile.simulation
-    image: urp-lab-sim:local
+    image: ghcr.io/peakpeng666/urp-sim:${URP_IMAGE_TAG:-deploy}
+    pull_policy: missing
     restart: unless-stopped
     ports:
       - "${URP_PUBLISH_HOST:-127.0.0.1}:${URP_PORT:-4100}:4100"
@@ -25,11 +24,10 @@ services:
       URP_ADMIN_TOKEN: "${URP_ADMIN_TOKEN:-}"
       LIBGL_ALWAYS_SOFTWARE: "${LIBGL_ALWAYS_SOFTWARE:-1}"
       URP_RMW: rmw_cyclonedds_cpp
+      URP_SIM_PROFILE: image
     volumes:
       - lab-runtime:/data/lab
       - archive-data:/data/archive
-    cap_add:
-      - NET_ADMIN
     shm_size: "1gb"
 
 volumes:

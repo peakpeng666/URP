@@ -5,10 +5,8 @@ name: urp-lab
 
 services:
   lab:
-    build:
-      context: ..
-      dockerfile: deploy/Dockerfile
-    image: urp-lab:local
+    image: ghcr.io/peakpeng666/urp-bench:${URP_IMAGE_TAG:-deploy}
+    pull_policy: missing
     restart: unless-stopped
     ports:
       - "${URP_PUBLISH_HOST:-127.0.0.1}:${URP_PORT:-4100}:4100"
@@ -25,8 +23,6 @@ services:
     volumes:
       - lab-runtime:/data/lab
       - archive-data:/data/archive
-    cap_add:
-      - NET_ADMIN
     shm_size: "256mb"
 
 volumes:

@@ -4,7 +4,7 @@
 
 ## 搭档的 Windows 电脑
 
-另一台 Windows 电脑（本机或 WSL2）不要走下面的整机镜像。那条路径只接受 Linux x86_64 上的本机 Docker，并且网关只对 `127.0.0.1` 发布。请从仓库根目录阅读 [DEPLOY.md](../DEPLOY.md)：有 Docker Desktop 时在仓库根目录执行 `docker compose up -d`，或双击 `启动实验台.bat`。依赖清单在 [deploy/DEPENDENCIES.md](../deploy/DEPENDENCIES.md)。
+另一台电脑不要走下面的整机镜像。那条路径只接受 Linux x86_64 上的本机 Docker，并且网关只对 `127.0.0.1` 发布。支持的三条路是 Docker Desktop（WSL2 后端）、WSL2 Ubuntu 22.04、原生 Ubuntu 22.04。一条公开命令即可拉取并启动，不需要登录，说明在 [DEPLOY.md](../DEPLOY.md)。依赖和第三方许可在 [deploy/DEPENDENCIES.md](../deploy/DEPENDENCIES.md)。
 
 ## 搭档从 GitHub 复现完整平台
 

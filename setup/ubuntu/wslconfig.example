@@ -1,0 +1,7 @@
+# Copy to %UserProfile%\.wslconfig on Windows, then run `wsl --shutdown` from PowerShell.
+# 8 GB is enough for the planner. Gazebo needs the higher value.
+[wsl2]
+memory=16GB
+processors=4
+localhostForwarding=true
+swap=8GB

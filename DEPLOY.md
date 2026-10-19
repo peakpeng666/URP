@@ -1,148 +1,161 @@
-# 把工作台装到另一台电脑
+# 把工作台和仿真装到另一台电脑
 
-给搭档的 Windows 电脑用。三条路里选一条：
+仓库 `peakpeng666/URP` 是公开的。镜像和 Release 附件也按公开来用。默认路径不登录、不提示令牌。
 
-| 你的电脑 | 怎么做 |
+三条路，都包含 ROS 2 Humble 和 Gazebo Fortress。没有纯 Windows 路径。
+
+| 你的电脑 | 安装器怎么做 |
 |---|---|
-| 装了 Docker Desktop | 走 A。这是默认路径，Windows 本机和 WSL2 都能用 |
-| 只有 WSL2 Ubuntu，没有 Docker | 走 B |
-| 纯 Windows，没有 WSL 也没有 Docker | 走 C。工作台和仿真都跑不起来，脚本会说明原因 |
+| Docker Desktop（Windows 的 WSL2 后端，或 Linux 上的 Docker） | A。不克隆仓库。拉取 `ghcr.io/peakpeng666/urp-sim:deploy` 后启动 |
+| WSL2 里的 Ubuntu 22.04，不用 Docker | B。浅克隆，排除 `src/repos`、`data/bpp`、`data/cifar-training` |
+| 原生 Ubuntu 22.04 | C。与 B 同一套 `setup/ubuntu/setup.sh` |
 
-依赖的版本和「仓库里看不到、需要主人笔记本确认」的项目在 [deploy/DEPENDENCIES.md](deploy/DEPENDENCIES.md)。
+B 和 C 发现是 WSL 时才使用软件渲染和 `0.0.0.0` 监听。原生 Ubuntu 不设置 `LIBGL_ALWAYS_SOFTWARE`。主人笔记本上的 `bash setup/run.sh lab` 仍然只监听 `127.0.0.1:4100`，也不设置 `URP_SIM_PROFILE`。
 
-笔记本上原来的 `bash setup/run.sh lab` 仍然只监听 `127.0.0.1:4100`，不需要改命令。
+依赖版本在 [deploy/DEPENDENCIES.md](deploy/DEPENDENCIES.md)。第三方许可在 [deploy/THIRD_PARTY.md](deploy/THIRD_PARTY.md)。
 
-## 先拿到代码
+## 一条命令
 
-```bat
-git clone https://github.com/peakpeng666/URP.git
-cd URP
-```
-
-普通 clone 就包含工作台源码、前端锁文件、两套 Python 锁文件，以及档案库 `data/backend/research.sqlite3`。不要把下面这些大文件提交回仓库：
-
-- ROS / Gazebo 的系统安装、Fuel 模型、Foxglove 解包、Fields2Cover 轮子、仿真运行库。它们不在 Git 里。取得方式见依赖清单。完整平台快照大约 7.2 GB，入口仍是 `setup/README.md` 里的 `bash setup/run.sh reproduce`，那条命令拒绝 Windows，只接受 Linux x86_64 上的本机 Docker。
-- 历史 BPP 大目录 `data/bpp` 如果 clone 里已经有，工作台镜像也不会把它打进去。
-
-磁盘：只开工作台，预留大约 8 GB。要构建带 ROS 的仿真镜像，预留 25 GB 以上。
-
-## A. Docker Desktop
-
-1. 安装 [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/)，后端选 WSL2。安装完成后打开一次，确认托盘图标不是「Engine stopped」。
-2. 在仓库根目录双击 `启动实验台.bat`，或在 PowerShell 里：
-
-```powershell
-docker compose up -d --build
-```
-
-这会构建工作台镜像：Node 24.22.0 编译前端，uv 0.12.23 按锁文件安装两套 Python 3.12.13 环境，然后在容器里启动网关。网关自己拉起档案后端。浏览器打开 http://localhost:4100/ 。健康检查是 http://localhost:4100/lab/api/health ，应返回 `"status": "ok"`。
-
-端口只绑定在 Windows 的 `127.0.0.1`，不监听局域网。容器内部监听 `0.0.0.0`，否则 Docker 的端口转发到不了只绑定在容器 `127.0.0.1` 上的进程。不要改成 `network_mode: host`，Docker Desktop 没有 Linux 那种 host 网络。
-
-关闭：双击 `停止实验台.bat`，或 `docker compose stop`。命名卷 `urp-lab_lab-runtime` 和 `urp-lab_archive-data` 会保留场景、运行库和档案库。`docker compose down` 也保留卷。删卷才会丢运行数据：`docker compose down -v`。
-
-更新：
-
-```powershell
-git pull
-docker compose up -d --build
-```
-
-回退：`git checkout` 到上一提交后再执行同一条构建命令。旧卷还在，所以运行库不会被这次构建清掉。
-
-### 仿真镜像
-
-工作台镜像没有 ROS，页面里的仿真会显示 ROS 不可用。要在容器里装 ROS 2 Humble 和 Gazebo Fortress：
-
-```powershell
-docker compose -f deploy/docker-compose.sim.yml up -d --build
-```
-
-第一次会很久，镜像很大。构建完成并健康之后，浏览器仍是 http://localhost:4100/ 。Foxglove 和 Gazebo 的页面套接字发布在 Windows 的 `127.0.0.1:8765` 和 `127.0.0.1:9002`。
-
-这台云端 Linux 虚拟机没有把这个仿真镜像构建完，也没有跑通 Gazebo。原因写在下面「这次没在真机上验证的部分」。
-
-仿真还依赖仓库里没有的验收二进制（桥接、TF、GUI 覆盖）。默认 `URP_BRIDGE_FIX=1`。新机器上现编译的二进制和主人笔记本的哈希不一致时，仿真会拒绝启动，而不是悄悄换一套。不要为了先跑起来把这三个开关改成 0，除非明确是在做对照实验。
-
-### GPU
-
-默认软件渲染（`LIBGL_ALWAYS_SOFTWARE=1`），没有显卡也能开工作台。Gazebo 若要用 NVIDIA GPU：
-
-1. Windows 安装支持 [CUDA on WSL](https://docs.nvidia.com/cuda/wsl-user-guide/index.html) 的驱动。不需要在 WSL 里再装一套 Linux 驱动。
-2. Docker Desktop 使用 WSL2 后端。
-3. 在仿真镜像上叠加 GPU 文件：
-
-```powershell
-docker compose -f deploy/docker-compose.sim.yml -f deploy/docker-compose.gpu.yml up -d --build
-```
-
-没有 NVIDIA 设备时不要加第二个文件，否则容器起不来。
-
-## B. 只有 WSL2
-
-1. 管理员 PowerShell：`wsl --install -d Ubuntu`。说明见 [安装 WSL](https://learn.microsoft.com/windows/wsl/install)。
-2. 进入 Ubuntu，装一次编译和下载所需的基础包（脚本在缺少 `curl` 时也会用 `sudo apt-get` 安装 `curl`、`ca-certificates`）：
+Linux、WSL Ubuntu 或任何能跑 bash 和 Docker 的机器：
 
 ```sh
-cd /mnt/c/Users/你的用户名/URP
-bash setup/wsl/setup.sh
-bash setup/wsl/run-lab.sh
+curl -fsSL https://raw.githubusercontent.com/peakpeng666/URP/deploy/install.sh | bash
 ```
 
-`setup.sh` 把 uv 0.12.23 和 Node 24.22.0 装到 `~/.local`，用 CPython 3.12.13 按锁文件创建两个虚拟环境，并构建前端。`run-lab.sh` 让网关在 WSL 里监听 `0.0.0.0:4100`，Windows 浏览器通过 WSL 的 localhost 转发打开 http://localhost:4100/ 。
+Windows PowerShell：
 
-关闭要在 WSL 里执行，这样连接才是本机回环，关闭接口才会接受：
+```powershell
+irm https://raw.githubusercontent.com/peakpeng666/URP/deploy/install.ps1 | iex
+```
+
+PowerShell 里 `docker info` 成功时，直接在 Windows 拉取镜像，不克隆约 3 GB 的仓库，也不进发行版。没有 Docker 时，它安装或使用 WSL 的 Ubuntu 22.04，再执行上面的 bash。第一次打开 Ubuntu 要先建一个 Linux 用户；建完后把同一条命令再执行一次。
+
+装好之后：
 
 ```sh
-bash setup/run.sh lab-stop
+urp up        # 已装过就再启动
+urp down      # 停止，保留数据卷
+urp update    # Docker：重新拉取。Ubuntu：更新浅克隆并重装后启动
+urp status    # 健康检查
+urp fuel      # 可选。从 fuel.gazebosim.org 下载 warehouse / depot 模型
 ```
 
-仿真：在这份 Ubuntu 22.04 里自行安装依赖清单中的 ROS Humble 与 Ignition Fortress 软件包，并准备 `/opt/ros/humble`。`setup.sh` 不安装它们。装好之前，规划页面可用，仿真启动会说明 ROS 不可用。
+`~/.local/bin` 不在 PATH 里时，用完整路径 `~/.local/bin/urp`。Windows 上后来的命令是再执行一次 `install.ps1`，参数用 `status`、`down`、`update` 或 `fuel`。
 
-WSL 内存。在 Windows 用户目录的 `.wslconfig` 里限制，避免 Gazebo 把内存吃满：
+浏览器打开 http://localhost:4100/ 。健康检查 http://localhost:4100/lab/api/health 应返回 `"status":"ok"`。Foxglove 和 Gazebo WebSocket 在 `127.0.0.1:8765` 和 `127.0.0.1:9002`。
 
-```ini
-[wsl2]
-memory=8GB
-processors=4
-localhostForwarding=true
-swap=4GB
+不要使用 `network_mode: host`。DDS 使用 `setup/cyclonedds.xml`：关闭组播，只在 `lo` 上向 `localhost` 做单播发现，并保留 `ROS_LOCALHOST_ONLY=1`。不需要 `NET_ADMIN`。
+
+只要规划、不要 ROS 时，在已经克隆的仓库里：
+
+```sh
+docker compose -f deploy/docker-compose.yml up -d
 ```
 
-只做规划时 8 GB 够用。要跑 Gazebo，把 `memory` 提到 16 GB，然后在 PowerShell 执行 `wsl --shutdown` 再重新打开 Ubuntu。
+这拉的是 `ghcr.io/peakpeng666/urp-bench`。默认那条命令拉的是带仿真的 `urp-sim`。
 
-## C. 纯 Windows
+## 主人做一次的公开设置
 
-双击 `启动实验台.bat` 时，如果既没有 Docker 也没有 WSL，脚本会停下来并给出上面两个安装链接。
+Actions 用 `GITHUB_TOKEN` 推送的包默认是私有的，工作流里的接口经常返回 403，不能代替下面的点击。镜像推上去之后：
 
-不能在原生 Windows 上按锁文件安装工作台：`ompl==2.0.1` 没有 Windows 轮子。ROS 2 Humble 与 Gazebo Fortress 也不是这条代码路径能在原生 Windows 上启动的。请安装 Docker Desktop 或 WSL2。
+1. 打开 https://github.com/users/peakpeng666/packages/container/urp-sim/settings
+2. **Package settings → Change package visibility → Public**
+3. 对 `urp-bench` 做同样的操作：https://github.com/users/peakpeng666/packages/container/urp-bench/settings
+4. 若页面写着没有关联仓库：**Connect repository → peakpeng666/URP**。工作流和 Dockerfile 都写了 `org.opencontainers.image.source=https://github.com/peakpeng666/URP`。
+
+推送发生在 `deploy` 分支和 `v*` 标签。`deploy` 得到 `:deploy` 和提交号；`v*` 得到版本号和 `:latest`。工作流是 `.github/workflows/images.yml`。
+
+在这一步完成之前，`docker pull` 会失败。安装器打印上面的地址然后退出。它不会执行 `docker login`，也不会要搭档的令牌。
+
+不要把 Fuel 缓存上传为 Release。可以公开上传的只有 Fields2Cover 轮子，并且必须连同 BSD 声明：
+
+```sh
+bash deploy/upload-assets.sh vYYYYMMDD
+```
+
+没有轮子时这条命令不上传任何东西。
+
+## 浅克隆里有什么
+
+没有 Docker 时，安装器把检出放在 `~/.local/share/urp/src`：
+
+```sh
+git clone --depth 1 --filter=blob:none --sparse --branch deploy https://github.com/peakpeng666/URP.git
+```
+
+然后排除 `src/repos`、`data/bpp`、`data/cifar-training`。Docker 路径只下载 compose 文件到 `~/.local/share/urp`（Windows 是 `%LOCALAPPDATA%\urp`）。
+
+## GPU
+
+镜像默认 `LIBGL_ALWAYS_SOFTWARE=1`。要用 NVIDIA：
+
+```sh
+URP_GPU=1 urp up
+```
+
+Windows 使用支持 CUDA on WSL 的驱动，不要在 WSL 里再装 Linux 驱动。没有 NVIDIA 设备时不要加 `URP_GPU=1`。原生 Ubuntu 不走这个变量。
+
+## Fuel 与许可
+
+`maze` 不引用 Fuel，一条命令起来就能开这个世界。
+
+`warehouse` 和 `depot` 需要使用者自己向 https://fuel.gazebosim.org 下载。`urp fuel` 做这件事，并把缓存挂进容器或写到检出的 `setup/2026-10-15/cache/ignition-fuel`。这是使用者自己的副本，不是我们再分发。
+
+不能放进公开镜像或公开 Release：
+
+| 模型 | 许可 |
+|---|---|
+| OpenRobotics Warehouse 5 | CC BY-NC-ND 4.0 |
+| MovAi shelf_big 2 | CC BY-NC-ND 4.0 |
+| MovAi shelf 1 | CC BY-NC 4.0 |
+
+Foxglove bridge 是 MIT，rosx_introspection 是 MPL-2.0，随镜像里的 apt 包安装，许可文件保留。Fields2Cover 是 BSD-3-Clause，轮子不在镜像里。细节在 `deploy/THIRD_PARTY.md`。
+
+## 指纹
+
+笔记本验收文件不改。系统库与验收记录一致时，只接受原来的二进制。镜像和别的机器在 `URP_SIM_PROFILE=image` 时使用编译出来的 `profile.json`。`URP_BRIDGE_FIX=0`、`URP_TF_FIX=0`、`URP_GUI_FIX=0` 只是对照开关。
+
+发布出去的 `urp-sim` 在构建时运行 `deploy/record-sim-profiles.py`，所以镜像里的指纹就是那次构建的产物。本地另编的二进制不会被拿去冒充已发布镜像。
 
 ## 关闭接口
 
-`POST /lab/api/shutdown` 默认只接受来自 `127.0.0.1` 或 `::1` 的连接。容器里从 Windows 转发进来的连接不是回环，所以从浏览器或宿主机 `curl` 这个地址会得到 403。这是故意的。关容器用 `docker compose stop`。关 WSL 里的进程用 WSL 内部的 `bash setup/run.sh lab-stop`。
+`POST /lab/api/shutdown` 默认只接受回环地址。从 Windows 经 Docker 转发进来的连接会得到 403。关容器用 `urp down` 或 `docker compose stop`。关 WSL 或本机进程要在那个 Linux 里执行 `urp down`，这样连接才是回环。设置 `URP_ADMIN_TOKEN` 之后，所有关闭请求都要带 `X-URP-Admin-Token` 或 `Authorization: Bearer`。
 
-只有在必须从另一台机器调用关闭接口时才设置 `URP_ADMIN_TOKEN`。设置之后，包括本机在内的所有关闭请求都要带这个值。页面上的求解和仿真按钮不使用这个接口。
+卷 `urp-lab_lab-runtime` 和 `urp-lab_archive-data` 在 `urp down` 之后还在。`docker compose down -v` 才删卷。
+
+Windows 上也可以双击 `启动实验台.bat`。它只调用 Docker 或 `wsl`，不在 Windows 里安装 Python。
+
+## 自己构建
+
+公开镜像还没推送，或要改 Dockerfile 时：
+
+```sh
+docker compose -f deploy/docker-compose.sim.yml -f deploy/docker-compose.sim-build.yml build
+```
+
+构建需要仓库，产物的名字就是 `ghcr.io/peakpeng666/urp-sim:deploy`。日常安装不要走这条。
 
 ## 排错
 
 | 现象 | 处理 |
 |---|---|
-| 浏览器打不开 localhost:4100 | Docker 引擎是否已启动；WSL 是否在跑 `run-lab.sh`；Windows 防火墙是否拦截了专用网络上的 Docker |
-| 页面 403，提示拒绝的 Host | 用 http://localhost:4100/ 打开。若用局域网 IP，把该主机名写入 `URP_EXTRA_HOSTS`，并把 `URP_PUBLISH_HOST` 改成 `0.0.0.0`。个人电脑不需要这样做 |
-| 端口被占用 | 先走停止脚本。不要按进程名批量结束进程 |
-| `sh` 脚本报 `$'\r'` | 仓库用 `.gitattributes` 把 `*.sh` 保持为 LF。若仍出现，在 WSL 里 `dos2unix setup/wsl/*.sh setup/run.sh`，不要在记事本里保存这些脚本 |
-| WSL 里仿真中途被系统杀掉 | 提高 `.wslconfig` 的 `memory`，执行 `wsl --shutdown` |
-| 仿真提示 ROS 不可用 | 当前是工作台镜像或尚未在 WSL 安装 ROS。见上文仿真镜像 |
-| 仿真提示桥接或覆盖指纹不符 | 新编译结果和主人笔记本的验收二进制不一致。不要改成成功。需要平台快照里的 `compiled-and-wheels`，或在主人机器上保留原来的 `setup/2026-10-15/deployment/runtime` |
-| `ompl` 在 Windows 上安装失败 | 预期行为。改走 A 或 B |
-| 组播 `Network is unreachable` | 容器入口会尝试 `ip route replace 239.255.0.0/16 dev lo`。失败时规划仍可用，Gazebo 发现会失败。需要 `NET_ADMIN`，Compose 已经加上 |
+| `docker pull` 要求登录或 403 | 主人把包改成 Public。搭档不要 `docker login` |
+| 浏览器打不开 localhost:4100 | Docker 引擎是否已启动；WSL 里 `urp status` |
+| 页面 403，提示拒绝的 Host | 用 http://localhost:4100/ |
+| `sh` 脚本报 `$'\r'` | `*.sh` 在 `.gitattributes` 里是 LF |
+| WSL 里仿真被杀掉 | 把 `setup/ubuntu/wslconfig.example` 复制为 Windows 用户目录的 `.wslconfig`，然后 `wsl --shutdown` |
+| warehouse 或 depot 报世界资源不完整 | `urp fuel`。maze 不需要 |
+| 指纹不符 | 镜像里应已有 profile。源码被改过才会拒绝 |
+| Ubuntu 不是 22.04 | 没有 Docker 时安装器会停。Humble 只装在 22.04 |
 
-## 这次验证了什么
+## 仿真怎么试
 
-在构建这次改动的 Linux 虚拟机上：
+工作台起来之后，TB4 用官方 `maze`（无 GUI）：
 
-- 工作台访问控制的单元测试（关闭接口、默认仍是本机）。
-- `bash setup/wsl/setup.sh` 是否能在这台 Ubuntu 上装好锁文件里的环境并构建前端。
-- `docker compose up` 之后，首页和 `/lab/api/health` 是否返回 200，以及从宿主机调用关闭接口是否返回 403。
+```sh
+curl -sS -X POST http://127.0.0.1:4100/lab/api/services/sim/start \
+  -H 'content-type: application/json' \
+  -d '{"world":"maze","gui":false,"rviz":false,"localization":"ground_truth"}'
+```
 
-没有在真实 Windows、WSL2 或 NVIDIA GPU 上点过界面。仿真镜像没有在这台虚拟机里构建到 Gazebo 能跑：它需要 Ubuntu 22.04 的 ROS Humble 与 Ignition，体积大，而且验收用的桥接二进制不在 Git 里，现场重编译会被指纹拒绝。工作台镜像里的仿真按钮会如实显示 ROS 不可用，不会把演示数据写成成功。
+等到 `GET /lab/api/services` 里仿真为运行，并且 `127.0.0.1:8765` 与 `127.0.0.1:9002` 能连上。田间仿真要先有一份已验算通过的多车方案，再 `POST /lab/api/fieldsim`。

@@ -21,13 +21,57 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def verified_bridge():
-    manifest = json.loads((SOURCE / 'manifest.json').read_text())
-    checks = {**{str(SOURCE / k): v for k, v in manifest['sources'].items()}, **manifest['system_files']}
-    for name, expected in checks.items():
-        p = Path(name)
-        if not p.is_file() or sha(p) != expected:
+def _mapping_ok(mapping):
+    for name, expected in mapping.items():
+        path = Path(name)
+        if not path.is_file() or sha(path) != expected:
+            return False
+    return True
+
+
+def _source_map(manifest):
+    return {str(SOURCE / key): value for key, value in manifest.get('sources', {}).items()}
+
+
+def active_manifest():
+    """Laptop audit wins whenever its system libraries are the ones on disk.
+
+    A machine profile (written by deploy/record-sim-profiles.py) is consulted only
+    when those libraries differ. It must carry the same source hashes, so a profile
+    cannot authorize a different patch. URP_BRIDGE_FIX=0 remains the explicit
+    contrast switch and is not a fallback.
+    """
+    audited = SOURCE / 'manifest.json'
+    if not audited.is_file():
+        raise RuntimeError('桥接修复的源码/依赖指纹变化：缺少 manifest.json；需重新构建验收，不能静默回退')
+    laptop = json.loads(audited.read_text())
+    sources = _source_map(laptop)
+    for name, expected in sources.items():
+        path = Path(name)
+        if not path.is_file() or sha(path) != expected:
             raise RuntimeError(f'桥接修复的源码/依赖指纹变化：{name}；需重新构建验收，不能静默回退')
+    profile_path = BUILD / 'profile.json'
+    profile = json.loads(profile_path.read_text()) if profile_path.is_file() else None
+
+    def profile_ok():
+        return (profile is not None and _source_map(profile) == sources and profile.get('executable_sha256')
+                and _mapping_ok(profile.get('system_files', {})))
+
+    if _mapping_ok(laptop.get('system_files', {})):
+        # The audited binary wins whenever it is the file on disk. A different binary
+        # is accepted only for an image profile, and only when URP_SIM_PROFILE=image.
+        if EXECUTABLE.is_file() and sha(EXECUTABLE) == laptop.get('executable_sha256'):
+            return laptop
+        if os.environ.get('URP_SIM_PROFILE') == 'image' and profile_ok() and profile.get('scope') == 'image':
+            return profile
+        return laptop
+    if profile_ok():
+        return profile
+    raise RuntimeError('桥接修复的源码/依赖指纹变化：系统库与笔记本验收指纹不一致，且没有与本机匹配的已登记指纹；需重新构建验收，不能静默回退')
+
+
+def verified_bridge():
+    manifest = active_manifest()
     BUILD.mkdir(parents=True, exist_ok=True)
     with (BUILD / 'build.lock').open('w') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)

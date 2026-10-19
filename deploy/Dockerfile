@@ -56,12 +56,15 @@ COPY data/backend/research.sqlite3 ./data/backend/research.sqlite3
 COPY data/packages ./data/packages
 COPY data/research ./data/research
 COPY --from=frontend /src/frontend/dist ./src/frontend/dist
-COPY deploy/entrypoint.sh ./deploy/entrypoint.sh
+COPY deploy/entrypoint.sh deploy/THIRD_PARTY.md ./deploy/
 
 RUN chmod 755 deploy/entrypoint.sh src/start.sh setup/profile.sh \
     && mkdir -p /data/lab /data/archive \
     && chown -R urp:urp /opt/urp /opt/uv-python /data
 
+LABEL org.opencontainers.image.source="https://github.com/peakpeng666/URP" \
+      org.opencontainers.image.title="urp-bench" \
+      org.opencontainers.image.description="URP workbench without ROS"
 EXPOSE 4100
 HEALTHCHECK --interval=15s --timeout=5s --start-period=40s --retries=8 \
     CMD ["/opt/urp/src/lab/.venv/bin/python", "-c", "import os,urllib.request; p=os.environ.get('URP_PORT','4100'); urllib.request.urlopen('http://127.0.0.1:%s/lab/api/health'%p, timeout=3)"]

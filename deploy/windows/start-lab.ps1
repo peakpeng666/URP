@@ -1,5 +1,6 @@
-# Start the workbench on a Windows PC. Docker Desktop is preferred, then WSL2.
-# Native Windows cannot install the locked lab environment: ompl 2.0.1 has no Windows wheel.
+# Optional Windows convenience launcher. It does not run the stack natively.
+# Docker Desktop (WSL2 backend) starts the simulation compose file.
+# Otherwise it asks WSL2 Ubuntu to run setup/ubuntu/run-lab.sh.
 $ErrorActionPreference = 'Stop'
 $Root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 Set-Location $Root
@@ -23,32 +24,36 @@ function Wait-Health {
 }
 
 $health = 'http://127.0.0.1:4100/lab/api/health'
+$compose = Join-Path $Root 'deploy\docker-compose.sim.yml'
 if (Test-DockerEngine) {
-    docker compose -f (Join-Path $Root 'deploy\docker-compose.yml') up -d --build
+    $image = if ($env:URP_IMAGE_TAG) { "ghcr.io/peakpeng666/urp-sim:$($env:URP_IMAGE_TAG)" } else { 'ghcr.io/peakpeng666/urp-sim:deploy' }
+    docker pull $image
+    if ($LASTEXITCODE -ne 0) {
+        docker image inspect $image *> $null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host '匿名拉取失败。不要执行 docker login。'
+            Write-Host '主人打开 https://github.com/users/peakpeng666/packages/container/urp-sim/settings'
+            Write-Host 'Package settings → Change package visibility → Public。urp-bench 同样操作。'
+            exit 1
+        }
+    }
+    docker compose -f $compose up -d --no-build --pull never
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-    if (Wait-Health $health 40) { Start-Process 'http://localhost:4100/' }
+    if (Wait-Health $health 90) { Start-Process 'http://localhost:4100/' }
     else { Write-Warning '容器已启动，但健康检查尚未返回。请看 docker compose logs。' }
     exit 0
 }
 
-$wsl = Get-Command wsl.exe -ErrorAction SilentlyContinue
-if ($wsl) {
+if (Get-Command wsl.exe -ErrorAction SilentlyContinue) {
     $wslPath = (wsl.exe -e wslpath -a $Root).Trim()
     if (-not $wslPath) { throw 'wslpath 没有返回仓库路径。' }
-    Start-Process wsl.exe -ArgumentList @('-e', 'bash', '-lc', "cd '$wslPath' && bash setup/wsl/run-lab.sh")
+    Start-Process wsl.exe -ArgumentList @('-e', 'bash', '-lc', "cd '$wslPath' && bash setup/ubuntu/run-lab.sh")
     if (Wait-Health $health 300) { Start-Process 'http://localhost:4100/' }
     else { Write-Warning '已在新窗口启动 WSL。若浏览器打不开，请看该窗口里的报错。' }
     exit 0
 }
 
-Write-Host @'
-没有找到可用的 Docker Desktop，也没有 WSL。
-
-纯 Windows 不能按锁文件安装工作台：ompl==2.0.1 只有 Linux 与 macOS 的轮子，没有 Windows 轮子。
-ROS 2 Humble 与 Gazebo Fortress 也不能在原生 Windows 上按本仓库的方式运行。
-
-请安装下面之一后重新双击「启动实验台」：
-  Docker Desktop（WSL2 后端）  https://docs.docker.com/desktop/setup/install/windows-install/
-  WSL2 Ubuntu                   https://learn.microsoft.com/windows/wsl/install
-'@
-exit 2
+Write-Host '没有 Docker，也没有 WSL。请安装 Docker Desktop（WSL2 后端）或 WSL2 Ubuntu 22.04。'
+Write-Host 'https://docs.docker.com/desktop/setup/install/windows-install/'
+Write-Host 'https://learn.microsoft.com/windows/wsl/install'
+exit 1

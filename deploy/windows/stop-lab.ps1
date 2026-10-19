@@ -1,21 +1,29 @@
-# Stop the workbench. Docker receives SIGTERM. WSL uses the loopback shutdown API.
+# Stop the simulation stack. Docker receives SIGTERM. WSL uses the loopback shutdown API.
 $ErrorActionPreference = 'Stop'
 $Root = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 Set-Location $Root
 
-if (Get-Command docker -ErrorAction SilentlyContinue) {
-    docker compose -f (Join-Path $Root 'deploy\docker-compose.yml') ps --status running -q *> $null
-    if ($LASTEXITCODE -eq 0) {
-        $running = docker compose -f (Join-Path $Root 'deploy\docker-compose.yml') ps --status running -q
-        if ($running) {
-            docker compose -f (Join-Path $Root 'deploy\docker-compose.yml') stop
-            exit $LASTEXITCODE
-        }
+function Stop-Compose {
+    param([string]$File)
+    if (-not (Test-Path $File)) { return $false }
+    $running = docker compose -f $File ps --status running -q
+    if ($LASTEXITCODE -ne 0) { return $false }
+    if ($running) {
+        docker compose -f $File stop
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        return $true
     }
+    return $false
 }
 
-$wsl = Get-Command wsl.exe -ErrorAction SilentlyContinue
-if ($wsl) {
+if (Get-Command docker -ErrorAction SilentlyContinue) {
+    $stopped = $false
+    if (Stop-Compose (Join-Path $Root 'deploy\docker-compose.sim.yml')) { $stopped = $true }
+    if (Stop-Compose (Join-Path $Root 'deploy\docker-compose.yml')) { $stopped = $true }
+    if ($stopped) { exit 0 }
+}
+
+if (Get-Command wsl.exe -ErrorAction SilentlyContinue) {
     wsl.exe -e bash -lc "curl --fail-with-body -sS -X POST -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:4100/lab/api/shutdown"
     exit $LASTEXITCODE
 }

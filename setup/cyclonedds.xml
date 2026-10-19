@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CycloneDDS xmlns="https://cdds.io/config">
   <Domain Id="any">
+    <General>
+      <!-- Docker Desktop and WSL2 do not deliver 239.255.0.0/16. Discovery is unicast on lo. -->
+      <AllowMulticast>false</AllowMulticast>
+      <Interfaces>
+        <NetworkInterface name="lo" priority="default" multicast="false"/>
+      </Interfaces>
+    </General>
     <Discovery>
       <!-- The official TB4 launch uses more than the default 10 DDS participants. -->
       <MaxAutoParticipantIndex>99</MaxAutoParticipantIndex>
+      <Peers>
+        <Peer address="localhost"/>
+      </Peers>
     </Discovery>
   </Domain>
 </CycloneDDS>

@@ -11,6 +11,14 @@
 
 安装命令只使用锁文件，不使用浮动版本：
 
+Ubuntu 22.04（WSL2 或原生）一条命令装齐，包括 ROS 2 Humble 与 Gazebo Fortress：
+
+```sh
+bash setup/ubuntu/setup.sh
+```
+
+只装 Python 与前端时：
+
 ```sh
 uv python install 3.12.13
 uv sync --locked --extra solvers --python 3.12.13
@@ -212,13 +220,27 @@ zustand@5.0.15
 | `ignition-fortress` | `ign gazebo` |
 | `libignition-gazebo6-dev` | 力矩模式按需编译关节插件，`pkg-config --modversion ignition-gazebo6` |
 | `cmake`、`ninja`、`g++`、`pkg-config` | 桥接、TF、GUI 覆盖和关节插件的按需编译 |
-| `ip`（iproute2） | 容器里给 `lo` 加 `239.255.0.0/16` 组播路由 |
+| `ip`（iproute2） | 镜像里保留，发现不再依赖组播 |
 
 Python 轮子是 manylinux 包，数值库的 `.so` 在轮子里。仿真的共享库在 `/opt/ros/humble/lib` 和 Ignition 的系统库。GUI 覆盖还链接 `libdl`。
 
+## DDS
+
+`setup/profile.sh simulation` 设置 `ROS_LOCALHOST_ONLY=1` 和 `CYCLONEDDS_URI=file://setup/cyclonedds.xml`。这份 XML 关闭组播，把网卡限定为 `lo`，发现对端是 `localhost`。Docker Desktop 和 WSL2 都不依赖 `239.255.0.0/16`。
+
+## 桥接与覆盖指纹
+
+笔记本验收文件不改：
+
+- `src/lab/ros/native/bridge/manifest.json`（可执行文件 `1a7fdb32269d384cd46eef7727e63d246256973fdaa2c664c89e400cf6a41ce0`）
+- `setup/2026-10-15/deployment/tf2-overlay-manifest.json`
+- `setup/2026-10-15/deployment/gui-overlay-manifest.json`
+
+系统库与其中的哈希一致时，只接受这些验收二进制。不一致时，`python3 deploy/record-sim-profiles.py` 用同一份源码编译，并把本机哈希写到 `src/lab/runtime/native/bridge/profile.json` 和 `setup/2026-10-15/deployment/runtime/profiles/`。源码哈希变了会拒绝。本机 profile 不能替换笔记本上已经对上的验收二进制。
+
 ## GPU
 
-工作台和仿真源码都没有 CUDA、cuDNN 或 PyTorch 设备选择。容器说明写的是软件渲染。默认 `LIBGL_ALWAYS_SOFTWARE=1`。要用 NVIDIA GPU，在 WSL2 上安装支持 CUDA on WSL 的 Windows 驱动，Docker Desktop 使用 WSL2 后端，再叠加 `deploy/docker-compose.gpu.yml`。没有 GPU 时不要加这个文件。
+工作台和仿真源码都没有 CUDA、cuDNN 或 PyTorch 设备选择。容器和 WSL 默认 `LIBGL_ALWAYS_SOFTWARE=1`。NVIDIA GPU：Windows 使用支持 CUDA on WSL 的驱动，Docker Desktop 用 WSL2 后端，再叠加 `deploy/docker-compose.gpu.yml`。原生 Ubuntu 22.04 不设置这个变量，已安装的驱动直接使用。没有 GPU 时不要加 GPU compose 文件。
 
 ## 不在 Git 里、运行时会用到的数据
 
@@ -228,9 +250,10 @@ Python 轮子是 manylinux 包，数值库的 `.so` 在轮子里。仿真的共�
 | `data/packages/` | **在 Git 里**。档案的 `--import-root`。 |
 | `data/research/` | **在 Git 里**。选择特征数据。 |
 | `src/lab/runtime/` | 运行时生成：场景、`lab.sqlite3`、仿真日志。容器卷 `/data/lab`。 |
-| `src/lab/vendor/wheels/*.whl` | 不在 Git 里。可选 Fields2Cover。完整平台附件见 `setup/README.md` 的快照说明。 |
-| `setup/2026-10-15/deployment/runtime/` | 不在 Git 里。TF/GUI 覆盖库和 Foxglove 解包。`run.sh lab` 会尝试按源码重建，但验收哈希对不上时仿真会拒绝使用。 |
-| Fuel 模型缓存 | 不在 Git 里。Gazebo 首次在线拉取，或从平台快照的 `fuel-cache` 组件取得。快照说明见 `setup/platform-snapshot.json`。 |
+| `src/lab/vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl` | 不在 Git 里。主人路径 `/home/peakpeng/Desktop/URP/src/lab/vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl`。SHA256 `0fe53e459024b282be455b2a4bdbca3d93efa029539ff87c88c1105361344c19`。字节数由 `pack-assets.sh` 在笔记本上打印。快照里包含轮子的 `compiled-and-wheels` 组件未压缩 110540114 字节（150 个文件，不只这一个轮子）。 |
+| `setup/2026-10-15/deployment/runtime/ros-extras` | 不在 Git 里。Foxglove 与 rosx 的 deb 解包。`bash src/lab/ros/native/install-ros-extras.sh` 可以用 apt 重新下载。 |
+| `setup/2026-10-15/deployment/runtime/tf-repro/liburp_tf_buffer.so`、`runtime/liburp_gui_lifetime.so`、`src/lab/runtime/native/bridge/parameter_bridge` | 主人笔记本上的验收二进制。别的机器运行 `python3 deploy/record-sim-profiles.py` 生成自己的产物和 profile，不要复制这些文件来通过检查。 |
+| Fuel 模型缓存 | 不在 Git 里，也不进公开镜像或公开 Release。主人路径 `/home/peakpeng/Desktop/URP/setup/2026-10-15/cache/ignition-fuel`。快照组件 `fuel-cache.tar.zst`：197 个文件，未压缩 174825180 字节，压缩包 144263245 字节，SHA256 `ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d`。这份快照混有不可再分发的模型，不能上传。`maze` 不引用 Fuel。`warehouse` 与 `depot` 由使用者执行 `urp fuel`，从 `https://fuel.gazebosim.org` 下载到本机。 |
 | CVRPLIB 实例正文 | 目录 JSON 在 `src/lab/urp_lab/library/data/cvrplib-catalog.json`。单题按需从 `https://galgos.inf.puc-rio.br/cvrplib` 下载到运行目录，无密钥。 |
 
 不要把 `data/bpp`（约 206 MB）或 `data/cifar-training` 打进工作台镜像。历史 BPP 页在数据未恢复时显示无历史数据，这是现有行为。
@@ -272,6 +295,12 @@ Python 轮子是 manylinux 包，数值库的 `.so` 在轮子里。仿真的共�
 
 外部地址：PyPI、npm、`https://astral.sh/uv/0.12.23/install.sh`、`https://nodejs.org/dist/v24.22.0/`、`http://packages.ros.org/ros2/ubuntu`、`https://galgos.inf.puc-rio.br/cvrplib`、GitHub Release 上的平台快照。工作台和仿真源码里没有 API 密钥或令牌名。
 
+## 第三方再分发
+
+2026-10-19 对照上游页面和 Fuel API 的结论写在 `deploy/THIRD_PARTY.md`。公开镜像可以包含 apt 安装的 ROS 2 Humble、Gazebo Fortress（Apache-2.0）以及 Foxglove bridge（MIT，https://github.com/foxglove/ros-foxglove-bridge）和 rosx_introspection（MPL-2.0，https://github.com/facontidavide/rosx_introspection）。镜像不剥离这些包里的许可文件。
+
+不能放进公开镜像或公开 Release 的模型：OpenRobotics Warehouse 5（CC BY-NC-ND 4.0）、MovAi shelf_big 2（CC BY-NC-ND 4.0）、MovAi shelf 1（CC BY-NC 4.0）。Depot、Chair、foldable_chair、MaleVisitorOnPhone 是 CC BY 4.0，Table、Jersey Barrier、Casual female 是 CC0。只发布后一组并不能让 warehouse 或 depot 完整，所以这些模型都不烘焙。Fields2Cover 是 BSD-3-Clause；轮子不在仓库里，只有主人用 `deploy/upload-assets.sh` 连同 BSD 声明一起上传时才进入 Release。
+
 ## 需要在主人笔记本上确认
 
 仓库推不出这些，部署没有把它们猜进安装命令：
@@ -281,5 +310,5 @@ Python 轮子是 manylinux 包，数值库的 `.so` 在轮子里。仿真的共�
 3. 笔记本仿真是否实际用了 NVIDIA GPU 或 CUDA。源码没有 CUDA 调用；容器文档写的是软件渲染。
 4. 主人日常使用的 Node 补丁号和 npm 版本。仓库只约束 `>=22.12.0`，CI 只写大版本 24。这里选用 24.22.0。
 5. `--open` 所用 Chrome / Chromium 的版本。
-6. Fuel 缓存里每个模型的本地状态。许可说明在平台快照的 `metadata/fuel-licenses.json`，不在普通 clone 里。
+6. 主人 Fuel 缓存的字节是否仍等于快照 SHA256 `ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d`。各模型许可已按 Fuel API 核对，见上面一节；缓存本身不公开分发。
 7. Fields2Cover 轮子的原始编译命令。manifest 已写明接手时轮子就在，不能声称从源码逐位重建。
