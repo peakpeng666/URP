@@ -1,0 +1,4 @@
+# `docker compose up` from the repository root pulls ghcr.io/peakpeng666/urp-sim.
+# It does not build. The planner-only image is deploy/docker-compose.yml.
+include:
+  - deploy/docker-compose.sim.yml

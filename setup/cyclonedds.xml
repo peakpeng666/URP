@@ -3,6 +3,11 @@
   <Domain Id="any">
     <Discovery>
       <!-- The official TB4 launch uses more than the default 10 DDS participants. -->
+      <!-- Do not add a NetworkInterface here. ROS_LOCALHOST_ONLY=1 already selects
+           lo, and lo is not multicast-capable, so discovery stays unicast.
+           A second interface entry fails with "the same interface may not be
+           selected twice". AllowMulticast plus a Peer also stopped nodes on
+           the same host from seeing each other. -->
       <MaxAutoParticipantIndex>99</MaxAutoParticipantIndex>
     </Discovery>
   </Domain>

@@ -1,0 +1,9 @@
+# Local build of the simulation image. The default compose file only pulls
+# ghcr.io/peakpeng666/urp-sim. Stack this file when the registry image is not
+# what you want to run:
+#   docker compose -f deploy/docker-compose.sim.yml -f deploy/docker-compose.sim-build.yml build
+services:
+  lab:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.simulation

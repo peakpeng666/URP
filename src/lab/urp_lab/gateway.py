@@ -72,6 +72,8 @@ class Config:
     worker_command: list[str] | None = None
     background: bool = True          # service monitor + sim poller threads (tests may disable)
     extra_hosts: set[str] = field(default_factory=set)
+    bind_host: str = '127.0.0.1'
+    admin_token: str = ''
 
 
 class Lab:
@@ -173,6 +175,39 @@ def export_with(fn, *args) -> Response:
     return attachment(data, media_type, filename)
 
 
+def client_host(request: Request) -> str:
+    return request.client.host if request.client is not None else ''
+
+
+def is_loopback(host: str) -> bool:
+    host = (host or '').strip().lower()
+    if host.startswith('::ffff:'):
+        host = host[7:]
+    if host in {'127.0.0.1', '::1', 'localhost'}:
+        return True
+    try:
+        import ipaddress
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def presented_admin_token(request: Request) -> str:
+    header = request.headers.get('x-urp-admin-token', '')
+    if header:
+        return header
+    auth = request.headers.get('authorization', '')
+    prefix = 'Bearer '
+    return auth[len(prefix):] if auth.startswith(prefix) else ''
+
+
+def shutdown_permitted(request: Request, token: str) -> bool:
+    """Loopback may shut the gateway down. A token, once set, is required for every client."""
+    if token:
+        return presented_admin_token(request) == token
+    return is_loopback(client_host(request))
+
+
 class Guard:
     """Host allow-list (DNS rebinding), cross-origin write rejection, JSON-only POST and body size limit."""
 
@@ -230,7 +265,7 @@ def create_app(config: Config | None = None) -> FastAPI:
     async def lifespan(app: FastAPI):
         app.state.http = httpx.AsyncClient(timeout=httpx.Timeout(120.0, connect=2.0), trust_env=False)
         await run_in_threadpool(lab.start)
-        log.info('gateway ready on 127.0.0.1:%s (runtime %s)', config.port, lab.runtime)
+        log.info('gateway ready on %s:%s (runtime %s)', config.bind_host, config.port, lab.runtime)
         try:
             yield
         finally:
@@ -294,7 +329,12 @@ def create_app(config: Config | None = None) -> FastAPI:
                 'scope': 'synthetic rigid-ground simulation verification; not real-machine calibration'}
 
     @app.post(f'{api}/shutdown', status_code=202)
-    def shutdown_gateway():
+    def shutdown_gateway(request: Request):
+        # Bound to loopback on the laptop, so any local client may close the process.
+        # When the socket is reachable from another machine, only that loopback (or a
+        # configured token) may call this. The panel does not use it; lab-stop does.
+        if not shutdown_permitted(request, config.admin_token):
+            raise ApiError(403, 'shutdown_forbidden', '关闭接口只接受本机连接')
         lab.shutdown_event.set()
         return {'accepted': True, 'message': '正在有序关闭求解、仿真与网关；日志保留'}
 
