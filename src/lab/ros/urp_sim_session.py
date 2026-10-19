@@ -8,6 +8,7 @@ import json
 import math
 import os
 from pathlib import Path
+import web_bind
 import queue
 import re
 import secrets
@@ -307,8 +308,8 @@ class Session:
             env={'LD_LIBRARY_PATH':':'.join(filter(None,[str(EXTRAS/'lib'),self.env.get('LD_LIBRARY_PATH')])),
                  'AMENT_PREFIX_PATH':':'.join(filter(None,[str(EXTRAS),self.env.get('AMENT_PREFIX_PATH')]))}
             port=self.args.foxglove_port
-            self.processes.start('foxglove',[str(fox),'--ros-args','-p',f'port:={port}','-p','address:=127.0.0.1','-p','use_sim_time:=true'],env)
-            self.st['components']['foxglove']='running';self.st['web']['ros']={'url':f'ws://127.0.0.1:{port}','protocol':'foxglove.sdk.v1'}
+            self.processes.start('foxglove',[str(fox),'--ros-args','-p',f'port:={port}','-p',f'address:={web_bind.foxglove_address()}','-p','use_sim_time:=true'],env)
+            self.st['components']['foxglove']='running';self.st['web']['ros']={'url':web_bind.browser_ws(port),'protocol':'foxglove.sdk.v1'}
         else:
             self.st['warnings'].append('Foxglove Bridge 未安装，浏览器里的 ROS 视图不可用：bash src/lab/ros/native/install-ros-extras.sh')
         key=secrets.token_hex(16);port=self.args.gazebo_web_port
@@ -326,7 +327,7 @@ class Session:
         share=Path('/opt/ros/humble/share')
         paths=':'.join([str(share/'turtlebot4_ignition_bringup/worlds'),str(share/'irobot_create_ignition_bringup/worlds'),str(share)])
         self.processes.start('gazebo_web',['ign','launch','-v','3',str(cfg)],{'IGN_GAZEBO_RESOURCE_PATH':paths,'GZ_SIM_RESOURCE_PATH':paths,'IGN_FILE_PATH':paths})
-        self.st['components']['gazebo_web']='running';self.st['web']['gazebo']={'url':f'ws://127.0.0.1:{port}','key':key,'world':self.args.world}
+        self.st['components']['gazebo_web']='running';self.st['web']['gazebo']={'url':web_bind.browser_ws(port),'key':key,'world':self.args.world}
 
     def window(self,key,on):
         if key not in ('gui','rviz'):raise ValueError('窗口类型无效')

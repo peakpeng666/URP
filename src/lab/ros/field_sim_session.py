@@ -19,6 +19,7 @@ import json
 import math
 import os
 from pathlib import Path
+import web_bind
 import secrets
 import signal
 import socket
@@ -590,10 +591,10 @@ class Session:
             env = {'LD_LIBRARY_PATH': ':'.join(filter(None, [str(EXTRAS / 'lib'), self.env.get('LD_LIBRARY_PATH')])),
                    'AMENT_PREFIX_PATH': ':'.join(filter(None, [str(EXTRAS), self.env.get('AMENT_PREFIX_PATH')]))}
             port = self.args.foxglove_port
-            self.processes.start('foxglove', [str(fox), '--ros-args', '-p', f'port:={port}', '-p', 'address:=127.0.0.1',
+            self.processes.start('foxglove', [str(fox), '--ros-args', '-p', f'port:={port}', '-p', f'address:={web_bind.foxglove_address()}',
                                               '-p', 'use_sim_time:=true'], env)
             self.st['components']['foxglove'] = 'running'
-            endpoints['ros'] = ('foxglove', port, {'url': f'ws://127.0.0.1:{port}', 'protocol': 'foxglove.sdk.v1'})
+            endpoints['ros'] = ('foxglove', port, {'url': web_bind.browser_ws(port), 'protocol': 'foxglove.sdk.v1'})
         else:
             self.st['warnings'].append('Foxglove Bridge 未安装：bash src/lab/ros/native/install-ros-extras.sh')
         key = secrets.token_hex(16)
@@ -614,7 +615,7 @@ class Session:
         self.processes.start('gazebo_web', ['ign', 'launch', '-v', '3', str(cfg)],
                              {'IGN_GAZEBO_RESOURCE_PATH': paths, 'GZ_SIM_RESOURCE_PATH': paths})
         self.st['components']['gazebo_web'] = 'running'
-        endpoints['gazebo'] = ('gazebo_web', port, {'url': f'ws://127.0.0.1:{port}', 'key': key, 'world': self.world, 'bounds': self.plan['bounds']})
+        endpoints['gazebo'] = ('gazebo_web', port, {'url': web_bind.browser_ws(port), 'key': key, 'world': self.world, 'bounds': self.plan['bounds']})
         # Popen is not readiness. Only publish endpoints once their sockets accept connections.
         deadline = time.monotonic() + 15
         while endpoints and time.monotonic() < deadline:

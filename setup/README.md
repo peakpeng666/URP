@@ -2,6 +2,10 @@
 
 面向农业机器人的路径规划算法库与智能推荐研究工作台。以多车任务访问为主线，同时支持点到点运动规划、转弯约束路网与覆盖任务：编辑问题、查看算法适用条件、同口径比较、独立验算，再把已适配的几何路径交给 ROS 2 / Gazebo，核对实际执行与原始记录。
 
+## 搭档的 Windows 电脑
+
+另一台 Windows 电脑（本机或 WSL2）不要走下面的整机镜像。那条路径只接受 Linux x86_64 上的本机 Docker，并且网关只对 `127.0.0.1` 发布。请从仓库根目录阅读 [DEPLOY.md](../DEPLOY.md)：有 Docker Desktop 时在仓库根目录执行 `docker compose up -d`，或双击 `启动实验台.bat`。依赖清单在 [deploy/DEPENDENCIES.md](../deploy/DEPENDENCIES.md)。
+
 ## 搭档从 GitHub 复现完整平台
 
 支持 **Linux x86_64 + 可用的本地 Docker Engine + Python 3**，本轮 Docker Engine 为 29.9.0。发布包封装本机 Ubuntu 22.04 用户空间、ROS 2 Humble / Gazebo Fortress、固定版本 Python/Node、求解环境与编译库、Fuel 模型、自建场景和运行数据库；补充包还包含旧数值基线的独立环境、JDK、原始批次及历史库。宿主机不必预装 ROS。为源码、镜像、下载缓存与实验留出至少 45 GB 空间。Docker Engine 需由搭档预先安装并能运行 `docker info`；入口不自动提权、不改系统 Python 或驱动。

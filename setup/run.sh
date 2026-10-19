@@ -85,7 +85,14 @@ PY
     exec bash setup/profile.sh frontend npm run build --prefix src/frontend
     ;;
   lab-stop)
-    exec curl --fail-with-body -sS -X POST -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:4100/lab/api/shutdown
+    # Same loopback target as before. URP_PORT and URP_ADMIN_TOKEN are optional.
+    port="${URP_PORT:-4100}"
+    token_header=()
+    if [[ -n "${URP_ADMIN_TOKEN:-}" ]]; then
+      token_header=(-H "X-URP-Admin-Token: ${URP_ADMIN_TOKEN}")
+    fi
+    exec curl --fail-with-body -sS -X POST -H 'Content-Type: application/json' "${token_header[@]}" \
+      -d '{}' "http://127.0.0.1:${port}/lab/api/shutdown"
     ;;
   *) printf 'Usage: bash setup/run.sh reproduce|lab|lab-stop|lab-setup|build|frontend|backend|research|numpy|solver-check|navigation [ARGS...]\n' ;;
 esac
