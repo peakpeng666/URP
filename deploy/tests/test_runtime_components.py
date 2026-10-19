@@ -150,6 +150,40 @@ class CohortCheckerTests(unittest.TestCase):
 
 
 class EntryGuardTests(unittest.TestCase):
+    def test_real_compiler_handles_unicode_paths_from_c_locale(self):
+        # Use the CI-installed complete JDK, not the runner's unrelated default.
+        jdk = Path('/usr/lib/jvm/java-17-openjdk-amd64')
+        if not (jdk / 'bin/java').is_file():
+            jdk = Path(os.environ.get('JAVA_HOME', '/missing-jdk'))
+        if not (jdk / 'bin/java').is_file() or not shutil.which('g++'):
+            self.skipTest('Requires a complete JDK 17+ (JAVA_HOME) and g++')
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp) / "中文 工作台's directory"
+            deploy = root / 'deploy'
+            ails = root / 'cohort_b/ails'
+            sisr = root / 'cohort_b/sisr'
+            deploy.mkdir(parents=True)
+            (ails / 'adapted/src/Adapter').mkdir(parents=True)
+            sisr.mkdir(parents=True)
+            (root / '启动实验台.bat').write_text('test fixture only\n', encoding='utf-8')
+            shutil.copyfile(ROOT / 'deploy/build-cohort.sh', deploy / 'build-cohort.sh')
+            shutil.copyfile(ROOT / 'cohort_b/ails/build.sh', ails / 'build.sh')
+            (ails / 'adapted/src/Adapter/Main.java').write_text(
+                '// Regress UTF-8 comments: Vinícius\npackage Adapter; public class Main {}\n', encoding='utf-8')
+            (sisr / 'build.sh').write_text(
+                '#!/bin/bash\nset -eu\ncd "$(dirname "$0")"\nmkdir -p build\n'
+                "printf 'int main() { return 0; }\\n' | g++ -std=c++20 -x c++ - -o build/sisr_adapter\n",
+                encoding='utf-8')
+            env = dict(os.environ, LC_ALL='C', LANG='C', JAVA_HOME=str(jdk),
+                       PATH=str(jdk / 'bin') + ':' + os.environ['PATH'])
+            result = subprocess.run(['bash', '-c', 'bash "$1" && printf "caller=%s/%s\\n" "$LC_ALL" "$LANG"',
+                                     'test', str(deploy / 'build-cohort.sh')],
+                                    env=env, capture_output=True, text=True, timeout=60)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue((ails / 'classes/Adapter/Main.class').is_file())
+            self.assertTrue((sisr / 'build/sisr_adapter').is_file())
+            self.assertIn('caller=C/C', result.stdout)
+
     def test_fields2cover_probe_loads_other_native_solvers_first(self):
         script = (ROOT / 'deploy/check-fields2cover.py').read_text()
         for native in ('pywrapcp.Solver(', 'pyvrp_model.add_depot(', 'og.SimpleSetup('):

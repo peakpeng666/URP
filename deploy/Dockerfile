@@ -27,7 +27,8 @@ RUN test "$(dpkg --print-architecture)" = amd64 \
 
 COPY --from=ghcr.io/astral-sh/uv:0.12.23 /uv /usr/local/bin/uv
 
-ENV URP_REVISION=${URP_REVISION} \
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 \
+    URP_REVISION=${URP_REVISION} \
     UV_PYTHON_INSTALL_DIR=/opt/uv-python \
     UV_LINK_MODE=copy \
     UV_PYTHON=3.12.13 \

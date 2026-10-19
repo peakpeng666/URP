@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 # Compile the frozen adapted sources only. Never starts a formal experiment.
 set -euo pipefail
+# JDK 17 also derives native filename decoding from the process locale. Source
+# encoding alone does not protect paths such as the repository's Chinese .bat
+# files. This export is local to this wrapper and its children, not the caller.
+export LC_ALL=C.UTF-8 LANG=C.UTF-8
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 cd "$root"
 if (( $# )); then
@@ -15,7 +19,7 @@ done
 probe="$(mktemp -d)"
 trap 'rm -rf -- "$probe"' EXIT
 printf 'final class UrpJdkProbe {}\n' > "$probe/UrpJdkProbe.java"
-if ! java -m jdk.compiler/com.sun.tools.javac.Main --release 17 -d "$probe" "$probe/UrpJdkProbe.java"; then
+if ! (cd "$probe" && java -m jdk.compiler/com.sun.tools.javac.Main --release 17 -d . UrpJdkProbe.java); then
   echo 'AILS needs a complete JDK 17+ supporting --release 17 (Ubuntu: openjdk-17-jdk-headless), not a JRE.' >&2
   exit 1
 fi
