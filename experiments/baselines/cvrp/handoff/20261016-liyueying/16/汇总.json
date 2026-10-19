@@ -1,0 +1,17 @@
+{
+  "instances": 16,
+  "group_valid_calls": 48,
+  "bridge_valid_calls": 48,
+  "group_mean_reference_gap_percent": 0.1487469008078703,
+  "bridge_mean_reference_gap_percent": 0.07520719833565567,
+  "historical_TSR_mean_reference_gap_percent": 11.992317722371023,
+  "bridge_minus_group_mean_reference_gap_pp": -0.07353970247221464,
+  "TSR_minus_bridge_mean_reference_gap_pp": 11.917110524035367,
+  "same_cost_seed_pairs": 41,
+  "bridge_better_equal_worse_vs_TSR": {
+    "better": 16,
+    "equal": 0,
+    "worse": 0
+  },
+  "batches_are_distinct_same_seeds_not_six_independent_seeds": true
+}

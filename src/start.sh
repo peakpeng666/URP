@@ -22,6 +22,9 @@ case "$URP_COMMAND" in
   backend|后端)
     prepare_default_database
     cd "$URP_SRC/backend"
+    # Import data/packages into the runtime database before serving.
+    # An unchanged package reuses its revision. The frozen data/backend snapshot is not written.
+    "$URP_RUNTIME_PYTHON" -m backend --db "$URP_DB" bootstrap --package-root "$URP_SRC/../data/packages"
     exec "$URP_RUNTIME_PYTHON" -m backend --db "$URP_DB" serve --import-root "$URP_SRC/../data/packages" --port "${URP_API_PORT:-4180}" "$@"
     ;;
   bootstrap|导入)

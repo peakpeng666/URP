@@ -1,0 +1,9 @@
+{
+  "package": "仅有效基线结果_交接包.zip",
+  "bytes": 12386339,
+  "sha256": "a45238ff7430302002dcd68ea5eaa9d006b71a542a897a99f1201a41ae258876",
+  "entries": 2519,
+  "effective_53_calls": 742,
+  "effective_16_old_calls": 48,
+  "effective_16_new_calls": 48
+}

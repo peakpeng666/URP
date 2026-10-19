@@ -1,0 +1,21 @@
+{
+  "who": "李月莹",
+  "handoff_note": "交接说明.md",
+  "recorded_unix_home": "/home/blair/urp_baseline_v2",
+  "results_root": "/home/blair/urp_baseline_v2_results",
+  "home_directory_is_a_path_in_the_freeze_not_a_second_author_name": true,
+  "frozen_utc": "2026-10-16T04:19:15.251156+00:00",
+  "bridge_started_utc": "2026-10-16T13:13:48.257590+00:00",
+  "bridge_finished_utc": "2026-10-16T13:14:44.996472+00:00",
+  "r1_finished_utc": "2026-10-09T00:16:38.360802+00:00",
+  "repo_commit": "50b3b2c2cc7377e1f13dcaeebce09abf5619dbf8",
+  "repository_source_modified": false,
+  "pyvrp": "0.14.0",
+  "python": "3.12.3",
+  "package_sha256": "a45238ff7430302002dcd68ea5eaa9d006b71a542a897a99f1201a41ae258876",
+  "package_bytes": 12386339,
+  "package_entries": 2519,
+  "zip_relative_path": "experiments/results/路线求解/李月莹_基线补做_20261016.zip",
+  "purpose": "acceptance_only",
+  "g5_formal_batch": false
+}

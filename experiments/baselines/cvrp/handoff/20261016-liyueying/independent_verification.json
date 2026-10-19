@@ -1,0 +1,826 @@
+{
+  "checks": [
+    {
+      "name": "zip_sha256",
+      "pass": true,
+      "sha256": "a45238ff7430302002dcd68ea5eaa9d006b71a542a897a99f1201a41ae258876",
+      "bytes": 12386339,
+      "entries": 2519,
+      "utf8_flag": true,
+      "note": "UTF-8 flag is set on every member; names are already Unicode. cp437 reinterpretation would corrupt them."
+    },
+    {
+      "name": "checksum_file",
+      "pass": true,
+      "package": "仅有效基线结果_交接包.zip"
+    },
+    {
+      "name": "commit_50b3b2c_source_unchanged",
+      "pass": true,
+      "py_files": 20,
+      "mismatches": [],
+      "extra_in_her_freeze": [],
+      "solver_commit": "32b7deaacb6f6bef2b7943214217aa47e557b804e36a5ab6be3b93f9bc53b09f",
+      "solver_hers": "32b7deaacb6f6bef2b7943214217aa47e557b804e36a5ab6be3b93f9bc53b09f",
+      "manifest_commit": "84aef977eae1112dfdd8f5c280cbd6f45bb66b2b325335e5257cce1fb8ebf5df",
+      "manifest_hers": "84aef977eae1112dfdd8f5c280cbd6f45bb66b2b325335e5257cce1fb8ebf5df",
+      "manifest_head": "84aef977eae1112dfdd8f5c280cbd6f45bb66b2b325335e5257cce1fb8ebf5df",
+      "repository_source_modified": false,
+      "formal_plan_present_at_commit": false
+    },
+    {
+      "name": "53_rescore_742",
+      "pass": true,
+      "rows": 742,
+      "bad": 0,
+      "bad_sample": [],
+      "families": [
+        "A",
+        "B",
+        "E",
+        "F",
+        "P",
+        "X"
+      ]
+    },
+    {
+      "name": "53_means_medians",
+      "pass": true,
+      "detail": {
+        "T": {
+          "got_mean": 23.52970946825851,
+          "claimed_overview_mean": 23.529709,
+          "mean_abs": 4.682585093007674e-07,
+          "got_median": 7.564296520423601,
+          "median_abs": 4.795763990372848e-07,
+          "calls": 53,
+          "cases": 53
+        },
+        "TRS": {
+          "got_mean": 13.393073925816015,
+          "claimed_overview_mean": 13.393074,
+          "mean_abs": 7.418398517700098e-08,
+          "got_median": 7.02970297029703,
+          "median_abs": 2.9702969861489237e-08,
+          "calls": 53,
+          "cases": 53
+        },
+        "TSR": {
+          "got_mean": 11.847302029746,
+          "claimed_overview_mean": 11.847302,
+          "mean_abs": 2.974599944138845e-08,
+          "got_median": 7.02970297029703,
+          "median_abs": 2.9702969861489237e-08,
+          "calls": 53,
+          "cases": 53
+        },
+        "pyvrp": {
+          "got_mean": 0.312572976167398,
+          "claimed_overview_mean": 0.312573,
+          "mean_abs": 2.383260200300441e-08,
+          "got_median": 0.01638001638001638,
+          "median_abs": 1.6380016381462026e-08,
+          "calls": 530,
+          "cases": 53
+        },
+        "savings": {
+          "got_mean": 24.278383284792977,
+          "claimed_overview_mean": 24.278383,
+          "mean_abs": 2.847929749805189e-07,
+          "got_median": 8.32072617246596,
+          "median_abs": 1.7246595973574586e-07,
+          "calls": 53,
+          "cases": 53
+        }
+      }
+    },
+    {
+      "name": "16_inputs_protocol_match_owner",
+      "pass": true,
+      "instances": 16,
+      "stdout_same": 48,
+      "protocol_same": true,
+      "schedule_same": true,
+      "per_seed_same": true,
+      "worker_sha256": "56f79576cf5984b36ed805506f362e4bfecb8ca2957a2a2301156be4d2a8a093"
+    },
+    {
+      "name": "16_rescore_48_48",
+      "pass": true,
+      "batches": {
+        "group_r1_20261009": {
+          "calls": 48,
+          "valid": 48,
+          "mean_reference_gap_percent": 0.14874690080787073,
+          "median_of_instance_means": 0.0,
+          "median_of_seed_gaps": 0.0
+        },
+        "bridge_20261016": {
+          "calls": 48,
+          "valid": 48,
+          "mean_reference_gap_percent": 0.0752071983356571,
+          "median_of_instance_means": 0.0,
+          "median_of_seed_gaps": 0.0
+        }
+      },
+      "identical": 41,
+      "differences": [
+        {
+          "instance_id": "A-n61-k9",
+          "seed": 0,
+          "old_cost": 1036,
+          "new_cost": 1034,
+          "old_gap_percent": 0.19342359767891681,
+          "new_gap_percent": 0.0,
+          "old_iterations": 2500,
+          "new_iterations": 4109,
+          "old_solver_loop_runtime": 1.0003085839998676,
+          "new_solver_loop_runtime": 1.0001846640000167,
+          "payload_sha256_equal": true
+        },
+        {
+          "instance_id": "A-n61-k9",
+          "seed": 1,
+          "old_cost": 1041,
+          "new_cost": 1035,
+          "old_gap_percent": 0.6769825918762089,
+          "new_gap_percent": 0.09671179883945841,
+          "old_iterations": 2337,
+          "new_iterations": 4287,
+          "old_solver_loop_runtime": 1.000561322995054,
+          "new_solver_loop_runtime": 1.0000657719999992,
+          "payload_sha256_equal": true
+        },
+        {
+          "instance_id": "A-n61-k9",
+          "seed": 2,
+          "old_cost": 1043,
+          "new_cost": 1034,
+          "old_gap_percent": 0.8704061895551257,
+          "new_gap_percent": 0.0,
+          "old_iterations": 2520,
+          "new_iterations": 4101,
+          "old_solver_loop_runtime": 1.000110663997475,
+          "new_solver_loop_runtime": 1.000160956000002,
+          "payload_sha256_equal": true
+        },
+        {
+          "instance_id": "A-n69-k9",
+          "seed": 2,
+          "old_cost": 1167,
+          "new_cost": 1159,
+          "old_gap_percent": 0.6902502157031924,
+          "new_gap_percent": 0.0,
+          "old_iterations": 2461,
+          "new_iterations": 3788,
+          "old_solver_loop_runtime": 1.000158046001161,
+          "new_solver_loop_runtime": 1.0002302240000063,
+          "payload_sha256_equal": true
+        },
+        {
+          "instance_id": "B-n63-k10",
+          "seed": 0,
+          "old_cost": 1506,
+          "new_cost": 1497,
+          "old_gap_percent": 0.6684491978609626,
+          "new_gap_percent": 0.06684491978609626,
+          "old_iterations": 2400,
+          "new_iterations": 3932,
+          "old_solver_loop_runtime": 1.000506709999172,
+          "new_solver_loop_runtime": 1.000743835999998,
+          "payload_sha256_equal": true
+        },
+        {
+          "instance_id": "P-n55-k7",
+          "seed": 1,
+          "old_cost": 570,
+          "new_cost": 568,
+          "old_gap_percent": 0.352112676056338,
+          "new_gap_percent": 0.0,
+          "old_iterations": 2257,
+          "new_iterations": 3848,
+          "old_solver_loop_runtime": 1.0001733479948598,
+          "new_solver_loop_runtime": 1.0000575560000016,
+          "payload_sha256_equal": true
+        },
+        {
+          "instance_id": "P-n70-k10",
+          "seed": 1,
+          "old_cost": 830,
+          "new_cost": 828,
+          "old_gap_percent": 0.36275695284159615,
+          "new_gap_percent": 0.12091898428053205,
+          "old_iterations": 2539,
+          "new_iterations": 4336,
+          "old_solver_loop_runtime": 1.0001511049995315,
+          "new_solver_loop_runtime": 1.0001219290000165,
+          "payload_sha256_equal": true
+        }
+      ],
+      "bad": 0
+    }
+  ],
+  "formal_overlap": {
+    "same_cost": 439,
+    "different_cost": 38,
+    "absent_from_formal_plan": 265,
+    "by_algorithm": {
+      "T": {
+        "same": 53,
+        "different": 0,
+        "absent": 0
+      },
+      "TRS": {
+        "same": 52,
+        "different": 1,
+        "absent": 0
+      },
+      "TSR": {
+        "same": 53,
+        "different": 0,
+        "absent": 0
+      },
+      "pyvrp": {
+        "same": 228,
+        "different": 37,
+        "absent": 265
+      },
+      "savings": {
+        "same": 53,
+        "different": 0,
+        "absent": 0
+      }
+    }
+  },
+  "formal_differences": [
+    {
+      "case_id": "B-n63-k10",
+      "algorithm": "pyvrp",
+      "seed": 3,
+      "hers": 1503,
+      "formal": 1533,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "B-n68-k9",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 1273,
+      "formal": 1275,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n106-k14",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 26389,
+      "formal": 26410,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n106-k14",
+      "algorithm": "pyvrp",
+      "seed": 1,
+      "hers": 26381,
+      "formal": 26386,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b03"
+    },
+    {
+      "case_id": "X-n106-k14",
+      "algorithm": "pyvrp",
+      "seed": 2,
+      "hers": 26394,
+      "formal": 26426,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud_parallel4_pinned_0_1_2_3"
+    },
+    {
+      "case_id": "X-n106-k14",
+      "algorithm": "pyvrp",
+      "seed": 3,
+      "hers": 26390,
+      "formal": 26392,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n204-k19",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 19742,
+      "formal": 19780,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n204-k19",
+      "algorithm": "pyvrp",
+      "seed": 2,
+      "hers": 19692,
+      "formal": 19736,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud_parallel4_pinned_0_1_2_3"
+    },
+    {
+      "case_id": "X-n204-k19",
+      "algorithm": "pyvrp",
+      "seed": 3,
+      "hers": 19740,
+      "formal": 19750,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n204-k19",
+      "algorithm": "pyvrp",
+      "seed": 4,
+      "hers": 19693,
+      "formal": 19692,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n209-k16",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 31027,
+      "formal": 31191,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n209-k16",
+      "algorithm": "pyvrp",
+      "seed": 2,
+      "hers": 30910,
+      "formal": 31197,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud_parallel4_pinned_0_1_2_3"
+    },
+    {
+      "case_id": "X-n209-k16",
+      "algorithm": "pyvrp",
+      "seed": 3,
+      "hers": 31067,
+      "formal": 31138,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n214-k11",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 10988,
+      "formal": 11071,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n214-k11",
+      "algorithm": "pyvrp",
+      "seed": 2,
+      "hers": 10948,
+      "formal": 11079,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud_parallel4_pinned_0_1_2_3"
+    },
+    {
+      "case_id": "X-n303-k21",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 21978,
+      "formal": 22029,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n303-k21",
+      "algorithm": "pyvrp",
+      "seed": 1,
+      "hers": 21998,
+      "formal": 21993,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b03"
+    },
+    {
+      "case_id": "X-n303-k21",
+      "algorithm": "pyvrp",
+      "seed": 2,
+      "hers": 22023,
+      "formal": 22224,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud_parallel4_pinned_0_1_2_3"
+    },
+    {
+      "case_id": "X-n303-k21",
+      "algorithm": "pyvrp",
+      "seed": 3,
+      "hers": 22014,
+      "formal": 22052,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n308-k13",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 26174,
+      "formal": 26233,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n308-k13",
+      "algorithm": "pyvrp",
+      "seed": 2,
+      "hers": 26424,
+      "formal": 26491,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud_parallel4_pinned_0_1_2_3"
+    },
+    {
+      "case_id": "X-n308-k13",
+      "algorithm": "pyvrp",
+      "seed": 3,
+      "hers": 26324,
+      "formal": 26393,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n308-k13",
+      "algorithm": "pyvrp",
+      "seed": 4,
+      "hers": 26427,
+      "formal": 26293,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n313-k71",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 95478,
+      "formal": 95933,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n313-k71",
+      "algorithm": "pyvrp",
+      "seed": 2,
+      "hers": 95446,
+      "formal": 95916,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud_parallel4_pinned_0_1_2_3"
+    },
+    {
+      "case_id": "X-n313-k71",
+      "algorithm": "pyvrp",
+      "seed": 3,
+      "hers": 95309,
+      "formal": 95607,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n502-k39",
+      "algorithm": "TRS",
+      "seed": 0,
+      "hers": 71875,
+      "formal": 71943,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n502-k39",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 69596,
+      "formal": 69782,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n502-k39",
+      "algorithm": "pyvrp",
+      "seed": 2,
+      "hers": 69571,
+      "formal": 69836,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud_parallel4_pinned_0_1_2_3"
+    },
+    {
+      "case_id": "X-n502-k39",
+      "algorithm": "pyvrp",
+      "seed": 3,
+      "hers": 69535,
+      "formal": 69588,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n502-k39",
+      "algorithm": "pyvrp",
+      "seed": 4,
+      "hers": 69552,
+      "formal": 69509,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n513-k21",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 24636,
+      "formal": 24828,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n513-k21",
+      "algorithm": "pyvrp",
+      "seed": 2,
+      "hers": 24566,
+      "formal": 24747,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud_parallel4_pinned_0_1_2_3"
+    },
+    {
+      "case_id": "X-n513-k21",
+      "algorithm": "pyvrp",
+      "seed": 3,
+      "hers": 24493,
+      "formal": 24514,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n513-k21",
+      "algorithm": "pyvrp",
+      "seed": 4,
+      "hers": 24605,
+      "formal": 24599,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    },
+    {
+      "case_id": "X-n524-k153",
+      "algorithm": "pyvrp",
+      "seed": 0,
+      "hers": 157972,
+      "formal": 159211,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud-serial-single-thread-unpinned-v1"
+    },
+    {
+      "case_id": "X-n524-k153",
+      "algorithm": "pyvrp",
+      "seed": 2,
+      "hers": 157773,
+      "formal": 158862,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "cloud",
+      "formal_resource_cohort": "cloud_parallel4_pinned_0_1_2_3"
+    },
+    {
+      "case_id": "X-n524-k153",
+      "algorithm": "pyvrp",
+      "seed": 4,
+      "hers": 157968,
+      "formal": 157906,
+      "her_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_status": "TIMEOUT_WITH_FEASIBLE_INCUMBENT",
+      "formal_host_id": "ubuntu-local",
+      "formal_resource_cohort": "ubuntu-local-pcore4-20261015-b01"
+    }
+  ],
+  "summary_53": {
+    "T": {
+      "mean_case_reference_gap_percent": 23.52970946825851,
+      "median_case_reference_gap_percent": 7.564296520423601,
+      "cases": 53,
+      "calls": 53
+    },
+    "TRS": {
+      "mean_case_reference_gap_percent": 13.393073925816015,
+      "median_case_reference_gap_percent": 7.02970297029703,
+      "cases": 53,
+      "calls": 53
+    },
+    "TSR": {
+      "mean_case_reference_gap_percent": 11.847302029746,
+      "median_case_reference_gap_percent": 7.02970297029703,
+      "cases": 53,
+      "calls": 53
+    },
+    "pyvrp": {
+      "mean_case_reference_gap_percent": 0.312572976167398,
+      "median_case_reference_gap_percent": 0.01638001638001638,
+      "cases": 53,
+      "calls": 530
+    },
+    "savings": {
+      "mean_case_reference_gap_percent": 24.278383284792977,
+      "median_case_reference_gap_percent": 8.32072617246596,
+      "cases": 53,
+      "calls": 53
+    }
+  },
+  "valid_53": 742,
+  "finished_53_max": "2026-10-16T05:06:16.616927+00:00",
+  "bridge_started_utc": "2026-10-16T13:13:48.257590+00:00",
+  "bridge_finished_utc": "2026-10-16T13:14:44.996472+00:00",
+  "r1_finished_utc": "2026-10-09T00:16:38.360802+00:00",
+  "summary_16": {
+    "batches": {
+      "group_r1_20261009": {
+        "calls": 48,
+        "valid": 48,
+        "mean_reference_gap_percent": 0.14874690080787073,
+        "median_of_instance_means": 0.0,
+        "median_of_seed_gaps": 0.0
+      },
+      "bridge_20261016": {
+        "calls": 48,
+        "valid": 48,
+        "mean_reference_gap_percent": 0.0752071983356571,
+        "median_of_instance_means": 0.0,
+        "median_of_seed_gaps": 0.0
+      }
+    },
+    "identical_costs": 41,
+    "cost_differences": [
+      {
+        "instance_id": "A-n61-k9",
+        "seed": 0,
+        "old_cost": 1036,
+        "new_cost": 1034,
+        "old_gap_percent": 0.19342359767891681,
+        "new_gap_percent": 0.0,
+        "old_iterations": 2500,
+        "new_iterations": 4109,
+        "old_solver_loop_runtime": 1.0003085839998676,
+        "new_solver_loop_runtime": 1.0001846640000167,
+        "payload_sha256_equal": true
+      },
+      {
+        "instance_id": "A-n61-k9",
+        "seed": 1,
+        "old_cost": 1041,
+        "new_cost": 1035,
+        "old_gap_percent": 0.6769825918762089,
+        "new_gap_percent": 0.09671179883945841,
+        "old_iterations": 2337,
+        "new_iterations": 4287,
+        "old_solver_loop_runtime": 1.000561322995054,
+        "new_solver_loop_runtime": 1.0000657719999992,
+        "payload_sha256_equal": true
+      },
+      {
+        "instance_id": "A-n61-k9",
+        "seed": 2,
+        "old_cost": 1043,
+        "new_cost": 1034,
+        "old_gap_percent": 0.8704061895551257,
+        "new_gap_percent": 0.0,
+        "old_iterations": 2520,
+        "new_iterations": 4101,
+        "old_solver_loop_runtime": 1.000110663997475,
+        "new_solver_loop_runtime": 1.000160956000002,
+        "payload_sha256_equal": true
+      },
+      {
+        "instance_id": "A-n69-k9",
+        "seed": 2,
+        "old_cost": 1167,
+        "new_cost": 1159,
+        "old_gap_percent": 0.6902502157031924,
+        "new_gap_percent": 0.0,
+        "old_iterations": 2461,
+        "new_iterations": 3788,
+        "old_solver_loop_runtime": 1.000158046001161,
+        "new_solver_loop_runtime": 1.0002302240000063,
+        "payload_sha256_equal": true
+      },
+      {
+        "instance_id": "B-n63-k10",
+        "seed": 0,
+        "old_cost": 1506,
+        "new_cost": 1497,
+        "old_gap_percent": 0.6684491978609626,
+        "new_gap_percent": 0.06684491978609626,
+        "old_iterations": 2400,
+        "new_iterations": 3932,
+        "old_solver_loop_runtime": 1.000506709999172,
+        "new_solver_loop_runtime": 1.000743835999998,
+        "payload_sha256_equal": true
+      },
+      {
+        "instance_id": "P-n55-k7",
+        "seed": 1,
+        "old_cost": 570,
+        "new_cost": 568,
+        "old_gap_percent": 0.352112676056338,
+        "new_gap_percent": 0.0,
+        "old_iterations": 2257,
+        "new_iterations": 3848,
+        "old_solver_loop_runtime": 1.0001733479948598,
+        "new_solver_loop_runtime": 1.0000575560000016,
+        "payload_sha256_equal": true
+      },
+      {
+        "instance_id": "P-n70-k10",
+        "seed": 1,
+        "old_cost": 830,
+        "new_cost": 828,
+        "old_gap_percent": 0.36275695284159615,
+        "new_gap_percent": 0.12091898428053205,
+        "old_iterations": 2539,
+        "new_iterations": 4336,
+        "old_solver_loop_runtime": 1.0001511049995315,
+        "new_solver_loop_runtime": 1.0001219290000165,
+        "payload_sha256_equal": true
+      }
+    ],
+    "historical_tsr_mean": 11.992317722371023
+  },
+  "registry_files": 742
+}

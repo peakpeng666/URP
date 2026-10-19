@@ -1,0 +1,38 @@
+{
+  "algorithms": {
+    "T": {
+      "mean_case_reference_gap_percent": 23.52970946825851,
+      "median_case_reference_gap_percent": 7.564296520423601,
+      "cases": 53,
+      "calls": 53
+    },
+    "TRS": {
+      "mean_case_reference_gap_percent": 13.393073925816015,
+      "median_case_reference_gap_percent": 7.02970297029703,
+      "cases": 53,
+      "calls": 53
+    },
+    "TSR": {
+      "mean_case_reference_gap_percent": 11.847302029746,
+      "median_case_reference_gap_percent": 7.02970297029703,
+      "cases": 53,
+      "calls": 53
+    },
+    "pyvrp": {
+      "mean_case_reference_gap_percent": 0.312572976167398,
+      "median_case_reference_gap_percent": 0.01638001638001638,
+      "cases": 53,
+      "calls": 530
+    },
+    "savings": {
+      "mean_case_reference_gap_percent": 24.278383284792977,
+      "median_case_reference_gap_percent": 8.32072617246596,
+      "cases": 53,
+      "calls": 53
+    }
+  },
+  "valid_calls": 742,
+  "scheduled_calls": 742,
+  "timing_scope": "5s_end_to_end",
+  "source": "independent rescore with urp_research.cvrplib.evaluate.evaluate_saved"
+}

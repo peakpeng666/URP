@@ -1,13 +1,14 @@
 # 科研记录与任务后端
 
-Python标准库与SQLite实现本地实验包导入、结果查询、附件下载、同口径比较和路线读取，并通过受控任务队列调用研究组件中的真实CVRP runner。当前记录包为selector、budget、fleet、turns和bpp-history；新提交的工程验证任务独立记账。
+Python标准库与SQLite实现本地实验包导入、结果查询、附件下载、同口径比较和路线读取，并通过受控任务队列调用研究组件中的真实CVRP runner。当前记录包为selector、budget、fleet、turns、bpp-history，以及 2026-10-16 的 `cvrplib-53-e2e-5s-20261016` 与 `cvrplib-16-searchloop-1s-20261016`。后两包的比较键不同，5 秒端到端和 1 秒搜索循环不会被比较接口合成。新提交的工程验证任务独立记账。
 
 从仓库根目录使用统一入口，依赖安装见[主 README](../../README.md)：
 
 ```sh
-bash src/start.sh bootstrap
 bash src/start.sh backend
 ```
+
+`backend` 会先把 `data/packages` 导入运行库再提供服务。未改动的包沿用原版本。`bash src/start.sh bootstrap` 仍可单独导入。冻结的 `data/backend/research.sqlite3` 不被这次导入改写。
 
 默认运行库为 `.local-state/research.sqlite3`。首次启动将存在的历史库只读备份到运行库；已有运行库不会被替换。直接使用组件 CLI 时也应指定独立运行库，例如：
 
