@@ -112,7 +112,12 @@ jobs:
             URP_PORT=4200 docker compose -f "$file" config --format json | python3 -c 'import json,sys; lab=json.load(sys.stdin)["services"]["lab"]; assert str(lab["environment"]["URP_PORT"]) == "4100"; assert any(str(p["published"]) == "4200" and p["target"] == 4100 for p in lab["ports"])'
           done
       - name: Build and minimally execute native CVRP adapters
+        env:
+          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
         run: |
+          source setup/ubuntu/env.sh
+          command -v java
+          java -version
           bash deploy/build-cohort.sh
           python3 deploy/check-cohort.py --output "$GITHUB_WORKSPACE/.local-state/cohort-smoke"
       - name: Retain native adapter smoke evidence
