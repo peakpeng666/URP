@@ -1,0 +1,7 @@
+# Local build of the planner-only image.
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.bench-build.yml build
+services:
+  lab:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile

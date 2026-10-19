@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import shutil
 import signal
 import socket
@@ -40,11 +41,11 @@ def open_browser(url: str):
         log.warning('无法打开浏览器（%s）：%s；请手动访问 %s', cmd[0], exc, url)
 
 
-def port_free(port: int) -> bool:
+def port_free(host: str, port: int) -> bool:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
-            s.bind(('127.0.0.1', port))
+            s.bind((host, port))
             return True
         except OSError:
             return False
@@ -54,8 +55,10 @@ def serve(args) -> int:
     import uvicorn
 
     from .gateway import Config, create_app
+    from .runtime_config import archive_autostart, archive_url, admin_token, extra_hosts
     from .services import http_json
 
+    bind = args.host
     url = f'http://127.0.0.1:{args.port}/'
     status, data = http_json('GET', f'{url}lab/api/health', timeout=1.0)
     if status == 200 and isinstance(data, dict) and data.get('status') == 'ok':
@@ -63,11 +66,12 @@ def serve(args) -> int:
         if args.open:
             open_browser(url)
         return 0
-    if not port_free(args.port):
+    if not port_free(bind, args.port):
         print(f'端口 {args.port} 已被其他进程占用，网关无法启动。', file=sys.stderr)
         return 1
     setup_logging(paths.RUNTIME)
-    app = create_app(Config(port=args.port, archive_autostart=not args.no_archive))
+    app = create_app(Config(port=args.port, bind_host=bind, archive_autostart=archive_autostart(args.no_archive),
+                            archive_url=archive_url(), extra_hosts=extra_hosts(), admin_token=admin_token()))
     lab = app.state.lab
 
     class Server(uvicorn.Server):
@@ -80,7 +84,7 @@ def serve(args) -> int:
             lab.bus.close()
             super().handle_exit(sig, frame)
 
-    config = uvicorn.Config(app, host='127.0.0.1', port=args.port, log_config=None, access_log=False,
+    config = uvicorn.Config(app, host=bind, port=args.port, log_config=None, access_log=False,
                             timeout_graceful_shutdown=5, lifespan='on', server_header=False)
     server = Server(config)
     signal.signal(signal.SIGHUP, server.handle_exit)  # terminal window closed
@@ -89,7 +93,7 @@ def serve(args) -> int:
         while not server.started and not server.should_exit:
             time.sleep(0.1)
         if server.started:
-            log.info('农业机器人路径规划工作台：%s（Ctrl+C 有序退出）', url)
+            log.info('农业机器人路径规划工作台：%s（监听 %s，Ctrl+C 有序退出）', url, bind)
             if args.open:
                 open_browser(url)
             while not server.should_exit:
@@ -164,8 +168,10 @@ def solve(args) -> int:
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog='python -m urp_lab', description='农业机器人路径规划工作台')
     sub = parser.add_subparsers(dest='command', required=True)
-    p = sub.add_parser('serve', help='启动网关（127.0.0.1）')
-    p.add_argument('--port', type=int, default=4100)
+    p = sub.add_parser('serve', help='启动网关（默认只监听 127.0.0.1）')
+    p.add_argument('--port', type=int, default=int(os.environ.get('URP_PORT', '4100')))
+    p.add_argument('--host', default=os.environ.get('URP_BIND_HOST', '127.0.0.1'),
+                   help='监听地址。笔记本保持 127.0.0.1；WSL 与容器设 URP_BIND_HOST=0.0.0.0')
     p.add_argument('--open', action='store_true', help='启动后用 Chrome 应用窗口打开面板')
     p.add_argument('--no-archive', action='store_true', help='不自动启动档案后端')
     sub.add_parser('doctor', help='打印服务检测结果（JSON）')

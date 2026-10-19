@@ -1,0 +1,7 @@
+# Optional bind of a Fuel cache the user downloaded with deploy/fetch-fuel.sh.
+# The public image does not contain Fuel models. Do not point this at a redistributed tarball.
+# docker compose -f deploy/docker-compose.sim.yml -f deploy/docker-compose.assets.yml up -d
+services:
+  lab:
+    volumes:
+      - ../setup/2026-10-15/cache/ignition-fuel:/opt/urp/setup/2026-10-15/cache/ignition-fuel:ro

@@ -1,0 +1,30 @@
+# Workbench for Docker Desktop (Windows or Linux). The published port is the host's
+# loopback only. The process inside the container listens on 0.0.0.0 so the proxy can reach it.
+# Do not switch this to network_mode: host; Docker Desktop on Windows has no host network.
+name: urp-lab
+
+services:
+  lab:
+    image: ghcr.io/peakpeng666/urp-bench:${URP_IMAGE_TAG:-deploy}
+    pull_policy: missing
+    restart: unless-stopped
+    ports:
+      - "${URP_PUBLISH_HOST:-127.0.0.1}:${URP_PORT:-4100}:4100"
+    environment:
+      URP_BIND_HOST: "0.0.0.0"
+      URP_PORT: "${URP_PORT:-4100}"
+      URP_LAB_RUNTIME: /data/lab
+      URP_API_DB: /data/archive/research.sqlite3
+      URP_FOXGLOVE_BIND: "0.0.0.0"
+      URP_BROWSER_HOST: "127.0.0.1"
+      URP_EXTRA_HOSTS: "${URP_EXTRA_HOSTS:-}"
+      URP_ADMIN_TOKEN: "${URP_ADMIN_TOKEN:-}"
+      LIBGL_ALWAYS_SOFTWARE: "${LIBGL_ALWAYS_SOFTWARE:-1}"
+    volumes:
+      - lab-runtime:/data/lab
+      - archive-data:/data/archive
+    shm_size: "256mb"
+
+volumes:
+  lab-runtime:
+  archive-data:

@@ -5,24 +5,28 @@ description = "URP 科研面板：网关、求解适配、路径检查、推荐�
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "fastapi==0.143.1",
+  "starlette==1.8.0",
   "uvicorn[standard]==0.54.0",
-  "httpx>=0.28",
+  "httpx==0.28.1",
+  "websockets==17.2",
+  "pyyaml==6.0.3",
   "pyvrp==0.14.0",
+  "vrplib==2.2.0",
   "ortools==9.15.6755",
   "shapely==2.2.0",
   "numpy==2.5.4",
   "scipy==1.18.1",
   "matplotlib==3.11.2",
-  "pillow>=11",
+  "pillow==12.3.0",
   "ompl==2.0.1",
-  "pyproj>=3.7",
-  "python-multipart>=0.0.32",
-  "defusedxml>=0.7.1",
-  "opencv-python-headless>=5.0.0.93",
+  "pyproj==3.8.0",
+  "python-multipart==0.0.32",
+  "defusedxml==0.7.1",
+  "opencv-python-headless==5.0.0.93",
 ]
 
 [dependency-groups]
-dev = ["pytest>=8"]
+dev = ["pytest==9.1.1"]
 
 [tool.uv]
 package = false
