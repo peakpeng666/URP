@@ -31,10 +31,10 @@ function BaselineArchiveCard() {
     .sort((a, b) => (a.id.includes('-53-') ? 0 : 1) - (b.id.includes('-53-') ? 0 : 1) || a.id.localeCompare(b.id));
   return (
     <div className={s.pad} data-testid="baseline-archive">
-      <h3>已归档基线（计时口径分开）</h3>
+      <h3>基线档案 · 按计时口径</h3>
       {archives.error && <p className={s.hint}>实验档案暂不可读：{archives.error.message}</p>}
       {!archives.error && archives.loading && !archives.data && <p className={s.hint}>正在读取实验档案…</p>}
-      {archives.data && rows.length === 0 && <p className={s.hint}>档案里还没有带计时口径标记的基线包。</p>}
+      {archives.data && rows.length === 0 && <p className={s.hint}>暂无标注计时口径的基线包。</p>}
       <div className={s.baselineGrid}>
         {rows.map((item) => (
           <article key={item.id} className={s.quote} data-testid="baseline-archive-item" data-timing-scope={item.parameters?.timing_scope}>
@@ -44,7 +44,7 @@ function BaselineArchiveCard() {
           </article>
         ))}
       </div>
-      {rows.length > 1 && <p className={s.hint}>5 秒端到端与 1 秒搜索循环是两套计时。16 例两批按批次并列，保留在同一张 1 秒卡片里，不并成 6 个独立种子。</p>}
+      {rows.length > 1 && <p className={s.hint}>5 秒端到端与 1 秒搜索循环分别统计。16 例的两批结果并列显示在 1 秒卡片中，独立种子数按各批计算。</p>}
     </div>
   );
 }
@@ -262,7 +262,7 @@ export function AnalysisPanel() {
   if (!studyId) {
     return (
       <div className={s.pad}>
-        <EmptyState icon={BarChart3} title="选择一个课题" detail="课题运行后，这里给出性能剖面、临界差图、收敛曲线和 LaTeX 表格。" />
+        <EmptyState icon={BarChart3} title="选择一个课题" detail="选择已运行的课题，查看性能剖面、临界差图、收敛曲线和 LaTeX 表格。" />
         <ul className={s.list}>
           {(studies.data?.studies ?? []).map((x) => (
             <li key={x.study_id}><button type="button" className={s.item} onClick={() => setStudy(x.study_id)}><span className={s.itemTitle}>{x.title}</span><span className={s.itemSub}>{x.progress.finished}/{x.progress.total}</span></button></li>

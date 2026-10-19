@@ -1,163 +1,175 @@
-# 算法库完整登记与 CVRP 适用范围
+# 算法库登记与 CVRP 适用范围
 
-**2026-10-19 当前状态。** 统一主计划的 17 个配置不是 17 个独立算法家族；[主计划](protocol/formal_plan.json)的 4505 个唯一终态已完成，独立重审为 4316 可行、189 无有效解，详见 [基线入口](experiments/baselines/cvrp/README.md)和 [归档重审](protocol/audits/20261017/README.md)。53 个问题来自 51 个底本，但不能把正式分母改为 51。主计划、[AILS-II/SISR vendor120](experiments/baselines/cvrp/evidence/vendor_all120_audit.json)、[接手验收 742 与旧/新各 48 项](experiments/baselines/cvrp/handoff/20261016-liyueying/核验与接手.md)分开记账；下方源码接入段落记录当时准备过程，不应再读作当前“待运行”。导师现状见 [2026-10-19 交付索引](docs/导师查看.md)。
+更新于 2026-10-19。[主计划](protocol/formal_plan.json)包含 17 个配置，涵盖算法家族及其邻域、参数或编码配置。4505 个唯一终态已完成，独立重审确认 4316 项可行、189 项无有效解，详见 [基线入口](experiments/baselines/cvrp/README.md)与 [归档重审](protocol/audits/20261017/README.md)。53 个问题来自 51 个底本，正式计划仍按 53 个问题计数。
 
-当前基线是描述性质量证据，不是跨硬件速度排名。cloud seed0 的 901 项具备归档 VERIFIED 主机链；cloud seed2 的 901 项有未 VERIFIED 的 host manifest，本机 2703 项有结果哈希绑定的 FROZEN resource manifest，却缺原汇总引用的主机/环境包装。**3604 项并非无数据或无效路线**；已验证同条件耗时统计需按 [重审](protocol/audits/20261017/README.md)降级。
+主计划、[AILS-II / SISR vendor 120 项](experiments/baselines/cvrp/evidence/vendor_all120_audit.json)、[接手验收 742 项与旧 / 新各 48 项](experiments/baselines/cvrp/handoff/20261016-liyueying/核验与接手.md)按各自预算和目的独立记账。研究进展见 [2026-10-19 交付索引](docs/导师查看.md)，源码接入过程保留在本页历史记录中。
 
-算法选择器不是第 18 个求解器。[当前冻结模型](src/lab/models/cvrp-knn-v1.json)对应另一批 train60/cal30/test30：PyVRP 对 OR-Tools 严格成本比较为 51胜9平、23胜7平、27胜3平，OR-Tools 严格更优 0 次，测试无相对固定 PyVRP 的选择收益。下表 `cvrp_selector_crc` 的早期离线回放不能替代这批 120 项实验。
+现有基线用于路线质量比较与描述性统计。cloud seed0 的 901 项具备归档 VERIFIED 主机链；cloud seed2 的 901 项已有尚未 VERIFIED 的 host manifest；本机 2703 项已有绑定结果哈希的 FROZEN resource manifest，待找回原汇总引用的主机与环境包装。其余 3604 项保留路线质量与描述性汇总价值，同条件耗时统计按 [重审](protocol/audits/20261017/README.md)规定的证明等级报告。
 
-## 立即可接入的算法配置
+算法选择器负责从候选求解器中选择算法。[当前冻结模型](src/lab/models/cvrp-knn-v1.json)对应独立的 train60/cal30/test30 实验：严格成本比较中，PyVRP 在训练集为 51 胜 9 平、校准集为 23 胜 7 平、测试集为 27 胜 3 平；OR-Tools 严格更优 0 次。测试尚未显示相对固定 PyVRP 的选择收益。`cvrp_selector_crc` 的早期离线回放与这批 120 项实验分别归档。
 
-Clarke–Wright savings；T/TRS/TSR；PyVRP ILS；NN；Sweep；完整 VND；多起点 VND；4种固定 LNS destroy/repair 配对；OR-Tools GLS；GA/PSO/DE random-key + Split。
+## 主基线算法配置
 
-GA/PSO/DE为本轮新明确命名的CVRP教学适配，不冒充原连续优化代码直接跑CVRP；统一pop20、固定参数、不调参。Split按固定排列求最优切分，不代表CVRP全局最优。
+Clarke–Wright savings；T / TRS / TSR；PyVRP ILS；NN；Sweep；完整 VND；多起点 VND；4 种固定 LNS destroy / repair 配对；OR-Tools GLS；GA / PSO / DE random-key + Split。
+
+T / TRS / TSR 是 VND 的邻域配置。NN、Sweep 与 VND 的基线距离统一为整数 EUC2D，历史连续欧氏距离结果单独保留。4 种 LNS 采用固定破坏—修复配对，本轮按截止时间控制预算，历史 delta 预算结果分别记录。
+
+GA / PSO / DE 是本轮新增的 CVRP 教学适配，统一使用种群 20 和预先固定的参数。它们与历史连续优化实现分别登记。Split 求给定排列的最优切分，具体定义见下文。
 
 ## 完整登记
 
-| ID | 家族/角色 | 状态 | CVRP适用 | 说明 |
+本表按当前 CVRPLIB 基线登记各项目。“源码登记”表示已收录源码或资料快照，运行证据由对应实验提供；CVRP 适用性与运行状态分别列示。表中“接入待核验”指经典 CVRP 入口与检查点适配。
+
+| ID | 家族 / 角色 | 状态 | CVRP 适用 | 说明 |
 |---|---|---|---|---|
-| savings | Clarke-Wright construction | 主4505已完成；见归档重审 | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
-| T | VND | 主4505已完成；见归档重审 | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
-| TRS | VND | 主4505已完成；见归档重审 | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
-| TSR | VND | 主4505已完成；见归档重审 | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
-| pyvrp | ILS | 主4505已完成；见归档重审 | True | T/TRS/TSR are neighborhood configurations, not independent families; PyVRP0.14 is ILS, not HGS. |
-| nearest_neighbor | nearest-neighbor construction | 主4505已完成；见归档重审 | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
-| seeded_sweep | sweep construction | 主4505已完成；见归档重审 | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
-| savings_vnd | VND | 主4505已完成；见归档重审 | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
-| multistart_vnd | VND | 主4505已完成；见归档重审 | True | Historical continuous metric replaced explicitly by EUC2D. multistart requests 8 starts under shared deadline, does not guarantee completion of all. |
-| random_cheapest | fixed destroy-repair LNS | 主4505已完成；见归档重审 | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
-| random_regret2 | fixed destroy-repair LNS | 主4505已完成；见归档重审 | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
-| worst_cheapest | fixed destroy-repair LNS | 主4505已完成；见归档重审 | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
-| worst_regret2 | fixed destroy-repair LNS | 主4505已完成；见归档重审 | True | random/worst removal × cheapest/regret2 repair; not adaptive ALNS; new deadline protocol differs from historical delta budget. |
-| ortools_gls | guided local search | 主4505已完成；见归档重审 | True | Historical9.14.6206 PCI+GLS lambda0.1,18/18 valid official3-case calls; not just VRPTW. New batch separately measured. |
-| ga_random_keys | GA | 主4505已完成；Split 独立审计1080例通过 | True | New transparent random-key+Split implementation, population20 fixed parameters. Not same code/results as historical continuous optimizer, no claim paper reproduction/HGS. Split optimal only for fixed ordering; reference https://arxiv.org/abs/1508.02759 |
-| pso_random_keys | PSO | 主4505已完成；Split 独立审计1080例通过 | True | New transparent random-key+Split implementation, population20 fixed parameters. Not same code/results as historical continuous optimizer, no claim paper reproduction/HGS. Split optimal only for fixed ordering; reference https://arxiv.org/abs/1508.02759 |
-| de_random_keys | DE | 主4505已完成；Split 独立审计1080例通过 | True | New transparent random-key+Split implementation, population20 fixed parameters. Not same code/results as historical continuous optimizer, no claim paper reproduction/HGS. Split optimal only for fixed ordering; reference https://arxiv.org/abs/1508.02759 |
-| held_karp_capacity_partition | exact dynamic programming | historically tested; small cases only | True | Held-Karp+capacity subset DP exponential; validation oracle not large-scale general baseline. |
-| capacity_partition_pruning | capacity initialization | historically tested | False | Initializer/pruning component, not independently a full routing optimizer. Preserve construction-failure vs proven infeasible distinction. |
-| cvrp_selector_crc | algorithm selection | implemented/historical experiment | False | Chooses solvers; not another path solver; must not receive evaluation reference values. |
-| continuous_ga_pso | continuous optimization | implemented or historical report; see evidence | False | GA/PSO historical6 aggregated rows ×20 =120 runs, not CVRP. |
-| continuous_de | continuous optimization | implemented or historical report; see evidence | False | ContinuousDE/search-control study; new route decoder required. |
-| deap_sphere_ga | continuous optimization | implemented or historical report; see evidence | False | Teaching sphere objective, not CVRP. |
-| bin_packing_rules_eoh | online bin packing | implemented or historical report; see evidence | False | FF/BF/EoH/generated/selector variants; substantial historic experiments but different objective and feasibility. |
-| sorting_generated | sorting | implemented or historical report; see evidence | False | Sorting/generated code, not CVRP. |
-| nas_fidelity | neural architecture search | implemented or historical report; see evidence | False | Architecture optimization/training-fidelity, not CVRP. |
-| orchard_navigation | geometric path planning | implemented or historical report; see evidence | False | Obstacle-aware local geometry differs from standard complete-graph CVRP. |
-| field_visibility_dijkstra_nn | geometric task routing | implemented or historical report; see evidence | False | Visibility graph+Dijkstra+NN on real boundary with synthetic tasks, not standard CVRPLIB metric. |
-| field_pyvrp_penalties | CVRP parameter study | implemented or historical report; see evidence | False | PyVRP default/fixed-capacity penalties ×E/G geometry: same implementation parameter variants, not four new algorithms. |
-| vrptw_heuristics | time-window routing | implemented or historical report; see evidence | False | Distance-first/time-window-first; different model. Do not mix partial-service costs with full CVRP. |
-| direct_generated_route | LLM generated route | implemented or historical report; see evidence | False | Generated outputs/admission tests not a fixed reproducible baseline unless frozen code recovered. |
-| turn_service_modes | turn-aware service routing | implemented or historical report; see evidence | False | Synthetic turn-service mode solver/checker, not CVRP. |
-| parent_selection | evolution control | implemented or historical report; see evidence | False | Evolution parent selection is component/control method, not CVRP solver. |
-| vendor:AILS-II | ILS | 独立vendor120已完成并审计 | True | Seeded Java adapter, complete incumbent stream; X12 unrestricted scope, original internal route bound retained. |
-| vendor:ASlibScenario | algorithm selection dataset interface | source-only for this benchmark; no new run evidence | False | algorithm selection dataset interface |
-| vendor:ADAS | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:APE | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:ACCEL | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:ALE-Bench | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:CEoH | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:AlphaEvolve-Results | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:DACBench | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:AutoML-Zero | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:AnyJev | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:AutoFolio | algorithm selector | source-only for this benchmark; no new run evidence | False | algorithm selector |
-| vendor:DR-ALNS | RL-controlled ALNS | source-only for this benchmark; no new run evidence | True | CVRP config and runner documented; model checkpoint, dependency and seed/distribution compatibility unverified. |
-| vendor:DiscoRL | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:DACE | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:DSPy | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:DGM | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:DiscoGen | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:Fields2Cover | coverage path planning, not delivery CVRP | source-only for this benchmark; no new run evidence | False | coverage path planning, not delivery CVRP |
-| vendor:EoH-S | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:EvoPrompt | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:DreamCoder | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:EoH | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:Eureka | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:FunSearch | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:G-LNS | LLM-designed LNS | source-only for this benchmark; no new run evidence | True | Generation framework and heuristic assets; freeze CVRP generated operators before evaluation, no online API generation in baseline. |
-| vendor:GEPA | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:HSEvo | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:HGS-CARP | capacitated arc routing, not node CVRP | source-only for this benchmark; no new run evidence | False | capacitated arc routing, not node CVRP |
-| vendor:HGS-TDCARP | time-dependent capacitated arc routing, not node CVRP | source-only for this benchmark; no new run evidence | False | time-dependent capacitated arc routing, not node CVRP |
-| vendor:InstanceSpace | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:HiFo-Prompt | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:HeurAgenix | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:HpBandSter | hyperparameter optimization | source-only for this benchmark; no new run evidence | False | hyperparameter optimization |
-| vendor:Hercules | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:JAIR2026-FrugalAS | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:LLaMEA | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:LLM4AD | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:JevOut | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:Jev-Mem | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:LaT | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:Lion | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:LitCEoH | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:OPRO | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:MLEvolve | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:OptiMUS-v0.3 | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:OptiMUS-v0.2 | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:OptiMUS-v0.1 | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:QD-LHD | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:QDAIF | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:OptiMUS | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:PLR | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:PyVRP | ILS/HGS version-dependent | source-only for this benchmark; no new run evidence | True | Snapshot present; active official0.14.0 wheel is ILS. Do not relabel as HGS. |
-| vendor:POET | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:RLCDAlignBench | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:Reflexion | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:QUBE | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:RouteFinder | neural constructive routing | source-only for this benchmark; no new run evidence | True | Requires checkpoints, torch env, normalized-input/integer-score and scale compatibility adapter. |
-| vendor:RouteLLM | LLM routing | source-only for this benchmark; no new run evidence | False | LLM routing |
-| vendor:ReEvo | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:Self-Refine | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:SMAC3 | algorithm configuration | source-only for this benchmark; no new run evidence | False | algorithm configuration |
-| vendor:algorithm_survival_analysis | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:Voyager | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:VRPAgent | generated heuristics | source-only for this benchmark; no new run evidence | True | Early released generated_heuristics, not complete running study. |
-| vendor:ShinkaEvolve | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:autorank | statistical ranking | source-only for this benchmark; no new run evidence | False | statistical ranking |
-| vendor:notes | documentation | source-only for this benchmark; no new run evidence | False | documentation |
-| vendor:aslib_data | algorithm selection data | source-only for this benchmark; no new run evidence | False | algorithm selection data |
-| vendor:irace | automatic parameter tuning | source-only for this benchmark; no new run evidence | False | automatic parameter tuning |
-| vendor:lavoir | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:laya | decision model | source-only for this benchmark; no new run evidence | False | decision model |
-| vendor:rl4co | neural routing framework | source-only for this benchmark; no new run evidence | True | Many environments/models; not one solver. Need selected pretrained model/checkpoint and CVRP adapter. |
-| vendor:open-source-sisr-routing | SISR/LNS | 独立vendor120已完成并审计 | True | Seeded C++20 adapter, original schedule; X12 unrestricted scope and integer metrics verified. |
-| vendor:online_as | algorithm-design / learning / tooling snapshot | source-only for this benchmark; no new run evidence | not established | No verified current classical-CVRP runner/checkpoint adaptation. Inventory presence is not successful reproduction. |
-| vendor:typesafe-router | typed model routing | source-only for this benchmark; no new run evidence | False | typed model routing |
+| savings | Clarke–Wright 构造 | 主基线已完成 | 是 | Clarke–Wright savings 构造。 |
+| T | VND | 主基线已完成 | 是 | VND 的 T 邻域配置。 |
+| TRS | VND | 主基线已完成 | 是 | VND 的 TRS 邻域配置。 |
+| TSR | VND | 主基线已完成 | 是 | VND 的 TSR 邻域配置。 |
+| pyvrp | ILS | 主基线已完成 | 是 | PyVRP 0.14.0 ILS。 |
+| nearest_neighbor | 最近邻构造 | 主基线已完成 | 是 | 最近邻构造，距离统一为整数 EUC2D。 |
+| seeded_sweep | Sweep 构造 | 主基线已完成 | 是 | Sweep 构造，距离统一为整数 EUC2D。 |
+| savings_vnd | VND | 主基线已完成 | 是 | Savings 初始化与完整 VND，距离统一为整数 EUC2D。 |
+| multistart_vnd | VND | 主基线已完成 | 是 | 请求 8 个起点，共享截止时间；实际完成起点数随预算记录，距离统一为整数 EUC2D。 |
+| random_cheapest | 固定破坏—修复 LNS | 主基线已完成 | 是 | 随机移除 + 最便宜插入；固定算子配对。 |
+| random_regret2 | 固定破坏—修复 LNS | 主基线已完成 | 是 | 随机移除 + regret-2 修复；固定算子配对。 |
+| worst_cheapest | 固定破坏—修复 LNS | 主基线已完成 | 是 | 最差移除 + 最便宜插入；固定算子配对。 |
+| worst_regret2 | 固定破坏—修复 LNS | 主基线已完成 | 是 | 最差移除 + regret-2 修复；固定算子配对。 |
+| ortools_gls | 引导局部搜索 | 主基线已完成 | 是 | 历史版本 9.14.6206，PCI + GLS，lambda = 0.1；3 个官方案例的 18/18 次调用有效。新批次独立测量。 |
+| ga_random_keys | GA | 主基线完成；Split 校验 1080 例通过 | 是 | 随机键 + Split 教学实现；种群 20，参数固定。Split 求给定排列的最优切分，见 [定义来源](https://arxiv.org/abs/1508.02759)。 |
+| pso_random_keys | PSO | 主基线完成；Split 校验 1080 例通过 | 是 | 随机键 + Split 教学实现；种群 20，参数固定。Split 求给定排列的最优切分，见 [定义来源](https://arxiv.org/abs/1508.02759)。 |
+| de_random_keys | DE | 主基线完成；Split 校验 1080 例通过 | 是 | 随机键 + Split 教学实现；种群 20，参数固定。Split 求给定排列的最优切分，见 [定义来源](https://arxiv.org/abs/1508.02759)。 |
+| held_karp_capacity_partition | 精确动态规划 | 已有小规模历史测试 | 是 | Held–Karp 与容量子集 DP，复杂度为指数级，用于小规模精确校验。 |
+| capacity_partition_pruning | 容量初始化 | 已有历史测试 | 否 | 容量初始化与剪枝组件；构造失败和已证明不可行分别记录。 |
+| cvrp_selector_crc | 算法选择 | 已实现；已有历史实验 | 否 | 根据实例选择求解器，输入与评价参考值隔离。 |
+| continuous_ga_pso | 连续优化 | 已实现或有历史报告 | 否 | 历史连续优化实验：6 行汇总 × 20 次，共 120 次运行。 |
+| continuous_de | 连续优化 | 已实现或有历史报告 | 否 | 连续 DE 与搜索控制研究；CVRP 使用需另配路线解码器。 |
+| deap_sphere_ga | 连续优化 | 已实现或有历史报告 | 否 | 以 sphere 函数为目标的教学实现。 |
+| bin_packing_rules_eoh | 在线装箱 | 已实现或有历史报告 | 否 | 包含 FF、BF、EoH、生成规则与选择器变体，按在线装箱的目标和可行性条件评价。 |
+| sorting_generated | 排序 | 已实现或有历史报告 | 否 | 排序算法与生成代码。 |
+| nas_fidelity | 神经架构搜索 | 已实现或有历史报告 | 否 | 架构优化与训练保真度研究。 |
+| orchard_navigation | 几何路径规划 | 已实现或有历史报告 | 否 | 考虑障碍物的局部几何规划，按相应几何输入评价。 |
+| field_visibility_dijkstra_nn | 几何任务路由 | 已实现或有历史报告 | 否 | 真实边界与合成任务上的可视图 + Dijkstra + NN，采用几何任务距离。 |
+| field_pyvrp_penalties | CVRP 参数研究 | 已实现或有历史报告 | 否 | 同一 PyVRP 实现的默认 / 固定容量惩罚 × E / G 几何参数配置。 |
+| vrptw_heuristics | 带时间窗路由 | 已实现或有历史报告 | 否 | 距离优先与时间窗优先启发式，按时间窗及实际服务范围记录成本。 |
+| direct_generated_route | LLM 路线生成 | 已实现或有历史报告 | 否 | LLM 生成路线与准入测试；固定基线需归档冻结代码。 |
+| turn_service_modes | 转弯感知服务路由 | 已实现或有历史报告 | 否 | 合成转弯服务任务的求解器与验算器。 |
+| parent_selection | 演化控制 | 已实现或有历史报告 | 否 | 演化流程的父代选择组件。 |
+| vendor:AILS-II | ILS | vendor 120 项完成并审计 | 是 | Java 种子适配器与完整 incumbent 流；X12 按 unrestricted 范围评价，保留原内部路线界限。 |
+| vendor:ASlibScenario | 算法选择数据接口 | 源码登记 | 否 | 算法选择数据接口。 |
+| vendor:ADAS | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:APE | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:ACCEL | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:ALE-Bench | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:CEoH | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:AlphaEvolve-Results | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:DACBench | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:AutoML-Zero | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:AnyJev | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:AutoFolio | 算法选择器 | 源码登记 | 否 | 算法选择器。 |
+| vendor:DR-ALNS | 强化学习控制的 ALNS | 源码登记 | 是 | 已记录 CVRP 配置与入口；模型检查点、依赖及种子 / 分布兼容性待验证。 |
+| vendor:DiscoRL | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:DACE | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:DSPy | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:DGM | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:DiscoGen | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:Fields2Cover | 覆盖路径规划 | 源码登记 | 否 | 覆盖路径规划。 |
+| vendor:EoH-S | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:EvoPrompt | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:DreamCoder | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:EoH | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:Eureka | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:FunSearch | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:G-LNS | LLM 设计的 LNS | 源码登记 | 是 | 生成框架与启发算法资料；CVRP 算子在评价前冻结，基线阶段使用冻结算子。 |
+| vendor:GEPA | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:HSEvo | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:HGS-CARP | 容量受限弧路径规划 | 源码登记 | 否 | 容量受限弧路径问题。 |
+| vendor:HGS-TDCARP | 时变容量受限弧路径规划 | 源码登记 | 否 | 时变容量受限弧路径问题。 |
+| vendor:InstanceSpace | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:HiFo-Prompt | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:HeurAgenix | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:HpBandSter | 超参数优化 | 源码登记 | 否 | 超参数优化。 |
+| vendor:Hercules | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:JAIR2026-FrugalAS | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:LLaMEA | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:LLM4AD | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:JevOut | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:Jev-Mem | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:LaT | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:Lion | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:LitCEoH | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:OPRO | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:MLEvolve | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:OptiMUS-v0.3 | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:OptiMUS-v0.2 | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:OptiMUS-v0.1 | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:QD-LHD | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:QDAIF | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:OptiMUS | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:PLR | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:PyVRP | ILS / HGS（按版本） | 源码登记 | 是 | 已收录源码快照；主基线使用官方 0.14.0 wheel，对应 ILS。 |
+| vendor:POET | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:RLCDAlignBench | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:Reflexion | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:QUBE | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:RouteFinder | 神经网络构造式路由 | 源码登记 | 是 | 需配套检查点、PyTorch 环境，以及归一化输入、整数计分和尺度适配。 |
+| vendor:RouteLLM | LLM 路由 | 源码登记 | 否 | LLM 路由。 |
+| vendor:ReEvo | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:Self-Refine | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:SMAC3 | 算法配置 | 源码登记 | 否 | 算法配置。 |
+| vendor:algorithm_survival_analysis | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:Voyager | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:VRPAgent | 生成式启发算法 | 源码登记 | 是 | 已收录早期发布的 generated_heuristics，完整运行研究待验证。 |
+| vendor:ShinkaEvolve | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:autorank | 统计排序 | 源码登记 | 否 | 统计排序。 |
+| vendor:notes | 文档 | 源码登记 | 否 | 文档资料。 |
+| vendor:aslib_data | 算法选择数据 | 源码登记 | 否 | 算法选择数据。 |
+| vendor:irace | 自动调参 | 源码登记 | 否 | 自动调参。 |
+| vendor:lavoir | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:laya | 决策模型 | 源码登记 | 否 | 决策模型。 |
+| vendor:rl4co | 神经路由框架 | 源码登记 | 是 | 包含多种环境与模型；接入需选定预训练模型、检查点及 CVRP 适配器。 |
+| vendor:open-source-sisr-routing | SISR / LNS | vendor 120 项完成并审计 | 是 | C++20 种子适配器，保留原日程；X12 unrestricted 范围与整数距离已验证。 |
+| vendor:online_as | 算法设计、学习与工具快照 | 源码登记 | 待核实 | 接入待核验。 |
+| vendor:typesafe-router | 类型化模型路由 | 源码登记 | 否 | 类型化模型路由。 |
 
-## 边界与下一步
+## 接入范围与后续安排
 
-- `src/repos/` 的登记有 76 个目录项，其中 `notes` 是资料目录；按是否把它计入“源码目录”，口径为 75 或 76，均不是成功复现数。详见 [外部代码目录](src/repos/README.md)。
-- AILS-II 和 SISR 已完成独立 vendor120 对照及验算，但其并发验算、预算与主计划不同，不能追加到 17 配置主分母或直接混比时间。DR-ALNS、RouteFinder、RL4CO 仍需另冻结模型/检查点及尺度适配。
-- HGS-CARP/HGS-TDCARP是弧路径问题；不能当成HGS-CVRP。当前树未定位独立HGS-CVRP实现，不以PyVRP0.14冒充。
-- NN/Sweep可能在车辆上限下无解，必须保留失败分母；多起点同预算内不保证每个起点都执行。
-- 旧报告/原源码快照保留，新增原始结果另存；不混用连续欧氏与EUC2D，不混用固定车数与标准CVRP。
-- 每条精确证据路径、126份报告扫描索引及全部vendor文件路径见algorithm_inventory.json。
+- `src/repos/` 共登记 76 个目录项，其中 `notes` 为资料目录；源码目录数为 75，目录项总数为 76。复现状态按各项目的运行与验算记录统计。详见 [外部代码目录](src/repos/README.md)。
+- AILS-II 与 SISR 已完成独立 vendor 120 项对照和验算，其并发验算方式与预算按该批次记录。主计划维持 17 配置及原分母，各批耗时分别统计。DR-ALNS、RouteFinder 与 RL4CO 的后续接入需冻结模型、检查点及尺度适配。
+- HGS-CARP 与 HGS-TDCARP 面向弧路径问题。独立 HGS-CVRP 实现尚待定位；当前 PyVRP 0.14 按 ILS 登记。
+- NN / Sweep 在车辆上限下的构造失败保留在统计分母中。多起点共享预算，并记录实际完成的起点数。
+- 旧报告与原源码快照继续归档，新增原始结果另存。连续欧氏与 EUC2D、固定车数与标准 CVRP 分别按各自合同评价。
+- 精确证据路径、126 份报告扫描索引及全部 vendor 文件路径见 `algorithm_inventory.json`。
+
 ## 新增种群算法的冻结定义
 
-三者均为透明教学级新适配，不冒充原论文复现或此前连续函数实验。客户按(random-key, customer-ID)升序解码，固定顺序Split用整数EUC2D及容量约束，超过K时执行≤K分层DP。种群20，初始key均匀[0,1]。只读问题坐标/需求/容量/K/seed/预算，不读参考解或参考成本。配置冻结后不因结果调参。
+GA、PSO 与 DE 均为本轮新增的教学实现，参数与算子按本节冻结定义执行，与历史连续函数实验分别归档。
 
-- GA：3元锦标赛，逐位0.5均匀交叉，逐位1/n均匀重置变异，保留1个精英。
-- PSO：惯性0.7298，个体/群体系数均1.49618，速度截断±0.2，位置截断[0,1]；每轮固定该轮全局最佳。不是宣称逐字复现1995论文。
-- DE：rand/1/bin，F=0.5、CR=0.9，强制至少1维变异，位置截断[0,1]，≤接受。实现为顺序原位/异步更新，不是整代同步版本。
-- Split使用易审计的二次DP及必要时车辆维度DP，不是文献线性时间实现；仅保证给定排列的最优切分。
+客户节点按 `(random-key, customer-ID)` 升序解码。固定顺序 Split 使用整数 EUC2D 和容量约束；超过 K 时，执行最多 K 辆车的分层 DP。种群为 20，初始 key 在 [0,1] 上均匀生成。算法输入限定为问题坐标、需求、容量、K、seed 与预算，参考解和参考成本与求解过程隔离。配置在实验前冻结。
 
-主要定义来源：[Split](https://arxiv.org/abs/1508.02759)、[DE原论文](https://doi.org/10.1023/A:1008202821328)、[PSO原论文](https://staff.washington.edu/paymana/swarm/kennedy95-ijcnn.pdf)。独立校验覆盖1080个小排列/车辆上限问题，逐一与全部切割枚举最优值一致；该测试不是正式CVRPLIB性能结果。
+- **GA：** 3 元锦标赛，逐位 0.5 均匀交叉，逐位 1/n 均匀重置变异，保留 1 个精英。
+- **PSO：** 惯性 0.7298，个体与群体系数均为 1.49618，速度截断为 ±0.2，位置截断为 [0,1]；每轮使用该轮固定的全局最佳。
+- **DE：** rand/1/bin，F = 0.5、CR = 0.9，强制至少 1 维变异，位置截断为 [0,1]，以 ≤ 作为接受条件，采用顺序原位 / 异步更新。
+- **Split：** 使用二次 DP，必要时加入车辆维度 DP，求给定排列的最优切分。
 
-随机键编码来源：[Bean 1994](https://doi.org/10.1287/ijoc.6.2.154)。这里借用编码思想，GA算子及参数以本工程冻结定义为准，不称Bean算法逐字复现。
+主要定义来源：[Split](https://arxiv.org/abs/1508.02759)、[DE 原论文](https://doi.org/10.1023/A:1008202821328)、[PSO 原论文](https://staff.washington.edu/paymana/swarm/kennedy95-ijcnn.pdf)。本工程的算子、参数与更新顺序以以上定义为准。
 
-## Cohort B 源码接入核查（历史准备记录，独立于已冻结17配置）
+Split 独立校验覆盖 1080 个小排列与车辆上限问题，逐一与全部切割枚举的最优值一致。这组测试用于检验解码正确性，正式 CVRPLIB 性能结果另行报告。
 
-以下是正式批次启动前的接入检查，保留当时的时态与问题；当前完成状态以上文及 vendor 审计为准。
+随机键编码参考 [Bean 1994](https://doi.org/10.1287/ijoc.6.2.154)，GA 算子与参数采用本工程冻结定义。
 
-- AILS-II：已读Java入口、配置与Solution。-best参与提前停止，禁止传BKS；默认0不可被报告为已知最优值。默认new Random()未暴露种子；CLI只输出成本/进度，需完整路线输出与初始化incumbent。JRE21存在，javac当前不在PATH。适配前须检查全部随机源和车辆上下界，不替换算法本体。
-- SISR：16个CVRP源码/配置/许可证已恢复，Apache2许可。g++可用，cmake未在PATH，可直接等价编译。原构造以random_device初始化，CLI没有seed/deadline；只在完整迭代结束后saveJson。须添加透明种子及incumbent观测接口，保留原迭代温度日程；退出/计时由独立主管管理。ProblemInstance使用float中间dx/dy，需逐边验证与统一整数EUC2D一致，否则不能混入同一榜单。
-- 上述两个属于可适配成熟CVRP源码，不是“不适用”，也尚不能标为已经完成公平运行。编译及数值测试安排在正式17配置计时窗口外，不用背景重载污染算法时间比较。
+## Cohort B 源码接入核查
 
+以下记录正式批次启动前的源码与环境检查。后续适配及 120 项实验状态见下一节和 vendor 审计。
 
-## Cohort B 技术验收更新（历史准备记录）
+- **AILS-II：** 当时已检查 Java 入口、配置与 Solution。`-best` 参与提前停止，适配要求将 BKS 与该参数隔离，并将默认 0 按默认值记录。原实现的 `new Random()` 未暴露种子，CLI 仅输出成本与进度，接入需补充完整路线和初始 incumbent 输出。当时环境有 JRE 21，javac 未在 PATH；适配范围包括全部随机源和车辆上下界，保留算法本体。
+- **SISR：** 当时已恢复 16 个 CVRP 源码、配置与许可证文件，采用 Apache 2 许可。g++ 可用，cmake 未在 PATH，可直接等价编译。原构造使用 `random_device` 初始化，CLI 缺少 seed / deadline 接口，仅在完整迭代结束后调用 `saveJson`。接入要求增加透明种子和 incumbent 观测接口，保留原迭代温度日程，由独立主管管理退出与计时。`ProblemInstance` 的中间 dx / dy 使用 float，整数 EUC2D 一致性通过逐边验证确认。
+- 两者均按成熟 CVRP 源码进行适配。编译与数值测试安排在正式 17 配置计时窗口之外，以隔离背景负载。
 
-AILS-II与SISR均已编译，toy完整路线验证通过；全部12个X实例整数距离逐边验证一致。AILS首次toy越界保留，采用公开参数varphi=min(40,n)修复（X12不改变默认40）。现有JVM内置编译器模块，无需安装JDK。技术验收当时 120 项尚未运行；截至 2026-10-19，120 项已独立完成并审计，仍不能与17项主批混写。
+## Cohort B 技术验收与实验完成情况
 
-Cohort B 已独立复核并冻结120行计划：seed0云端24行，seed1–4本地96行。其后正式120行已经完成，当前结果见 [vendor 审计](experiments/baselines/cvrp/evidence/vendor_all120_audit.json)；源码交付包不含二进制/JDK，具体命令见 [cohort_b/README.md](cohort_b/README.md)。
+AILS-II 与 SISR 均已编译，toy 完整路线验证通过，全部 12 个 X 实例的整数距离逐边验证一致。AILS 首次 toy 越界记录保留，随后采用公开参数 `varphi = min(40,n)` 修复；X12 继续使用默认值 40。编译使用现有 JVM 的内置编译器模块。
+
+Cohort B 独立冻结了 120 行计划：seed0 云端 24 行，seed1–4 本地 96 行。截至 2026-10-19，该批次已独立完成并审计，结果见 [vendor 审计](experiments/baselines/cvrp/evidence/vendor_all120_audit.json)。主批次与 Cohort B 分别记账。
+
+源码交付包不含二进制或 JDK。构建与运行命令见 [cohort_b/README.md](cohort_b/README.md)。

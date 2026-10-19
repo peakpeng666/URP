@@ -55,7 +55,7 @@ export async function startFieldSim(runId: string, opts: { gui?: boolean; rviz?:
     await studio.startFieldsim(runId, opts);
     await refreshFieldSim();
     st.setWorkspace('sim');
-    st.notify('info', '正在生成田间世界并启动 Gazebo；只有实际状态与结果检查才会标记执行成功');
+    st.notify('info', '正在生成田间场景并启动 Gazebo…');
   } catch (e) {
     const message = executionErrorMessage(e);
     setFieldSimActionError(message);
@@ -125,7 +125,7 @@ export function FieldSimPanel() {
           <h3><Tractor size={14} style={{ verticalAlign: -2 }} /> 田间多车仿真</h3>
           <Badge tone={phase.tone}>{phase.text}</Badge>
         </div>
-        <p className={s.meta}>Gazebo Fortress 按任务地图生成田块、作物行、障碍和车库。URP 路径跟踪、规划几何和实际轨迹分开记录；HTTP 200 或窗口打开不等于执行成功。</p>
+        <p className={s.meta}>Gazebo Fortress 按任务地图生成场景。车辆由 URP 跟踪规划路径，规划路线与实际轨迹分别记录，完成状态以执行检查为准。</p>
         {error && <Notice tone="error">仿真状态读取失败：{error}</Notice>}
         {actionError && <Notice tone="error">{actionError}<div className={s.row}><Button size="sm" onClick={() => void refreshFieldSim()}>刷新会话状态</Button><Button size="sm" variant="plain" onClick={() => setFieldSimActionError(null)}>知道了</Button></div></Notice>}
 
@@ -186,10 +186,10 @@ function PhysicsSetup({ data, error, overrides, onChange }: { data: FieldPhysics
   return (
     <details className={s.physics}>
       <summary>物理模型：{data?.default.schema ?? '读取失败或尚未返回'}</summary>
-      {error && <Notice tone="error">物理配置读取失败：{error}。仅显示后端实际启动结果，不伪造默认版本。</Notice>}
+      {error && <Notice tone="error">物理配置读取失败：{error}</Notice>}
       {data && (
         <>
-          <p className={s.hint}>{data.scope ?? '合成刚体仿真'}。可配置不等于该工况已验证；当前没有真实土壤 / 轮胎校准。</p>
+          <p className={s.hint}>{data.scope ?? '合成刚体仿真'}。参数可调；各工况需单独验证，土壤与轮胎模型尚未经实地标定。</p>
           <p className={s.meta}>默认：步长 {String(data.default.max_step_size_s ?? '—')} s · 检测 {String(data.default.collision_detector ?? '—')} · 地面 / 轮胎摩擦 {String(data.default.ground_friction ?? '—')} / {String(data.default.wheel_friction ?? '—')} · 载荷 {String(data.default.payload_kg ?? '—')} kg</p>
           {data.override_keys.map((key) => {
             const enabled = Object.prototype.hasOwnProperty.call(overrides, key);
@@ -228,7 +228,7 @@ function ExecutionSetup({ data, ground, loc, seed, protection, onGround, onLoc, 
   return (
     <details className={s.physics} open={nonideal}>
       <summary>执行条件：{nonideal ? '非理想实验' : '理想参考'}</summary>
-      <p className={s.hint}>{data?.execution?.scope ?? '非理想执行：地面摩擦分区 + 定位误差模型（若后端未返回预设说明则以下为本地展示）'}。地面分区固定于地图；求解器未使用其代价。选择误差定位时控制使用估计，真值仅生成观测与验算；真值定位是显式对照。</p>
+      <p className={s.hint}>{data?.execution?.scope ?? '非理想执行：地面摩擦分区 + 定位误差模型（本地预设）'}。地面分区固定于地图，不参与求解成本。误差定位模式以估计位置控制，真值用于生成观测和验算；真值定位用于对照。</p>
       <div className={s.row}>
         <label className={s.meta}>地面</label>
         <Select aria-label="地面预设" value={ground} onChange={(e) => onGround(e.target.value)}>
@@ -246,7 +246,7 @@ function ExecutionSetup({ data, ground, loc, seed, protection, onGround, onLoc, 
       </div>
       {nonideal && (
         <p className={s.meta}>
-          地面：{groundPresets[ground]?.label ?? ground} · 定位：{locPresets[loc]?.label ?? loc}。地面是低附着摩擦分区代理（非土壤力学），定位是合成误差模型（偏置/漂移/噪声/延迟/失锁）；两者均未标定。
+          地面：{groundPresets[ground]?.label ?? ground} · 定位：{locPresets[loc]?.label ?? loc}。地面采用低附着摩擦分区模型，定位包含合成偏置、漂移、噪声、延迟和失锁；均未经实地标定，未模拟土壤力学。
         </p>
       )}
     </details>
@@ -318,7 +318,7 @@ function RunningView({ state, busy, onStop, onWindow }: { state: FieldSimState; 
         )}
       </div>
       {state.running && (
-        <p className={s.hint}><MonitorPlay size={12} style={{ verticalAlign: -2 }} /> 中间是 ROS 2 实时视图（Foxglove Bridge），旁边标签页是 Gazebo 场景（gzweb）；底部是遥测曲线。停止 / 关闭是有序关闭并保存记录；后端尚未提供暂停物理或取消任务但保留会话的接口。</p>
+        <p className={s.hint}><MonitorPlay size={12} style={{ verticalAlign: -2 }} /> 中间查看 ROS 2 实时视图，旁边查看 Gazebo 场景，底部查看遥测。停止或关闭会保存记录并结束会话；暂不支持暂停物理，或取消任务后保留会话。</p>
       )}
     </div>
   );

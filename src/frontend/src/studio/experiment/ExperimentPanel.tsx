@@ -71,14 +71,14 @@ export function ExperimentPanel() {
   }, [latest?.session_id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!st.scenario) return <EmptyState icon={FlaskConical} title="未打开场景" />;
-  if (!run) return <EmptyState icon={FlaskConical} title="选择一个方案" detail="求解后在「方案对比」里点一个方案，这里汇总它的规划指标、验算、仿真执行与可导出的实验记录。" />;
+  if (!run) return <EmptyState icon={FlaskConical} title="选择一个方案" detail="在「方案对比」中选择方案，查看规划指标、验算和仿真结果，并导出实验记录。" />;
   const fleet = run.problem_class === 'fleet_routing';
   const stateDetail = {
     queued: { text: '方案仍在队列中，尚无最终解。', tone: 'info' as const },
     running: { text: '方案正在计算，尚无最终解。', tone: 'info' as const },
     error: { text: `方案计算错误：${run.error ?? '后端未提供错误明细'}`, tone: 'error' as const },
     timeout: { text: `方案计算超时：${run.error ?? '超过提交预算'}`, tone: 'error' as const },
-    canceled: { text: '方案已取消；不会把它计为成功或可行解。', tone: 'warn' as const },
+    canceled: { text: '方案已取消。', tone: 'warn' as const },
   };
   return (
     <div className={p.scroll}>
@@ -88,7 +88,7 @@ export function ExperimentPanel() {
           <ExportButton run={run} />
         </div>
         {run.state !== 'done'
-          ? <Notice tone={stateDetail[run.state].tone}>{stateDetail[run.state].text} 可下载当前服务端记录以保留失败、超时或取消的分母。</Notice>
+          ? <Notice tone={stateDetail[run.state].tone}>{stateDetail[run.state].text} 可导出本次运行记录。</Notice>
           : fleet ? <FleetMetrics run={run} sim={simHere} simLoading={simLoading} hasSims={!!simsHere?.length} simError={simError} /> : <GenericMetrics run={run} />}
         <AssetBinding run={run} />
       </div>
@@ -117,10 +117,10 @@ function FleetMetrics({ run, sim, simLoading, hasSims, simError }: { run: Run; s
       <h3>规划（求解器输出，经独立验算）</h3>
       {researchAcceptanceIssues(inst, planModelSchema(run)).map((issue) => <Notice key={issue} tone="warn">{issue}</Notice>)}
       <div className={a.metricGrid}>
-        <Cell label="任务完成率（规划）" value={total ? `${fmt.num((100 * served) / total, 1)}%` : '—'} note={`${served} / ${total}，分母：任务地图中的全部任务点；不表示喷施 / 采样质量`} tone={served === total ? 'good' : 'bad'} />
-        <Cell label="总里程" value={`${fmt.num(run.metrics.total_distance_m as number, 1)} m`} note="各车几何路径长度之和（验算复算），不等于实际轨迹" />
+        <Cell label="任务完成率（规划）" value={total ? `${fmt.num((100 * served) / total, 1)}%` : '—'} note={`${served} / ${total}，按地图全部任务点统计服务完成情况，不含喷施或采样质量`} tone={served === total ? 'good' : 'bad'} />
+        <Cell label="总里程" value={`${fmt.num(run.metrics.total_distance_m as number, 1)} m`} note="各车规划路径长度之和，已独立复算" />
         <Cell label="最晚完成" value={fmt.sec(run.metrics.makespan_s as number)} note={`按类别车速 ${speeds.join(' / ')} m/s 与作业时间的匀速代理；不含交通等待、接驳和真实转向`} />
-        <Cell label="趟数 / 返库" value={`${fmt.num(run.metrics.trips as number, 0)} 趟`} note={`单趟最大载重 ${maxLoad ?? '—'}；类别容量 ${classes.map((item, index) => `${item.name ?? `类${index + 1}`}=${item.capacity}`).join('，')}（抽象单位，不是 kg）`} tone={overCapacity ? 'bad' : undefined} />
+        <Cell label="趟数 / 返库" value={`${fmt.num(run.metrics.trips as number, 0)} 趟`} note={`单趟最大载重 ${maxLoad ?? '—'}；类别容量 ${classes.map((item, index) => `${item.name ?? `类${index + 1}`}=${item.capacity}`).join('，')}（抽象容量单位）`} tone={overCapacity ? 'bad' : undefined} />
         <Cell label="约束违规" value={run.check ? String(errors.length) : '未验算'} note={run.check ? (errors.length ? errors.slice(0, 2).join('；') : `验算方：${run.check.checker ?? '独立检查器'}`) : ''} tone={run.check ? (errors.length ? 'bad' : 'good') : 'warn'} />
         <Cell label="使用车辆" value={`${fmt.num(run.metrics.vehicles_used as number, 0)} / ${fleetSize(inst)}`} note={`${classes.length} 类；分工均衡度（变异系数）${fmt.num(run.metrics.balance_cv as number, 2)}；家库按表序轮询`} />
         <Cell label="覆盖率" value="不适用" note="多车任务按任务点计完成率；覆盖率只对覆盖作业（分母：田块面积）计算" />
@@ -128,20 +128,20 @@ function FleetMetrics({ run, sim, simLoading, hasSims, simError }: { run: Run; s
       </div>
       <h3>仿真执行（Gazebo 田间仿真）</h3>
       {simLoading && <Spinner />}
-      {simError && <Notice tone="error">{simError}。不会用空结果或旧拼装记录替代。</Notice>}
-      {!simLoading && !hasSims && !simError && <p className={p.hint}>这个方案还没有在仿真中执行（「方案对比」里点 Gazebo）。跟踪误差与多车间距只有执行后才有。</p>}
+      {simError && <Notice tone="error">{simError}</Notice>}
+      {!simLoading && !hasSims && !simError && <p className={p.hint}>尚无仿真结果。在「方案对比」中点击 Gazebo 执行后，可查看跟踪误差与车间距。</p>}
       {sim && m && (
         <>
           <div className={a.metricGrid}>
             <Cell label={verified != null ? '任务完成率（真值位置与停留）' : completed != null ? '控制器停留完成率' : '控制器到达率'} value={`${fmt.num((100 * simNumerator) / Math.max(1, m.tasks_total), 1)}%`} note={`${simNumerator} / ${m.tasks_total}；控制器到达 ${m.tasks_reached}${completed != null ? `、停留完成 ${completed}` : '；历史记录未区分完成停留'}；不表示作业质量`} tone={sim.r.state === 'canceled' ? 'warn' : simNumerator === m.tasks_total && sim.r.state === 'succeeded' ? 'good' : 'bad'} />
             <Cell label="实际总里程" value={`${fmt.num(m.total_distance_m, 1)} m`} note={`规划 ${fmt.num(m.planned_total_distance_m, 1)} m；实际轨迹独立显示，含接驳与转向`} />
             <Cell label="实际最晚完成" value={fmt.sec(m.makespan_s)} note={`规划 ${fmt.sec(m.planned_makespan_s)}（匀速代理）；实际含交通等待、接驳与转向`} />
-            <Cell label="路径跟踪误差" value={`${fmt.num(m.cross_track_mean_m, 3)} m`} note={`最大 ${fmt.num(m.cross_track_max_m, 2)} m；真值位置到跟踪路线的横向距离；URP 跟踪，不是 Nav2 逐点重规划`} tone={m.cross_track_max_m > 0.5 ? 'warn' : 'good'} />
+            <Cell label="路径跟踪误差" value={`${fmt.num(m.cross_track_mean_m, 3)} m`} note={`最大 ${fmt.num(m.cross_track_max_m, 2)} m；真值位置到跟踪路线的横向距离；URP 路径跟踪`} tone={m.cross_track_max_m > 0.5 ? 'warn' : 'good'} />
             <Cell label="交通与接触" value={traffic!.value} tone={traffic!.tone} note={`${sep ? `记录轨迹最近车距 ${sep.d.toFixed(2)} m（t=${sep.t.toFixed(0)} s）；` : ''}${traffic!.note}`} />
             <Cell label="异常" value={String(sim.d.anomalies.length)} note={sim.d.anomalies.slice(0, 2).map((x) => x.text).join('；') || '无'} tone={sim.d.anomalies.some((x) => x.tone === 'error') ? 'bad' : sim.d.anomalies.length ? 'warn' : 'good'} />
           </div>
           <div className={p.row}>
-            <span className={p.meta} style={{ margin: 0 }}>执行：URP 纯追踪（非 Nav2 重规划）· 控制定位：{sim.r.execution?.localization?.gnss ? '轮式输入与合成位置观测融合估计' : 'Gazebo 真值对照'} · 会话 {sim.r.session_id} · 状态 {sim.r.state} · 清理 {sim.r.session_report?.cleanup_status ?? '未记录'}</span>
+            <span className={p.meta} style={{ margin: 0 }}>执行：URP 纯追踪· 控制定位：{sim.r.execution?.localization?.gnss ? '轮式输入与合成位置观测融合估计' : 'Gazebo 真值对照'} · 会话 {sim.r.session_id} · 状态 {sim.r.state} · 清理 {sim.r.session_report?.cleanup_status ?? '未记录'}</span>
             <span className={p.spacer} />
             <Button size="sm" onClick={() => { void useReplay.getState().load(sim.r.session_id); window.dispatchEvent(new CustomEvent('studio:open-panel', { detail: 'replay' })); }}>在地图上回放</Button>
           </div>
@@ -161,9 +161,9 @@ function GenericMetrics({ run }: { run: Run }) {
   return (
     <div className={a.metricGrid}>
       <Cell label="目标值" value={`${fmt.num(run.objective.value, 2)} ${run.objective.unit}`} note={run.objective.lower_bound != null ? `下界 ${fmt.num(run.objective.lower_bound, 2)}` : ''} />
-      <Cell label="验算" value={recheck ? '旧覆盖记录 · 须重求解' : run.check ? (run.check.valid ? '通过' : `${run.check.errors.length} 项未通过`) : '未验算'} tone={recheck ? 'warn' : run.check ? (run.check.valid ? 'good' : 'bad') : 'warn'} note={recheck ? '保留原始检查结果作追溯，不作为新版可行解或执行依据' : run.check?.errors.slice(0, 2).join('；')} />
+      <Cell label="验算" value={recheck ? '旧覆盖记录 · 须重求解' : run.check ? (run.check.valid ? '通过' : `${run.check.errors.length} 项未通过`) : '未验算'} tone={recheck ? 'warn' : run.check ? (run.check.valid ? 'good' : 'bad') : 'warn'} note={recheck ? '历史检查记录；须重新求解并通过新版验算后执行' : run.check?.errors.slice(0, 2).join('；')} />
       {cov != null && <Cell label="全田块覆盖率" value={`${fmt.num(cov * 100, 1)}%`} note={`覆盖面积 ${fmt.num(m.coverage_area_m2 as number, 1)} m² / 田块面积 ${fmt.num(m.field_area_m2 as number, 1)} m²`} />}
-      {working != null && <Cell label="内缩作业区覆盖率" value={`${fmt.num(working * 100, 1)}%`} note={`覆盖口径：${String(m.coverage_scope ?? '未记录')}；按声明幅宽与作业状态计算，不按路线涂色估算`} />}
+      {working != null && <Cell label="内缩作业区覆盖率" value={`${fmt.num(working * 100, 1)}%`} note={`覆盖口径：${String(m.coverage_scope ?? '未记录')}；按声明幅宽与作业状态计算`} />}
       {turnEnforced != null && <Cell label="转弯半径约束" value={turnEnforced ? '已约束' : '未约束'} note={turnEnforced ? '按求解器声明的转弯模型与独立采样检查展示' : '该算法允许原地转向或未施加曲率约束'} />}
       <Cell label="计算时间" value={fmt.sec(m.wall_s)} />
     </div>
@@ -204,19 +204,19 @@ function ExportButton({ run }: { run: Run }) {
     const current = new AbortController();
     controller.current = current;
     setState('loading');
-    setDetail('正在读取服务端完整 record envelope…');
+    setDetail('正在读取完整实验记录…');
     try {
       const result = await downloadServerRecord(run.run_id, { signal: current.signal });
       if (current.signal.aborted) return;
       setState('done');
-      setDetail(`${result.envelope.record.schema ?? '服务端记录'} · assembled ${result.envelope.assembled_utc}；SHA256 仅校验内容完整性，不是身份签名`);
+      setDetail(`${result.envelope.record.schema ?? '服务端记录'} · assembled ${result.envelope.assembled_utc}；SHA-256 完整性校验（无身份签名）`);
     } catch (e) {
       if ((e as Error).name === 'AbortError') {
         setState('canceled');
-        setDetail('导出已取消；未使用旧拼装记录替代');
+        setDetail('导出已取消');
       } else {
         setState('error');
-        setDetail(`服务端完整记录导出失败：${(e as Error).message}。可重试；不会静默回退到 schema /1`);
+        setDetail(`服务端完整记录导出失败：${(e as Error).message}。请重试。`);
       }
     } finally {
       if (controller.current === current) controller.current = null;
@@ -226,7 +226,7 @@ function ExportButton({ run }: { run: Run }) {
     <div>
       <div className={p.row}>
         {!isFleet(st.scenario) && <Badge tone="gray">{run.problem_class}</Badge>}
-        <Button size="sm" icon={Download} loading={state === 'loading'} onClick={() => void download()} title="下载 GET /runs/{run_id}/record 返回的完整 record、integrity、assembled_utc；不重新组装，不沿用旧 hash">
+        <Button size="sm" icon={Download} loading={state === 'loading'} onClick={() => void download()} title="下载服务端完整实验记录，含完整性校验与生成时间">
           {state === 'error' ? '重试导出实验记录' : '导出实验记录'}
         </Button>
         {state === 'loading' && <Button size="sm" variant="plain" icon={X} onClick={() => controller.current?.abort()}>取消</Button>}

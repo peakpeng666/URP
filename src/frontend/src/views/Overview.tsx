@@ -50,7 +50,7 @@ function OverviewBody({ meta }: { meta: Meta }) {
             平均省下 <span className={s.bigDelta}>{fmt(-conf.selector_minus_SBS_mean, 2)}</span> 个箱子
           </h1>
           <p className={s.lede}>
-            前缀选择器用 BF 处理前 500 项，读取此刻的到达物品与箱残量后只扳一次道岔——继续 BF，或切到固定 EoH。
+            前 500 项由 BF 处理，再根据已到物品和箱残量选择继续 BF 或切换到固定 EoH，之后不再切换。
             相对训练选出的基线 SBS（= BF→EoH），它在确认集上平均{' '}
             <strong>{fmtSigned(conf.selector_minus_SBS_mean, 2)} 箱</strong>
             （负数表示更省）。
@@ -102,19 +102,19 @@ function OverviewBody({ meta }: { meta: Meta }) {
 
       <Panel
         title="三个集合，一次冻结"
-        subtitle="训练只有两条真实分支，用来选出 SBS 并拟合邻居标签；模型冻结后才执行确认与风险。主指标只来自确认集。"
+        subtitle="训练集运行两条分支，选出 SBS 并拟合邻居标签。冻结模型后评估确认集与风险集，主指标取自确认集。"
       >
         <FlowDiagram meta={meta} />
       </Panel>
 
       <Panel
         title="确认集各角色平均最终箱数"
-        subtitle="越少越好。横轴不从 0 开始（各角色都在 2730–2794 之间），用点而非柱，避免放大或掩盖差异；轴起点已标注。"
+        subtitle="箱数越少越好。各角色均值为 2730–2794 箱，横轴起点已标注。"
         aside={
           <EvidenceButton
             provenance={{
               title: '确认集平均最终箱数',
-              meaning: '7 个角色在 108 条确认流上的平均最终箱数。SBS 与分支 oracle 是角色/事后参照，不是新增运行；全程 EoH 起点状态不同。',
+              meaning: '7 个角色在 108 条确认流上的平均最终箱数。SBS 与分支 oracle 取自已有运行；全程 EoH 使用不同起始状态。',
               derivation: '由 analysis/SUMMARY.json 的 confirmation.mean_bins 读取，等于各策略 108 流最终箱数的平均。',
               sources: [srcRef(meta, 'analysis/SUMMARY.json', 'confirmation.mean_bins')],
               checks: metaChecks(meta, ['historical', 'project']),
@@ -143,20 +143,20 @@ function OverviewBody({ meta }: { meta: Meta }) {
             />
           </ul>
           <p className={s.note}>
-            88.17% 指收回“SBS 相对同一 BF 前缀下两分支事后 oracle”的可改善余地，不是总体装箱效率提高 88%。
-            分支 oracle 由两条可执行分支构成，本身不可部署。
+            88.17% 表示选择器缩小了 SBS 与同前缀分支 oracle 之间的箱数差距，按这部分差距计算。
+            分支 oracle 事后取两条分支中的最优结果，仅作比较参照。
           </p>
         </Panel>
       </div>
 
       <Panel
         title="18 个确认单元：尺寸族 × 到达顺序"
-        subtitle="每格 6 条新多重集流的选择器 − SBS 平均。同一多重集的三种顺序不是三个独立样本。点击格子查看构成。"
+        subtitle="每格为 6 条新多重集流的选择器 − SBS 均值。同一多重集的三种顺序按一组统计；点击查看构成。"
         aside={
           <EvidenceButton
             provenance={{
               title: '18 个确认单元',
-              meaning: '6 个尺寸族 × 3 种到达顺序，每格 6 流。所有 18 格等权进入主指标。升/降序是给定的结构化到达流，不是在线算法获得排序权。',
+              meaning: '6 个尺寸族 × 3 种到达顺序，每格 6 流，18 格等权计入主指标。升序和降序由输入预先设定，在线算法按到达顺序处理。',
               derivation: '由 analysis/family_order_summary.csv 读取，派生为 cells.json。',
               sources: [srcRef(meta, 'analysis/family_order_summary.csv', '每族每顺序一行')],
               checks: metaChecks(meta, ['historical', 'project']),
@@ -169,14 +169,14 @@ function OverviewBody({ meta }: { meta: Meta }) {
 
       <Panel
         title="不确定性：族内多重集组自助重抽样"
-        subtitle="在浏览器内解码 cluster_bootstrap.npz 的 10000 次重抽样均值并重画。区间只描述本次预冻的合成混合。"
+        subtitle="显示 cluster_bootstrap.npz 中的 10000 次重抽样均值。区间适用于本次预先固定的合成混合。"
         aside={
           <EvidenceButton
             provenance={{
               title: '组 bootstrap 95% 百分位区间',
               value: ci ? `[${fmt(ci[0], 6)}, ${fmt(ci[1], 6)}]` : '未计算',
               meaning:
-                '按族内多重集组重抽样（每组三种顺序共同抽取）得到的 10000 次均值分布的 2.5/97.5 百分位。仅描述本次预设合成混合，不是部署或新分布的保证。筛选后的局部统计不套用此全局区间。',
+                '按族内多重集分组重抽样，每组三种顺序一同抽取。区间取 10000 次均值分布的 2.5% 和 97.5% 分位，仅适用于本次预设合成混合的整体统计。新分布与筛选子集需另行估计。',
               derivation: 'analysis/cluster_bootstrap.npz 的 mean_deltas 数组（10000 个），百分位由 numpy.quantile 记录在 SUMMARY.json。',
               sources: [srcRef(meta, 'analysis/cluster_bootstrap.npz', 'mean_deltas / group_deltas / indices'), srcRef(meta, 'analysis/SUMMARY.json', 'confirmation.cluster_bootstrap_95_percentile_CI')],
               checks: metaChecks(meta, ['historical', 'project']),
@@ -193,7 +193,7 @@ function OverviewBody({ meta }: { meta: Meta }) {
 
       <Panel
         title="构造风险集：同前缀，不同未来"
-        subtitle="单列呈现，不并入确认收益。4 组各用一个固定的 500 项前缀，接三种不同的 4500 项未来；合法的前缀选择必须保持不变。"
+        subtitle="4 组固定的 500 项前缀，各接三种 4500 项后缀。前缀选择应保持一致；风险结果单列，不计入确认收益。"
         id="risk-summary"
       >
         <div className={s.riskGrid}>

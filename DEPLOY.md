@@ -1,8 +1,8 @@
-# 把工作台和仿真装到另一台电脑
+# 工作台与仿真部署
 
-仓库 `peakpeng666/URP` 是公开的。镜像和 Release 附件也按公开来用。默认路径不登录、不提示令牌。
+仓库 `peakpeng666/URP` 为公开仓库，安装入口使用匿名下载。
 
-本页的一键命令固定读取 `deploy` 分支，镜像标签为 `deploy`，不会自动包含当前 `main` 或其他交付分支的修改。使用前需核对对应构建和匿名拉取结果；仓库中存在安装脚本不等于当前镜像已经发布并验收。已存整机快照的具体版本与验收范围另见 [工作台使用说明](setup/README.md)，本次云端源码回归见 [交付核查](setup/2026-10-19/delivery-review/REPORT.md)。
+安装命令读取 `deploy` 分支，镜像标签为 `deploy`。使用前核对构建版本和匿名拉取状态；`main`、`redo` 的更新需单独构建发布。完整平台快照见 [工作台使用说明](setup/README.md)，云端测试见 [测试报告](setup/2026-10-19/delivery-review/REPORT.md)。
 
 三条路，都包含 ROS 2 Humble 和 Gazebo Fortress。没有纯 Windows 路径。
 
@@ -12,7 +12,7 @@
 | WSL2 里的 Ubuntu 22.04，不用 Docker | B。浅克隆，排除 `src/repos`、`data/bpp`、`data/cifar-training` |
 | 原生 Ubuntu 22.04 | C。与 B 同一套 `setup/ubuntu/setup.sh` |
 
-B 和 C 发现是 WSL 时才使用软件渲染和 `0.0.0.0` 监听。原生 Ubuntu 不设置 `LIBGL_ALWAYS_SOFTWARE`。主人笔记本上的 `bash setup/run.sh lab` 仍然只监听 `127.0.0.1:4100`，也不设置 `URP_SIM_PROFILE`。
+B 和 C 发现是 WSL 时才使用软件渲染和 `0.0.0.0` 监听。原生 Ubuntu 不设置 `LIBGL_ALWAYS_SOFTWARE`。本机的 `bash setup/run.sh lab` 仍然只监听 `127.0.0.1:4100`，也不设置 `URP_SIM_PROFILE`。
 
 依赖版本在 [deploy/DEPENDENCIES.md](deploy/DEPENDENCIES.md)。第三方许可在 [deploy/THIRD_PARTY.md](deploy/THIRD_PARTY.md)。
 
@@ -56,7 +56,7 @@ docker compose -f deploy/docker-compose.yml up -d
 
 这拉的是 `ghcr.io/peakpeng666/urp-bench`。默认那条命令拉的是带仿真的 `urp-sim`。
 
-## 主人做一次的公开设置
+## 镜像发布设置
 
 Actions 用 `GITHUB_TOKEN` 推送的包默认是私有的，工作流里的接口经常返回 403，不能代替下面的点击。镜像推上去之后：
 
@@ -67,9 +67,9 @@ Actions 用 `GITHUB_TOKEN` 推送的包默认是私有的，工作流里的接�
 
 推送发生在 `deploy` 分支和 `v*` 标签。`deploy` 得到 `:deploy` 和提交号；`v*` 得到版本号和 `:latest`。工作流是 `.github/workflows/images.yml`。
 
-在这一步完成之前，`docker pull` 会失败。安装器打印上面的地址然后退出。它不会执行 `docker login`，也不会要搭档的令牌。
+在这一步完成之前，`docker pull` 会失败。安装器打印上面的地址然后退出。它不会执行 `docker login`，也不会要使用者的令牌。
 
-不要把 Fuel 缓存上传为 Release。可以公开上传的只有 Fields2Cover 轮子，并且必须连同 BSD 声明：
+本部署流程仅上传附带 BSD 声明的 Fields2Cover 轮子，Fuel 模型由使用者从上游下载。旧平台快照的附件与许可见 [第三方说明](deploy/THIRD_PARTY.md)。
 
 ```sh
 bash deploy/upload-assets.sh vYYYYMMDD
@@ -103,7 +103,7 @@ Windows 使用支持 CUDA on WSL 的驱动，不要在 WSL 里再装 Linux 驱�
 
 `warehouse` 和 `depot` 需要使用者自己向 https://fuel.gazebosim.org 下载。`urp fuel` 做这件事，并把缓存挂进容器或写到检出的 `setup/2026-10-15/cache/ignition-fuel`。这是使用者自己的副本，不是我们再分发。
 
-不能放进公开镜像或公开 Release：
+本部署流程不打包以下 Fuel 模型：
 
 | 模型 | 许可 |
 |---|---|
@@ -117,7 +117,7 @@ Foxglove bridge 是 MIT，rosx_introspection 是 MPL-2.0，随镜像里的 apt �
 
 笔记本验收文件不改。系统库与验收记录一致时，只接受原来的二进制。镜像和别的机器在 `URP_SIM_PROFILE=image` 时使用编译出来的 `profile.json`。`URP_BRIDGE_FIX=0`、`URP_TF_FIX=0`、`URP_GUI_FIX=0` 只是对照开关。
 
-发布出去的 `urp-sim` 在构建时运行 `deploy/record-sim-profiles.py`，所以镜像里的指纹就是那次构建的产物。本地另编的二进制不会被拿去冒充已发布镜像。
+发布出去的 `urp-sim` 在构建时运行 `deploy/record-sim-profiles.py`，所以镜像里的指纹就是那次构建的产物。本地重新编译的二进制使用独立构建指纹。
 
 ## 关闭接口
 
@@ -141,7 +141,7 @@ docker compose -f deploy/docker-compose.sim.yml -f deploy/docker-compose.sim-bui
 
 | 现象 | 处理 |
 |---|---|
-| `docker pull` 要求登录或 403 | 主人把包改成 Public。搭档不要 `docker login` |
+| `docker pull` 要求登录或 403 | 由仓库维护者将镜像设为 Public；使用者无需登录 |
 | 浏览器打不开 localhost:4100 | Docker 引擎是否已启动；WSL 里 `urp status` |
 | 页面 403，提示拒绝的 Host | 用 http://localhost:4100/ |
 | `sh` 脚本报 `$'\r'` | `*.sh` 在 `.gitattributes` 里是 LF |

@@ -454,8 +454,8 @@ function FleetForm() {
             <Button size="sm" icon={Plus} disabled={classes.length >= 8} onClick={() => set((i) => ({ ...i, vehicles: { ...i.vehicles, fleet: [...fleetClasses(i), { ...fleetClasses(i)[0], name: `车型 ${classes.length + 1}`, count: 1 }] } }))}>添加车型</Button>
             <Button size="sm" variant="plain" onClick={() => set((i) => { const first = fleetClasses(i)[0]; return { ...i, robot_radius: first.robot_radius ?? i.robot_radius, vehicles: { ...i.vehicles, fleet: undefined, count: first.count, capacity: first.capacity, speed_mps: first.speed_mps ?? 1, names: undefined } }; })}>返回同构设置</Button>
           </div>
-          {classes.some((item) => (item.min_turn_radius_m ?? 0) > 0) && <p className={s.hint}><strong className={s.warn}>执行限制：</strong>曲率结果可保存、求解和查看，采样几何检查不代表动力学验证；rows 不支持，Gazebo 执行会返回 422 curvature_constrained_execution。</p>}
-          {classes.length > 1 && <p className={s.hint}>异构方案仅 PyVRP / OR-Tools 可提交；Gazebo 当前返回 422 heterogeneous_fleet_execution。容量分配错误由后端如实返回，不会自动抬高小车容量。</p>}
+          {classes.some((item) => (item.min_turn_radius_m ?? 0) > 0) && <p className={s.hint}><strong className={s.warn}>执行限制：</strong>曲率约束支持规划、保存和查看，并提供采样几何检查；尚无动力学验证。rows 模式不支持，Gazebo 执行返回 422 curvature_constrained_execution。</p>}
+          {classes.length > 1 && <p className={s.hint}>异构车队支持 PyVRP / OR-Tools；Gazebo 执行返回 422 heterogeneous_fleet_execution。各车按设定容量求解，分配错误会直接报出。</p>}
         </>
       )}
       <label className={s.field}>
@@ -479,7 +479,7 @@ function FleetForm() {
           : '车辆可在地块内任意穿行，只避开障碍物；走廊在 free 模式不构成通行约束。'}
       </p>
       <p className={s.hint}>
-        {inst.tasks.length} 个任务点，总需求 {demand}（抽象容量单位，不是 kg）；每车各一趟的总容量为 {perWave}，估算至少 {waves} 轮，实际趟次由求解结果确定
+        {inst.tasks.length} 个任务点，总需求 {demand}（抽象容量单位）；每车各一趟的总容量为 {perWave}，估算至少 {waves} 轮，实际趟次由求解结果确定
         {v.trips === 'single' && waves > 1 ? <strong className={s.warn}>，单趟模式容量不足</strong> : ''}。
       </p>
       <FleetAssetSection />
@@ -584,7 +584,7 @@ function SelectionForm() {
           <Num label="X" value={xy[0]} step={0.5} unit="m" onChange={(n) => set((i) => setDepot(i, index, [n, xy[1]]))} />
           <Num label="Y" value={xy[1]} step={0.5} unit="m" onChange={(n) => set((i) => setDepot(i, index, [xy[0], n]))} />
         </div>
-        <p className={s.hint}>车辆按类别展开后的表序轮询分配家库，并非优化选库；车库顺序不会被界面隐式重排。</p>
+        <p className={s.hint}>车辆按类别展开后，依车库原有顺序轮询分配家库；选库未参与优化。</p>
         <div className={s.row}>
           <Button size="sm" icon={Plus} disabled={depotsOf(inst).length >= 8} onClick={() => { set((i) => addDepot(i, [xy[0] + 2, xy[1]])); select({ type: 'depot', index: depotsOf(inst).length }); }}>添加车库</Button>
           <Button size="sm" variant="destructive" icon={Trash2} disabled={depotsOf(inst).length <= 1} onClick={() => { set((i) => removeDepot(i, index)); select(null); }}>删除此库</Button>
@@ -955,7 +955,7 @@ function Convergence({ runs }: { runs: Solution[] }) {
     });
     el.append(chart);
   }, [data]);
-  if (data.length < 2) return excluded.length ? <div className={s.pad}><p className={s.meta}>内部搜索曲线保留在原始记录；其成本含量化、松弛或加权目标，未将它作为最终验算目标绘制。</p></div> : null;
+  if (data.length < 2) return excluded.length ? <div className={s.pad}><p className={s.meta}>内部搜索曲线使用量化、松弛或加权成本，与最终验算目标不同，可在原始记录中查看。</p></div> : null;
   return (
     <div className={s.convergence}>
       <h4>求解过程中最好解的变化</h4>
@@ -974,7 +974,7 @@ export function VerifyPanel() {
     return <EmptyState title={run.error ?? label} detail="没有可供独立验算的最终解。" />;
   }
   const check = run.check;
-  if (!check) return <EmptyState icon={CircleDashed} title="未检查" detail="后端未提供独立检查结果；不能据此判定方案可行。" />;
+  if (!check) return <EmptyState icon={CircleDashed} title="未检查" detail="缺少独立检查结果，可行性待确认。" />;
   const errors = check.errors;
   const recheck = requiresCoverageRecheck(run);
   const fleet = isFleet(st.scenario);
@@ -1003,8 +1003,8 @@ export function VerifyPanel() {
           <h3>{run.algorithm.name} 的验算</h3>
           {recheck ? <Badge tone="orange">旧版检查 · 须重求解</Badge> : check.valid ? <Badge tone="green">全部通过</Badge> : <Badge tone="red">未通过{errors.length ? ` · ${errors.length} 项` : ''}</Badge>}
         </div>
-        {recheck && <Notice tone="warn">以下为历史原始检查记录。旧全流程适配漏掉最后作业段，不代表通过新版覆盖验收；请重新求解。</Notice>}
-        {fleet && researchAcceptanceIssues(run.instance as unknown as FleetInstance, planModelSchema(run)).map((issue) => <Notice key={issue} tone="warn">{issue} 绿色验算徽标不覆盖该限制。</Notice>)}
+        {recheck && <Notice tone="warn">旧版检查遗漏了最后作业段，请重新求解并按新版验收。以下保留历史检查记录。</Notice>}
+        {fleet && researchAcceptanceIssues(run.instance as unknown as FleetInstance, planModelSchema(run)).map((issue) => <Notice key={issue} tone="warn">{issue} 验算通过后仍需满足此限制。</Notice>)}
         {!!unexplained.length && <Notice tone="error">其他检查失败：{unexplained.join('；')}</Notice>}
         <ul className={s.checks}>
           {items.map((it) => {

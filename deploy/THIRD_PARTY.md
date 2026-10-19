@@ -1,20 +1,19 @@
 # Third-party notices for the collaborator images
 
-Checked on 2026-10-19 from the upstream project pages and the Gazebo Fuel API.
-This notice describes the collaborator images built from `deploy/`. They install
-ROS packages from apt and exclude the Fuel cache and Fields2Cover wheel.
-It does not describe the older `setup/platform/` snapshot image.
+Checked on 2026-10-19 against upstream project pages and the Gazebo Fuel API.
+This notice covers the collaborator images built from `deploy/`. These images
+install ROS packages from apt and exclude the Fuel cache and Fields2Cover wheel.
+The older `setup/platform/` snapshot image is covered separately below.
 
 ## Published snapshot exception requiring review
 
-As checked on 2026-10-19, the existing
+As of 2026-10-19, the
 [platform-snapshot-20261018-ddb5113e Release](https://github.com/peakpeng666/URP/releases/tag/platform-snapshot-20261018-ddb5113e)
-still publishes `fuel-cache.tar.zst` (144,263,245 bytes), and its description
-states that the snapshot includes Fuel models and a Fields2Cover wheel.
-The exclusion policy below must not be read as a claim that these historical
-assets have been removed. The actual asset licenses, attribution, unchanged
-content and permitted uses must be checked before further redistribution.
-This documentation correction does not remove or replace any published asset.
+still publishes `fuel-cache.tar.zst` (144,263,245 bytes). Its description lists
+Fuel models and a Fields2Cover wheel. Those assets remain in the published Release.
+Before further redistribution, check their licenses, attribution requirements,
+whether the content is unchanged, and permitted uses. The exclusions below
+apply to new collaborator images and asset uploads.
 
 ## Allowed inside the published images
 
