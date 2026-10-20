@@ -20,3 +20,8 @@ setup/2026-10-15/backups
 setup/2026-10-15/runtime
 setup/2026-10-15/deployment/runtime
 setup/2026-10-15/deployment/logs
+cohort_b/ails/classes
+cohort_b/ails/sources.list
+cohort_b/sisr/build
+cohort_b/formal-runs-*
+cohort_b/evidence

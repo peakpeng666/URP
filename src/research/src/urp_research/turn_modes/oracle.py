@@ -5,6 +5,8 @@ import heapq,math,time
 from functools import lru_cache
 
 def solve(inst):
+    if inst.get('fleet_limit') is not None:
+        raise ValueError('turn_modes oracle does not support fleet_limit; expected null')
     startwall=time.perf_counter();startcpu=time.process_time()
     depot=inst['depot'];cap=inst['capacity'];tasks=inst['customers'];n=len(tasks);full=(1<<n)-1
     lookup={}

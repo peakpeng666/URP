@@ -120,3 +120,7 @@ setup/2026-10-17/critique/mu2-study/*/
 /setup/2026-10-18/ground-risk-audit/probe-*/
 
 /setup/2026-10-18/ground-risk-audit/**/experiment-*.json
+
+# Local Java compiler output
+/cohort_b/ails/classes/
+/cohort_b/ails/sources.list

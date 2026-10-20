@@ -1,0 +1,92 @@
+{
+  "schema": "urp-cvrp-delivery-index-v1",
+  "as_of": "2026-10-19",
+  "scope": "Read-only index of archived cohorts, not a new optimization run or a G5/field acceptance certificate.",
+  "sources": {
+    "plan": {
+      "path": "protocol/formal_plan.json",
+      "sha256": "a8a4bee5f43c9a186996845f725f5b2fdfa8cad51df6582ea30561513a995ad5"
+    },
+    "cases": {
+      "path": "src/research/configs/cvrplib_cases.json",
+      "sha256": "84aef977eae1112dfdd8f5c280cbd6f45bb66b2b325335e5257cce1fb8ebf5df"
+    },
+    "main_reaudit": {
+      "path": "protocol/audits/20261017/archive_review.json",
+      "sha256": "96a7f8d1bf2e2a9e37792728b5d8531cbef32a4644d3dba8d88d4a56b3360e85"
+    },
+    "vendor_audit": {
+      "path": "experiments/baselines/cvrp/evidence/vendor_all120_audit.json",
+      "sha256": "46e4dab9fcc622b2dbb7749884f5e87f72eb779b7aab9c54caa61837a8cbbd84"
+    },
+    "handoff_audit": {
+      "path": "experiments/baselines/cvrp/handoff/20261016-liyueying/independent_verification.json",
+      "sha256": "90e308b99d2553df83fb728b8058522207f7b93003205d58e9d806c53f2fd2b7"
+    }
+  },
+  "main": {
+    "cohort": "teacher_baseline_17",
+    "configuration_count": 17,
+    "case_count": 53,
+    "base_count": 51,
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "budget_seconds_per_key": 5,
+    "planned_unique_keys": 4505,
+    "terminal_results": 4505,
+    "recorded_attempts_including_interrupted_claims": 4509,
+    "independently_eligible": 4316,
+    "without_valid_solution": 189,
+    "not_started": 0,
+    "size_strata_cases": {
+      "small": 41,
+      "medium": 6,
+      "large": 6
+    },
+    "provenance_levels": {
+      "verified_host_manifest_and_environment_hash": 901,
+      "unverified_host_manifest_and_result_declarations": 901,
+      "result_bound_resource_manifest_without_archived_host_verification": 2703
+    },
+    "quality_report": "experiments/baselines/cvrp/results/基线实验报告.md"
+  },
+  "separate_cohorts": {
+    "vendor": {
+      "planned": 120,
+      "attempted": 120,
+      "independently_eligible": 120,
+      "not_started": 0,
+      "purpose": "supplementary AILS-II/SISR; not in main denominator"
+    },
+    "liyueying_handoff": {
+      "independently_valid": 742,
+      "purpose": "acceptance_only; 53 cases and 5-second end-to-end budget; not G5 or main denominator"
+    },
+    "sixteen_case_search_loop": {
+      "historical_r1": {
+        "calls": 48,
+        "valid": 48,
+        "status": "existing r1 stdout, byte-identical; not a new replication"
+      },
+      "new_bridge": {
+        "calls": 48,
+        "valid": 48,
+        "status": "separate new batch"
+      },
+      "equal_cost_pairs": 41,
+      "budget_seconds_search_loop": 1
+    }
+  },
+  "interpretation": [
+    "Fifty-three problem contracts share fifty-one geometry-demand bases; capacity/vehicle variants remain distinct cases.",
+    "Pooled route quality is descriptive under heterogeneous hosts and confounded seeds.",
+    "Only the 901 cloud seed-0 records have archived VERIFIED host/environment metadata for verified same-condition resource statistics.",
+    "No valid solution does not establish mathematical infeasibility.",
+    "CVRPLIB route cost does not validate agricultural geometry or physical execution."
+  ]
+}

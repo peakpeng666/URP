@@ -133,7 +133,7 @@ export interface Recommendation {
   features: { name: string; key: string; value: number | string | null; unit: string | null }[];
   learned_selector: {
     id: string;
-    status: 'unavailable' | 'available' | 'not_applicable' | 'out_of_scope';
+    status: 'unavailable' | 'available' | 'not_applicable' | 'out_of_scope' | 'out_of_profile';
     evaluation?: {test_n:number;train_n:number;calibration_n:number;alternative_count:number;harmful_instances:number;mean_improvement_pct:number;sbs:string};
     model_sha256?: string;
     scope?: string;

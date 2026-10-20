@@ -1,23 +1,31 @@
 # 依赖清单
 
-这份清单以仓库 `main` 里的锁文件和源码为准，不是笔记本上的 `pip freeze`。笔记本当时离线，没有采集现场环境。下面凡是仓库推不出来的项目，都列在文末「需要在主人笔记本上确认」。
+这份清单对应 [统一部署入口](../DEPLOY.md)。Python 和前端使用仓库锁文件；系统包按部署清单从 Ubuntu / ROS 仓库安装。旧平台快照及其历史环境见 [工作台使用说明](../setup/README.md)。
 
-工作台有两套互不替换的 Python 环境，版本故意不同，安装时必须分开：
+工作台有两套互不替换的 Python 环境，解释器同为 3.12，依赖版本不同，安装时必须分开：
 
 | 环境 | 解释器 | 锁文件 | 用途 |
 |---|---|---|---|
 | 仓库根 `.venv` | CPython 3.12.13 | `uv.lock` | 档案 / CVRP 数值任务（`src/start.sh backend`） |
 | `src/lab/.venv` | CPython 3.12.13 | `src/lab/uv.lock` | 网关、求解、前端不负责的算法 |
 
-安装命令只使用锁文件，不使用浮动版本：
-
-Ubuntu 22.04（WSL2 或原生）一条命令装齐，包括 ROS 2 Humble 与 Gazebo Fortress：
+Ubuntu 22.04 x86_64（WSL2 或原生）的完整安装：
 
 ```sh
-bash setup/ubuntu/setup.sh
+bash setup/ubuntu/setup.sh --components full
 ```
 
-只装 Python 与前端时：
+`--components` 与安装器的 `URP_COMPONENTS` 对应：
+
+| 组件 | 安装内容 |
+|---|---|
+| `workbench` | 两套 Python 环境、Node / 前端、ROS 2 Humble / Gazebo Fortress；Fields2Cover 仅在本地已有轮子时校验并安装 |
+| `research` | 两套 Python 环境、Node / 前端、JDK 17、AILS 与 SISR；不安装 ROS |
+| `full`（默认） | 合并上面两组，并下载、校验和安装 Fields2Cover 及其系统库 |
+
+`research` 是当前 CVRP 数值基线环境，不包含历史 NAS 训练栈。Docker 的 `urp-sim` 包含完整运行栈，`urp-bench` 包含规划与 CVRP 基线，不含 ROS / Fields2Cover。
+
+手动准备 Python 与前端时：
 
 ```sh
 uv python install 3.12.13
@@ -26,11 +34,11 @@ uv sync --locked --extra solvers --python 3.12.13
 (cd src/frontend && npm ci --engine-strict --no-audit --no-fund && npm run build)
 ```
 
-`uv` 固定为 **0.12.23**。Node 固定为 **24.22.0**（官方 `linux-x64` 包 SHA256 `28ea0a438de9a13bd7891fd758eee6c7819ee8af5442dfd8d45bd65e56d4228c`，Windows x64 包 SHA256 `f9683a19877e12a9b167305c8db71040d812876359de21f0d2e97c3f321f80c3`）。仓库没有 `.nvmrc`。`src/frontend/package.json` 的 `engines.node` 是 `>=22.12.0`，CI 只写了大版本 24。部署选用当前 Node 24 的 24.22.0，npm 使用该官方包自带的 npm，`package-lock.json` 为 lockfileVersion 3。
+`uv` 固定为 **0.12.23**。Node 固定为 **24.22.0**（官方 `linux-x64` 包 SHA256 `28ea0a438de9a13bd7891fd758eee6c7819ee8af5442dfd8d45bd65e56d4228c`，Windows x64 包 SHA256 `f9683a19877e12a9b167305c8db71040d812876359de21f0d2e97c3f321f80c3`）。仓库没有 `.nvmrc`。`src/frontend/package.json` 的 `engines.node` 是 `>=22.12.0`，CI 只写了大版本 24。部署统一使用 24.22.0，npm 使用该官方包自带的 npm，`package-lock.json` 为 lockfileVersion 3。
 
-## 直接 import、原先没写进依赖声明的包
+## 工作台直接依赖
 
-这些名字在工作台或仿真脚本里被直接 import，以前只是别的包带进来的。现已按锁文件里的版本写进 `src/lab/pyproject.toml`，锁文件里的包版本没有改：
+这些包由工作台或仿真脚本直接使用，已在 `src/lab/pyproject.toml` 中声明，并与锁文件保持一致：
 
 | import | 分发名 | 版本 | 原先从哪来 |
 |---|---|---|---|
@@ -41,15 +49,27 @@ uv sync --locked --extra solvers --python 3.12.13
 
 同时把原来的范围约束收成锁文件里的版本：`httpx==0.28.1`、`pillow==12.3.0`、`pyproj==3.8.0`、`python-multipart==0.0.32`、`defusedxml==0.7.1`、`opencv-python-headless==5.0.0.93`、开发依赖 `pytest==9.1.1`。
 
-## 扫描过、不加入安装集的 import
+## 锁文件之外的依赖
 
 | 名字 | 原因 |
 |---|---|
 | `torch` | 只出现在 `src/research` 的 NAS 试验代码。网关、档案后端和仿真会话不 import 它。 |
-| `fields2cover` | 可选覆盖库。不在 PyPI 锁里。轮子路径和 SHA256 在 `src/lab/vendor/fields2cover-manifest.json`，轮子本身被 `src/lab/vendor/wheels/.gitignore` 排除。没有这份轮子时，覆盖算法使用面板里的往复基线，不假装 Fields2Cover 可用。 |
+| `fields2cover` | 由固定 Release 轮子安装，不在 PyPI 锁里。`full` 必须安装成功；`workbench` / `research` 默认只检查本地轮子，缺少时使用覆盖往复基线。下载和 ABI 依赖见下节。 |
 | `rclpy`、`sensor_msgs`、`geometry_msgs`、`nav_msgs`、`nav2_msgs`、`tf2_ros`、`tf2_msgs`、`rosgraph_msgs`、`visualization_msgs`、`std_msgs`、`irobot_create_msgs`、`rcl_interfaces`、`ros_gz_interfaces` | ROS 2 Humble 的系统包，给 `/usr/bin/python3`（Ubuntu 22.04 上的 3.10）用，不进 3.12 虚拟环境。 |
 | 档案后端 `src/backend` | 标准库。CVRP 任务再 import 研究目录里的 `urp_research.cvrplib`，求解包来自根环境的 `solvers` extra。 |
 | `urp_research.cvrp_selection` | 网关的学习特征模块 import 它，该包本身只用标准库。 |
+
+## CVRP 原生基线与 Fields2Cover
+
+`research` / `full` 安装完整 `openjdk-17-jdk-headless` 和支持 C++20 的 `g++`，通过 `bash deploy/build-cohort.sh` 构建 `cohort_b/ails` 与 `cohort_b/sisr` 的适配源码。AILS 编译使用 `--release 17`；仅有 JRE 不够。构建脚本由源码安装和 Docker 共用，不运行正式实验，也不改写已有结果。
+
+`full` 通过 `python3 deploy/fetch-fields2cover.py` 获取 `setup/platform-snapshot.json` 中固定 Release 的 `compiled-and-wheels.tar.zst`，先核对压缩包大小与 SHA256，再只取出 manifest 指定的 wheel 并复核其 SHA256。已存在的 wheel 也先校验；错误文件不会被覆盖。下载缓存保存在 `.local-state/deploy/downloads`。
+
+Fields2Cover 2.1.0 使用 CPython 3.12 / Linux x86_64 wheel，运行库见 `deploy/fields2cover-packages.txt`：`libgdal30`、`libgeos-c1v5`、`libtinyxml2-9`、`libjpeg8`、`libtiff5`、`libpng16-16`。下载解包还需要 `zstd`。这些是 Ubuntu 22.04 的 ABI 依赖，不能用其他发行版的同名环境直接代替。
+
+源码安装支持 `--fields2cover auto|required|skip`。`workbench` / `research` 默认 `auto`，仅安装本地已有且校验通过的轮子；`required` 会下载并安装；`skip` 跳过。`full` 固定为 `required`，缺少资源或校验失败时停止。
+
+安装末尾执行 `deploy/check-runtime.py`，将版本、导入、原生绑定、合成基线与所选 ROS 命令的检查写入 `.local-state/deploy/runtime-*/runtime.json`。复核命令见 [安装验载](../DEPLOY.md#安装验载)；镜像内也提供该脚本，`urp-sim` 用 `--components full`，`urp-bench` 用 `--components research --fields2cover skip`。物理仿真与正式研究复现单独进行。
 
 ## 工作台虚拟环境（`src/lab/uv.lock`，56 个）
 
@@ -200,6 +220,8 @@ zustand@5.0.15
 | `bash` | `src/start.sh`、仿真启动命令 |
 | CPython 3.12.13 | 网关与档案 |
 | Node 24.22.0 | 构建前端；运行时执行 JS 基线 |
+| 完整 JDK 17、支持 C++20 的 `g++` | `research` / `full` 构建与运行 AILS / SISR |
+| `zstd` 与 `deploy/fields2cover-packages.txt` | `full` 获取 Fields2Cover wheel 并满足其系统 ABI |
 | `curl` | `setup/run.sh lab-stop` |
 | `google-chrome` / `chromium` / `xdg-open` | 仅 `serve --open`。容器与远程浏览器不需要 |
 
@@ -242,7 +264,7 @@ Python 轮子是 manylinux 包，数值库的 `.so` 在轮子里。仿真的共�
 
 工作台和仿真源码都没有 CUDA、cuDNN 或 PyTorch 设备选择。容器和 WSL 默认 `LIBGL_ALWAYS_SOFTWARE=1`。NVIDIA GPU：Windows 使用支持 CUDA on WSL 的驱动，Docker Desktop 用 WSL2 后端，再叠加 `deploy/docker-compose.gpu.yml`。原生 Ubuntu 22.04 不设置这个变量，已安装的驱动直接使用。没有 GPU 时不要加 GPU compose 文件。
 
-## 不在 Git 里、运行时会用到的数据
+## 数据与运行资源
 
 | 路径 | 如何得到 |
 |---|---|
@@ -250,22 +272,25 @@ Python 轮子是 manylinux 包，数值库的 `.so` 在轮子里。仿真的共�
 | `data/packages/` | **在 Git 里**。档案的 `--import-root`。 |
 | `data/research/` | **在 Git 里**。选择特征数据。 |
 | `src/lab/runtime/` | 运行时生成：场景、`lab.sqlite3`、仿真日志。容器卷 `/data/lab`。 |
-| `src/lab/vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl` | 不在 Git 里。主人路径 `/home/peakpeng/Desktop/URP/src/lab/vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl`。SHA256 `0fe53e459024b282be455b2a4bdbca3d93efa029539ff87c88c1105361344c19`。字节数由 `pack-assets.sh` 在笔记本上打印。快照里包含轮子的 `compiled-and-wheels` 组件未压缩 110540114 字节（150 个文件，不只这一个轮子）。 |
+| `src/lab/vendor/wheels/fields2cover-2.1.0-cp312-cp312-linux_x86_64.whl` | 不在 Git 里。`full` 从固定 Release 获取，SHA256 为 `0fe53e459024b282be455b2a4bdbca3d93efa029539ff87c88c1105361344c19`；路径与指纹由 `src/lab/vendor/fields2cover-manifest.json` 管理。 |
 | `setup/2026-10-15/deployment/runtime/ros-extras` | 不在 Git 里。Foxglove 与 rosx 的 deb 解包。`bash src/lab/ros/native/install-ros-extras.sh` 可以用 apt 重新下载。 |
 | `setup/2026-10-15/deployment/runtime/tf-repro/liburp_tf_buffer.so`、`runtime/liburp_gui_lifetime.so`、`src/lab/runtime/native/bridge/parameter_bridge` | 主人笔记本上的验收二进制。别的机器运行 `python3 deploy/record-sim-profiles.py` 生成自己的产物和 profile，不要复制这些文件来通过检查。 |
-| Fuel 模型缓存 | 不在 Git 里，也不进公开镜像或公开 Release。主人路径 `/home/peakpeng/Desktop/URP/setup/2026-10-15/cache/ignition-fuel`。快照组件 `fuel-cache.tar.zst`：197 个文件，未压缩 174825180 字节，压缩包 144263245 字节，SHA256 `ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d`。这份快照混有不可再分发的模型，不能上传。`maze` 不引用 Fuel。`warehouse` 与 `depot` 由使用者执行 `urp fuel`，从 `https://fuel.gazebosim.org` 下载到本机。 |
+| Fuel 模型缓存 | 新镜像不包含。`maze` 无需下载；`warehouse` / `depot` 由使用者显式执行 `urp fuel`，从 `https://fuel.gazebosim.org` 下载到本机。旧快照另有 `fuel-cache` 组件，其模型许可和文件清单按原发布记录保留。 |
 | CVRPLIB 实例正文 | 目录 JSON 在 `src/lab/urp_lab/library/data/cvrplib-catalog.json`。单题按需从 `https://galgos.inf.puc-rio.br/cvrplib` 下载到运行目录，无密钥。 |
 
 不要把 `data/bpp`（约 206 MB）或 `data/cifar-training` 打进工作台镜像。历史 BPP 页在数据未恢复时显示无历史数据，这是现有行为。
 
 ## 环境变量
 
-笔记本什么都不设时，行为与原来一致：只监听 `127.0.0.1`，关闭接口只接受本机连接。
+本机入口默认只监听 `127.0.0.1`，关闭接口只接受本机连接。
 
 | 变量 | 默认 | 含义 |
 |---|---|---|
+| `URP_REF` | `deploy` | 安装来源；可用发布标签、完整提交号或源码分支，后续命令沿用保存的选择 |
+| `URP_IMAGE_TAG` | 所选已发布标签 | Docker 镜像标签；完整 SHA 与 OCI revision 核对 |
+| `URP_COMPONENTS` | `full` | 源码安装组件：`workbench` / `research` / `full` |
 | `URP_BIND_HOST` | `127.0.0.1` | 网关监听地址。WSL 与容器设为 `0.0.0.0` |
-| `URP_PORT` | `4100` | 网关端口 |
+| `URP_PORT` | `4100` | 源码网关端口；Compose 仅改宿主机发布端口，容器内固定 4100 |
 | `URP_PUBLISH_HOST` | `127.0.0.1` | 仅 Compose：宿主机发布地址 |
 | `URP_EXTRA_HOSTS` | 空 | 额外允许的 Host，逗号分隔 |
 | `URP_ADMIN_TOKEN` | 空 | 一旦设置，关闭接口必须带 `X-URP-Admin-Token` 或 `Authorization: Bearer` |
@@ -299,16 +324,8 @@ Python 轮子是 manylinux 包，数值库的 `.so` 在轮子里。仿真的共�
 
 2026-10-19 对照上游页面和 Fuel API 的结论写在 `deploy/THIRD_PARTY.md`。公开镜像可以包含 apt 安装的 ROS 2 Humble、Gazebo Fortress（Apache-2.0）以及 Foxglove bridge（MIT，https://github.com/foxglove/ros-foxglove-bridge）和 rosx_introspection（MPL-2.0，https://github.com/facontidavide/rosx_introspection）。镜像不剥离这些包里的许可文件。
 
-不能放进公开镜像或公开 Release 的模型：OpenRobotics Warehouse 5（CC BY-NC-ND 4.0）、MovAi shelf_big 2（CC BY-NC-ND 4.0）、MovAi shelf 1（CC BY-NC 4.0）。Depot、Chair、foldable_chair、MaleVisitorOnPhone 是 CC BY 4.0，Table、Jersey Barrier、Casual female 是 CC0。只发布后一组并不能让 warehouse 或 depot 完整，所以这些模型都不烘焙。Fields2Cover 是 BSD-3-Clause；轮子不在仓库里，只有主人用 `deploy/upload-assets.sh` 连同 BSD 声明一起上传时才进入 Release。
+本部署不打包的 Fuel 模型：OpenRobotics Warehouse 5（CC BY-NC-ND 4.0）、MovAi shelf_big 2（CC BY-NC-ND 4.0）、MovAi shelf 1（CC BY-NC 4.0）。Depot、Chair、foldable_chair、MaleVisitorOnPhone 是 CC BY 4.0，Table、Jersey Barrier、Casual female 是 CC0。只发布后一组并不能让 warehouse 或 depot 完整，所以这些模型都不烘焙。Fields2Cover 是 BSD-3-Clause；轮子不在仓库里，安装器从仓库清单指定的 Release 获取；单独更新资源可用 `deploy/upload-assets.sh` 连同 BSD 声明打包上传。
 
-## 需要在主人笔记本上确认
+## 版本记录
 
-仓库推不出这些，部署没有把它们猜进安装命令：
-
-1. 虚拟环境里装了、但源码从未 import 的 pip 包。没有 `pip freeze`。
-2. 笔记本上 ROS 2、Gazebo Fortress、Foxglove `.deb` 的精确版本号。源码只写了发行版名字 Humble / Fortress。
-3. 笔记本仿真是否实际用了 NVIDIA GPU 或 CUDA。源码没有 CUDA 调用；容器文档写的是软件渲染。
-4. 主人日常使用的 Node 补丁号和 npm 版本。仓库只约束 `>=22.12.0`，CI 只写大版本 24。这里选用 24.22.0。
-5. `--open` 所用 Chrome / Chromium 的版本。
-6. 主人 Fuel 缓存的字节是否仍等于快照 SHA256 `ee2d2ce72dea345b5aaac8c4fe0d3d501a8d51c3211ba1c038ca025cc0ae3b0d`。各模型许可已按 Fuel API 核对，见上面一节；缓存本身不公开分发。
-7. Fields2Cover 轮子的原始编译命令。manifest 已写明接手时轮子就在，不能声称从源码逐位重建。
+Python、Node、前端与求解库版本按上述锁文件和安装脚本固定；Ubuntu / ROS 的 apt 补丁版本以安装时仓库为准。历史平台的精确包版本、运行结果及 Fields2Cover 构建来源另保存在快照与验收记录中。新部署不复制原机器的虚拟环境或验收二进制。

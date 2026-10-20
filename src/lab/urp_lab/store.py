@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import sys
 import threading
 from pathlib import Path
 
@@ -28,17 +29,55 @@ SIM_ACTIVE = ('queued', 'approach', 'executing')
 
 class Store:
     def __init__(self, path: Path):
-        self.path = Path(path)
-        self.path.parent.mkdir(parents=True, exist_ok=True)
+        raw_path = Path(path)
+        # Resolve DB aliases before deriving the owner-lock path. Otherwise a
+        # symlink to an active database could acquire a different .jobs.lock.
+        self.path = raw_path if str(raw_path) == ':memory:' else raw_path.resolve()
         self._lock = threading.Lock()
-        self._db = sqlite3.connect(self.path, check_same_thread=False, isolation_level=None, timeout=30)
-        self._db.execute('PRAGMA journal_mode=WAL')
-        self._db.execute('PRAGMA synchronous=NORMAL')
-        self._db.executescript(_SCHEMA)
+        self._db = None
+        self._owner_file = None
+        if str(self.path) != ':memory:':
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            # As with archive Jobs, claim the database before schema changes or
+            # recovery. SQLite's write lock is not an execution-owner lock.
+            self._owner_file = self.path.with_suffix(self.path.suffix + '.jobs.lock').open('a+b')
+            try:
+                if sys.platform == 'win32':
+                    import msvcrt
+                    self._owner_file.seek(0)
+                    if not self._owner_file.read(1):
+                        self._owner_file.write(b'\0')
+                        self._owner_file.flush()
+                    self._owner_file.seek(0)
+                    msvcrt.locking(self._owner_file.fileno(), msvcrt.LK_NBLCK, 1)
+                else:
+                    import fcntl
+                    fcntl.flock(self._owner_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BaseException as exc:
+                self._owner_file.close()
+                self._owner_file = None
+                raise RuntimeError(f'运行库 {self.path} 已有任务执行服务；请复用该网关或选择其他 runtime。') from exc
+        try:
+            self._db = sqlite3.connect(self.path, check_same_thread=False, isolation_level=None, timeout=30)
+            self._db.execute('PRAGMA journal_mode=WAL')
+            self._db.execute('PRAGMA synchronous=NORMAL')
+            self._db.executescript(_SCHEMA)
+        except BaseException:
+            self.close()
+            raise
 
     def close(self):
         with self._lock:
-            self._db.close()
+            if self._db is not None:
+                self._db.close()
+                self._db = None
+            if self._owner_file is not None:
+                if sys.platform == 'win32':
+                    import msvcrt
+                    self._owner_file.seek(0)
+                    msvcrt.locking(self._owner_file.fileno(), msvcrt.LK_UNLCK, 1)
+                self._owner_file.close()
+                self._owner_file = None
 
     def _query(self, sql: str, args=()) -> list[dict]:
         with self._lock:

@@ -4,6 +4,10 @@ Small exact CVRP wrapper is new validation scaffolding, not official UHGS code.
 import heapq, itertools, math, time
 INF=math.inf
 
+def _require_unlimited_fleet(inst):
+    if inst.get('fleet_limit') is not None:
+        raise ValueError('turn_modes solver does not support fleet_limit; expected null')
+
 def graph(inst):
     out={};incoming={}
     for u,v,c in sorted(inst['arcs']):
@@ -60,6 +64,7 @@ def preprocess(inst,kind):
       'between':between,'last':last,'preprocess_wall_s':time.perf_counter()-t,'shortest_expansions':expansions}
 
 def subset_dp(inst,tab):
+    _require_unlimited_fleet(inst)
     n=len(inst['customers']);full=(1<<n)-1;cap=inst['capacity'];dem=[x['demand'] for x in inst['customers']]
     load=[sum(dem[i] for i in range(n) if mask>>i&1) for mask in range(full+1)]
     dp=[{} for _ in range(full+1)];prev={};routes={};route_ends={};transitions=0
@@ -132,6 +137,7 @@ def brute_modes(tab,sequence):
     return None if best==INF else best,count
 
 def solve(inst,kind='mode'):
+    _require_unlimited_fleet(inst)
     cpu=time.process_time();wall=time.perf_counter();tab=preprocess(inst,kind)
     sol=subset_dp(inst,tab)
     sol.update(method=kind,wall_s=time.perf_counter()-wall,cpu_s=time.process_time()-cpu,

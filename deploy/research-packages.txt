@@ -1,0 +1,3 @@
+# Source-built AILS / SISR prerequisites; no historical NAS environment implied.
+openjdk-17-jdk-headless
+g++

@@ -13,7 +13,9 @@ FRONTEND = REPO / 'src' / 'frontend'
 FRONTEND_DIST = FRONTEND / 'dist'
 FRONTEND_ROUTING = FRONTEND / 'core' / 'routing'
 DEPLOYMENT = REPO / 'setup' / '2026-10-15' / 'deployment'
-ROS_MAPS = Path('/opt/ros/humble/share/turtlebot4_navigation/maps')
+# A local, explicitly supplied copy supports map-only checks without a ROS installation.
+# This does not make ROS/Gazebo execution available.
+ROS_MAPS = Path(os.environ.get('URP_ROS_MAPS', '/opt/ros/humble/share/turtlebot4_navigation/maps')).expanduser().resolve()
 USER_SCENARIOS = RUNTIME / 'scenarios'
 CVRP_SELECTION_DATA = REPO / 'data' / 'research' / 'cvrp-selection-crc'
 

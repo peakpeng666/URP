@@ -83,7 +83,8 @@ def _depot_central(inst):
     return min(xs) < dx < max(xs) and min(ys) < dy < max(ys)
 
 
-def recommend(scenario, instance):
+def recommend(scenario, instance, budget_s=None):
+    """Rank algorithms; an omitted budget cannot borrow the learned study's profile."""
     pc = scenario['problem_class']
     algs = [a for a in catalog() if pc in a['problem_classes']]
     model = None
@@ -122,7 +123,7 @@ def recommend(scenario, instance):
             score['urp.js.savings'] += 1.5
             why['urp.js.savings'].append('节约算法构造基线（≤ 100 客户），耗时以实测为准')
             why['urp.js.nearest_neighbor'].append('最近邻构造基线，成本经独立验算')
-            model = learned.recommend(scenario, instance)
+            model = learned.recommend(scenario, instance, budget_s=budget_s)
             if model and model['status'] == 'available':
                 chosen = model['prediction']['selected']
                 score[chosen] = score.get(chosen, 0) + 5

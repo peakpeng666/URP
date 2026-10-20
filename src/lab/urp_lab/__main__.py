@@ -70,8 +70,12 @@ def serve(args) -> int:
         print(f'端口 {args.port} 已被其他进程占用，网关无法启动。', file=sys.stderr)
         return 1
     setup_logging(paths.RUNTIME)
-    app = create_app(Config(port=args.port, bind_host=bind, archive_autostart=archive_autostart(args.no_archive),
-                            archive_url=archive_url(), extra_hosts=extra_hosts(), admin_token=admin_token()))
+    try:
+        app = create_app(Config(port=args.port, bind_host=bind, archive_autostart=archive_autostart(args.no_archive),
+                                archive_url=archive_url(), extra_hosts=extra_hosts(), admin_token=admin_token()))
+    except RuntimeError as exc:
+        print(f'网关无法启动：{exc}', file=sys.stderr)
+        return 1
     lab = app.state.lab
 
     class Server(uvicorn.Server):
@@ -154,15 +158,22 @@ def solve(args) -> int:
     except ValueError as exc:
         print(str(exc), file=sys.stderr)
         return 2
-    store = Store(':memory:' if args.no_save else paths.RUNTIME / 'lab.sqlite3')
-    jobs = JobManager(store, None, concurrency=1, recover=False)
-    instance = scenario['instance']
-    sol = skeleton(new_id('job'), scenario, instance, algorithm, params, args.label)
-    request = {'run_id': sol['run_id'], 'scenario': scenario, 'instance': instance,
-               'algorithm_id': algorithm['id'], 'params': params}
-    jobs.execute(sol, request, wall_budget(params, algorithm, jobs.grace_s))
-    print(json.dumps(sol, ensure_ascii=False, indent=None if args.compact else 1))
-    return 0 if sol['state'] == 'done' else 1
+    try:
+        store = Store(':memory:' if args.no_save else paths.RUNTIME / 'lab.sqlite3')
+    except RuntimeError as exc:
+        print(f'求解无法开始：{exc}', file=sys.stderr)
+        return 1
+    try:
+        jobs = JobManager(store, None, concurrency=1, recover=False)
+        instance = scenario['instance']
+        sol = skeleton(new_id('job'), scenario, instance, algorithm, params, args.label)
+        request = {'run_id': sol['run_id'], 'scenario': scenario, 'instance': instance,
+                   'algorithm_id': algorithm['id'], 'params': params}
+        jobs.execute(sol, request, wall_budget(params, algorithm, jobs.grace_s))
+        print(json.dumps(sol, ensure_ascii=False, indent=None if args.compact else 1))
+        return 0 if sol['state'] == 'done' else 1
+    finally:
+        store.close()
 
 
 def main(argv=None) -> int:
