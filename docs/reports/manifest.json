@@ -1,0 +1,26 @@
+{
+  "updated": "2026-10-20",
+  "scope": "研究进展报告及可重编译LaTeX源码；本次没有重跑科研实验或物理仿真。",
+  "files": [
+    {
+      "path": "docs/reports/URP研究进展简报.pdf",
+      "bytes": 1935010,
+      "sha256": "7c67591c176a094cdcaa0a01fe6e63f3c7aa2dd8403fcb66472b929dc4aa2f15"
+    },
+    {
+      "path": "docs/reports/URP研究进展简报_LaTeX源码.zip",
+      "bytes": 2444241,
+      "sha256": "c15d8c2a42f0aa850a9a407f0684abad2d0a9a1910967c90372edcb13fca4463"
+    },
+    {
+      "path": "docs/reports/URP项目研究进展报告.pdf",
+      "bytes": 15747930,
+      "sha256": "53e125ddd4144a4456e2afaa933ffa3c4544bd9bd0bf99363d07eb492bac058b"
+    },
+    {
+      "path": "docs/reports/URP项目研究进展报告_LaTeX源码.zip",
+      "bytes": 18814049,
+      "sha256": "8b7693c34f5e9480515e7797ed0ab50a9fd7bfeefdbf46ce3c04937ae1a3c99b"
+    }
+  ]
+}
