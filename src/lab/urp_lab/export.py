@@ -3,6 +3,8 @@ import csv
 import io
 import json
 
+from .result_integrity import without_invalidated_results
+
 def pack(record, fmt, stem):
     if fmt == 'json': return json.dumps(record,ensure_ascii=False,indent=2,allow_nan=False).encode(), 'application/json', stem+'.json'
     raise ValueError('不支持的导出格式')
@@ -12,6 +14,7 @@ def rows_csv(rows, fields, stem):
     return stream.getvalue().encode('utf-8-sig'),'text/csv',stem+'.csv'
 
 def export_run(sol, fmt):
+    sol = without_invalidated_results(sol)
     stem=sol['run_id']
     if fmt=='json': return pack(sol,fmt,stem)
     if fmt=='csv':
@@ -42,6 +45,7 @@ def export_sim_run(run, fmt):
     raise ValueError('格式须为 json/csv')
 
 def export_compare(solutions, fmt):
+    solutions = [without_invalidated_results(s) for s in solutions]
     if fmt=='json': return pack(solutions,fmt,'plan-compare')
     if fmt=='csv':
         rows=[dict(run_id=s['run_id'],scenario=s['scenario_id'],instance_sha256=s['instance_sha256'],algorithm=s['algorithm']['id'],name=s['algorithm'].get('name'),state=s['state'],status=s['status'],cost=s['objective']['value'],unit=s['objective']['unit'],valid=(s.get('check')or{}).get('valid'),

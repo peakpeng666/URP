@@ -185,6 +185,7 @@ export interface MapCheck {
 }
 
 export interface Solution {
+  process?: { returncode?: number; budget_s?: number; evidence?: string; source_identity_verified?: boolean };
   planning?: PlanningContext;
   trace_contract?: { schema?: string; semantic: 'reported_objective' | 'solver_search_proxy'; note: string; independent_check_at_each_sample?: boolean };
   raw_result?: { model_contract?: { schema?: string; [key: string]: unknown }; [key: string]: unknown };

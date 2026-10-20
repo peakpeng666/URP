@@ -46,3 +46,33 @@ describe('actual experiment panel with legacy and abstract fleet fields', () => 
     expect(renderToStaticMarkup(createElement(ExperimentPanel))).toContain(expected);
   });
 });
+
+describe('legacy source-invalidated records in the primary studio', () => {
+  it.each([['comparison', ComparePanel], ['experiment', ExperimentPanel]] as const)(
+    'suppresses invalidated metrics and traces in the %s panel', (_, Panel) => {
+      const r = { run_id: 'invalidated', scenario_id: 'scene', problem_class: 'coverage',
+        instance: {}, instance_sha256: 'hash', frame: { kind: 'field', units: 'm' },
+        state: 'error', status: null, error: '执行期间来源身份核对失败',
+        check: null, map_check: null, objective: { value: null, unit: 'm', lower_bound: 20 },
+        routes: [], algorithm: { id: 'test', name: '历史算法' }, params: {},
+        process: { returncode: 0, source_identity_verified: false },
+        metrics: { coverage_fraction: .934, working_area_fraction: .978, turn_radius_enforced: true },
+        trace_contract: { semantic: 'reported_objective', note: 'raw candidate trace' },
+        trace: [[.1, 30], [.2, 20]],
+      } as unknown as Solution;
+      useStudio.setState({ scenario: { id: 'scene', problem_class: 'coverage' } as Scenario,
+        draft: {}, runIds: [r.run_id], focusRun: r.run_id, runs: { [r.run_id]: r }, algorithms: [] });
+      const markup = renderToStaticMarkup(createElement(Panel));
+      expect(markup).not.toContain('93.4%');
+      expect(markup).not.toContain('97.8%');
+      expect(markup).not.toContain('求解过程中最好解的变化');
+      expect(useStudio.getState().runs[r.run_id]).toBe(r);
+      expect(r.metrics.coverage_fraction).toBe(.934);
+      if (Panel === ComparePanel) {
+        const ordinaryFailure = { ...r, process: { ...r.process, source_identity_verified: true } };
+        useStudio.setState({ runs: { [r.run_id]: ordinaryFailure } });
+        expect(renderToStaticMarkup(createElement(ComparePanel))).toContain('求解过程中最好解的变化');
+      }
+    },
+  );
+});

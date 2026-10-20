@@ -23,6 +23,7 @@ from . import paths
 from .events import EventBus, utc_now
 from .store import Store
 from .planning import context, without_stale_reference
+from .native_identity import native_planners_manifest
 
 log = logging.getLogger('urp_lab.jobs')
 
@@ -54,14 +55,15 @@ def _execution_files() -> list[Path]:
 
 
 def execution_manifest() -> dict:
-    """A small, exact first-party execution manifest, including the learned and JS paths."""
+    """Bind first-party code, learned/JS paths, and native planner artifacts."""
     try:
         files = {paths.rel(p): hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else None
                  for p in _execution_files()}
+        native = native_planners_manifest()
     except OSError as exc:
         raise SourceChangedError(f'无法核对 Lab 执行依赖：{exc}') from exc
     packages = {}
-    for name in ('pyvrp', 'ortools', 'numpy', 'scipy', 'shapely'):
+    for name in ('pyvrp', 'ortools', 'numpy', 'scipy', 'shapely', 'ompl', 'fields2cover'):
         try:
             packages[name] = importlib.metadata.version(name)
         except importlib.metadata.PackageNotFoundError:
@@ -77,7 +79,8 @@ def execution_manifest() -> dict:
         node_version = None
     identity = {'files': files, 'python': sys.version, 'python_executable': str(Path(sys.executable).absolute()),
                 'python_prefix': str(Path(sys.prefix).resolve()),
-                'packages': packages, 'node_executable': node, 'node_version': node_version}
+                'packages': packages, 'native_dependencies': native,
+                'node_executable': node, 'node_version': node_version}
     digest = hashlib.sha256(json.dumps(identity, sort_keys=True, ensure_ascii=False,
                                        separators=(',', ':')).encode()).hexdigest()
     return {**identity, 'sha256': digest}
@@ -168,6 +171,7 @@ def skeleton(job_id: str, scenario: dict, instance: dict, algorithm: dict, param
         'frame': copy.deepcopy(frame), 'cost_unit': cost_unit, 'instance': copy.deepcopy(instance), 'scenario_snapshot': snapshot,
         'reproducibility': {
             'python': source['python'], 'packages': source['packages'],
+            'native_dependencies': copy.deepcopy(source['native_dependencies']),
             'python_executable': source['python_executable'], 'python_prefix': source['python_prefix'],
             'node_executable': source['node_executable'], 'node_version': source['node_version'],
             'source_sha256': source['files'], 'execution_sha256': source['sha256'],
@@ -276,7 +280,7 @@ class JobManager:
         current = execution_manifest()
         if current['sha256'] != self._source['sha256'] or (
                 expected is not None and current['sha256'] != expected):
-            raise SourceChangedError('Lab 执行源码、模型、JS 基线或依赖版本已改变；请重启网关后重新提交。')
+            raise SourceChangedError('Lab 执行源码、模型、JS 基线、依赖版本或原生组件已改变；请重启网关后重新提交。')
         return current
 
     def _stamp_worker_identity(self, sol: dict):
@@ -288,8 +292,10 @@ class JobManager:
             # versions must not masquerade as that child's environment.
             repro['gateway_python'] = repro.get('python')
             repro['gateway_packages'] = repro.get('packages')
+            repro['gateway_native_dependencies'] = repro.get('native_dependencies')
             repro['python'] = None
             repro['packages'] = None
+            repro['native_dependencies'] = None
             repro['python_executable'] = None
             repro['python_prefix'] = None
 
@@ -410,16 +416,10 @@ class JobManager:
         except SourceChangedError as exc:
             # Keep raw process evidence, but never certify a result from a tree
             # that changed while the child was running.
+            from .result_integrity import without_invalidated_results
             sol.update(state='error', error=f'执行期间来源身份核对失败：{exc}')
-            sol['routes'] = []
-            sol['status'] = None
-            sol['check'] = None
-            sol['map_check'] = None
-            if isinstance(sol.get('objective'), dict):
-                sol['objective']['value'] = None
-            for key in ('cost', 'length', 'n_routes'):
-                sol['metrics'][key] = None
             sol['process']['source_identity_verified'] = False
+            sol.update(without_invalidated_results(sol))
         self._save(sol)
         return sol
 

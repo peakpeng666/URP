@@ -933,7 +933,7 @@ export function ComparePanel() {
         </table>
         {rows.some((r) => r.error) && <Notice tone="error">{rows.filter((r) => r.error).map((r) => `${r.algorithm.name}：${r.error}`).join('；')}</Notice>}
       </div>
-      <Convergence runs={group} />
+      <Convergence runs={group.filter((r) => r.process?.source_identity_verified !== false)} />
     </div>
   );
 }
