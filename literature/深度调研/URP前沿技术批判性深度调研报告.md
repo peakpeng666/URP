@@ -44,7 +44,9 @@ URP 是本科生科研训练项目，主线为"面向农业机器人的路径规
 
 算法选择理论中，单实例最优选择的上界是 **VBS（Virtual Best Solver）**，固定单算法的基线是 **SBS（Single Best Solver）**，选择器能收割的最大期望收益就是 VBS−SBS 差距；而 ASlib 基准库的系统性研究表明，多数场景下大量求解器高度相关、对 VBS 的边际贡献极小，前向选择后只需很少几个互补求解器([ASlib](http://www.cs.uwyo.edu/~larsko/papers/bischl_aslib__2016.pdf))。URP 的 CVRP 库恰好处于"VBS≈SBS"象限：PyVRP 是 2021 年第 12 届 DIMACS 实现挑战赛 VRPTW 赛道第一名算法的精炼版，在 X 实例集上平均差距仅 **0.22%**，与同族 HGS-2012 的 0.21%、HGS-CVRP 的 0.11% 几乎重叠([PyVRP 论文](https://arxiv.org/abs/2403.13795))。在这种性能画像下，任何选择器在欧氏 CVRP 标准分布上的期望收益都趋近于零——URP 实测"替代选择 0 次、平均收益为 0"不是选择器失败，而是**互补性缺失的必然结果**。
 
-![HGS 系求解器性能画像重叠](figures/hgs_family_overlap.svg)
+![VBS−SBS 差距：选择器的收益上限](figures/vbs_sbs_schematic.svg)
+
+![HGS 系画像重叠与跨规模排名切换](figures/hgs_family_overlap.svg)
 
 正面证据来自顶级赛事本身：DIMACS CVRP 赛道冠军 Alkaid-X 的 FHCSolver 正是**按实例规模做算法切换**——小实例用 HGS、大实例切换迭代局部搜索（ILS），以 643 分夺魁；前四名（UFF-IC 的 MDM-HGS 622 分、AILS-II 536 分、EQRS 的 POP-HGS 525 分）全部基于开源 HGS 改造([DIMACS 结果页](https://dimacs.rutgers.edu/programs/implementation-challenges/vehicle-routing/implementation-challenge-vehicle-routing/results), [DIMACS 新闻](https://dimacs.rutgers.edu/news/news-details/the-12th-dimacs-implementation-challenge-vrp))。**启示是双重的**：其一，选择发生在一阶结构轴（规模、几何、约束）上才有肉；其二，URP 的第一件事应是给现有库做"互补性审计"——按实例切片（规模×几何×约束）计算 VBS−SBS 差距，差距显著为正的切片才是选择器的战场，差距为零的切片应果断放弃选择、转向生成。
 
@@ -52,7 +54,9 @@ URP 是本科生科研训练项目，主线为"面向农业机器人的路径规
 
 ### 3.2 实例特征体系：从手工特征到嵌入表示
 
-URP 当前用人工设计的 4/8 个几何特征驱动 1NN 选择器。2026 年的 ZeroFolio 提供了一条更便宜的路线：**把实例文件当纯文本读入，用预训练嵌入模型编码，再做加权 kNN 选择**，全程零领域知识；在 11 个 ASlib 场景（SAT、MaxSAT、QBF、ASP、CSP、MIP、图问题）中，该流水线以单一固定配置在 10/11 个场景击败基于手工特征的随机森林，双种子投票后 11/11 全胜([ZeroFolio](https://arxiv.org/abs/2604.19753))。其消融显示关键设计是逆距离加权、行打乱序列化与曼哈顿距离。对 URP 而言，这意味着特征工程可以从"手工设计—消融验证"循环切换为"嵌入 + 手工特征软投票融合"，且嵌入路线天然覆盖 CVRPLib/Fields2Cover 的文本实例格式。
+URP 当前用人工设计的 4/8 个几何特征驱动 1NN 选择器。2026 年的 ZeroFolio 提供了一条更便宜的路线：**把实例文件当纯文本读入，用预训练嵌入模型编码，再做加权 kNN 选择**，全程零领域知识；在 11 个 ASlib 场景（SAT、MaxSAT、QBF、ASP、CSP、MIP、图问题）中，该流水线以单一固定配置在 9/11 个场景击败基于手工特征的随机森林（其中 8 个场景在所有序列化种子下稳胜），对逐场景调参的随机森林也胜出 8/11，并与 2015 ICON 算法选择赛冠军 AutoFolio 仅差 6–9%([ZeroFolio](https://arxiv.org/abs/2604.19753))。其消融显示关键设计是逆距离加权与行打乱序列化；在随机森林更强的 SAT12-ALL 场景上，嵌入与手工特征的软投票融合可同时超过两者——这正呼应 URP 的融合路线。对 URP 而言，这意味着特征工程可以从"手工设计—消融验证"循环切换为"嵌入 + 手工特征软投票融合"，且嵌入路线天然覆盖 CVRPLib/Fields2Cover 的文本实例格式。
+
+![ZeroFolio 与手工特征随机森林的逐场景对比](figures/zerofolio_scenarios.svg)
 
 手工特征并非要抛弃，而是要**体系化**。ASlib 的经验是多数场景中只有极少数特征真正驱动选择([ASlib](http://www.cs.uwyo.edu/~larsko/papers/bischl_aslib__2016.pdf))；实例空间分析（ISA）进一步把"特征空间中的获胜区域"显式画出来，MOSAIC 等工作正是借助 ISA 思想让启发式特化到实例空间的具体区域([MOSAIC](https://arxiv.org/abs/2608.07544))。建议 URP 将特征栈分三层：嵌入层（ZeroFolio 式，泛化兜底）、结构层（规模/密度/需求分布/几何矩）、领域层（田块形状指数、障碍物占比、行间宽度），并用 SIFTED 式筛选把每层的冗余特征砍掉，使选择器在低维、可解释的空间里工作。
 
@@ -70,7 +74,11 @@ URP 的 VRPTW 实验里，主方法 45/48 可行、固定 SAV 对照 46/48 可�
 
 LLM 自动启发式设计（AHD）的主线已经清晰：FunSearch 以"LLM + 评估器"的岛屿模型演化程序，在在线装箱等问题上超越人类基线，登上 Nature([FunSearch](https://pmc.ncbi.nlm.nih.gov/articles/PMC10794145/))；EoH 同时演化"思想（thought）+ 代码"，获 ICML 2024 Oral([EoH](https://arxiv.org/abs/2401.02051))；AlphaEvolve 把演化对象扩展到完整代码库，采用 MAP-Elites 与岛屿模型维护多样性([AlphaEvolve](https://arxiv.org/abs/2506.13131))；ShinkaEvolve 用父代采样、代码新颖性拒绝采样与 bandit 式 LLM 集成选择，把样本效率提升到 **150 个样本即刷新圆堆积 SOTA**([ShinkaEvolve](https://arxiv.org/abs/2509.19349))。平台侧的 LLM4AD 已把 EoH、MEoH、FunSearch、ReEvo、MCTS-AHD、LLaMEA、EoH-S 等方法统一到同一框架([LLM4AD](https://github.com/Optima-CityU/LLM4AD))。
 
+![LLM 自动启发式设计（AHD）方法谱系与里程碑](figures/ahd_timeline.svg)
+
 与 URP 最相关的两个里程碑发生在 2026 年。其一，**EoH 赢得 CVRPLib 最优已知解（BKS）竞赛**：OptVerse-CityU 队以 AILS-II 为主搜索引擎，用 EoH 自动演化其接受准则、扰动控制与 ruin 算子，配合 HGS-CVRP、FILO2 组合求解，在 100 个 XL 实例上建立 **51 个新 BKS**，全程约 42,600 CPU-天([XL 实例与 BKS 竞赛](https://arxiv.org/abs/2601.11467), [CityU Optima 新闻](https://optima.cs.cityu.edu.hk/))。其二，**EoH-S 把设计对象从"单一最优启发式"改为"互补启发式集合"**：提出自动化启发式集合设计（AHSD），证明其目标函数单调且超模，配合互补种群管理与模因搜索，在在线装箱、TSP、CVRP 上较 SOTA AHD 方法最高提升 60%([EoH-S](https://arxiv.org/abs/2508.03082))。EoH-S 的问题陈述——"让每个实例至少被集合中一个成员服务好"——与 URP 的准入协议（VBS 增量、残差）在数学上是同一件事，**可以直接把 EoH-S 的互补性度量翻译为 URP 的第四准入规则（当前策略残差）的可计算形式**。
+
+![CVRPLib BKS 挑战赛结果与关键数字](figures/bks_challenge.svg)
 
 ### 4.2 批判性证据：跨分布泛化崩塌
 
@@ -83,6 +91,8 @@ LLM 自动启发式设计（AHD）的主线已经清晰：FunSearch 以"LLM + �
 泛化崩塌的教训改变了演化对象的选择。2026 年的趋势是不再让 LLM 生成端到端求解器，而是生成**成熟求解器内部的组件**：G-LNS 让 LLM 协同演化 LNS 的 destroy 与 repair 算子对（以 ALNS 自适应打分作为适应度信号），在 CVRPLib Set F 上把最优性差距从 EoH-S 的 40.1% 压到 15.9%，在 TSPLib 上保持 2.8% 的低差距([G-LNS](https://arxiv.org/abs/2602.08253))；PyVRP+ 直接把"LLM 驱动的元认知启发式演化"做到 HGS 求解器（即 PyVRP 内核）上([PyVRP+](https://arxiv.org/abs/2604.07872))；irace-evo 把自动配置工具 irace 扩展到"参数 + 代码"联合空间，采用 Always-From-Original 原则（每个变体都从原始代码重新生成、防止漂移累积），在 VSBPP 的 CMSA 算法上发现了多个超越 SOTA 的放置启发式，**总 LLM 成本低于 2 欧元**([irace-evo](https://arxiv.org/abs/2511.14794))。
 
 对 URP 这是决定性好消息：PyVRP 本身就是 HGS/ALNS 体系，其 destroy/repair 算子、接受准则、多样性管理都有清晰函数边界，**正是 G-LNS/PyVRP+/irace-evo 三类工作的标准靶点**；GLM-5.3 生成管线和 P2 槽位评价协议可以直接复用，只需把演化目标从"生成完整启发式"改为"为 PyVRP 生成一个在特定实例切片上击败默认算子的 destroy/repair 对"。准入判据用仓库已有的 VBS 增量 + 残差规则，多样性维护借鉴 AlphaEvolve 的 MAP-Elites 岛屿([AlphaEvolve](https://arxiv.org/abs/2506.13131))，成本上限参照 irace-evo 的 2 欧元量级做预算门([irace-evo](https://arxiv.org/abs/2511.14794))。这样 LLM 生成不再是游离的 P2 实验，而是闭环里可准入、可回退、可计成本的库成员生产线。
+
+![G-LNS 与端到端 AHD 的跨分布泛化对比](figures/glns_benchmarks.svg)
 
 ---
 
@@ -140,6 +150,8 @@ URP 全田覆盖 45.83% 的短板在地头转弯([导师查看.md](https://githu
 
 URP 已用共形风险控制（CRC）做校准门控，结果是 32 个非基线推荐全被拒([导师查看.md](https://github.com/peakpeng666/URP/blob/main/docs/导师查看.md))。门控"全拒"未必是门控太严，更可能是候选与基线无互补（第 3.1 节）叠加**预测目标不含可行性**（第 3.3 节）。升级路径有三级：第一级，把门控目标从"性能不劣于基线"改为"可行性风险 + 性能风险"双约束；第二级，采用 SCRC 两阶段结构——先选"值得预测的实例"，再对入选实例做风险控制的预测集，其对称选择规则可保持交换性、保住共形保证([SCRC](https://arxiv.org/abs/2512.12844))；第三级，对在线场景（田间实时推荐）引入自适应拒判阈值，以覆盖率与风险的显式权衡取代固定阈值。
 
+![可信度门控升级结构：OOD 前置 + SCRC 两阶段 + 证据回流](figures/conformal_flow.svg)
+
 必须记住共形保证的数学前提：交换性。一旦实例分布漂移（新田块、新机型、新作物品系），边缘覆盖保证失效——这正是 BPP 风险集反噬的统计学解释。因此共形门控之前应前置**分布外检测**：用第 3.2 节的嵌入表示做新颖度打分，嵌入距离超阈值的实例直接回退到 SBS（PyVRP 默认配置），不进入选择链路。
 
 ### 7.2 分布迁移防御的工程化
@@ -177,6 +189,8 @@ URP 已用共形风险控制（CRC）做校准门控，结果是 32 个非基线
 | 近期（1 学期） | **互补性审计 + 特征升级** | 按规模×几何×约束切片计算现有库 VBS−SBS 差距；接入嵌入特征与手工特征软投票；选择目标加入可行性风险；覆盖评估迁移到 Fields2Benchmark 的 350 田 | 产出各切片的差距图谱；明确"做选择"与"做生成"的切片边界；覆盖率指标与文献可比 | ([ZeroFolio](https://arxiv.org/abs/2604.19753))、([Fields2Benchmark](https://www.sciencedirect.com/science/article/pii/S2772375525003880)) |
 | 中期（1–2 学期） | **LLM 演化闭环 + 地头转弯 + 门控升级** | 以 PyVRP destroy/repair 算子为靶点跑通 G-LNS/irace-evo 式演化（GLM-5.3，预算门）；互补准入采用 EoH-S 度量；移植 clothoid 地头转弯；门控升级为 SCRC 两阶段 + OOD 前置 | 至少 1 个演化算子通过四规则准入并在一切片上产生稳定净收益；全田覆盖率向 97% 文献水平靠拢；风险集不再出现反噬 | ([G-LNS](https://arxiv.org/abs/2602.08253))、([irace-evo](https://arxiv.org/abs/2511.14794))、([EoH-S](https://arxiv.org/abs/2508.03082))、([JFR 地头转弯](https://onlinelibrary.wiley.com/doi/full/10.1002/rob.22489)) |
 | 远期（2 学期+） | **执行层闭环 + 多机协同** | 自监督可通行性 + MPPI 控制器在 Gazebo/实车闭环；多机作业引入 ENDA/动态重路由；System2 推荐层接 AFL 式校验智能体；形成"农业路径规划实例结构 → 推荐"的完整论文叙事 | 执行层有过程指标（可通行性误差、风险事件率）的统计显著证据；多机对照串行基线有净收益 | ([WayFASTER](https://arxiv.org/abs/2402.00683))、([EVORA](https://arxiv.org/abs/2311.06234))、([ENDA](https://doi.org/10.1007/s10479-022-04685-5))、([AFL](https://proceedings.iclr.cc/paper_files/paper/2026/file/b9c91701ff28d480f186e4643e71ad11-Paper-Conference.pdf)) |
+
+![分阶段路线图甘特图](figures/roadmap_gantt.svg)
 
 每一阶段的"继续推进判据"沿用仓库既定原则：固定预算新实例上的稳定净收益 + 消融定位([下一阶段.md](https://github.com/peakpeng666/URP/blob/main/docs/下一阶段.md))。特别地，近期阶段的互补性审计是**全路线的总开关**：若审计发现某些切片存在正差距，选择器直接复活；若全库切片差距均为零，则证明当前库结构已到顶，全部资源转向演化生产线。
 
