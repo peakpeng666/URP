@@ -31,6 +31,7 @@ import { FieldEditor } from '../editor/FieldEditor';
 import { OBSTACLE_STYLE, area } from '../editor/geometry';
 import { useLanes } from '../editor/lanes';
 import { asFleet, isFleet, retrySave, saveDraftCopy, useStudio } from '../store';
+import { GeneratedFrom } from '../agri/GeneratedFrom';
 import { studio, urls } from '../api';
 import type { FleetInstance, FleetRoute, FleetScenario, ObstacleKind, PerVehicle } from '../types';
 import { addDepot, depotsOf, fleetClassFor, fleetClasses, fleetSize, planningFingerprint, removeDepot, setDepot } from '../fleet';
@@ -650,6 +651,7 @@ export function ScenarioInfo() {
         </div>
       )}
       <p className={s.meta}>{sc.provenance?.note}</p>
+      <GeneratedFrom />
       <div className={s.row}>
         <a className={s.link} href={urls.scenarioExport(sc.id, 'json')} download><Download size={12} /> 场景 JSON</a>
         {sc.problem_class === 'fleet_routing' && <a className={s.link} href={urls.scenarioExport(sc.id, 'geojson')} download><Download size={12} /> GeoJSON</a>}

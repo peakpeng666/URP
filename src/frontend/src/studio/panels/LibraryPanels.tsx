@@ -10,6 +10,7 @@ import type { CvrplibInstance, FieldEntry, Reference } from '../types';
 import { LibraryBadge } from './PlanPanels';
 import s from './panels.module.css';
 import { AgriCatalog } from '../agri/AgriCatalog';
+import { FOCUS_EVENT, peekCatalogFocus } from '../agri/drafts';
 
 const CodeMirror = lazy(() => import('@uiw/react-codemirror'));
 
@@ -21,7 +22,8 @@ const FRAME_LABEL = (sc: ScenarioSummary) =>
 
 /* ------------------------------------------------------------ scenarios -- */
 export function ScenarioNavigator() {
-  const [catalog, setCatalog] = useState(false);
+  const [catalog, setCatalog] = useState(() => Boolean(peekCatalogFocus()));
+  useEffect(() => { const on = () => setCatalog(true); window.addEventListener(FOCUS_EVENT, on); return () => window.removeEventListener(FOCUS_EVENT, on); }, []);
   const res = useLabResource('studio-scenarios', () => lab.scenarios(), { pollMs: 8000 });
   const current = useStudio((st) => st.scenarioId);
   const notify = useStudio((st) => st.notify);

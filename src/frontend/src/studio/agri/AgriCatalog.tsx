@@ -5,7 +5,7 @@ import { ENVIRONMENTS, OPERATIONS, PLANNING_PROBLEMS, SERVICE_OBJECTS, type Agri
 import { AGRI_PATTERNS, patternStatus } from './patterns';
 import { buildPattern, createImportGuard, defaultValues, filterPatterns, importPattern, STATUS_LABELS } from './catalog';
 import { downloadFile, downloadMatrices, evidenceFile } from './export';
-import { clearDraft, lastImport, recordImport, loadDraft, loadFilters, onForeignDraftChange, saveDraft, debouncedDraftWriter, saveFilters } from './drafts';
+import { clearDraft, lastImport, recordImport, loadDraft, loadFilters, onForeignDraftChange, saveDraft, debouncedDraftWriter, saveFilters, FOCUS_EVENT, takeCatalogFocus } from './drafts';
 import { extractPreview, previewIssues } from './preview';
 import { PreviewMap } from './PreviewMap';
 import { CAP_AXES, CAP_AXIS_LABELS, CAP_LEVEL_LABELS, capabilityEvidence, catalogStats } from './evidence';
@@ -21,6 +21,12 @@ export function AgriCatalog({ visible = true }: { visible?: boolean } = {}) {
   const [operation, setOperation] = useState(initialFilters.operation);
   const [status, setStatus] = useState(initialFilters.status);
   useEffect(() => { saveFilters({ environment, operation, status }); }, [environment, operation, status]);
+  // A focus request from the plan page clears filters so the requested card is visible, then opens it.
+  const [focus, setFocus] = useState<{ id: string; n: number }>({ id: '', n: 0 });
+  useEffect(() => {
+    const apply = () => { const id = takeCatalogFocus(); if (!id) return; setEnvironment(''); setOperation(''); setStatus(''); setFocus((f) => ({ id, n: f.n + 1 })); };
+    apply(); window.addEventListener(FOCUS_EVENT, apply); return () => window.removeEventListener(FOCUS_EVENT, apply);
+  }, []);
   const [downloadError, setDownloadError] = useState('');
   function download(format: 'json' | 'csv') {
     try { downloadMatrices(format); setDownloadError(''); }
@@ -46,11 +52,11 @@ export function AgriCatalog({ visible = true }: { visible?: boolean } = {}) {
     </div>
     {downloadError && <div role="alert"><Notice tone="error">下载失败：{downloadError}</Notice></div>}
     {!patterns.length && <p role="status">此组合暂无模式，请调整筛选条件。</p>}
-    {AGRI_PATTERNS.map((p) => <div key={p.id} hidden={!patterns.some((visible) => visible.id === p.id)}><PatternCard pattern={p} active={visible && patterns.some((shown) => shown.id === p.id)} /></div>)}
+    {AGRI_PATTERNS.map((p) => <div key={p.id} hidden={!patterns.some((visible) => visible.id === p.id)}><PatternCard pattern={p} active={visible && patterns.some((shown) => shown.id === p.id)} focusRequest={focus.id === p.id ? focus.n : 0} /></div>)}
   </section>;
 }
 
-export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPattern; active?: boolean }) {
+export function PatternCard({ pattern: p, active = true, focusRequest = 0 }: { pattern: AgriTaskPattern; active?: boolean; focusRequest?: number }) {
   const [initial] = useState(() => (p.runnable ? loadDraft(p, defaultValues(p)) : { values: defaultValues(p), seed: '42', restored: false, notice: '' }));
   const [values, setValues] = useState(initial.values);
   const [seed, setSeed] = useState(initial.seed);
@@ -74,6 +80,15 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
     setDraftNotice(`已把场景 ${prior?.title ?? ''} 记录的参数和种子带回表单；地图上的手工编辑仍只保存在那份场景里。`);
   }
   const touched = useRef(false);
+  const card = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    if (!focusRequest || !p.runnable) return;
+    // Re-read the shared draft the plan page just wrote; it wins over this card's in-memory values.
+    const d = loadDraft(p, defaultValues(p));
+    touched.current = false; setValues(d.values); setSeed(d.seed);
+    setDraftNotice('已从规划页带回该场景的生成参数和种子；导入会新建场景，原场景及其手工编辑保留。');
+    if (card.current) { card.current.open = true; card.current.scrollIntoView({ block: 'start' }); }
+  }, [focusRequest, p]);
   const [located, setLocated] = useState<string[]>([]);
   function locateIssue(issue: PreviewIssue) {
     const keys = issueFields(issue, (p.runnable?.params ?? []).map((x) => x.key));
@@ -141,7 +156,7 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
       if (mounted.current) setError(message); notify('error', `农业模板导入失败：${message}`);
     } finally { guard.current.finish(); if (mounted.current) setBusy(false); }
   }
-  return <details className={s.algCard} onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}>
+  return <details ref={card} className={s.algCard} onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}>
     <summary>{p.name} · {STATUS_LABELS[status]}</summary>
     <p>{p.summary}</p><p>{p.modeling}</p>
     <p>目标：{SERVICE_OBJECTS.find((x) => x.id === p.serviceObject)?.name} / {PLANNING_PROBLEMS.find((x) => x.id === p.planningProblem)?.name}</p>

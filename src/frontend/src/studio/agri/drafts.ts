@@ -166,3 +166,27 @@ export function debouncedDraftWriter(write: () => void, delayMs: number) {
     pending: () => timer !== null,
   };
 }
+
+const FOCUS_KEY = 'urp.agri.focus.v1';
+export const FOCUS_EVENT = 'urp-agri-focus';
+/** Ask the catalog to open one pattern card (used when the plan page sends the user back to edit parameters). */
+export function requestCatalogFocus(patternId: string) {
+  storage('session')?.setItem(FOCUS_KEY, patternId);
+  globalThis.dispatchEvent?.(new CustomEvent(FOCUS_EVENT, { detail: patternId }));
+}
+export function peekCatalogFocus(): string { return storage('session')?.getItem(FOCUS_KEY) ?? ''; }
+/** Read and clear the pending focus request, so it applies once. */
+export function takeCatalogFocus(): string {
+  const id = peekCatalogFocus();
+  if (id) storage('session')?.removeItem(FOCUS_KEY);
+  return id;
+}
+
+/** The pattern and parameters an imported scenario was generated from, or null if it was not built by a catalog pattern. */
+export function generatedFrom(provenance: unknown): { patternId: string; params: Record<string, unknown>; seed: number | null } | null {
+  const prov = (provenance ?? {}) as Record<string, unknown>;
+  const params = prov.params as Record<string, unknown> | undefined;
+  const id = params?.pattern_id;
+  if (typeof id !== 'string' || !id) return null;
+  return { patternId: id, params, seed: typeof prov.seed === 'number' ? prov.seed : null };
+}
