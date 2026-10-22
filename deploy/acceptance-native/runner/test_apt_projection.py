@@ -38,4 +38,23 @@ class ProjectionTests(unittest.TestCase):
         cache['root']=pkg(version(edges=[('Depends','dep','','')]))
         self.assertEqual(project('Broken root:amd64 Conflicts on dep:amd64',metadata_lookup(cache),['root'])['dependencies'],[])
 
+
+
+class MetadataErrorsTests(unittest.TestCase):
+    def test_fixed_exception_categories(self):
+        from runner.apt_projection import error_category
+        self.assertEqual(error_category(ModuleNotFoundError('PRIVATE')),'import_missing')
+        self.assertEqual(error_category(AttributeError('PRIVATE')),'api_attribute')
+        self.assertEqual(error_category(TypeError('PRIVATE')),'api_type')
+        self.assertEqual(error_category(RuntimeError('PRIVATE')),'apt_runtime')
+    def test_missing_import_has_phase_without_raw_exception(self):
+        import pathlib,tempfile
+        from unittest.mock import patch
+        from runner.apt_projection import collect
+        with tempfile.TemporaryDirectory() as tmp, patch('runner.apt_projection.importlib.import_module',side_effect=ModuleNotFoundError('PRIVATE_MODULE')):
+            result=collect('/unused','/unused',pathlib.Path(tmp)/'out.json')
+            self.assertEqual(result['metadata_phase'],'module_import')
+            self.assertEqual(result['metadata_error'],'import_missing')
+            self.assertNotIn('PRIVATE',json.dumps(result))
+
 if __name__=='__main__':unittest.main()

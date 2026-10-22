@@ -3,11 +3,11 @@
 
 Does not update APT, install, mark or commit packages.
 """
-import argparse, collections, json, pathlib, re
+import argparse, collections, importlib, json, pathlib, re, subprocess
 LIMIT=65536
 NAME=r'[a-z0-9][a-z0-9+.-]{0,119}'
 RELATIONS={'Depends':'depends','PreDepends':'predepends','Conflicts':'conflicts','Breaks':'breaks'}
-OPS={'':'any','=':'eq','>=':'ge','<=':'le','>>':'gt','<<':'lt'}
+OPS={'':'any','=':'eq','>=':'ge','<=':'le','>>':'gt','<<':'lt','>':'gt','<':'lt'}
 VERSION=re.compile(r'[A-Za-z0-9.+:~\-]{1,120}\Z')
 
 
@@ -80,19 +80,52 @@ def project(text,lookup,roots):
     return {'status':'verified' if out else 'no_verified_edges','dependencies':out}
 
 
-def main():
-    p=argparse.ArgumentParser();p.add_argument('--source',required=True);p.add_argument('--log',required=True);p.add_argument('--output',required=True);args=p.parse_args()
-    result={'status':'metadata_unavailable','dependencies':[]}
+def error_category(exc):
+    if isinstance(exc,ModuleNotFoundError):return 'import_missing'
+    if isinstance(exc,ImportError):return 'import_error'
+    if isinstance(exc,AttributeError):return 'api_attribute'
+    if isinstance(exc,TypeError):return 'api_type'
+    if isinstance(exc,KeyError):return 'api_key'
+    if isinstance(exc,subprocess.CalledProcessError):return 'command_failed'
+    if isinstance(exc,ValueError):return 'validation'
+    if isinstance(exc,OSError):return 'filesystem'
+    if isinstance(exc,SystemError):return 'apt_system'
+    if isinstance(exc,RuntimeError):return 'apt_runtime'
+    return 'unknown'
+
+
+def collect(source,log,output):
+    result={'status':'metadata_unavailable','dependencies':[],'metadata_phase':'module_import','metadata_error':'none'}
+    def phase(name):
+        result['metadata_phase']=name
+        pathlib.Path(output).write_text(json.dumps(result,sort_keys=True))
     try:
-        import apt
-        from apt_diagnostic import solver_command
-        roots=solver_command(args.source)[6:]  # validates fixed HEAD and exact package manifest
-        path=pathlib.Path(args.log)
+        phase('module_import')
+        apt=importlib.import_module('apt')
+        phase('source_identity')
+        if __package__:
+            from .apt_diagnostic import solver_command
+        else:
+            from apt_diagnostic import solver_command
+        roots=solver_command(source)[6:]
+        phase('log_read')
+        path=pathlib.Path(log)
         if path.is_symlink():raise ValueError('unsafe_log')
         with path.open('rb') as f:
             f.seek(0,2);f.seek(max(0,f.tell()-LIMIT));text=f.read(LIMIT).decode('utf-8',errors='replace')
-        result=project(text,metadata_lookup(apt.Cache()),roots)
-    except Exception:pass
-    pathlib.Path(args.output).write_text(json.dumps(result,sort_keys=True))
+        phase('cache_open')
+        cache=apt.Cache()
+        phase('metadata_project')
+        result.update(project(text,metadata_lookup(cache),roots))
+        result['metadata_phase']='complete'
+    except Exception as exc:
+        result['metadata_error']=error_category(exc)
+    pathlib.Path(output).write_text(json.dumps(result,sort_keys=True))
+    return result
+
+
+def main():
+    p=argparse.ArgumentParser();p.add_argument('--source',required=True);p.add_argument('--log',required=True);p.add_argument('--output',required=True);args=p.parse_args()
+    collect(args.source,args.log,args.output)
 
 if __name__=='__main__':main()

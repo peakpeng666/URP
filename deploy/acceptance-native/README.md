@@ -27,9 +27,9 @@
 ```sh
 python acceptance.py --source SOURCE --private-dir NEW_DIRECTORY --summary SUMMARY --harness-sha COMMIT --stage maze
 python public_summary.py --input SUMMARY --runner-status RUNNER_STATUS
-python -m unittest -v test_acceptance runner.test_runner runner.test_worktree runner.test_materialize runner.test_apt_diagnostic runner.test_apt_projection
+python -m unittest -v test_acceptance runner.test_runner runner.test_worktree runner.test_materialize runner.test_apt_diagnostic runner.test_apt_projection runner.test_registry
 ```
 
-公开摘要包含固定状态、数值、布尔值和摘要哈希；缺测值标null。安装失败时补充经官方APT元数据核对的软件包依赖关系。完整日志与运行数据留在临时目录，不上传artifact或缓存。工作流不发布镜像，不修改部署分支，不使用付费runner。
+公开摘要包含固定状态、数值、布尔值和摘要哈希；缺测值标null。安装失败时列出经软件包缓存核对的依赖诊断，并标注核验方式。完整日志与运行数据留在临时目录，不上传artifact或缓存。工作流不发布镜像，不修改部署分支，不使用付费runner。
 
 库房固定路线复验为后续阶段，当前工具明确标为NOT_RUN。它需要保留历史五任务几何与精确起点，在新版本下重新校验和生成执行身份。

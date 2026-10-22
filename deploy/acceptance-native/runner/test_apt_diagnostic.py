@@ -27,4 +27,36 @@ class AptDiagnosticTests(unittest.TestCase):
             self.assertIn('--output',run.call_args_list[1].args[0])
             output.assert_any_call('URP_APT_SOLVER_EXIT_100',flush=True)
 
+
+
+class ProjectionRunTests(unittest.TestCase):
+    def test_missing_module_falls_back_without_install(self):
+        import json
+        from runner.apt_diagnostic import projection_run
+        with tempfile.TemporaryDirectory() as tmp:
+            output=pathlib.Path(tmp)/'apt-dependencies.json'
+            (pathlib.Path(tmp)/'apt-solver.log').write_text('Broken public-a:amd64 Depends on public-b:amd64\nBroken private-a:amd64 Depends on public-b:amd64')
+            calls=[]
+            def run(cmd,**kwargs):
+                calls.append(cmd)
+                if cmd[0]=='/usr/bin/python3':
+                    output.write_text(json.dumps({'status':'metadata_unavailable','dependencies':[],'metadata_phase':'module_import','metadata_error':'import_missing'}))
+                    return Mock(returncode=0)
+                return Mock(returncode=0,stdout=b'public-a\npublic-b\n')
+            with patch('runner.apt_diagnostic.subprocess.run',side_effect=run),patch('runner.apt_diagnostic.solver_command',return_value=[]):result=projection_run('/isolated',tmp,{})
+            self.assertEqual(calls[1],['apt-cache','pkgnames'])
+            self.assertEqual(result['metadata_error'],'import_missing')
+            self.assertEqual(result['status'],'membership_only')
+            self.assertEqual(result['evidence'],'apt_cache_membership')
+            self.assertEqual(result['dependencies'],[{'package':'public-a','relation':'depends','dependency':'public-b'}])
+            self.assertNotIn('private-a',json.dumps(result))
+    def test_timeout_records_error_without_install(self):
+        import subprocess
+        from runner.apt_diagnostic import projection_run
+        with tempfile.TemporaryDirectory() as tmp, patch('runner.apt_diagnostic.solver_command',return_value=[]), patch('runner.apt_diagnostic.subprocess.run',side_effect=subprocess.TimeoutExpired('PRIVATE',90)) as run:
+            result=projection_run('/isolated',tmp,{})
+            self.assertEqual(result['metadata_error'],'subprocess_timeout')
+            self.assertEqual(run.call_count,2)
+            self.assertEqual(result['fallback_error'],'timeout')
+
 if __name__=='__main__':unittest.main()

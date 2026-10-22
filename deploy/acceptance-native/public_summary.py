@@ -27,11 +27,19 @@ def digest(v, length=64):
     return v if isinstance(v, str) and re.fullmatch('[0-9a-f]{%d}' % length, v) else None
 
 def apt_projection(value):
-    states={'not_run','verified','no_verified_edges','metadata_unavailable','tree_limit','invalid_projection'}
+    states={'not_run','verified','no_verified_edges','metadata_unavailable','tree_limit','invalid_projection','membership_only'}
     invalid=('invalid_projection',[])
-    if not isinstance(value,dict) or set(value)!={'status','dependencies'}:return invalid
+    if not isinstance(value,dict) or set(value) not in ({'status','dependencies'},{'status','dependencies','metadata_phase','metadata_error'},{'status','dependencies','metadata_phase','metadata_error','evidence','fallback_error'}):return invalid
     state=value['status'];edges=value['dependencies']
     if not isinstance(state,str) or state not in states or not isinstance(edges,list) or len(edges)>20:return invalid
+    if state=='membership_only':
+        if value.get('evidence')!='apt_cache_membership' or value.get('fallback_error')!='none':return invalid
+        clean=[]
+        for e in edges:
+            if not isinstance(e,dict) or set(e)!={'package','relation','dependency'} or not all(isinstance(x,str) for x in e.values()):return invalid
+            if not all(re.fullmatch(r'[a-z0-9][a-z0-9+.-]{0,119}',e[k]) for k in ('package','dependency')) or e['relation'] not in ('depends','predepends','conflicts','breaks'):return invalid
+            clean.append({k:e[k] for k in ('package','relation','dependency')})
+        return ('membership_only',clean) if clean else ('no_verified_edges',[])
     if state!='verified':return (state,[]) if not edges else invalid
     out=[]
     keys={'package','package_version','relation','dependency','version_relation','dependency_version'}
@@ -84,6 +92,10 @@ def project(raw, runner=None):
     result['runner_cleanup_remaining'] = None
     result['forced_kill_count'] = None
     result['apt_metadata_status'] = 'not_run'
+    result['apt_metadata_phase'] = 'not_run'
+    result['apt_metadata_error'] = 'not_measured'
+    result['apt_evidence'] = 'not_measured'
+    result['apt_fallback_error'] = 'not_measured'
     result['apt_dependencies'] = []
     result['registry_diagnostic'] = registry_projection(None)
     if runner is not None:
@@ -98,6 +110,16 @@ def project(raw, runner=None):
         result['runner_cleanup_remaining'] = number(runner.get('cleanup_remaining'), True)
         result['forced_kill_count'] = number(runner.get('forced_kill_count'), True)
         result['apt_metadata_status'], result['apt_dependencies'] = apt_projection(runner.get('apt_projection', {'status':'not_run','dependencies':[]}))
+        diagnostic=runner.get('apt_projection')
+        if isinstance(diagnostic,dict):
+            result['apt_evidence']='apt_cache_membership' if diagnostic.get('evidence')=='apt_cache_membership' else 'official_metadata' if diagnostic.get('status')=='verified' else 'not_measured'
+            fallback=diagnostic.get('fallback_error')
+            result['apt_fallback_error']=fallback if fallback in ('none','timeout','exit','unavailable','output_invalid') else 'not_measured'
+
+            phase=diagnostic.get('metadata_phase');error=diagnostic.get('metadata_error')
+            result['apt_metadata_phase']=phase if phase in ('module_import','source_identity','log_read','cache_open','metadata_project','complete','dependency_install','subprocess') else 'not_run'
+            result['apt_metadata_error']=error if error in ('none','import_missing','import_error','api_attribute','api_type','api_key','command_failed','validation','filesystem','apt_system','apt_runtime','unknown','subprocess_exit','subprocess_timeout','subprocess_os','invalid_output','dependency_install_failed','dependency_install_timeout') else 'not_measured'
+
         if result['runner_exit_code'] != 0 or result['runner_cleanup_remaining'] != 0 or result['forced_kill_count'] != 0:
             result['state'] = 'FAIL'
     # A public PASS cannot be forged by an incomplete/ready-only input.

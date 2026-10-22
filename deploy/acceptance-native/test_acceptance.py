@@ -141,4 +141,26 @@ class AptPublicProjectionTests(unittest.TestCase):
         for runner in (None,{}, {'exit_code':0,'cleanup_remaining':0}, {'exit_code':0,'cleanup_remaining':0,'forced_kill_count':1}):
             self.assertEqual(project(raw,runner)['state'],'FAIL')
 
+class MetadataDiagnosticProjectionTests(unittest.TestCase):
+    def test_membership_evidence_is_not_official_verified(self):
+        diagnostic={'status':'membership_only','dependencies':[{'package':'public-a','relation':'conflicts','dependency':'public-b'}],'metadata_phase':'module_import','metadata_error':'import_missing','evidence':'apt_cache_membership','fallback_error':'none'}
+        result=project({}, {'apt_projection':diagnostic})
+        self.assertEqual(result['apt_metadata_status'],'membership_only')
+        self.assertEqual(result['apt_evidence'],'apt_cache_membership')
+        self.assertEqual(result['apt_metadata_error'],'import_missing')
+        self.assertEqual(len(result['apt_dependencies']),1)
+        diagnostic['dependencies'][0]['raw']='PRIVATE'
+        result=project({}, {'apt_projection':diagnostic})
+        self.assertEqual(result['apt_dependencies'],[])
+        self.assertNotIn('PRIVATE',json.dumps(result))
+
+    def test_metadata_failure_phase_and_enum(self):
+        diagnostic={'status':'metadata_unavailable','dependencies':[],'metadata_phase':'metadata_project','metadata_error':'api_attribute'}
+        result=project({}, {'apt_projection':diagnostic})
+        self.assertEqual(result['apt_metadata_phase'],'metadata_project')
+        self.assertEqual(result['apt_metadata_error'],'api_attribute')
+        self.assertEqual(result['apt_metadata_status'],'metadata_unavailable')
+        diagnostic['metadata_error']='PRIVATE_EXCEPTION'
+        self.assertNotIn('PRIVATE',json.dumps(project({}, {'apt_projection':diagnostic})))
+
 if __name__ == '__main__': unittest.main()
