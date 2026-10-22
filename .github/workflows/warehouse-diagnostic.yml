@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 220
     env:
       TARGET_SHA: 3acf840d1a0c16ab1cfcca15744e4ea6609ddb35
-      HARNESS_SHA: 0c2a0792515bfaf63550ea4a6a976b98e14fe8a4
+      HARNESS_SHA: 25beb819b1168d8b6156d427afc1b5dc3252dae5
       URP_WAREHOUSE_STARTUP_OBSERVER: '1'
       URP_WAREHOUSE_STARTUP_OBSERVER_DELAY_S: '30'
     steps:
