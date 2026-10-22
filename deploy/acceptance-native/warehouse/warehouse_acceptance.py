@@ -23,8 +23,80 @@ from warehouse_lifecycle import drive, physical_evidence, OVERALL_WALL_S
 from warehouse_public_summary import project, digest
 from startup_observer import Observer, is_cancellation
 from process_observer import ProcessObserver
+import runtime_identity
 
 FUEL_MODELS=('Warehouse','shelf_big','shelf','Chair','foldable_chair','MaleVisitorOnPhone','Table','Jersey Barrier','Casual female')
+
+
+class IdentityCapture:
+    """Optional evidence, with original errors authoritative and cleanup first."""
+    def __init__(self):
+        self.instance=None
+        self.started=False
+        self.finished=False
+        self.cached=None
+        self.pending=None
+        self.containment_error=None
+        self.original_error=None
+
+    def defer_cancellation(self, error):
+        if self.pending is None:
+            self.pending=error
+
+    def begin(self, private):
+        if self.started or self.finished:return
+        self.started=True
+        try:
+            self.instance=runtime_identity.RuntimeIdentity(private)
+            self.instance.before_gateway()
+        except BaseException as exc:
+            if is_cancellation(exc):
+                self.defer_cancellation(exc)
+                raise
+            if isinstance(exc,runtime_identity.QueryCleanupUncertain):
+                self.containment_error=exc
+                raise
+
+    def finish(self):
+        if self.finished:return self.cached
+        self.finished=True
+        self.cached=dict(runtime_identity.UNAVAILABLE)
+        try:
+            if self.instance is not None:
+                try:self.instance.cleanup_query_child()
+                except BaseException:
+                    self.cached['query_cleanup_status']='uncertain'
+                    raise
+                self.instance.after_cleanup()
+                self.cached=self.instance.result()
+        except BaseException as exc:
+            if isinstance(exc,runtime_identity.QueryCleanupUncertain):self.containment_error=exc
+            if is_cancellation(exc):self.defer_cancellation(exc)
+            self.remember_child_evidence()
+        return self.cached
+
+    def remember_child_evidence(self):
+        # Own in-memory collector fields only, never process/environment reads.
+        try:
+            evidence=getattr(self.instance,'raw',None)
+            if type(evidence) is dict:
+                status=evidence.get('query_cleanup_status')
+                if type(status) is str and status in ('not_started','not_observed','pending','reaped','uncertain'):
+                    self.cached['query_cleanup_status']=status
+                uncertain=evidence.get('query_cleanup_was_uncertain')
+                if type(uncertain) is bool:self.cached['query_cleanup_was_uncertain']=uncertain
+        except BaseException as exc:
+            if is_cancellation(exc):self.defer_cancellation(exc)
+
+    def apply_pending(self, result):
+        if (self.pending is not None or self.containment_error is not None) and self.original_error is None:
+            for key in ('state','warehouse_state'):
+                if result.get(key)=='PASS':result[key]='ERROR'
+
+    def raise_pending(self):
+        error=self.pending if self.pending is not None else self.containment_error
+        if error is not None and (self.original_error is None or self.original_error is error):
+            raise error
 
 
 def adapter_identity():
@@ -76,6 +148,7 @@ def execute(a):
     from startup_diagnostics import collect
     from execution_diagnostics import collect as collect_execution
     source=a.source.resolve();token=secrets.token_hex(24);gateway=None;base=None;forced=False;sid=None;observer=None;process_observer=None
+    identity_capture=IdentityCapture()
     raw={'state':'ERROR','source_sha':SOURCE,'harness_sha':a.harness_sha,'overall_wall_budget_s':OVERALL_WALL_S}
     diagnostic={'harness':{'phase':'preflight'},'session_report':'unavailable'}
     raw['warehouse_diagnostics']=diagnostic
@@ -161,6 +234,7 @@ def execute(a):
                 raise
         mark('guard')
         guard()
+        identity_capture.begin(private)
         mark('gateway_start')
         with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
         base=f'http://127.0.0.1:{port}'
@@ -231,6 +305,7 @@ def execute(a):
             sources['deployment/'+rel]=hashlib.sha256((deployment/rel).read_bytes()).hexdigest()
         raw['overlay_source_sha256']=canonical_sha(sources)
     except BaseException as exc:
+        identity_capture.original_error=exc
         diagnostic['harness'].update(failure_phase=diagnostic['harness']['phase'],**describe_failure(exc))
         raw['state']='ERROR';(private/'harness-error.txt').write_text(type(exc).__name__+': '+str(exc))
     finally:
@@ -271,8 +346,13 @@ def execute(a):
         diagnostic['harness']['startup_collection_failed']=False
         try:raw['startup_diagnostics']=collect(runtime,sid)
         except Exception:diagnostic['harness']['startup_collection_failed']=True
-        summary=project(raw,require_runner=False);a.summary.parent.mkdir(parents=True,exist_ok=True);a.summary.write_text(json.dumps(summary,indent=2,allow_nan=False))
+        raw['warehouse_runtime_identity']=identity_capture.finish()
+        identity_capture.apply_pending(raw)
+        summary=project(raw,require_runner=False,runtime_identity_cancellation=identity_capture.defer_cancellation)
+        identity_capture.apply_pending(summary)
+        a.summary.parent.mkdir(parents=True,exist_ok=True);a.summary.write_text(json.dumps(summary,indent=2,allow_nan=False))
         if observer_cancellation is not None:raise observer_cancellation
+        identity_capture.raise_pending()
     return 0 if summary['state']=='PASS' else 1
 
 

@@ -13,6 +13,7 @@ from startup_diagnostics import sanitize as sanitize_startup
 from execution_diagnostics import sanitize as sanitize_execution
 from execution_protocol import sanitize as sanitize_protocol, protocol_ok
 from startup_observation_schema import sanitize as sanitize_observation
+import runtime_identity
 from historical_input import SOURCE, HISTORICAL_SOURCE
 from process_observer import sanitize as sanitize_process_observation, UNAVAILABLE_OBSERVATION, is_cancellation
 
@@ -36,7 +37,7 @@ def number(value, integer=False, low=0, high=1e9):
 def digest(value, length=64):
     return value if isinstance(value,str) and re.fullmatch('[0-9a-f]{%d}'%length,value) else None
 
-def project(raw, runner=None, *, require_runner=True):
+def project(raw, runner=None, *, require_runner=True, runtime_identity_cancellation=None):
     raw=raw if isinstance(raw,dict) else {}
     state=raw.get('state');state=state if state in ('PASS','FAIL','ERROR','NOT_RUN') else 'ERROR'
     result={'startup_diagnostics':sanitize_startup(raw.get('startup_diagnostics')),
@@ -57,6 +58,12 @@ def project(raw, runner=None, *, require_runner=True):
     except BaseException as exc:
         if is_cancellation(exc):raise
         result['warehouse_process_observation']=dict(UNAVAILABLE_OBSERVATION,rows=[])
+    try:result['warehouse_runtime_identity']=runtime_identity.sanitize(raw.get('warehouse_runtime_identity'))
+    except BaseException as exc:
+        if is_cancellation(exc):
+            if runtime_identity_cancellation is None:raise
+            runtime_identity_cancellation(exc)
+        result['warehouse_runtime_identity']=dict(runtime_identity.UNAVAILABLE)
     result['warehouse_startup_observation']=sanitize_observation(raw.get('warehouse_startup_observation'))
     result['raw_resource_manifest_sha256']=digest(raw.get('raw_resource_manifest_sha256'))
     result['raw_resources_match_historical']=raw.get('raw_resources_match_historical') if type(raw.get('raw_resources_match_historical')) is bool else None

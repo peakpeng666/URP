@@ -433,6 +433,7 @@ class ObserverTests(unittest.TestCase):
                        'signal':signal,'time':time,'collect':lambda *args:calls.append(('collect',)) or {},
                        'runtime':Path(self.temp.name),'sid':'sim_fixture','project':lambda raw,**kw:dict(raw),
                        'a':types.SimpleNamespace(summary=Path(self.temp.name)/'summary.json'),'json':json}
+            namespace['identity_capture']=types.SimpleNamespace(finish=lambda:{},defer_cancellation=lambda exc:None,apply_pending=lambda result:None,raise_pending=lambda:None)
             exec(compile(module,'production-finalizer','exec'),namespace)
             with self.assertRaises(RuntimeError) as caught:namespace['finalize']()
             self.assertIs(caught.exception,exc)

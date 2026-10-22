@@ -333,6 +333,7 @@ class Tests(unittest.TestCase):
                         'owned':lambda token:[],'token':'fixture','forced':False,'subprocess':subprocess,'signal':signal,'time':time,
                         'collect':lambda *args:{},'runtime':Path(d),'sid':'sim_fixture','project':lambda raw,**kw:dict(raw),
                         'a':SimpleNamespace(summary=Path(d)/'summary.json'),'json':json}
+                    ns['identity_capture']=SimpleNamespace(finish=lambda:{},defer_cancellation=lambda exc:None,apply_pending=lambda result:None,raise_pending=lambda:None)
                     exec(compile(module,'production-finalizer','exec'),ns)
                     if p.is_cancellation(failure):
                         with self.assertRaises(type(failure)) as caught:ns['finalize']()

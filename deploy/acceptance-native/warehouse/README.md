@@ -140,3 +140,49 @@ the process observer's contracts: ordinary optional diagnostic failures remain
 isolated, exact project cancellations propagate, and original cleanup is still
 attempted once. No new packages, native run, acceptance relaxation or environment
 intervention is required to test this helper-only code.
+
+### Optional installed-runtime identity evidence
+
+`warehouse_runtime_identity` is an observational, separately bounded projection.
+Immediately before gateway creation, it queries one fixed 21-package catalogue
+from `/var/lib/dpkg` and hashes 14 fixed installed Humble xacro/launch/world files.
+It does not install packages, execute xacro, resolve new resource paths, inspect
+process arguments/environment/maps, create graphics contexts, or add subscribers.
+The package query has a 3-second execution deadline and 64 KiB stdout limit;
+its sole child is killed when needed and reaped before returning. Installed files
+are regular, ownership-checked, non-symlink files under an anchored directory
+chain, capped at 256 KiB each, and checked for identity/content-metadata changes.
+
+After existing application shutdown and owned-process cleanup, the helper may
+read only the fresh invocation HOME `.ignition/rendering/ogre.log` (128 KiB cap).
+Rendering6's `IGN_HOMEDIR` is a compile-time macro for `HOME` on Linux, not the
+similarly named runtime environment variable. The known runner HOME comes from
+`runner/run.py`, not from live environment inspection. A preexisting, changed,
+unowned, nonregular, symlinked, conflicting, or oversized log supplies no
+renderer identity claim. Output contains only finite vendor/renderer families
+and validated numeric API versions, never log lines or arbitrary GPU strings.
+
+The evidence groups explicitly distinguish installed package database records,
+installed file bytes, and renderer log claims. None proves loaded shared-library
+identity, which remains `unavailable`. A fresh log is invocation-associated,
+not bound to the observed Ruby process. An OpenGL API version is not a Mesa
+package version. Installed bytes are not proof that an xacro was expanded or a
+sensor was active. Missing evidence is reported without changing acceptance.
+
+Ordinary optional evidence faults cannot change the application/API result or
+cleanup outcome. Cancellation keeps the project's exact exception identity and
+is deferred until existing cleanup and result writing have run. An earlier
+application/API error remains authoritative over later optional diagnostic
+failures. Observer timing, sensors, scene, route, readiness and cleanup criteria
+are unchanged. No `LP_NUM_THREADS` default is introduced; both LP1 and LP0 were
+negative controlled trials, not resource fixes.
+
+One fail-closed diagnostic containment exception is explicit: if the package
+query's own child cannot be confirmed reaped after bounded cleanup, gateway
+creation is aborted. Its actual `Popen` handle is retained for one additional
+bounded final cleanup attempt. No unrelated processes are inspected or killed.
+The public finite cleanup status and sticky prior-uncertainty flag distinguish
+this condition from unavailable package metadata, even if the final retry reaps
+successfully. Exact cancellation identity still wins over ordinary diagnostic
+cleanup errors. This adds no application readiness test and cannot turn a
+failed application run into a pass.
