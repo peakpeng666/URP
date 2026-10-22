@@ -19,7 +19,7 @@ jobs:
     env:
       SOURCE_COMMIT: 18557cfc61f291e8ac5fa4a80d9df212e1df0030
       # Filled only after independent review of every source-index entry.
-      REVIEWED_SOURCE_INDEX_SHA256: 1745391535cec4d12fea748766a008f4b2ad7af24dc0dc8536cddb61ac0bf671
+      REVIEWED_SOURCE_INDEX_SHA256: 4e5c20fb619ba04977a02b5768650ab0db637fd2700a2ae6429da66dc7cbf93b
       PYTHONDONTWRITEBYTECODE: '1'
       UV_NO_CACHE: '1'
     steps:
@@ -196,36 +196,44 @@ jobs:
           case "$FAILED_STAGE" in none|helpers_checkout|source_checkout|uv_bootstrap|node_bootstrap|source_anchor|helper_tests|packages|validation_inputs|measured_lock|offline_build|native_validation) ;; *) FAILED_STAGE=unknown;; esac
           if [ "$RESULT" != PASS ] && [ "$FAILED_STAGE" = none ]; then FAILED_STAGE=unknown; fi
           export FAILED_STAGE
-          FAILURE_CODE="$(/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 LC_ALL=C.UTF-8 \
+          FAILURE_DETAILS="$(/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 LC_ALL=C.UTF-8 \
             CANDIDATE_ROOT="${CANDIDATE_ROOT:-}" REVIEWED_SOURCE_INDEX_SHA256="$REVIEWED_SOURCE_INDEX_SHA256" \
             FAILED_STAGE="$FAILED_STAGE" /usr/bin/python3 -I -B - <<'PY_FAILURE'
           import hashlib,json,os,pathlib,re,subprocess
-          code='UNKNOWN'
-          allowed_codes=['APT_ARCHIVE_MISMATCH', 'APT_HOST_MISMATCH', 'APT_INPUT_CHANGED', 'APT_PROVIDER_CONFLICT', 'APT_REMOVAL_REFUSED', 'APT_SIGNATURE_REJECTED', 'APT_SOLVER_BLOCKED', 'BUILD_STAGE_FAILED', 'GUARD_INDEX_MISMATCH', 'GUARD_INPUT_MISMATCH', 'GUARD_NAMESPACE_REJECTED', 'GUARD_OUTPUT_EXISTS', 'HELPER_TESTS_FAILED', 'PREPARATION_ARCHIVE_REJECTED', 'PREPARATION_HOST_MISMATCH', 'PREPARATION_INPUT_INCOMPLETE', 'PREPARATION_PROVIDER_REJECTED', 'UNKNOWN', 'VALIDATION_ABI_REJECTED', 'VALIDATION_INPUT_REJECTED', 'VALIDATION_INTEGRITY_FAILED', 'VALIDATION_PROVIDER_REJECTED', 'VALIDATION_TEST_GATE_FAILED']
+          details='code=UNKNOWN'
+          allowed_codes=['APT_ARCHIVE_MISMATCH', 'APT_FILE_ACCESS_ERROR', 'APT_HOST_MISMATCH', 'APT_HTTP_ERROR', 'APT_INPUT_CHANGED', 'APT_INVARIANT_REJECTED', 'APT_METADATA_PARSE_ERROR', 'APT_NETWORK_ERROR', 'APT_PREREQUISITE_FAILED', 'APT_PROVIDER_CONFLICT', 'APT_REMOVAL_REFUSED', 'APT_SIGNATURE_REJECTED', 'APT_SOLVER_BLOCKED', 'APT_SUBPROCESS_FAILED', 'APT_TIMEOUT', 'APT_TLS_ERROR', 'APT_UNEXPECTED_ERROR', 'BUILD_STAGE_FAILED', 'GUARD_INDEX_MISMATCH', 'GUARD_INPUT_MISMATCH', 'GUARD_NAMESPACE_REJECTED', 'GUARD_OUTPUT_EXISTS', 'HELPER_TESTS_FAILED', 'PREPARATION_ARCHIVE_REJECTED', 'PREPARATION_HOST_MISMATCH', 'PREPARATION_INPUT_INCOMPLETE', 'PREPARATION_PROVIDER_REJECTED', 'UNKNOWN', 'VALIDATION_ABI_REJECTED', 'VALIDATION_INPUT_REJECTED', 'VALIDATION_INTEGRITY_FAILED', 'VALIDATION_PROVIDER_REJECTED', 'VALIDATION_TEST_GATE_FAILED']
           try:
               root=pathlib.Path(os.environ['CANDIDATE_ROOT'])
               raw=(root/'source-index.json').read_bytes()
               assert hashlib.sha256(raw).hexdigest()==os.environ['REVIEWED_SOURCE_INDEX_SHA256']
               index=json.loads(raw)
               helper=root/'recipe/project_failure_code.py'
-              assert not helper.is_symlink() and hashlib.sha256(helper.read_bytes()).hexdigest()==index['files']['recipe/project_failure_code.py']['sha256']
+              helper_bytes=helper.read_bytes()
+              assert not helper.is_symlink() and hashlib.sha256(helper_bytes).hexdigest()==index['files']['recipe/project_failure_code.py']['sha256']
+              verified={'__name__':'verified_failure_projector','__file__':str(helper)}
+              exec(compile(helper_bytes,str(helper),'exec'),verified)
               names={'helper_tests':['helper-tests.log'],'packages':['packages.log'],'validation_inputs':['validation-inputs.log'],'measured_lock':['preparation.log'],'offline_build':['offline-build.log'],'native_validation':['validation-run.log','validation-stage.log','validation-freeze.log']}
               stage=os.environ['FAILED_STAGE']
               for name in names.get(stage,[]):
                   log=root/'private-workflow-evidence'/name
                   if not log.exists(): continue
-                  result=subprocess.run(['/usr/bin/python3','-I','-B',str(helper),'--stage',stage,'--log',str(log)],env={'PATH':'/usr/bin:/bin','LANG':'C.UTF-8','LC_ALL':'C.UTF-8'},stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,timeout=5,check=False,text=True)
-                  token=result.stdout.strip()
-                  if result.returncode==0 and token in allowed_codes: code=token
+                  projected=verified['project_details'](stage,str(log))
+                  if projected.get('code') in allowed_codes:
+                      details='code='+projected['code']
+                      if set(projected)==verified['PACKAGE_KEYS']:
+                          checked=verified['validated_package_receipt'](json.dumps(projected))
+                          if checked is None: raise ValueError('Invalid projection')
+                          for key in ('operation','exception_class','http_status','errno','returncode','suite','component'):
+                              value=checked[key]
+                              if value is not None: details+=' '+key+'='+str(value)
                   break
           except Exception:
-              code='UNKNOWN'
-          allowed_codes=['APT_ARCHIVE_MISMATCH', 'APT_HOST_MISMATCH', 'APT_INPUT_CHANGED', 'APT_PROVIDER_CONFLICT', 'APT_REMOVAL_REFUSED', 'APT_SIGNATURE_REJECTED', 'APT_SOLVER_BLOCKED', 'BUILD_STAGE_FAILED', 'GUARD_INDEX_MISMATCH', 'GUARD_INPUT_MISMATCH', 'GUARD_NAMESPACE_REJECTED', 'GUARD_OUTPUT_EXISTS', 'HELPER_TESTS_FAILED', 'PREPARATION_ARCHIVE_REJECTED', 'PREPARATION_HOST_MISMATCH', 'PREPARATION_INPUT_INCOMPLETE', 'PREPARATION_PROVIDER_REJECTED', 'UNKNOWN', 'VALIDATION_ABI_REJECTED', 'VALIDATION_INPUT_REJECTED', 'VALIDATION_INTEGRITY_FAILED', 'VALIDATION_PROVIDER_REJECTED', 'VALIDATION_TEST_GATE_FAILED']
-          print(code)
+              details='code=UNKNOWN'
+          print(details)
           PY_FAILURE
           )"
-          if [ "$RESULT" = PASS ]; then FAILURE_CODE=NONE; fi
-          printf 'Candidate diagnostic: stage=%s code=%s\n' "$FAILED_STAGE" "$FAILURE_CODE" | tee -a "$GITHUB_STEP_SUMMARY"
+          if [ "$RESULT" = PASS ]; then FAILURE_DETAILS=code=NONE; fi
+          printf 'Candidate diagnostic: stage=%s %s\n' "$FAILED_STAGE" "$FAILURE_DETAILS" | tee -a "$GITHUB_STEP_SUMMARY"
           if [ "$RESULT" = PASS ]; then
             /usr/bin/python3 -I -B - <<'PY_SUMMARY' >> "$GITHUB_STEP_SUMMARY"
           import json,os,pathlib,re

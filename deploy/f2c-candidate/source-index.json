@@ -4,10 +4,10 @@
       "sha256": "cc14d22e1195d61e844ff01426812552f4bdfc971adb660f53bbff0857435c0d"
     },
     "PREPARATION.md": {
-      "sha256": "8ff6089e8e66a35ce12db18f83122d8793003f09696e6fad71c7e91102730956"
+      "sha256": "106b0c4f4cd69fb24142907cd3e0a9cf8236e6d021c342fe80e6a461b8ed8586"
     },
     "PUBLIC_FILE_ALLOWLIST.txt": {
-      "sha256": "5809d56b6eb68f6afe52b6b3e7ef3098e5dfac5ba1576c6a70deb83e5e5db9e4"
+      "sha256": "feb7750077f018b6b4f57c3e80335de5fc73431091124d7fd84e3c32a17e1a30"
     },
     "build-requirements.lock": {
       "sha256": "20882c0230ae0bd0d73dff6a21c0f069a2c893bff443a7e286a7916c9cbef2c3"
@@ -25,10 +25,10 @@
       "sha256": "70e28d980f06f4d188b77245d9f27c26f7fc9c705fc6bf3d590efd1a6bf06562"
     },
     "recipe/PACKAGE_PREPARATION.md": {
-      "sha256": "cf084c3cde78ad55226ee566de1f625049c02d4c7a7022d8575e56bea8f9bc3b"
+      "sha256": "f4795d05b978d71ec4e72ec5ee5145193e114cb098ff78f97f431d72a1699245"
     },
     "recipe/README.md": {
-      "sha256": "a1d97a73b1cd2973ca3b66660440d27fdbaf406881dd7cfe7f5bfb53471d293b"
+      "sha256": "d1fbec27fb3528694f2e01969e42d83c37751f57e99f246f304d5c84f75c9f6d"
     },
     "recipe/VALIDATION.md": {
       "sha256": "4b5d7d621c810d0d88d1854e2ce97add9942b060017b709befef4fff1aefe65a"
@@ -52,7 +52,7 @@
       "sha256": "b8865c8b8475c33f00609866b627548f188faf78143cba8d425619b1655079c5"
     },
     "recipe/prepare_jammy_packages.py": {
-      "sha256": "2fbc8827ce2195b203ded8738f9f4dc47c483f2b64c7003e6e84b1b40d72a99c"
+      "sha256": "2fd26a61887518cde8673dd0a5ed76be4f69736cda968d9e156b38fecd16c25c"
     },
     "recipe/prepare_live.py": {
       "sha256": "1d1b97f6c42f4618ad87d5623c76b0fb09d5d973ed1217522ae09502fa55c426"
@@ -61,7 +61,7 @@
       "sha256": "8d0adf96e35166187f4731bc2b6296f75f21185f58eadf9bc420053bf047d48f"
     },
     "recipe/project_failure_code.py": {
-      "sha256": "1a7fd0ab69ae736274a7a85ebf2dc19c1211ee8a8163863c69d6f1269484a62d"
+      "sha256": "3aee1e1e7c14a9e17d7051f31b65f96b2a4604d72ee859e641b0d59b73815b87"
     },
     "recipe/reviewed-inputs.template.json": {
       "sha256": "8d902ec58c740d966ad5fc44a678012145128ad7da13768c0025682c6d4df6e2"
@@ -82,7 +82,10 @@
       "sha256": "e1d36bda616278262e5e9508723d6b339f8930e1383adae1e9a4b08391011d92"
     },
     "recipe/tests/test_package_preparation.py": {
-      "sha256": "70c55b749ea5bb7517e6625b357b3c233721de7f458db2ff3732c0c437db5b54"
+      "sha256": "f593efe65ad27e9cb2fd6404deaf36c4d574194c6570b56818b864a483023239"
+    },
+    "recipe/tests/test_structured_failure_projection.py": {
+      "sha256": "af40307d64aee13bf6e6c8b4fe8c4af210c6e3664ea75217075c72f91b053f38"
     },
     "recipe/tests/test_validation.py": {
       "sha256": "84e430799619b907c8950b117c061d29703601017e3c287ea3965a482fe92f6d"

@@ -6,6 +6,7 @@ is a diagnostic hint, not an acceptance decision or a replacement exit status.
 The CLI always emits one allowlisted token and exits zero, including on misuse.
 """
 import os
+import json
 import re
 import stat
 import sys
@@ -130,6 +131,43 @@ UNSHARE_ERRORS = frozenset({'unshare: unshare failed: Operation not permitted',
                             'unshare: unshare failed: Invalid argument',
                             'unshare: unshare failed: Function not implemented'})
 
+
+PACKAGE_CODES = frozenset('APT_HTTP_ERROR APT_TLS_ERROR APT_NETWORK_ERROR APT_TIMEOUT APT_PREREQUISITE_FAILED APT_SUBPROCESS_FAILED APT_METADATA_PARSE_ERROR APT_FILE_ACCESS_ERROR APT_INVARIANT_REJECTED APT_UNEXPECTED_ERROR'.split())
+PACKAGE_OPERATIONS = frozenset('bootstrap host-check prerequisites base-inventory release-download signature-verify release-parse index-download index-parse provider-selection apt-config apt-update native-solver solver-result closure-provenance archive-download archive-control transaction-plan transaction-simulate installation post-install-check provider-verification preparation-receipt'.split())
+PACKAGE_CLASSES = frozenset('RuntimeError CalledProcessError ProcessFailure HTTPError URLError SSLError TimeoutError FileNotFoundError PermissionError FileExistsError OSError UnicodeDecodeError LZMAError KeyError ValueError ModuleNotFoundError ImportError AssertionError TypeError JSONDecodeError AttributeError AptPkgError OtherError'.split())
+PACKAGE_ERRNOS = frozenset([-3,-2,1,2,5,11,13,17,22,28,30,32,36,40,95,101,104,110,111,113])
+PACKAGE_KEYS = frozenset('schema code operation exception_class http_status errno returncode suite component'.split())
+PACKAGE_MARKER = 'SAFE_PACKAGE_DIAGNOSTIC:'
+ALLOWED_CODES = ALLOWED_CODES | PACKAGE_CODES
+
+def validated_package_receipt(raw):
+    """Closed schema. No arbitrary string or unknown JSON member can escape."""
+    try:
+        if not isinstance(raw, str) or len(raw) > 4096:
+            return None
+        def unique(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError('Duplicate key')
+                result[key] = value
+            return result
+        d = json.loads(raw, object_pairs_hook=unique)
+        if type(d) is not dict or set(d) != PACKAGE_KEYS or type(d['schema']) is not int or d['schema'] != 1:
+            return None
+        if d['code'] not in PACKAGE_CODES or d['operation'] not in PACKAGE_OPERATIONS or d['exception_class'] not in PACKAGE_CLASSES:
+            return None
+        for key, low, high in [('http_status', 100, 599), ('returncode', -255, 255)]:
+            if d[key] is not None and (type(d[key]) is not int or not low <= d[key] <= high):
+                return None
+        if d['errno'] is not None and (type(d['errno']) is not int or d['errno'] not in PACKAGE_ERRNOS):
+            return None
+        if d['suite'] not in (None, 'jammy', 'jammy-updates', 'jammy-security') or d['component'] not in (None, 'main', 'universe'):
+            return None
+        return d
+    except Exception:
+        return None
+
 def safe_tail(path):
     """Open every component without following symlinks; never block on a FIFO."""
     directories, fd = [], None
@@ -176,12 +214,7 @@ def safe_tail(path):
             except OSError:
                 pass
 
-def project(stage, log_path):
-    if stage not in STAGES:
-        return 'UNKNOWN'
-    text = safe_tail(log_path)
-    if text is None:
-        return 'UNKNOWN'
+def project_text(stage, text):
     for line in reversed(text.splitlines()):
         if stage == 'helper_tests' and re.fullmatch(r'FAILED \((?:failures|errors)=[0-9]+(?:, (?:failures|errors|skipped)=[0-9]+)*\)', line):
             return 'HELPER_TESTS_FAILED'
@@ -198,19 +231,42 @@ def project(stage, log_path):
                 return 'UNKNOWN'
     return 'UNKNOWN'
 
+def project_details(stage, log_path):
+    unknown = {'code': 'UNKNOWN'}
+    if stage not in STAGES:
+        return unknown
+    text = safe_tail(log_path)
+    if text is None:
+        return unknown
+    if stage == 'packages':
+        for line in reversed(text.splitlines()):
+            if line.startswith(PACKAGE_MARKER):
+                return validated_package_receipt(line[len(PACKAGE_MARKER):]) or unknown
+            if any(line.startswith(prefix) for prefix in ERROR_PREFIXES):
+                break
+    return {'code': project_text(stage, text)}
+
+def project(stage, log_path):
+    return project_details(stage, log_path)['code']
+
 def main(argv=None):
-    code = 'UNKNOWN'
+    details = {'code': 'UNKNOWN'}
+    json_mode = False
     try:
-        argv = sys.argv[1:] if argv is None else argv
+        argv = list(sys.argv[1:] if argv is None else argv)
+        if argv and argv[0] == '--json':
+            json_mode = True
+            argv.pop(0)
         if len(argv) == 4 and argv[0] in ('--stage', '--log') and argv[2] in ('--stage', '--log') and argv[0] != argv[2]:
             options = {argv[0]: argv[1], argv[2]: argv[3]}
-            code = project(options['--stage'], options['--log'])
-        if code not in ALLOWED_CODES:
-            code = 'UNKNOWN'
+            details = project_details(options['--stage'], options['--log'])
+        if details['code'] not in ALLOWED_CODES:
+            details = {'code': 'UNKNOWN'}
     except Exception:
-        code = 'UNKNOWN'
+        details = {'code': 'UNKNOWN'}
     try:
-        os.write(1, (code + '\n').encode('ascii'))
+        output = json.dumps(details, sort_keys=True, separators=(',', ':')) if json_mode else details['code']
+        os.write(1, (output + '\n').encode('ascii'))
     except OSError:
         pass
     return 0

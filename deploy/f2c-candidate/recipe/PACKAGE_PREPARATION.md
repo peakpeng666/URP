@@ -37,3 +37,39 @@ Official references:
 ## Verification completed here
 
 The stdlib fixture suite covers OS guards, signed metadata parsing, archive path restrictions, bad hashes/oversized downloads, native APT API fixtures, dependency alternatives/cycles, provider conflicts/bytes, exact transaction parsing, holds/removals/downgrades, stale inventory and unexpected post-install changes. The actual Debian-host invocation exits 2 before preparation state exists. This is not a native Jammy execution test. No APT update, package installation or experiment was run here.
+# Failure diagnostics (v2)
+
+The first hosted attempt failed during package preparation, but its public
+`UNKNOWN` code does not identify a cause. The published v1 script was byte-equal
+to the reviewed local script. Its package paragraph delimiter was correct, and
+all 118,009 package stanzas in the six previously authenticated indexes parse
+successfully. A new real-like multi-stanza regression test exercises the same
+index parser used by preparation. No hosted root cause is inferred from timing.
+
+On an exception, preparation now emits a final `SAFE_PACKAGE_DIAGNOSTIC:` line
+with a strict nine-field JSON object: schema, code, operation, exception_class,
+http_status, errno, returncode, suite, and component. Text values come only from
+fixed allowlists; numeric values are bounded. It never serializes exception
+messages, URLs, paths, arguments, headers, inventory, or environment values.
+`package-failure.json` receives the same diagnostic when possible, with exclusive
+creation, no symlink following, and mode 0600. An existing diagnostic is never
+overwritten. A diagnostic does not authorize a retry or change an acceptance gate.
+
+The native solver's final diagnostic is validated again against a closed schema
+before its code and exception class can appear in the outer diagnostic. No raw
+child line is forwarded. The outer return code remains the actual child exit
+status. Both system-Python child invocations use `-I -B`; isolated mode does not
+disable the system site-packages needed by the distribution's `apt_pkg` module.
+
+The subprocess operation identifies the failing phase, but its bounded exit
+code is not the underlying native APT error message. In particular, failure in the
+installation phase may have partially changed the disposable runner; preserve
+that cohort and use a separately reviewed fresh candidate rather than resuming.
+
+Debian-cloud evidence is not a Jammy runtime test. Python 3.10 syntax is checked
+with the parser; Python 3.10 and native `apt_pkg` are unavailable here. The single
+clean-environment cloud fetch of the pinned official Jammy InRelease raised
+`URLError` without an HTTP status. It was not retried, and does not establish the
+cause of the hosted failure. Existing signature, hash, exact-version, no-removal,
+and installed-state checks remain in force.
+

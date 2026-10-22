@@ -1,6 +1,6 @@
 # Ubuntu 22.04 Fields2Cover candidate preparation
 
-Status: official-input research and a complete portable preparation/build/validation template are implemented and source-reviewed. All 158 pure helper/interface fixtures passed. No native Jammy build/import, GitHub launch, application repository modification, or production promotion has occurred.
+Status: official-input research and a complete portable preparation/build/validation template are implemented and source-reviewed. All 187 pure helper/interface fixtures passed. The first hosted cohort stopped during package preparation before any native build; its bounded report did not establish the cause. This diagnostic revision has not been launched. No native Jammy build/import, application repository modification, or production promotion is claimed.
 
 ## Verified upstream inputs
 

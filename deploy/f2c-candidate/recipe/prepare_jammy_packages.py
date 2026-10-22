@@ -15,11 +15,13 @@ import platform
 import re
 import shutil
 import shlex
+import ssl
 import subprocess
 import sys
 import tarfile
 import urllib.parse
 import urllib.request
+import urllib.error
 
 SNAPSHOT = '20261021T000000Z'
 ORIGIN = 'https://snapshot.ubuntu.com/ubuntu/' + SNAPSHOT + '/'
@@ -40,6 +42,155 @@ ROOTS = {
 }
 RELEASE_SIZES = {'jammy': 270087, 'jammy-updates': 128049, 'jammy-security': 128927}
 KEYRING = Path('/usr/share/keyrings/ubuntu-archive-keyring.gpg')
+
+# Diagnostic-only output. Never include exception text, command arguments,
+# filenames, environment values, response headers, or unreviewed URL strings.
+DIAGNOSTIC_PREFIX = 'SAFE_PACKAGE_DIAGNOSTIC:'
+DIAGNOSTIC_CODES = frozenset({
+    'APT_HTTP_ERROR', 'APT_TLS_ERROR', 'APT_NETWORK_ERROR', 'APT_TIMEOUT',
+    'APT_PREREQUISITE_FAILED', 'APT_SUBPROCESS_FAILED', 'APT_METADATA_PARSE_ERROR',
+    'APT_FILE_ACCESS_ERROR', 'APT_INVARIANT_REJECTED', 'APT_UNEXPECTED_ERROR',
+})
+DIAGNOSTIC_OPERATIONS = frozenset({
+    'bootstrap', 'host-check', 'prerequisites', 'base-inventory', 'release-download',
+    'signature-verify', 'release-parse', 'index-download', 'index-parse',
+    'provider-selection', 'apt-config', 'apt-update', 'native-solver', 'solver-result',
+    'closure-provenance', 'archive-download', 'archive-control', 'transaction-plan',
+    'transaction-simulate', 'installation', 'post-install-check',
+    'provider-verification', 'preparation-receipt',
+})
+DIAGNOSTIC_CLASSES = frozenset({
+    'RuntimeError', 'CalledProcessError', 'ProcessFailure', 'HTTPError', 'URLError',
+    'SSLError', 'TimeoutError', 'FileNotFoundError', 'PermissionError',
+    'FileExistsError', 'OSError', 'UnicodeDecodeError', 'LZMAError', 'KeyError',
+    'ValueError', 'ModuleNotFoundError', 'ImportError', 'AssertionError', 'TypeError',
+    'JSONDecodeError', 'AttributeError', 'AptPkgError', 'OtherError',
+})
+DIAGNOSTIC_ERRNOS = frozenset({-3, -2, 1, 2, 5, 11, 13, 17, 22, 28, 30, 32,
+                              36, 40, 95, 101, 104, 110, 111, 113})
+DIAGNOSTIC_CONTEXT = {'operation': 'bootstrap', 'suite': None, 'component': None}
+DIAGNOSTIC_ROOT = None
+
+
+def phase(operation, suite=None, component=None):
+    """Set only caller-supplied static logical names, never paths or package names."""
+    DIAGNOSTIC_CONTEXT.update(operation=operation, suite=suite, component=component)
+
+
+class ProcessFailure(RuntimeError):
+    def __init__(self, returncode, child_receipt=None):
+        super().__init__('Native subprocess returned nonzero status')
+        self.returncode = returncode
+        self.child_receipt = child_receipt
+
+
+def validated_child_receipt(receipt):
+    """Only the exact, closed native-solver schema can cross the process boundary."""
+    try:
+        if type(receipt) is not dict or set(receipt) != {
+                'schema', 'code', 'operation', 'exception_class', 'http_status',
+                'errno', 'returncode', 'suite', 'component'}:
+            return None
+        if type(receipt['schema']) is not int or receipt['schema'] != 1:
+            return None
+        if receipt['code'] not in DIAGNOSTIC_CODES or receipt['exception_class'] not in DIAGNOSTIC_CLASSES:
+            return None
+        if receipt['operation'] != 'native-solver' or receipt['suite'] is not None or receipt['component'] is not None:
+            return None
+        for key, lower, upper in (('http_status', 100, 599), ('returncode', -255, 255)):
+            value = receipt[key]
+            if value is not None and (type(value) is not int or not lower <= value <= upper):
+                return None
+        value = receipt['errno']
+        if value is not None and (type(value) is not int or value not in DIAGNOSTIC_ERRNOS):
+            return None
+        return dict(receipt)
+    except (TypeError, KeyError):
+        return None
+
+
+def parse_child_receipt(output):
+    """Inspect only the bounded final line, not a child log or earlier marker."""
+    try:
+        line = output[-4096:].splitlines()[-1]
+        if not line.startswith(DIAGNOSTIC_PREFIX) or len(line) > 1024 or not line.isascii():
+            return None
+        def unique_object(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError('Duplicate diagnostic key')
+                result[key] = value
+            return result
+        return validated_child_receipt(json.loads(line[len(DIAGNOSTIC_PREFIX):], object_pairs_hook=unique_object))
+    except (ValueError, TypeError, IndexError):
+        return None
+
+
+def failure_diagnostic(error):
+    """Project errors to a bounded public schema without ever calling str(error)."""
+    operation = DIAGNOSTIC_CONTEXT.get('operation')
+    if operation not in DIAGNOSTIC_OPERATIONS:
+        operation = 'bootstrap'
+    name = type(error).__name__
+    exception_class = name if name in DIAGNOSTIC_CLASSES else 'OtherError'
+    if name == 'Error' and type(error).__module__ == 'apt_pkg':
+        exception_class = 'AptPkgError'
+    code, status, number, returncode = 'APT_UNEXPECTED_ERROR', None, None, None
+    reason = error.reason if isinstance(error, urllib.error.URLError) else error
+    if isinstance(error, urllib.error.HTTPError):
+        code = 'APT_HTTP_ERROR'
+        status = error.code if type(error.code) is int and 100 <= error.code <= 599 else None
+    elif isinstance(reason, ssl.SSLError):
+        code = 'APT_TLS_ERROR'
+    elif isinstance(reason, TimeoutError):
+        code = 'APT_TIMEOUT'
+    elif isinstance(error, urllib.error.URLError):
+        code = 'APT_NETWORK_ERROR'
+    elif isinstance(error, (ProcessFailure, subprocess.CalledProcessError)):
+        code = 'APT_PREREQUISITE_FAILED' if operation == 'prerequisites' else 'APT_SUBPROCESS_FAILED'
+        rc = error.returncode
+        returncode = rc if type(rc) is int and -255 <= rc <= 255 else None
+    elif isinstance(error, OSError):
+        code = 'APT_FILE_ACCESS_ERROR'
+    elif operation in ('release-parse', 'index-parse') and isinstance(
+            error, (RuntimeError, ValueError, KeyError, lzma.LZMAError)):
+        code = 'APT_METADATA_PARSE_ERROR'
+    elif isinstance(error, (ImportError, AssertionError)) and operation == 'prerequisites':
+        code = 'APT_PREREQUISITE_FAILED'
+    elif isinstance(error, RuntimeError):
+        code = 'APT_INVARIANT_REJECTED'
+    if isinstance(reason, OSError):
+        value = reason.errno
+        number = value if type(value) is int and value in DIAGNOSTIC_ERRNOS else None
+    if isinstance(error, ProcessFailure) and operation == 'native-solver':
+        child = validated_child_receipt(error.child_receipt)
+        if child is not None:
+            code, exception_class = child['code'], child['exception_class']
+            status, number = child['http_status'], child['errno']
+    suite, component = DIAGNOSTIC_CONTEXT.get('suite'), DIAGNOSTIC_CONTEXT.get('component')
+    return {'schema': 1, 'code': code, 'operation': operation,
+            'exception_class': exception_class, 'http_status': status, 'errno': number,
+            'returncode': returncode,
+            'suite': suite if suite in RELEASE_HASHES else None,
+            'component': component if component in ('main', 'universe') else None}
+
+
+def emit_failure(error):
+    receipt = failure_diagnostic(error)
+    encoded = json.dumps(receipt, sort_keys=True, separators=(',', ':'))
+    # Do not overwrite a previous cohort, follow aliases, or let diagnostics mask
+    # the original failure. A missing file never means preparation succeeded.
+    if DIAGNOSTIC_ROOT is not None:
+        try:
+            fd = os.open(DIAGNOSTIC_ROOT / 'package-failure.json',
+                         os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+            with os.fdopen(fd, 'w') as stream:
+                stream.write(encoded + '\n')
+        except OSError:
+            pass
+    print(DIAGNOSTIC_PREFIX + encoded, file=sys.stderr, flush=True)
+    return receipt
 
 
 def require(value, message):
@@ -69,6 +220,15 @@ def fields(text):
             require(key not in out, 'Duplicate control field: ' + key)
             out[key] = value
     return out
+
+
+def package_index_rows(compressed):
+    """Parse multiple signed package stanzas; a single-control parser is not enough."""
+    for stanza in lzma.decompress(compressed).decode('utf-8').split('\n\n'):
+        row = fields(stanza)
+        if 'Package' in row:
+            package_identity(row)
+            yield row
 
 
 def identity(row):
@@ -248,6 +408,7 @@ def closure_versions(selected, seeds):
 
 
 def native_solve(input_path, output_path):
+    phase('native-solver')
     import apt_pkg  # Only the runner's /usr/bin/python3, never imported by fixture tests.
     request = json.loads(Path(input_path).read_text())
     apt_pkg.init_config()
@@ -330,6 +491,8 @@ def download_payload(row, destination):
 
 
 def main():
+    global DIAGNOSTIC_ROOT
+    phase('bootstrap')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', '--candidate-root', required=True, type=Path)
     parser.add_argument('--install', action='store_true')
@@ -337,10 +500,15 @@ def main():
     root = args.root.resolve()
     require(root.is_dir() and not args.root.is_symlink(), 'Candidate root missing or symlinked')
     require(not any(c.isspace() or c in '\";$' for c in str(root)), 'Unsupported candidate path')
+    if not (root / 'package-preparation').exists() and not (root / 'package-preparation.json').exists():
+        DIAGNOSTIC_ROOT = root
+    phase('host-check')
     arch = subprocess.check_output(['/usr/bin/dpkg', '--print-architecture'], text=True).strip()
     check_host(os_values(Path('/etc/os-release').read_text()), platform.machine(), arch)
+    phase('prerequisites')
     require(KEYRING.is_file(), 'Trusted Ubuntu keyring is missing; no bootstrap installation attempted')
-    subprocess.run(['/usr/bin/python3', '-c', 'import apt_pkg; assert apt_pkg.VERSION.startswith("2.4.")'], check=True)
+    subprocess.run(['/usr/bin/python3', '-I', '-B', '-c',
+                    'import apt_pkg; assert apt_pkg.VERSION.startswith("2.4.")'], check=True)
     for tool in ('/usr/bin/gpgv', '/usr/bin/apt-get', '/usr/bin/dpkg-deb'):
         require(Path(tool).is_file(), 'Missing native tool: ' + tool)
     out = root / 'package-preparation'
@@ -355,8 +523,11 @@ def main():
             command = ['/usr/bin/sudo', '-n', '/usr/bin/env'] + [k + '=' + v for k, v in env.items()] + command
         result = subprocess.run(command, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         (logs / (label + '.log')).write_text(result.stdout)
-        require(result.returncode == 0, label + ' failed; see ' + str(logs / (label + '.log')))
+        if result.returncode != 0:
+            child = parse_child_receipt(result.stdout) if label == 'native-solver' else None
+            raise ProcessFailure(result.returncode, child)
         return result.stdout
+    phase('base-inventory')
     base_status = Path('/var/lib/dpkg/status').read_bytes()
     (out / 'base-status').write_bytes(base_status)
     base = inventory(base_status.decode())
@@ -370,11 +541,14 @@ def main():
     require(metadata.resolve() == metadata, 'Symlinked metadata directory refused')
     records, signed_files = {}, []
     for suite, expected in RELEASE_HASHES.items():
+        phase('release-download', suite)
         release = metadata / (suite + '.InRelease')
         download_verified(ORIGIN + 'dists/' + suite + '/InRelease', release, RELEASE_SIZES[suite], expected)
         require(sha(release) == expected, 'Pinned InRelease changed: ' + suite)
+        phase('signature-verify', suite)
         result = run(['/usr/bin/gpgv', '--status-fd=1', '--keyring', str(KEYRING), str(release)], suite + '-signature')
         require('[GNUPG:] VALIDSIG ' + SIGNER + ' ' in result, 'Unexpected Ubuntu release signer')
+        phase('release-parse', suite)
         payload = cleartext(release.read_text())
         header = fields(payload.split('MD5Sum:', 1)[0])
         require(header.get('Origin') == 'Ubuntu' and header.get('Suite') == suite and header.get('Codename') == 'jammy', 'Wrong signed distribution')
@@ -383,6 +557,7 @@ def main():
         shutil.copyfile(release, directory / 'InRelease')
         signed_files.append(file_row(root, release))
         for component in ('main', 'universe'):
+            phase('index-download', suite, component)
             index = metadata / (suite + '.' + component + '.amd64.Packages.xz')
             relative = component + '/binary-amd64/Packages.xz'
             # The signed Release is already authenticated before even fetching this index.
@@ -392,17 +567,18 @@ def main():
             target = directory / relative; target.parent.mkdir(parents=True)
             shutil.copyfile(index, target)
             signed_files.append(file_row(root, index))
-            for stanza in lzma.decompress(index.read_bytes()).decode().split('\n\n'):
-                row = fields(stanza)
-                if 'Package' in row:
-                    row.update(_suite=suite, _component=component)
-                    records.setdefault(package_identity(row), []).append(row)
+            phase('index-parse', suite, component)
+            for row in package_index_rows(index.read_bytes()):
+                row.update(_suite=suite, _component=component)
+                records.setdefault(package_identity(row), []).append(row)
+    phase('provider-selection')
     roots, providers = choose_roots(base, records)
     if providers:
         owner = run(['/usr/bin/dpkg-query', '-S', '/usr/bin/pkg-config'], 'pkg-config-owner')
         require(all(line.split(': ', 1)[0] in ('pkgconf', 'pkgconf:amd64') for line in owner.splitlines()),
                 'pkg-config executable is not owned by selected signed pkgconf provider')
         require(Path('/usr/bin/pkg-config').is_file(), 'Provider executable missing')
+    phase('apt-config')
     for path in ('lists/partial', 'archives/partial', 'empty-conf', 'empty-sources', 'empty-prefs'):
         (out / path).mkdir(parents=True)
     sources = out / 'sources.list'
@@ -423,18 +599,22 @@ def main():
     }
     conf.write_text(''.join(f'{key} "{value}";\n' for key, value in options.items()))
     env['APT_CONFIG'] = str(conf)
+    phase('apt-update')
     run(['/usr/bin/apt-get', 'update'], 'apt-update')
     # Older relevant preinstalled versions may no longer be in the fixed snapshot.
     # Upgrade them only to authenticated versions, re-solving until provenance closes.
     while True:
+        phase('native-solver')
         write_json(out / 'solver-input.json', {'config': str(conf), 'roots': roots})
-        run(['/usr/bin/python3', str(Path(__file__).resolve()), '--native-solve',
+        run(['/usr/bin/python3', '-I', '-B', str(Path(__file__).resolve()), '--native-solve',
              str(out / 'solver-input.json'), str(out / 'solver-output.json')], 'native-solver')
+        phase('solver-result')
         solution = json.loads((out / 'solver-output.json').read_text())
         validate_transaction(solution['transaction'], base)
         missing = [r for r in solution['closure'] if identity(r) not in records]
         if not missing:
             break
+        phase('closure-provenance')
         progress = False
         for item in missing:
             choices = [k for k in records if k[0] == item['name'] and k[2] == item['architecture']]
@@ -455,15 +635,18 @@ def main():
     resolved = []
     for item in solution['closure']:
         require(item['architecture'] in ('amd64', 'all'), 'Foreign architecture in relevant closure')
+        phase('archive-download')
         record = records[identity(item)][0]
         path = payloads / (record['SHA256'] + '.deb')
         if not path.exists():
             download_payload(record, path)
+        phase('archive-control')
         control = run(['/usr/bin/dpkg-deb', '-f', str(path), 'Package', 'Version', 'Architecture'], 'control-' + item['name'])
         require(package_identity(fields(control)) == identity(item), 'Archive control identity mismatch')
         resolved.append({**item, 'suite': record['_suite'], 'component': record['_component'],
                          'archive': file_row(root, path), 'archive_filename': record['Filename'],
                          'archive_size': int(record['Size']), 'archive_sha256': record['SHA256']})
+    phase('transaction-plan')
     actual = {r['name']: r for r in resolved}
     pins = [row['name'] + '=' + row['version'] for row in solution['transaction']]
     require(Path('/var/lib/dpkg/status').read_bytes() == base_status, 'Package database changed during preparation')
@@ -487,16 +670,19 @@ def main():
             shutil.copyfile(root / row['archive']['ref']['path'], destination)
             require(sha(destination) == row['archive_sha256'], 'Cached payload copy mismatch')
         require(not remaining, 'APT did not enumerate every exact transaction archive')
+        phase('transaction-simulate')
         simulation = run(install_command[:1] + ['--simulate'] + install_command[1:], 'verified-payload-simulation')
         require(parse_simulation(simulation) == {r['name']: r['version'] for r in solution['transaction']},
                 'Verified-payload APT transaction differs from native solution')
     installed = False
     if args.install:
+        phase('installation')
         require(Path('/var/lib/dpkg/status').read_bytes() == base_status,
                 'Package database changed before installation')
         if pins:
             # No archive can be fetched during this step. No removal/downgrade option is granted.
             run(install_command[:1] + ['--assume-yes'] + install_command[1:], 'install', privileged=True)
+        phase('post-install-check')
         post_status = Path('/var/lib/dpkg/status').read_bytes()
         (out / 'post-status').write_bytes(post_status)
         after = inventory(post_status.decode())
@@ -506,11 +692,13 @@ def main():
                     'Post-install closure mismatch: ' + row['name'])
         write_json(out / 'post-inventory.json', after)
         run(['/usr/bin/apt-get', 'check'], 'post-apt-check', privileged=True)
+        phase('provider-verification')
         provider = actual[providers.get('pkg-config', 'pkg-config')]
         provider_archive = root / provider['archive']['ref']['path']
         data_tar = subprocess.check_output(['/usr/bin/dpkg-deb', '--fsys-tarfile', str(provider_archive)])
         verify_provider_member(data_tar, Path('/'))
         installed = True
+    phase('preparation-receipt')
     evidence = [file_row(root, path) for path in sorted(out.rglob('*'))
                 if path.is_file() and not path.is_symlink() and (path.parent == logs or path.parent == out)]
     result = {'schema': 1, 'distribution': 'ubuntu', 'release': '22.04',
@@ -536,6 +724,8 @@ if __name__ == '__main__':
             native_solve(sys.argv[2], sys.argv[3])
         else:
             main()
-    except (RuntimeError, subprocess.CalledProcessError, OSError, ValueError) as error:
-        print('BLOCKED: ' + str(error), file=sys.stderr)
+    except Exception as error:
+        # This failure-only diagnostic path never changes acceptance or retries.
+        # Raw subprocess logs remain private; the final marker is a projection.
+        emit_failure(error)
         sys.exit(2)

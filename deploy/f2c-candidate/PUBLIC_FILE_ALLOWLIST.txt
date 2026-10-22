@@ -28,6 +28,7 @@ recipe/tests/test_failure_projection.py
 recipe/tests/test_guards.py
 recipe/tests/test_live_preparation.py
 recipe/tests/test_package_preparation.py
+recipe/tests/test_structured_failure_projection.py
 recipe/tests/test_validation.py
 recipe/tests/test_validation_data.py
 recipe/validate_jammy_candidate.py
