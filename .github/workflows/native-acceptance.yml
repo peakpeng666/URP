@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 125
     env:
       TARGET_SHA: 94420cf3b703c564134048e1b074406df901bba3
-      HARNESS_SHA: 9c1e72766240015938ec45ab9bde7aba22530061
+      HARNESS_SHA: 99bc98901b4ee835306fcff5495220dee6bedc03
     steps:
       - name: Run isolated native maze and emit allowlisted result
         shell: bash
