@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: '374e555f6340389244112d641d804e772d7a5031'
+          ref: 'ba785dd4288c099374325a6446cdc9cb95dc8673'
           path: control-checkout
           sparse-checkout: ci/f2c-docker-candidate
           persist-credentials: false
@@ -43,8 +43,8 @@ jobs:
           enable-cache: false
       - name: Trusted preparation, then isolated compiler build only
         env:
-          REVIEWED_REVISION: '374e555f6340389244112d641d804e772d7a5031'
-          REVIEWED_SOURCE_INDEX: '1f186df10d362bbfb62a9ac51915bd8abb5c7ce4d141c79a2f63d37e8240b7cb'
+          REVIEWED_REVISION: 'ba785dd4288c099374325a6446cdc9cb95dc8673'
+          REVIEWED_SOURCE_INDEX: '36fc791708d359587abde10d4bd3a377aec8ebc5a1a29512d717213005656b5b'
         run: |
           set -euo pipefail
           umask 077
