@@ -351,3 +351,56 @@
   fill: #e5352b;
   pointer-events: none;
 }
+.issueList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow: auto;
+}
+.issueList button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-top: 3px;
+  text-align: left;
+  border-left-width: 4px;
+}
+.issueList button[data-severity="error"] {
+  border-left-color: #e5352b;
+  border-left-style: solid;
+}
+.issueList button[data-severity="warning"] {
+  border-left-color: #d9922b;
+  border-left-style: dashed;
+}
+.issueList button[aria-current="true"] {
+  background: #e8f0fd;
+}
+.issueMark {
+  pointer-events: none;
+}
+.issueMark path {
+  stroke: #1d1d1f;
+  stroke-width: 1;
+}
+.issueMark[data-severity="error"] path {
+  fill: #e5352b;
+}
+.issueMark[data-severity="warning"] path {
+  fill: #f0b93a;
+}
+.issueMark text {
+  font-size: 9px;
+  font-weight: 700;
+  fill: #fff;
+  text-anchor: middle;
+}
+.issueFocus {
+  fill: none;
+  stroke: #e5352b;
+  stroke-width: 2;
+  stroke-dasharray: 6 3;
+  pointer-events: none;
+}

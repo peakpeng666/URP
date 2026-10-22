@@ -21,6 +21,8 @@ import {
 } from './geometry';
 import { fromSelection, itemPoints, itemsInBox, liveRefs, refKey, sameRef, toSelection, translateItems, type ItemRef } from './selection';
 import { SelectionPanel } from './SelectionPanel';
+import { IssuesPanel } from './IssuesPanel';
+import { validateGeometry, type GeometryIssue } from './validation';
 import { ALL_LAYERS, AxisCompass, KindPattern, LayerLegendPanel, OriginMark, legendEntries, routeDash, type LayerKey, type Layers } from './legend';
 import s from './editor.module.css';
 
@@ -126,6 +128,22 @@ export function FieldEditor(props: FieldEditorProps) {
   }, [size.width, size.height, inst]);
 
   const issues = useMemo(() => taskIssues(shown), [shown]);
+  const geoIssues = useMemo(() => validateGeometry(shown), [shown]);
+  const [focusedIssue, setFocusedIssue] = useState<GeometryIssue | null>(null);
+  const focusLive = focusedIssue && geoIssues.some((i) => i.key === focusedIssue.key) ? focusedIssue : null;
+  const locateIssue = (issue: GeometryIssue) => {
+    setFocusedIssue(issue);
+    const t = issue.target;
+    if (t && t.type !== 'boundary') selectRefs([t]);
+    else if (t) { setPicked([]); onSelect({ type: 'boundary' }); }
+    if (issue.bounds && size.width && size.height) {
+      const [x0, y0, x1, y1] = issue.bounds;
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      const half = Math.max(4, (x1 - x0) * 0.6, (y1 - y0) * 0.6);
+      touched.current = true;
+      setView(fitView({ minX: cx - half, minY: cy - half, maxX: cx + half, maxY: cy + half }, size.width, size.height, 28));
+    }
+  };
   const visibleRoutes = useMemo(() => routes.filter((r) => !hidden.includes(r.vehicle_name)), [routes, hidden]);
   const taskOwner = useMemo(() => vehicleOfTask(visibleRoutes), [visibleRoutes]);
   // Where each task is served when that is not the task point itself (from a lane or the headland).
@@ -348,7 +366,7 @@ export function FieldEditor(props: FieldEditorProps) {
   const scr = (p: XY) => toScreen(view, p[0], p[1]);
   const routeIndex = useMemo(() => new Map(routes.map((r, i) => [r.vehicle_name, i] as const)), [routes]);
   const legend = legendEntries(shown, visibleRoutes, layers, {
-    lanes: !!lanes?.length, badTasks: issues.size, violations: violations?.length ?? 0, idp, routeIndex: (r) => routeIndex.get(r.vehicle_name) ?? 0,
+    lanes: !!lanes?.length, badTasks: issues.size, violations: violations?.length ?? 0, geoIssues: geoIssues.filter((i) => i.at).length, idp, routeIndex: (r) => routeIndex.get(r.vehicle_name) ?? 0,
   });
   const originScr = scr([0, 0]);
   const originOnScreen = originScr[0] >= 0 && originScr[0] <= size.width && originScr[1] >= 0 && originScr[1] <= size.height;
@@ -510,6 +528,22 @@ export function FieldEditor(props: FieldEditorProps) {
             const [x, y] = scr(p);
             return <rect key={i} data-hit="vertex" data-id={`${selTarget}:${selId}:${i}`} x={x - 4.5} y={y - 4.5} width={9} height={9} className={s.vertex} />;
           })}
+        {layers.issues && geoIssues.map((i) => {
+          if (!i.at) return null;
+          const [x, y] = scr(i.at);
+          return (
+            <g key={i.key} className={s.issueMark} data-severity={i.severity} transform={`translate(${x} ${y - 12})`}>
+              <path d="M 0 -7 L 7 5 L -7 5 Z" />
+              <text y={4}>{i.severity === 'error' ? '×' : '!'}</text>
+            </g>
+          );
+        })}
+        {focusLive?.bounds && (() => {
+          const [x0, y0, x1, y1] = focusLive.bounds;
+          const [ax, ay] = scr([x0, y1]);
+          const [bx, by] = scr([x1, y0]);
+          return <rect className={s.issueFocus} x={ax - 6} y={ay - 6} width={bx - ax + 12} height={by - ay + 12} />;
+        })()}
         {originOnScreen && <OriginMark at={originScr} />}
         <AxisCompass x={size.width - 110} y={size.height - 34} />
         <ScaleBar step={gridStep} k={view.k} height={size.height} />
@@ -517,6 +551,7 @@ export function FieldEditor(props: FieldEditorProps) {
       </svg>
       <div className={s.panelStack}>
         <SelectionPanel inst={inst} refs={multi} editable={editable} onEdit={onEdit} onSelectRefs={selectRefs} />
+        <IssuesPanel issues={geoIssues} focused={focusLive?.key ?? null} onLocate={locateIssue} />
         <LayerLegendPanel layers={layers} onToggle={toggleLayer} entries={legend} />
       </div>
     </div>

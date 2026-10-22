@@ -53,7 +53,7 @@ function Swatch({ children }: { children: ReactNode }) {
 export interface LegendEntry { key: string; label: string; swatch: ReactNode }
 
 /** Legend rows for exactly what the map is drawing now (data present and layer on). */
-export function legendEntries(inst: FleetInstance, routes: FleetRoute[], layers: Layers, opts: { lanes: boolean; badTasks: number; violations: number; idp: string; routeIndex: (r: FleetRoute) => number }): LegendEntry[] {
+export function legendEntries(inst: FleetInstance, routes: FleetRoute[], layers: Layers, opts: { lanes: boolean; badTasks: number; violations: number; geoIssues?: number; idp: string; routeIndex: (r: FleetRoute) => number }): LegendEntry[] {
   const out: LegendEntry[] = [];
   out.push({ key: 'boundary', label: '场地边界', swatch: <Swatch><rect x={1} y={1} width={SW - 2} height={12} fill="#f6f3e9" stroke="#8b7d5c" strokeWidth={2} /></Swatch> });
   if (layers.plots && inst.plots.length) out.push({ key: 'plot', label: `田块（斜线为作物行向）×${inst.plots.length}`, swatch: <Swatch><rect x={1} y={1} width={SW - 2} height={12} fill="rgba(126,190,102,0.22)" stroke="#6aa05a" /><path d="M4 12 L10 2 M10 12 L16 2 M16 12 L22 2" stroke="#548e40" /></Swatch> });
@@ -78,6 +78,7 @@ export function legendEntries(inst: FleetInstance, routes: FleetRoute[], layers:
     if (inst.unload_points?.length) out.push({ key: 'unload', label: `补给/卸载点（菱形）×${inst.unload_points.length}`, swatch: <Swatch><path d="M13 1 L19 7 L13 13 L7 7 Z" fill="#555" /></Swatch> });
   }
   if (layers.issues && opts.violations) out.push({ key: 'viol', label: `求解器报告的违规 ×${opts.violations}`, swatch: <Swatch><circle cx={13} cy={7} r={5.5} fill="rgba(229,53,43,0.18)" stroke="#e5352b" strokeWidth={2} /></Swatch> });
+  if (layers.issues && opts.geoIssues) out.push({ key: 'geo', label: `几何问题（三角 ×=错误 !=警告）×${opts.geoIssues}`, swatch: <Swatch><path d="M13 1 L20 13 L6 13 Z" fill="#f0b93a" stroke="#1d1d1f" /><text x={13} y={12} fontSize={8} textAnchor="middle" fill="#fff">!</text></Swatch> });
   return out;
 }
 
