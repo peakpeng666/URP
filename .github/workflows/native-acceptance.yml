@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 125
     env:
       TARGET_SHA: 18557cfc61f291e8ac5fa4a80d9df212e1df0030
-      HARNESS_SHA: 0a302f5668bba18868efacb32d66a26cb1c8ef43
+      HARNESS_SHA: d285711480e89d3f2459b71247587990eb57350d
     steps:
       - name: Run isolated native maze and emit allowlisted result
         shell: bash
@@ -84,7 +84,7 @@ jobs:
     timeout-minutes: 125
     env:
       TARGET_SHA: 18557cfc61f291e8ac5fa4a80d9df212e1df0030
-      HARNESS_SHA: 0a302f5668bba18868efacb32d66a26cb1c8ef43
+      HARNESS_SHA: d285711480e89d3f2459b71247587990eb57350d
     steps:
       - name: Run isolated historical warehouse replay and emit allowlisted result
         shell: bash
