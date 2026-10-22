@@ -61,30 +61,118 @@ def installation_step(path):
 
 
 INSTALL_PHASES = frozenset({'unknown', 'source_identity', 'registry_check', 'setup',
-    'apt', 'uv', 'node', 'npm', 'native', 'runtime_check', 'apt_diagnostic', 'apt_repair', 'complete'})
+    'apt', 'apt_update', 'apt_install', 'uv', 'node', 'npm', 'native', 'runtime_check', 'apt_diagnostic', 'apt_repair', 'complete'})
+
+def installation_trace_state(path):
+    """Fixed phase plus a private byte boundary identifying its traced command."""
+    try:
+        path=pathlib.Path(path)
+        if path.is_symlink() or not path.is_file():return 'unknown',None
+        with path.open('rb') as f:
+            f.seek(0,2);start=max(0,f.tell()-LIMIT);f.seek(start);tail=f.read(LIMIT)
+    except OSError:return 'unknown',None
+    phase='unknown';boundary=None;offset=start
+    for raw in tail.splitlines(keepends=True):
+        line=raw.decode('utf-8',errors='replace').rstrip('\r\n')
+        line_offset=offset;offset+=len(raw)
+        # The bounded tail may start in the middle of an arbitrary trace line.
+        if start and line_offset==start:continue
+        candidate=None
+        if line.startswith('URP_INSTALL_PHASE '):
+            marker=line.removeprefix('URP_INSTALL_PHASE ')
+            if marker in INSTALL_PHASES:candidate=marker
+        elif re.match(r'^\++URP_SETUP ',line):
+            if re.search(r'\bapt-get update(?:\s|$)',line):candidate='apt_update'
+            elif re.search(r'\bapt-get install(?:\s|$)',line):candidate='apt_install'
+            elif re.search(r'\bapt-get\s',line):candidate='apt'
+            elif re.search(r'\buv\s|astral\.sh/uv/',line):candidate='uv'
+            elif 'https://nodejs.org/dist/' in line:candidate='node'
+            elif re.search(r'\bnpm\s',line):candidate='npm'
+            elif 'src/lab/ros/native/install-ros-extras.sh' in line or 'deploy/build-cohort.sh' in line:candidate='native'
+            elif re.search(r'\bpython3 deploy/(?:record-sim-profiles|check-runtime)\.py(?:\s|$)',line):candidate='runtime_check'
+        if candidate is not None:phase=candidate;boundary=line_offset
+    return phase,boundary
+
 
 def installation_progress(path):
     """Reduce private control traces to enums; never return commands or paths."""
-    try:
-        path=pathlib.Path(path)
-        if path.is_symlink() or not path.is_file():return 'unknown'
-        with path.open('rb') as f:
-            f.seek(0,2);f.seek(max(0,f.tell()-LIMIT));tail=f.read(LIMIT).decode('utf-8',errors='replace')
-    except OSError:return 'unknown'
-    phase='unknown'
-    for line in tail.splitlines():
-        if line.startswith('URP_INSTALL_PHASE '):
-            candidate=line.removeprefix('URP_INSTALL_PHASE ')
-            if candidate in INSTALL_PHASES:phase=candidate
-            continue
-        if not re.match(r'^\++URP_SETUP ',line):continue
-        if re.search(r'\bapt-get\s',line):phase='apt'
-        elif re.search(r'\buv\s|astral\.sh/uv/',line):phase='uv'
-        elif 'https://nodejs.org/dist/' in line:phase='node'
-        elif re.search(r'\bnpm\s',line):phase='npm'
-        elif 'src/lab/ros/native/install-ros-extras.sh' in line or 'deploy/build-cohort.sh' in line:phase='native'
-        elif re.search(r'\bpython3 deploy/(?:record-sim-profiles|check-runtime)\.py(?:\s|$)',line):phase='runtime_check'
-    return phase
+    return installation_trace_state(path)[0]
+
+
+APT_EVENTS = (
+    ('download', r'^Get:[0-9]+\s'),
+    ('index_hit', r'^Hit:[0-9]+\s'),
+    ('index_ignored', r'^Ign:[0-9]+\s'),
+    ('index_error', r'^Err:[0-9]+\s'),
+    ('unpack', r'^Unpacking '),
+    ('configure', r'^Setting up '),
+    ('triggers', r'^Processing triggers for '),
+    ('reading_lists', r'^Reading package lists'),
+    ('reading_state', r'^Reading state information'),
+    ('resolving_dependencies', r'^Building dependency tree'),
+    ('fetched', r'^Fetched [0-9]'),
+    ('lock_wait', r'^Waiting for cache lock:'),
+)
+
+class AptOutputObservation:
+    """Lower-bound event counts AFTER phase detection, not package totals.
+
+    Each sample reads at most LIMIT bytes. No commands, package names, repository
+    names or original output are returned. Unknown/localized output stays unknown.
+    """
+    def __init__(self,path,now):
+        self.path=pathlib.Path(path)
+        self.offset=self.size()
+        self.last_size=self.offset
+        self.last_event='unknown'
+        self.counts={name:0 for name,_ in APT_EVENTS}
+        self.truncated=False
+        self.last_activity=None
+
+    def size(self):
+        try:
+            if self.path.is_symlink() or not self.path.is_file():return 0
+            return self.path.stat().st_size
+        except OSError:return 0
+
+    def sample(self,now):
+        try:
+            if self.path.is_symlink() or not self.path.is_file():return
+            with self.path.open('rb') as stream:
+                stream.seek(0,2);size=stream.tell()
+                if size!=self.last_size:
+                    self.last_activity=now;self.last_size=size
+                if size<self.offset:
+                    # Log replacement/truncation breaks observation continuity.
+                    self.truncated=True;self.offset=size;self.last_event='unknown'
+                    return
+                if size==self.offset:return
+                start=max(self.offset,size-LIMIT)
+                stream.seek(start);raw=stream.read(min(LIMIT,size-start))
+                if start>self.offset:
+                    self.truncated=True
+                    # Never interpret the beginning of a truncated line.
+                    split=raw.find(b'\n')
+                    raw=raw[split+1:] if split>=0 else b''
+                end=raw.rfind(b'\n')
+                if end<0:
+                    if size-self.offset>=LIMIT:self.offset=size;self.truncated=True
+                    return
+                # Revisit only the unfinished trailing line on the next sample.
+                self.offset=size-(len(raw)-end-1)
+                for line in raw[:end+1].decode('utf-8',errors='replace').splitlines():
+                    for name,pattern in APT_EVENTS:
+                        if re.match(pattern,line):
+                            self.last_event=name
+                            self.counts[name]=min(100000,self.counts[name]+1)
+                            break
+        except OSError:return
+
+    def public(self,now):
+        return {'apt_output_last_observed_event':self.last_event,
+                'apt_output_observed_event_counts':dict(self.counts),
+                'apt_output_observation_truncated':self.truncated,
+                'apt_output_seconds_since_observed_activity':None if self.last_activity is None else min(3600,max(0,int(now-self.last_activity)))}
 
 
 def snapshot():
@@ -161,8 +249,10 @@ def run(args):
         print(json.dumps({'stage':status['stage'],'state':'running'}),flush=True)
         next_progress=time.monotonic()+120
         last_install_phase='unknown'
+        last_install_boundary=None
         phase_started=time.monotonic()
         next_phase_sample=0
+        apt_observation=None
         with (private / filename).open('wb') as stream:
             current = subprocess.Popen(command, cwd=root, env=env, stdout=stream, stderr=subprocess.STDOUT, start_new_session=True)
             while current.poll() is None:
@@ -170,16 +260,20 @@ def run(args):
                 now=time.monotonic()
                 if status['stage']=='installation' and now >= next_phase_sample:
                     trace=private/'installation-trace.log'
-                    found=installation_progress(trace if trace.exists() else private/filename)
-                    if found!='unknown' and found!=last_install_phase:
+                    found,boundary=installation_trace_state(trace if trace.exists() else private/filename)
+                    if found!='unknown' and (found!=last_install_phase or boundary!=last_install_boundary):
                         last_install_phase=found
+                        last_install_boundary=boundary
                         phase_started=now
+                        apt_observation=AptOutputObservation(private/filename,now) if found in ('apt_update','apt_install') else None
+                    if apt_observation is not None:apt_observation.sample(now)
                     next_phase_sample=now+1
                 if now >= next_progress:
                     progress={'stage':status['stage'],'state':'running'}
                     if status['stage']=='installation':
                         progress['installation_substage']=last_install_phase
                         progress['installation_substage_observed_seconds']=min(3600,max(0,int(now-phase_started)))
+                        if apt_observation is not None:progress.update(apt_observation.public(now))
                     print(json.dumps(progress),flush=True)
                     next_progress=time.monotonic()+120
                 if stop or time.monotonic() > deadline:

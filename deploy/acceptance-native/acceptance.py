@@ -18,6 +18,7 @@ import urllib.request
 
 from public_summary import SOURCE, project
 from startup_diagnostics import session_id, collect
+from execution_diagnostics import collect as collect_execution
 from undock_observer.lifecycle import ObserverProcess
 from undock_observer.projection import project as project_observer
 
@@ -166,6 +167,7 @@ def execute(args):
         if sid is None: raise RuntimeError('session_missing')
         session = read(runtime / 'sim' / sid / 'session-report.json', {})
         derive(report, read(output / 'sim-follow_path.json', {}), read(output / 'solutions.json', []), session, raw)
+        raw['execution_diagnostics'] = collect_execution(read(output / 'sim-follow_path.json', {}), read(output / 'solutions.json', []), source)
         # Hash actual verified overlay files, but never expose their paths.
         compat = session.get('compatibility') or {}
         binary = {k: hashlib.sha256(Path(compat[k]).read_bytes()).hexdigest() for k in ('tf', 'gui') if compat.get(k)}

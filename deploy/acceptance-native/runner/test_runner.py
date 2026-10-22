@@ -116,7 +116,8 @@ class InstallationProgressTests(unittest.TestCase):
                 'source_identity':'URP_INSTALL_PHASE source_identity',
                 'registry_check':'URP_INSTALL_PHASE registry_check',
                 'setup':'URP_INSTALL_PHASE setup',
-                'apt':'+URP_SETUP sudo apt-get install -y PRIVATE_PACKAGE',
+                'apt_update':'+URP_SETUP sudo apt-get update',
+                'apt_install':'+URP_SETUP sudo apt-get install -y PRIVATE_PACKAGE',
                 'uv':'++URP_SETUP uv sync --locked',
                 'node':'+URP_SETUP curl https://nodejs.org/dist/PRIVATE_ARCHIVE',
                 'npm':'+URP_SETUP npm ci',
@@ -171,3 +172,78 @@ class InstallationProgressTests(unittest.TestCase):
                 self.assertIsInstance(row['installation_substage_observed_seconds'],int)
             status=json.loads((root/'private/runner-status.json').read_text())
             self.assertEqual(status['installation_step'],'registry_check')
+
+class AptOutputObservationTests(unittest.TestCase):
+    def test_operation_trace_disambiguates_update_from_install(self):
+        from runner.run import installation_progress
+        with tempfile.TemporaryDirectory() as tmp:
+            p=pathlib.Path(tmp)/'trace'
+            p.write_text('+URP_SETUP sudo apt-get update\n')
+            self.assertEqual(installation_progress(p),'apt_update')
+            with p.open('a') as stream:stream.write('+URP_SETUP sudo DEBIAN_FRONTEND=noninteractive apt-get install -y PRIVATE\n')
+            self.assertEqual(installation_progress(p),'apt_install')
+
+    def test_counts_only_new_output_and_never_returns_private_text(self):
+        from runner.run import AptOutputObservation
+        with tempfile.TemporaryDirectory() as tmp:
+            p=pathlib.Path(tmp)/'log';p.write_text('Get:1 PRIVATE_OLD_SOURCE\nUnpacking PRIVATE_OLD_PACKAGE\n')
+            observation=AptOutputObservation(p,10)
+            self.assertEqual(observation.public(12)['apt_output_last_observed_event'],'unknown')
+            self.assertIsNone(observation.public(12)['apt_output_seconds_since_observed_activity'])
+            with p.open('a') as stream:stream.write('Get:2 PRIVATE_SOURCE\nUnpacking PRIVATE_PACKAGE\nSetting up PRIVATE_PACKAGE\nProcessing triggers for PRIVATE_PACKAGE\n')
+            observation.sample(15);output=observation.public(20)
+            self.assertEqual(output['apt_output_last_observed_event'],'triggers')
+            self.assertEqual(output['apt_output_observed_event_counts']['download'],1)
+            self.assertEqual(output['apt_output_observed_event_counts']['unpack'],1)
+            self.assertEqual(output['apt_output_observed_event_counts']['configure'],1)
+            self.assertEqual(output['apt_output_seconds_since_observed_activity'],5)
+            self.assertNotIn('PRIVATE',json.dumps(output))
+            observation.sample(25)
+            self.assertEqual(observation.public(25)['apt_output_observed_event_counts'],output['apt_output_observed_event_counts'])
+            # A new operation cannot reuse preceding operation's output evidence.
+            following=AptOutputObservation(p,30)
+            self.assertEqual(following.public(31)['apt_output_last_observed_event'],'unknown')
+
+    def test_incremental_partial_lines_and_silence(self):
+        from runner.run import AptOutputObservation
+        with tempfile.TemporaryDirectory() as tmp:
+            p=pathlib.Path(tmp)/'log';p.touch();observation=AptOutputObservation(p,0)
+            with p.open('a') as stream:stream.write('Get:1 PRIVATE')
+            observation.sample(1);observation.sample(5)
+            self.assertEqual(observation.public(5)['apt_output_seconds_since_observed_activity'],4)
+            self.assertEqual(observation.public(5)['apt_output_observed_event_counts']['download'],0)
+            with p.open('a') as stream:stream.write('\nReading package lists...\n')
+            observation.sample(6)
+            self.assertEqual(observation.public(7)['apt_output_observed_event_counts']['download'],1)
+            self.assertEqual(observation.public(7)['apt_output_last_observed_event'],'reading_lists')
+
+    def test_bounded_truncation_unknown_and_symlinks(self):
+        from runner.run import AptOutputObservation,LIMIT
+        with tempfile.TemporaryDirectory() as tmp:
+            p=pathlib.Path(tmp)/'log';p.touch();observation=AptOutputObservation(p,0)
+            p.write_bytes(b'Get:1 PRIVATE\n'+b'x'*(LIMIT+10)+b'\nIgn:2 PRIVATE\nErr:3 PRIVATE\n')
+            observation.sample(2);output=observation.public(3)
+            self.assertTrue(output['apt_output_observation_truncated'])
+            self.assertEqual(output['apt_output_observed_event_counts']['download'],0)
+            self.assertEqual(output['apt_output_last_observed_event'],'index_error')
+            self.assertEqual(output['apt_output_observed_event_counts']['index_ignored'],1)
+            p.write_text('replacement\n');observation.sample(4)
+            self.assertEqual(observation.public(4)['apt_output_last_observed_event'],'unknown')
+            link=p.with_name('link');link.symlink_to(p)
+            linked=AptOutputObservation(link,0);linked.sample(1)
+            self.assertEqual(linked.public(1)['apt_output_last_observed_event'],'unknown')
+
+
+class InstallationBoundaryTests(unittest.TestCase):
+    def test_same_phase_retry_has_distinct_private_boundary(self):
+        from runner.run import installation_trace_state
+        with tempfile.TemporaryDirectory() as tmp:
+            p=pathlib.Path(tmp)/'trace'
+            line='+URP_SETUP sudo apt-get update\n'
+            p.write_text(line)
+            first=installation_trace_state(p)
+            with p.open('a') as stream:stream.write(line)
+            second=installation_trace_state(p)
+            self.assertEqual(first[0],second[0])
+            self.assertNotEqual(first[1],second[1])
+            self.assertEqual(installation_trace_state(p),second)
