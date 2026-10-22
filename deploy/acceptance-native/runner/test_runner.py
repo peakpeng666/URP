@@ -94,3 +94,15 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(installation_step(p),'other')
 
 if __name__=='__main__':unittest.main()
+
+class RuntimeProfileTests(unittest.TestCase):
+    def test_matches_original_native_entrypoint(self):
+        from runner.run import select_runtime_profile
+        with tempfile.TemporaryDirectory() as tmp:
+            root=pathlib.Path(tmp);env={}
+            select_runtime_profile(root,env)
+            self.assertNotIn('URP_SIM_PROFILE',env)
+            profile=root/'src/lab/runtime/native/bridge/profile.json'
+            profile.parent.mkdir(parents=True);profile.write_text('{}')
+            select_runtime_profile(root,env)
+            self.assertEqual(env['URP_SIM_PROFILE'],'image')

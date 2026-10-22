@@ -55,6 +55,17 @@ def verify_source(source):
     from runner.verify_worktree import verify
     return verify(source, SOURCE)
 
+def failure_diagnostic(report, solutions):
+    names={'gateway health':'health','service inventory':'services','load scenario':'scenario','recommendation':'recommendation','submit solve job':'solve_submit','all solver runs terminal':'solve_terminal','recommended run valid and checked':'solve_validation','map check collision-free':'map_validation','start simulation session':'session_start','session ready':'session_ready','submit sim run (follow_path)':'sim_submit','sim run follow_path succeeded':'sim_execute','sim run follow_path reached every task':'sim_tasks','shutdown / process cleanup':'shutdown'}
+    failed=next((r.get('name') for r in report.get('steps',[]) if isinstance(r,dict) and r.get('ok') is False),report.get('failed_step'))
+    step=names.get(failed,'export' if isinstance(failed,str) and (failed.startswith('export ') or failed in ('compare export','sim export follow_path')) else 'none' if report.get('status')=='PASS' else 'unknown')
+    failed_runs=[r for r in solutions or [] if isinstance(r,dict) and r.get('state') in ('error','timeout')]
+    errors=[report.get('error')]+[r.get('error') for r in failed_runs]
+    text=json.dumps(errors,ensure_ascii=True).lower()
+    identity_failed=any((r.get('process') or {}).get('source_identity_verified') is False or (r.get('reproducibility') or {}).get('worker_environment_verified') is False for r in failed_runs)
+    kind='module_missing' if 'modulenotfounderror' in text else 'source_identity' if identity_failed else 'timeout' if 'timeouterror' in text else 'http' if 'httperror' in text else 'value' if 'valueerror' in text else 'runtime' if 'runtimeerror' in text else 'none' if step=='none' else 'unknown'
+    return {'simulation_failure_step':step,'simulation_error_kind':kind}
+
 def derive(report, sim, solutions, session, raw):
     sim = sim or {}; report = report or {}; session = session or {}
     metrics = sim.get('metrics') or {}
@@ -128,6 +139,7 @@ def execute(args):
             raw['process_exit_codes']['full_loop'] = loop.wait(timeout=2220)
         verify_source(source)
         report = read(output / 'report.json', {})
+        raw.update(failure_diagnostic(report,read(output / 'solutions.json', [])))
         sid = report.get('session_id')
         if not isinstance(sid, str) or not sid.startswith('sim_') or '/' in sid or '..' in sid: raise RuntimeError('session_missing')
         session = read(runtime / 'sim' / sid / 'session-report.json', {})

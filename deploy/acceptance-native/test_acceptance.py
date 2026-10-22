@@ -185,4 +185,15 @@ class HostRepairProjectionTests(unittest.TestCase):
         self.assertNotIn('PRIVATE',json.dumps(bad))
         self.assertEqual(bad['planned_removal_count'],0)
 
+class FailureDiagnosticTests(unittest.TestCase):
+    def test_first_failure_survives_later_cleanup_failure(self):
+        from acceptance import failure_diagnostic
+        result=failure_diagnostic({'status':'FAIL','failed_step':'shutdown / process cleanup','steps':[{'name':'session ready','ok':False}]},[])
+        self.assertEqual(result['simulation_failure_step'],'session_ready')
+    def test_unknown_messages_do_not_escape(self):
+        from acceptance import failure_diagnostic
+        result=failure_diagnostic({'status':'ERROR','error':'PRIVATE /path SECRET','steps':[{'name':'PRIVATE','ok':False}]},[])
+        self.assertEqual(result,{'simulation_failure_step':'unknown','simulation_error_kind':'unknown'})
+        self.assertNotIn('PRIVATE',json.dumps(project(result)))
+
 if __name__ == '__main__': unittest.main()

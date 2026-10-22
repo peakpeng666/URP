@@ -21,6 +21,41 @@ def evidence_gate(evidence):
     pairs={(e.get('package'),e.get('dependency')) for e in edges if isinstance(e,dict) and e.get('relation') in ('conflicts','breaks')}
     if not NEEDED.issubset(pairs):raise Refuse('conflict_not_confirmed')
 
+def valid_partial_verified(evidence):
+    if not isinstance(evidence,dict) or evidence.get('status')!='verified':return False
+    edges=evidence.get('dependencies')
+    if not isinstance(edges,list) or not 1<=len(edges)<=20:return False
+    keys={'package','package_version','relation','dependency','version_relation','dependency_version'}
+    for edge in edges:
+        if not isinstance(edge,dict) or set(edge)!=keys or not all(isinstance(x,str) for x in edge.values()):return False
+        if not all(re.fullmatch(r'[a-z0-9][a-z0-9+.-]{0,119}',edge[k]) for k in ('package','dependency')):return False
+        if not re.fullmatch(r'[A-Za-z0-9.+:~\-]{1,120}',edge['package_version']):return False
+        if edge['dependency_version'] and not re.fullmatch(r'[A-Za-z0-9.+:~\-]{1,120}',edge['dependency_version']):return False
+        if edge['relation'] not in ('depends','predepends','conflicts','breaks') or edge['version_relation'] not in ('any','eq','ge','le','gt','lt'):return False
+        if (edge['version_relation']=='any') != (edge['dependency_version']==''):return False
+    return True
+
+
+def select_evidence(primary,source,private,env,fallback=None):
+    try:
+        evidence_gate(primary)
+        return 'official_metadata' if primary['status']=='verified' else 'apt_cache_membership'
+    except Refuse:
+        if not valid_partial_verified(primary):raise
+    if fallback is None:
+        if __package__:
+            from .apt_diagnostic import membership_fallback
+        else:
+            from apt_diagnostic import membership_fallback
+        fallback=membership_fallback
+    secondary=fallback(source,private,env,primary)
+    # Never replace or merge the original official metadata evidence.
+    (pathlib.Path(private)/'host-repair-evidence.json').write_text(json.dumps(secondary,sort_keys=True))
+    if secondary.get('status')!='membership_only' or secondary.get('evidence')!='apt_cache_membership' or secondary.get('fallback_error')!='none':raise Refuse('conflict_not_confirmed')
+    evidence_gate(secondary)
+    return 'apt_cache_membership'
+
+
 def removal_plan(text):
     removed=set()
     for line in text.splitlines():
@@ -54,7 +89,7 @@ def state_digest():
 
 def repair(source,private,setup_exit,execute=subprocess.run):
     source=pathlib.Path(source);private=pathlib.Path(private)
-    result={'state':'blocked','reason':'unknown','planned_removals':[],'planned_removal_count':0,'apply_exit_code':None}
+    result={'state':'blocked','reason':'unknown','planned_removals':[],'planned_removal_count':0,'apply_exit_code':None,'evidence_used':'not_measured'}
     env=dict(os.environ,LC_ALL='C',LANG='C')
     def command(args,log,timeout=120):
         with (private/log).open('wb') as stream:
@@ -74,7 +109,7 @@ def repair(source,private,setup_exit,execute=subprocess.run):
         if architecture!='amd64':raise Refuse('platform_not_allowed')
         evidence_path=private/'apt-dependencies.json'
         if evidence_path.is_symlink() or evidence_path.stat().st_size>32768:raise Refuse('conflict_not_confirmed')
-        evidence_gate(json.loads(evidence_path.read_text()))
+        result['evidence_used']=select_evidence(json.loads(evidence_path.read_text()),source,private,env)
         (private/'host-apt-repair-attempted').touch(exist_ok=False)
         before=state_digest()
         if command(['apt-get','--simulate',*ARGS],'host-repair-plan.log'):raise Refuse('simulation_failed')

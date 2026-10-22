@@ -7,6 +7,8 @@ from pathlib import Path
 
 SOURCE = '94420cf3b703c564134048e1b074406df901bba3'
 STATES = {'PASS', 'FAIL', 'ERROR', 'NOT_RUN'}
+FAILURE_STEPS = {'none','unknown','health','services','scenario','recommendation','solve_submit','solve_terminal','solve_validation','map_validation','export','session_start','session_ready','sim_submit','sim_execute','sim_tasks','shutdown'}
+ERROR_KINDS = {'none','unknown','module_missing','source_identity','timeout','runtime','http','value'}
 HASHES = ('scenario_sha256', 'solution_sha256', 'resource_manifest_sha256',
           'runtime_fingerprint_sha256', 'overlay_source_sha256', 'overlay_binary_sha256')
 NUMBERS = ('duration_sim_s', 'duration_wall_s', 'real_time_factor', 'clock_gap_max_s',
@@ -75,6 +77,7 @@ def host_repair_projection(raw):
     removed=sorted(set(removed)) if isinstance(removed,list) and len(removed)<=11 and all(isinstance(x,str) and x in allowed for x in removed) else []
     return {'state':raw.get('state') if raw.get('state') in ('applied','blocked') else 'not_run',
             'reason':raw.get('reason') if raw.get('reason') in reasons else 'unknown',
+            'evidence_used':raw.get('evidence_used') if raw.get('evidence_used') in ('official_metadata','apt_cache_membership') else 'not_measured',
             'planned_removals':removed,'planned_removal_count':len(removed),'apply_exit_code':number(raw.get('apply_exit_code'),True,-255,255)}
 
 
@@ -96,6 +99,8 @@ def project(raw, runner=None, *, require_runner=True):
                                     for k in ('full_loop', 'gateway')}
     result['measurement_availability'] = {k: 'measured' if result[k] is not None else 'not_measured'
                                           for k in (*NUMBERS, *COUNTS)}
+    result['simulation_failure_step'] = raw.get('simulation_failure_step') if isinstance(raw.get('simulation_failure_step'),str) and raw.get('simulation_failure_step') in FAILURE_STEPS else 'unknown'
+    result['simulation_error_kind'] = raw.get('simulation_error_kind') if isinstance(raw.get('simulation_error_kind'),str) and raw.get('simulation_error_kind') in ERROR_KINDS else 'unknown'
     result['installation_step'] = 'unknown'
     result['runner_failure_hint'] = 'unknown'
     result['runner_stage'] = 'unknown'

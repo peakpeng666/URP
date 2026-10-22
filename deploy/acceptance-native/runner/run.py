@@ -80,6 +80,11 @@ def descendants(rows, roots):
         result |= new
     return result
 
+def select_runtime_profile(root, env):
+    # Match setup/ubuntu/run-lab.sh without changing runtime fingerprint checks.
+    if (pathlib.Path(root)/'src/lab/runtime/native/bridge/profile.json').is_file():
+        env['URP_SIM_PROFILE']='image'
+
 def run(args):
     # Adopt only descendants that would otherwise be orphaned during shutdown.
     if ctypes.CDLL(None, use_errno=True).prctl(36, 1, 0, 0, 0) != 0:
@@ -140,6 +145,7 @@ def run(args):
         if rc:
             status['exit_code'] = rc
             return status
+        select_runtime_profile(root, env)
         status['stage'] = 'simulation'
         env['PATH'] = str(pathlib.Path(env['HOME'])/'.local/node-v24.22.0/bin') + ':' + env['PATH']
         # Xvfb is owned by this supervisor; Xvfb -displayfd avoids display collisions.

@@ -48,4 +48,36 @@ class RepairTests(unittest.TestCase):
             with patch(MODULE+'.subprocess.check_output') as sub:result=repair(root,root,100,runner)
             self.assertEqual(result['reason'],'already_attempted');sub.assert_not_called()
 
+
+
+class PartialEvidenceTests(unittest.TestCase):
+    def partial(self):
+        return {'status':'verified','dependencies':[{'package':'libunwind-14-dev','package_version':'1.0','relation':'breaks','dependency':'libunwind-dev','version_relation':'any','dependency_version':''}]}
+    def complete_secondary(self):
+        return {'status':'membership_only','evidence':'apt_cache_membership','fallback_error':'none','dependencies':[{'package':p,'relation':'breaks','dependency':d} for p,d in NEEDED]}
+    def test_verified_partial_rechecked_without_overwriting_primary(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            primary=self.partial();path=pathlib.Path(tmp)/'apt-dependencies.json';path.write_text(json.dumps(primary));before=path.read_bytes()
+            fallback=Mock(return_value=self.complete_secondary())
+            self.assertEqual(select_evidence(primary,'SOURCE',tmp,{},fallback),'apt_cache_membership')
+            fallback.assert_called_once_with('SOURCE',tmp,{},primary)
+            self.assertEqual(path.read_bytes(),before)
+            self.assertTrue((pathlib.Path(tmp)/'host-repair-evidence.json').is_file())
+    def test_invalid_verified_or_membership_does_not_trigger_fallback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for evidence in ({'status':'verified','dependencies':[]}, {'status':'verified','dependencies':[{'package':'PRIVATE'}]}, {'status':'membership_only','evidence':'apt_cache_membership','dependencies':[]}):
+                fallback=Mock()
+                with self.assertRaises(Refuse):select_evidence(evidence,'SOURCE',tmp,{},fallback)
+                fallback.assert_not_called()
+    def test_fallback_still_requires_both_original_pairs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            secondary=self.complete_secondary();secondary['dependencies'].pop()
+            with self.assertRaises(Refuse):select_evidence(self.partial(),'SOURCE',tmp,{},Mock(return_value=secondary))
+            secondary=self.complete_secondary();secondary['fallback_error']='timeout'
+            with self.assertRaises(Refuse):select_evidence(self.partial(),'SOURCE',tmp,{},Mock(return_value=secondary))
+    def test_complete_primary_no_fallback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            primary=self.partial();extra=dict(primary['dependencies'][0],package='pkgconf',dependency='pkg-config');primary['dependencies'].append(extra)
+            fallback=Mock();self.assertEqual(select_evidence(primary,'SOURCE',tmp,{},fallback),'official_metadata');fallback.assert_not_called()
+
 if __name__=='__main__':unittest.main()
