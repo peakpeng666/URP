@@ -14,6 +14,7 @@ from execution_diagnostics import sanitize as sanitize_execution
 from execution_protocol import sanitize as sanitize_protocol, protocol_ok
 from startup_observation_schema import sanitize as sanitize_observation
 from historical_input import SOURCE, HISTORICAL_SOURCE
+from process_observer import sanitize as sanitize_process_observation, UNAVAILABLE_OBSERVATION, is_cancellation
 
 HASHES = ('historical_routes_sha256', 'historical_planned_sha256', 'current_plan_sha256',
           'adapter_sha256', 'current_execution_sha256', 'current_map_fingerprint_sha256',
@@ -52,6 +53,10 @@ def project(raw, runner=None, *, require_runner=True):
             'api_spawn_yaw':1.570796,'expected_session_spawn_yaw':1.5708,
             'runner_failure_hint':'unknown','runner_termination_reason':'unknown','runner_stage':'unknown','runner_exit_code':None,'runner_cleanup_remaining':None,'runner_forced_kill_count':None}
     result['warehouse_diagnostics']=project_diagnostics(raw.get('warehouse_diagnostics'))
+    try:result['warehouse_process_observation']=sanitize_process_observation(raw.get('warehouse_process_observation'))
+    except BaseException as exc:
+        if is_cancellation(exc):raise
+        result['warehouse_process_observation']=dict(UNAVAILABLE_OBSERVATION,rows=[])
     result['warehouse_startup_observation']=sanitize_observation(raw.get('warehouse_startup_observation'))
     result['raw_resource_manifest_sha256']=digest(raw.get('raw_resource_manifest_sha256'))
     result['raw_resources_match_historical']=raw.get('raw_resources_match_historical') if type(raw.get('raw_resources_match_historical')) is bool else None

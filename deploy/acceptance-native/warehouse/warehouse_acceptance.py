@@ -22,6 +22,7 @@ from historical_fuel import download_archive as download_fuel_archive, materiali
 from warehouse_lifecycle import drive, physical_evidence, OVERALL_WALL_S
 from warehouse_public_summary import project, digest
 from startup_observer import Observer, is_cancellation
+from process_observer import ProcessObserver
 
 FUEL_MODELS=('Warehouse','shelf_big','shelf','Chair','foldable_chair','MaleVisitorOnPhone','Table','Jersey Barrier','Casual female')
 
@@ -74,7 +75,7 @@ def execute(a):
     from acceptance import api, owned, signal_owned, verify_source, read
     from startup_diagnostics import collect
     from execution_diagnostics import collect as collect_execution
-    source=a.source.resolve();token=secrets.token_hex(24);gateway=None;base=None;forced=False;sid=None;observer=None
+    source=a.source.resolve();token=secrets.token_hex(24);gateway=None;base=None;forced=False;sid=None;observer=None;process_observer=None
     raw={'state':'ERROR','source_sha':SOURCE,'harness_sha':a.harness_sha,'overall_wall_budget_s':OVERALL_WALL_S}
     diagnostic={'harness':{'phase':'preflight'},'session_report':'unavailable'}
     raw['warehouse_diagnostics']=diagnostic
@@ -83,6 +84,7 @@ def execute(a):
         nonlocal sid
         sid=value
         if observer is not None:observer.safe('bind',value)
+        if process_observer is not None:process_observer.safe('bind',value)
     def save(name,obj):(private/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2,allow_nan=False))
     try:
         if a.stage!='warehouse' or not digest(a.harness_sha,40):raise ValueError('warehouse_arguments_invalid')
@@ -165,6 +167,11 @@ def execute(a):
         with (private/'gateway.log').open('w') as log:
             gateway=subprocess.Popen([str(source/'src/lab/.venv/bin/python'),'-m','urp_lab','serve','--host','127.0.0.1','--port',str(port),'--no-archive'],
                          cwd=source/'src/lab',env=env,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+        if env.get('URP_WAREHOUSE_STARTUP_OBSERVER')=='1' and env.get('URP_WAREHOUSE_STARTUP_OBSERVER_DELAY_S')=='30':
+            try:process_observer=ProcessObserver(gateway)
+            except BaseException as exc:
+                if is_cancellation(exc):raise
+                raw['warehouse_process_observation']={'status':'unavailable','end_reason':'read_error'}
         mark('gateway_health')
         end=time.monotonic()+120
         while True:
@@ -187,6 +194,7 @@ def execute(a):
             except BaseException as exc:
                 if is_cancellation(exc):raise
                 observer=None;raw['warehouse_startup_observation']={'status':'unavailable'}
+        if process_observer is not None:api_call=process_observer.wrap(api_call)
         lifecycle=drive(api_call,record['run_id'],plan,guard,save,on_session=observed_session)
         diagnostic['lifecycle']=lifecycle['diagnostics']
         raw['execution_protocol']=lifecycle['execution_protocol']
@@ -227,6 +235,15 @@ def execute(a):
         raw['state']='ERROR';(private/'harness-error.txt').write_text(type(exc).__name__+': '+str(exc))
     finally:
         observer_cancellation=None
+        if process_observer is not None:
+            try:
+                process_observer.stop('cleanup_started')
+                raw['warehouse_process_observation']=process_observer.result()
+            except BaseException as exc:
+                raw['warehouse_process_observation']={'status':'unavailable','end_reason':'read_error'}
+                if is_cancellation(exc):
+                    observer_cancellation=exc
+                    if raw.get('state')=='PASS':raw['state']='ERROR'
         if observer is not None:
             try:observer.safe('close')
             except BaseException as exc:

@@ -42,3 +42,51 @@ CPU 累计值统计当前存活进程，进程退出后可下降。UTC 相对时
 `URP_WAREHOUSE_STARTUP_OBSERVER_DELAY_S=30` 将独立观测推迟至会话绑定后约 30 秒；
 默认仍为 5 秒。两种设置均使用既有 8 秒观测窗口、阶段检查、身份检查和看门狗。
 非法延迟配置仅关闭该项诊断，启动、超时、路线及验收条件保持原样。
+
+### Bounded owned-process CPU observation
+
+With the existing startup observer enabled and its delay set to `30`, the helper
+also samples gateway descendants during cached `starting` observations between
+30 and 38 seconds after the same session binding. The actual gateway `Popen`
+object is passed immediately after creation; API PIDs and files are not ownership
+authority. The gateway must remain the original helper child and process-group
+leader. Each descendant's PID/start ticks and complete ancestry are revalidated
+around executable identity reads. No argv, environment, maps, thread enumeration,
+ptrace, signals, packages, application changes or acceptance changes are added.
+
+`warehouse_process_observation` is a separate fixed-schema projection, not part
+of the native observer's 16 KiB result. At most nine snapshots enumerate at most
+4096 numeric process entries and account for at most 128 descendants/lifetimes;
+the public output retains 32 highest observed-CPU lifetime rows with omission
+counts. A lifetime is an invocation-local integer backed privately by PID/start
+ticks. CPU seconds sum only adjacent matched identity/executable/parent intervals,
+without child CPU counters. Covered wall seconds use monotonic snapshot-start spacing, not exact per-process
+read instants; individual reads occur within each bounded scan. Interval counts
+are reported, not utilization or a root-cause diagnosis. Late polls do not extend
+the 30–38-second window, and reads completing after its end are discarded.
+
+Executable categories are intentionally conservative: Python and Ruby remain
+interpreter categories, even if the launch is running Gazebo. An executable
+identity change drops that interval and makes its lifetime category unavailable.
+Same-image exec is not detectable using this interface. Reparenting, reuse,
+missing permissions, exits, scan/row caps and incomplete coverage are not replaced
+with guessed values. Summed RSS is not unique physical memory, and sampled process
+state is not a thread-level blocking diagnosis. Sampling is bounded by read counts,
+not a preemptive real-time guarantee for individual procfs reads. Phase departure,
+DELETE, errors and finalization stop observation without signaling any process.
+
+Cancellation uses the existing project predicate, including the exact
+RuntimeError("interrupted") used by its SIGTERM handler, as well as BaseException
+cancellations. A failed GET /sim/state is rethrown unchanged and breaks matched
+interval continuity, but does not prevent a later caller-driven valid startup
+poll from sampling within the original window. No retries are added. The current
+warehouse lifecycle normally enters cleanup after such an API error; DELETE
+still closes sampling before attempting the original cleanup exactly once.
+
+The exact native executable catalogue reuses `LAUNCH_GRAPH_PROCESSES` from
+`resource_uri_diagnostics.py`, already sourced from the public pinned Humble
+launch graph, together with its exact `create`, `image_bridge`, `turtlebot4_node`
+and `create3_nodes` names. It does not use that module's command-line/log aliases.
+Thus native `motion_control`, `sensors_node`, and `wheel_status_publisher` can be
+distinguished, while an interpreter executing a similarly named script remains
+Python/Ruby. Unknown basenames are never published verbatim.
