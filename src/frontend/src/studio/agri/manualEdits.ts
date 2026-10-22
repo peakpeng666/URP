@@ -14,7 +14,30 @@ export interface ManualEditReport {
 }
 
 type Rec = Record<string, unknown>;
-const key = (v: unknown) => JSON.stringify(v);
+/**
+ * 规范化后再比较：后端保存时会补默认值（空的 corridors、默认车名 车1…车N）、改键序、
+ * 序列化浮点数，这些都不算手工编辑。空数组 / null 视同缺省，键排序，数值取 1e-6 精度。
+ */
+function canon(v: unknown): unknown {
+  if (v === null || v === undefined) return undefined;
+  if (typeof v === 'number') return Math.round(v * 1e6) / 1e6;
+  if (Array.isArray(v)) return v.length ? v.map(canon) : undefined;
+  if (typeof v === 'object') {
+    const out: Rec = {};
+    for (const k of Object.keys(v as Rec).sort()) { const c = canon((v as Rec)[k]); if (c !== undefined) out[k] = c; }
+    return Object.keys(out).length ? out : undefined;
+  }
+  return v;
+}
+/** 车队：未给 fleet 时，names 等于默认的 车1…车count 视同未填。 */
+function canonVehicles(v: unknown): unknown {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return canon(v);
+  const r = { ...(v as Rec) };
+  const n = Number(r.count);
+  if (!r.fleet && Array.isArray(r.names) && r.names.length === n && r.names.every((x, i) => x === `车${i + 1}`)) delete r.names;
+  return canon(r);
+}
+const key = (v: unknown) => JSON.stringify(canon(v));
 const near = (a: unknown, b: unknown) => Array.isArray(a) && Array.isArray(b) && a.length === 2 && b.length === 2
   && Math.abs(Number(a[0]) - Number(b[0])) < 0.01 && Math.abs(Number(a[1]) - Number(b[1])) < 0.01;
 
@@ -53,7 +76,7 @@ export function manualEdits(pattern: AgriTaskPattern, scenario: { instance: unkn
     ...(key(gen.depot) !== key(cur.depot) && !near(gen.depot, cur.depot) ? ['库点已移动'] : []),
     ...(key(gen.unload_points) !== key(cur.unload_points) ? ['卸货点已改动'] : []),
     ...(key(gen.corridors) !== key(cur.corridors) ? ['通道已改动'] : []),
-    ...(key(gen.vehicles) !== key(cur.vehicles) ? ['车队配置已改动'] : []),
+    ...(JSON.stringify(canonVehicles(gen.vehicles)) !== JSON.stringify(canonVehicles(cur.vehicles)) ? ['车队配置已改动'] : []),
   ];
   return { ...base, reproducible: true, reason: '', changes };
 }
