@@ -6,7 +6,7 @@ import { Badge, Button, EmptyState, Input, Notice, Spinner } from '../../lab/ui'
 import { studio, urls } from '../api';
 import { useStudio } from '../store';
 import type { Analysis, InstanceSpace, Study } from '../types';
-import { AnytimeChart, CdChart, EcdfCharts, GapTimeChart, ProfileChart } from '../research/AnalysisCharts';
+import { AnytimeChart, CdChart, EcdfCharts, GapTimeChart, ProfileChart } from '../researchCharts/AnalysisCharts';
 import s from './panels.module.css';
 
 type ArchiveExperiment = {

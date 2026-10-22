@@ -44,7 +44,7 @@ import { centerMap, ReplayOverlay } from '../experiment/ReplayPanel';
 import { comparable, currentInput, exclusionReason, inputIdentity, partitionRuns, requiresCoverageRecheck, resultState, verifiedPlan } from '../comparison';
 import { identityState, withoutInvalidatedResults } from '../../lab/views/plan/resultIntegrity';
 import { RunTrace } from '../experiment/RunTrace';
-import { SeedBandChart, StatusFlowChart, VerificationChart } from '../research/RunCharts';
+import { SeedBandChart, StatusFlowChart, VerificationChart } from '../researchCharts/RunCharts';
 import { ProblemEditor } from './ProblemEditor';
 import s from './panels.module.css';
 
