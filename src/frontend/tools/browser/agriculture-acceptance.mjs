@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { chromium } from 'playwright';
+import { readJsonResponse, submittedRunId, waitForSuccessfulRun } from './agriculture-acceptance-contract.mjs';
 const base = process.env.URP_BASE_URL ?? 'http://127.0.0.1:4100';
 assert.ok(['127.0.0.1', 'localhost'].includes(new URL(base).hostname));
 const output = process.env.URP_BROWSER_OUTPUT;
@@ -11,7 +12,7 @@ const page = await browser.newPage({ viewport: { width: 1500, height: 1100 }, ac
 const checks = [], errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 const check = async (name, fn) => { await fn(); checks.push(name); };
-const get = async (path) => { const r = await page.request.get(base + path); assert.equal(r.status(), 200, await r.text()); return r.json(); };
+const get = async (path) => readJsonResponse(await page.request.get(base + path), 200, path);
 try {
   await page.goto(base + '/#/');
   await page.getByRole('button', { name: '打开农业任务目录' }).click();
@@ -62,13 +63,17 @@ try {
   await fs.writeFile(output + '/persisted-scenario.json', JSON.stringify(scenario, null, 2));
   assert.equal(scenario.instance.tasks.length, 6); checks.push('real backend validated and persisted import');
   await check('refresh preserves imported scene', async () => { await page.reload(); await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {}); assert.equal((await get('/lab/api/scenarios/' + id)).id, id); });
-  const response = await page.request.post(base + '/lab/api/solve', { headers: { Origin: base }, data: { scenario_id: id, algorithms: [{ id: 'panel.cluster_first', params: {} }], label: 'agri acceptance' } });
-  assert.equal(response.status(), 202, await response.text());
-  const job = await response.json(); await fs.writeFile(output + '/job.json', JSON.stringify(job, null, 2));
-  const runId = job.run_ids[0]; let run;
-  for (let n = 0; n < 120; n++) { run = await get('/lab/api/runs/' + runId); if (['done', 'error', 'cancelled'].includes(run.state)) break; await page.waitForTimeout(500); }
-  await fs.writeFile(output + '/run.json', JSON.stringify(run, null, 2));
-  assert.equal(run.state, 'done', JSON.stringify(run)); assert.equal(run.status, 'feasible', JSON.stringify(run)); assert.equal(run.check?.valid, true);
+  const algorithmId = 'panel.cluster_first';
+  const response = await page.request.post(base + '/lab/api/solve', { headers: { Origin: base }, data: { scenario_id: id, algorithms: [{ id: algorithmId, params: {} }], label: 'agri acceptance' } });
+  const job = await readJsonResponse(response, 202, 'POST /lab/api/solve');
+  await fs.writeFile(output + '/job.json', JSON.stringify(job, null, 2));
+  const runId = submittedRunId(job); let run;
+  try {
+    await waitForSuccessfulRun({ get, wait: (ms) => page.waitForTimeout(ms), job, scenarioId: id, algorithmId,
+      onRun: (value) => { run = value; } });
+  } finally {
+    if (run !== undefined) await fs.writeFile(output + '/run.json', JSON.stringify(run, null, 2));
+  }
   checks.push('actual solver completed feasible');
   const record = await get('/lab/api/runs/' + runId + '/record'); await fs.writeFile(output + '/record.json', JSON.stringify(record, null, 2));
   checks.push('server experiment export');
