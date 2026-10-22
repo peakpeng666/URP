@@ -82,6 +82,16 @@ bash setup/run.sh lab --open
 
 验收记录见 [2026-10-16/资产库与科研图表验收.md](2026-10-16/资产库与科研图表验收.md)，需要后端配合的接口见 [2026-10-16/后端对接需求.md](2026-10-16/后端对接需求.md)。
 
+### 科研统计口径
+
+- 性能剖面比较每个实例的**可行运行平均成本**，不是 BKS 差距或运行时间。分母是所有算法均有终态记录的齐全实例；某算法在该实例全部失败时，该单元仍保留在分母中，但不贡献有限 τ 下的成功。最优成本为零时，只有零成本算法计为并列最优。成功率另按各算法全部终态运行计算。
+- 对可表示的大数，均值与偶数中位数使用精确求和，差距计算避免中间乘法溢出，收敛曲线与摘要使用同一差距公式。标准差仍使用全部观察值；仅当真实标准差超出浮点范围时返回空值并标记 out_of_range，不删除有效观测。
+- 平均秩以齐全实例为统计块，失败排末位、并列取平均秩；全失败实例不计最优次数。重复 seed 不增加 N，分组本身也不证明不同实例相互独立。
+- 本实现采用经平局校正的 Friedman 卡方近似，支持范围为 N≥11 且 k≥7；范围外或全部平局时保留描述性平均秩，不报告推断结论。默认 α=0.05，仅有效且 p<α 时计算并展示 Nemenyi 临界差；不显著时不画 CD。这是当前近似方法的支持范围，不表示小样本不能采用其他统计方法。依据：[SciPy Friedman 说明](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.friedmanchisquare.html)、[Demšar 2006](https://www.jmlr.org/papers/v7/demsar06a.html)。
+- Wilcoxon 两两比较只纳入双方成本和差值均有限的齐全实例，分别记录无效成本与差值溢出的排除数。有效配对不足 5 个或全为零差时不检验；其余沿用 SciPy 的 auto / zsplit 方法。Holm 仅校正成功得到有限 p 值的检验，holm_family_size 给出实际校正数量。
+- 现有差距图为箱线图，JSON 的 ecdf 字段仍是有限差距数组，并非已归一化曲线。新增 ecdf_metadata 为未来累计比例明确分母：**每个算法具有有限正参照的全部已观察终态运行**，包括失败，每次运行等权，不对实例或重复次数再加权。缺失或非正参照单独计数，不视为失败；算法缺测和未结束运行不补入。分母为零时不定义曲线。
+- ecdf_metadata.counts 按算法记录 terminal_runs、eligible_terminal_runs、finite_gap_runs、eligible_failed_runs、eligible_nonfinite_gap_runs、missing_reference_runs；后三类与有限差距互斥。failed_runs 独立统计全部失败，其中 failed_missing_reference_runs 与缺参照重叠。totals 只用于核对总数，不作为单个算法曲线分母。有效参照沿用有效 BKS，否则取同组最好可行值；零参照不能计算相对百分比。
+
 ## 算法库一览
 
 - **多车任务**：PyVRP 固定车队、OR-Tools 车队调度（可做均衡分工）、节约算法、扫描算法、先聚类后排程；距离按绕开障碍的最短路计算。

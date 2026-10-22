@@ -120,7 +120,7 @@ def _pdf_fonts(pdf: bytes) -> tuple[bool, bool]:
 
 def test_every_figure_with_data_renders_at_journal_width(ctx):
     items = {i['key']: i for i in catalog(ctx)}
-    expected_missing = {'map_extraction'}            # no map asset in this context
+    expected_missing = {'map_extraction', 'cd_diagram'}            # no map asset; synthetic 4-block/3-algorithm study is descriptive only
     for s in SPECS:
         assert items[s.key]['available'] is (s.key not in expected_missing), (s.key, items[s.key]['reason'])
     for s in SPECS:

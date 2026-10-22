@@ -12,6 +12,7 @@ import numpy as np
 from matplotlib.patches import Polygon as MPoly
 from matplotlib.ticker import LogLocator, NullFormatter
 
+from ..analysis import cd_unavailable_reason
 from . import data as D
 from .names import FEATURE_EN, alg_index, alg_label
 from .style import Style, color, dash, figure, log_axis, marker, qlabel
@@ -56,9 +57,9 @@ def perf_profile(ctx: D.Context, st: Style, opts: dict):
     ax.legend(loc='lower right')
     cap = {
         'zh': f"性能曲线（Dolan & Moré 2002）：ρ(τ) 为该算法成本不超过每个实例最好成本 τ 倍的实例比例；曲线越靠左上越好，τ = 1 处为取得最好解的比例。"
-              f"基于 {_n_text(an, st)}，每个实例取各算法有效运行的平均成本。",
+              f"基于 {_n_text(an, st)}，只纳入所有算法齐全的实例，每个实例取各算法可行运行的平均成本；全失败的算法–实例单元保留在分母，在有限 τ 处不计成功。部分种子失败另见运行成功率。",
         'en': f"Performance profiles (Dolan & Moré 2002): ρ(τ) is the fraction of instances on which an algorithm's cost is within a factor τ of the best; "
-              f"higher and further left is better, ρ(1) is the share of wins. Based on {_n_text(an, st)}; per-instance cost is the mean over valid runs.",
+              f"higher and further left is better. Based on complete paired instances from {_n_text(an, st)}; per-instance cost is the mean over feasible runs. An algorithm-instance cell with no feasible run remains in the instance denominator but never counts at finite τ. Partial seed failures are reflected separately in run success rates.",
     }
     return fig, cap, {'profile': rows}
 
@@ -91,8 +92,8 @@ def gap_distribution(ctx: D.Context, st: Style, opts: dict):
     ax.grid(axis='x')
     ax.axvline(0, color='#888888', lw=0.5)
     cap = {
-        'zh': f"各算法相对参照解差距的分布（每点一次有效运行；箱体为四分位，须为 5–95 百分位）。参照：{an.get('reference_note')} {_n_text(an, st)}。",
-        'en': f"Distribution of the gap to the reference solution per algorithm (one point per valid run; boxes are quartiles, whiskers the 5th–95th percentiles). "
+        'zh': f"各算法相对参照解差距的分布（每点一次有有限差距的有效运行；失败和无正参照运行不画点；箱体为四分位，须为 5–95 百分位）。参照：{an.get('reference_note')} {_n_text(an, st)}。",
+        'en': f"Distribution of the gap to the reference solution per algorithm (one point per finite valid-run gap; failures and runs without a positive reference are not plotted; boxes are quartiles, whiskers the 5th–95th percentiles). "
               f"Reference: best-known solution for CVRPLIB instances, otherwise the best valid solution found by any algorithm. {_n_text(an, st)}.",
     }
     return fig, cap, {'gaps': rows}
@@ -102,6 +103,9 @@ def cd_diagram(ctx: D.Context, st: Style, opts: dict):
     """Critical-difference diagram (Demšar 2006): mean ranks on an axis, groups not significantly different joined by bars."""
     an = ctx.analysis
     tests = an['tests']
+    reason = cd_unavailable_reason(tests)
+    if reason:
+        raise ValueError(reason)
     nem = tests['nemenyi']
     names = _names(an, st)
     ranks = sorted(nem['mean_ranks'].items(), key=lambda kv: kv[1])
@@ -138,7 +142,7 @@ def cd_diagram(ctx: D.Context, st: Style, opts: dict):
     cliques = []
     for i in range(k):
         j = i
-        while j + 1 < k and vals[j + 1] - vals[i] < cd:
+        while j + 1 < k and vals[j + 1] - vals[i] <= cd:
             j += 1
         if j > i and not any(a <= i and j <= b for a, b in cliques):
             cliques.append((i, j))
@@ -149,9 +153,9 @@ def cd_diagram(ctx: D.Context, st: Style, opts: dict):
     ptxt = f"p = {fr['p_value']:.2g}" if fr.get('p_value') is not None else st.t('无法计算', 'not computable')
     cap = {
         'zh': f"临界差图（Demšar 2006）：轴上为各算法在 {tests['n']} 个实例上的平均秩（1 为最好），粗横线连接的算法之间差异不显著"
-              f"（Nemenyi 检验，α = {tests['alpha']}，CD = {cd:.2f}）。Friedman 检验 χ² = {fr.get('statistic', float('nan')):.2f}，{ptxt}。",
+              f"（Nemenyi 检验，α = {tests['alpha']}，CD = {cd:.2f}）。Friedman 检验 χ² = {fr.get('statistic'):.2f}，{ptxt}。",
         'en': f"Critical-difference diagram (Demšar 2006): mean ranks over {tests['n']} instances (1 = best); algorithms joined by a thick bar are not "
-              f"significantly different (Nemenyi, α = {tests['alpha']}, CD = {cd:.2f}). Friedman test χ² = {fr.get('statistic', float('nan')):.2f}, {ptxt}.",
+              f"significantly different (Nemenyi, α = {tests['alpha']}, CD = {cd:.2f}). Friedman test χ² = {fr.get('statistic'):.2f}, {ptxt}.",
     }
     rows = [{'algorithm': a, 'mean_rank': rk} for a, rk in ranks] + [{'algorithm': 'CD', 'mean_rank': cd}]
     return fig, cap, {'ranks': rows}
@@ -196,9 +200,9 @@ def pairwise(ctx: D.Context, st: Style, opts: dict):
     cb.outline.set_linewidth(0.4)
     cap = {
         'zh': f"两两比较：格中数字为行算法优于列算法的实例比例，星号为 Wilcoxon 符号秩检验经 Holm 校正后的显著性（* p<0.05，** p<0.01，*** p<0.001；"
-              f"实例数 < 5 的对不检验）。{_n_text(an, st)}。",
+              f"仅纳入双方成本及差值有限的配对；有效配对不足 5 个或全部平局时不检验）。{_n_text(an, st)}。",
         'en': f"Pairwise comparison: each cell is the share of instances on which the row algorithm beats the column algorithm; stars mark Wilcoxon signed-rank "
-              f"tests with Holm correction (* p<0.05, ** p<0.01, *** p<0.001; pairs with fewer than 5 instances are not tested). {_n_text(an, st)}.",
+              f"tests with Holm correction (* p<0.05, ** p<0.01, *** p<0.001; only finite-cost, finite-difference pairs are included; fewer than 5 such pairs or all ties are not tested). {_n_text(an, st)}.",
     }
     return fig, cap, {'pairs': an['tests']['wilcoxon_holm']}
 
