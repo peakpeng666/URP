@@ -14,6 +14,12 @@
 
 云端测试结果见 [2026-10-19 测试报告](2026-10-19/delivery-review/REPORT.md)。容器和本机测试的对应版本见各自记录。
 
+## TB4 执行时钟（可选实验协议）
+
+默认执行预算仍按墙钟。慢速云端 ROS 仿真可显式选择模拟时钟，并且必须同时指定有限墙钟看门狗：`src/lab/.venv/bin/python src/lab/e2e/full_loop.py --scenario maze-inspection --modes follow_path --execution-time-basis simulation --execution-wall-watchdog 900 --budget 1800`。不指定 `--execution-budget` 时仍用原路径长度公式的预算值，只改变明确选择的计时口径。接驳和全部分段共用一个总预算，不逐段重置；时钟异常、数据陈旧、几何和到达检查不放宽。
+
+外层在会话就绪后核查剩余墙钟是否覆盖提交、看门狗与终态处理；不足就拒绝排队。默认两种 modes 不会自动减为一种，示例明确只跑 follow_path。warehouse 长实验须另选有界协议及 CI 总时限，不把慢 RTF 当作无限等待许可。参数、元数据、上限和验收边界见 [仿真契约](../src/lab/CONTRACT.md)。这些选项只提供可复现实验条件，不能替代原生验收。
+
 ## 打开
 
 安装器部署后使用 `urp up`、`urp status`、`urp down`。Windows PowerShell 的对应命令见 [DEPLOY.md](../DEPLOY.md)。

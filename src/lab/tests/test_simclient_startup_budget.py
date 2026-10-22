@@ -4,6 +4,7 @@ from pathlib import Path
 import threading
 from types import SimpleNamespace as NS
 import unittest
+from urp_lab.execution_timing import budget_metadata, freeze_plan_budget
 
 SOURCE=Path(__file__).parents[1]/'urp_lab/simclient.py'
 
@@ -22,8 +23,8 @@ class StartupDispatch(unittest.TestCase):
         defs=[n for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id in ('READY_TIMEOUT_S','SIM_FINAL') for t in n.targets)]
         defs+=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name=='new_sim_run']
         defs+=[ast.ClassDef(name='SimClient',bases=[],keywords=[],body=methods,decorator_list=[])]
-        ns={'threading':NS(Event=threading.Event,Thread=Worker),'ServiceError':ServiceError,
-            'NotSimulatable':ValueError,'to_sim_plan':lambda *args:{'path':[[0,0],[1,1]],'tasks':[]},
+        ns={'budget_metadata':budget_metadata, 'freeze_plan_budget':freeze_plan_budget, 'threading':NS(Event=threading.Event,Thread=Worker),'ServiceError':ServiceError,
+            'NotSimulatable':ValueError,'to_sim_plan':lambda *args:{'path':[[0,0],[1,1]],'tasks':[], 'budget_s':103},
             'new_id':lambda _: 'run1','utc_now':lambda:'fake-time',
             'http_json':lambda *args,**kwargs:(posts.append((args,kwargs)) or (202,{}))}
         ns['time']=NS(monotonic=lambda:clock.wall)

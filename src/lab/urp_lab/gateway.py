@@ -590,7 +590,8 @@ def create_app(config: Config | None = None) -> FastAPI:
         except KeyError:
             raise ApiError(422, 'not_simulatable', f"运行所属场景 {sol['scenario_id']} 已不存在") from None
         return lab.sim.submit(sol, sc, body.get('mode') or 'follow_path', autostart=bool(body.get('autostart')),
-                              gui=body.get('gui'), rviz=body.get('rviz'))
+                              gui=body.get('gui'), rviz=body.get('rviz'), budget_s=body.get('budget_s'),
+                              time_basis=body.get('time_basis'), wall_watchdog_s=body.get('wall_watchdog_s'))
 
     @app.get(f'{api}/sim/runs')
     def sim_runs(run_id: str | None = None, limit: int = Query(100, ge=1, le=1000)):

@@ -34,6 +34,7 @@ from processes import OwnedProcesses
 from navigation_profile import create_profile
 from urp_lab.worlds import inspect_world, CACHE
 from urp_lab.process_health import unexpected_launch_exit
+from urp_lab.execution_timing import ExecutionTiming, budget_metadata, validate_plan_budget
 
 import rclpy
 from rclpy.action import ActionClient
@@ -296,14 +297,21 @@ class Session:
     def future(self,f,seconds=15,allow_stop=False):
         self.wait(f.done,seconds,'ROS 响应超时',allow_stop=allow_stop);return f.result()
 
-    def action(self,typ,topic,goal,seconds,record=True,timing=None):
+    def action(self,typ,topic,goal,seconds,record=True,timing=None,execution_timing=None):
         if timing is not None and topic!='/undock':raise ValueError('Dual-clock timing is Undock-only')
+        if execution_timing is not None:
+            if timing is not None or topic not in ('/follow_path','/navigate_to_pose'):raise ValueError('Execution timing is Nav2-only')
+            execution_timing.check(time.monotonic(),self.sim_time(),self.at)
+        if seconds is None and (execution_timing is None or execution_timing.effective['time_basis']!='simulation'):
+            raise ValueError('Only shared simulation timing may omit a local wall deadline')
         client=ActionClient(self.node,typ,topic);self.actions.append(client)
         self.wait(client.server_is_ready,25,f'{topic} 动作服务不可用')
+        if execution_timing is not None:execution_timing.check(time.monotonic(),self.sim_time(),self.at)
         feedback=[]
         handle=self.future(client.send_goal_async(goal,feedback_callback=lambda m:feedback.append(str(m.feedback))))
         if not handle.accepted:raise RuntimeError(f'{topic} 拒绝目标')
-        future=handle.get_result_async();self.goal=(handle,future);end=time.monotonic()+seconds
+        future=handle.get_result_async();self.goal=(handle,future)
+        end=time.monotonic()+seconds if seconds is not None else None
         cancel_reason=None;cancel_time=None;cancel_accepted=False
         if timing is not None:
             timing.start(time.monotonic(),self.sim_time());self.report['undock_timing']=timing.data
@@ -316,9 +324,13 @@ class Session:
                 if self.stop.is_set():cancel_reason='stop'
                 elif self.cancel.is_set():cancel_reason='cancel'
                 elif timing is not None:cancel_reason=trigger
+                elif execution_timing is not None:
+                    cancel_reason=execution_timing.observe(time.monotonic(),self.sim_time(),self.at)
+                    if cancel_reason is None and execution_timing.effective['time_basis']=='wall' and time.monotonic()>end:cancel_reason='budget'
                 elif time.monotonic()>end:cancel_reason='budget'
                 if cancel_reason is not None:
                     if timing is not None:timing.trigger(cancel_reason,time.monotonic(),self.sim_time())
+                    if execution_timing is not None:execution_timing.trigger(cancel_reason,time.monotonic(),self.sim_time())
                     ack=handle.cancel_goal_async()
                     # A terminal result may win the race with the cancel reply.
                     # Stop must not interrupt cleanup's bounded monotonic waits.
@@ -332,16 +344,23 @@ class Session:
                 raise TimeoutError('动作取消未收敛')
             # Shutdown is checked here so cancellation can complete before shutdown begins.
             self.spin(allow_stop=True)
-            if not self.shutting and cancel_reason is None and topic in ('/follow_path','/navigate_to_pose'):
+            if not self.shutting and cancel_reason is None and execution_timing is None and topic in ('/follow_path','/navigate_to_pose'):
                 if any(time.monotonic()-self.at.get(k,0)>3 for k in ('clock','scan','odom','ground_truth')):
                     raise RuntimeError('执行中传感器/时钟数据超时')
+        # Health failures cannot hide behind a terminal callback. Do not invent
+        # a deadline expiry from time spent delivering/processing that result.
+        terminal_guard=None
+        if execution_timing is not None and cancel_reason is None:
+            terminal_guard=execution_timing.observe(time.monotonic(),self.sim_time(),self.at,deadlines=False)
+            if terminal_guard is not None:execution_timing.trigger(terminal_guard,time.monotonic(),self.sim_time())
         reply=future.result();self.goal=None
         if timing is not None:timing.finish(time.monotonic(),self.sim_time(),reply.status)
         if record and self.execution:
-            self.execution['nav2'].append(dict(action=topic,status=reply.status,status_text={4:'SUCCEEDED',5:'CANCELED',6:'ABORTED'}.get(reply.status,str(reply.status)),t_sim=self.sim_time(),feedback_count=len(feedback),cancel_requested=cancel_reason is not None,cancel_reason=cancel_reason,cancel_accepted=cancel_accepted))
+            self.execution['nav2'].append(dict(action=topic,status=reply.status,status_text={4:'SUCCEEDED',5:'CANCELED',6:'ABORTED'}.get(reply.status,str(reply.status)),t_sim=ExecutionTiming.safe_sim(self.sim_time()) if execution_timing is not None else self.sim_time(),feedback_count=len(feedback),cancel_requested=cancel_reason is not None,cancel_reason=cancel_reason,cancel_accepted=cancel_accepted))
         if self.stop.is_set() or self.cancel.is_set():raise Interrupted('会话停止请求' if self.stop.is_set() else '执行取消请求')
         if timing is not None and cancel_reason is not None:raise TimeoutError(f'{topic} timing guard: {cancel_reason}')
         if cancel_reason=='budget':raise TimeoutError(f'{topic} 执行预算耗尽')
+        if execution_timing is not None and (cancel_reason is not None or terminal_guard is not None):raise TimeoutError(f'{topic} execution timing guard: {cancel_reason or terminal_guard}')
         if reply.status!=4:raise RuntimeError(f'{topic} 状态 {reply.status}，未到达')
         return reply
 
@@ -475,12 +494,18 @@ class Session:
     def navigate(self,xy,heading=0):
         goal=NavigateToPose.Goal();goal.pose=PoseStamped();goal.pose.header.frame_id='map'
         goal.pose.pose.position.x=float(xy[0]);goal.pose.pose.position.y=float(xy[1]);goal.pose.pose.orientation.z=math.sin(heading/2);goal.pose.pose.orientation.w=math.cos(heading/2)
-        self.action(NavigateToPose,'/navigate_to_pose',goal,min(90,max(1,self.exec_end-time.monotonic())))
+        # Legacy wall mode retains its 90s local cap. Simulation mode has only
+        # the shared execution budget/watchdog, never a fresh per-goal allowance.
+        local_wall_cap=self.exec_timing.effective['navigate_wall_cap_s']
+        self.action(NavigateToPose,'/navigate_to_pose',goal,local_wall_cap,execution_timing=self.exec_timing)
 
     def execute(self,plan):
-        ex=self.execution;begin=time.monotonic();sim_begin=self.sim_time();self.exec_end=begin+plan['budget_s']
+        ex=self.execution;begin=time.monotonic();sim_begin=self.sim_time()
+        self.exec_timing=ExecutionTiming(plan['budget_policy'],begin,sim_begin)
+        ex['execution_timing']=self.exec_timing.data
         ex['state']='approach';self.phase('executing');self.plan_pub.publish(self.path_msg(plan['path']))
         try:
+            self.exec_timing.check(time.monotonic(),self.sim_time(),self.at)
             first=plan['path'][0];heading=math.atan2(plan['path'][1][1]-first[1],plan['path'][1][0]-first[0])
             if math.dist(self.st['robot']['ground_truth'][:2],first)>.15:self.navigate(first,heading)
             ex['state']='executing'
@@ -490,7 +515,7 @@ class Session:
                     ex['progress']=dict(leg=i+1,legs_total=len(plan['legs']))
                     goal=FollowPath.Goal();goal.path=self.path_msg(leg);goal.controller_id='FollowCoverage' if plan['problem_class']=='coverage' else 'FollowPath';goal.goal_checker_id='general_goal_checker'
                     ex['controller']=goal.controller_id
-                    self.action(FollowPath,'/follow_path',goal,max(.1,self.exec_end-time.monotonic()))
+                    self.action(FollowPath,'/follow_path',goal,plan['budget_s'] if plan['time_basis']=='wall' else None,execution_timing=self.exec_timing)
                     endpoint_error=math.dist(self.st['robot']['ground_truth'][:2],leg[-1])
                     ex.setdefault('leg_results',[]).append(dict(leg=i+1,target=leg[-1],robot=copy.deepcopy(self.st['robot']),endpoint_error_m=endpoint_error))
                     scan=self.latest.get('scan')
@@ -514,7 +539,7 @@ class Session:
                 if t['state']=='pending':t['state']='missed'
             trace=ex['tracking_trajectory'];planned=plan['path'];distances=[self.distance_to_path(p[1:3],planned) for p in trace]
             ordered=sorted(distances)
-            ex['metrics'].update(duration_sim_s=self.sim_time()-sim_begin,duration_wall_s=time.monotonic()-begin,
+            ex['metrics'].update(duration_sim_s=self.exec_timing.elapsed_sim(self.sim_time()),duration_wall_s=time.monotonic()-begin,
                 actual_length_m=sum(math.dist(a[1:3],b[1:3]) for a,b in zip(trace,trace[1:])),
                 cross_track_mean_m=sum(distances)/len(distances) if distances else None,cross_track_max_m=max(distances) if distances else None,
                 cross_track_p95_m=ordered[min(len(ordered)-1,int(.95*len(ordered)))] if ordered else None,
@@ -544,6 +569,7 @@ class Session:
                 ex['localization']=localization_compare(ex,self.args.localization)
             except Exception as exc:  # recorded evidence only; never gates the run
                 ex['localization']={'mode':self.args.localization,'error':str(exc)}
+            self.exec_timing.finish(time.monotonic(),self.sim_time(),ex['state'])
             ex['finished_utc']=now();ex['report']=str(self.runtime/'runs'/f'{ex["sim_run_id"]}.json')
             ex['telemetry_at_finish']=self.state()['telemetry'];save(Path(ex['report']),ex);self.runs[ex['sim_run_id']]=copy.deepcopy(ex)
             if not self.stop.is_set():self.phase('ready')
@@ -674,7 +700,8 @@ def handler(session):
                     with session.lock:
                         if session.st['phase']!='ready' or (session.execution and session.execution['state'] not in FINAL):return self.answer(409,{'message':'会话未就绪或正在执行'})
                         if body.get('mode') not in ('follow_path','nav2_waypoints') or len(body.get('path',[]))<2:return self.answer(422,{'message':'路径或模式无效'})
-                        ex=dict(sim_run_id=body['sim_run_id'],run_id=body['run_id'],session_id=session.args.session_id,world=session.args.world,mode=body['mode'],
+                        body=validate_plan_budget(body)
+                        ex=dict(**budget_metadata(body),sim_run_id=body['sim_run_id'],run_id=body['run_id'],session_id=session.args.session_id,world=session.args.world,mode=body['mode'],
                             state='queued',sources=body['sources'],planned={'path':body['path'],'length_m':body['planned_length_m']},
                             tasks=[dict(**t,state='pending',t_sim=None,distance_m=None) for t in body['tasks']],actual={'ground_truth':[],'amcl':[]},
                             approach_trajectory=[],tracking_trajectory=[],task_radius_m=body['task_radius_m'],nav2=[],metrics={'tasks_total':len(body['tasks']),'tasks_reached':0},
