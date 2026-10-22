@@ -34,7 +34,7 @@ from processes import OwnedProcesses
 from navigation_profile import create_profile
 from urp_lab.worlds import inspect_world, CACHE
 from urp_lab.process_health import unexpected_launch_exit
-from urp_lab.execution_timing import ExecutionTiming, budget_metadata, validate_plan_budget
+from urp_lab.execution_timing import ExecutionTiming, REQUIRED_STREAMS, record_telemetry, budget_metadata, validate_plan_budget
 
 import rclpy
 from rclpy.action import ActionClient
@@ -170,7 +170,7 @@ class Session:
             self.st['known_issues'].append('URP_BRIDGE_FIX=0：使用未修复系统桥接，关闭竞态仍存在。')
         self.report['navigation_profile']=create_profile(self.runtime,args.localization)
         self.st['localization']=args.localization
-        self.counts={}; self.latest={}; self.at={}; self.last_sample=0.; self.last_trace=0.; self.subs=[]; self.actions=[]
+        self.counts={}; self.latest={}; self.at={}; self.timing_telemetry={}; self.last_sample=0.; self.last_trace=0.; self.subs=[]; self.actions=[]
         self.log_offsets={}; self.log_fragments={}
         rclpy.init(signal_handler_options=SignalHandlerOptions.NO)
         self.node=rclpy.create_node('workbench_sim_session',parameter_overrides=[Parameter('use_sim_time',value=True)])
@@ -197,6 +197,10 @@ class Session:
 
     def observe(self,key,msg):
         self.counts[key]=self.counts.get(key,0)+1; self.latest[key]=msg; self.at[key]=time.monotonic()
+        if key in REQUIRED_STREAMS:
+            try: source=stamp(msg.clock if key=='clock' else msg.header.stamp)
+            except (AttributeError, TypeError, ValueError, OverflowError): source=None
+            record_telemetry(self.timing_telemetry,key,self.at[key],self.sim_time() if 'clock' in self.latest else None,source)
         if key=='amcl' and self.execution and self.execution['state'] not in FINAL:
             p=msg.pose.pose
             self.execution['actual']['amcl'].append([stamp(msg.header.stamp),p.position.x,p.position.y,yaw(p.orientation)])
@@ -501,7 +505,7 @@ class Session:
 
     def execute(self,plan):
         ex=self.execution;begin=time.monotonic();sim_begin=self.sim_time()
-        self.exec_timing=ExecutionTiming(plan['budget_policy'],begin,sim_begin)
+        self.exec_timing=ExecutionTiming(plan['budget_policy'],begin,sim_begin,telemetry=self.timing_telemetry)
         ex['execution_timing']=self.exec_timing.data
         ex['state']='approach';self.phase('executing');self.plan_pub.publish(self.path_msg(plan['path']))
         try:

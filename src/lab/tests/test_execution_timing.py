@@ -8,7 +8,7 @@ import unittest
 
 from urp_lab.execution_timing import (ExecutionTiming, MAX_BUDGET_S, MAX_WALL_WATCHDOG_S,
                                      budget_metadata, execution_poll_wall_s, freeze_plan_budget,
-                                     resolve_budget_policy, validate_plan_budget)
+                                     resolve_budget_policy, validate_plan_budget, record_telemetry)
 from test_session_action_cancellation import session, Interrupted, Future
 from test_simclient_startup_budget import StartupDispatch
 
@@ -22,6 +22,25 @@ def policy(budget=5, basis='simulation', watchdog=100):
 
 def arrivals(wall):
     return {key: wall for key in ('clock', 'scan', 'odom', 'ground_truth')}
+
+
+def samples(wall, sim, at=None):
+    result = {}
+    for key, arrival in (arrivals(wall) if at is None else at).items():
+        epoch = sim-(wall-arrival) if type(sim) in (int,float) else sim
+        record_telemetry(result,key,arrival,epoch,epoch)
+    return result
+
+
+def instrument_session(s, c):
+    s.timing_telemetry = samples(c.wall, s.sim_time())
+    spin = s.spin
+    def tick(*args, **kwargs):
+        spin(*args, **kwargs)
+        for key, arrived in s.at.items():
+            if arrived != s.timing_telemetry[key]['received_wall_s']:
+                record_telemetry(s.timing_telemetry,key,arrived,s.sim_time(),s.sim_time())
+    s.spin = tick
 
 
 class PolicyValidation(unittest.TestCase):
@@ -72,70 +91,74 @@ class PolicyValidation(unittest.TestCase):
 
 
 class ClockPolicy(unittest.TestCase):
+    def observe(self, p, wall, sim, at, **kwargs):
+        return p.observe(wall, sim, at, telemetry=samples(wall,sim,at), **kwargs)
+
     def test_selected_time_boundary_and_wall_watchdog(self):
         p = ExecutionTiming(policy(), 10, 100)
-        self.assertIsNone(p.observe(14.9, 104.9, arrivals(14.9)))
-        self.assertEqual(p.observe(15, 105, arrivals(15)), 'simulation_budget')
+        self.assertIsNone(self.observe(p, 14.9, 104.9, arrivals(14.9)))
+        self.assertEqual(self.observe(p, 15, 105, arrivals(15)), 'simulation_budget')
         p = ExecutionTiming(policy(watchdog=10), 0, 0)
-        self.assertIsNone(p.observe(9.9, .99, arrivals(9.9)))
-        self.assertEqual(p.observe(10, 1, arrivals(10)), 'wall_watchdog')
+        self.assertIsNone(self.observe(p, 9.9, .99, arrivals(9.9)))
+        self.assertEqual(self.observe(p, 10, 1, arrivals(10)), 'wall_watchdog')
         p = ExecutionTiming(policy(basis='wall'), 0, 0)
-        self.assertIsNone(p.observe(4.99, 1000, arrivals(4.99)))
-        self.assertEqual(p.observe(5, 1000, arrivals(5)), 'budget')
+        self.assertIsNone(self.observe(p, 4.99, 1000, arrivals(4.99)))
+        self.assertEqual(self.observe(p, 5, 1000, arrivals(5)), 'budget')
 
     def test_wall_clock_remains_wall_when_sim_clock_slow_frozen_or_backwards(self):
         for sim in [.01, 0, -10, float('nan')]:
             p = ExecutionTiming(policy(basis='wall'), 0, 0)
-            self.assertEqual(p.observe(5, sim, arrivals(5)), 'budget')
+            self.assertEqual(self.observe(p, 5, sim, arrivals(5)), 'budget')
 
     def test_missing_invalid_backward_and_duplicates(self):
         p = ExecutionTiming(policy(), 0, 100)
-        self.assertEqual(p.observe(1, 100, {'scan': 1, 'odom': 1, 'ground_truth': 1}), 'clock_missing')
+        self.assertEqual(self.observe(p, 1, 100, {'scan': 1, 'odom': 1, 'ground_truth': 1}), 'clock_missing')
         for bad in [None, float('nan'), float('inf')]:
             p = ExecutionTiming(policy(), 0, bad)
-            self.assertEqual(p.observe(1, 100, arrivals(1)), 'clock_invalid')
+            self.assertEqual(self.observe(p, 1, 100, arrivals(1)), 'clock_invalid')
             p.trigger('clock_invalid', 1, bad); p.finish(2, bad, 'failed')
             json.dumps(p.data, allow_nan=False)
             self.assertIsNone(p.data['start_sim_s'])
         p = ExecutionTiming(policy(), 0, 100)
-        self.assertEqual(p.observe(1, 99, arrivals(1)), 'clock_backwards')
+        self.assertEqual(self.observe(p, 1, 99, arrivals(1)), 'clock_backwards')
         p = ExecutionTiming(policy(), 0, 100)
-        for wall in range(1, 30): self.assertIsNone(p.observe(wall, 100, arrivals(wall)))
-        self.assertEqual(p.observe(30, 100, arrivals(30)), 'clock_no_progress')
+        for wall in range(1, 30): self.assertIsNone(self.observe(p, wall, 100, arrivals(wall)))
+        self.assertEqual(self.observe(p, 30, 100, arrivals(30)), 'clock_no_progress')
         # A genuine advance, not a duplicate arrival, restarts only the stall timer.
         p = ExecutionTiming(policy(), 0, 100)
-        self.assertIsNone(p.observe(29, 101, arrivals(29)))
-        self.assertIsNone(p.observe(58, 101, arrivals(58)))
-        self.assertEqual(p.observe(59, 101, arrivals(59)), 'clock_no_progress')
+        self.assertIsNone(self.observe(p, 29, 101, arrivals(29)))
+        self.assertIsNone(self.observe(p, 58, 101, arrivals(58)))
+        self.assertEqual(self.observe(p, 59, 101, arrivals(59)), 'clock_no_progress')
 
     def test_each_required_stream_missing_stale_and_exact_boundary(self):
         for key in arrivals(0):
             p = ExecutionTiming(policy(), 0, 0)
             at = arrivals(1); at.pop(key)
-            self.assertEqual(p.observe(1, 1, at), 'clock_missing' if key == 'clock' else 'stream_missing:'+key)
-            p = ExecutionTiming(policy(), 0, 0)
-            self.assertIsNone(p.observe(3, 1, arrivals(0)))
-            self.assertEqual(p.observe(3.01, 1, arrivals(0)), 'stream_stale:clock')
+            self.assertEqual(self.observe(p, 1, 1, at), 'clock_missing' if key == 'clock' else 'stream_missing:'+key)
+            p = ExecutionTiming(policy(basis='wall'), 0, 0)
+            self.assertIsNone(self.observe(p, 3, 1, arrivals(0)))
+            self.assertEqual(self.observe(p, 3.01, 1, arrivals(0)), 'stream_stale:clock')
             at = arrivals(4); at[key] = 0
-            self.assertEqual(p.observe(4, 1, at), 'stream_stale:'+key)
+            self.assertEqual(self.observe(p, 4, 1, at), 'stream_stale:'+key)
 
     def test_trigger_is_sticky_and_cannot_be_reset_by_new_leg(self):
-        p = ExecutionTiming(policy(budget=2), 0, 100)
+        p = ExecutionTiming(policy(budget=2), 0, 100, telemetry=samples(0,100))
         with self.assertRaisesRegex(TimeoutError, 'simulation_budget'): p.check(2, 102, arrivals(2))
         with self.assertRaisesRegex(TimeoutError, 'simulation_budget'): p.check(3, 100, arrivals(3))
         self.assertEqual(p.data['trigger_elapsed_sim_s'], 2)
 
     def test_terminal_health_checks_do_not_invent_deadline(self):
         p = ExecutionTiming(policy(), 0, 0)
-        self.assertIsNone(p.observe(10, 10, arrivals(10), deadlines=False))
-        self.assertEqual(p.observe(11, 0, arrivals(11), deadlines=False), 'clock_backwards')
+        self.assertIsNone(self.observe(p, 10, 10, arrivals(10), deadlines=False))
+        self.assertEqual(self.observe(p, 11, 0, arrivals(11), deadlines=False), 'clock_backwards')
 
 
 class ExecutionActions(unittest.TestCase):
     def setup_action(self, budget=5, watchdog=100, basis='simulation', **kwargs):
         s, h, c = session(**kwargs)
         s.action.__func__.__globals__['ExecutionTiming'] = ExecutionTiming
-        guard = ExecutionTiming(policy(budget, basis, watchdog), c.wall, s.sim_time())
+        instrument_session(s,c)
+        guard = ExecutionTiming(policy(budget, basis, watchdog), c.wall, s.sim_time(), telemetry=s.timing_telemetry)
         return s, h, c, guard
 
     def run_action(self, s, guard, seconds=90):
@@ -209,9 +232,9 @@ class ExecutionActions(unittest.TestCase):
                 if c.wall>=2:
                     if failure=='backwards':s.sim_time=lambda:-1
                     elif failure=='invalid':s.sim_time=lambda:float('nan')
-                    else:s.at['scan']=-10
+                    else:s.at['scan']=-40
             s.spin=tick
-            expected={'backwards':'clock_backwards','invalid':'clock_invalid','stale':'stream_stale:scan'}[failure]
+            expected={'backwards':'clock_backwards','invalid':'clock_invalid','stale':'stream_stale_wall:scan'}[failure]
             with self.subTest(failure=failure),self.assertRaisesRegex(TimeoutError,expected):self.run_action(s,p)
             self.assertEqual(h.cancel_calls,0);self.assertIsNone(s.goal)
             self.assertFalse(s.execution['nav2'][0]['cancel_requested'])
@@ -325,6 +348,7 @@ def test_actual_execute_shares_one_epoch_across_approach_and_legs(tmp_path, monk
     exec(compile(ast.fix_missing_locations(ast.Module(body=[ast.ClassDef(name='Session',bases=[],keywords=[],body=methods,decorator_list=[])],type_ignores=[])),str(source),'exec'),ns)
     s=ns['Session']();s.runtime=tmp_path;(tmp_path/'runs').mkdir();s.runs={}
     s.args=NS(world='maze',localization='ground_truth');s.stop=NS(is_set=lambda:False);s.cancel=NS(is_set=lambda:False)
+    s.timing_telemetry=samples(0,0)
     s.at=arrivals(0);s.sim_time=lambda:wall.value;s.phase=lambda _:None;s.settle=lambda:None;s.cancel_active=lambda:None
     s.state=lambda:{'telemetry':{}};s.path_msg=lambda p:p;s.plan_pub=NS(publish=lambda _:None)
     s.st={'robot':{'ground_truth':[0,0,0]}};s.latest={}
@@ -335,6 +359,7 @@ def test_actual_execute_shares_one_epoch_across_approach_and_legs(tmp_path, monk
         execution_timing.check(wall.value,s.sim_time(),s.at)
         calls.append(topic);epochs.append(id(execution_timing))
         wall.value+=.75;s.at=arrivals(wall.value)
+        s.timing_telemetry.update(samples(wall.value,wall.value))
         if topic=='/navigate_to_pose':s.st['robot']['ground_truth']=[goal.pose.pose.position.x,goal.pose.pose.position.y,0]
         else:s.st['robot']['ground_truth']=[*goal.path[-1],0]
     s.action=action
@@ -429,7 +454,8 @@ def test_simulation_shared_only_nav95_succeeds_wall90_cap_remains():
     for basis in ['simulation','wall']:
         s,h,c=session(result_at=95)
         s.action.__func__.__globals__['ExecutionTiming']=ExecutionTiming
-        p=ExecutionTiming(policy(103,basis,200),0,0)
+        instrument_session(s,c)
+        p=ExecutionTiming(policy(103,basis,200),0,0,telemetry=s.timing_telemetry)
         cap=p.effective['navigate_wall_cap_s']
         assert p.effective['scope']=='shared_approach_and_all_legs'
         if basis=='simulation':
