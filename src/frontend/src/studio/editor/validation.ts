@@ -5,7 +5,7 @@
  */
 import type { XY } from '../../lab/types';
 import type { FleetInstance } from '../types';
-import { distToPolygon, pointInPolygon } from '../agri/geometry';
+import { distToPolygon, pointInPolygon, segmentsIntersect, selfIntersection } from '../agri/geometry';
 import { depotsOf } from '../fleet';
 import { OBSTACLE_STYLE, area } from './geometry';
 import type { ItemRef } from './selection';
@@ -61,31 +61,6 @@ function bbox(pts: XY[]): [number, number, number, number] {
 const pointBox = (p: XY, r = 2): [number, number, number, number] => [p[0] - r, p[1] - r, p[0] + r, p[1] + r];
 const overlapBox = (a: number[], b: number[]) => a[0] <= b[2] && b[0] <= a[2] && a[1] <= b[3] && b[1] <= a[3];
 
-const orient = (a: XY, b: XY, c: XY) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
-const onSeg = (a: XY, b: XY, p: XY) => Math.min(a[0], b[0]) <= p[0] && p[0] <= Math.max(a[0], b[0]) && Math.min(a[1], b[1]) <= p[1] && p[1] <= Math.max(a[1], b[1]);
-
-/** Closed-segment intersection test (touching counts). */
-export function segmentsIntersect(a: XY, b: XY, c: XY, d: XY): boolean {
-  const d1 = orient(c, d, a), d2 = orient(c, d, b), d3 = orient(a, b, c), d4 = orient(a, b, d);
-  if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) return true;
-  return (d1 === 0 && onSeg(c, d, a)) || (d2 === 0 && onSeg(c, d, b)) || (d3 === 0 && onSeg(a, b, c)) || (d4 === 0 && onSeg(a, b, d));
-}
-
-/** First pair of non-adjacent edges that meet, with the meeting point (approximate), or null. */
-export function selfIntersection(poly: XY[]): XY | null {
-  const n = poly.length;
-  if (n < 4) return null;
-  for (let i = 0; i < n; i++) {
-    const a = poly[i], b = poly[(i + 1) % n];
-    for (let j = i + 2; j < n; j++) {
-      if (i === 0 && j === n - 1) continue; // shares vertex 0
-      const c = poly[j], d = poly[(j + 1) % n];
-      if (segmentsIntersect(a, b, c, d)) return [(a[0] + b[0] + c[0] + d[0]) / 4, (a[1] + b[1] + c[1] + d[1]) / 4];
-    }
-  }
-  return null;
-}
-
 function polygonsOverlap(a: XY[], b: XY[]): boolean {
   if (!overlapBox(bbox(a), bbox(b))) return false;
   if (a.some((p) => pointInPolygon(p, b)) || b.some((p) => pointInPolygon(p, a))) return true;
@@ -125,7 +100,7 @@ export function validateGeometry(inst: FleetInstance): GeometryIssue[] {
     const b = bbox(poly);
     const x = selfIntersection(poly);
     if (x) {
-      push({ code: 'self_intersection', severity: 'error', message: `${name} 边自相交`, target, bounds: b, at: x });
+      push({ code: 'self_intersection', severity: 'error', message: `${name} 边自相交（第 ${x.i + 1} 与第 ${x.j + 1} 条边）`, target, bounds: b, at: x.at });
       continue;
     }
     if (poly.length < 3 || area(poly) < MIN_AREA_M2) {

@@ -96,3 +96,42 @@ export function round2(x: number): number {
 export function ringPoints(cx: number, cy: number, r: number, n: number, rot = 0): Ring {
   return disc(cx, cy, r, n, rot);
 }
+
+/** 闭线段相交（含端点接触与共线重叠）。 */
+export function segmentsIntersect(a: XY, b: XY, c: XY, d: XY): boolean {
+  const o = (p: XY, q: XY, r: XY) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
+  const on = (p: XY, q: XY, r: XY) => Math.min(p[0], q[0]) <= r[0] && r[0] <= Math.max(p[0], q[0]) && Math.min(p[1], q[1]) <= r[1] && r[1] <= Math.max(p[1], q[1]);
+  const d1 = o(c, d, a), d2 = o(c, d, b), d3 = o(a, b, c), d4 = o(a, b, d);
+  if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) return true;
+  return (d1 === 0 && on(c, d, a)) || (d2 === 0 && on(c, d, b)) || (d3 === 0 && on(a, b, c)) || (d4 === 0 && on(a, b, d));
+}
+
+/** 环的首个非相邻边相交：边下标 i<j（边 i 为 ring[i]→ring[i+1]）与交点；简单多边形返回 null。 */
+export function selfIntersection(ring: Ring): { i: number; j: number; at: XY } | null {
+  const n = ring.length;
+  if (n < 4) return null;
+  for (let i = 0; i < n; i++) {
+    const a = ring[i], b = ring[(i + 1) % n];
+    for (let j = i + 2; j < n; j++) {
+      if (i === 0 && j === n - 1) continue;
+      const c = ring[j], d = ring[(j + 1) % n];
+      if (!segmentsIntersect(a, b, c, d)) continue;
+      const den = (b[0] - a[0]) * (d[1] - c[1]) - (b[1] - a[1]) * (d[0] - c[0]);
+      let at: XY;
+      if (den !== 0) {
+        const t = ((c[0] - a[0]) * (d[1] - c[1]) - (c[1] - a[1]) * (d[0] - c[0])) / den;
+        at = [a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])];
+      } else {
+        // 共线接触/重叠：取落在另一条边上的端点。
+        at = [c, d, a, b].find((p, k) => (k < 2 ? segDist(p, a, b) : segDist(p, c, d)) === 0) ?? a;
+      }
+      return { i, j, at };
+    }
+  }
+  return null;
+}
+
+/** 环是否自相交（任一对非相邻边相交或接触）。 */
+export function selfIntersects(ring: Ring): boolean {
+  return selfIntersection(ring) !== null;
+}

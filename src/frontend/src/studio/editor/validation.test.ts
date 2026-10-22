@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { FleetInstance } from '../types';
-import { selfIntersection, validateGeometry, vehicleBodyRadius } from './validation';
+import { selfIntersects } from '../agri/geometry';
+import { validateGeometry, vehicleBodyRadius } from './validation';
 
 const base = (): FleetInstance => ({
   boundary: [[0, 0], [100, 0], [100, 60], [0, 60]],
@@ -27,7 +28,7 @@ describe('validateGeometry', () => {
     expect(issue.code).toBe('self_intersection');
     expect(issue.target).toEqual({ type: 'plot', id: 'A' });
     expect(issue.at).toEqual([25, 25]);
-    expect(selfIntersection([[0, 0], [1, 0], [1, 1], [0, 1]])).toBeNull();
+    expect(selfIntersects([[0, 0], [1, 0], [1, 1], [0, 1]])).toBe(false);
   });
   it('detects degenerate area', () => {
     const i = base();
