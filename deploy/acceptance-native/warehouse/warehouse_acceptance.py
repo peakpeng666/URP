@@ -1,3 +1,4 @@
+from warehouse_diagnostics import failure as describe_failure
 #!/usr/bin/env python3
 """Isolated warehouse replay over original APIs. No ROS starts in local tests."""
 import argparse
@@ -74,9 +75,16 @@ def execute(a):
     from execution_diagnostics import collect as collect_execution
     source=a.source.resolve();token=secrets.token_hex(24);gateway=None;base=None;forced=False;sid=None
     raw={'state':'ERROR','source_sha':SOURCE,'harness_sha':a.harness_sha,'overall_wall_budget_s':OVERALL_WALL_S}
+    diagnostic={'harness':{'phase':'preflight'},'session_report':'unavailable'}
+    raw['warehouse_diagnostics']=diagnostic
+    def mark(phase):diagnostic['harness']['phase']=phase
+    def observed_session(value):
+        nonlocal sid
+        sid=value
     def save(name,obj):(private/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2,allow_nan=False))
     try:
         if a.stage!='warehouse' or not digest(a.harness_sha,40):raise ValueError('warehouse_arguments_invalid')
+        mark('source_verification')
         verify_source(source)
         if Path(sys.prefix).resolve()!=(source/'src/lab/.venv').resolve():raise ValueError('wrong_checker_interpreter')
         env=dict(os.environ,URP_LAB_RUNTIME=str(runtime),URP_ACCEPTANCE_OWNER=token,ROS_LOCALHOST_ONLY='1',
@@ -92,9 +100,12 @@ def execute(a):
         from urp_lab.store import Store
         from urp_research.turn_modes.checker import check
         # No directory override in production CLI. Local JSON fixtures are test-only.
+        mark('historical_inputs')
         inputs=from_archive(a.archive or download_archive(private))
+        mark('fuel_restore')
         cache_receipt=preload_fuel(source,private,env)
         raw.update(cache_receipt)
+        mark('resource_check')
         raw_assets=inspect_world('warehouse')
         raw_resources=compare(inputs['evidence/native-tb4-session/world-assets.json'],raw_assets)
         raw.update(raw_resource_manifest_sha256=raw_resources['current_resource_manifest_sha256'],
@@ -106,9 +117,11 @@ def execute(a):
         raw.update(resources)
         if resources['resources_match_historical'] is not True:raise ValueError('historical_resources_mismatch')
         map_before=map_snapshot(maps);adapter_before=adapter_identity()
+        mark('record_build')
         record,plan=build_record(inputs,check,map_check,to_sim_plan,execution_manifest,lambda:maps.fingerprint('warehouse'),adapter_before)
         raw.update(public_receipt(record));raw.update(resources);raw.update(source_sha=SOURCE,harness_sha=a.harness_sha,overall_wall_budget_s=OVERALL_WALL_S,state='ERROR',**map_before)
         save('new-record.json',record);save('current-plan.json',plan)
+        mark('record_store')
         db=Store(runtime/'lab.sqlite3')
         try:
             if db.list_runs() or db.active_sim_runs():raise ValueError('runtime_not_empty')
@@ -142,12 +155,15 @@ def execute(a):
             except Exception:
                 raw['resources_match_historical']=False
                 raise
+        mark('guard')
         guard()
+        mark('gateway_start')
         with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
         base=f'http://127.0.0.1:{port}'
         with (private/'gateway.log').open('w') as log:
             gateway=subprocess.Popen([str(source/'src/lab/.venv/bin/python'),'-m','urp_lab','serve','--host','127.0.0.1','--port',str(port),'--no-archive'],
                          cwd=source/'src/lab',env=env,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+        mark('gateway_health')
         end=time.monotonic()+120
         while True:
             if gateway.poll() is not None or time.monotonic()>end:raise ValueError('gateway_failed')
@@ -155,22 +171,36 @@ def execute(a):
                 if api(base,'GET','/health').get('status')=='ok':break
             except (OSError,ValueError):pass
             time.sleep(.5)
+        diagnostic['harness']['gateway_health_verified']=True
+        mark('gateway_readback')
         persisted=api(base,'GET','/runs/'+record['run_id'])
         if persisted!=record:raise ValueError('gateway_import_readback_mismatch')
-        lifecycle=drive(lambda method,path,data=None,timeout=5:api(base,method,path,data,timeout),record['run_id'],plan,guard,save)
+        diagnostic['harness']['gateway_record_verified']=True
+        mark('lifecycle')
+        lifecycle=drive(lambda method,path,data=None,timeout=5:api(base,method,path,data,timeout),record['run_id'],plan,guard,save,on_session=observed_session)
+        diagnostic['lifecycle']=lifecycle['diagnostics']
         raw['execution_protocol']=lifecycle['execution_protocol']
         raw['execution_diagnostics']=collect_execution(lifecycle['result'],[record],source)
         sid=lifecycle['session_id']
         import re
         if not isinstance(sid,str) or not re.fullmatch(r'sim_[A-Za-z0-9_]+',sid):raise ValueError('session_identity_missing')
-        session=read(runtime/'sim'/sid/'session-report.json',{})
-        if session.get('session_id')!=sid:raise ValueError('session_report_identity_mismatch')
+        mark('session_report')
+        report_path=runtime/'sim'/sid/'session-report.json'
+        diagnostic['session_report']='missing' if not report_path.is_file() else 'invalid'
+        session=read(report_path,{})
+        if not isinstance(session,dict):raise ValueError('session_report_identity_mismatch')
+        if session.get('session_id')!=sid:
+            if report_path.is_file():diagnostic['session_report']='identity_mismatch'
+            raise ValueError('session_report_identity_mismatch')
+        diagnostic['session_report']='available'
+        mark('physical_check')
         raw.update(physical_evidence(lifecycle['result'],session,lifecycle,plan))
         guard();raw.update(source_identity_verified=True,map_identity_verified=True)
         # Assert real session settings, not just requested API settings.
         if (session.get('spawn')!=record['replay']['expected_session_spawn'] or
                 (session.get('navigation_profile') or {}).get('localization')!='ground_truth'):
             raw['state']='FAIL'
+        mark('overlay_identity')
         compat=session.get('compatibility') or {}
         binary={k:hashlib.sha256(Path(compat[k]).read_bytes()).hexdigest() for k in ('tf','gui') if compat.get(k)}
         bridge_hash=(session.get('bridge_runtime') or {}).get('sha256')
@@ -183,13 +213,16 @@ def execute(a):
             sources['deployment/'+rel]=hashlib.sha256((deployment/rel).read_bytes()).hexdigest()
         raw['overlay_source_sha256']=canonical_sha(sources)
     except BaseException as exc:
+        diagnostic['harness'].update(failure_phase=diagnostic['harness']['phase'],**describe_failure(exc))
         raw['state']='ERROR';(private/'harness-error.txt').write_text(type(exc).__name__+': '+str(exc))
     finally:
         if base and gateway and gateway.poll() is None:
             try:api(base,'POST','/shutdown',{},timeout=10)
-            except Exception:pass
+            except Exception as exc:diagnostic['harness']['gateway_shutdown_exception_kind']=describe_failure(exc)['exception_kind']
+            diagnostic['harness']['gateway_wait_timed_out']=False
             try:gateway.wait(timeout=240)
-            except subprocess.TimeoutExpired:forced=True
+            except subprocess.TimeoutExpired:
+                forced=True;diagnostic['harness']['gateway_wait_timed_out']=True
         if owned(token):
             forced=True;signal_owned(token,signal.SIGTERM);end=time.monotonic()+15
             while owned(token) and time.monotonic()<end:time.sleep(.5)
@@ -197,11 +230,13 @@ def execute(a):
         if gateway:
             try:gateway.wait(timeout=5)
             except subprocess.TimeoutExpired:pass
+        diagnostic['harness']['forced_cleanup']=forced
         raw['gateway_exit_code']=gateway.returncode if gateway else None
         raw['remaining_owned_process_count']=len(owned(token))
         raw['cleanup_pass']=bool(raw.get('cleanup_pass') and not forced and raw['remaining_owned_process_count']==0)
+        diagnostic['harness']['startup_collection_failed']=False
         try:raw['startup_diagnostics']=collect(runtime,sid)
-        except Exception:pass
+        except Exception:diagnostic['harness']['startup_collection_failed']=True
         summary=project(raw,require_runner=False);a.summary.parent.mkdir(parents=True,exist_ok=True);a.summary.write_text(json.dumps(summary,indent=2,allow_nan=False))
     return 0 if summary['state']=='PASS' else 1
 

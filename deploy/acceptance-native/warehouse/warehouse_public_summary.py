@@ -1,5 +1,6 @@
 """Separate fixed projection for rechecked historical replay, not a solver run."""
 from historical_fuel import ARCHIVE_SHA256 as FUEL_ARCHIVE_SHA, SELECTED_SHA256 as FUEL_SELECTED_SHA, COHORT as FUEL_COHORT, ALIAS_PROJECTION
+from warehouse_diagnostics import project as project_diagnostics
 import argparse
 import json
 import math
@@ -49,6 +50,7 @@ def project(raw, runner=None, *, require_runner=True):
             'historical_counts_semantics':'tasks_reached_single_route_not_trials',
             'api_spawn_yaw':1.570796,'expected_session_spawn_yaw':1.5708,
             'runner_failure_hint':'unknown','runner_termination_reason':'unknown','runner_stage':'unknown','runner_exit_code':None,'runner_cleanup_remaining':None,'runner_forced_kill_count':None}
+    result['warehouse_diagnostics']=project_diagnostics(raw.get('warehouse_diagnostics'))
     result['raw_resource_manifest_sha256']=digest(raw.get('raw_resource_manifest_sha256'))
     result['raw_resources_match_historical']=raw.get('raw_resources_match_historical') if type(raw.get('raw_resources_match_historical')) is bool else None
     result['historical_alias_projection']=ALIAS_PROJECTION if raw.get('historical_alias_projection')==ALIAS_PROJECTION else None

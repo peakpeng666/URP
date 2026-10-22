@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "identity": "jammy-rootless-capability-v1",
+  "scope": "diagnostic-only-existing-facilities",
+  "scientific_source_context": "18557cfc61f291e8ac5fa4a80d9df212e1df0030",
+  "prior_cohort": {
+    "identity": "jammy-candidate-v7",
+    "workflow_run": "39800731973",
+    "job": "119900349167",
+    "outcome": "APT_CLOSURE_DOWNGRADE_REFUSED",
+    "authenticated_target": {
+      "package": "libpq-dev",
+      "version": "14.24-0ubuntu0.22.04.1",
+      "architecture": "amd64",
+      "snapshot": "20261021T000000Z",
+      "suite": "jammy-updates",
+      "component": "main",
+      "stanza": 1632
+    }
+  },
+  "publication": {
+    "repository": "peakpeng666/URP",
+    "branch": "fix/agriculture-compatibility-20261022",
+    "helpers": "deploy/f2c-capability",
+    "workflow": ".github/workflows/f2c-capability.yml",
+    "runner": "ubuntu-22.04",
+    "uploads": false
+  },
+  "prohibited": [
+    "host-package-installation",
+    "persistent-subordinate-id-changes",
+    "setuid-program-installation",
+    "host-security-setting-changes",
+    "rootfs-preparation",
+    "image-pull-or-publication",
+    "native-fields2cover-execution",
+    "scientific-test-relaxation",
+    "unknown-provider-acceptance",
+    "downgrade",
+    "raw-log-or-cache-upload"
+  ],
+  "acceptance": [
+    "independent-source-review",
+    "source-and-index-only-hermetic-fixtures",
+    "complete-workflow-parity",
+    "authenticated-existing-tools-and-runtime",
+    "existing-multi-id-allocation",
+    "namespace-local-ownership-proof",
+    "nested-offline-namespace-proof",
+    "actual-kernel-namespace-fd-reference",
+    "unchanged-host-inputs",
+    "bounded-public-status-only",
+    "authenticated-permitted-nss-fallback",
+    "local-owner-and-loginuid-guards",
+    "rechecked-nscd-endpoint-absence",
+    "verified-final-capability-pass-receipt"
+  ],
+  "not_claimed": [
+    "hosted-probe-success-before-observation",
+    "rootfs-package-preparation-success",
+    "native-build-success",
+    "scientific-validation",
+    "production-promotion",
+    "whole-host-authentication",
+    "remote-daemon-identity",
+    "support-for-every-valid-subordinate-allocation-form"
+  ]
+}

@@ -1,0 +1,16 @@
+PUBLIC_FILE_ALLOWLIST.txt
+README.md
+REVIEW_SCOPE.json
+recipe/CAPABILITY_INPUTS.md
+recipe/candidate-workflow.yml
+recipe/jammy_metadata.py
+recipe/prepare_capability_inputs.py
+recipe/probe_namespace_capabilities.py
+recipe/public_codes.json
+recipe/report_capability_status.py
+recipe/tests/test_capability_inputs.py
+recipe/tests/test_capability_projection.py
+recipe/tests/test_namespace_capabilities.py
+recipe/tests/test_workflow_contract.py
+recipe/verify_workflow_contract.py
+source-index.json
