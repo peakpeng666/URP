@@ -133,3 +133,15 @@ describe('describeTarget', () => {
     expect(previewIssues(p).some((i) => i.target === 'obstacle:o1')).toBe(true);
   });
 });
+
+describe('issueFields', () => {
+  it('maps each issue to the form fields that drive it', async () => {
+    const { issueFields } = await import('./preview');
+    const keys = ['field_w', 'field_h', 'headland_width', 'swath_width', 'obstacle_count', 'obstacle_r', 'robot_radius', 'task_count'];
+    expect(issueFields({ level: 'warn', message: '地头宽 1 m 小于作业幅宽 4 m', target: 'boundary' }, keys)).toEqual(['headland_width', 'swath_width']);
+    expect(issueFields({ level: 'error', message: '边界自交', target: 'boundary' }, keys)[0]).toBe('field_w');
+    expect(issueFields({ level: 'warn', message: '障碍 o1 越出边界', target: 'obstacle:o1' }, keys)[0]).toBe('obstacle_count');
+    expect(issueFields({ level: 'error', message: '树 1 落在障碍内', target: 'task:t1' }, keys)[0]).toBe('robot_radius');
+    expect(issueFields({ level: 'error', message: 'x', target: 'task:t1' }, ['seedless'])).toEqual([]);
+  });
+});

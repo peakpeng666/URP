@@ -8,6 +8,8 @@ import { downloadFile, downloadMatrices } from './export';
 import { clearDraft, lastImport, recordImport, loadDraft, loadFilters, onForeignDraftChange, saveDraft, debouncedDraftWriter, saveFilters } from './drafts';
 import { extractPreview, previewIssues } from './preview';
 import { PreviewMap } from './PreviewMap';
+import { issueFields, type PreviewIssue } from './preview';
+const paramAnchor = (pattern: string, key: string) => `agri-param-${pattern}-${key}`;
 import { manualEdits, type ManualEditReport } from './manualEdits';
 import { lab } from '../../lab/api';
 import s from '../panels/panels.module.css';
@@ -70,6 +72,14 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
     setDraftNotice(`已把场景 ${prior?.title ?? ''} 记录的参数和种子带回表单；地图上的手工编辑仍只保存在那份场景里。`);
   }
   const touched = useRef(false);
+  const [located, setLocated] = useState<string[]>([]);
+  function locateIssue(issue: PreviewIssue) {
+    const keys = issueFields(issue, (p.runnable?.params ?? []).map((x) => x.key));
+    setLocated(keys);
+    const el = keys.length ? document.getElementById(paramAnchor(p.id, keys[0])) : null;
+    el?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    el?.querySelector<HTMLElement>('input,select')?.focus({ preventScroll: true });
+  }
   const pendingDraft = useRef<ReturnType<typeof debouncedDraftWriter> | null>(null);
   useEffect(() => {
     const flush = () => pendingDraft.current?.flush();
@@ -139,10 +149,10 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
     {p.proposal ? <><Notice tone="warn">提案不可提交：{p.proposal.missing.join('；')}</Notice><p>接口草案：{p.proposal.apiDraft}</p></> : <>
       {draftNotice && <p role="status">{draftNotice}</p>}
       {saveError && <Notice tone="warn">{saveError}</Notice>}
-      {built?.preview && <PreviewMap preview={built.preview} issues={built.issues} title={p.name} />}
+      {built?.preview && <PreviewMap preview={built.preview} issues={built.issues} title={p.name} onLocate={locateIssue} />}
       {built?.error && <Notice tone="warn">当前参数无法生成预览：{built.error}</Notice>}
       <fieldset disabled={busy} style={{ border: 0, padding: 0 }}>
-        {(p.runnable?.params ?? []).map((param) => <label key={param.key} style={{ display: 'block', marginBottom: 8 }}>
+        {(p.runnable?.params ?? []).map((param) => <label key={param.key} id={paramAnchor(p.id, param.key)} data-located={located.includes(param.key) || undefined} style={{ display: 'block', marginBottom: 8, outline: located.includes(param.key) ? '2px solid #ff6f00' : undefined, outlineOffset: 2 }}>
           {param.label}{param.unit ? ` (${param.unit})` : ''}
           {param.type === 'select' ? <Select aria-label={`${p.name} ${param.label}`} value={String(values[param.key])} onChange={(e) => edit({ ...values, [param.key]: e.target.value })}>
             {param.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}

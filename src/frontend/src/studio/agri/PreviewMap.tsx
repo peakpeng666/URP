@@ -7,7 +7,7 @@ type Layer = 'plots' | 'obstacles' | 'tasks' | 'depots' | 'issues';
 const LAYER_LABEL: Record<Layer, string> = { plots: '地块', obstacles: '障碍', tasks: '服务对象', depots: '库点/卸货点', issues: '问题标记' };
 
 /** 米制坐标预览：y 轴向上（与场景坐标一致），左下角标原点，带比例尺与图例；形状和颜色同时编码类型。 */
-export function PreviewMap({ preview: p, issues, title }: { preview: Preview; issues: PreviewIssue[]; title: string }) {
+export function PreviewMap({ preview: p, issues, title, onLocate }: { preview: Preview; issues: PreviewIssue[]; title: string; onLocate?: (issue: PreviewIssue) => void }) {
   const [on, setOn] = useState<Record<Layer, boolean>>({ plots: true, obstacles: true, tasks: true, depots: true, issues: true });
   const [picked, setPicked] = useState<string>('');
   const [x0, y0, x1, y1] = p.bbox;
@@ -23,16 +23,16 @@ export function PreviewMap({ preview: p, issues, title }: { preview: Preview; is
   const pick = (t: string) => { setPicked(t); const l = describeTarget(p, t)?.layer; if (l && l !== 'boundary' && !on[l]) setOn({ ...on, [l]: true }); };
   return <figure style={{ margin: '8px 0' }}>
     <svg role="img" aria-label={`${title} 几何预览`} viewBox={`0 0 ${w} ${h}`} style={{ width: '100%', maxHeight: 320, background: '#fafaf7', border: '1px solid #ccc', touchAction: 'manipulation' }}>
-      <polygon data-target="boundary" data-picked={picked === 'boundary' || undefined} points={pts(p.boundary)} fill="#eef5e6" stroke={picked === 'boundary' ? HI : bad.has('boundary') ? '#c62828' : '#4d6b2f'} strokeWidth={unit * (picked === 'boundary' ? 0.9 : 0.3)} onClick={() => pick('boundary')} strokeDasharray={bad.has('boundary') ? `${unit} ${unit / 2}` : undefined} />
+      <polygon data-target="boundary" data-picked={picked === 'boundary' || undefined} points={pts(p.boundary)} fill="#eef5e6" stroke={picked === 'boundary' ? HI : '#4d6b2f'} strokeWidth={unit * (picked === 'boundary' ? 0.9 : 0.3)} onClick={() => pick('boundary')}  />
       {on.plots && p.plots.map((pl) => <polygon key={pl.id} points={pts(pl.polygon)} fill="none" stroke="#7a9a4a" strokeWidth={unit * 0.15} strokeDasharray={`${unit * 0.6} ${unit * 0.3}`}><title>地块 {pl.name}</title></polygon>)}
-      {on.obstacles && p.obstacles.map((o) => <polygon key={o.id} data-target={`obstacle:${o.id}`} data-picked={picked === `obstacle:${o.id}` || undefined} points={pts(o.polygon)} fill="url(#hatch)" stroke={picked === `obstacle:${o.id}` ? HI : bad.has(`obstacle:${o.id}`) ? '#c62828' : '#555'} strokeWidth={unit * (picked === `obstacle:${o.id}` ? 0.8 : 0.2)} style={{ cursor: 'pointer' }} onClick={() => pick(`obstacle:${o.id}`)}><title>障碍 {o.id}（{o.kind}）</title></polygon>)}
+      {on.obstacles && p.obstacles.map((o) => <polygon key={o.id} data-target={`obstacle:${o.id}`} data-picked={picked === `obstacle:${o.id}` || undefined} points={pts(o.polygon)} fill="url(#hatch)" stroke={picked === `obstacle:${o.id}` ? HI : '#555'} strokeWidth={unit * (picked === `obstacle:${o.id}` ? 0.8 : 0.2)} style={{ cursor: 'pointer' }} onClick={() => pick(`obstacle:${o.id}`)}><title>障碍 {o.id}（{o.kind}）</title></polygon>)}
       <defs><pattern id="hatch" width={unit} height={unit} patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width={unit} height={unit} fill="#ddd" /><line x1={0} y1={0} x2={0} y2={unit} stroke="#888" strokeWidth={unit * 0.3} /></pattern></defs>
       {on.tasks && p.tasks.map((t) => { const [cx, cy] = tx(t.xy).split(',').map(Number); const err = bad.has(`task:${t.id}`);
         return <g key={t.id} data-target={`task:${t.id}`} data-picked={picked === `task:${t.id}` || undefined} onClick={() => pick(`task:${t.id}`)} style={{ cursor: 'pointer' }}>
           <circle cx={cx} cy={cy} r={unit * (picked === `task:${t.id}` ? 1.1 : 0.7)} fill={err ? '#c62828' : '#1565c0'} stroke="#fff" strokeWidth={unit * 0.15} />
           {err && on.issues && <text x={cx + unit} y={cy - unit} fontSize={unit * 1.6} fill="#c62828">!</text>}
           <title>{t.label}{t.demand !== undefined ? `，需求 ${t.demand}` : ''}，({t.xy[0]}, {t.xy[1]}) m</title></g>; })}
-      {on.depots && p.depots.map((d, i) => { const [cx, cy] = tx(d).split(',').map(Number); return <rect key={`d${i}`} data-target={`depot:${i}`} data-picked={picked === `depot:${i}` || undefined} x={cx - unit} y={cy - unit} width={unit * 2} height={unit * 2} fill="#6d4c41" stroke={picked === `depot:${i}` ? HI : bad.has(`depot:${i}`) ? '#c62828' : 'none'} strokeWidth={unit * 0.5} style={{ cursor: 'pointer' }} onClick={() => pick(`depot:${i}`)}><title>库点 {i + 1}</title></rect>; })}
+      {on.depots && p.depots.map((d, i) => { const [cx, cy] = tx(d).split(',').map(Number); return <rect key={`d${i}`} data-target={`depot:${i}`} data-picked={picked === `depot:${i}` || undefined} x={cx - unit} y={cy - unit} width={unit * 2} height={unit * 2} fill="#6d4c41" stroke={picked === `depot:${i}` ? HI : 'none'} strokeWidth={unit * 0.5} style={{ cursor: 'pointer' }} onClick={() => pick(`depot:${i}`)}><title>库点 {i + 1}</title></rect>; })}
       {on.depots && p.unload.map((d, i) => { const [cx, cy] = tx(d).split(',').map(Number); return <polygon key={`u${i}`} points={`${cx},${cy - unit * 1.2} ${cx + unit},${cy + unit * 0.8} ${cx - unit},${cy + unit * 0.8}`} fill="#ef6c00"><title>卸货点 {i + 1}</title></polygon>; })}
       {p.start && (() => { const [cx, cy] = tx(p.start).split(',').map(Number); return <rect x={cx - unit} y={cy - unit} width={unit * 2} height={unit * 2} fill="#6d4c41"><title>起点</title></rect>; })()}
       {(() => { const [ox, oy] = tx([0, 0]).split(',').map(Number); return <g><line x1={ox} y1={oy} x2={ox + unit * 3} y2={oy} stroke="#000" strokeWidth={unit * 0.15} /><line x1={ox} y1={oy} x2={ox} y2={oy - unit * 3} stroke="#000" strokeWidth={unit * 0.15} /><text x={ox + unit * 0.4} y={oy - unit * 0.4} fontSize={unit * 1.3}>原点 (0,0) · x→ y↑</text></g>; })()}
@@ -47,7 +47,7 @@ export function PreviewMap({ preview: p, issues, title }: { preview: Preview; is
       {pickedInfo && <span role="status">已选：{pickedInfo.text}</span>}
     </figcaption>
     {issues.length > 0 && <ul aria-label="预检问题" style={{ fontSize: 12 }}>{issues.map((i, k) => <li key={k} style={{ color: i.level === 'error' ? '#c62828' : '#8a6d00' }}>
-      <button type="button" style={{ all: 'unset', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => i.target && pick(i.target)}>{i.level === 'error' ? '错误' : '提醒'}：{i.message}</button></li>)}</ul>}
+      <button type="button" style={{ all: 'unset', cursor: 'pointer', textDecoration: 'underline' }} onClick={() => { if (i.target) pick(i.target); onLocate?.(i); }}>{i.level === 'error' ? '错误' : '提醒'}：{i.message}</button></li>)}</ul>}
   </figure>;
 }
 
