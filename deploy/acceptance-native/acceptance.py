@@ -17,6 +17,7 @@ import time
 import urllib.request
 
 from public_summary import SOURCE, project
+from startup_diagnostics import session_id, collect
 
 def sha(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()).hexdigest()
@@ -114,7 +115,7 @@ def execute(args):
     runtime = private / 'runtime'; runtime.mkdir(mode=0o700)
     output = private / 'full-loop'
     token = secrets.token_hex(24)
-    gateway = loop = None; base = None; forced = False
+    gateway = loop = None; base = None; forced = False; sid = None
     try:
         if args.stage != 'maze': raise RuntimeError('warehouse_replay_not_implemented')
         source = args.source.resolve(); verify_source(source)
@@ -153,8 +154,8 @@ def execute(args):
         verify_source(source)
         report = read(output / 'report.json', {})
         raw.update(failure_diagnostic(report,read(output / 'solutions.json', [])))
-        sid = report.get('session_id')
-        if not isinstance(sid, str) or not sid.startswith('sim_') or '/' in sid or '..' in sid: raise RuntimeError('session_missing')
+        sid = session_id(report)
+        if sid is None: raise RuntimeError('session_missing')
         session = read(runtime / 'sim' / sid / 'session-report.json', {})
         derive(report, read(output / 'sim-follow_path.json', {}), read(output / 'solutions.json', []), session, raw)
         # Hash actual verified overlay files, but never expose their paths.
@@ -195,6 +196,10 @@ def execute(args):
         raw['process_exit_codes']['gateway'] = gateway.returncode if gateway else None
         raw['remaining_owned_process_count'] = len(owned(token))
         raw['cleanup_pass'] = bool(raw.get('cleanup_pass') and not forced and raw['remaining_owned_process_count'] == 0)
+        # session-report.json is finalized by shutdown, including failed startup.
+        # Diagnostic recovery never updates execution state or PASS evidence.
+        try: raw['startup_diagnostics'] = collect(runtime,sid)
+        except Exception: pass
         # This private stage result precedes supervisor cleanup. The public CLI
         # independently requires the final runner-status receipt.
         result = project(raw, require_runner=False)

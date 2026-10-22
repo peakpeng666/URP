@@ -75,7 +75,8 @@ def execute(a):
     frozen=a.frozen_harness.resolve()
     sys.path.insert(0,str(frozen))
     from acceptance import api, owned, signal_owned, verify_source, read
-    source=a.source.resolve();token=secrets.token_hex(24);gateway=None;base=None;forced=False
+    from startup_diagnostics import collect
+    source=a.source.resolve();token=secrets.token_hex(24);gateway=None;base=None;forced=False;sid=None
     raw={'state':'ERROR','source_sha':SOURCE,'harness_sha':a.harness_sha,'overall_wall_budget_s':1800}
     def save(name,obj):(private/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2,allow_nan=False))
     try:
@@ -184,6 +185,8 @@ def execute(a):
         raw['gateway_exit_code']=gateway.returncode if gateway else None
         raw['remaining_owned_process_count']=len(owned(token))
         raw['cleanup_pass']=bool(raw.get('cleanup_pass') and not forced and raw['remaining_owned_process_count']==0)
+        try:raw['startup_diagnostics']=collect(runtime,sid)
+        except Exception:pass
         summary=project(raw,require_runner=False);a.summary.parent.mkdir(parents=True,exist_ok=True);a.summary.write_text(json.dumps(summary,indent=2,allow_nan=False))
     return 0 if summary['state']=='PASS' else 1
 

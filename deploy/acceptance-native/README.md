@@ -23,7 +23,7 @@
 - acceptance.py：调用现有full_loop.py，汇总真实执行证据。
 - public_summary.py：生成字段受限的公开摘要。
 - runner/verify_worktree.py：校验源码。
-- runner/verify_registry.py：将镜像包完整性与官方npm元数据对照。
+- runner/verify_registry.py：核对镜像包完整性及官方tarball路径；临时安装改走官方npm源，锁文件不变。
 
 ```sh
 python acceptance.py --source SOURCE --private-dir NEW_DIRECTORY --summary SUMMARY --harness-sha COMMIT --stage maze

@@ -57,6 +57,9 @@ def verify(root,fetch=fetch_metadata):
             result['phase']='integrity_check'
             dist=metadata.get('dist')
             if not isinstance(dist,dict) or dist.get('integrity')!=integrity:raise CheckError('integrity_mismatch',attempts=attempts)
+            official=urllib.parse.urlsplit(dist.get('tarball',''))
+            if official.scheme!='https' or official.hostname!='registry.npmjs.org' or official.username or official.password or official.query or official.fragment or parsed.query or parsed.fragment or urllib.parse.unquote(official.path)!=urllib.parse.unquote(parsed.path):
+                raise CheckError('tarball_path_mismatch',attempts=attempts)
             result['mirror_identities_verified']+=1
         result.update(phase='complete',status='passed',error='none',http_status=None,mirror_index=None)
     except CheckError as e:

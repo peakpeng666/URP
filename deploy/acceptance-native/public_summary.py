@@ -4,6 +4,7 @@ import json
 import math
 import re
 from pathlib import Path
+from startup_diagnostics import sanitize as sanitize_startup
 
 SOURCE = '94420cf3b703c564134048e1b074406df901bba3'
 STATES = {'PASS', 'FAIL', 'ERROR', 'NOT_RUN'}
@@ -59,7 +60,7 @@ def apt_projection(value):
 def registry_projection(raw):
     raw=raw if isinstance(raw,dict) else {}
     phases=('lock_parse','source_policy','metadata_fetch','integrity_check','complete')
-    errors=('none','http','timeout','tls','network','metadata_invalid','integrity_mismatch','source_not_allowlisted','lock_invalid','unknown')
+    errors=('none','http','timeout','tls','network','metadata_invalid','integrity_mismatch','tarball_path_mismatch','source_not_allowlisted','lock_invalid','unknown')
     return {'phase':raw.get('phase') if raw.get('phase') in phases else 'unknown',
             'status':raw.get('status') if raw.get('status') in ('passed','failed') else 'not_measured',
             'error':raw.get('error') if raw.get('error') in errors else 'unknown',
@@ -83,7 +84,8 @@ def host_repair_projection(raw):
 
 def project(raw, runner=None, *, require_runner=True):
     raw = raw if isinstance(raw, dict) else {}
-    result = {'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
+    startup = sanitize_startup(raw.get('startup_diagnostics'))
+    result = {'startup_diagnostics': startup, 'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
               'harness_sha': digest(raw.get('harness_sha'), 40),
               'stage': raw.get('stage') if raw.get('stage') in ('maze', 'warehouse') else 'unknown',
               'state': raw.get('state') if isinstance(raw.get('state'), str) and raw.get('state') in STATES else 'ERROR',

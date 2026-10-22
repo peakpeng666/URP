@@ -37,8 +37,10 @@ class RegistryTests(unittest.TestCase):
             self.assertNotIn('PRIVATE',json.dumps(result))
             fetch=Mock(side_effect=CheckError('http',403,1));result=verify(tmp,fetch)
             self.assertEqual(result['phase'],'metadata_fetch');self.assertEqual(result['http_status'],403)
-            result=verify(tmp,Mock(return_value=({'dist':{'integrity':'sha512-original'}},1)))
+            result=verify(tmp,Mock(return_value=({'dist':{'integrity':'sha512-original','tarball':'https://registry.npmjs.org/PRIVATE'}},1)))
             self.assertEqual(result['status'],'passed');self.assertEqual(result['mirror_identities_verified'],1)
+            result=verify(tmp,Mock(return_value=({'dist':{'integrity':'sha512-original','tarball':'https://registry.npmjs.org/OTHER'}},1)))
+            self.assertEqual(result['error'],'tarball_path_mismatch')
     def test_reducer_drops_unknown_fields(self):
         result=registry_projection({'phase':'PRIVATE','status':'PRIVATE','error':'PRIVATE','http_status':'PRIVATE','mirror_index':True,'attempts':999,'raw':'PRIVATE'})
         self.assertNotIn('PRIVATE',json.dumps(result));self.assertIsNone(result['mirror_index']);self.assertIsNone(result['attempts'])

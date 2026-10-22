@@ -58,6 +58,21 @@ def installation_step(path):
     return step
 
 
+def installation_progress(path):
+    try:
+        with pathlib.Path(path).open('rb') as f:
+            f.seek(0,2);f.seek(max(0,f.tell()-LIMIT));tail=f.read(LIMIT).decode('utf-8',errors='replace')
+    except OSError:return 'unknown'
+    phase='unknown'
+    for line in tail.splitlines():
+        if not re.match(r'^\++URP_SETUP ',line):continue
+        if re.search(r'\bapt-get\s',line):phase='apt'
+        elif re.search(r'\buv\s|astral\.sh/uv/',line):phase='uv'
+        elif re.search(r'\bnpm\s',line):phase='npm'
+        elif 'src/lab/ros/native/install-ros-extras.sh' in line or 'deploy/build-cohort.sh' in line:phase='native'
+    return phase
+
+
 def snapshot():
     rows = {}
     for path in pathlib.Path('/proc').iterdir():
@@ -108,6 +123,9 @@ def run(args):
                UV_PYTHON_INSTALL_DIR=str(private/'python'),
                PATH=str(private/'home/.local/bin') + ':' + env.get('PATH', ''))
     # CLI opt-in is required even if the caller exports the environment variable.
+    # Temporary child environment only; preserve the source lock and SRI checks.
+    env['npm_config_registry']='https://registry.npmjs.org'
+    env['npm_config_replace_registry_host']='registry.npmmirror.com'
     env.pop('URP_HOST_APT_REPAIR',None)
     if getattr(args,'allow_host_apt_repair',False):env['URP_HOST_APT_REPAIR']='1'
     stop = False
@@ -128,12 +146,18 @@ def run(args):
         nonlocal current
         print(json.dumps({'stage':status['stage'],'state':'running'}),flush=True)
         next_progress=time.monotonic()+120
+        last_install_phase='unknown'
         with (private / filename).open('wb') as stream:
             current = subprocess.Popen(command, cwd=root, env=env, stdout=stream, stderr=subprocess.STDOUT, start_new_session=True)
             while current.poll() is None:
                 track()
                 if time.monotonic() >= next_progress:
-                    print(json.dumps({'stage':status['stage'],'state':'running'}),flush=True)
+                    progress={'stage':status['stage'],'state':'running'}
+                    if status['stage']=='installation':
+                        found=installation_progress(private/filename)
+                        if found!='unknown':last_install_phase=found
+                        progress['installation_substage']=last_install_phase
+                    print(json.dumps(progress),flush=True)
                     next_progress=time.monotonic()+120
                 if stop or time.monotonic() > deadline:
                     raise TimeoutError('owned_stage_timeout')

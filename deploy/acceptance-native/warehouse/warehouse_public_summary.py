@@ -7,6 +7,7 @@ import re
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 from public_summary import project as runner_projection
+from startup_diagnostics import sanitize as sanitize_startup
 from historical_input import SOURCE, HISTORICAL_SOURCE
 
 HASHES = ('historical_routes_sha256', 'historical_planned_sha256', 'current_plan_sha256',
@@ -32,7 +33,7 @@ def digest(value, length=64):
 def project(raw, runner=None, *, require_runner=True):
     raw=raw if isinstance(raw,dict) else {}
     state=raw.get('state');state=state if state in ('PASS','FAIL','ERROR','NOT_RUN') else 'ERROR'
-    result={'schema_version':1,'stage':'warehouse','state':state,'warehouse_state':state,
+    result={'startup_diagnostics':sanitize_startup(raw.get('startup_diagnostics')),'schema_version':1,'stage':'warehouse','state':state,'warehouse_state':state,
             'source_sha':digest(raw.get('source_sha'),40),'harness_sha':digest(raw.get('harness_sha'),40),
             'historical_source_sha':HISTORICAL_SOURCE,'route_origin':'historical_fixed_witness',
             'solver_executed':False,'physical_budget_origin':'source_reconstructed_not_observed',
