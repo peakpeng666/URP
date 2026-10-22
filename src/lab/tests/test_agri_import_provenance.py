@@ -120,3 +120,15 @@ def test_http_duplicate_import_returns_conflict(tmp_path, monkeypatch):
         restored = client.get('/lab/api/scenarios/agri-import-test')
         assert restored.status_code == 200
         assert restored.json()['revision'] == 1
+
+
+@pytest.mark.parametrize('sid', ['maze-inspection', 'p2p-maze-cross'])
+def test_official_map_ids_remain_reserved_without_maps(sid, tmp_path, monkeypatch):
+    monkeypatch.setattr(paths, 'USER_SCENARIOS', tmp_path)
+    monkeypatch.setattr(scenarios, '_builtin', lambda: {})
+    obj = payload(); obj['id'] = sid
+    with pytest.raises(ValueError, match='内置'):
+        scenarios.import_scenario(obj)
+    with pytest.raises(ValueError, match='内置'):
+        scenarios.save_user_scenario(obj)
+    assert not list(tmp_path.glob('*.json'))

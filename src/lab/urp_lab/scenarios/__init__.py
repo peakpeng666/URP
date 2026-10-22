@@ -143,7 +143,7 @@ def import_scenario(obj: dict) -> dict:
     sid = str(obj.get('id') or '').strip().lower()
     if not ID_RE.match(sid):
         raise ValueError('场景 id 须为 2–64 位小写字母、数字、-、_、.（以字母或数字开头）')
-    if sid in _builtin():
+    if sid in field.MAP_SCENARIO_IDS or sid in motion.MAP_SCENARIO_IDS or sid in _builtin():
         raise ValueError(f'场景 id {sid} 与内置场景重名')
     pc = obj.get('problem_class')
     if pc not in PROBLEM_CLASSES:
@@ -231,7 +231,7 @@ def _save_user_scenario(scenario: dict, overwrite: bool = True) -> dict:
     sid = str(scenario.get('id') or '').strip().lower()
     if not ID_RE.match(sid):
         raise ValueError('场景 id 须为 2–64 位小写字母、数字、-、_、.')
-    if sid in _builtin():
+    if sid in field.MAP_SCENARIO_IDS or sid in motion.MAP_SCENARIO_IDS or sid in _builtin():
         raise ValueError('内置场景不能覆盖；请另存为新场景')
     target = paths.USER_SCENARIOS / f'{sid}.json'
     if target.exists() and not overwrite:

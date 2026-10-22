@@ -65,3 +65,5 @@ jobs:
           code=$(curl -sS -o /tmp/shutdown.json -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{}' http://127.0.0.1:4100/lab/api/shutdown)
           test "$code" = 403
           grep -q shutdown_forbidden /tmp/shutdown.json
+      - name: Agriculture works in the bench image without ROS maps
+        run: python3 deploy/check-agriculture.py --base-url http://127.0.0.1:4100
