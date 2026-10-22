@@ -9,12 +9,15 @@ from __future__ import annotations
 
 from shapely.geometry import LineString, Point, Polygon
 
+from .. import coverage_limits
+
 MAX_CONNECTOR_GRAPH_NODES = 512
 
 
 def connect_swaths(inst: dict, swaths: list[list]) -> tuple[list, dict, str | None]:
     # Coverage excludes the execution system's separately planned approach leg
     # (CONTRACT §1). Preserve that common baseline/Fields2Cover scope.
+    coverage_limits.output_budget(segments=len(swaths), points=sum(map(len, swaths)))
     start = list(swaths[0][0])
     points = [list(p) for swath in swaths for p in swath]
     area = Polygon(inst['field'], inst.get('obstacles', []))
@@ -57,6 +60,7 @@ def connect_swaths(inst: dict, swaths: list[list]) -> tuple[list, dict, str | No
         connected.extend(list(p) for p in swath[1:])
         previous_index = first_index + len(swath) - 1
         first_index += len(swath)
+        coverage_limits.output_budget(points=len(connected))
     return connected, metadata, None
 
 
@@ -75,15 +79,21 @@ def coverage(inst):
     """Panel boustrophedon baseline: parallel swaths along x, connected end to end (in-place turns allowed)."""
     from shapely.geometry import Polygon, LineString
     from shapely.ops import unary_union
-    area = Polygon(inst['field'], inst.get('obstacles', []))
-    interior = area.buffer(-inst['headland_width'])
-    if interior.is_empty:
-        return [], {'valid': False, 'errors': ['内缩作业区为空']}, {}
+    try:
+        area, interior = coverage_limits.geometry(inst['field'], inst.get('obstacles', []), inst['headland_width'])
+        coverage_limits.scan_budget(interior, inst['swath_width'], 0)
+    except ValueError as error:
+        return [], {'valid': False, 'errors': [str(error)]}, {}
     x0, y0, x1, y1 = interior.bounds
     step = inst['swath_width']
     points, strips, swaths = [], [], []
-    y, row = y0 + min(step / 2, (y1 - y0) / 2), 0
+    y, _ = coverage_limits.scan_range(y0, y1, step)
+    row, scans = 0, 0
     while y < y1:
+        # The preflight is mathematical; keep a hard cap for rounding drift.
+        if scans >= coverage_limits.MAX_SCAN_LINES:
+            return [], {'valid': False, 'errors': ['覆盖扫描行数超出预算']}, {}
+        scans += 1
         cut = interior.intersection(LineString([(x0 - 1, y), (x1 + 1, y)]))
         lines = [cut] if cut.geom_type == 'LineString' else list(getattr(cut, 'geoms', []))
         for line in lines:
@@ -92,14 +102,25 @@ def coverage(inst):
             pair = list(line.coords)
             if row % 2:
                 pair.reverse()
+            try:
+                coverage_limits.output_budget(segments=len(swaths) + 1, points=len(points) + len(pair))
+            except ValueError as error:
+                return [], {'valid': False, 'errors': [str(error)]}, {}
             points.extend(pair)
             swaths.append(pair)
             strips.append(line.buffer(step / 2, cap_style=2))
             row += 1
-        y += step
+        next_y = y + step
+        if next_y <= y:
+            return [], {'valid': False, 'errors': ['覆盖扫描浮点步进不能前进']}, {}
+        y = next_y
     if len(points) < 2:
         return [], {'valid': False, 'errors': ['没有作业行']}, {}
-    points, connector_metrics, connector_error = connect_swaths(inst, swaths)
+    try:
+        points, connector_metrics, connector_error = connect_swaths(inst, swaths)
+        coverage_limits.output_budget(points=len(points))
+    except ValueError as error:
+        return [], {'valid': False, 'errors': [str(error)]}, {}
     path = LineString(points)
     footprint_ok = footprint_valid(area, path, inst['robot_width'] / 2)
     covered = unary_union(strips).intersection(area).area

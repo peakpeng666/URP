@@ -1,7 +1,6 @@
 """Cross-language agri contract check. Invoked by frontend/tools/check-agri-contract.mjs.
 Loads the real backend validator, not a copied TS geometry approximation.
 """
-import importlib.util
 import json
 from pathlib import Path
 import sys
@@ -9,10 +8,9 @@ import sys
 from shapely.geometry import Point, Polygon
 
 sys.dont_write_bytecode = True
-source = Path(__file__).resolve().parents[1] / 'urp_lab/scenarios/validate.py'
-spec = importlib.util.spec_from_file_location('agri_actual_validator', source)
-validator = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(validator)
+# Import the real package so validator helpers keep their normal relative imports.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from urp_lab.scenarios import validate as validator
 results = []
 for record in json.loads(Path(sys.argv[1]).read_text()):
     scenario = record['scenario']
