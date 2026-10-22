@@ -94,3 +94,16 @@ export function describeTarget(p: Preview, target: string): { layer: 'boundary' 
   if (kind === 'depot') { const d = p.depots[Number(id)]; return d ? { layer: 'depots', text: `库点 ${Number(id) + 1}，坐标 ${fmt(d)}` } : null; }
   return null;
 }
+
+/** Form parameters that drive an issue's target, most direct first; only keys the pattern actually has. */
+export function issueFields(issue: PreviewIssue, keys: string[]): string[] {
+  const t = issue.target ?? '';
+  const want: RegExp[] = /地头/.test(issue.message) ? [/^headland_width$/, /^(swath_width|row_spacing|rows_per_pass|implement_width)$/]
+    : t === 'boundary' ? [/^field_[wh]$/, /boundary|shape|notch/]
+    : t.startsWith('obstacle:') ? [/obstacle|pond|tree|pole|ditch/, /^field_[wh]$/]
+    : t.startsWith('task:') ? [/^robot_radius$|robot/, /task|row|spacing|tree/, /obstacle/]
+    : t.startsWith('depot:') ? [/depot|unload/, /^field_[wh]$/] : [];
+  const out: string[] = [];
+  for (const re of want) for (const k of keys) if (re.test(k) && !out.includes(k)) out.push(k);
+  return out;
+}
