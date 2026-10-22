@@ -8,6 +8,8 @@ import { downloadFile, downloadMatrices } from './export';
 import { clearDraft, lastImport, recordImport, loadDraft, loadFilters, onForeignDraftChange, saveDraft, saveFilters } from './drafts';
 import { extractPreview, previewIssues } from './preview';
 import { PreviewMap } from './PreviewMap';
+import { manualEdits, type ManualEditReport } from './manualEdits';
+import { lab } from '../../lab/api';
 import s from '../panels/panels.module.css';
 
 export function AgriCatalog({ visible = true }: { visible?: boolean } = {}) {
@@ -52,6 +54,21 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
   const [saveError, setSaveError] = useState('');
   const [open, setOpen] = useState(false);
   const [prior, setPrior] = useState(() => lastImport(p.id));
+  const [edits, setEdits] = useState<ManualEditReport | null>(null);
+  const [editsError, setEditsError] = useState('');
+  useEffect(() => {
+    if (!open || !prior || !p.runnable) return;
+    let alive = true;
+    setEditsError('');
+    lab.scenario(prior.scenarioId).then((sc) => { if (alive) setEdits(manualEdits(p, sc as { instance: unknown; provenance?: unknown })); })
+      .catch((e) => { if (alive) { setEdits(null); setEditsError(e instanceof Error ? e.message : String(e)); } });
+    return () => { alive = false; };
+  }, [open, prior, p]);
+  function adoptScenarioParams() {
+    if (!edits || edits.seed === null) return;
+    edit({ ...defaultValues(p), ...edits.params }); editSeed(String(edits.seed));
+    setDraftNotice(`已把场景 ${prior?.title ?? ''} 记录的参数和种子带回表单；地图上的手工编辑仍只保存在那份场景里。`);
+  }
   const touched = useRef(false);
   useEffect(() => {
     if (!p.runnable || !touched.current) return;
@@ -131,6 +148,10 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
           } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
         }}>下载原始场景 JSON</Button>
         {prior && <Notice tone="info">此模式上次导入为 <a href={`#/plan/${encodeURIComponent(prior.scenarioId)}`}>{prior.title}</a>（种子 {prior.seed}）。再次导入会新建一个场景，不会覆盖你在地图上对那份做的手工编辑；要保留手工成果请继续编辑原场景。</Notice>}
+        {prior && edits && (edits.reproducible
+          ? <Notice tone={edits.changes.length ? 'warn' : 'info'}>{edits.changes.length ? `那份场景相对生成结果有手工编辑：${edits.changes.join('；')}。重新生成不会带上这些编辑。` : '那份场景与按其参数重新生成的结果一致，没有手工编辑。'}{' '}<Button size="sm" onClick={adoptScenarioParams}>用该场景的参数和种子填回表单</Button></Notice>
+          : <Notice tone="warn">无法比较那份场景的手工编辑：{edits.reason}</Notice>)}
+        {prior && editsError && <Notice tone="warn">读取上次导入的场景失败：{editsError}</Notice>}
         <Button onClick={resetDraft}>清除草稿并恢复默认</Button>
         <Button onClick={() => void submit()} disabled={busy || !p.runnable}>{busy ? '校验并保存中…' : '校验并导入任务规划'}</Button>
       </fieldset>
