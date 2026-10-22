@@ -61,7 +61,7 @@ export function SelectionPanel({ inst, refs, editable, onEdit, onSelectRefs }: S
         ))}
         {refs.length > 0 && <button type="button" onClick={() => onSelectRefs([])}>清除</button>}
       </div>
-      <div className={s.hint}>Alt/⌘ + 拖动框选，⌘/Ctrl + 点击加减选</div>
+      <div className={s.hint}>框选工具或 Alt/⌘ + 拖动框选，⌘/Ctrl + 点击加减选</div>
       {refs.length > 0 && <div className={s.panelTitle}>已选 {refs.length} 项{one ? ` · ${ITEM_LABEL[one.type]} ${one.type === 'depot' ? `D${Number(one.id) + 1}` : one.type === 'unload' ? `U${Number(one.id) + 1}` : one.id}` : ''}</div>}
       {one && pts && isPoint && (
         <div className={s.fields}>

@@ -7,6 +7,7 @@
   touch-action: none;
   user-select: none;
 }
+.editor[data-tool="box"],
 .editor[data-tool="task"],
 .editor[data-tool="depot"],
 .editor[data-tool="unload"],

@@ -174,6 +174,11 @@ export function FieldEditor(props: FieldEditorProps) {
       return;
     }
     if (e.button !== 0) return;
+    if (tool === 'box') {
+      drag.current = { kind: 'marquee', from: p, to: p, add: e.ctrlKey || e.metaKey };
+      setMarquee({ a: p, b: p });
+      return;
+    }
     if (tool === 'select' || !editable) {
       const additive = e.ctrlKey || e.metaKey;
       const ref: ItemRef | null =

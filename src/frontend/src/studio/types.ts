@@ -153,7 +153,7 @@ export type Selection =
   | { type: 'boundary' }
   | null;
 
-export type Tool = 'select' | 'pan' | 'task' | 'obstacle' | 'plot' | 'depot' | 'unload' | 'corridor';
+export type Tool = 'select' | 'box' | 'pan' | 'task' | 'obstacle' | 'plot' | 'depot' | 'unload' | 'corridor';
 
 export interface Reference {
   key: string;
