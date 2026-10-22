@@ -356,3 +356,12 @@ A separate v2 reference marker supplements only this exact failure. It describes
 The new `SAFE_PACKAGE_TARGET_REFERENCE_V2:` record must precede the unique original failure marker on the same exactly recognized package RUN vertex. Other vertices may interleave. The same vertex may not interpose unrelated output, repeat or conflict with a reference, or attach it to another failure operation. Producer and consumer use one source-indexed closed schema, and the public receipt independently revalidates the optional reference. Invalid reference evidence is rejected, not reprinted. Missing references remain compatible with old receipts; the existing v1 target-reference hash marker is unchanged.
 
 Coordinates are diagnostic claims about already-verified signed metadata, not a new process-authentication channel or proof of installed bytes. The local investigator must resolve them against the pinned signed indices and respect unmapped states. Raw logs remain private and ephemeral. This revision neither establishes image preparation success nor performs compilation, fresh-runtime validation, or current-application acceptance.
+
+### v14 parser correctness and separately reviewed cleanup
+
+The control parser now recognizes empty-initial-value colon headers such as
+Conffiles, preserving continuation precedence and strict inventory equality.
+See CONTROL_FIELD_SOURCE_EVIDENCE.md for exact archive/source provenance and
+reconstructed status limitations. The separately reviewed controller cleanup
+and its9 fixtures are included without modification. No native success follows
+from these pure regressions; fresh compiler/runtime acceptance remains pending.

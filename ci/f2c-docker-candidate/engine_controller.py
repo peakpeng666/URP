@@ -151,8 +151,8 @@ def run(args):
     (control/'launch.json').write_text(json.dumps(launch));(out/'engine-info.json').write_text(json.dumps(engine))
     cid=call(create_argv(args.image,inputs,control,launch['uid'],launch['gid'],args.out_bytes,args.memory_bytes)).decode().strip()
     require(re.fullmatch('[0-9a-f]{64}',cid),'container ID invalid')
-    (out/'container-id').write_text(cid)
     try:
+        (out/'container-id').write_text(cid)
         call(['docker','start',cid]);deadline=time.monotonic()+120;ready=None
         while time.monotonic()<deadline:
             logs=call(['docker','logs',cid]);require(len(logs)<1024*1024,'unexpected controller log volume')
@@ -187,18 +187,23 @@ def run(args):
         (control/'release').write_text('release\n')
         return finished['exit_code']
     except BaseException as exc:
-        (out/'controller-failure.json').write_text(json.dumps({'status':'failed','type':type(exc).__name__,'reason':str(exc)}))
-        if not (out/'private-output.tar').exists() and not (out/'private-output.partial.tar').exists():
-            try: export_output(cid,out,args.out_bytes)
-            except BaseException as export_error:
-                (out/'export-failure.json').write_text(json.dumps({'type':type(export_error).__name__,'reason':str(export_error)}))
+        # Evidence is best effort on a failed run; never mask its original error/cancellation.
+        try:
+            (out/'controller-failure.json').write_text(json.dumps({'status':'failed','type':type(exc).__name__,'reason':str(exc)}))
+            if not (out/'private-output.tar').exists() and not (out/'private-output.partial.tar').exists():
+                try: export_output(cid,out,args.out_bytes)
+                except BaseException as export_error:
+                    (out/'export-failure.json').write_text(json.dumps({'type':type(export_error).__name__,'reason':str(export_error)}))
+        except BaseException: pass
         raise
     finally:
         # Only this exact newly-created ephemeral container is removed. Evidence remains.
         had_failure=sys.exc_info()[0] is not None
         try:call(['docker','rm','-f',cid])
         except BaseException as cleanup_error:
-            (out/'cleanup-failure.json').write_text(json.dumps({'container_id':cid,'reason':str(cleanup_error),'removed':False}))
+            try:
+                (out/'cleanup-failure.json').write_text(json.dumps({'container_id':cid,'reason':str(cleanup_error),'removed':False}))
+            except BaseException: pass
             if not had_failure:raise
 
 def export_output(cid,out,out_bytes):

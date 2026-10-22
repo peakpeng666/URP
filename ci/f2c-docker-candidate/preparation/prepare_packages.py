@@ -364,12 +364,20 @@ def write_json(path, value):
 def fields(text):
     out, key = {}, None
     for line in text.splitlines():
-        if line.startswith((' ', '\t')) and key:
+        if not line:
+            key = None
+            continue
+        if line.startswith((' ', '\t')):
+            require(key is not None, 'Orphan control continuation')
             out[key] += '\n' + line
-        elif ': ' in line:
-            key, value = line.split(': ', 1)
+        else:
+            require(':' in line, 'Malformed control field')
+            key, value = line.split(':', 1)
+            require(bool(key) and key[0] not in '#-' and
+                    all(33 <= ord(c) <= 126 and c != ':' for c in key),
+                    'Malformed control field name')
             require(key not in out, 'Duplicate control field: ' + key)
-            out[key] = value
+            out[key] = value.strip(' \t')
     return out
 
 

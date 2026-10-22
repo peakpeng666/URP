@@ -5,11 +5,14 @@
     "preparation/runtime"
   ],
   "files": {
+    "CONTROL_FIELD_SOURCE_EVIDENCE.md": {
+      "sha256": "d90b11f930215ed44210e51b057acf933d35582cc36bd9e179f4dcfc3d1d5947"
+    },
     "PYTHON_PREREQUISITE_SOURCES.md": {
       "sha256": "8a147ae2c9bb225985c5cf6aba2a9e08948019b03c92aa4c8438f9eb2af79b6e"
     },
     "README.md": {
-      "sha256": "4b0d27069f43dce6fd77feaeb8c19d5dead37f0d26a963502eff55c2f187d803"
+      "sha256": "7a5f98805c53ef6fed1b2e491882a40517e55b72580d207672f4e7ceae42c849"
     },
     "SYSTEM_CA_SOURCE_EVIDENCE.md": {
       "sha256": "88559e675023b804c501cd8293e583a6dc9a6831f4015847c5c1e2f9428fcc57"
@@ -24,7 +27,7 @@
       "sha256": "1fc031ac0b84c146ee3c4bc3293985826c7a932ff44d7fff32c9bba85df711af"
     },
     "engine_controller.py": {
-      "sha256": "427289aeca9418013ee347956732cbfed2c5a3a386245bc7d11e0367dc4cdc1b"
+      "sha256": "13cdabf3c7a65e0ee61534fd76ddaa41cc217d4f36e7858e697288353ead8650"
     },
     "engine_gate.py": {
       "sha256": "65e9b1c6b0d0a864f4c9a9211d3be837c9d7216514b8b00b04c54e771acd20bf"
@@ -168,7 +171,7 @@
       "sha256": "1150e001f9c7828826e418489e21bfb9d97e5e2e5a01b2961078dd896d3dce70"
     },
     "preparation/prepare_packages.py": {
-      "sha256": "33231b90e690aaf0f9f34c97ddab30cb9c546ca5c2ed4a3815b64886e462ae75"
+      "sha256": "f87c3338c764a0950092cb24784c8a2af8b5716844253773481fe42aba937510"
     },
     "preparation/source-provenance.json": {
       "sha256": "e94d07a8b871da7043de91268eeb67ac84442869586bd2e144f8dea5a0b69360"
@@ -194,6 +197,9 @@
     "stage_build_output.py": {
       "sha256": "6e19497aa5dbd8c5b84170837276c325a3b626ddacc4a80b6ff0ed92e2a02e6e"
     },
+    "tests/fixtures/fonts-dejavu-core-status.txt": {
+      "sha256": "f2e54c20b7daaabe632e373509c843d64d95064425269251f9e10ec786b1803c"
+    },
     "tests/test_bootstrap_substeps.py": {
       "sha256": "656b34118ca88729abf4ed81277dda16c9359b6280b2de1b1815f9f2e137db8a"
     },
@@ -205,6 +211,12 @@
     },
     "tests/test_buildkit_structure.py": {
       "sha256": "10513c39c8c81118e39bbda80bb1ac02614c2b3beb019102648a2aeba8a3e530"
+    },
+    "tests/test_control_fields.py": {
+      "sha256": "81684b7c7d97672a2514ffa4c3c7b05ae7066ef8a10b5858584d2b3318090e0b"
+    },
+    "tests/test_controller_cleanup.py": {
+      "sha256": "a1fc35b6153f0e0ce208b742ddbdb1f1d78e4276e2b024a5ddc453bfadf7c06f"
     },
     "tests/test_engine_protocol.py": {
       "sha256": "e177456b94246753980fc20a559c519511d52569d65cf6949ff5c79c7802c779"
