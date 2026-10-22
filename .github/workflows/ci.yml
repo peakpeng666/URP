@@ -68,6 +68,11 @@ jobs:
             src/lab
             src/research
             src/frontend/core/routing
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+      - name: Verify Node runtime before model collection
+        run: node --version
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           version: '0.12.23'
