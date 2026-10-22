@@ -22,14 +22,14 @@ describe('分类体系规模', () => {
     expect(METRICS).toHaveLength(16);
   });
 
-  it('模式目录 39 个 = 14 可运行 + 8 近似 + 17 提案', () => {
-    expect(AGRI_PATTERNS).toHaveLength(39);
+  it('模式目录 40 个 = 11 可构建 + 12 近似 + 17 提案', () => {
+    expect(AGRI_PATTERNS).toHaveLength(40);
     const counts = { runnable: 0, approx: 0, proposal: 0 };
     for (const p of AGRI_PATTERNS) counts[patternStatus(p)] += 1;
     // 3 个可运行模板带 approximation（果园植保离散、多田块欧氏转场、茶园无坡度）→ 状态计入 approx
-    expect(counts).toEqual({ runnable: 11, approx: 11, proposal: 17 });
+    expect(counts).toEqual({ runnable: 11, approx: 12, proposal: 17 });
     expect(PROPOSAL_IDS.size).toBe(17);
-    expect(APPROX_IDS.size).toBe(11);
+    expect(APPROX_IDS.size).toBe(12);
   });
 
   it('模式 id 全局唯一', () => {
@@ -58,10 +58,10 @@ describe('空白清单（gapReport）', () => {
     expect(gap.envsWithout).toEqual([]);
   });
 
-  it('13 个作业当前无任何模式（字面清单）', () => {
-    expect(gap.opsWithout).toHaveLength(13);
+  it('12 个作业当前无任何模式（字面清单）', () => {
+    expect(gap.opsWithout).toHaveLength(12);
     expect([...gap.opsWithout].sort()).toEqual([
-      '除草（机械）', '施肥（变量追肥）', '灌溉设施巡检', '果园修剪', '联合收获',
+      '施肥（变量追肥）', '灌溉设施巡检', '果园修剪', '联合收获',
       '秸秆处理', '割草', '搂草', '打捆', '圈舍清扫',
       '补水补药（站点补给）', '充电（充电桩调度）', '卸载（港池/粮库排队）',
     ].sort());

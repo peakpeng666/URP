@@ -5,7 +5,7 @@ import { ENVIRONMENTS, OPERATIONS, PLANNING_PROBLEMS, SERVICE_OBJECTS, type Agri
 import { AGRI_PATTERNS, patternStatus } from './patterns';
 import { buildPattern, createImportGuard, defaultValues, filterPatterns, importPattern, STATUS_LABELS } from './catalog';
 import { downloadFile, downloadMatrices } from './export';
-import { clearDraft, lastImport, recordImport, loadDraft, loadFilters, onForeignDraftChange, saveDraft, saveFilters } from './drafts';
+import { clearDraft, lastImport, recordImport, loadDraft, loadFilters, onForeignDraftChange, saveDraft, debouncedDraftWriter, saveFilters } from './drafts';
 import { extractPreview, previewIssues } from './preview';
 import { PreviewMap } from './PreviewMap';
 import { manualEdits, type ManualEditReport } from './manualEdits';
@@ -70,10 +70,21 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
     setDraftNotice(`已把场景 ${prior?.title ?? ''} 记录的参数和种子带回表单；地图上的手工编辑仍只保存在那份场景里。`);
   }
   const touched = useRef(false);
+  const pendingDraft = useRef<ReturnType<typeof debouncedDraftWriter> | null>(null);
+  useEffect(() => {
+    const flush = () => pendingDraft.current?.flush();
+    const flushIfHidden = () => { if (document.visibilityState === 'hidden') flush(); };
+    window.addEventListener('pagehide', flush);
+    document.addEventListener('visibilitychange', flushIfHidden);
+    return () => { window.removeEventListener('pagehide', flush); document.removeEventListener('visibilitychange', flushIfHidden); flush(); };
+  }, []);
   useEffect(() => {
     if (!p.runnable || !touched.current) return;
-    const t = setTimeout(() => setSaveError(saveDraft(p, values, seed)), 300);
-    return () => clearTimeout(t);
+    // Debounced; a pending write is flushed on pagehide, on hide, or on unmount (effect below),
+    // so a refresh right after an edit cannot lose it.
+    const writer = debouncedDraftWriter(() => setSaveError(saveDraft(p, values, seed)), 300);
+    pendingDraft.current = writer;
+    return () => { if (pendingDraft.current === writer) pendingDraft.current = null; writer.cancel(); };
   }, [p, values, seed]);
   useEffect(() => onForeignDraftChange(p.id, () => setDraftNotice('另一个标签页修改了这个模式的草稿；本页保留当前内容，刷新后会读取较新的那份。')), [p.id]);
   const edit = (next: Record<string, unknown>) => { touched.current = true; setValues(next); };

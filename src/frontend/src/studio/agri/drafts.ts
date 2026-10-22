@@ -155,3 +155,14 @@ export function lastImport(patternId: string): LastImport | null {
     return typeof v.scenarioId === 'string' && typeof v.title === 'string' ? { scenarioId: v.scenarioId, title: v.title, seed: String(v.seed ?? ''), at: String(v.at ?? '') } : null;
   } catch { return null; }
 }
+
+/** Runs `write` once after `delayMs`; `flush` runs a pending write immediately and is a no-op otherwise. */
+export function debouncedDraftWriter(write: () => void, delayMs: number) {
+  let timer: ReturnType<typeof setTimeout> | null = setTimeout(() => { timer = null; write(); }, delayMs);
+  return {
+    flush() { if (timer === null) return; clearTimeout(timer); timer = null; write(); },
+    /** Drops a pending write (superseded by a newer edit). */
+    cancel() { if (timer !== null) clearTimeout(timer); timer = null; },
+    pending: () => timer !== null,
+  };
+}
