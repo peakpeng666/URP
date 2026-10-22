@@ -43,10 +43,11 @@ import type { Instance, Scenario } from '../../lab/types';
 import { logTimeAxis, unitSuffix } from '../chart';
 import { BackgroundControl, FleetAssetSection, PlanBackground } from '../assets/PlanLayers';
 import { centerMap, ReplayOverlay } from '../experiment/ReplayPanel';
-import { comparable, currentInput, exclusionReason, inputIdentity, partitionRuns, requiresCoverageRecheck, resultState, verifiedPlan } from '../comparison';
+import { comparable, currentInput, exclusionReason, inputIdentity, mapCheckIssue, partitionRuns, requiresCoverageRecheck, resultState, verifiedPlan } from '../comparison';
 import { identityState, withoutInvalidatedResults } from '../../lab/views/plan/resultIntegrity';
 import { RunTrace } from '../experiment/RunTrace';
 import { HistoryRuns } from './HistoryRuns';
+import { MapExclusionNote } from './MapExclusionNote';
 import { SeedBandChart, StatusFlowChart, VerificationChart } from '../researchCharts/RunCharts';
 import { ProblemEditor } from './ProblemEditor';
 import s from './panels.module.css';
@@ -855,6 +856,11 @@ export function ComparePanel() {
     <div className={s.compare}>
       <div className={s.pad} style={{ paddingBottom: 4 }}>
         <p className={s.meta}>本批 {rows.length} 次运行 · {rows.filter(verifiedPlan).length} 个已验算可行解。最佳值仅在相同输入、目标、单位和时间预算内标记。</p>
+        {rows.some((r) => r.check?.valid === true && mapCheckIssue(r)) && (
+          <div className={s.meta} data-exclusion-summary="map_check" aria-label="地图检查未计入的运行">
+            {rows.filter((r) => r.check?.valid === true && mapCheckIssue(r)).map((r) => <MapExclusionNote key={r.run_id} run={r} />)}
+          </div>
+        )}
         {anchor?.planning && <p className={s.meta}>{anchor.planning.objective_label} · {anchor.planning.objective_unit} · 输入 {anchor.instance_sha256.slice(0, 12)}</p>}
         <HistoryRuns />
         {groups.length > 1 && <Notice tone="warn">存在 {groups.length} 种比较口径{groups.some((g) => g.identity === 'unknown') ? '（含身份未核验组）' : ''}；当前最佳值只针对选中方案所在组，不跨组排名。</Notice>}
@@ -957,7 +963,8 @@ export function ComparePanel() {
             <h3>未参与比较与排名（{partition.excluded.length}）</h3>
             <ul className={s.meta} aria-label="未参与比较的运行">
               {partition.excluded.map(({ run, reason }) => (
-                <li key={run.run_id} data-exclusion={reason.code}>{run.algorithm.name} · {run.run_id.slice(0, 8)} · {resultState(run).text} · {reason.text}</li>
+                <li key={run.run_id} data-exclusion={reason.code}>{run.algorithm.name} · {run.run_id.slice(0, 8)} · {resultState(run).text} · {reason.text}
+                  {reason.map && <MapExclusionNote run={run} label="碰撞明细" />}</li>
               ))}
             </ul>
           </div>

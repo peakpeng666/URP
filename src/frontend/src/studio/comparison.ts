@@ -27,7 +27,33 @@ export function comparisonKey(run: Solution): string | null {
   return JSON.stringify([model, run.objective.unit, run.params.time_limit_s ?? null, identity === 'unknown' ? 'identity:unknown' : 'identity:verified']);
 }
 
-export interface Exclusion { code: 'quarantined' | 'pending' | 'timeout' | 'canceled' | 'failed' | 'legacy' | 'infeasible' | 'no_solution' | 'missing_basis' | 'unchecked'; text: string }
+export interface MapViolationSummary { route: number; segment: number; point: [number, number] | null; clearance_m: number | null }
+export interface MapCollisionDetail { violations: MapViolationSummary[]; total: number; min_clearance_m: number | null; threshold_m: number | null }
+export interface Exclusion {
+  code: 'quarantined' | 'pending' | 'timeout' | 'canceled' | 'failed' | 'legacy' | 'infeasible' | 'no_solution' | 'missing_basis' | 'map_collision' | 'map_unchecked' | 'unchecked';
+  text: string;
+  map?: MapCollisionDetail;
+}
+
+const finite = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
+
+/** Map-check status from the run's own map_check record; null when the run carries no map check or it passed. */
+export function mapCheckIssue(run: Solution): Exclusion | null {
+  const mc = run.map_check;
+  if (!mc) return null;
+  if (mc.checked && mc.collision_free === true) return null;
+  if (!mc.checked || mc.collision_free !== false) return { code: 'map_unchecked', text: '地图碰撞检查未完成 · 不计入已验算可行解' };
+  const list = Array.isArray(mc.violations) ? mc.violations : [];
+  const violations = list.map((v) => ({
+    route: v.route, segment: v.segment,
+    point: Array.isArray(v.point) && finite(v.point[0]) && finite(v.point[1]) ? [v.point[0], v.point[1]] as [number, number] : null,
+    clearance_m: finite(v.clearance_m) ? v.clearance_m : null,
+  }));
+  const total = finite(mc.violation_count) ? Math.max(mc.violation_count, violations.length) : violations.length;
+  const threshold = finite(mc.robot_radius_m) ? mc.robot_radius_m + (finite(mc.margin_m) ? mc.margin_m : 0) : null;
+  return { code: 'map_collision', text: `地图碰撞检查未通过（${total} 处）· 不计入已验算可行解`,
+    map: { violations, total, min_clearance_m: finite(mc.min_clearance_m) ? mc.min_clearance_m : null, threshold_m: threshold } };
+}
 
 /** Why a run may not be ranked or compared; null when it is a verified feasible plan with a full basis. */
 export function exclusionReason(run: Solution): Exclusion | null {
@@ -40,6 +66,10 @@ export function exclusionReason(run: Solution): Exclusion | null {
   if (run.status === 'infeasible') return { code: 'infeasible', text: '不可行' };
   if (run.status === 'no_solution') return { code: 'no_solution', text: '未找到可行解' };
   if (!run.instance_sha256 || !run.objective?.unit || !run.frame) return { code: 'missing_basis', text: '缺少比较依据（实例哈希/单位/坐标系）' };
+  if (run.check?.valid === true) {
+    const map = mapCheckIssue(run);
+    if (map) return map;
+  }
   if (!verifiedPlan(run)) return { code: 'unchecked', text: '未通过独立验算' };
   return null;
 }
