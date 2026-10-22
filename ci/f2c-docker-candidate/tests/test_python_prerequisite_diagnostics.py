@@ -6,6 +6,7 @@ module, certificate store, package installation or native build is executed.
 import ast
 import builtins
 from contextlib import redirect_stderr, redirect_stdout
+import hashlib
 import io
 from pathlib import Path
 import shlex
@@ -15,7 +16,7 @@ import unittest
 
 from test_bootstrap_substeps import (
     BOOTSTRAP, PYTHON_SUBSTEP_CODES, ROOT, V9_PREREQUISITE,
-    V10_HELPER_LOOP, V10_PREREQUISITE_BLOCK,
+    V11_HELPER_LOOP, V10_PREREQUISITE_BLOCK,
 )
 
 HELPER = ROOT / 'preparation' / 'bootstrap' / 'check_python_prerequisites.py'
@@ -141,6 +142,10 @@ class PythonPrerequisiteDiagnosticsTests(unittest.TestCase):
         cls.source = HELPER.read_text(encoding='ascii')
         cls.shell = BOOTSTRAP.read_text(encoding='ascii')
 
+    def test_v10_prerequisite_guard_is_byte_identical(self):
+        self.assertEqual(hashlib.sha256(HELPER.read_bytes()).hexdigest(),
+                         '2d26330f8b4c4e314f71a0fb4477ec9bb11e9407e9cbb8bc7cf1521554680e63')
+
     def helper_namespace(self, optimize, importer, main=False):
         safe_builtins = dict(vars(builtins), __import__=importer)
         namespace = {'__name__': '__main__' if main else 'fixture_helper',
@@ -240,7 +245,7 @@ class PythonPrerequisiteDiagnosticsTests(unittest.TestCase):
             self.assertEqual(handler.type.id, 'Exception')
 
     def test_helper_is_checked_and_copied_and_execution_uses_private_log(self):
-        self.assertEqual(self.shell.count(V10_HELPER_LOOP + '\n'), 2)
+        self.assertEqual(self.shell.count(V11_HELPER_LOOP + '\n'), 2)
         self.assertEqual(self.shell.count(V10_PREREQUISITE_BLOCK), 1)
         line = V10_PREREQUISITE_BLOCK.splitlines()[1]
         self.assertEqual(shlex.split(line), [

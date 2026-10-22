@@ -1,4 +1,4 @@
-"""Pure v9/v10 observability contracts; never execute the provisioning shell.
+"""Pure v9/v10/v11 contracts; never execute the provisioning shell.
 
 The pinned digest is the reviewed v8 bootstrap's exact bytes. Removing substep
 assignments and reversing three explicit replacements must recover it, without
@@ -23,6 +23,7 @@ import buildkit_diagnostic as d
 BOOTSTRAP = ROOT / 'preparation' / 'bootstrap' / 'bootstrap.sh'
 V8_SHA256 = '20f05e01919aef231194b97cdd274fe0994ec7e914b105531a6198aa190d4bb1'
 V9_SHA256 = 'e41b8aaa97831d32f67bfeefd52b8d02adaa6791c2518cca2095ba03b8c806e4'
+V10_SHA256 = '38651a731c2c9c1c6a6f965fba6d5b77f75690d63683940066dcc2ce5864c3d3'
 ASSIGNMENT = re.compile(r'^[ \t]*(phase|substep)=([a-z][a-z0-9_]*)$')
 SUBSTEP_LINE = re.compile(rb'^[ \t]*substep=[a-z][a-z0-9_]*\n', re.MULTILINE)
 PREREQUISITE_PREFIX = 'run python-apt-prerequisites /usr/bin/python3 -I -B -c '
@@ -48,6 +49,55 @@ V9_HELPER_LOOP = ('for helper in parse_release.awk parse_packages.awk parse_simu
                   'parse_uris.awk parse_status.awk verify_delta.awk parse_ca_members.awk '
                   'verify_ca_pem.awk; do')
 V10_HELPER_LOOP = V9_HELPER_LOOP.replace('; do', ' check_python_prerequisites.py; do')
+V11_HELPER_LOOP = V10_HELPER_LOOP.replace('; do', ' provision_system_ca.py; do')
+SYSTEM_CA_SUBSTEP_CODES = {
+    71: 'system_ca_layout', 72: 'system_ca_bundle', 73: 'system_ca_usable',
+    74: 'system_ca_default_path', 75: 'system_ca_alias_conflict',
+    76: 'system_ca_alias_write', 77: 'system_ca_record', 78: 'system_ca_execution',
+}
+V11_SYSTEM_CA_BLOCK = r'''substep=system_ca_defaults
+system_ca_result=0
+/usr/bin/python3 -I -B "$HELPERS/provision_system_ca.py" --install-default-alias > "$OUT/logs/system-ca-default.log" 2>&1 || system_ca_result=$?
+case "$system_ca_result" in
+    0) ;;
+    71)
+        substep=system_ca_layout
+        fail
+        ;;
+    72)
+        substep=system_ca_bundle
+        fail
+        ;;
+    73)
+        substep=system_ca_usable
+        fail
+        ;;
+    74)
+        substep=system_ca_default_path
+        fail
+        ;;
+    75)
+        substep=system_ca_alias_conflict
+        fail
+        ;;
+    76)
+        substep=system_ca_alias_write
+        fail
+        ;;
+    77)
+        substep=system_ca_record
+        fail
+        ;;
+    78)
+        substep=system_ca_execution
+        fail
+        ;;
+    *)
+        substep=system_ca_unknown
+        fail
+        ;;
+esac
+'''
 PYTHON_SUBSTEP_CODES = {
     61: 'python_import_sys', 62: 'python_import_apt_pkg', 63: 'python_import_ssl',
     64: 'python_version_check', 65: 'python_version_mismatch',
@@ -142,7 +192,7 @@ class BootstrapSubstepTests(unittest.TestCase):
         return argv[-1]
 
     def normalized_v9(self):
-        normalized = self.raw
+        normalized = self.normalized_v10()
         new = V10_PREREQUISITE_BLOCK.encode('ascii')
         old = (PREREQUISITE_PREFIX + "'" + V9_PREREQUISITE + "'\n").encode('ascii')
         self.assertEqual(normalized.count(new), 1)
@@ -155,6 +205,20 @@ class BootstrapSubstepTests(unittest.TestCase):
         normalized = normalized.replace(new, old, 2)
         self.assertEqual(hashlib.sha256(normalized).hexdigest(), V9_SHA256,
                          'A bootstrap byte changed outside the v10 diagnostic block and helper lists')
+        return normalized
+
+    def normalized_v10(self):
+        normalized = self.raw
+        block = V11_SYSTEM_CA_BLOCK.encode('ascii')
+        self.assertEqual(normalized.count(block), 1)
+        normalized = normalized.replace(block, b'', 1)
+        new = (V11_HELPER_LOOP + '\n').encode('ascii')
+        old = (V10_HELPER_LOOP + '\n').encode('ascii')
+        self.assertEqual(normalized.count(new), 2)
+        self.assertNotIn(old, normalized)
+        normalized = normalized.replace(new, old, 2)
+        self.assertEqual(hashlib.sha256(normalized).hexdigest(), V10_SHA256,
+                         'A bootstrap byte changed outside the fixed v11 CA block and helper lists')
         return normalized
 
     def test_source_phase_substep_pairs_equal_exact_finite_mapping(self):
@@ -354,7 +418,9 @@ class BootstrapSubstepTests(unittest.TestCase):
         }
         self.assertEqual(operations, expected)
         self.assertEqual(set(operations), set(d.BOOTSTRAP_SUBSTEPS['post_install_verification'])
-                         - set(PYTHON_SUBSTEP_CODES.values()) - {'python_execution'})
+                         - set(PYTHON_SUBSTEP_CODES.values()) - {'python_execution'}
+                         - set(SYSTEM_CA_SUBSTEP_CODES.values())
+                         - {'system_ca_defaults', 'system_ca_unknown'})
 
     def test_only_declared_shell_changes_restore_exact_v8_bytes(self):
         normalized, annotations = SUBSTEP_LINE.subn(b'', self.normalized_v9())

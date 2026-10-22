@@ -1,11 +1,19 @@
 """Bind the authenticated bootstrap transaction to the later full signed closure."""
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 
 
 def require(value,code):
     if not value:raise RuntimeError(code)
+
+def verify_system_ca():
+    # Exact source-indexed sibling; -I remains enabled and no search path changes.
+    path=Path(__file__).parent/'bootstrap'/'provision_system_ca.py'
+    spec=importlib.util.spec_from_file_location('urp_verified_system_ca',path)
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    return module.verify()
 
 def verify(bootstrap,packages):
     receipt=json.loads((bootstrap/'bootstrap.json').read_bytes())
@@ -34,12 +42,13 @@ def verify(bootstrap,packages):
         require(target['architecture']==arch and target['version']==version and target['archive_filename']==filename and target['archive_sha256']==digest and target['archive_size']==int(size),'BOOTSTRAP_PROVIDER_CHANGED')
     require(selected.issubset(resolved),'BOOTSTRAP_ROOT_OUTSIDE_CLOSURE')
     require(all(resolved[name]['version']==version for name,version in root_rows),'BOOTSTRAP_ROOT_VERSION_CHANGED')
+    system_ca=verify_system_ca()
     rows={}
     for p in sorted(bootstrap.rglob('*')):
         require(not p.is_symlink(),'BOOTSTRAP_EVIDENCE_ALIAS')
         if p.is_file():rows[p.relative_to(bootstrap).as_posix()]=hashlib.sha256(p.read_bytes()).hexdigest()
         else:require(p.is_dir(),'BOOTSTRAP_EVIDENCE_SPECIAL')
-    return {'schema':1,'status':'bootstrap-transaction-bound-to-full-closure','bootstrap_packages':sorted(selected),'bootstrap_evidence':rows,'compiler_build_executed':False}
+    return {'schema':1,'status':'bootstrap-transaction-bound-to-full-closure','bootstrap_packages':sorted(selected),'bootstrap_evidence':rows,'derived_system_ca':system_ca,'compiler_build_executed':False}
 
 def main():
     bootstrap=Path('/opt/urp-bootstrap-evidence');root=Path('/inputs')

@@ -117,8 +117,18 @@ class ClosureTests(unittest.TestCase):
   return {'installed':True,'signed_metadata_verified':True,'closure_complete':True,'snapshot':{'kind':'immutable-signed-snapshot','identifier':'20261021T000000Z'},'resolved':[{'name':x,'architecture':'amd64','version':'1','archive_filename':'pool/python.deb','archive_size':3,'archive_sha256':'a'*64} for x in ('python3','python3-apt','ca-certificates')]}
  def test_full_binding(self):
   with tempfile.TemporaryDirectory() as d:
-   root=Path(d);result=load('verify_bootstrap_closure').verify(root,self.fixture(root))
+   root=Path(d);module=load('verify_bootstrap_closure')
+   with mock.patch.object(module,'verify_system_ca',return_value={'fixture':'not-real-CA'}) as check:
+    result=module.verify(root,self.fixture(root))
+   check.assert_called_once_with()
+   self.assertEqual(result['derived_system_ca'],{'fixture':'not-real-CA'})
    self.assertEqual(len(result['bootstrap_packages']),3)
+ def test_derived_ca_verification_cannot_be_skipped(self):
+  with tempfile.TemporaryDirectory() as d:
+   root=Path(d);module=load('verify_bootstrap_closure');pkg=self.fixture(root)
+   with mock.patch.object(module,'verify_system_ca',side_effect=RuntimeError('FIXED_CA_FAILURE')) as check:
+    with self.assertRaises(RuntimeError):module.verify(root,pkg)
+   check.assert_called_once_with()
  def test_closure_missing_and_changed(self):
   for field,value in [('version','2'),('archive_sha256','b'*64),('archive_filename','pool/foreign.deb'),('archive_size',4)]:
    with tempfile.TemporaryDirectory() as d:

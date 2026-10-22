@@ -78,7 +78,7 @@ substep=base_keyring
 [ ! -L /usr/share/keyrings/ubuntu-archive-keyring.gpg ] || fail
 [ ! -e "$OUT" ] && [ ! -L "$OUT" ] || fail
 substep=helper_presence
-for helper in parse_release.awk parse_packages.awk parse_simulation.awk parse_uris.awk parse_status.awk verify_delta.awk parse_ca_members.awk verify_ca_pem.awk check_python_prerequisites.py; do
+for helper in parse_release.awk parse_packages.awk parse_simulation.awk parse_uris.awk parse_status.awk verify_delta.awk parse_ca_members.awk verify_ca_pem.awk check_python_prerequisites.py provision_system_ca.py; do
     [ -f "$HELPERS/$helper" ] && [ ! -L "$HELPERS/$helper" ] || fail
 done
 substep=evidence_workspace
@@ -89,7 +89,7 @@ started=true
     "$OUT/payloads" "$OUT/empty-conf" "$OUT/empty-sources" "$OUT/empty-prefs" "$OUT/empty-trusted" "$OUT/provisioning"
 /usr/bin/cp "$HELPERS/bootstrap.sh" "$OUT/provisioning/bootstrap.sh"
 substep=helper_presence
-for helper in parse_release.awk parse_packages.awk parse_simulation.awk parse_uris.awk parse_status.awk verify_delta.awk parse_ca_members.awk verify_ca_pem.awk check_python_prerequisites.py; do
+for helper in parse_release.awk parse_packages.awk parse_simulation.awk parse_uris.awk parse_status.awk verify_delta.awk parse_ca_members.awk verify_ca_pem.awk check_python_prerequisites.py provision_system_ca.py; do
     /usr/bin/cp "$HELPERS/$helper" "$OUT/provisioning/$helper"
 done
 substep=base_tool_hashes
@@ -395,6 +395,48 @@ substep=dpkg_audit
 run post-dpkg-audit /usr/bin/dpkg --audit
 substep=audit_clean
 [ ! -s "$OUT/logs/post-dpkg-audit.log" ] || fail
+substep=system_ca_defaults
+system_ca_result=0
+/usr/bin/python3 -I -B "$HELPERS/provision_system_ca.py" --install-default-alias > "$OUT/logs/system-ca-default.log" 2>&1 || system_ca_result=$?
+case "$system_ca_result" in
+    0) ;;
+    71)
+        substep=system_ca_layout
+        fail
+        ;;
+    72)
+        substep=system_ca_bundle
+        fail
+        ;;
+    73)
+        substep=system_ca_usable
+        fail
+        ;;
+    74)
+        substep=system_ca_default_path
+        fail
+        ;;
+    75)
+        substep=system_ca_alias_conflict
+        fail
+        ;;
+    76)
+        substep=system_ca_alias_write
+        fail
+        ;;
+    77)
+        substep=system_ca_record
+        fail
+        ;;
+    78)
+        substep=system_ca_execution
+        fail
+        ;;
+    *)
+        substep=system_ca_unknown
+        fail
+        ;;
+esac
 substep=python_prerequisites
 prerequisite_result=0
 /usr/bin/python3 -I -B "$HELPERS/check_python_prerequisites.py" > "$OUT/logs/python-apt-prerequisites.log" 2>&1 || prerequisite_result=$?

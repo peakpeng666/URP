@@ -9,7 +9,10 @@
       "sha256": "8a147ae2c9bb225985c5cf6aba2a9e08948019b03c92aa4c8438f9eb2af79b6e"
     },
     "README.md": {
-      "sha256": "50e2abefdcd4f3551e7c518e12650fbfdb77251e09f45654618afae9f63f264e"
+      "sha256": "e536b76e782ab7d9dd0db2d969a8bdf6b3c383c2326f98252d8901335bd13086"
+    },
+    "SYSTEM_CA_SOURCE_EVIDENCE.md": {
+      "sha256": "88559e675023b804c501cd8293e583a6dc9a6831f4015847c5c1e2f9428fcc57"
     },
     "build-plan-provenance.json": {
       "sha256": "75148a35fab684b3e2784b913d4f654b911331f6ae62215b978fa7366043124f"
@@ -18,7 +21,7 @@
       "sha256": "7d5a5d3ce7d6fc2ffe02b8bf0889d3af8c49db36d59e5d14bb38d2720c0bad55"
     },
     "buildkit_diagnostic.py": {
-      "sha256": "fb9c1ede2cc32f32433baa3403558aa98860f08b04c0bf4a6ff62ce0abd7508d"
+      "sha256": "855c56db4115d6dc9487bc0bfaa22a0c09bb987524022679d206a119df2264df"
     },
     "engine_controller.py": {
       "sha256": "427289aeca9418013ee347956732cbfed2c5a3a386245bc7d11e0367dc4cdc1b"
@@ -63,7 +66,7 @@
       "sha256": "8a92e10d0436086a7ba9a2f13413ff0820b9d4464fb09b0a653ccaa49591843e"
     },
     "preparation/bootstrap/bootstrap.sh": {
-      "sha256": "38651a731c2c9c1c6a6f965fba6d5b77f75690d63683940066dcc2ce5864c3d3"
+      "sha256": "b59eb42f0e06415aaf42102da1cd44549956586a7b3430d07e61f0c42237d279"
     },
     "preparation/bootstrap/ca-inputs.lock.json": {
       "sha256": "08e361d03124c6f9900d112910d5b0fb1cbd87aaf2df3578357f4c6123d36f36"
@@ -92,6 +95,9 @@
     "preparation/bootstrap/parse_uris.awk": {
       "sha256": "af606d3c430d17442ea871d314e5c1208d507deb7f4e57525073285ed3320c32"
     },
+    "preparation/bootstrap/provision_system_ca.py": {
+      "sha256": "56881f01a45a92485a6f13e4df8bfa7da400710f237774c3ce821acbe4bcfc8e"
+    },
     "preparation/bootstrap/reviewed-input-anchors.json": {
       "sha256": "e856bfec03d5900212c79df0488f51e1e6ac6fc8b4626882e24b4f091dc53ebb"
     },
@@ -112,6 +118,9 @@
     },
     "preparation/evidence/python-distribution-reference.json": {
       "sha256": "0308323538210f72d5069a357b565b481f07c301b3ae7fbb269b926fe1b87ee3"
+    },
+    "preparation/evidence/system-ca-package-source.json": {
+      "sha256": "670c3e7f270c6f6366cfdedf062db145f28ad5cd2ad1a293d157350fa1f323fa"
     },
     "preparation/inputs/README.md": {
       "sha256": "04d63a60e1a7df82cc88c7df68b9e0fc3cb81f679f801d94eedf720d05d2a84b"
@@ -162,13 +171,13 @@
       "sha256": "e94d07a8b871da7043de91268eeb67ac84442869586bd2e144f8dea5a0b69360"
     },
     "preparation/tests/test_bootstrap_contract.py": {
-      "sha256": "e2ab2aba7222904d6b390026757606ace7676bcda7e3e0225cdc957d5501d93e"
+      "sha256": "28e1af3223d486933877366a50baf141e34f5b8f139483c8bcce69f4b4ac25be"
     },
     "preparation/tests/test_source_read_identity.py": {
       "sha256": "b9e064b0b22552de88d3d0dcd419f6ea923e5b9da8017e6628f983df64b13c31"
     },
     "preparation/verify_bootstrap_closure.py": {
-      "sha256": "eee47352706af59425b4220c1c82c6eda7f4860ae769c6639c86d01e4e9d03ae"
+      "sha256": "444156edb8746bbd1abfe55f7cb781dd97612f0b4198bc1ae19982103343f96b"
     },
     "preparation_diagnostic.py": {
       "sha256": "8afb24ac4e1911425a5240310a3d2f123c2439586ca7ad16afcb9b57668078da"
@@ -183,7 +192,7 @@
       "sha256": "6e19497aa5dbd8c5b84170837276c325a3b626ddacc4a80b6ff0ed92e2a02e6e"
     },
     "tests/test_bootstrap_substeps.py": {
-      "sha256": "06d3fa0ed0963e6418764c6451c4e8c72c2ed1924477a06c095fe757e79d47cb"
+      "sha256": "656b34118ca88729abf4ed81277dda16c9359b6280b2de1b1815f9f2e137db8a"
     },
     "tests/test_buildkit_diagnostic.py": {
       "sha256": "e2e8378948ebde6804ad2df372c4f861b3e9a39c5f04c13ca855cf8b5e27d966"
@@ -210,10 +219,13 @@
       "sha256": "25e49dc3b40c6f27d623c3bfb4cea86bc2ccec2c8dd9964a3a661f0718e15191"
     },
     "tests/test_python_prerequisite_diagnostics.py": {
-      "sha256": "4225fcb8a3e4041c6a2c6bd42680ee5e3073a8bd59b5973ed28083cf4b0cec0f"
+      "sha256": "e71571fd17f2ba35a6090531fb6109b4ef181a660df2c68240d37a96c78bfa35"
     },
     "tests/test_review_hardening.py": {
       "sha256": "ae1e4f05739399fc26050255a34e5131f929e73f3939a2e97472a45c0affbeb2"
+    },
+    "tests/test_system_ca_provision.py": {
+      "sha256": "1b9eddbb4d5c4d6063cdeba6cb00592f34c37372868c45f18a00657e4a20d0d1"
     },
     "workflow/compiler-build.yml.example": {
       "sha256": "236df82f0c4bf01b9a701e755da1d6bffcb0a161e712c870eb1152be8ffce355"

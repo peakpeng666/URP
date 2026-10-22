@@ -284,3 +284,57 @@ must identify the concrete failing prerequisite; this revision itself performs
 no Docker, full bootstrap, installation, native build or publication. v9 remains
 unchanged. Primary-source distinctions are recorded separately in
 `PYTHON_PREREQUISITE_SOURCES.md`.
+
+
+## Review revision 11: verified distribution CA default alias
+
+Actual v10 run 39858883912 / job 120104103832 failed at
+`BLOCKED_post_install_verification__ca_file_missing`. The system Python imports,
+Python 3.10 version and APT 2.4 checks passed; the generated distribution bundle's
+presence was not observed. Exact Ubuntu package/source inspection demonstrates
+a separate deterministic layout mismatch: OpenSSL's compiled default CAfile is
+`/usr/lib/ssl/cert.pem`, while these Jammy packages do not supply that alias.
+The ca-certificates package generates `/etc/ssl/certs/ca-certificates.crt`.
+Successful package configuration and triggers alone therefore do not satisfy the
+existing default-CAfile predicate. See `SYSTEM_CA_SOURCE_EVIDENCE.md` and the
+source-indexed package evidence for the exact bytes and attribution limits.
+
+This revision provisions only the missing fixed alias inside the trusted
+preparation container, after status/delta/root-version/APT/dpkg-audit gates. It
+does not reinstall packages, run extra update-ca-certificates commands, replace
+the distribution bundle, substitute the bootstrap seed, import host roots, set
+SSL_CERT_FILE/SSL_CERT_DIR or relax the original Python prerequisite. That helper
+and its original guard remain byte-identical to v10.
+
+The new source-indexed helper rejects SSL_CERT_* overrides, unexpected compiled
+default paths, aliased or unsafe expected directories, unsafe ownership/modes,
+empty/symlinked/hardlinked/oversized/changing bundles, and bundles not loadable as
+CA certificates by SSL. Reads are bounded and exclude atime from mutation checks.
+SSL loads held bundle bytes, never a temporary fixture's absolute alias or an
+ambient default trust store. Only an absent alias may be created, with the exact
+absolute target `/etc/ssl/certs/ca-certificates.crt`. An already-correct owned alias
+is accepted after the same checks; every other existing file/link is rejected
+without replacement. The receipt is exclusive-create, not overwriteable.
+
+A bounded private receipt records the derived alias, distribution-bundle hash,
+size and CA count. It explicitly labels these as generated/derived artifacts,
+not archive-owned files. After the full signed package closure is verified, the
+closure binder performs another read-only check of the exact alias, bundle and
+receipt and includes the result. Existing command/library archive-owner and byte
+verification remains unchanged: no general exemption for unowned system files
+was introduced. The input index also freezes the resulting closure receipt.
+
+Public failure reporting remains a closed finite substep vocabulary. Unknown
+helper exits fail under `system_ca_unknown`; no path, certificate text, exception,
+raw stderr or arbitrary value is projected. A missing distribution bundle remains
+a finite failure, never silently replaced or regenerated. No claim is made that
+this source correction has already passed the hosted preparation stage.
+
+Pure tests use temporary trees and mocked SSL only, including collision
+preservation, guarded alias creation, read-only downstream validation, mutation
+and privacy fixtures. Existing verification order is preserved and shell
+normalization restores v10, then v9 and v8. No Docker, full bootstrap, trust-store
+mutation on the authoring host, installation, native build or publication occurs
+in this review. The compiler-only scope, target application 3acf, CPython 3.12.13,
+base/package/source pins and isolation protocol are unchanged; fresh-runtime and
+full-application acceptance remain pending.
