@@ -49,7 +49,7 @@ describe('HTTP recovery and duplicate writes', () => {
     const { importPattern } = await import('./catalog');
     let complete!: (value: Response) => void;
     const fetchMock = vi.fn().mockImplementationOnce(() => new Promise<Response>((resolve) => { complete = resolve; }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ id: 'new-saved-id', title: 'saved' }), { status: 201 }));
+      .mockImplementationOnce((_url, options) => Promise.resolve(new Response(JSON.stringify({ id: JSON.parse(options.body).id, title: 'saved' }), { status: 201 })));
     vi.stubGlobal('fetch', fetchMock);
     try {
       const values = defaultValues(pattern);
@@ -60,7 +60,7 @@ describe('HTTP recovery and duplicate writes', () => {
       complete(new Response(JSON.stringify({ message: '场景 id 已存在' }), { status: 409 }));
       expect((await failures).map((r) => r.status)).toEqual(['rejected', 'rejected']);
       expect(values).toEqual(defaultValues(pattern));
-      expect((await importPattern(pattern, values, 42)).id).toBe('new-saved-id');
+      expect((await importPattern(pattern, values, 42)).title).toBe('saved');
       expect(fetchMock).toHaveBeenCalledTimes(2);
       expect(JSON.parse(fetchMock.mock.calls[1][1].body).id).not.toBe(firstId);
     } finally { vi.unstubAllGlobals(); }
@@ -100,6 +100,129 @@ describe('LAN HTTP compatibility', () => {
       expect(first.id).not.toBe(second.id);
       expect(first.id).toMatch(/-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
       expect(getRandomValues).toHaveBeenCalledTimes(2);
+    } finally { vi.unstubAllGlobals(); }
+  });
+});
+
+describe('uncertain import recovery', () => {
+  it('queries the original ID after a lost response instead of writing a duplicate', async () => {
+    const { importPattern } = await import('./catalog');
+    let saved: any;
+    const fetch = vi.fn().mockImplementationOnce((_url, options) => {
+      saved = JSON.parse(options.body); return Promise.reject(new TypeError('response lost'));
+    }).mockImplementationOnce(() => Promise.resolve(new Response(JSON.stringify(saved))));
+    vi.stubGlobal('fetch', fetch);
+    try {
+      await expect(importPattern(pattern, defaultValues(pattern), 1001)).rejects.toThrow('再次点击将先查询');
+      expect((await importPattern(pattern, defaultValues(pattern), 1001)).id).toBe(saved.id);
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(fetch.mock.calls[1][0]).toBe(`/lab/api/scenarios/${saved.id}`);
+      expect(fetch.mock.calls[1][1].method).toBe('GET');
+    } finally { vi.unstubAllGlobals(); }
+  });
+  it('only resubmits after a definitive 404 and keeps the same ID', async () => {
+    const { importPattern } = await import('./catalog');
+    let saved: any;
+    const fetch = vi.fn().mockImplementationOnce((_url, options) => {
+      saved = JSON.parse(options.body); return Promise.reject(new TypeError('response lost'));
+    }).mockResolvedValueOnce(new Response('{}', { status: 404 }))
+      .mockImplementationOnce((_url, options) => {
+        expect(JSON.parse(options.body).id).toBe(saved.id);
+        return Promise.resolve(new Response(JSON.stringify(saved), { status: 201 }));
+      });
+    vi.stubGlobal('fetch', fetch);
+    try {
+      await expect(importPattern(pattern, defaultValues(pattern), 1002)).rejects.toThrow();
+      expect((await importPattern(pattern, defaultValues(pattern), 1002)).id).toBe(saved.id);
+      expect(fetch.mock.calls.map((c) => c[1].method)).toEqual(['POST', 'GET', 'POST']);
+    } finally { vi.unstubAllGlobals(); }
+  });
+  it('handles a late original write winning the read/retry race without overwriting', async () => {
+    const { importPattern } = await import('./catalog');
+    let saved: any;
+    const fetch = vi.fn().mockImplementationOnce((_url, options) => {
+      saved = JSON.parse(options.body); return Promise.reject(new TypeError('response lost'));
+    }).mockResolvedValueOnce(new Response('{}', { status: 404 }))
+      .mockResolvedValueOnce(new Response('{}', { status: 409 }))
+      .mockImplementationOnce(() => Promise.resolve(new Response(JSON.stringify(saved))));
+    vi.stubGlobal('fetch', fetch);
+    try {
+      await expect(importPattern(pattern, defaultValues(pattern), 1003)).rejects.toThrow();
+      expect((await importPattern(pattern, defaultValues(pattern), 1003)).id).toBe(saved.id);
+      expect(fetch.mock.calls.map((c) => c[1].method)).toEqual(['POST', 'GET', 'POST', 'GET']);
+    } finally { vi.unstubAllGlobals(); }
+  });
+  it('does not resubmit when reconciliation fails or metadata differs', async () => {
+    const { importPattern } = await import('./catalog');
+    let saved: any;
+    const fetch = vi.fn().mockImplementationOnce((_url, options) => {
+      saved = JSON.parse(options.body); return Promise.reject(new TypeError('response lost'));
+    }).mockResolvedValueOnce(new Response('{}', { status: 503 }))
+      .mockImplementationOnce(() => Promise.resolve(new Response(JSON.stringify({ ...saved, provenance: { ...saved.provenance, seed: 999 } }))));
+    vi.stubGlobal('fetch', fetch);
+    try {
+      await expect(importPattern(pattern, defaultValues(pattern), 1004)).rejects.toThrow();
+      await expect(importPattern(pattern, defaultValues(pattern), 1004)).rejects.toThrow();
+      await expect(importPattern(pattern, defaultValues(pattern), 1004)).rejects.toThrow('不一致');
+      expect(fetch.mock.calls.map((c) => c[1].method)).toEqual(['POST', 'GET', 'GET']);
+    } finally { vi.unstubAllGlobals(); }
+  });
+});
+
+describe('reconciliation identity and draft changes', () => {
+  it('rejects changed geometry even when the stored parameters match', async () => {
+    const { importPattern } = await import('./catalog');
+    let saved: any;
+    const fetch = vi.fn().mockImplementationOnce((_url, options) => {
+      saved = JSON.parse(options.body); return Promise.reject(new TypeError('response lost'));
+    }).mockImplementationOnce(() => {
+      saved.instance.tasks[0].xy[0] += 1;
+      return Promise.resolve(new Response(JSON.stringify(saved)));
+    });
+    vi.stubGlobal('fetch', fetch);
+    try {
+      await expect(importPattern(pattern, defaultValues(pattern), 1005)).rejects.toThrow();
+      await expect(importPattern(pattern, defaultValues(pattern), 1005)).rejects.toThrow('不一致');
+      expect(fetch.mock.calls.map((c) => c[1].method)).toEqual(['POST', 'GET']);
+    } finally { vi.unstubAllGlobals(); }
+  });
+  it('keeps the original uncertain ID across failed reads and changed drafts', async () => {
+    const { importPattern } = await import('./catalog');
+    let first: any; let changed: any;
+    const fetch = vi.fn().mockImplementationOnce((_url, options) => {
+      first = JSON.parse(options.body); return Promise.reject(new TypeError('response lost'));
+    }).mockRejectedValueOnce(new TypeError('offline'))
+      .mockResolvedValueOnce(new Response('{}', { status: 401 }))
+      .mockImplementationOnce((_url, options) => {
+        changed = JSON.parse(options.body); return Promise.resolve(new Response(JSON.stringify(changed)));
+      }).mockImplementationOnce(() => Promise.resolve(new Response(JSON.stringify(first))));
+    vi.stubGlobal('fetch', fetch);
+    try {
+      const values = defaultValues(pattern);
+      await expect(importPattern(pattern, values, 1006)).rejects.toThrow();
+      await expect(importPattern(pattern, values, 1006)).rejects.toThrow();
+      await expect(importPattern(pattern, values, 1006)).rejects.toThrow();
+      expect((await importPattern(pattern, { ...values, task_count: 6 }, 1006)).id).not.toBe(first.id);
+      expect((await importPattern(pattern, values, 1006)).id).toBe(first.id);
+      expect(fetch.mock.calls.map((c) => c[1].method)).toEqual(['POST', 'GET', 'GET', 'POST', 'GET']);
+    } finally { vi.unstubAllGlobals(); }
+  });
+});
+
+describe('successful response identity', () => {
+  it('rejects another valid ID then reconciles the original ID without another POST', async () => {
+    const { importPattern } = await import('./catalog');
+    let saved: any;
+    const fetch = vi.fn().mockImplementationOnce((_url, options) => {
+      saved = JSON.parse(options.body);
+      return Promise.resolve(new Response(JSON.stringify({ id: 'unrelated-valid-id', title: 'wrong scene' }), { status: 201 }));
+    }).mockImplementationOnce(() => Promise.resolve(new Response(JSON.stringify(saved))));
+    vi.stubGlobal('fetch', fetch);
+    try {
+      await expect(importPattern(pattern, defaultValues(pattern), 1007)).rejects.toThrow('标识与本次提交不一致');
+      expect((await importPattern(pattern, defaultValues(pattern), 1007)).id).toBe(saved.id);
+      expect(fetch.mock.calls.map((c) => c[1].method)).toEqual(['POST', 'GET']);
+      expect(fetch.mock.calls[1][0]).toBe(`/lab/api/scenarios/${saved.id}`);
     } finally { vi.unstubAllGlobals(); }
   });
 });

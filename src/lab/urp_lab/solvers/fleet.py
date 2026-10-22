@@ -71,15 +71,40 @@ class Graph:
         P = np.array(self.nodes, dtype=float)
         W = np.full((n, n), np.inf)
         simple = not inst.get('obstacles') and self.boundary.equals(self.boundary.convex_hull)
+        # Match the independent fleet checker's metre tolerance. The polygonal
+        # round buffer is only a fast broad-phase filter, not a clearance proof.
+        clearance = r - 1e-6
+        obstacle_polygons = [Polygon(o['polygon']) for o in inst.get('obstacles') or []]
+        boundary_ring = self.boundary.boundary
+        if simple:
+            # In a convex obstacle-free boundary, the disc-clear centre domain
+            # is convex: safe endpoints suffice, retaining the cheap fast path.
+            node_points = shapely.points(P)
+            safe_nodes = (shapely.covers(self.boundary, node_points)
+                          & (shapely.distance(node_points, boundary_ring) >= clearance))
         np.fill_diagonal(W, 0.0)
         ii, jj = np.triu_indices(n, 1)
         # Batch GEOS predicates instead of constructing/calling a Python geometry
         # for every pair. Bound each batch to avoid quadratic temporary geometries.
         for start in range(0, len(ii), 8192):
             i, j = ii[start:start + 8192], jj[start:start + 8192]
-            if not simple:
+            if simple:
+                visible = safe_nodes[i] & safe_nodes[j]
+                i, j = i[visible], j[visible]
+            else:
                 segments = shapely.linestrings(np.stack((P[i], P[j]), axis=1))
+                # Co-located service nodes are genuine zero-length edges; use
+                # points rather than invalid degenerate LineStrings in GEOS.
+                same = np.all(P[i] == P[j], axis=1)
+                segments[same] = shapely.points(P[i[same]])
                 visible = shapely.covers(pfree.context, segments)
+                i, j, segments = i[visible], j[visible], segments[visible]
+                visible = (shapely.covers(self.boundary, segments)
+                           & (shapely.distance(segments, boundary_ring) >= clearance))
+                # Keep GEOS operations batched without an edges × obstacles
+                # temporary array. Check original polygons, not inscribed arcs.
+                for obstacle in obstacle_polygons:
+                    visible &= shapely.distance(segments, obstacle) >= clearance
                 i, j = i[visible], j[visible]
             W[i, j] = W[j, i] = np.hypot(*(P[i] - P[j]).T)
         if ground_zones and risk_weight > 0:

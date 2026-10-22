@@ -1,4 +1,5 @@
 import { studio } from '../api';
+import { lab, LabApiError } from '../../lab/api';
 import { AGRI_PATTERNS, patternStatus, type PatternStatus } from './patterns';
 import type { AgriTaskPattern } from './taxonomy';
 
@@ -36,17 +37,64 @@ export function buildPattern(pattern: AgriTaskPattern, values: Record<string, un
   return { ...built, id: `agri-${pattern.id.slice(0, 20)}-${uniqueScenarioSuffix()}`, provenance: { ...built.provenance, params: { ...values, pattern_id: pattern.id, builder_version: 'urp.agri.builder/3' } } };
 }
 const importsInFlight = new Map<string, ReturnType<typeof studio.importScenario>>();
+// Keep uncertain writes stable until an explicit retry reconciles their outcome.
+const uncertainImports = new Map<string, ReturnType<typeof buildPattern>>();
+function validateSaved(scenario: Awaited<ReturnType<typeof studio.importScenario>>) {
+  if (!scenario || typeof scenario.id !== 'string' || !/^[a-z0-9][a-z0-9_.-]{1,63}$/.test(scenario.id)
+    || typeof scenario.title !== 'string') throw new Error('请先核对保存结果：响应缺少有效场景标识');
+  return scenario;
+}
+function containsSubmittedValue(actual: unknown, expected: unknown): boolean {
+  if (Array.isArray(expected)) return Array.isArray(actual) && actual.length === expected.length
+    && expected.every((value, i) => containsSubmittedValue(actual[i], value));
+  if (expected !== null && typeof expected === 'object') return actual !== null && typeof actual === 'object'
+    && Object.entries(expected).every(([key, value]) => containsSubmittedValue((actual as Record<string, unknown>)[key], value));
+  return actual === expected;
+}
+function recoveredScenario(scenario: Awaited<ReturnType<typeof lab.scenario>>, built: ReturnType<typeof buildPattern>) {
+  validateSaved(scenario);
+  const provenance = scenario.provenance as { seed?: number; params?: Record<string, unknown> };
+  if (scenario.id !== built.id || scenario.problem_class !== built.problem_class
+    || !containsSubmittedValue(scenario.instance, built.instance) || !containsSubmittedValue(scenario.frame, built.frame)
+    || provenance?.seed !== built.provenance.seed
+    || !Object.entries(built.provenance.params).every(([key, value]) => provenance.params?.[key] === value)) {
+    throw new Error('该场景与当前草稿不一致，请先核对保存结果');
+  }
+  return scenario;
+}
 export async function importPattern(pattern: AgriTaskPattern, values: Record<string, unknown>, seed: number) {
-  const built = buildPattern(pattern, values, seed);
+  const fresh = buildPattern(pattern, values, seed);
   const key = JSON.stringify([pattern.id, seed, pattern.runnable!.params.map((p) => [p.key, values[p.key]])]);
   const existing = importsInFlight.get(key);
   if (existing) return existing;
-  // Share a still-pending identical submission even if the panel was closed and reopened.
-  const request = studio.importScenario(built).then((scenario) => {
-    if (!scenario || typeof scenario.id !== 'string' || !/^[a-z0-9][a-z0-9_.-]{1,63}$/.test(scenario.id)
-      || typeof scenario.title !== 'string') throw new Error('保存响应缺少有效场景标识，请先在已有场景中核对保存结果');
-    return scenario;
-  });
+  const retry = uncertainImports.get(key);
+  const built = retry ?? fresh;
+  const request = (async () => {
+    let definiteWriteFailure = false;
+    try {
+      if (retry) {
+        try { return recoveredScenario(await lab.scenario(built.id), built); }
+        catch (e) { if (!(e instanceof LabApiError && e.status === 404)) throw e; }
+      }
+      try {
+        const saved = validateSaved(await studio.importScenario(built));
+        if (saved.id !== built.id) throw new Error('返回的场景标识与本次提交不一致');
+        return saved;
+      }
+      catch (e) {
+        // The original write may finish between the read and this explicit retry.
+        if (retry && e instanceof LabApiError && e.status === 409) return recoveredScenario(await lab.scenario(built.id), built);
+        definiteWriteFailure = e instanceof LabApiError && e.code !== 'bad_response' && e.status >= 400 && e.status < 500 && e.status !== 408;
+        throw e;
+      }
+    } catch (e) {
+      if (definiteWriteFailure) {
+        uncertainImports.delete(key); throw e;
+      }
+      uncertainImports.set(key, built);
+      throw new Error(`请先核对保存结果（${built.id}）：${e instanceof Error ? e.message : String(e)}。再次点击将先查询该场景。`);
+    }
+  })().then((scenario) => { uncertainImports.delete(key); return scenario; });
   importsInFlight.set(key, request);
   try { return await request; }
   finally { if (importsInFlight.get(key) === request) importsInFlight.delete(key); }

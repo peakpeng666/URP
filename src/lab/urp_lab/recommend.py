@@ -151,7 +151,7 @@ def recommend(scenario, instance, budget_s=None):
             why['f2c.boustrophedon'].append('凸作业区的往复作业候选；须通过足迹、覆盖率与采样曲率检查，仿真适配另检')
             score['f2c.snake'] += 1
             why['f2c.snake'].append('隔行跳跃减少急转弯，适合转弯半径较大的机具')
-            why['panel.boustrophedon'].append('允许原地掉头的参照下限')
+            why['panel.boustrophedon'].append('允许原地转向的几何覆盖对照基线')
         elif pc == 'point_to_point':
             model_kind = instance['motion_model']
             feats = [_feature('运动模型', 'motion', {'holonomic': '全向', 'dubins': 'Dubins（只前进）', 'reeds_shepp': 'Reeds–Shepp（可倒车）'}[model_kind]),

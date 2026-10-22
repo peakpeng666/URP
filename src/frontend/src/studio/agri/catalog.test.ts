@@ -41,9 +41,12 @@ describe('agriculture existing-workbench integration', () => {
     expect(fetch).not.toHaveBeenCalled();
   });
   it('uses the existing scenario import endpoint and returns only its persisted response', async () => {
-    const saved = { id: 'user-backend-id', title: 'saved', origin: 'user' };
-    const fetch = vi.fn().mockResolvedValue(new Response(JSON.stringify(saved), { status: 200 })); vi.stubGlobal('fetch', fetch);
-    expect(await importPattern(runnable, defaultValues(runnable), 42)).toEqual(saved);
+    let saved: { id: string; title: string; origin: string };
+    const fetch = vi.fn().mockImplementation((_url, options) => {
+      saved = { id: JSON.parse(options.body).id, title: 'saved', origin: 'user' };
+      return Promise.resolve(new Response(JSON.stringify(saved), { status: 200 }));
+    }); vi.stubGlobal('fetch', fetch);
+    expect(await importPattern(runnable, defaultValues(runnable), 42)).toEqual(saved!);
     expect(fetch.mock.calls[0][0]).toBe('/lab/api/scenarios');
     const request = JSON.parse(fetch.mock.calls[0][1].body);
     expect(request.provenance.pattern).toBe(runnable.id);
