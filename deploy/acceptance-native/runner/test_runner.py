@@ -106,3 +106,68 @@ class RuntimeProfileTests(unittest.TestCase):
             profile.parent.mkdir(parents=True);profile.write_text('{}')
             select_runtime_profile(root,env)
             self.assertEqual(env['URP_SIM_PROFILE'],'image')
+
+class InstallationProgressTests(unittest.TestCase):
+    def test_fixed_phase_reducer_and_private_output(self):
+        from runner.run import installation_progress, installation_step, INSTALL_PHASES
+        with tempfile.TemporaryDirectory() as tmp:
+            p=pathlib.Path(tmp)/'trace'
+            cases={
+                'source_identity':'URP_INSTALL_PHASE source_identity',
+                'registry_check':'URP_INSTALL_PHASE registry_check',
+                'setup':'URP_INSTALL_PHASE setup',
+                'apt':'+URP_SETUP sudo apt-get install -y PRIVATE_PACKAGE',
+                'uv':'++URP_SETUP uv sync --locked',
+                'node':'+URP_SETUP curl https://nodejs.org/dist/PRIVATE_ARCHIVE',
+                'npm':'+URP_SETUP npm ci',
+                'native':'+URP_SETUP bash src/lab/ros/native/install-ros-extras.sh',
+                'runtime_check':'+URP_SETUP python3 deploy/check-runtime.py --output PRIVATE_PATH',
+                'apt_diagnostic':'URP_INSTALL_PHASE apt_diagnostic',
+                'apt_repair':'URP_INSTALL_PHASE apt_repair',
+                'complete':'URP_INSTALL_PHASE complete',
+            }
+            for phase,line in cases.items():
+                p.write_text(line+'\nPRIVATE_MESSAGE\nURP_INSTALL_PHASE PRIVATE_SECRET\n')
+                self.assertEqual(installation_progress(p),phase)
+                self.assertIn(installation_progress(p),INSTALL_PHASES)
+            p.write_text('URP_INSTALL_PHASE registry_check\n')
+            self.assertEqual(installation_step(p),'registry_check')
+            link=p.with_name('link');link.symlink_to(p)
+            self.assertEqual(installation_progress(link),'unknown')
+            self.assertEqual(installation_progress(p.with_name('missing')),'unknown')
+            p.write_text('URP_INSTALL_PHASE complete PRIVATE_SUFFIX\n')
+            self.assertEqual(installation_progress(p),'unknown')
+
+    def test_real_wrapper_separates_trace_from_large_package_output(self):
+        from runner.run import installation_progress, LIMIT
+        with tempfile.TemporaryDirectory() as tmp:
+            root=pathlib.Path(tmp);source=root/'source';private=root/'private';bin_dir=root/'bin'
+            (source/'setup/ubuntu').mkdir(parents=True);private.mkdir();bin_dir.mkdir()
+            for command,body in {'git':'echo 18557cfc61f291e8ac5fa4a80d9df212e1df0030', 'python3':'exit 0'}.items():
+                stub=bin_dir/command;stub.write_text('#!/bin/bash\n'+body+'\n');stub.chmod(0o755)
+            # Fake installer only: no apt, network, dependencies or actual source changes.
+            (source/'setup/ubuntu/setup.sh').write_text("uv() { head -c 131072 /dev/zero; }; uv sync --locked; exit 7\n")
+            result=subprocess.run(['bash',str(pathlib.Path(__file__).with_name('install.sh').resolve()),str(source),str(private)],env=dict(os.environ,PATH=str(bin_dir)+':'+os.environ['PATH']),capture_output=True,timeout=10)
+            self.assertEqual(result.returncode,7)
+            self.assertGreater(len(result.stdout),LIMIT)
+            self.assertNotIn(b'URP_SETUP',result.stdout+result.stderr)
+            trace=private/'installation-trace.log'
+            self.assertIn('URP_INSTALL_PHASE registry_check',trace.read_text())
+            self.assertEqual(installation_progress(trace),'uv')
+
+    def test_live_progress_reports_phase_without_raw_trace(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=pathlib.Path(tmp);script=root/'run.py'
+            original=pathlib.Path(__file__).with_name('run.py').read_text()
+            script.write_text(original.replace('time.monotonic()+120','time.monotonic()+.1'))
+            (root/'install.sh').write_text('#!/bin/bash\nprintf "URP_INSTALL_PHASE registry_check\\nPRIVATE_MARKER\\n" > "$2/installation-trace.log"\nsleep 1.5\nexit 7\n')
+            result=subprocess.run([sys.executable,str(script),'--source',str(root),'--harness',str(root),'--private-dir',str(root/'private'),'--harness-sha','a'*40],capture_output=True,text=True,timeout=10)
+            self.assertEqual(result.returncode,1)
+            self.assertNotIn('PRIVATE_MARKER',result.stdout+result.stderr)
+            rows=[json.loads(line) for line in result.stdout.splitlines()]
+            self.assertTrue(any(row.get('installation_substage')=='registry_check' for row in rows))
+            for row in rows[1:]:
+                self.assertIn(row['installation_substage'],('unknown','registry_check'))
+                self.assertIsInstance(row['installation_substage_observed_seconds'],int)
+            status=json.loads((root/'private/runner-status.json').read_text())
+            self.assertEqual(status['installation_step'],'registry_check')

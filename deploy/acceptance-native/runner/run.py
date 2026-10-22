@@ -51,6 +51,8 @@ def installation_step(path):
     except OSError:return 'unknown'
     step='unknown'
     for line in tail.splitlines():
+        if line == 'URP_INSTALL_PHASE registry_check':step='registry_check'
+        elif line.startswith('URP_INSTALL_PHASE '):step='other'
         if not re.match(r'^\++URP_SETUP ',line):continue
         if re.search(r'\bapt-get update(?:\s|$)',line):step='apt_update'
         elif re.search(r'\bapt-get install(?:\s|$)',line):step='apt_install'
@@ -58,18 +60,30 @@ def installation_step(path):
     return step
 
 
+INSTALL_PHASES = frozenset({'unknown', 'source_identity', 'registry_check', 'setup',
+    'apt', 'uv', 'node', 'npm', 'native', 'runtime_check', 'apt_diagnostic', 'apt_repair', 'complete'})
+
 def installation_progress(path):
+    """Reduce private control traces to enums; never return commands or paths."""
     try:
-        with pathlib.Path(path).open('rb') as f:
+        path=pathlib.Path(path)
+        if path.is_symlink() or not path.is_file():return 'unknown'
+        with path.open('rb') as f:
             f.seek(0,2);f.seek(max(0,f.tell()-LIMIT));tail=f.read(LIMIT).decode('utf-8',errors='replace')
     except OSError:return 'unknown'
     phase='unknown'
     for line in tail.splitlines():
+        if line.startswith('URP_INSTALL_PHASE '):
+            candidate=line.removeprefix('URP_INSTALL_PHASE ')
+            if candidate in INSTALL_PHASES:phase=candidate
+            continue
         if not re.match(r'^\++URP_SETUP ',line):continue
         if re.search(r'\bapt-get\s',line):phase='apt'
         elif re.search(r'\buv\s|astral\.sh/uv/',line):phase='uv'
+        elif 'https://nodejs.org/dist/' in line:phase='node'
         elif re.search(r'\bnpm\s',line):phase='npm'
         elif 'src/lab/ros/native/install-ros-extras.sh' in line or 'deploy/build-cohort.sh' in line:phase='native'
+        elif re.search(r'\bpython3 deploy/(?:record-sim-profiles|check-runtime)\.py(?:\s|$)',line):phase='runtime_check'
     return phase
 
 
@@ -147,16 +161,25 @@ def run(args):
         print(json.dumps({'stage':status['stage'],'state':'running'}),flush=True)
         next_progress=time.monotonic()+120
         last_install_phase='unknown'
+        phase_started=time.monotonic()
+        next_phase_sample=0
         with (private / filename).open('wb') as stream:
             current = subprocess.Popen(command, cwd=root, env=env, stdout=stream, stderr=subprocess.STDOUT, start_new_session=True)
             while current.poll() is None:
                 track()
-                if time.monotonic() >= next_progress:
+                now=time.monotonic()
+                if status['stage']=='installation' and now >= next_phase_sample:
+                    trace=private/'installation-trace.log'
+                    found=installation_progress(trace if trace.exists() else private/filename)
+                    if found!='unknown' and found!=last_install_phase:
+                        last_install_phase=found
+                        phase_started=now
+                    next_phase_sample=now+1
+                if now >= next_progress:
                     progress={'stage':status['stage'],'state':'running'}
                     if status['stage']=='installation':
-                        found=installation_progress(private/filename)
-                        if found!='unknown':last_install_phase=found
                         progress['installation_substage']=last_install_phase
+                        progress['installation_substage_observed_seconds']=min(3600,max(0,int(now-phase_started)))
                     print(json.dumps(progress),flush=True)
                     next_progress=time.monotonic()+120
                 if stop or time.monotonic() > deadline:
@@ -221,7 +244,9 @@ def run(args):
         if status['stage']=='installation' and status['failure_hint'] in ('unknown','apt_dependency_conflict'):
             solver_hint=classify(private/'apt-solver.log',status['exit_code'])
             if solver_hint.startswith('apt_'):status['failure_hint']=solver_hint
-        status['installation_step'] = installation_step(logfile) if status['stage']=='installation' else 'not_applicable'
+        trace=private/'installation-trace.log'
+        step_log=trace if trace.exists() else logfile
+        status['installation_step'] = installation_step(step_log) if status['stage']=='installation' else 'not_applicable'
         if stop:
             status['exit_code'] = 1
             status['failure_hint'] = 'unknown'

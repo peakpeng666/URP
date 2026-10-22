@@ -1,4 +1,4 @@
-import io,json,pathlib,socket,ssl,tempfile,unittest,urllib.error
+import io,json,pathlib,socket,ssl,tempfile,threading,unittest,urllib.error
 from unittest.mock import Mock
 from runner.verify_registry import fetch_metadata,verify,CheckError
 from public_summary import registry_projection
@@ -44,5 +44,81 @@ class RegistryTests(unittest.TestCase):
     def test_reducer_drops_unknown_fields(self):
         result=registry_projection({'phase':'PRIVATE','status':'PRIVATE','error':'PRIVATE','http_status':'PRIVATE','mirror_index':True,'attempts':999,'raw':'PRIVATE'})
         self.assertNotIn('PRIVATE',json.dumps(result));self.assertIsNone(result['mirror_index']);self.assertIsNone(result['attempts'])
+
+class RegistryConcurrencyTests(unittest.TestCase):
+    def fixture(self,root):
+        directory=root/'src/frontend';directory.mkdir(parents=True)
+        packages={f'node_modules/p{n}':{
+            'resolved':f'https://registry.npmmirror.com/p{n}/-/p{n}-1.tgz',
+            'version':'1','integrity':f'sha512-{n}'} for n in range(90)}
+        (directory/'package-lock.json').write_text(json.dumps({'packages':packages}))
+
+    def metadata(self,n):
+        return {'dist':{'integrity':f'sha512-{n}',
+                        'tarball':f'https://registry.npmjs.org/p{n}/-/p{n}-1.tgz'}},1
+
+    def test_all_ninety_verified_with_four_worker_bound(self):
+        from runner.verify_registry import MAX_WORKERS
+        self.assertEqual(MAX_WORKERS,4)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=pathlib.Path(tmp);self.fixture(root)
+            guard=threading.Lock();first_batch=threading.Barrier(4,timeout=5)
+            active=peak=0;seen=[]
+            def fetch(url):
+                nonlocal active,peak
+                n=int(url.split('/')[-2][1:])
+                with guard:
+                    active+=1;peak=max(peak,active);seen.append(n)
+                try:
+                    if n<4:first_batch.wait()
+                    return self.metadata(n)
+                finally:
+                    with guard:active-=1
+            result=verify(root,fetch)
+            self.assertEqual(result['status'],'passed')
+            self.assertEqual(result['mirror_identities_verified'],90)
+            self.assertEqual(peak,4);self.assertEqual(active,0)
+            self.assertCountEqual(seen,range(90))
+
+    def test_earliest_lock_failure_wins_and_only_four_are_outstanding(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=pathlib.Path(tmp);self.fixture(root)
+            guard=threading.Lock();first_batch=threading.Barrier(4,timeout=5)
+            later_failed=threading.Event();seen=[]
+            def fetch(url):
+                n=int(url.split('/')[-2][1:])
+                with guard:seen.append(n)
+                first_batch.wait()
+                if n==2:
+                    later_failed.set()
+                    raise CheckError('http',503,3)
+                if n==0:
+                    if not later_failed.wait(5):raise AssertionError('later fixture did not finish')
+                    raise CheckError('timeout',attempts=3)
+                return self.metadata(n)
+            result=verify(root,fetch)
+            self.assertEqual(result['status'],'failed')
+            self.assertEqual(result['phase'],'metadata_fetch')
+            self.assertEqual(result['error'],'timeout')
+            self.assertEqual(result['mirror_index'],1)
+            self.assertEqual(result['mirror_identities_verified'],0)
+            self.assertEqual(result['attempts'],3)
+            self.assertIsNone(result['http_status'])
+            self.assertCountEqual(seen,range(4))
+
+    def test_each_package_still_applies_source_integrity_and_path_guards(self):
+        from runner.verify_registry import verify_package
+        good={'resolved':'https://registry.npmmirror.com/p1/-/p1-1.tgz',
+              'version':'1','integrity':'sha512-1'}
+        cases=[(dict(good,resolved='http://registry.npmmirror.com/p1'),'source_not_allowlisted'),
+               (dict(good,resolved='https://elsewhere.invalid/p1'),'source_not_allowlisted'),
+               (dict(good,integrity='sha512-wrong'),'integrity_mismatch'),
+               (dict(good,resolved=good['resolved']+'?private=1'),'tarball_path_mismatch'),
+               (dict(good,resolved='https://registry.npmmirror.com/wrong'),'tarball_path_mismatch'),
+               (dict(good,version=None),'lock_invalid')]
+        for package,expected in cases:
+            row=verify_package('node_modules/p1',package,lambda _:self.metadata(1))
+            self.assertEqual(row['error'],expected)
+            self.assertFalse(row['verified'])
 
 if __name__=='__main__':unittest.main()

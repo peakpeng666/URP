@@ -46,6 +46,46 @@ def sanitize_undock_timing(raw):
     result['samples']=num(raw.get('samples'),True,10000000)
     return result
 
+NAV_NODES={'controller_server','smoother_server','planner_server','behavior_server','bt_navigator','waypoint_follower','velocity_smoother','amcl','map_server','local_costmap','global_costmap','manager'}
+NAV_EVENTS={'configure_requested','activate_requested','deactivate_requested','cleanup_requested','shutdown_requested','transition_failed','bond_connected','bond_failed','state_service_wait','bringup_started','bringup_failed','managed_active','shutdown_started','shutdown_finished','preshutdown','tf_wait','change_state_unavailable','get_state_unavailable','bt_load_failed','bt_xml_failed','action_server_unavailable','controller_create_failed'}
+NAV_CONTEXTS={'before_shutdown_marker','at_or_after_shutdown_marker','no_shutdown_marker'}
+def sanitize_nav_lifecycle(raw):
+    raw=raw if isinstance(raw,dict) else {};events=[]
+    for row in raw.get('events',[]) if isinstance(raw.get('events'),list) else []:
+        if not isinstance(row,dict):continue
+        if all(isinstance(row.get(k),str) and row[k] in allowed for k,allowed in [('component',{'nav','localization'}),('node',NAV_NODES),('event',NAV_EVENTS),('context',NAV_CONTEXTS)]) and num(row.get('count'),True,10000) is not None:
+            events.append({k:row[k] for k in ('component','node','event','context','count')})
+    return {'coverage':'bounded_log_tail','log_window':'tail_64k','failure_time_alignment':'unavailable','events':events[:60]}
+
+def nav_lifecycle(logs):
+    events={}
+    node_pattern='('+'|'.join(sorted(NAV_NODES-{'manager'},key=len,reverse=True))+r')(?=$|[\s.,:;\x1b])'
+    transitions=[('Configuring ','configure_requested'),('Activating ','activate_requested'),('Deactivating ','deactivate_requested'),('Cleaning up ','cleanup_requested'),('Shutting down ','shutdown_requested'),('Failed to change state for node: ','transition_failed'),('Waiting for service /','state_service_wait')]
+    markers={'Starting managed nodes bringup...':'bringup_started','Failed to bring up all requested nodes. Aborting bringup.':'bringup_failed','Managed nodes are active':'managed_active','Shutting down managed nodes...':'shutdown_started','Managed nodes have been shut down':'shutdown_finished','Running Nav2 LifecycleManager rcl preshutdown':'preshutdown','change_state service is not available!':'change_state_unavailable','get_state service is not available!':'get_state_unavailable'}
+    for component in ('nav','localization'):
+        lines=logs.get(component,'').splitlines();shutdown=next((n for n,line in enumerate(lines) if any(marker in line for marker in ('Shutting down managed nodes','Running Nav2 LifecycleManager rcl preshutdown','signal_handler(signum='))),None)
+        for index,line in enumerate(lines):
+            context='no_shutdown_marker' if shutdown is None else 'before_shutdown_marker' if index<shutdown else 'at_or_after_shutdown_marker'
+            found=[]
+            for marker,event in transitions:
+                # Exact static node name after the known manager phrase, never raw names.
+                pattern=re.escape(marker)+node_pattern
+                if event=='state_service_wait':pattern=r'Waiting for service /?('+ '|'.join(sorted(NAV_NODES-{'manager'}))+r')/get_state(?:\.\.\.|\s|$)'
+                match=re.search(pattern,line)
+                if match:found.append((match.group(1),event))
+            for marker,event in markers.items():
+                if marker in line:found.append(('manager',event))
+            match=re.search(r'Server '+node_pattern+r' (connected with bond\.|was unable to be reached after)',line)
+            if match:found.append((match.group(1),'bond_connected' if match.group(2).startswith('connected') else 'bond_failed'))
+            if 'Timed out waiting for transform from ' in line and ' to become available, tf error:' in line:
+                for node in ('global_costmap','local_costmap'):
+                    if '['+node+'.'+node+']' in line or '['+node+']' in line:found.append((node,'tf_wait'))
+            for node,marker,event in [('bt_navigator','Exception when loading BT:','bt_load_failed'),('bt_navigator','Error loading XML file:','bt_xml_failed'),('bt_navigator','action server not available after waiting','action_server_unavailable'),('controller_server','Failed to create controller.','controller_create_failed')]:
+                if '['+node+']' in line and marker in line:found.append((node,event))
+            for node,event in found:
+                key=(component,node,event,context);events[key]=min(10000,events.get(key,0)+1)
+    return sanitize_nav_lifecycle({'events':[dict(zip(('component','node','event','context'),key),count=count) for key,count in events.items()]})
+
 def sanitize(raw):
     raw=raw if isinstance(raw,dict) else {};counts=raw.get('counts');counts=counts if isinstance(counts,dict) else {}
     stages=[]
@@ -56,7 +96,7 @@ def sanitize(raw):
         if isinstance(row,dict) and row.get('component') in COMPONENTS and type(row.get('exit_code')) is int and -255<=row['exit_code']<=255:exits.append({'component':row['component'],'exit_code':row['exit_code']})
     events=raw.get('undock_events');events=events if isinstance(events,list) else []
     codes=raw.get('error_codes');codes=codes if isinstance(codes,list) else []
-    return {'undock_timing':sanitize_undock_timing(raw.get('undock_timing')),'report_available':raw.get('report_available') is True,'undock_events':sorted({e for e in events if isinstance(e,str) and e in UNDOCK_EVENTS}),'dock_state_at_undock_entry':raw.get('dock_state_at_undock_entry') if raw.get('dock_state_at_undock_entry') == 'docked' else 'unavailable','final_dock_state':'unavailable','final_sim_time_s':num(raw.get('final_sim_time_s'),high=86400),'final_speed_m_s':num(raw.get('final_speed_m_s'),high=20),'phase':raw.get('phase') if isinstance(raw.get('phase'),str) and raw['phase'] in PHASES else 'unknown','stages':stages[-20:],'counts':{k:num(counts.get(k),True) for k in COUNTS},'assets_complete':raw.get('assets_complete') if type(raw.get('assets_complete')) is bool else None,'assets_missing_count':num(raw.get('assets_missing_count'),True,100000),'error_codes':sorted({c for c in codes if isinstance(c,str) and c in CODES})[:16],'component_exits':exits[:20]}
+    return {'nav_lifecycle':sanitize_nav_lifecycle(raw.get('nav_lifecycle')),'undock_timing':sanitize_undock_timing(raw.get('undock_timing')),'report_available':raw.get('report_available') is True,'undock_events':sorted({e for e in events if isinstance(e,str) and e in UNDOCK_EVENTS}),'dock_state_at_undock_entry':raw.get('dock_state_at_undock_entry') if raw.get('dock_state_at_undock_entry') == 'docked' else 'unavailable','final_dock_state':'unavailable','final_sim_time_s':num(raw.get('final_sim_time_s'),high=86400),'final_speed_m_s':num(raw.get('final_speed_m_s'),high=20),'phase':raw.get('phase') if isinstance(raw.get('phase'),str) and raw['phase'] in PHASES else 'unknown','stages':stages[-20:],'counts':{k:num(counts.get(k),True) for k in COUNTS},'assets_complete':raw.get('assets_complete') if type(raw.get('assets_complete')) is bool else None,'assets_missing_count':num(raw.get('assets_missing_count'),True,100000),'error_codes':sorted({c for c in codes if isinstance(c,str) and c in CODES})[:16],'component_exits':exits[:20]}
 
 def project(report,logs):
     report=report if isinstance(report,dict) else {};final=report.get('final_state') or {};final=final if isinstance(final,dict) else {}
@@ -75,8 +115,8 @@ def project(report,logs):
             if marker in text:codes.append(code)
         for value in re.findall(r'\bexit code (-?\d{1,3})(?:\D|$)',text):exits.append({'component':component,'exit_code':int(value)})
     robot=final.get('robot');robot=robot if isinstance(robot,dict) else {}
-    # Fixed944 gates entry to undocking on latest dock.is_docked; it does not persist final dock state.
-    return sanitize({'undock_timing':report.get('undock_timing'),'report_available':bool(report),'undock_events':events,'dock_state_at_undock_entry':'docked' if any(r.get('phase')=='undocking' for r in stages) else 'unavailable','final_sim_time_s':robot.get('t_sim'),'final_speed_m_s':robot.get('speed'),'phase':final.get('phase') or (stages[-1]['phase'] if stages else 'unknown'),'stages':stages,'counts':{k:report['counts'].get(k,0) for k in COUNTS} if isinstance(report.get('counts'),dict) else {},'assets_complete':assets.get('complete'),'assets_missing_count':len(assets['missing']) if isinstance(assets.get('missing'),list) else None,'error_codes':codes,'component_exits':exits})
+    # The pinned session gates undocking on latest dock.is_docked; final dock state is not persisted.
+    return sanitize({'nav_lifecycle':nav_lifecycle(logs),'undock_timing':report.get('undock_timing'),'report_available':bool(report),'undock_events':events,'dock_state_at_undock_entry':'docked' if any(r.get('phase')=='undocking' for r in stages) else 'unavailable','final_sim_time_s':robot.get('t_sim'),'final_speed_m_s':robot.get('speed'),'phase':final.get('phase') or (stages[-1]['phase'] if stages else 'unknown'),'stages':stages,'counts':{k:report['counts'].get(k,0) for k in COUNTS} if isinstance(report.get('counts'),dict) else {},'assets_complete':assets.get('complete'),'assets_missing_count':len(assets['missing']) if isinstance(assets.get('missing'),list) else None,'error_codes':codes,'component_exits':exits})
 
 def collect(runtime,sid):
     if not isinstance(sid,str) or not SID.fullmatch(sid):return sanitize({})
@@ -87,7 +127,9 @@ def collect(runtime,sid):
         with path.open('rb') as stream:
             stream.seek(0,2);size=stream.tell()
             if path.suffix=='.json' and size>limit:return b''
-            stream.seek(max(0,size-limit));return stream.read(limit)
+            stream.seek(max(0,size-limit));data=stream.read(limit)
+            # An incomplete first line in a truncated tail is not a log event.
+            return data.split(b'\n',1)[1] if size>limit and b'\n' in data else b'' if size>limit else data
     try:report=json.loads(bounded(root/'session-report.json',2097152))
     except (ValueError,OSError):report={}
     logs={}
