@@ -16,6 +16,7 @@ recipe/tests/test_capability_inputs.py
 recipe/tests/test_capability_projection.py
 recipe/tests/test_keyring_input.py
 recipe/tests/test_namespace_capabilities.py
+recipe/tests/test_package_hop_attribution.py
 recipe/tests/test_public_keyring.py
 recipe/tests/test_workflow_contract.py
 recipe/verify_workflow_contract.py

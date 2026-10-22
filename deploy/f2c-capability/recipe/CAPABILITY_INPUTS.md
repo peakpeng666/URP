@@ -81,7 +81,7 @@ default/hwcaps library candidates are authenticated, not merely the first one.
 Unsupported formats or foreign runtime providers fail closed. This is a narrow
 tool/runtime closure, not the runner's whole scientific package closure.
 
-`capability-inputs.lock.json` uses schema 2 and protocol `private-public-keyring-v1`, with a separate `trust_anchor` data manifest. It binds source bytes, boot ID, caller IDs/groups,
+`capability-inputs.lock.json` uses schema 3 and protocol `private-public-keyring-v1`, with a separate `trust_anchor` data manifest. It binds source bytes, boot ID, caller IDs/groups,
 host configuration, optional subordinate-ID-file absence, metadata/archive
 evidence, tools, Python sources, and runtime files. It is exclusive and mode
 0600. `verify_lock(root, expected_lock_sha256)` rechecks the exact lock digest
@@ -137,3 +137,9 @@ Only the closed schema-1 PASS/FAIL preparation code and, for mode failures, fixe
 installed versions not authenticated to the snapshot, arbitrary exception text,
 and subprocess stderr are not projected. Pure-data and mocked fixtures are not
 a claim that a namespace or root filesystem has been executed successfully.
+
+## V5 package-hop attribution
+
+The lock is schema 3 with the unchanged public-keyring protocol and separate `member_protocol: signed-package-hop-attribution-v1`. Its `member_attributions` mapping binds each authenticated path's ordered non-usrmerge symlink hops and terminal regular member to unique exact signed package/archive records. A different package may own a canonical terminal target, but its identity and archive must be authenticated independently; no archive union or filename-based ownership inference is accepted. Every literal alias target and terminal byte/size/mode/UID/GID predicate remains enforced.
+
+The four pre-existing root usrmerge aliases retain only their exact source-reviewed layout rule and are explicitly distinguished from signed package-owned members. Reuse replays complete used-member projections bound to exact authenticated package/archive identities, while rechecking the measured source, dpkg status, host files, archive bytes and snapshot inputs. This relies on the reviewed preparation code and externally measured lock hash; it does not claim independent archive reparsing or native owner-query execution on each reuse. Old schema-2 locks cannot be reused by the v5 namespace launcher. The observed v4 generic byte-rejection and the separately reproduced canonical Python-package alias defect remain distinct evidence.

@@ -79,6 +79,11 @@ def cache_data(entries=(('libc.so.6', '/lib/x86_64-linux-gnu/libc.so.6'),)):
     return bytes(data + strings)
 
 
+def alias_record(path, target):
+    return {'path': path, 'target': target, 'uid': 0, 'gid': 0, 'mode': 0o777,
+            'device': 1, 'inode': 3}
+
+
 def record(path='/usr/bin/newuidmap', content=b'authentic', mode=0o4755):
     return {'path': path, 'resolved_path': path, 'sha256': M.digest(content),
             'uid': 0, 'gid': 0, 'mode': mode, 'device': 1, 'inode': 2,
@@ -356,8 +361,9 @@ class Fixtures(unittest.TestCase):
 
     def test_member_usrmerge_requires_exact_alias(self):
         members = M.archive_members(tar_data([('bin/tool', b'authentic', 'file', 0o755)]))
-        row = record('/usr/bin/tool', mode=0o755)
-        row['aliases'] = [{'path': '/bin', 'target': 'usr/bin'}]
+        row = record('/bin/tool', mode=0o755)
+        row['resolved_path'] = '/usr/bin/tool'
+        row['aliases'] = [alias_record('/bin', 'usr/bin')]
         M.verify_member(row, members)
         row['aliases'][0]['target'] = 'private/bin'
         self.fails('CAP_BYTES_REJECTED', M.verify_member, row, members)
@@ -367,7 +373,7 @@ class Fixtures(unittest.TestCase):
           ('usr/lib/python3.10/sitecustomize.py', '/etc/python3.10/sitecustomize.py', 'symlink', 0o777)]))
         row = record('/usr/lib/python3.10/sitecustomize.py', mode=0o644)
         row['resolved_path'] = '/etc/python3.10/sitecustomize.py'
-        row['aliases'] = [{'path': row['path'], 'target': row['resolved_path']}]
+        row['aliases'] = [alias_record(row['path'], row['resolved_path'])]
         M.verify_member(row, members)
 
     def test_elf_needed_and_interpreter(self):
@@ -477,7 +483,9 @@ class Fixtures(unittest.TestCase):
         auth.owner.return_value = 'libpython3.10-dev'
         with mock.patch.object(M, 'select_record', return_value={'Source': 'python3.10'}):
             M.authenticate_python(auth, ['/usr/lib/python3.10/config-x/python-config.py'])
-        auth.authenticate.assert_called_with('/usr/lib/python3.10/config-x/python-config.py', archive_owner='libpython3.10-dev')
+        self.assertEqual(auth.authenticate.call_args.args, ('/usr/lib/python3.10/config-x/python-config.py',))
+        self.assertEqual(auth.authenticate.call_args.kwargs['expected'], 'libpython3.10-dev')
+        self.assertTrue(callable(auth.authenticate.call_args.kwargs['owner_policy']))
 
     def test_python_tk_owner_must_have_declared_extension_source(self):
         auth = mock.Mock()
@@ -687,7 +695,7 @@ class Fixtures(unittest.TestCase):
             self.fails('CAP_LOCK_REJECTED', M.check_nss_state, lock, {})
 
     def state_before_runtime(self):
-        return {'schema': 2, 'protocol': M.PROTOCOL, 'status': 'authenticated-existing-tools', 'scope': 'namespace-capability-only',
+        return {'schema': M.LOCK_SCHEMA, 'protocol': M.PROTOCOL, 'member_protocol': M.MEMBER_PROTOCOL, 'status': 'authenticated-existing-tools', 'scope': 'namespace-capability-only',
                 'snapshot': M.SNAPSHOT, 'tools': {name: {'path': path} for name, path in M.TOOLS.items()},
                 'bootstrap_files': {name: {'path': path} for name, path in M.BOOTSTRAP_TOOLS.items()},
                 'host_files': {path: {} for path in M.HOST_FILES},
@@ -746,7 +754,7 @@ class Fixtures(unittest.TestCase):
         members = M.archive_members(tar_data([('usr/lib/x86_64-linux-gnu/libnss_systemd.so.2', b'authentic', 'file', 0o644)]))
         row = record('/lib/x86_64-linux-gnu/libnss_systemd.so.2', mode=0o644)
         row['resolved_path'] = '/usr/lib/x86_64-linux-gnu/libnss_systemd.so.2'
-        row['aliases'] = [{'path': '/lib', 'target': 'usr/lib'}]
+        row['aliases'] = [alias_record('/lib', 'usr/lib')]
         M.verify_member(row, members)
         row['sha256'] = '0' * 64
         self.fails('CAP_BYTES_REJECTED', M.verify_member, row, members)

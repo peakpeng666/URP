@@ -59,7 +59,7 @@ class WorkflowTests(unittest.TestCase):
                 base=Path(d); source=base/'recipe-source/deploy/f2c-capability';source.mkdir(parents=True)
                 target=base/'target';target.mkdir()
                 (source/'recipe').mkdir();data=b'VALUE=1\n';(source/'recipe/demo.py').write_bytes(data)
-                raw=json.dumps({'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v4','files':{'recipe/demo.py':{'sha256':hashlib.sha256(data).hexdigest()}}}).encode()
+                raw=json.dumps({'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v5','files':{'recipe/demo.py':{'sha256':hashlib.sha256(data).hexdigest()}}}).encode()
                 (source/'source-index.json').write_bytes(raw)
                 (source/'unindexed-private.txt').write_text('UNINDEXED MUST NOT COPY')
                 # A source-index-only checkout has no candidate workflow at all.
@@ -80,7 +80,7 @@ class WorkflowTests(unittest.TestCase):
                     path=source/'x'
                     if kind=='symlink':path.symlink_to(original)
                     else:os.link(original,path)
-                    raw=json.dumps({'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v4','files':{'x':{'sha256':hashlib.sha256(b'x').hexdigest()}}}).encode()
+                    raw=json.dumps({'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v5','files':{'x':{'sha256':hashlib.sha256(b'x').hexdigest()}}}).encode()
                     (source/'source-index.json').write_bytes(raw)
                     env={'GITHUB_WORKSPACE':str(base),'CANDIDATE_ROOT':str(target),'REVIEWED_SOURCE_INDEX_SHA256':hashlib.sha256(raw).hexdigest()}
                     with patch.dict(os.environ,env,clear=True),self.assertRaises(ValueError):
@@ -94,7 +94,7 @@ class WorkflowTests(unittest.TestCase):
                     base=Path(d);source=base/'recipe-source/deploy/f2c-capability';source.mkdir(parents=True)
                     target=base/'target';target.mkdir();(source/'x').write_bytes(b'x')
                     row={'sha256':hashlib.sha256(b'x').hexdigest()}
-                    index={'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v4','files':{'x':row}}
+                    index={'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v5','files':{'x':row}}
                     if invalid=='schema':index['schema']=2
                     elif invalid=='status':index['status']='unreviewed'
                     elif invalid=='identity':index['identity']='jammy-rootless-capability-v2'

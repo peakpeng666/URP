@@ -22,6 +22,10 @@ import tarfile
 
 SNAPSHOT = '20261021T000000Z'
 PROTOCOL = 'private-public-keyring-v1'
+LOCK_SCHEMA = 3
+LOCK_SIZE_LIMIT = 16 * 1024 * 1024
+MEMBER_PROTOCOL = 'signed-package-hop-attribution-v1'
+USRMERGE_LAYOUT_POLICY = 'root-usrmerge-v1'
 KEYRING_SOURCE_PATH = 'inputs/ubuntu-archive-keyring.gpg'
 KEYRING_PROVENANCE_PATH = 'inputs/ubuntu-archive-keyring.provenance.json'
 KEYRING_SOURCE_SHA256 = '80a36b0a6de2f69f49d2df75ef473ccde121e9e190b9ea01d20a4f63778d5c31'
@@ -158,7 +162,8 @@ def measure(path, limit=64 * 1024 * 1024, root_owned=True, subject='UNKNOWN'):
             need(hops <= 16, 'CAP_MODE_REJECTED', subject, 'SYMLINK_LIMIT')
             target = os.readlink(current)
             aliases.append({'path': str(current), 'target': target, 'uid': before.st_uid,
-                            'gid': before.st_gid, 'device': before.st_dev, 'inode': before.st_ino})
+                            'gid': before.st_gid, 'mode': stat.S_IMODE(before.st_mode),
+                            'device': before.st_dev, 'inode': before.st_ino})
             expanded = Path(os.path.normpath(str(current.parent / target)))
             todo = list(expanded.parts[1:]) + todo
             current = Path('/')
@@ -369,7 +374,8 @@ def archive_members(data):
                 result[name] = {'kind': 'file', 'sha256': digest(content), 'size': member.size,
                                 'mode': member.mode, 'uid': member.uid, 'gid': member.gid}
             elif member.issym():
-                result[name] = {'kind': 'symlink', 'target': member.linkname}
+                result[name] = {'kind': 'symlink', 'target': member.linkname,
+                                'mode': member.mode, 'uid': member.uid, 'gid': member.gid}
             elif member.islnk():
                 result[name] = {'kind': 'hardlink', 'target': member.linkname.removeprefix('./')}
             else:
@@ -377,24 +383,165 @@ def archive_members(data):
     return result
 
 
-def verify_member(row, members):
-    candidates = [row['path'].lstrip('/'), row['resolved_path'].lstrip('/')]
-    for value in list(candidates):
-        if value.startswith(('usr/lib/', 'usr/lib64/', 'usr/bin/', 'usr/sbin/')):
-            candidates.append(value[4:])
-    selected = [members[value] for value in candidates if value in members and members[value]['kind'] == 'file']
-    need(selected, 'CAP_BYTES_REJECTED')
-    need(any(x['sha256'] == row['sha256'] and x['size'] == row['size'] and
-             x['mode'] == row['mode'] and x['uid'] == row['uid'] and x['gid'] == row['gid'] for x in selected),
+def canonical_path(path):
+    need(type(path) is str and 1 < len(path) <= 4096 and path.startswith('/') and
+         '\0' not in path and all(x not in ('', '.', '..') for x in path[1:].split('/')),
          'CAP_BYTES_REJECTED')
-    for alias in row['aliases']:
-        name = alias['path'].lstrip('/')
-        if name in ('bin', 'sbin', 'lib', 'lib64'):
-            need(alias['target'] == 'usr/' + name, 'CAP_BYTES_REJECTED')
+    return path
+
+
+def member_names(path):
+    """Only the existing four usrmerge spellings, not a general path fallback."""
+    canonical_path(path)
+    names = [path[1:]]
+    if path.startswith(('/usr/lib/', '/usr/lib64/', '/usr/bin/', '/usr/sbin/')):
+        names.append(path[5:])
+    return names
+
+
+def resolved_alias(path, target, suffix):
+    need(type(target) is str and 0 < len(target) <= 4096 and '\0' not in target,
+         'CAP_BYTES_REJECTED')
+    parts = [] if target.startswith('/') else path[1:].split('/')[:-1]
+    for part in target.split('/') + suffix:
+        if part in ('', '.'):
+            continue
+        if part == '..':
+            need(parts, 'CAP_BYTES_REJECTED')
+            parts.pop()
         else:
-            names = [name, name[4:] if name.startswith('usr/lib') else name]
-            need(any(n in members and members[n]['kind'] == 'symlink' and
-                     members[n]['target'] == alias['target'] for n in names), 'CAP_BYTES_REJECTED')
+            parts.append(part)
+    return canonical_path('/' + '/'.join(parts))
+
+
+def member_chain(row):
+    """Replay the measured order, rejecting unconsumed hops, cycles and escapes."""
+    current = canonical_path(row['path'])
+    canonical_path(row['resolved_path'])
+    aliases = row['aliases']
+    need(type(aliases) is list and len(aliases) <= 16, 'CAP_BYTES_REJECTED')
+    seen = {current}
+    for alias in aliases:
+        path = canonical_path(alias['path'])
+        need(current == path or current.startswith(path + '/'), 'CAP_BYTES_REJECTED')
+        need(all(type(alias.get(k)) is int and alias[k] >= 0 for k in
+                 ('uid', 'gid', 'mode', 'device', 'inode')), 'CAP_BYTES_REJECTED')
+        suffix = current[len(path):].strip('/').split('/') if current != path else []
+        current = resolved_alias(path, alias['target'], suffix)
+        need(current not in seen, 'CAP_BYTES_REJECTED')
+        seen.add(current)
+        if path in ('/bin', '/sbin', '/lib', '/lib64'):
+            # A fixed host-layout policy, deliberately NOT signed ownership.
+            need(alias['target'] == 'usr' + path, 'CAP_BYTES_REJECTED')
+    need(current == row['resolved_path'], 'CAP_BYTES_REJECTED')
+    return aliases
+
+
+def verified_archive_member(path, observed, kind, members):
+    names = [name for name in member_names(path) if name in members]
+    need(len(names) == 1, 'CAP_BYTES_REJECTED')
+    name = names[0]
+    signed = members[name]
+    keys = ('sha256', 'size', 'mode', 'uid', 'gid') if kind == 'file' else ('target', 'mode', 'uid', 'gid')
+    need(type(signed) is dict and set(signed) == {'kind'} | set(keys) and
+         signed.get('kind') == kind and all(k in signed and k in observed and
+         signed[k] == observed[k] and type(signed[k]) is type(observed[k]) for k in keys),
+         'CAP_BYTES_REJECTED')
+    return name
+
+
+def package_reference(package):
+    return {key: package[key] for key in
+            ('name', 'version', 'architecture', 'source', 'suite', 'component', 'stanza')} | {
+            'archive_sha256': package['archive']['sha256'], 'archive_size': package['archive']['size']}
+
+
+def attributed_members(row, bind):
+    hops = []
+    for alias in member_chain(row):
+        if alias['path'] in ('/bin', '/sbin', '/lib', '/lib64'):
+            hops.append({'kind': 'layout-policy', 'path': alias['path'], 'target': alias['target'],
+                         'layout_policy': USRMERGE_LAYOUT_POLICY})
+        else:
+            hops.append(bind(alias['path'], alias, 'symlink'))
+    return {'hops': hops, 'target': bind(row['resolved_path'], row, 'file')}
+
+
+def verify_member(row, members):
+    """Single-archive pure checker; cross-package use must supply attribution."""
+    def bind(path, observed, kind):
+        return verified_archive_member(path, observed, kind, members)
+    attributed_members(row, bind)
+
+
+def verify_member_attributions(lock):
+    """Replay the hash-anchored ledger; do not execute archive or host programs.
+
+    Member projections and ownership observations are outputs of preparation,
+    authenticated by the externally supplied lock digest. They are not a second
+    signature scheme. verify_state separately remeasures every pinned archive,
+    dpkg status, runtime file and alias before accepting this ledger on reuse.
+    """
+    need(len(json.dumps(lock, sort_keys=True, separators=(',', ':')).encode()) + 1 <= LOCK_SIZE_LIMIT,
+         'CAP_LOCK_REJECTED')
+    need(lock.get('member_protocol') == MEMBER_PROTOCOL and
+         type(lock.get('member_attributions')) is dict and
+         type(lock.get('packages')) is dict and 0 < len(lock['packages']) <= 96 and
+         set(lock['member_attributions']) == set(lock['runtime_files']), 'CAP_LOCK_REJECTED')
+    owners, used_members, used_paths = {}, {}, set()
+    for name, package in lock['packages'].items():
+        need(package.get('name') == name and type(name) is str and
+             re.fullmatch('[a-z0-9][a-z0-9+.-]{1,59}', name) and
+             type(package.get('version')) is str and re.fullmatch('[0-9][0-9A-Za-z.+:~-]{0,53}', package['version']) and
+             package.get('architecture') in ('amd64', 'all') and
+             type(package.get('source')) is str and 0 < len(package['source']) <= 256 and
+             package.get('suite') in ('jammy', 'jammy-updates', 'jammy-security') and
+             package.get('component') in ('main', 'universe') and
+             type(package.get('stanza')) is int and package['stanza'] >= 0 and
+             type(package.get('members')) is dict and type(package.get('owner_paths')) is list and
+             all(type(path) is str for path in package['owner_paths']) and
+             package['owner_paths'] == sorted(set(package['owner_paths'])), 'CAP_LOCK_REJECTED')
+        need(type(package.get('archive')) is dict and
+             type(package['archive'].get('sha256')) is str and
+             re.fullmatch('[0-9a-f]{64}', package['archive']['sha256']) and
+             type(package['archive'].get('size')) is int and 0 < package['archive']['size'] <= 64 * 1024 * 1024,
+             'CAP_LOCK_REJECTED')
+        used_members[name] = set()
+        for path in package['owner_paths']:
+            canonical_path(path)
+            need(path not in owners, 'CAP_LOCK_REJECTED')
+            owners[path] = name
+    for path, name in owners.items():
+        for equivalent in member_names(path):
+            need('/' + equivalent not in owners or owners['/' + equivalent] == name,
+                 'CAP_LOCK_REJECTED')
+    def owner(path):
+        need(path in owners, 'CAP_LOCK_REJECTED')
+        used_paths.add(path)
+        return owners[path]
+    def bind(path, observed, kind):
+        name = owner(path)
+        package = lock['packages'][name]
+        member = verified_archive_member(path, observed, kind, package['members'])
+        used_members[name].add(member)
+        return {'kind': 'signed-package-member', 'path': path, 'member': member,
+                'package': name, 'package_record': package_reference(package)}
+    for path, row in lock['runtime_files'].items():
+        need(row['path'] == path and row.get('package') == owner(path), 'CAP_LOCK_REJECTED')
+        need(attributed_members(row, bind) == lock['member_attributions'][path], 'CAP_LOCK_REJECTED')
+    need(used_paths == set(owners) and all(used_members[name] and used_members[name] == set(package['members'])
+         for name, package in lock['packages'].items()), 'CAP_LOCK_REJECTED')
+    for mapping in (lock['tools'], lock['bootstrap_files']):
+        need(all(row == lock['runtime_files'].get(row['path']) for row in mapping.values()), 'CAP_LOCK_REJECTED')
+    for name, path in TOOLS.items():
+        need(lock['runtime_files'][path]['package'] == TOOL_PACKAGES[name], 'CAP_LOCK_REJECTED')
+    for path in lock['python_source_paths']:
+        need(path in lock['member_attributions'], 'CAP_LOCK_REJECTED')
+        attribution = lock['member_attributions'][path]
+        names = {lock['runtime_files'][path]['package']} | {part['package'] for part in
+            attribution['hops'] + [attribution['target']] if part['kind'] == 'signed-package-member'}
+        for name in names:
+            python_package_policy(name, lock['packages'][name]['source'])
 
 
 def cstring(data, offset, end=None):
@@ -471,6 +618,7 @@ class Authenticator:
         self.root, self.m, self.out = root, m, out
         self.installed, self.records = installed, records
         self.packages, self.members, self.files = {}, {}, {}
+        self.member_attributions, self.owners = {}, {}
         self.serial = 0
 
     def package(self, name):
@@ -486,17 +634,24 @@ class Authenticator:
         need(rc == 0 and self.m.package_identity(parsed) == self.m.package_identity(row), 'CAP_ARCHIVE_REJECTED')
         rc, data = command(['/usr/bin/dpkg-deb', '--fsys-tarfile', str(archive)], self.out, 'data-' + str(len(self.members)))
         need(rc == 0, 'CAP_ARCHIVE_REJECTED')
-        self.members[name] = archive_members(data)
+        members = archive_members(data)
+        archive_row = measure(archive, root_owned=False, subject='SOURCE_INPUT')[0]
+        need(archive_row['sha256'] == row['SHA256'] and archive_row['size'] == int(row['Size']),
+             'CAP_ARCHIVE_REJECTED')
+        self.members[name] = members
         self.packages[name] = {'name': row['Package'], 'version': row['Version'],
             'architecture': row['Architecture'], 'suite': row['_suite'], 'component': row['_component'],
-            'stanza': row['_stanza'], 'archive': measure(archive, root_owned=False, subject='SOURCE_INPUT')[0]}
+            'stanza': row['_stanza'], 'source': row.get('Source', row['Package']),
+            'archive': archive_row,
+            'members': {}, 'owner_paths': []}
         return self.members[name]
 
     def owner(self, path):
-        candidates = [path]
-        if path.startswith(('/usr/lib/', '/usr/lib64/', '/usr/bin/', '/usr/sbin/')):
-            candidates.append(path[4:])
-        elif path.startswith(('/lib/', '/lib64/', '/bin/', '/sbin/')):
+        canonical_path(path)
+        if path in self.owners:
+            return self.owners[path]
+        candidates = ['/' + name for name in member_names(path)]
+        if path.startswith(('/lib/', '/lib64/', '/bin/', '/sbin/')):
             candidates.append('/usr' + path)
         owners = set()
         for candidate in candidates:
@@ -511,16 +666,43 @@ class Authenticator:
                 need(match and match[2] == candidate, 'CAP_OWNER_REJECTED')
                 owners.add(match[1])
         need(len(owners) == 1, 'CAP_OWNER_REJECTED')
-        return next(iter(owners))
+        self.owners[path] = next(iter(owners))
+        return self.owners[path]
 
-    def authenticate(self, path, expected=None, archive_owner=None):
+    def authenticate(self, path, expected=None, owner_policy=None):
         if path in self.files:
-            return self.files[path]
+            row = self.files[path]
+            need(expected is None or row['package'] == expected, 'CAP_OWNER_REJECTED')
+            if owner_policy is not None:
+                attribution = self.member_attributions[path]
+                names = {row['package']} | {part['package'] for part in
+                    attribution['hops'] + [attribution['target']] if part['kind'] == 'signed-package-member'}
+                for name in names:
+                    owner_policy(name)
+            return row
         row, data = measure(path, subject=MODE_FIXED_SUBJECTS.get(path, 'RUNTIME_INPUT'))
-        owner = archive_owner if archive_owner is not None else self.owner(path)
+        member_chain(row)
+        def checked_owner(member_path):
+            owner = self.owner(member_path)
+            if owner_policy is not None:
+                owner_policy(owner)
+            self.package(owner)
+            package = self.packages[owner]
+            package['owner_paths'] = sorted(set(package['owner_paths']) | {member_path})
+            return owner
+        owner = self.owner(path)
         need(expected is None or owner == expected, 'CAP_OWNER_REJECTED')
-        verify_member(row, self.package(owner))
+        checked_owner(path)
+        def bind(member_path, observed, kind):
+            actual = checked_owner(member_path)
+            member = verified_archive_member(member_path, observed, kind, self.members[actual])
+            package = self.packages[actual]
+            package['members'][member] = dict(self.members[actual][member])
+            return {'kind': 'signed-package-member', 'path': member_path, 'member': member,
+                    'package': actual, 'package_record': package_reference(package)}
+        attribution = attributed_members(row, bind)
         row['package'] = owner
+        self.member_attributions[path] = attribution
         self.files[path] = row
         return row
 
@@ -648,22 +830,26 @@ def python_files():
     return sorted(files)
 
 
+def python_package_policy(name, source):
+    need(name in PYTHON_PACKAGES or name in PYTHON_OPTIONAL_PACKAGES, 'CAP_RUNTIME_UNAUTHENTICATED')
+    expected = 'python3.10' if name in PYTHON_PACKAGES else PYTHON_OPTIONAL_PACKAGES[name]
+    need(type(source) is str and source.split() and source.split()[0] == expected,
+         'CAP_RUNTIME_UNAUTHENTICATED')
+
+
 def authenticate_python(auth, paths):
     for package in PYTHON_PACKAGES:
         auth.package(package)
+    def policy(owner):
+        # Apply the same bounded Python source policy to EVERY hop and target.
+        need(owner in PYTHON_PACKAGES or owner in PYTHON_OPTIONAL_PACKAGES,
+             'CAP_RUNTIME_UNAUTHENTICATED')
+        row = select_record(owner, auth.installed, auth.records)
+        python_package_policy(owner, row.get('Source', owner))
     for path in paths:
-        owners = [package for package in PYTHON_PACKAGES if path.lstrip('/') in auth.members[package]]
-        if not owners:
-            # Development/test files are not silently skipped: their exact installed
-            # identity and same python3.10 source must also be in the signed snapshot.
-            owner = auth.owner(path)
-            need(owner in PYTHON_OPTIONAL_PACKAGES, 'CAP_RUNTIME_UNAUTHENTICATED')
-            row = select_record(owner, auth.installed, auth.records)
-            need(row.get('Source', owner).split()[0] == PYTHON_OPTIONAL_PACKAGES[owner], 'CAP_RUNTIME_UNAUTHENTICATED')
-            auth.package(owner)
-            owners = [owner]
-        need(len(owners) == 1, 'CAP_RUNTIME_UNAUTHENTICATED')
-        auth.authenticate(path, archive_owner=owners[0])
+        owner = auth.owner(path)
+        policy(owner)
+        auth.authenticate(path, expected=owner, owner_policy=policy)
 
 
 def verify_interpreter(row):
@@ -776,7 +962,8 @@ def prepare(root, expected):
     authenticate_nss(auth, nss)
     initial.extend(nss['fallback_paths'])
     runtime = runtime_closure(auth, initial, cache)
-    lock = {'schema': 2, 'protocol': PROTOCOL, 'trust_anchor': trust_anchor,
+    lock = {'schema': LOCK_SCHEMA, 'protocol': PROTOCOL, 'member_protocol': MEMBER_PROTOCOL,
+        'member_attributions': auth.member_attributions, 'trust_anchor': trust_anchor,
         'status': 'authenticated-existing-tools', 'scope': 'namespace-capability-only',
         'source_index_sha256': expected, 'snapshot': SNAPSHOT, 'host': host, 'tools': tools,
         'host_files': host_files, 'source_files': source_files, 'runtime_files': auth.files,
@@ -790,7 +977,8 @@ def prepare(root, expected):
 
 
 def verify_state(root, lock):
-    need(type(lock.get('schema')) is int and lock.get('schema') == 2 and lock.get('protocol') == PROTOCOL and lock.get('status') == 'authenticated-existing-tools' and
+    need(type(lock.get('schema')) is int and lock.get('schema') == LOCK_SCHEMA and lock.get('protocol') == PROTOCOL and
+         lock.get('member_protocol') == MEMBER_PROTOCOL and lock.get('status') == 'authenticated-existing-tools' and
          lock.get('scope') == 'namespace-capability-only' and lock.get('snapshot') == SNAPSHOT,
          'CAP_LOCK_REJECTED')
     need(set(lock['tools']) == set(TOOLS) and all(lock['tools'][name]['path'] == path for name, path in TOOLS.items()), 'CAP_LOCK_REJECTED')
@@ -827,6 +1015,7 @@ def verify_state(root, lock):
     for package in lock['packages'].values():
         row = package['archive']
         need(measure(row['path'], root_owned=False, subject='SOURCE_INPUT')[0] == row, 'CAP_STATE_CHANGED')
+    verify_member_attributions(lock)
     need(all(not os.path.lexists(path) for path in lock['absent_paths']) and
          python_files() == lock['python_source_paths'], 'CAP_STATE_CHANGED')
     initial = list(TOOLS.values()) + list(BOOTSTRAP_TOOLS.values()) + [path for path in lock['python_source_paths'] if path.endswith('.so')]
@@ -839,7 +1028,7 @@ def verify_state(root, lock):
 def verify_lock(root, expected_lock_sha256):
     root = Path(root).absolute()
     need(re.fullmatch('[0-9a-f]{64}', expected_lock_sha256 or ''), 'CAP_LOCK_REJECTED')
-    row, raw = measure(root / 'capability-inputs.lock.json', 16 * 1024 * 1024, False, subject='SOURCE_INPUT')
+    row, raw = measure(root / 'capability-inputs.lock.json', LOCK_SIZE_LIMIT, False, subject='SOURCE_INPUT')
     need(not row['aliases'] and row['nlink'] == 1 and row['mode'] == 0o600 and
          digest(raw) == expected_lock_sha256, 'CAP_LOCK_REJECTED')
     lock = unique_json(raw)

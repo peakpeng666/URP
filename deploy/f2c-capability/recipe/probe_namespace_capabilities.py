@@ -681,7 +681,8 @@ def _child_entry(mode, control, report):
 
 
 def _execute_locked(root, lock, expected_lock, expected_source, verifier):
-    require(lock.get('schema') == 2 and lock.get('protocol') == 'private-public-keyring-v1' and
+    require(lock.get('schema') == 3 and lock.get('protocol') == 'private-public-keyring-v1' and
+            lock.get('member_protocol') == 'signed-package-hop-attribution-v1' and
             lock.get('status') == 'authenticated-existing-tools', 'LOCK_INVALID')
     require(lock.get('scope') == 'namespace-capability-only' and lock['source_index_sha256'] == expected_source, 'LOCK_INVALID')
     require(threading.active_count() == 1 and signal.getsignal(signal.SIGCHLD) == signal.SIG_DFL, 'CALLER_UNSUPPORTED')

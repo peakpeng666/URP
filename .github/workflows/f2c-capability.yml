@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     env:
-      REVIEWED_SOURCE_INDEX_SHA256: 388968cd13a4a309e788ea7bb8de01509ac4a267258a21e4b67a9af28470645a
+      REVIEWED_SOURCE_INDEX_SHA256: 8e3d1cb8f1ca6bda2d36a652a9aed6ad8a89fe42c9c055ed9ed72fb06b2f1d75
     steps:
       - name: Check out reviewed capability sources
         id: checkout
@@ -61,7 +61,7 @@ jobs:
           require(hashlib.sha256(raw).hexdigest()==expected)
           index=json.loads(raw,object_pairs_hook=unique)
           require(index['schema']==1 and index['status']=='reviewed-source')
-          require(index['identity']=='jammy-rootless-capability-v4')
+          require(index['identity']=='jammy-rootless-capability-v5')
           require(1<=len(index['files'])<=64)
           for name,row in index['files'].items():
               require(isinstance(name,str) and not name.startswith('/') and all(x not in ('','.','..') for x in name.split('/')))

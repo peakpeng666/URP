@@ -1,4 +1,4 @@
-# Jammy rootless capability candidate v4
+# Jammy rootless capability candidate v5
 
 This is a separate, diagnostic-only cohort. It does not build or import Fields2Cover, prepare a root filesystem, install packages, modify the host APT database, add subordinate-ID allocations, install setuid programs, change host security settings, or publish artifacts/caches. A successful result is a capability proof, not a scientific/native validation result.
 
@@ -19,6 +19,14 @@ V4 replaces reliance on the unused writable host public-keyring file with a sepa
 The reviewed bytes are copied into a fresh private data input and consumed through a held, fully sealed memory-file descriptor. Only the exact internally generated descriptor path is accepted by the verifier command; no default or extra keyring is permitted. The descriptor is closed before later authentication/helper work. Lock schema 2 and protocol `private-public-keyring-v1` distinguish this data trust anchor from authenticated installed-package files. The old host keyring is neither repaired nor described as authenticated. All other executable, runtime, control-file, metadata/package, NSS, helper and namespace predicates remain enforced. No general writable-path exception or host permission change is introduced.
 
 This is a new trust-input protocol, not a claim that v1 or v3 passed. Its externally reviewed source-index anchor is independent of the Ubuntu metadata/package chain it authenticates; downloading a key and its checksum together at runtime would not provide that guarantee. Initial platform, interpreter and verifier trust remains explicit. A successful capability proof would still not authorize or establish a rootfs/native build.
+
+## V5: explicit signed ownership for canonical package hops
+
+Hosted v4 run `39825742401`, job `119988438351`, at commit `4d9a23b04b7e11c40b0b826bc7d04a78fc1a5fdc` passed anchor and helper stages, then failed authentication with `CAP_BYTES_REJECTED`; namespace proof was skipped. This generic code does not identify the failed host object or establish corruption. The published public-keyring bytes were independently read back unchanged.
+
+A separate pure reproduction using exact official Jammy archives demonstrates a real verifier defect: `libpython3.10-stdlib` owns `/usr/lib/python3.10/_sysconfigdata__linux_x86_64-linux-gnu.py`, a symlink to `_sysconfigdata__x86_64-linux-gnu.py`, while `libpython3.10-minimal` owns the regular target. Both packages are version `3.10.12-1~22.04.18`. V4 incorrectly required the regular target to be present in the alias owner's archive. This is proof of rejection of a valid canonical package layout, not observation of the unreported hosted failed path.
+
+V5 attributes each non-usrmerge symlink hop and the terminal regular member to a unique actual owner whose exact installed identity and archive are authenticated against the signed snapshot. It does not union unrelated archives, infer ownership from filenames, or skip alias targets or byte/size/mode/UID/GID requirements. The four existing root usrmerge aliases retain their exact fixed layout policy; that policy is recorded separately and is not represented as a signed package-owned symlink. Lock schema 3 and the explicit package-member attribution protocol distinguish this provenance from v4. Public-keyring sealing, host controls, NSS and namespace gates are unchanged. No rootfs or Docker protocol is introduced.
 
 ## Why this candidate exists
 
