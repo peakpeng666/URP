@@ -338,3 +338,11 @@ mutation on the authoring host, installation, native build or publication occurs
 in this review. The compiler-only scope, target application 3acf, CPython 3.12.13,
 base/package/source pins and isolation protocol are unchanged; fresh-runtime and
 full-application acceptance remain pending.
+
+## Revision 12: post-install package failure discrimination
+
+The actual compiler11 run 39861467782 / job120112965565 reached the package stage and rejected preparation with `APT_INVARIANT_REJECTED`, `RuntimeError`, operation `post-install-check`. This establishes progress beyond the bootstrap RUN, not a completed prepared image or isolated compilation. The receipt cannot distinguish status parsing, exact inventory delta, or closure version verification. An ordinary nonzero APT-check exit would be classified as ProcessFailure, not the observed RuntimeError; that ordinary subprocess failure is therefore not supported by this receipt. No specific dependency or package defect has been demonstrated from it.
+
+Revision12 changes diagnostics only. Fixed operations identify the status snapshot, inventory parse, exact delta, closure verification, inventory receipt and APT check. On the original delta RuntimeError, a failure-only projection distinguishes missing entries, unexpected entries, version differences, held-state differences and other differences, in that precedence. It never emits package names, versions, values, paths, URLs or exception text. Multiple differences are intentionally represented by only the first applicable category, not a complete diagnosis. Projection errors fall back to the fixed other category; the original exception is re-raised. A matching-delta diagnostic is reserved for an inconsistent failure observation and does not turn rejection into success.
+
+The original `validate_inventory_delta` equality predicate and all closure, installation, provider, signature, archive and isolation gates are unchanged. There is no retry, package upgrade, removal, exception suppression or alternate trust source. The public safe-marker schema is unchanged; only its exact operation allowlist expands. Pure fixtures cannot identify the hosted failing package or establish prepared-image/native/runtime acceptance.

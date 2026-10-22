@@ -9,7 +9,7 @@
       "sha256": "8a147ae2c9bb225985c5cf6aba2a9e08948019b03c92aa4c8438f9eb2af79b6e"
     },
     "README.md": {
-      "sha256": "e536b76e782ab7d9dd0db2d969a8bdf6b3c383c2326f98252d8901335bd13086"
+      "sha256": "f52200122f48cf5e2ed8cdcde8864ef34f5a4ce678dd53adb5996d1a690822bd"
     },
     "SYSTEM_CA_SOURCE_EVIDENCE.md": {
       "sha256": "88559e675023b804c501cd8293e583a6dc9a6831f4015847c5c1e2f9428fcc57"
@@ -21,7 +21,7 @@
       "sha256": "7d5a5d3ce7d6fc2ffe02b8bf0889d3af8c49db36d59e5d14bb38d2720c0bad55"
     },
     "buildkit_diagnostic.py": {
-      "sha256": "855c56db4115d6dc9487bc0bfaa22a0c09bb987524022679d206a119df2264df"
+      "sha256": "b0e222c307911ac0016047c8e1b2d2a15c58eb20191c30419c9e2f1b179d9f6a"
     },
     "engine_controller.py": {
       "sha256": "427289aeca9418013ee347956732cbfed2c5a3a386245bc7d11e0367dc4cdc1b"
@@ -165,7 +165,7 @@
       "sha256": "1150e001f9c7828826e418489e21bfb9d97e5e2e5a01b2961078dd896d3dce70"
     },
     "preparation/prepare_packages.py": {
-      "sha256": "0746592a76d178a306b406cc309fd621e8904af397437a33387bf3744e7e77c6"
+      "sha256": "ee7a2cb0e78810a828e451344455720b4b79189ae318ede28fe1825a5543b8ba"
     },
     "preparation/source-provenance.json": {
       "sha256": "e94d07a8b871da7043de91268eeb67ac84442869586bd2e144f8dea5a0b69360"
@@ -208,6 +208,9 @@
     },
     "tests/test_input_and_artifact.py": {
       "sha256": "96290af289a711bf2aa17f887bb0cb9e11945de8fa36cefbfd6889a0305b4f28"
+    },
+    "tests/test_package_postinstall_diagnostics.py": {
+      "sha256": "48909077d8ce32e9eeb545e06c7bbcd307e17779e44a8ed11e5873172ec37914"
     },
     "tests/test_preparation_diagnostic.py": {
       "sha256": "61265f0ff17fa651537085e7b3404756e5428a3d982f01c2d8643e3950e89a15"

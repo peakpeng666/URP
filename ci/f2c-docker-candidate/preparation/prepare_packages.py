@@ -78,6 +78,7 @@ DIAGNOSTIC_OPERATIONS = frozenset({
     'provider-selection', 'apt-config', 'apt-update', 'native-solver', 'solver-result',
     'closure-provenance', 'archive-download', 'archive-control', 'transaction-plan',
     'transaction-simulate', 'installation', 'post-install-check',
+    'post-status-read', 'post-inventory-parse', 'post-inventory-delta', 'post-closure-verify', 'post-inventory-write', 'post-apt-check', 'post-delta-match', 'post-delta-missing', 'post-delta-unexpected', 'post-delta-version', 'post-delta-held', 'post-delta-other',
     'provider-verification', 'preparation-receipt',
 })
 DIAGNOSTIC_CLASSES = frozenset({
@@ -444,6 +445,30 @@ def validate_inventory_delta(before, after, transaction):
         expected[key] = {'name': row['name'], 'version': row['version'],
                          'architecture': row['architecture'], 'held': False}
     require(expected == after, 'Unexpected installed inventory change; no readiness lock emitted')
+
+
+def post_install_delta_operation(before, after, transaction):
+    """Failure-only finite projection; never emits package identity or changes acceptance."""
+    try:
+        expected = {k: dict(v) for k, v in before.items()}
+        for row in transaction:
+            key = row['name'] + ':' + row['architecture']
+            expected[key] = {'name': row['name'], 'version': row['version'],
+                             'architecture': row['architecture'], 'held': False}
+        if expected == after:
+            return 'post-delta-match'
+        if set(expected) - set(after):
+            return 'post-delta-missing'
+        if set(after) - set(expected):
+            return 'post-delta-unexpected'
+        if any(expected[k].get('version') != after[k].get('version') for k in expected):
+            return 'post-delta-version'
+        if any(expected[k].get('held') != after[k].get('held') for k in expected):
+            return 'post-delta-held'
+    except Exception:
+        # Diagnostic failure must not mask the original rejection.
+        pass
+    return 'post-delta-other'
 
 
 def parse_simulation(text):
@@ -815,14 +840,24 @@ def main():
             # No archive can be fetched during this step. No removal/downgrade option is granted.
             run(install_command[:1] + ['--assume-yes'] + install_command[1:], 'install', privileged=True)
         phase('post-install-check')
+        phase('post-status-read')
         post_status = Path('/var/lib/dpkg/status').read_bytes()
         (out / 'post-status').write_bytes(post_status)
+        phase('post-inventory-parse')
         after = inventory(post_status.decode())
-        validate_inventory_delta(base, after, solution['transaction'])
+        phase('post-inventory-delta')
+        try:
+            validate_inventory_delta(base, after, solution['transaction'])
+        except RuntimeError:
+            phase(post_install_delta_operation(base, after, solution['transaction']))
+            raise
+        phase('post-closure-verify')
         for row in resolved:
             require(after.get(row['name'] + ':' + row['architecture'], {}).get('version') == row['version'],
                     'Post-install closure mismatch: ' + row['name'])
+        phase('post-inventory-write')
         write_json(out / 'post-inventory.json', after)
+        phase('post-apt-check')
         run(['/usr/bin/apt-get', 'check'], 'post-apt-check', privileged=True)
         phase('provider-verification')
         provider = actual[providers.get('pkg-config', 'pkg-config')]

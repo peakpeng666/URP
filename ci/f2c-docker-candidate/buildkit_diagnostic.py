@@ -62,6 +62,7 @@ PACKAGE_OPERATIONS = frozenset({
     'provider-selection', 'apt-config', 'apt-update', 'native-solver', 'solver-result',
     'closure-provenance', 'archive-download', 'archive-control', 'transaction-plan',
     'transaction-simulate', 'installation', 'post-install-check',
+    'post-status-read', 'post-inventory-parse', 'post-inventory-delta', 'post-closure-verify', 'post-inventory-write', 'post-apt-check', 'post-delta-match', 'post-delta-missing', 'post-delta-unexpected', 'post-delta-version', 'post-delta-held', 'post-delta-other',
     'provider-verification', 'preparation-receipt',
 })
 PACKAGE_CLASSES = frozenset({
