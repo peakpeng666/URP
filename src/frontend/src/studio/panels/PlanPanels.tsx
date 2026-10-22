@@ -43,6 +43,7 @@ import { BackgroundControl, FleetAssetSection, PlanBackground } from '../assets/
 import { centerMap, ReplayOverlay } from '../experiment/ReplayPanel';
 import { comparable, currentInput, exclusionReason, inputIdentity, partitionRuns, requiresCoverageRecheck, resultState, verifiedPlan } from '../comparison';
 import { identityState, withoutInvalidatedResults } from '../../lab/views/plan/resultIntegrity';
+import { RunTrace } from '../experiment/RunTrace';
 import { ProblemEditor } from './ProblemEditor';
 import s from './panels.module.css';
 
@@ -937,6 +938,7 @@ export function ComparePanel() {
             })}
           </tbody>
         </table>
+        {anchor && <div className={s.pad}><RunTrace run={anchor} title="选中方案追溯" /></div>}
         {partition.excluded.length > 0 && (
           <div className={s.pad}>
             <h3>未参与比较与排名（{partition.excluded.length}）</h3>

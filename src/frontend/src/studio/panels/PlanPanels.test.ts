@@ -124,5 +124,7 @@ describe('comparison panel ranking excludes invalid runs but lists them', () => 
     expect(html).toContain('data-exclusion="failed"');
     expect(html).toContain('依赖缺失');
     expect(html).toContain('已隔离 · 不适用');
+    expect(html).toContain('选中方案追溯');
+    expect(html).toContain('href="#/plan/scene"');
   });
 });
