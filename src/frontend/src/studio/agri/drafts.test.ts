@@ -145,3 +145,35 @@ describe('issueFields', () => {
     expect(issueFields({ level: 'error', message: 'x', target: 'task:t1' }, ['seedless'])).toEqual([]);
   });
 });
+
+describe('shared draft between plan page and catalog', () => {
+  it('generatedFrom reads pattern, params and seed from provenance', async () => {
+    const { generatedFrom } = await import('./drafts');
+    expect(generatedFrom({ params: { pattern_id: 'x', field_w: 10 }, seed: 7 })).toEqual({ patternId: 'x', params: { pattern_id: 'x', field_w: 10 }, seed: 7 });
+    expect(generatedFrom({ note: 'composed' })).toBeNull();
+    expect(generatedFrom(undefined)).toBeNull();
+  });
+  it('a focus request applies once', async () => {
+    const { requestCatalogFocus, peekCatalogFocus, takeCatalogFocus } = await import('./drafts');
+    requestCatalogFocus('row-weeding-coverage');
+    expect(peekCatalogFocus()).toBe('row-weeding-coverage');
+    expect(takeCatalogFocus()).toBe('row-weeding-coverage');
+    expect(takeCatalogFocus()).toBe('');
+  });
+  it('round trip: built scenario params written back load into the catalog form unchanged', async () => {
+    const { buildPattern, defaultValues } = await import('./catalog');
+    const { generatedFrom } = await import('./drafts');
+    const { manualEdits } = await import('./manualEdits');
+    const { getPattern } = await import('./patterns');
+    const p = getPattern('row-weeding-coverage')!;
+    const values = { ...defaultValues(p), rows_per_pass: 6 };
+    const built = buildPattern(p, values, 11) as { instance: unknown; provenance: unknown };
+    const src = generatedFrom(built.provenance)!;
+    expect(src.patternId).toBe(p.id); expect(src.seed).toBe(11);
+    const rep = manualEdits(p, built);
+    expect(rep.reproducible).toBe(true); expect(rep.changes).toEqual([]);
+    saveDraft(p, { ...defaultValues(p), ...rep.params }, String(src.seed));
+    const back = loadDraft(p, defaultValues(p));
+    expect(back.seed).toBe('11'); expect(back.values.rows_per_pass).toBe(6);
+  });
+});
