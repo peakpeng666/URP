@@ -19,4 +19,6 @@ export GIT_TERMINAL_PROMPT=0
 export UV_CACHE_DIR="$private/uv-cache"
 export UV_PYTHON_INSTALL_DIR="$private/python"
 python3 "$(dirname "$0")/verify_registry.py" "$source_root" > "$private/registry-identity.json"
-bash setup/ubuntu/setup.sh --components workbench --fields2cover skip
+# Xtrace is private; reducer publishes only a fixed installation-step enum.
+export PS4='+URP_SETUP '
+bash -x setup/ubuntu/setup.sh --components workbench --fields2cover skip

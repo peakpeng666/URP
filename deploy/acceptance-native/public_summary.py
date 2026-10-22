@@ -44,14 +44,17 @@ def project(raw, runner=None):
                                     for k in ('full_loop', 'gateway')}
     result['measurement_availability'] = {k: 'measured' if result[k] is not None else 'not_measured'
                                           for k in (*NUMBERS, *COUNTS)}
+    result['installation_step'] = 'unknown'
     result['runner_failure_hint'] = 'unknown'
     result['runner_stage'] = 'unknown'
     result['runner_exit_code'] = None
     result['runner_cleanup_remaining'] = None
     if runner is not None:
         runner = runner if isinstance(runner, dict) else {}
+        step = runner.get('installation_step')
+        result['installation_step'] = step if step in ('unknown', 'apt_update', 'apt_install', 'other', 'not_applicable') else 'unknown'
         hint = runner.get('failure_hint')
-        result['runner_failure_hint'] = hint if hint in ('none', 'source_identity', 'package_install', 'dependency_fetch', 'network', 'disk_full', 'native_build', 'registry_identity', 'unknown') else 'unknown'
+        result['runner_failure_hint'] = hint if hint in ('none', 'source_identity', 'package_install', 'dependency_fetch', 'network', 'disk_full', 'native_build', 'registry_identity', 'apt_signature', 'apt_source_conflict', 'apt_release', 'apt_hook', 'apt_lock', 'apt_package_missing', 'unknown') else 'unknown'
         result['runner_stage'] = runner.get('stage') if runner.get('stage') in ('installation', 'simulation') else 'unknown'
         result['runner_exit_code'] = number(runner.get('exit_code'), True, -255, 255)
         result['runner_cleanup_remaining'] = number(runner.get('cleanup_remaining'), True)

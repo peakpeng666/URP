@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Isolated runner lifecycle. All child output is private, never echoed on failure."""
-import argparse, ctypes, json, os, pathlib, signal, subprocess, sys, time
-HINTS = frozenset({'none','source_identity','package_install','dependency_fetch','network','disk_full','native_build','registry_identity','unknown'})
+import argparse, ctypes, json, os, pathlib, re, signal, subprocess, sys, time
+HINTS = frozenset({'none','source_identity','package_install','dependency_fetch','network','disk_full','native_build','registry_identity','unknown','apt_signature','apt_source_conflict','apt_release','apt_hook','apt_lock','apt_package_missing'})
 LIMIT = 65536
 
 def classify(path, exit_code):
@@ -22,6 +22,12 @@ def classify(path, exit_code):
         ('disk_full', ('no space left on device','disk quota exceeded')),
         ('source_identity', ('source_revision_mismatch','index_revision_mismatch','tracked_blob_mismatch','tracked_file_missing','tracked_symlink_changed','unmerged_index','empty_source_checkout')),
         ('registry_identity', ('npm_mirror_identity_mismatch','non_allowlisted_npm_source')),
+        ('apt_source_conflict', ('conflicting values set for option signed-by','conflicting values set for option trusted')),
+        ('apt_signature', ('no_pubkey','expkeysig','badsig','the following signatures were invalid','the following signatures couldn','is not signed','at least one invalid signature was encountered')),
+        ('apt_release', ('does not have a release file','no longer has a release file','release file is not valid yet','release file is expired')),
+        ('apt_hook', ('problem executing scripts apt::update::post-invoke','problem executing scripts apt::update::pre-invoke','problem executing scripts dpkg::post-invoke','problem executing scripts dpkg::pre-invoke')),
+        ('apt_lock', ('could not get lock','unable to acquire the dpkg frontend lock','unable to lock directory')),
+        ('apt_package_missing', ('e: unable to locate package','has no installation candidate','unable to find a source package')),
         ('network', ('temporary failure in name resolution','could not resolve host','network is unreachable','connection timed out','connection reset by peer','certificate verify failed')),
         ('package_install', ('e: unable to locate package','e: unmet dependencies','dpkg: error','sub-process /usr/bin/dpkg returned an error code')),
         ('dependency_fetch', ('failed to download','failed to fetch','no solution found when resolving dependencies','npm error code eintegrity','npm err! code eintegrity')),
@@ -31,6 +37,21 @@ def classify(path, exit_code):
         if any(needle in tail for needle in needles):
             return hint
     return 'unknown'
+
+
+def installation_step(path):
+    try:
+        with pathlib.Path(path).open('rb') as stream:
+            stream.seek(0,2);stream.seek(max(0,stream.tell()-LIMIT))
+            tail=stream.read(LIMIT).decode('utf-8',errors='replace')
+    except OSError:return 'unknown'
+    step='unknown'
+    for line in tail.splitlines():
+        if not re.match(r'^\++URP_SETUP ',line):continue
+        if re.search(r'\bapt-get update(?:\s|$)',line):step='apt_update'
+        elif re.search(r'\bapt-get install(?:\s|$)',line):step='apt_install'
+        elif re.search(r'\b(?:uv|npm|cmake|g\+\+|python3|curl)\s',line):step='other'
+    return step
 
 
 def snapshot():
@@ -152,6 +173,7 @@ def run(args):
             status['exit_code'] = 1
         logfile = private / ('install.log' if status['stage'] == 'installation' else 'acceptance.log')
         status['failure_hint'] = classify(logfile, status['exit_code'])
+        status['installation_step'] = installation_step(logfile) if status['stage']=='installation' else 'not_applicable'
         if stop:
             status['exit_code'] = 1
             status['failure_hint'] = 'unknown'

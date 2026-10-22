@@ -10,7 +10,7 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(result.returncode,1)
             self.assertEqual(json.loads(result.stdout),{'stage':'installation','state':'running'});self.assertEqual(result.stderr,'')
             status=json.loads((root/'private/runner-status.json').read_text())
-            self.assertEqual(status,{'stage':'installation','exit_code':7,'cleanup_remaining':0,'failure_hint':'unknown'})
+            self.assertEqual(status,{'stage':'installation','exit_code':7,'cleanup_remaining':0,'failure_hint':'unknown','installation_step':'unknown'})
             self.assertIn('PRIVATE_TEST_MARKER',(root/'private/install.log').read_text())
 
     def test_cancel_during_install_cannot_pass(self):
@@ -34,7 +34,7 @@ class RunnerTests(unittest.TestCase):
         from runner.run import classify, LIMIT
         with tempfile.TemporaryDirectory() as tmp:
             path=pathlib.Path(tmp)/'private.log'
-            cases={'source_identity':'tracked_blob_mismatch','registry_identity':'npm_mirror_identity_mismatch','package_install':'E: Unable to locate package','dependency_fetch':'Failed to download','network':'Could not resolve host','disk_full':'No space left on device','native_build':'CMake Error','unknown':'other error'}
+            cases={'source_identity':'tracked_blob_mismatch','registry_identity':'npm_mirror_identity_mismatch','package_install':'dpkg: error','dependency_fetch':'Failed to download','network':'Could not resolve host','disk_full':'No space left on device','native_build':'CMake Error','unknown':'other error'}
             for hint, marker in cases.items():
                 path.write_text(marker+' PRIVATE_PACKAGE_AND_PATH')
                 self.assertEqual(classify(path,1),hint)
@@ -42,5 +42,19 @@ class RunnerTests(unittest.TestCase):
             path.write_bytes(b'No space left on device'+b'x'*LIMIT)
             self.assertEqual(classify(path,1),'unknown')
             self.assertEqual(classify(pathlib.Path(tmp)/'absent',1),'unknown')
+
+    def test_apt_hints_and_trace_steps(self):
+        from runner.run import classify, installation_step
+        with tempfile.TemporaryDirectory() as tmp:
+            p=pathlib.Path(tmp)/'log'
+            cases={'apt_signature':'NO_PUBKEY PRIVATE_KEY_ID','apt_source_conflict':'Conflicting values set for option Signed-By PRIVATE_URL','apt_release':'does not have a Release file','apt_hook':'Problem executing scripts APT::Update::Post-Invoke','apt_lock':'Could not get lock PRIVATE_PATH','apt_package_missing':'E: Unable to locate package PRIVATE_NAME'}
+            for expected,text in cases.items():
+                p.write_text('+URP_SETUP sudo apt-get update\n'+text)
+                self.assertEqual(classify(p,100),expected)
+                self.assertEqual(installation_step(p),'apt_update')
+            p.write_text('+URP_SETUP sudo apt-get update\n+URP_SETUP sudo DEBIAN_FRONTEND=noninteractive apt-get install -y PRIVATE_PACKAGE\n')
+            self.assertEqual(installation_step(p),'apt_install')
+            p.write_text('+URP_SETUP sudo apt-get update\n+URP_SETUP uv sync --locked\n')
+            self.assertEqual(installation_step(p),'other')
 
 if __name__=='__main__':unittest.main()
