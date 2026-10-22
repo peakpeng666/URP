@@ -1,3 +1,4 @@
+import ast
 import contextlib
 import hashlib
 import importlib.util
@@ -19,7 +20,15 @@ def body(marker):
     s=W.TEMPLATE.split("<<'"+marker+"'\n",1)[1].split('\n          '+marker,1)[0]
     return textwrap.dedent(s)+'\n'
 
+def compiled_body(marker, optimize):
+    return compile(body(marker), '<workflow:'+marker+'>', 'exec', optimize=optimize)
+
 class WorkflowTests(unittest.TestCase):
+    def test_bootstrap_bodies_have_no_assert_statements(self):
+        for marker in ('PY_ANCHOR','PY_REPORT'):
+            with self.subTest(marker=marker):
+                self.assertFalse(any(isinstance(node,ast.Assert) for node in ast.walk(ast.parse(body(marker)))))
+
     def test_full_parity(self):
         anchor='a'*64
         W.verify_text(W.render(anchor),anchor)
@@ -34,46 +43,127 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(first,'exec 2>/dev/null')
             result=subprocess.run(['/bin/bash','-c',first+"\nprintf '/home/private/token https://private.invalid' >&2; exit 23"],capture_output=True,text=True,env={'PATH':'/usr/bin:/bin'})
             self.assertEqual((result.returncode,result.stdout,result.stderr),(23,'',''))
+    def test_failed_authentication_keeps_namespace_step_gated(self):
+        workflow=W.render('a'*64)
+        self.assertLess(workflow.index('id: authentication'),workflow.index('id: capability'))
+        step=workflow.split('        id: capability',1)[1].split('      - name: Publish',1)[0]
+        self.assertNotIn('if:',step)
+        self.assertIn('--execute-capability-probe',step)
+
     def test_invalid_anchors(self):
         for value in ('','x'*64,'a'*63,'a'*65,'A'*64,'a'*64+'\n'):
             with self.subTest(value=value),self.assertRaises(ValueError): W.render(value)
     def test_source_index_only_materialization(self):
-        with tempfile.TemporaryDirectory() as d:
-            base=Path(d); source=base/'recipe-source/deploy/f2c-capability';source.mkdir(parents=True)
-            target=base/'target';target.mkdir()
-            (source/'recipe').mkdir();data=b'VALUE=1\n';(source/'recipe/demo.py').write_bytes(data)
-            raw=json.dumps({'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v1','files':{'recipe/demo.py':{'sha256':hashlib.sha256(data).hexdigest()}}}).encode()
-            (source/'source-index.json').write_bytes(raw)
-            (source/'candidate-workflow.yml').write_text('UNINDEXED MUST NOT COPY')
-            env={'GITHUB_WORKSPACE':str(base),'CANDIDATE_ROOT':str(target),'REVIEWED_SOURCE_INDEX_SHA256':hashlib.sha256(raw).hexdigest()}
-            with patch.dict(os.environ,env,clear=True): exec(body('PY_ANCHOR'),{})
-            self.assertEqual((target/'recipe/demo.py').read_bytes(),data)
-            self.assertFalse((target/'candidate-workflow.yml').exists())
-    def test_anchor_rejects_symlink_and_hardlink(self):
-        for kind in ('symlink','hardlink'):
-            with self.subTest(kind=kind),tempfile.TemporaryDirectory() as d:
+        for optimize in (0,1):
+            with self.subTest(optimize=optimize),tempfile.TemporaryDirectory() as d:
                 base=Path(d); source=base/'recipe-source/deploy/f2c-capability';source.mkdir(parents=True)
-                target=base/'target';target.mkdir();original=base/'original';original.write_bytes(b'x')
-                path=source/'x'
-                if kind=='symlink':path.symlink_to(original)
-                else:os.link(original,path)
-                raw=json.dumps({'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v1','files':{'x':{'sha256':hashlib.sha256(b'x').hexdigest()}}}).encode()
+                target=base/'target';target.mkdir()
+                (source/'recipe').mkdir();data=b'VALUE=1\n';(source/'recipe/demo.py').write_bytes(data)
+                raw=json.dumps({'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v3','files':{'recipe/demo.py':{'sha256':hashlib.sha256(data).hexdigest()}}}).encode()
                 (source/'source-index.json').write_bytes(raw)
+                (source/'unindexed-private.txt').write_text('UNINDEXED MUST NOT COPY')
+                # A source-index-only checkout has no candidate workflow at all.
+                self.assertFalse((source/'candidate-workflow.yml').exists())
                 env={'GITHUB_WORKSPACE':str(base),'CANDIDATE_ROOT':str(target),'REVIEWED_SOURCE_INDEX_SHA256':hashlib.sha256(raw).hexdigest()}
-                with patch.dict(os.environ,env,clear=True),self.assertRaises(AssertionError):exec(body('PY_ANCHOR'),{})
+                with patch.dict(os.environ,env,clear=True): exec(compiled_body('PY_ANCHOR',optimize),{})
+                self.assertEqual((target/'recipe/demo.py').read_bytes(),data)
+                self.assertEqual((target/'source-index.json').read_bytes(),raw)
+                self.assertFalse((target/'unindexed-private.txt').exists())
+                self.assertFalse((target/'candidate-workflow.yml').exists())
+
+    def test_anchor_rejects_symlink_and_hardlink(self):
+        for optimize in (0,1):
+            for kind in ('symlink','hardlink'):
+                with self.subTest(optimize=optimize,kind=kind),tempfile.TemporaryDirectory() as d:
+                    base=Path(d); source=base/'recipe-source/deploy/f2c-capability';source.mkdir(parents=True)
+                    target=base/'target';target.mkdir();original=base/'original';original.write_bytes(b'x')
+                    path=source/'x'
+                    if kind=='symlink':path.symlink_to(original)
+                    else:os.link(original,path)
+                    raw=json.dumps({'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v3','files':{'x':{'sha256':hashlib.sha256(b'x').hexdigest()}}}).encode()
+                    (source/'source-index.json').write_bytes(raw)
+                    env={'GITHUB_WORKSPACE':str(base),'CANDIDATE_ROOT':str(target),'REVIEWED_SOURCE_INDEX_SHA256':hashlib.sha256(raw).hexdigest()}
+                    with patch.dict(os.environ,env,clear=True),self.assertRaises(ValueError):
+                        exec(compiled_body('PY_ANCHOR',optimize),{})
+                    self.assertFalse((target/'x').exists())
+
+    def test_anchor_rejects_invalid_index_and_file_bytes_under_optimization(self):
+        for optimize in (0,1):
+            for invalid in ('anchor_format','index_digest','schema','status','identity','empty_files','absolute_path','parent_path','invalid_path','row_fields','row_digest','file_digest','duplicate_key'):
+                with self.subTest(optimize=optimize,invalid=invalid),tempfile.TemporaryDirectory() as d:
+                    base=Path(d);source=base/'recipe-source/deploy/f2c-capability';source.mkdir(parents=True)
+                    target=base/'target';target.mkdir();(source/'x').write_bytes(b'x')
+                    row={'sha256':hashlib.sha256(b'x').hexdigest()}
+                    index={'schema':1,'status':'reviewed-source','identity':'jammy-rootless-capability-v3','files':{'x':row}}
+                    if invalid=='schema':index['schema']=2
+                    elif invalid=='status':index['status']='unreviewed'
+                    elif invalid=='identity':index['identity']='jammy-rootless-capability-v2'
+                    elif invalid=='empty_files':index['files']={}
+                    elif invalid in ('absolute_path','parent_path','invalid_path'):
+                        name={'absolute_path':'/x','parent_path':'../x','invalid_path':'x?'}[invalid]
+                        index['files']={name:row}
+                    elif invalid=='row_fields':row['unreviewed']='x'
+                    elif invalid=='row_digest':row['sha256']='not-a-digest'
+                    elif invalid=='file_digest':row['sha256']='0'*64
+                    raw=json.dumps(index).encode()
+                    if invalid=='duplicate_key':raw=raw.replace(b'"schema": 1',b'"schema": 1, "schema": 1')
+                    (source/'source-index.json').write_bytes(raw)
+                    expected=hashlib.sha256(raw).hexdigest()
+                    if invalid=='anchor_format':expected='not-a-digest'
+                    elif invalid=='index_digest':expected='0'*64
+                    env={'GITHUB_WORKSPACE':str(base),'CANDIDATE_ROOT':str(target),'REVIEWED_SOURCE_INDEX_SHA256':expected}
+                    with patch.dict(os.environ,env,clear=True),self.assertRaises(ValueError):
+                        exec(compiled_body('PY_ANCHOR',optimize),{})
+                    self.assertFalse((target/'source-index.json').exists())
+
     def test_reporting_bootstrap_uses_only_verified_bytes(self):
-        with tempfile.TemporaryDirectory() as d:
-            root=Path(d);(root/'recipe').mkdir()
-            reporter=b"assert _VERIFIED_PUBLIC_CODES_BYTES==b'{}';print('SAFE')\n"
-            files={'recipe/report_capability_status.py':reporter,'recipe/public_codes.json':b'{}'}
-            for name,data in files.items():(root/name).write_bytes(data)
-            raw=json.dumps({'files':{k:{'sha256':hashlib.sha256(v).hexdigest()} for k,v in files.items()}}).encode()
-            (root/'source-index.json').write_bytes(raw)
-            env={'CANDIDATE_ROOT':str(root),'REVIEWED_SOURCE_INDEX_SHA256':hashlib.sha256(raw).hexdigest()}
-            for valid in (True,False):
-                if not valid:(root/'recipe/public_codes.json').write_bytes(b'{"secret":"/home/private/token"}')
-                out=io.StringIO()
-                with patch.dict(os.environ,env,clear=True),contextlib.redirect_stdout(out):exec(body('PY_REPORT'),{})
-                self.assertEqual(out.getvalue(),'SAFE\n' if valid else 'stage=report status=FAIL code=UNKNOWN\n')
+        for optimize in (0,1):
+            for invalid in (None,'index_digest','reporter_digest','codes_digest','reporter_symlink','codes_symlink','reporter_hardlink','codes_hardlink'):
+                with self.subTest(optimize=optimize,invalid=invalid),tempfile.TemporaryDirectory() as d:
+                    root=Path(d);(root/'recipe').mkdir()
+                    reporter=b"if _VERIFIED_PUBLIC_CODES_BYTES!=b'{}': raise ValueError('Unverified bytes')\nprint('SAFE')\n"
+                    files={'recipe/report_capability_status.py':reporter,'recipe/public_codes.json':b'{}'}
+                    for name,data in files.items():(root/name).write_bytes(data)
+                    raw=json.dumps({'files':{k:{'sha256':hashlib.sha256(v).hexdigest()} for k,v in files.items()}}).encode()
+                    (root/'source-index.json').write_bytes(raw)
+                    expected=hashlib.sha256(raw).hexdigest()
+                    if invalid=='index_digest':expected='0'*64
+                    elif invalid=='reporter_digest':(root/'recipe/report_capability_status.py').write_bytes(b"print('UNVERIFIED')\n")
+                    elif invalid=='codes_digest':(root/'recipe/public_codes.json').write_bytes(b'{"secret":"/home/private/token"}')
+                    elif invalid:
+                        which,kind=invalid.split('_')
+                        path=root/('recipe/report_capability_status.py' if which=='reporter' else 'recipe/public_codes.json')
+                        original=root/'original';path.rename(original)
+                        if kind=='symlink':path.symlink_to(original)
+                        else:os.link(original,path)
+                    env={'CANDIDATE_ROOT':str(root),'REVIEWED_SOURCE_INDEX_SHA256':expected}
+                    out=io.StringIO()
+                    with patch.dict(os.environ,env,clear=True),contextlib.redirect_stdout(out):
+                        exec(compiled_body('PY_REPORT',optimize),{})
+                    self.assertEqual(out.getvalue(),'SAFE\n' if invalid is None else 'stage=report status=FAIL code=UNKNOWN\n')
+
+    def test_production_reporter_bootstrap_acceptance_contract(self):
+        # These are the production bytes, not the synthetic PROVED fixture.
+        files={name:(R/Path(name).name).read_bytes() for name in ('recipe/report_capability_status.py','recipe/public_codes.json')}
+        codes=json.loads(files['recipe/public_codes.json'])
+        self.assertEqual(codes['authentication']['pass_code'],'CAP_INPUTS_VERIFIED')
+        self.assertEqual(codes['capability']['pass_code'],'OK')
+        self.assertNotIn('PROVED',codes['capability']['codes'])
+        for optimize in (0,1):
+            with self.subTest(optimize=optimize),tempfile.TemporaryDirectory() as d:
+                root=Path(d);(root/'recipe').mkdir()
+                for name,data in files.items():(root/name).write_bytes(data)
+                raw=json.dumps({'files':{k:{'sha256':hashlib.sha256(v).hexdigest()} for k,v in files.items()}}).encode()
+                (root/'source-index.json').write_bytes(raw)
+                (root/'capability-preparation-status.json').write_text(json.dumps({'schema':1,'status':'PASS','code':'CAP_INPUTS_VERIFIED'}))
+                env={'CANDIDATE_ROOT':str(root),'REVIEWED_SOURCE_INDEX_SHA256':hashlib.sha256(raw).hexdigest()}
+                env.update({'OUTCOME_'+stage.upper():'success' for stage in ('checkout','anchor','helper_tests','authentication','capability')})
+                for code,expected in (('OK','stage=capability status=PASS code=OK\n'),('PROVED','stage=report status=FAIL code=UNKNOWN\n')):
+                    with self.subTest(code=code):
+                        (root/'capability-probe-status.json').write_text(json.dumps({'schema':1,'status':'PASS','code':code}))
+                        out=io.StringIO()
+                        with patch.dict(os.environ,env,clear=True),contextlib.redirect_stdout(out):
+                            exec(compiled_body('PY_REPORT',optimize),{})
+                        self.assertEqual(out.getvalue(),expected)
 
 if __name__=='__main__':unittest.main()

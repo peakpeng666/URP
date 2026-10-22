@@ -1,6 +1,14 @@
-# Jammy rootless capability candidate v1
+# Jammy rootless capability candidate v3
 
 This is a separate, diagnostic-only cohort. It does not build or import Fields2Cover, prepare a root filesystem, install packages, modify the host APT database, add subordinate-ID allocations, install setuid programs, change host security settings, or publish artifacts/caches. A successful result is a capability proof, not a scientific/native validation result.
+
+## Preserved hosted v1 result and diagnostic scope
+
+Hosted capability v1 run `39815381470`, job `119952469283`, at commit `f17b6bb1eeca864be42265938faa692644111854` passed its anchor and helper-test stage using Python 3.10. The retained source/index-only review counted 165 fixtures; detailed hosted test output was suppressed, so the hosted fixture count was not independently observed. Authentication then failed with `CAP_MODE_REJECTED`; namespace proof was skipped. No rootfs or native build occurred. The failed object and predicate were not reported and remain unknown.
+
+V2 adds only finite `subject` and `check` labels to authentication mode-failure receipts and their verified projection. All ownership, write-bit, alias, type, size, executable and setuid rejection predicates remain intact. Labels come from reviewed static categories, never runtime paths, usernames, UID/mode values or exception text. Malformed or unknown diagnostic combinations project `UNKNOWN`.
+
+The exact official runner-image source applies `chmod -R 777 /usr/share` late in provisioning. That conflicts with the protected-ancestor requirement for the configured Ubuntu keyring if the state persists; a mocked fixture reproduces that rejection without opening any file. It is not evidence that this was the failed object in the hosted run. V2 does not change modes, bypass checks, substitute a keyring or introduce a new trust source.
 
 ## Why this candidate exists
 
@@ -49,3 +57,11 @@ Scientific source context remains `18557cfc61f291e8ac5fa4a80d9df212e1df0030`. Th
 - Missing/short subordinate UID or GID grant: stop. Adding an allocation would change the existing access configuration and is outside this probe. A separately reviewed authenticated-provider strategy may avoid that change; do not silently substitute ownership flattening.
 - Group-drop, mount, nested-user/network or kernel-FD proof unavailable: stop with the specific finite capability code. Do not change sysctls, AppArmor, seccomp, container privileges or offline guards to turn it into a pass.
 - Successful capability proof: prepare a separately reviewed immutable signed Jammy rootfs/input plan. It remains necessary to establish package-script compatibility, authentic file ownership, complete closure, target ABI, exact provider maps and unchanged scientific tests before any candidate is accepted.
+
+- Runner permission provisioning: https://github.com/actions/runner-images/blob/90417558da49483fcc9279962bcfb099eba367e8/images/ubuntu/scripts/build/configure-system.sh#L12-L13
+
+## V3 optimized-Python hardening
+
+V2 was not published: an additional optimized-Python fixture run exposed assertions being removed from two workflow bootstrap bodies. V3 replaces those security-significant assertions with explicit invariant checks, preserving every predicate and bounded failure output. The normal workflow continues to use its fixed isolated interpreter flags. Both normal and optimized source/index-only fixtures are required. This is not evidence of an observed hosted bypass.
+
+The production preparation success code is `CAP_INPUTS_VERIFIED`; final capability success is exactly `stage=capability status=PASS code=OK`. `PROVED` appears only in synthetic projector fixtures and is not accepted by the production public-code contract.

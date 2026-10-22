@@ -46,32 +46,34 @@ jobs:
           mkdir "$CANDIDATE_ROOT"
           /usr/bin/python3.10 -I -B -S -X "pycache_prefix=$CAPABILITY_PYCACHE" - <<'PY_ANCHOR'
           import hashlib,json,os,pathlib,re,stat
+          def require(value):
+              if not value: raise ValueError('Bootstrap invariant rejected')
           source=pathlib.Path(os.environ['GITHUB_WORKSPACE'])/'recipe-source/deploy/f2c-capability'
           root=pathlib.Path(os.environ['CANDIDATE_ROOT'])
           expected=os.environ['REVIEWED_SOURCE_INDEX_SHA256']
-          assert re.fullmatch('[0-9a-f]{64}',expected)
+          require(re.fullmatch('[0-9a-f]{64}',expected))
           def regular(path):
               for part in (path, *path.parents):
-                  assert not part.is_symlink()
-              s=path.stat(); assert stat.S_ISREG(s.st_mode) and s.st_nlink==1 and s.st_size<=2000000
+                  require(not part.is_symlink())
+              s=path.stat(); require(stat.S_ISREG(s.st_mode) and s.st_nlink==1 and s.st_size<=2000000)
               return path.read_bytes()
           def unique(pairs):
               result={}
               for key,value in pairs:
-                  assert key not in result
+                  require(key not in result)
                   result[key]=value
               return result
           raw=regular(source/'source-index.json')
-          assert hashlib.sha256(raw).hexdigest()==expected
+          require(hashlib.sha256(raw).hexdigest()==expected)
           index=json.loads(raw,object_pairs_hook=unique)
-          assert index['schema']==1 and index['status']=='reviewed-source'
-          assert index['identity']=='jammy-rootless-capability-v1'
-          assert 1<=len(index['files'])<=64
+          require(index['schema']==1 and index['status']=='reviewed-source')
+          require(index['identity']=='jammy-rootless-capability-v3')
+          require(1<=len(index['files'])<=64)
           for name,row in index['files'].items():
-              assert isinstance(name,str) and not name.startswith('/') and all(x not in ('','.','..') for x in name.split('/'))
-              assert re.fullmatch('[A-Za-z0-9_./-]+',name)
-              assert set(row)=={'sha256'} and re.fullmatch('[0-9a-f]{64}',row['sha256'])
-              data=regular(source/name); assert hashlib.sha256(data).hexdigest()==row['sha256']
+              require(isinstance(name,str) and not name.startswith('/') and all(x not in ('','.','..') for x in name.split('/')))
+              require(re.fullmatch('[A-Za-z0-9_./-]+',name))
+              require(set(row)=={'sha256'} and re.fullmatch('[0-9a-f]{64}',row['sha256']))
+              data=regular(source/name); require(hashlib.sha256(data).hexdigest()==row['sha256'])
               out=root/name; out.parent.mkdir(parents=True,exist_ok=True)
               with out.open('xb') as f: f.write(data)
           with (root/'source-index.json').open('xb') as f: f.write(raw)
@@ -132,18 +134,20 @@ jobs:
           exec 2>/dev/null
           /usr/bin/python3.10 -I -B -S -X "pycache_prefix=$RUNNER_TEMP/f2c-capability/unused-pycache" - <<'PY_REPORT'
           import hashlib,json,os,pathlib
+          def require(value):
+              if not value: raise ValueError('Bootstrap invariant rejected')
           try:
               root=pathlib.Path(os.environ['CANDIDATE_ROOT'])
               raw=(root/'source-index.json').read_bytes()
-              assert hashlib.sha256(raw).hexdigest()==os.environ['REVIEWED_SOURCE_INDEX_SHA256']
+              require(hashlib.sha256(raw).hexdigest()==os.environ['REVIEWED_SOURCE_INDEX_SHA256'])
               index=json.loads(raw)
               verified={}
               for name in ('recipe/report_capability_status.py','recipe/public_codes.json'):
                   path=root/name
-                  assert not any(p.is_symlink() for p in (path,*path.parents))
-                  assert path.stat().st_nlink==1
+                  require(not any(p.is_symlink() for p in (path,*path.parents)))
+                  require(path.stat().st_nlink==1)
                   data=path.read_bytes()
-                  assert hashlib.sha256(data).hexdigest()==index['files'][name]['sha256']
+                  require(hashlib.sha256(data).hexdigest()==index['files'][name]['sha256'])
                   verified[name]=data
               helper=root/'recipe/report_capability_status.py'
               data=verified['recipe/report_capability_status.py']

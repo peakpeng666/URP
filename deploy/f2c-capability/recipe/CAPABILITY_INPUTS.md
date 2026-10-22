@@ -125,7 +125,7 @@ This authenticates the fixed callable module and ELF bytes, not external
 systemd userdb daemon state, all possible account data, or the entire host.
 Bootstrap trust remains the boundary described above.
 
-Only the closed schema-1 PASS/FAIL preparation code is public. Host inventories,
+Only the closed schema-1 PASS/FAIL preparation code and, for mode failures, fixed subject/check labels are public. The latter never contain measured paths, owners, UID/mode values or exception text. Tool-specific mode codes must match their fixed tool subject, except the legacy UNKNOWN/UNKNOWN pair. Other preparation receipts retain exactly their original three fields. Host inventories,
 installed versions not authenticated to the snapshot, arbitrary exception text,
 and subprocess stderr are not projected. Pure-data and mocked fixtures are not
 a claim that a namespace or root filesystem has been executed successfully.

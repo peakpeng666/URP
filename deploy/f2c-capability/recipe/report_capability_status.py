@@ -32,6 +32,17 @@ def read_bounded(path, limit):
         return json.loads(raw,object_pairs_hook=unique)
     finally: os.close(fd)
 
+def mode_diagnostic_valid(mode, code, subject, check):
+    if (type(code) is not str or code not in mode['codes'] or
+            type(subject) is not str or subject not in mode['subjects'] or
+            type(check) is not str or check not in mode['checks']):
+        return False
+    if code != 'CAP_MODE_REJECTED':
+        expected = code.removeprefix('CAP_').removesuffix('_MODE_REJECTED')
+        if subject != expected and (subject, check) != ('UNKNOWN', 'UNKNOWN'):
+            return False
+    return True
+
 def project(root, outcomes, code_bytes):
     if set(outcomes)!=set(STAGES) or any(not isinstance(v,str) or v not in OUTCOMES for v in outcomes.values()):
         return 'stage=report status=FAIL code=UNKNOWN'
@@ -41,7 +52,7 @@ def project(root, outcomes, code_bytes):
     try:
         if not isinstance(code_bytes,bytes) or len(code_bytes)>16384: raise ValueError('Bad code bytes')
         codes=json.loads(code_bytes,object_pairs_hook=unique)
-        if set(codes)!={'schema','authentication','capability'} or type(codes['schema']) is not int or codes['schema']!=1:
+        if set(codes)!={'schema','authentication','capability','mode_diagnostics'} or type(codes['schema']) is not int or codes['schema']!=1:
             raise ValueError('Bad code set')
         for name in ('authentication','capability'):
             row=codes[name]
@@ -51,12 +62,23 @@ def project(root, outcomes, code_bytes):
                 raise ValueError('Bad code set')
             if len(set(row['codes']))!=len(row['codes']) or row['pass_code'] not in row['codes']:
                 raise ValueError('Bad code set')
+        mode=codes['mode_diagnostics']
+        if set(mode)!={'codes','subjects','checks'}: raise ValueError('Bad diagnostic set')
+        for values in mode.values():
+            if not isinstance(values,list) or not 1<=len(values)<=64 or any(not isinstance(v,str) or not re.fullmatch('[A-Z][A-Z0-9_]{0,79}',v) for v in values) or len(set(values))!=len(values):
+                raise ValueError('Bad diagnostic set')
+        if not set(mode['codes']).issubset(codes['authentication']['codes']): raise ValueError('Bad diagnostic codes')
         records={}
         for name,file in (('authentication','capability-preparation-status.json'),('capability','capability-probe-status.json')):
             if stage and name!=stage: continue
             row=read_bounded(Path(root)/file,4096)
-            if set(row)!={'schema','status','code'} or type(row['schema']) is not int or row['schema']!=1:
+            if not isinstance(row,dict) or type(row.get('schema')) is not int or row['schema']!=1:
                 raise ValueError('Bad receipt')
+            diagnostic=name=='authentication' and row.get('status')=='FAIL' and row.get('code') in mode['codes']
+            keys={'schema','status','code','subject','check'} if diagnostic else {'schema','status','code'}
+            if set(row)!=keys: raise ValueError('Bad receipt')
+            if diagnostic and not mode_diagnostic_valid(mode, row['code'], row['subject'], row['check']):
+                raise ValueError('Bad diagnostic')
             if row['status'] not in {'PASS','FAIL'} or row['code'] not in codes[name]['codes']:
                 raise ValueError('Bad receipt')
             if (row['status']=='PASS') != (row['code']==codes[name]['pass_code']):
@@ -65,7 +87,8 @@ def project(root, outcomes, code_bytes):
         if stage:
             row=records[stage]
             if row['status']!='FAIL': raise ValueError('Outcome mismatch')
-            return 'stage='+stage+' status=FAIL code='+row['code']
+            details=(' subject='+row['subject']+' check='+row['check']) if 'subject' in row else ''
+            return 'stage='+stage+' status=FAIL code='+row['code']+details
         if any(row['status']!='PASS' for row in records.values()): raise ValueError('Outcome mismatch')
         return 'stage=capability status=PASS code='+codes['capability']['pass_code']
     except Exception:

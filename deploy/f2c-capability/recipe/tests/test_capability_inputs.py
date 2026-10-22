@@ -463,7 +463,7 @@ class Fixtures(unittest.TestCase):
         auth = mock.Mock()
         binaries = {'/tool': elf_data(), '/lib64/ld-linux-x86-64.so.2': elf_data(names=(), interp=False),
                     '/lib/libc.so.6': elf_data(names=(), interp=False), '/alternate/libc.so.6': elf_data(names=(), interp=False)}
-        with mock.patch.object(M, 'measure', side_effect=lambda path: ({}, binaries[path])), \
+        with mock.patch.object(M, 'measure', side_effect=lambda path, **kwargs: ({}, binaries[path])), \
              mock.patch.object(M, 'library_paths', return_value=['/lib/libc.so.6', '/alternate/libc.so.6']):
             result = M.runtime_closure(auth, ['/tool'], {})
         self.assertEqual(set(result), set(binaries))
@@ -678,6 +678,250 @@ class Fixtures(unittest.TestCase):
         M.verify_member(row, members)
         row['sha256'] = '0' * 64
         self.fails('CAP_BYTES_REJECTED', M.verify_member, row, members)
+
+    def test_mode_exports_match_fixed_reviewed_subjects(self):
+        fixed = set(M.HOST_FILES) | set(M.OPTIONAL_HOST_FILES) | set(M.TOOLS.values()) | set(M.BOOTSTRAP_TOOLS.values()) | {'/etc/ld.so.preload'}
+        self.assertEqual(set(M.MODE_FIXED_SUBJECTS), fixed)
+        self.assertEqual(M.MODE_SUBJECTS, set(M.MODE_FIXED_SUBJECTS.values()) | {'SOURCE_INPUT', 'RUNTIME_INPUT', 'UNKNOWN'})
+        self.assertEqual(M.MODE_CODES, {code for code in M.PREPARATION_CODES if code.endswith('_MODE_REJECTED')})
+        self.assertEqual(len(M.MODE_SUBJECTS), 20)
+        self.assertEqual(len(M.MODE_CHECKS), 11)
+        self.assertTrue(all(value.isupper() and '/' not in value for value in M.MODE_SUBJECTS | M.MODE_CHECKS))
+
+    def test_mode_error_and_receipt_are_finite(self):
+        for code in M.MODE_CODES:
+            subject = 'ARCHIVE_KEYRING' if code == 'CAP_MODE_REJECTED' else code.removeprefix('CAP_').removesuffix('_MODE_REJECTED')
+            error = M.PreparationError(code, subject, 'COMPONENT_WRITABLE')
+            self.assertEqual(str(error), code)
+            self.assertEqual(M.preparation_status(error), {'schema': 1, 'status': 'FAIL', 'code': code,
+                'subject': subject, 'check': 'COMPONENT_WRITABLE'})
+        self.assertEqual(M.preparation_status(M.PreparationError('CAP_MODE_REJECTED')),
+            {'schema': 1, 'status': 'FAIL', 'code': 'CAP_MODE_REJECTED', 'subject': 'UNKNOWN', 'check': 'UNKNOWN'})
+
+    def test_tool_mode_code_rejects_unrelated_known_subject(self):
+        for name, path in M.TOOLS.items():
+            code = 'CAP_' + name.upper() + '_MODE_REJECTED'
+            expected = M.MODE_FIXED_SUBJECTS[path]
+            for subject in M.MODE_SUBJECTS:
+                valid = subject == expected
+                self.assertEqual(M.mode_diagnostic_valid(code, subject, 'FILE_TYPE'), valid)
+                if not valid:
+                    with self.assertRaises(ValueError):
+                        M.PreparationError(code, subject, 'FILE_TYPE')
+            self.assertTrue(M.mode_diagnostic_valid(code, 'UNKNOWN', 'UNKNOWN'))
+            self.assertEqual(M.PreparationError(code).subject, 'UNKNOWN')
+        self.assertTrue(M.mode_diagnostic_valid('CAP_MODE_REJECTED', 'UNKNOWN', 'FILE_TYPE'))
+        self.assertTrue(M.mode_diagnostic_valid('CAP_MODE_REJECTED', 'SOURCE_INPUT', 'UNKNOWN'))
+        for value in ('private-secret', [], {}, 100123, None):
+            self.assertFalse(M.mode_diagnostic_valid(value, 'UNKNOWN', 'UNKNOWN'))
+            self.assertFalse(M.mode_diagnostic_valid('CAP_MODE_REJECTED', value, 'UNKNOWN'))
+            self.assertFalse(M.mode_diagnostic_valid('CAP_MODE_REJECTED', 'UNKNOWN', value))
+
+    def test_nonmode_and_success_receipts_have_no_diagnostics(self):
+        self.assertEqual(M.preparation_status(), {'schema': 1, 'status': 'PASS', 'code': 'CAP_INPUTS_VERIFIED'})
+        for code in M.PREPARATION_CODES - M.MODE_CODES - {'CAP_INPUTS_VERIFIED'}:
+            self.assertEqual(set(M.preparation_status(M.PreparationError(code))), {'schema', 'status', 'code'})
+
+    def test_mode_diagnostic_invalid_enum_never_echoes_input(self):
+        secrets = ('/private/secret-user/keyring', '100123', '0777', 'token-secret', 'ARCHIVE_KEYRING\nsecret', 100123, [], {})
+        for secret in secrets:
+            for subject, check in ((secret, 'FILE_TYPE'), ('PASSWD', secret)):
+                with self.subTest(subject=subject, check=check), self.assertRaises(ValueError) as raised:
+                    M.PreparationError('CAP_MODE_REJECTED', subject, check)
+                self.assertEqual(str(raised.exception), 'Unknown mode diagnostic')
+        for pair in (('PASSWD', None), (None, 'FILE_TYPE')):
+            with self.assertRaises(ValueError):
+                M.PreparationError('CAP_MODE_REJECTED', *pair)
+        with self.assertRaises(ValueError):
+            M.PreparationError('CAP_SOURCE_REJECTED', 'PASSWD', 'FILE_TYPE')
+
+    def test_forged_mutated_diagnostic_rejected_at_receipt_boundary(self):
+        for attr in ('subject', 'check', 'code'):
+            error = M.PreparationError('CAP_MODE_REJECTED', 'PASSWD', 'FILE_TYPE')
+            setattr(error, attr, '/private/token-secret/uid-100123/mode-0777')
+            with self.assertRaises(ValueError) as raised:
+                M.preparation_status(error)
+            self.assertNotIn('private', str(raised.exception))
+        error = M.PreparationError('CAP_SOURCE_REJECTED')
+        error.subject = 'PASSWD'
+        with self.assertRaises(ValueError):
+            M.preparation_status(error)
+        with self.assertRaises(ValueError):
+            M.preparation_status(RuntimeError('private secret'))
+
+    def test_measure_subject_validation_precedes_io(self):
+        with mock.patch.object(Path, 'lstat') as inspect, mock.patch.object(M.os, 'open') as opening:
+            with self.assertRaises(ValueError) as raised:
+                M.measure('/private/secret', subject='/private/secret')
+        self.assertEqual(str(raised.exception), 'Unknown mode subject')
+        inspect.assert_not_called()
+        opening.assert_not_called()
+
+    def test_official_image_writable_share_ancestor_is_finite_and_terminal(self):
+        seen = []
+        def inspect(path):
+            seen.append(str(path))
+            return types.SimpleNamespace(st_uid=0, st_mode=stat.S_IFDIR | (0o777 if str(path) == '/usr/share' else 0o755))
+        path = '/usr/share/keyrings/ubuntu-archive-keyring.gpg'
+        with mock.patch.object(Path, 'lstat', inspect), mock.patch.object(M.os, 'open') as opening:
+            with self.assertRaises(M.PreparationError) as raised:
+                M.measure(path, subject=M.MODE_FIXED_SUBJECTS[path])
+        self.assertEqual(seen, ['/usr', '/usr/share'])
+        opening.assert_not_called()
+        receipt = M.preparation_status(raised.exception)
+        self.assertEqual(receipt, {'schema': 1, 'status': 'FAIL', 'code': 'CAP_MODE_REJECTED',
+            'subject': 'ARCHIVE_KEYRING', 'check': 'COMPONENT_WRITABLE'})
+        rendered = json.dumps(receipt)
+        for value in ('/usr', '0777', 'keyring.gpg', 'st_uid'):
+            self.assertNotIn(value, rendered)
+
+    def test_component_owner_writable_and_type_rejection_order(self):
+        cases = ((100123, stat.S_IFREG | 0o777, 'COMPONENT_OWNER'),
+                 (0, stat.S_IFREG | 0o777, 'COMPONENT_WRITABLE'),
+                 (0, stat.S_IFREG | 0o644, 'INTERMEDIATE_TYPE'))
+        for uid, mode, check in cases:
+            with self.subTest(check=check), mock.patch.object(Path, 'lstat', return_value=types.SimpleNamespace(st_uid=uid, st_mode=mode)), \
+                 mock.patch.object(M.os, 'open') as opening:
+                with self.assertRaises(M.PreparationError) as raised:
+                    M.measure('/private-secret/file', subject='RUNTIME_INPUT')
+            opening.assert_not_called()
+            self.assertEqual((raised.exception.subject, raised.exception.check), ('RUNTIME_INPUT', check))
+            self.assertNotIn('100123', json.dumps(M.preparation_status(raised.exception)))
+
+    def test_symlink_hop_bound_keeps_original_limit(self):
+        alias = types.SimpleNamespace(st_uid=0, st_gid=0, st_mode=stat.S_IFLNK | 0o777, st_dev=1, st_ino=2)
+        with mock.patch.object(Path, 'lstat', return_value=alias) as inspect, \
+             mock.patch.object(M.os, 'readlink', return_value='/alias') as links, mock.patch.object(M.os, 'open') as opening:
+            with self.assertRaises(M.PreparationError) as raised:
+                M.measure('/alias', subject='RUNTIME_INPUT')
+        self.assertEqual(raised.exception.check, 'SYMLINK_LIMIT')
+        self.assertEqual(inspect.call_count, 17)
+        self.assertEqual(links.call_count, 16)
+        opening.assert_not_called()
+
+    def test_fd_type_size_owner_writable_rejection_order(self):
+        cases = ((stat.S_IFIFO | 0o777, 999999999, 100123, 'FILE_TYPE'),
+                 (stat.S_IFREG | 0o777, 999999999, 100123, 'FILE_SIZE'),
+                 (stat.S_IFREG | 0o777, -1, 100123, 'FILE_SIZE'),
+                 (stat.S_IFREG | 0o777, 0, 100123, 'FILE_OWNER'),
+                 (stat.S_IFREG | 0o777, 0, 0, 'FILE_WRITABLE'))
+        for mode, size, uid, check in cases:
+            with self.subTest(check=check), \
+                 mock.patch.object(Path, 'lstat', return_value=types.SimpleNamespace(st_mode=stat.S_IFREG | 0o644, st_uid=0)), \
+                 mock.patch.object(M.os, 'open', return_value=123), \
+                 mock.patch.object(M.os, 'fstat', return_value=types.SimpleNamespace(st_mode=mode, st_size=size, st_uid=uid)), \
+                 mock.patch.object(M.os, 'read') as reading, mock.patch.object(M.os, 'close') as closing:
+                with self.assertRaises(M.PreparationError) as raised:
+                    M.measure('/private-secret', limit=64, subject='SOURCE_INPUT')
+            self.assertEqual(raised.exception.check, check)
+            reading.assert_not_called()
+            closing.assert_called_once_with(123)
+
+    def test_mode_predicate_acceptance_equivalence_matrix(self):
+        # Execute the revised measure against the original component predicate.
+        good = types.SimpleNamespace(st_uid=0, st_gid=0, st_mode=stat.S_IFREG | 0o644,
+            st_size=0, st_dev=1, st_ino=2, st_nlink=1, st_mtime_ns=3, st_ctime_ns=4)
+        for root_owned in (False, True):
+            for uid in (0, 100123):
+                for kind in (stat.S_IFDIR, stat.S_IFREG, stat.S_IFLNK):
+                    for mode in (0o000, 0o644, 0o755, 0o777, 0o4755, 0o1777):
+                        expected = not root_owned or (uid == 0 and (stat.S_ISLNK(kind | mode) or not (kind | mode) & 0o022))
+                        component = types.SimpleNamespace(**vars(good))
+                        component.st_uid, component.st_mode = uid, kind | mode
+                        def inspect(path):
+                            return component if str(path) == '/fixture' else good
+                        with self.subTest(root_owned=root_owned, uid=uid, kind=kind, mode=mode), \
+                             mock.patch.object(Path, 'lstat', inspect), \
+                             mock.patch.object(M.os, 'readlink', return_value='/target'), \
+                             mock.patch.object(M.os, 'open', return_value=123), \
+                             mock.patch.object(M.os, 'fstat', return_value=good), \
+                             mock.patch.object(M.os, 'read', return_value=b''), mock.patch.object(M.os, 'close'):
+                            try:
+                                M.measure('/fixture', root_owned=root_owned)
+                                accepted = True
+                            except M.PreparationError as error:
+                                self.assertEqual(error.code, 'CAP_MODE_REJECTED')
+                                accepted = False
+                            self.assertEqual(accepted, bool(expected))
+        # Execute the revised FD checks against the original type/size conjunction.
+        for kind in (stat.S_IFREG, stat.S_IFDIR, stat.S_IFIFO):
+            for size in (-1, 0, 64, 65):
+                expected = stat.S_ISREG(kind) and 0 <= size <= 64
+                fd_stat = types.SimpleNamespace(**vars(good))
+                fd_stat.st_mode, fd_stat.st_size = kind | 0o644, size
+                with self.subTest(kind=kind, size=size), mock.patch.object(Path, 'lstat', return_value=good), \
+                     mock.patch.object(M.os, 'open', return_value=123), mock.patch.object(M.os, 'fstat', return_value=fd_stat), \
+                     mock.patch.object(M.os, 'read', return_value=b''), mock.patch.object(M.os, 'close'):
+                    try:
+                        M.measure('/fixture', limit=64)
+                        accepted = True
+                    except M.PreparationError as error:
+                        self.assertEqual(error.code, 'CAP_MODE_REJECTED')
+                        accepted = False
+                    self.assertEqual(accepted, bool(expected))
+
+    def test_tool_mode_remapping_retags_subject_preserves_check(self):
+        auth = mock.Mock()
+        auth.authenticate.side_effect = M.PreparationError('CAP_MODE_REJECTED', 'SOURCE_INPUT', 'FILE_SIZE')
+        with self.assertRaises(M.PreparationError) as raised:
+            M.authenticate_tools(auth)
+        self.assertEqual(M.preparation_status(raised.exception), {'schema': 1, 'status': 'FAIL',
+            'code': 'CAP_PYTHON_MODE_REJECTED', 'subject': 'PYTHON', 'check': 'FILE_SIZE'})
+
+    def test_tool_executable_setuid_and_owner_check_details(self):
+        cases = (('/usr/bin/python3.10', 0o644, 0, 'PYTHON', 'EXECUTABLE'),
+                 ('/usr/bin/newuidmap', 0o755, 0, 'NEWUIDMAP', 'SETUID'),
+                 ('/usr/bin/newuidmap', 0o4755, 100123, 'NEWUIDMAP', 'FILE_OWNER'))
+        for target, mode, uid, subject, check in cases:
+            auth = mock.Mock()
+            def checked(path, owner):
+                row = record(path, mode=mode if path == target else 0o4755)
+                row['uid'] = uid if path == target else 0
+                return row
+            auth.authenticate.side_effect = checked
+            with self.subTest(check=check), self.assertRaises(M.PreparationError) as raised:
+                M.authenticate_tools(auth)
+            self.assertEqual((raised.exception.subject, raised.exception.check), (subject, check))
+
+    def test_fixed_subject_lookup_does_not_classify_similar_or_private_paths(self):
+        auth = self.authenticator()
+        for path in ('/private/secret/keyring.gpg', '/etc/passwd-copy', '/etc/./passwd'):
+            with mock.patch.object(M, 'measure', side_effect=M.PreparationError('CAP_MODE_REJECTED')) as measuring:
+                self.fails('CAP_MODE_REJECTED', auth.authenticate, path)
+            measuring.assert_called_once_with(path, subject='RUNTIME_INPUT')
+        for path, subject in M.MODE_FIXED_SUBJECTS.items():
+            with mock.patch.object(M, 'measure', side_effect=M.PreparationError('CAP_MODE_REJECTED')) as measuring:
+                self.fails('CAP_MODE_REJECTED', auth.authenticate, path)
+            measuring.assert_called_once_with(path, subject=subject)
+
+    def test_nested_failure_does_not_leave_stale_mode_context(self):
+        original = M.PreparationError('CAP_MODE_REJECTED', 'SOURCE_INPUT', 'FILE_SIZE')
+        auth = mock.Mock()
+        auth.authenticate.side_effect = original
+        with self.assertRaises(M.PreparationError) as remapped:
+            M.authenticate_tools(auth)
+        self.assertEqual(remapped.exception.subject, 'PYTHON')
+        self.assertEqual(original.subject, 'SOURCE_INPUT')
+        with mock.patch.object(Path, 'lstat', return_value=types.SimpleNamespace(st_uid=100123, st_mode=stat.S_IFREG | 0o777)):
+            with self.assertRaises(M.PreparationError) as later:
+                M.measure('/private-second')
+        self.assertEqual((later.exception.subject, later.exception.check), ('UNKNOWN', 'COMPONENT_OWNER'))
+        self.assertEqual(M.preparation_status(M.PreparationError('CAP_OWNER_REJECTED')),
+                         {'schema': 1, 'status': 'FAIL', 'code': 'CAP_OWNER_REJECTED'})
+
+    def test_main_mode_receipt_omits_exception_text_and_measured_values(self):
+        error = M.PreparationError('CAP_MODE_REJECTED', 'ARCHIVE_KEYRING', 'COMPONENT_WRITABLE')
+        error.args = ('/private/secret-user uid=100123 mode=0777 token-secret',)
+        output = io.StringIO()
+        with mock.patch.object(M.sys, 'argv', ['prepare', '--root', str(self.root), '--expected-source-index-sha256', '0' * 64]), \
+             mock.patch.object(M, 'prepare', side_effect=error), mock.patch.object(M, 'write_new') as writing, \
+             contextlib.redirect_stdout(output):
+            self.assertEqual(M.main(), 2)
+        expected = M.preparation_status(error)
+        self.assertEqual(json.loads(output.getvalue()), expected)
+        self.assertEqual(writing.call_args.args[1], expected)
+        for secret in ('private', '100123', '0777', 'token-secret'):
+            self.assertNotIn(secret, output.getvalue())
 
     def test_main_emits_only_finite_failure(self):
         output = io.StringIO()

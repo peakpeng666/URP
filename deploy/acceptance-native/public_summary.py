@@ -5,6 +5,7 @@ import math
 import re
 from pathlib import Path
 from startup_diagnostics import sanitize as sanitize_startup
+from shutdown_diagnostics import sanitize as sanitize_shutdown
 from execution_diagnostics import sanitize as sanitize_execution
 from execution_protocol import sanitize as sanitize_protocol, protocol_ok
 from undock_observer.projection import project as project_observer
@@ -90,7 +91,7 @@ def host_repair_projection(raw):
 def project(raw, runner=None, *, require_runner=True):
     raw = raw if isinstance(raw, dict) else {}
     startup = sanitize_startup(raw.get('startup_diagnostics'))
-    result = {'execution_protocol':sanitize_protocol(raw.get('execution_protocol')),'execution_diagnostics':sanitize_execution(raw.get('execution_diagnostics')),'undock_observer':project_observer(raw.get('undock_observer')),'startup_diagnostics': startup, 'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
+    result = {'shutdown_diagnostics':sanitize_shutdown(raw.get('shutdown_diagnostics')),'execution_protocol':sanitize_protocol(raw.get('execution_protocol')),'execution_diagnostics':sanitize_execution(raw.get('execution_diagnostics')),'undock_observer':project_observer(raw.get('undock_observer')),'startup_diagnostics': startup, 'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
               'harness_sha': digest(raw.get('harness_sha'), 40),
               'stage': raw.get('stage') if raw.get('stage') in ('maze', 'warehouse') else 'unknown',
               'state': raw.get('state') if isinstance(raw.get('state'), str) and raw.get('state') in STATES else 'ERROR',

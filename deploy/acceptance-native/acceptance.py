@@ -17,6 +17,7 @@ import time
 import urllib.request
 
 from public_summary import SOURCE, project
+from shutdown_diagnostics import capture as capture_shutdown
 from startup_diagnostics import session_id, collect
 from execution_diagnostics import collect as collect_execution
 from execution_protocol import maze_receipt
@@ -119,7 +120,7 @@ def execute(args):
     runtime = private / 'runtime'; runtime.mkdir(mode=0o700)
     output = private / 'full-loop'
     token = secrets.token_hex(24)
-    gateway = loop = observer = None; base = None; forced = False; sid = None
+    gateway = loop = observer = None; base = None; forced = False; sid = None; report = {}
     try:
         if args.stage != 'maze': raise RuntimeError('warehouse_replay_not_implemented')
         source = args.source.resolve(); verify_source(source)
@@ -166,6 +167,7 @@ def execute(args):
         raw.update(failure_diagnostic(report,read(output / 'solutions.json', [])))
         sid = session_id(report)
         if sid is None: raise RuntimeError('session_missing')
+        raw['shutdown_diagnostics']={'at_full_loop_return':capture_shutdown(runtime,sid,report)}
         session = read(runtime / 'sim' / sid / 'session-report.json', {})
         derive(report, read(output / 'sim-follow_path.json', {}), read(output / 'solutions.json', []), session, raw)
         raw['execution_diagnostics'] = collect_execution(read(output / 'sim-follow_path.json', {}), read(output / 'solutions.json', []), source)
@@ -219,6 +221,9 @@ def execute(args):
         # session-report.json is finalized by shutdown, including failed startup.
         # Diagnostic recovery never updates execution state or PASS evidence.
         try: raw['startup_diagnostics'] = collect(runtime,sid)
+        except Exception: pass
+        try:
+            raw.setdefault('shutdown_diagnostics',{})['after_gateway_shutdown']=capture_shutdown(runtime,sid,report)
         except Exception: pass
         # This private stage result precedes supervisor cleanup. The public CLI
         # independently requires the final runner-status receipt.

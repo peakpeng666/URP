@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "identity": "jammy-rootless-capability-v1",
+  "identity": "jammy-rootless-capability-v3",
   "scope": "diagnostic-only-existing-facilities",
   "scientific_source_context": "18557cfc61f291e8ac5fa4a80d9df212e1df0030",
   "prior_cohort": {
@@ -64,5 +64,26 @@
     "whole-host-authentication",
     "remote-daemon-identity",
     "support-for-every-valid-subordinate-allocation-form"
-  ]
+  ],
+  "preserved_capability_v1": {
+    "source_index_sha256": "29e4270541ca452c016f8a3f66ecc0024a465beecc5afa7b8dedb9b7db5ad3c1",
+    "workflow_run": "39815381470",
+    "job": "119952469283",
+    "published_commit": "f17b6bb1eeca864be42265938faa692644111854",
+    "anchor": "PASS",
+    "authentication": "CAP_MODE_REJECTED",
+    "namespace": "SKIPPED",
+    "failed_object": "UNKNOWN",
+    "observed_helper_stage": "PASS",
+    "observed_helper_interpreter": "Python 3.10",
+    "expected_fixture_count_from_source_review": 165,
+    "observed_hosted_fixture_count": null
+  },
+  "v2_change_scope": "finite-mode-subject-check-diagnostics-only",
+  "preserved_unpublished_v2": {
+    "source_index_sha256": "4bdef2a86c69738a4685f0001dbda23ec7a84409471a90b3ade7d394f92694aa",
+    "published": false,
+    "optimized_python_fixture_failures": 3
+  },
+  "v3_change_scope": "explicit-equivalent-bootstrap-invariants-under-optimization"
 }

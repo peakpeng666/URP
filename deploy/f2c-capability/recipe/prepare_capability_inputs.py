@@ -51,19 +51,70 @@ FILE_KEYS = frozenset('path resolved_path sha256 uid gid mode device inode size 
 LIBDIRS = ('/lib/x86_64-linux-gnu', '/usr/lib/x86_64-linux-gnu', '/lib', '/usr/lib')
 NSCD_SOCKET = '/var/run/nscd/socket'
 NSS_SONAMES = ('libnss_systemd.so.2', 'libnss_systemd-2.35.so')
+# Public diagnostic values are closed reviewed labels, never measured values.
+MODE_FIXED_SUBJECTS = {
+    '/etc/passwd': 'PASSWD', '/etc/group': 'GROUP',
+    '/etc/nsswitch.conf': 'NSSWITCH', '/etc/ld.so.cache': 'LOADER_CACHE',
+    '/usr/lib/os-release': 'OS_RELEASE', '/var/lib/dpkg/status': 'DPKG_STATUS',
+    '/usr/share/keyrings/ubuntu-archive-keyring.gpg': 'ARCHIVE_KEYRING',
+    '/etc/subuid': 'SUBUID', '/etc/subgid': 'SUBGID',
+    '/etc/ld.so.preload': 'LOADER_PRELOAD',
+    '/usr/bin/python3.10': 'PYTHON', '/usr/bin/unshare': 'UNSHARE',
+    '/usr/bin/newuidmap': 'NEWUIDMAP', '/usr/bin/newgidmap': 'NEWGIDMAP',
+    '/usr/bin/gpgv': 'GPGV', '/usr/bin/dpkg-query': 'DPKG_QUERY',
+    '/usr/bin/dpkg-deb': 'DPKG_DEB',
+}
+MODE_SUBJECTS = frozenset(MODE_FIXED_SUBJECTS.values()) | {'SOURCE_INPUT', 'RUNTIME_INPUT', 'UNKNOWN'}
+MODE_CHECKS = frozenset({
+    'COMPONENT_OWNER', 'COMPONENT_WRITABLE', 'SYMLINK_LIMIT', 'INTERMEDIATE_TYPE',
+    'FILE_TYPE', 'FILE_SIZE', 'FILE_OWNER', 'FILE_WRITABLE', 'EXECUTABLE', 'SETUID', 'UNKNOWN',
+})
+MODE_CODES = frozenset({'CAP_MODE_REJECTED'} | {'CAP_' + name.upper() + '_MODE_REJECTED' for name in TOOLS})
+
+
+def mode_diagnostic_valid(code, subject, check):
+    """Closed labels and the producer's fixed tool-code/subject relationship."""
+    if (type(code) is not str or code not in MODE_CODES or
+            type(subject) is not str or subject not in MODE_SUBJECTS or
+            type(check) is not str or check not in MODE_CHECKS):
+        return False
+    if code == 'CAP_MODE_REJECTED' or (subject, check) == ('UNKNOWN', 'UNKNOWN'):
+        return True
+    return any(code == 'CAP_' + name.upper() + '_MODE_REJECTED' and
+               subject == MODE_FIXED_SUBJECTS[path] for name, path in TOOLS.items())
 
 
 class PreparationError(RuntimeError):
-    def __init__(self, code):
-        if code not in PREPARATION_CODES or code == 'CAP_INPUTS_VERIFIED':
+    def __init__(self, code, subject=None, check=None):
+        if type(code) is not str or code not in PREPARATION_CODES or code == 'CAP_INPUTS_VERIFIED':
             raise ValueError('Unknown preparation code')
+        if code in MODE_CODES:
+            if subject is None and check is None:
+                subject, check = 'UNKNOWN', 'UNKNOWN'
+            if not mode_diagnostic_valid(code, subject, check):
+                raise ValueError('Unknown mode diagnostic')
+        elif subject is not None or check is not None:
+            raise ValueError('Unexpected mode diagnostic')
         super().__init__(code)
-        self.code = code
+        self.code, self.subject, self.check = code, subject, check
 
 
-def need(value, code):
+def need(value, code, subject=None, check=None):
     if not value:
-        raise PreparationError(code)
+        raise PreparationError(code, subject, check)
+
+
+def preparation_status(error=None):
+    """Revalidate diagnostics at the receipt boundary, without exception text."""
+    if error is None:
+        return {'schema': 1, 'status': 'PASS', 'code': 'CAP_INPUTS_VERIFIED'}
+    if not isinstance(error, PreparationError):
+        raise ValueError('Invalid preparation error')
+    checked = PreparationError(error.code, error.subject, error.check)
+    status = {'schema': 1, 'status': 'FAIL', 'code': checked.code}
+    if checked.code in MODE_CODES:
+        status.update(subject=checked.subject, check=checked.check)
+    return status
 
 
 def digest(data):
@@ -80,8 +131,10 @@ def unique_json(raw):
     return json.loads(raw, object_pairs_hook=unique)
 
 
-def measure(path, limit=64 * 1024 * 1024, root_owned=True):
+def measure(path, limit=64 * 1024 * 1024, root_owned=True, subject='UNKNOWN'):
     """Measure root-owned aliases and a stable regular file, never special files."""
+    if type(subject) is not str or subject not in MODE_SUBJECTS:
+        raise ValueError('Unknown mode subject')
     path = Path(path).absolute()
     need('..' not in path.parts, 'CAP_IO_FAILED')
     aliases, todo, current, hops = [], list(path.parts[1:]), Path('/'), 0
@@ -89,10 +142,12 @@ def measure(path, limit=64 * 1024 * 1024, root_owned=True):
         current /= todo.pop(0)
         before = current.lstat()
         if root_owned:
-            need(before.st_uid == 0 and (stat.S_ISLNK(before.st_mode) or not before.st_mode & 0o022), 'CAP_MODE_REJECTED')
+            need(before.st_uid == 0, 'CAP_MODE_REJECTED', subject, 'COMPONENT_OWNER')
+            need(stat.S_ISLNK(before.st_mode) or not before.st_mode & 0o022,
+                 'CAP_MODE_REJECTED', subject, 'COMPONENT_WRITABLE')
         if stat.S_ISLNK(before.st_mode):
             hops += 1
-            need(hops <= 16, 'CAP_MODE_REJECTED')
+            need(hops <= 16, 'CAP_MODE_REJECTED', subject, 'SYMLINK_LIMIT')
             target = os.readlink(current)
             aliases.append({'path': str(current), 'target': target, 'uid': before.st_uid,
                             'gid': before.st_gid, 'device': before.st_dev, 'inode': before.st_ino})
@@ -100,13 +155,15 @@ def measure(path, limit=64 * 1024 * 1024, root_owned=True):
             todo = list(expanded.parts[1:]) + todo
             current = Path('/')
         elif todo:
-            need(stat.S_ISDIR(before.st_mode), 'CAP_MODE_REJECTED')
+            need(stat.S_ISDIR(before.st_mode), 'CAP_MODE_REJECTED', subject, 'INTERMEDIATE_TYPE')
     fd = os.open(current, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
         before = os.fstat(fd)
-        need(stat.S_ISREG(before.st_mode) and 0 <= before.st_size <= limit, 'CAP_MODE_REJECTED')
+        need(stat.S_ISREG(before.st_mode), 'CAP_MODE_REJECTED', subject, 'FILE_TYPE')
+        need(0 <= before.st_size <= limit, 'CAP_MODE_REJECTED', subject, 'FILE_SIZE')
         if root_owned:
-            need(before.st_uid == 0 and not before.st_mode & 0o022, 'CAP_MODE_REJECTED')
+            need(before.st_uid == 0, 'CAP_MODE_REJECTED', subject, 'FILE_OWNER')
+            need(not before.st_mode & 0o022, 'CAP_MODE_REJECTED', subject, 'FILE_WRITABLE')
         chunks, total = [], 0
         while True:
             block = os.read(fd, min(1024 * 1024, limit + 1 - total))
@@ -129,7 +186,7 @@ def measure(path, limit=64 * 1024 * 1024, root_owned=True):
 
 def source_anchor(root, expected):
     need(re.fullmatch('[0-9a-f]{64}', expected or ''), 'CAP_SOURCE_REJECTED')
-    measured, raw = measure(root / 'source-index.json', 1024 * 1024, False)
+    measured, raw = measure(root / 'source-index.json', 1024 * 1024, False, subject='SOURCE_INPUT')
     need(not measured['aliases'] and measured['nlink'] == 1 and digest(raw) == expected, 'CAP_SOURCE_REJECTED')
     index = unique_json(raw)
     need(type(index.get('schema')) is int and index.get('schema') == 1 and index.get('status') == 'reviewed-source' and
@@ -141,7 +198,7 @@ def source_anchor(root, expected):
     for name, entry in index['files'].items():
         need(type(name) is str and not name.startswith('/') and
              all(p not in ('', '.', '..') for p in name.split('/')), 'CAP_SOURCE_REJECTED')
-        row, data = measure(root / name, 4 * 1024 * 1024, False)
+        row, data = measure(root / name, 4 * 1024 * 1024, False, subject='SOURCE_INPUT')
         need(not row['aliases'] and row['nlink'] == 1 and not row['mode'] & 0o022 and
              row['sha256'] == entry['sha256'], 'CAP_SOURCE_REJECTED')
         result[name] = row
@@ -151,7 +208,7 @@ def source_anchor(root, expected):
 
 def metadata_module(root):
     path = root / 'recipe/jammy_metadata.py'
-    raw = measure(path, 4 * 1024 * 1024, False)[1]
+    raw = measure(path, 4 * 1024 * 1024, False, subject='SOURCE_INPUT')[1]
     need(digest(raw) == METADATA_SOURCE_SHA256, 'CAP_SOURCE_REJECTED')
     module = types.ModuleType('capability_jammy_metadata')
     module.__file__ = str(path)
@@ -199,14 +256,14 @@ def load_metadata(root, m, out):
         need(header.get('Origin') == 'Ubuntu' and header.get('Suite') == suite and
              header.get('Codename') == 'jammy', 'CAP_METADATA_REJECTED')
         entries = m.hash_entries(payload)
-        evidence[str(release.relative_to(root))] = measure(release, root_owned=False)[0]
+        evidence[str(release.relative_to(root))] = measure(release, root_owned=False, subject='SOURCE_INPUT')[0]
         for component in ('main', 'universe'):
             index = directory / (suite + '.' + component + '.amd64.Packages.xz')
             relative = component + '/binary-amd64/Packages.xz'
             expected_hash, size = entries[relative]
             need(0 < size <= 16 * 1024 * 1024, 'CAP_METADATA_REJECTED')
             m.download_verified(m.ORIGIN + 'dists/' + suite + '/' + relative, index, size, expected_hash)
-            evidence[str(index.relative_to(root))] = measure(index, root_owned=False)[0]
+            evidence[str(index.relative_to(root))] = measure(index, root_owned=False, subject='SOURCE_INPUT')[0]
             for ordinal, row in enumerate(m.package_index_rows(index.read_bytes())):
                 row.update(_suite=suite, _component=component, _stanza=ordinal)
                 records.setdefault(m.package_identity(row), []).append(row)
@@ -360,7 +417,7 @@ class Authenticator:
         self.members[name] = archive_members(data)
         self.packages[name] = {'name': row['Package'], 'version': row['Version'],
             'architecture': row['Architecture'], 'suite': row['_suite'], 'component': row['_component'],
-            'stanza': row['_stanza'], 'archive': measure(archive, root_owned=False)[0]}
+            'stanza': row['_stanza'], 'archive': measure(archive, root_owned=False, subject='SOURCE_INPUT')[0]}
         return self.members[name]
 
     def owner(self, path):
@@ -387,7 +444,7 @@ class Authenticator:
     def authenticate(self, path, expected=None, archive_owner=None):
         if path in self.files:
             return self.files[path]
-        row, data = measure(path)
+        row, data = measure(path, subject=MODE_FIXED_SUBJECTS.get(path, 'RUNTIME_INPUT'))
         owner = archive_owner if archive_owner is not None else self.owner(path)
         need(expected is None or owner == expected, 'CAP_OWNER_REJECTED')
         verify_member(row, self.package(owner))
@@ -496,7 +553,7 @@ def runtime_closure(auth, initial, cache):
         need(len(seen) < 512, 'CAP_RUNTIME_UNSUPPORTED')
         seen.add(path)
         auth.authenticate(path)
-        row, data = measure(path)
+        row, data = measure(path, subject=MODE_FIXED_SUBJECTS.get(path, 'RUNTIME_INPUT'))
         interp, needed = elf_inputs(data)
         if interp:
             queue.append(interp)
@@ -554,7 +611,7 @@ def check_runtime_paths(initial, cache, expected):
             continue
         need(path in expected and len(seen) < 512, 'CAP_STATE_CHANGED')
         seen.add(path)
-        interp, names = elf_inputs(measure(path)[1])
+        interp, names = elf_inputs(measure(path, subject=MODE_FIXED_SUBJECTS.get(path, 'RUNTIME_INPUT'))[1])
         if interp:
             queue.append(interp)
         for name in names:
@@ -577,12 +634,16 @@ def authenticate_tools(auth):
     for name, path in TOOLS.items():
         try:
             tools[name] = auth.authenticate(path, TOOL_PACKAGES[name])
-            need(tools[name]['mode'] & 0o111, 'CAP_MODE_REJECTED')
+            need(tools[name]['mode'] & 0o111, 'CAP_MODE_REJECTED', MODE_FIXED_SUBJECTS[path], 'EXECUTABLE')
             if name in ('newuidmap', 'newgidmap'):
-                need(tools[name]['mode'] & stat.S_ISUID and tools[name]['uid'] == 0, 'CAP_MODE_REJECTED')
+                need(tools[name]['mode'] & stat.S_ISUID, 'CAP_MODE_REJECTED', MODE_FIXED_SUBJECTS[path], 'SETUID')
+                need(tools[name]['uid'] == 0, 'CAP_MODE_REJECTED', MODE_FIXED_SUBJECTS[path], 'FILE_OWNER')
         except PreparationError as error:
             code = 'CAP_' + name.upper() + '_' + error.code.removeprefix('CAP_')
-            raise PreparationError(code if code in PREPARATION_CODES else error.code) from None
+            selected = code if code in PREPARATION_CODES else error.code
+            if selected in MODE_CODES:
+                raise PreparationError(selected, MODE_FIXED_SUBJECTS[path], error.check) from None
+            raise PreparationError(selected) from None
     return tools
 
 
@@ -601,16 +662,16 @@ def prepare(root, expected):
     need(not (root / 'capability-inputs.lock.json').exists(), 'CAP_LOCK_REJECTED')
     out = root / 'capability-input-evidence'
     out.mkdir(mode=0o700)
-    host_files = {path: measure(path)[0] for path in HOST_FILES}
+    host_files = {path: measure(path, subject=MODE_FIXED_SUBJECTS[path])[0] for path in HOST_FILES}
     need(not os.path.lexists(NSCD_SOCKET), 'CAP_NSCD_PRESENT')
     absent = [PYTHON_PATHS[0], NSCD_SOCKET]
     for path in OPTIONAL_HOST_FILES:
         if os.path.lexists(path):
-            host_files[path] = measure(path)[0]
+            host_files[path] = measure(path, subject=MODE_FIXED_SUBJECTS[path])[0]
         else:
             absent.append(path)
     if os.path.lexists('/etc/ld.so.preload'):
-        row, data = measure('/etc/ld.so.preload', 65536)
+        row, data = measure('/etc/ld.so.preload', 65536, subject='LOADER_PRELOAD')
         need(not any(line.split(b'#', 1)[0].strip() for line in data.splitlines()), 'CAP_CONFIGURATION_REJECTED')
         host_files['/etc/ld.so.preload'] = row
     else:
@@ -678,11 +739,12 @@ def verify_state(root, lock):
     for mapping, root_owned in ((lock['tools'], True), (lock['bootstrap_files'], True), (lock['runtime_files'], True),
                                 (lock['host_files'], True), (lock['metadata_files'], False)):
         for row in mapping.values():
-            measured, unused = measure(row['path'], root_owned=root_owned)
+            measured, unused = measure(row['path'], root_owned=root_owned,
+                                       subject=MODE_FIXED_SUBJECTS.get(row['path'], 'RUNTIME_INPUT' if root_owned else 'SOURCE_INPUT'))
             need(measured == {k: row[k] for k in FILE_KEYS}, 'CAP_STATE_CHANGED')
     for package in lock['packages'].values():
         row = package['archive']
-        need(measure(row['path'], root_owned=False)[0] == row, 'CAP_STATE_CHANGED')
+        need(measure(row['path'], root_owned=False, subject='SOURCE_INPUT')[0] == row, 'CAP_STATE_CHANGED')
     need(all(not os.path.lexists(path) for path in lock['absent_paths']) and
          python_files() == lock['python_source_paths'], 'CAP_STATE_CHANGED')
     initial = list(TOOLS.values()) + list(BOOTSTRAP_TOOLS.values()) + [path for path in lock['python_source_paths'] if path.endswith('.so')]
@@ -695,7 +757,7 @@ def verify_state(root, lock):
 def verify_lock(root, expected_lock_sha256):
     root = Path(root).absolute()
     need(re.fullmatch('[0-9a-f]{64}', expected_lock_sha256 or ''), 'CAP_LOCK_REJECTED')
-    row, raw = measure(root / 'capability-inputs.lock.json', 16 * 1024 * 1024, False)
+    row, raw = measure(root / 'capability-inputs.lock.json', 16 * 1024 * 1024, False, subject='SOURCE_INPUT')
     need(not row['aliases'] and row['nlink'] == 1 and row['mode'] == 0o600 and
          digest(raw) == expected_lock_sha256, 'CAP_LOCK_REJECTED')
     lock = unique_json(raw)
@@ -711,17 +773,17 @@ def main():
     os.umask(0o077)
     try:
         prepare(args.root, args.expected_source_index_sha256)
-        status = {'schema': 1, 'status': 'PASS', 'code': 'CAP_INPUTS_VERIFIED'}
+        status = preparation_status()
     except PreparationError as error:
-        status = {'schema': 1, 'status': 'FAIL', 'code': error.code}
+        status = preparation_status(error)
     except OSError:
-        status = {'schema': 1, 'status': 'FAIL', 'code': 'CAP_IO_FAILED'}
+        status = preparation_status(PreparationError('CAP_IO_FAILED'))
     except Exception:
-        status = {'schema': 1, 'status': 'FAIL', 'code': 'CAP_UNEXPECTED_ERROR'}
+        status = preparation_status(PreparationError('CAP_UNEXPECTED_ERROR'))
     try:
         write_new(args.root / 'capability-preparation-status.json', status)
     except OSError:
-        status = {'schema': 1, 'status': 'FAIL', 'code': 'CAP_IO_FAILED'}
+        status = preparation_status(PreparationError('CAP_IO_FAILED'))
     print(json.dumps(status, sort_keys=True, separators=(',', ':')))
     return 0 if status['status'] == 'PASS' else 2
 

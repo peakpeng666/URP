@@ -4,46 +4,46 @@
       "sha256": "34df472646dc00f67f0a68966a4c34b22da4d58f49b239a83707faefaa250a71"
     },
     "README.md": {
-      "sha256": "71b568452252f56dbd934a2f962b4b0537278ee96e53cb8856471bf99ebd9ffe"
+      "sha256": "80ae424442b23f7e900b2e67f7387b2fa6b171a1611365d6ad424630a409a561"
     },
     "REVIEW_SCOPE.json": {
-      "sha256": "7226c3492feec28ed9335066ac876ed87d0f0dd7436d4dd6e3cc7e090dbf47b3"
+      "sha256": "0064232776220d151f572b7be12393e72792b27d8f8b2e2a4d73f168c153ace6"
     },
     "recipe/CAPABILITY_INPUTS.md": {
-      "sha256": "2d55933c1d7a9f450d97b0fe607521d3fcdc655447a371f2b7d1df92e1651dc4"
+      "sha256": "636ff4f287bf977acdcb4a2bb26adbf972fdd0eca8b7880c8e654863fd023ba6"
     },
     "recipe/jammy_metadata.py": {
       "sha256": "3ef3c611be036f06331e4c2f0567fa75db27072270b075c72dc1231a4644f558"
     },
     "recipe/prepare_capability_inputs.py": {
-      "sha256": "eb66e5449309929b00d9a6757a3f1f56dd50ad00a0e1990b70bf247848ad9c6e"
+      "sha256": "e64eb03dec179037d7242eb82b8c3add669395808627410290a7ec1c832d077a"
     },
     "recipe/probe_namespace_capabilities.py": {
       "sha256": "867fc9ea5dfa06858d3ec40367e8a7308373187c6d350690db2a09b66f2a9958"
     },
     "recipe/public_codes.json": {
-      "sha256": "7ffb5b4bd93cc5efae2fe23bf8d8625690206e038430a5afcb84f375438c05aa"
+      "sha256": "21d8e1ad7d74471c160545b0b1f5bab4d1104e09839911e21b37654729ce8369"
     },
     "recipe/report_capability_status.py": {
-      "sha256": "b2e612ce0988901bb7b365c4358b678ee73629ca69c9c9820cae167a3cf6cf33"
+      "sha256": "ae3614c78fbbd3c942027e576f1708be569ea1b0cbe4618bb2b128e2902279b8"
     },
     "recipe/tests/test_capability_inputs.py": {
-      "sha256": "b41033cf738a5e3d0e50bd9a9a01ec9bd4ca8bec7b363d180db7a350ffc6a3f2"
+      "sha256": "9149ba58f9f536d34106d4d698b0fdfa52bb84ae2d63612eecc393675166ff2e"
     },
     "recipe/tests/test_capability_projection.py": {
-      "sha256": "fd636b1125829019190bd0706e292f17eb775c0e8ef449fde19e7ea066c8a288"
+      "sha256": "9752b713009704da8b4dff4e69b821043ec76289130d5f0aee39a28884d3ef65"
     },
     "recipe/tests/test_namespace_capabilities.py": {
       "sha256": "e83c88532758d747359cee1bc1866179bb5a8407259cf0ef7f4e7cf4b2fca972"
     },
     "recipe/tests/test_workflow_contract.py": {
-      "sha256": "1268ed352cf88f944518a868ede6f66bf18ab1d5411b714ce4123be3b715af44"
+      "sha256": "ac206755ba885e433b44fb1a0c5ef0667299279cb8759193f86b683a4f2a01e1"
     },
     "recipe/verify_workflow_contract.py": {
-      "sha256": "672ebe2a498a4f5512bac6408f21d72ddafff05a40c65561bf5dc750930dcce5"
+      "sha256": "692b96c3cafa3bd4b0ac3ad8cb0ad62558fffb911bd7479ad03566a43b866fa1"
     }
   },
-  "identity": "jammy-rootless-capability-v1",
+  "identity": "jammy-rootless-capability-v3",
   "schema": 1,
   "scientific_execution": false,
   "scientific_source_context": "18557cfc61f291e8ac5fa4a80d9df212e1df0030",

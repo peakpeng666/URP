@@ -81,5 +81,49 @@
     ],
     "pass_code": "OK"
   },
+  "mode_diagnostics": {
+    "checks": [
+      "COMPONENT_OWNER",
+      "COMPONENT_WRITABLE",
+      "EXECUTABLE",
+      "FILE_OWNER",
+      "FILE_SIZE",
+      "FILE_TYPE",
+      "FILE_WRITABLE",
+      "INTERMEDIATE_TYPE",
+      "SETUID",
+      "SYMLINK_LIMIT",
+      "UNKNOWN"
+    ],
+    "codes": [
+      "CAP_MODE_REJECTED",
+      "CAP_NEWGIDMAP_MODE_REJECTED",
+      "CAP_NEWUIDMAP_MODE_REJECTED",
+      "CAP_PYTHON_MODE_REJECTED",
+      "CAP_UNSHARE_MODE_REJECTED"
+    ],
+    "subjects": [
+      "ARCHIVE_KEYRING",
+      "DPKG_DEB",
+      "DPKG_QUERY",
+      "DPKG_STATUS",
+      "GPGV",
+      "GROUP",
+      "LOADER_CACHE",
+      "LOADER_PRELOAD",
+      "NEWGIDMAP",
+      "NEWUIDMAP",
+      "NSSWITCH",
+      "OS_RELEASE",
+      "PASSWD",
+      "PYTHON",
+      "RUNTIME_INPUT",
+      "SOURCE_INPUT",
+      "SUBGID",
+      "SUBUID",
+      "UNKNOWN",
+      "UNSHARE"
+    ]
+  },
   "schema": 1
 }
