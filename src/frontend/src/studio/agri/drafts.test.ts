@@ -114,3 +114,22 @@ describe('debouncedDraftWriter', () => {
     } finally { vi.useRealTimers(); }
   });
 });
+
+describe('describeTarget', () => {
+  it('resolves every issue target kind so the map can highlight it', async () => {
+    const { describeTarget } = await import('./preview');
+    const p = { kind: 'fleet', boundary: [[0, 0], [10, 0], [10, 10], [0, 10]], plots: [], obstacles: [{ id: 'o1', kind: 'pond', polygon: [[1, 1], [2, 1], [2, 2]] }],
+      tasks: [{ id: 't1', label: '树 1', xy: [5, 5] }], depots: [[0, 0]], unload: [], bbox: [0, 0, 10, 10] } as never;
+    expect(describeTarget(p, 'boundary')?.layer).toBe('boundary');
+    expect(describeTarget(p, 'obstacle:o1')?.text).toMatch('障碍 o1');
+    expect(describeTarget(p, 'task:t1')?.text).toMatch('(5, 5)');
+    expect(describeTarget(p, 'depot:0')?.layer).toBe('depots');
+    expect(describeTarget(p, 'obstacle:missing')).toBeNull();
+  });
+  it('obstacle issues carry a namespaced target', async () => {
+    const { previewIssues } = await import('./preview');
+    const p = { kind: 'fleet', boundary: [[0, 0], [10, 0], [10, 10], [0, 10]], plots: [], obstacles: [{ id: 'o1', kind: 'pond', polygon: [[8, 8], [20, 8], [20, 20]] }],
+      tasks: [], depots: [], unload: [], bbox: [0, 0, 20, 20] } as never;
+    expect(previewIssues(p).some((i) => i.target === 'obstacle:o1')).toBe(true);
+  });
+});

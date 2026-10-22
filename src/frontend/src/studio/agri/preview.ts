@@ -65,9 +65,9 @@ export function previewIssues(p: Preview): PreviewIssue[] {
   if (Math.abs(signedArea(p.boundary)) < 1e-6) out.push({ level: 'error', message: '边界面积退化为 0', target: 'boundary' });
   if (selfIntersects(p.boundary)) out.push({ level: 'error', message: '边界自交', target: 'boundary' });
   for (const o of p.obstacles) {
-    if (o.polygon.length < 3 || Math.abs(signedArea(o.polygon)) < 1e-6) out.push({ level: 'error', message: `障碍 ${o.id} 面积退化`, target: o.id });
-    else if (selfIntersects(o.polygon)) out.push({ level: 'error', message: `障碍 ${o.id} 自交`, target: o.id });
-    else if (o.polygon.some((v) => !pointInPolygon(v, p.boundary) && distToPolygon(v, p.boundary) > 1e-6)) out.push({ level: 'warn', message: `障碍 ${o.id} 越出边界`, target: o.id });
+    if (o.polygon.length < 3 || Math.abs(signedArea(o.polygon)) < 1e-6) out.push({ level: 'error', message: `障碍 ${o.id} 面积退化`, target: `obstacle:${o.id}` });
+    else if (selfIntersects(o.polygon)) out.push({ level: 'error', message: `障碍 ${o.id} 自交`, target: `obstacle:${o.id}` });
+    else if (o.polygon.some((v) => !pointInPolygon(v, p.boundary) && distToPolygon(v, p.boundary) > 1e-6)) out.push({ level: 'warn', message: `障碍 ${o.id} 越出边界`, target: `obstacle:${o.id}` });
   }
   const r = p.robotRadius ?? 0;
   const obs = p.obstacles.map((o) => o.polygon).filter((g) => g.length >= 3);
@@ -82,4 +82,15 @@ export function previewIssues(p: Preview): PreviewIssue[] {
     out.push({ level: 'warn', message: `地头宽 ${p.headlandWidth} m 小于作业幅宽 ${p.swathWidth} m，地头转弯可能不足一个幅宽`, target: 'boundary' });
   }
   return out;
+}
+
+/** What a picked issue target points at, so the map can highlight and describe it; null if it no longer exists. */
+export function describeTarget(p: Preview, target: string): { layer: 'boundary' | 'obstacles' | 'tasks' | 'depots'; text: string } | null {
+  const fmt = (q: XY) => `(${q[0]}, ${q[1]}) m`;
+  if (target === 'boundary') return { layer: 'boundary', text: `作业边界，${p.boundary.length} 个顶点` };
+  const [kind, ...rest] = target.split(':'); const id = rest.join(':');
+  if (kind === 'obstacle') { const o = p.obstacles.find((x) => x.id === id); return o ? { layer: 'obstacles', text: `障碍 ${o.id}（${o.kind}），${o.polygon.length} 个顶点` } : null; }
+  if (kind === 'task') { const t = p.tasks.find((x) => x.id === id); return t ? { layer: 'tasks', text: `${t.label}，坐标 ${fmt(t.xy)}${t.demand !== undefined ? `，需求 ${t.demand}` : ''}` } : null; }
+  if (kind === 'depot') { const d = p.depots[Number(id)]; return d ? { layer: 'depots', text: `库点 ${Number(id) + 1}，坐标 ${fmt(d)}` } : null; }
+  return null;
 }
