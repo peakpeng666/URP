@@ -76,6 +76,7 @@ export const REFS: RefEntry[] = [
     title: 'Using the Vehicle Routing Problem to reduce field completion times with multiple machines',
     year: 2017, authors: 'Seyyedhasani, Dvorak', venue: 'Computers and Electronics in Agriculture',
     supports: '多机分工显著缩短完工时间 → 果园采收集运以 makespan 为目标、车队规模做实验因子。',
+    repo_note: 'DOI 待核对后补入；当前不附猜测的标识符。',
     status: '题录待复核',
   },
   {
@@ -83,6 +84,7 @@ export const REFS: RefEntry[] = [
     title: 'Multi-criteria route planning for discrete spraying targets in orchards (Conesa-Muñoz 等离散目标喷施建模)',
     year: 2016, venue: 'Computers and Electronics in Agriculture',
     supports: '把喷施对象离散为带需求点集是一种有文献先例的近似；连续行喷施则需行服务建模。',
+    repo_note: 'DOI 待核对后补入；当前不附猜测的标识符。',
     status: '题录待复核',
   },
   {
@@ -90,6 +92,7 @@ export const REFS: RefEntry[] = [
     title: 'Field logistics and capacity-driven refill trips in agricultural operations (Jensen 等田间物流)',
     year: 2015,
     supports: '容量驱动多趟补给是田间物流的结构性开销来源 → refill_overhead 单列。',
+    repo_note: 'DOI 待核对后补入；当前不附猜测的标识符。',
     status: '题录待复核',
   },
   {
@@ -97,6 +100,7 @@ export const REFS: RefEntry[] = [
     title: 'Coverage path planning under obstacles by field decomposition (Zhou 等含障田块分解覆盖)',
     year: 2014,
     supports: '障碍作为覆盖区内孔时按几何分解为子区域分别覆盖再跨区连接。',
+    repo_note: 'DOI 待核对后补入；当前不附猜测的标识符。',
     status: '题录待复核',
   },
   {
@@ -104,6 +108,7 @@ export const REFS: RefEntry[] = [
     title: 'Optimal in-field routing for full and partial field coverage with non-convex fields and obstacle areas (Plessen)',
     year: 2019,
     supports: '非凸田块与多障碍下的全/部分覆盖统一路由；支持斑块选择性覆盖的提案建模。',
+    repo_note: 'DOI 待核对后补入；当前不附猜测的标识符。',
     status: '题录待复核',
   },
   {
