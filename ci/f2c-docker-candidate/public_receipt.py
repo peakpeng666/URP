@@ -7,6 +7,8 @@ import re
 import importlib.util
 _spec=importlib.util.spec_from_file_location("preparation_diagnostic",Path(__file__).resolve().with_name("preparation_diagnostic.py"))
 _diagnostic=importlib.util.module_from_spec(_spec);_spec.loader.exec_module(_diagnostic)
+_buildkit_spec=importlib.util.spec_from_file_location("buildkit_diagnostic",Path(__file__).resolve().with_name("buildkit_diagnostic.py"))
+_buildkit=importlib.util.module_from_spec(_buildkit_spec);_buildkit_spec.loader.exec_module(_buildkit)
 
 PHASES=('bootstrap','preparation','isolation_and_build')
 DIGEST=re.compile('[0-9a-f]{64}')
@@ -24,6 +26,12 @@ def project(state):
     terminal=read(state/'terminal.json') or {}
     phase=terminal.get('phase');code=terminal.get('exit_code')
     if phase not in PHASES or type(code) is not int or not 0<=code<=255:raise ValueError('terminal shape')
+    preparation_detail=_diagnostic.read_projected(state/'preparation-stderr.log') if phase=='preparation' and code else None
+    buildkit_detail=None
+    buildkit_structure=None
+    if preparation_detail is not None and preparation_detail['stage']=='image_build':
+        buildkit_detail=_buildkit.validate_projection(_buildkit.parse_log(state/'prepared/preparation.log'))
+        buildkit_structure=_buildkit.validate_structure(_buildkit.inspect_structure(state/'prepared/preparation.log'))
     reached=PHASES.index(phase)
     outcomes=[{'phase':p,'status':('passed' if i<reached or (i==reached and code==0) else 'failed' if i==reached else 'not_run'),'exit_code':(0 if i<reached else code if i==reached else None)} for i,p in enumerate(PHASES)]
     prepared=read(state/'prepared/prepared-image.json') or {}
@@ -36,7 +44,9 @@ def project(state):
            and digest_field(result.get('output_tar_sha256')) is not None)
     return {'schema':1,'protocol':'urp.f2c.docker-engine-netnone/1','application_commit':'3acf840d1a0c16ab1cfcca15744e4ea6609ddb35','python':'3.12.13',
         'outcome':'built_not_accepted' if built else 'failed_or_not_run','stages':outcomes,
-        'preparation_failure_detail':_diagnostic.read_projected(state/'preparation-stderr.log') if phase=='preparation' and code else None,
+        'preparation_failure_detail':preparation_detail,
+        'buildkit_failure_detail':buildkit_detail,
+        'buildkit_structure':buildkit_structure,
         'failure_category':None if built else CATEGORIES[phase] if code else 'RESULT_RECEIPT_MISSING',
         'source_index_sha256':source_hash,
         'input_index_sha256':digest_field(prepared.get('input_index_sha256')),

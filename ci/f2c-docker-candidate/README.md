@@ -132,3 +132,53 @@ publish Docker logs, commands, paths, URLs, headers or environment values. Neste
 SAFE_PACKAGE_DIAGNOSTIC extraction is deliberately not implemented in this
 revision; image-build failures identify their top-level stage/class only. Raw
 logs remain ephemeral, not durably archived.
+
+## Review revision 6: first-run failure observability only
+
+The first hosted attempt stopped during image preparation before native
+compilation. This revision adds `--progress=plain` and a bounded projection of
+existing safe bootstrap/package markers in the private preparation log. It does
+not change package selection, source/input authentication, build commands beyond
+progress presentation, isolation or acceptance gates. No dependency workaround
+is inferred from the initial generic image-build failure.
+
+`buildkit_failure_detail` is populated only for failed preparation at the
+image-build stage. Marker lines must have the expected BuildKit vertex/timestamp
+framing and a vertex tied to the exact reviewed Dockerfile RUN command. The
+projection uses fixed codes, finite enums and bounded numeric fields only.
+Unframed summary replays do not establish a source; a successful bootstrap marker
+is not a failure. Missing, oversized, malformed, conflicting or unrecognized
+records produce no nested detail. No raw logs, commands, filesystem paths, URLs,
+headers, environment values or arbitrary strings are published.
+
+This is structural diagnostic attribution, not cryptographic child identity or
+proof of a successful/failed acceptance gate. The original nonzero result and
+finite top-level preparation stage remain authoritative for the job outcome.
+Raw preparation logs remain ephemeral and are not uploaded or durably archived.
+
+## Review revision 7: bounded pre-RUN log structure
+
+The v6 safe-marker schema is unchanged. A separate `buildkit_structure` is
+projected only for failed image preparation. It distinguishes a missing, empty,
+unreadable, unsupported, oversized, changed or invalid log from a bounded read.
+`log_bytes` is at most 16 MiB + 1; that sentinel with `size_capped: true`
+means only that the log exceeds the limit, not its exact size. No oversized log
+content is scanned. Each line and the vertex/event counts remain bounded.
+
+`buildkit_frames_seen` means syntactically valid, anchored BuildKit framing was
+observed; it is not authenticated process identity. `stages_reached` is a fixed
+canonical-order subset of `base_metadata`, `base_pull`, `bootstrap`, `package`,
+not a timing sequence. Base stages require the exact pinned official image in
+the metadata/FROM header; RUN stages require the existing exact static commands.
+A single top-level `#N ERROR:` selects a finite `failed_stage` only when its
+vertex was bound to such a header. Unknown vertices/stages, multiple errors or
+any repeated/rebound vertex conservatively yield `unknown`. ERROR payload bytes
+are never decoded, classified, retained in the receipt or published. Nested
+output, failure-summary replays and truncated final fragments cannot establish
+headers. Ordinary Docker-client text can yield a nonempty log with no frames,
+but is deliberately not classified by its free text.
+
+This is diagnostic structure only. It changes no preparation/build acceptance,
+package/source pins or isolation setting, does not infer the initial run's cause,
+and does not constitute image, compiler or fresh-runtime acceptance. Raw logs
+remain private and ephemeral. v6 is preserved as an immutable predecessor.

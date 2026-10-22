@@ -6,13 +6,16 @@
   ],
   "files": {
     "README.md": {
-      "sha256": "d8e75df99c7a248ff26f8a14ea5ad81e03eed851ac31f078c08c789bd140ea32"
+      "sha256": "3dd9e7ce403928badc1eb60fac4cbf8e0efab20b8feefec7e39a530639a29f04"
     },
     "build-plan-provenance.json": {
       "sha256": "75148a35fab684b3e2784b913d4f654b911331f6ae62215b978fa7366043124f"
     },
     "build_plan.py": {
       "sha256": "7d5a5d3ce7d6fc2ffe02b8bf0889d3af8c49db36d59e5d14bb38d2720c0bad55"
+    },
+    "buildkit_diagnostic.py": {
+      "sha256": "0a4cd6cf82e51b4d56ef7bd5795841a9deb08109a14a89d6c100d09778049907"
     },
     "engine_controller.py": {
       "sha256": "427289aeca9418013ee347956732cbfed2c5a3a386245bc7d11e0367dc4cdc1b"
@@ -141,7 +144,7 @@
       "sha256": "df63d1f1721614b8bf47b17ce02e0a0983c563fda068b15ed791727c59eac954"
     },
     "preparation/prepare_image.py": {
-      "sha256": "44e913a84568e7f63370667c1f23efb281e44927edd616f8fee7a46e5ab118e1"
+      "sha256": "1150e001f9c7828826e418489e21bfb9d97e5e2e5a01b2961078dd896d3dce70"
     },
     "preparation/prepare_packages.py": {
       "sha256": "0746592a76d178a306b406cc309fd621e8904af397437a33387bf3744e7e77c6"
@@ -162,13 +165,22 @@
       "sha256": "8afb24ac4e1911425a5240310a3d2f123c2439586ca7ad16afcb9b57668078da"
     },
     "public_receipt.py": {
-      "sha256": "5efd13ab4661b5a38eccdf9003190a777fa0c77d5f713b9cf4fd62bbf298c3c9"
+      "sha256": "2cdb3193ccd40a95d2644c272314465f588b7810988f10c4ba546128578855d6"
     },
     "render_push_workflow.py": {
       "sha256": "3d408802ce8d13c1161bacddb3d542cd5d4ebb925d6d449534655b33230cda6a"
     },
     "stage_build_output.py": {
       "sha256": "6e19497aa5dbd8c5b84170837276c325a3b626ddacc4a80b6ff0ed92e2a02e6e"
+    },
+    "tests/test_buildkit_diagnostic.py": {
+      "sha256": "98c4181b76f2571b5882146dd9a852afea6a285b6c4370da18de9e79434555f2"
+    },
+    "tests/test_buildkit_receipt_integration.py": {
+      "sha256": "169591cf911f3fe38a6dd1fa0d966ff800909a311e40329bf5dba4f2a12f9731"
+    },
+    "tests/test_buildkit_structure.py": {
+      "sha256": "10513c39c8c81118e39bbda80bb1ac02614c2b3beb019102648a2aeba8a3e530"
     },
     "tests/test_engine_protocol.py": {
       "sha256": "e177456b94246753980fc20a559c519511d52569d65cf6949ff5c79c7802c779"

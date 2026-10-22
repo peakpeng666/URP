@@ -157,7 +157,7 @@ def execute(source,application,uv,bootstrap_lock,bootstrap_sha,source_sha,out):
     iid=out/'prepared-image.id'
     # Build context contains only anchored helpers, verified Git blobs and the
     # declared UV bootstrap executable. No credentials, checkout .git or host libs.
-    cmd=docker+['build','--platform','linux/amd64','--pull','--no-cache',
+    cmd=docker+['build','--platform','linux/amd64','--pull','--no-cache','--progress=plain',
          '--build-arg','WORKLOAD_UID='+str(os.getuid()),'--build-arg','WORKLOAD_GID='+str(os.getgid()),
          '--build-arg','INPUT_SOURCE_SHA='+input_sha,'--build-arg','BOOTSTRAP_SHA='+bootstrap_sha,
          '--iidfile',str(iid),str(context)]
