@@ -23,6 +23,7 @@ import { fromSelection, itemPoints, itemsInBox, liveRefs, refKey, sameRef, toSel
 import { SelectionPanel } from './SelectionPanel';
 import { IssuesPanel } from './IssuesPanel';
 import { validateGeometry, type GeometryIssue } from './validation';
+import { decimateForDisplay } from './decimate';
 import { ALL_LAYERS, AxisCompass, KindPattern, LayerLegendPanel, OriginMark, legendEntries, routeDash, type LayerKey, type Layers } from './legend';
 import s from './editor.module.css';
 
@@ -368,6 +369,13 @@ export function FieldEditor(props: FieldEditorProps) {
   const legend = legendEntries(shown, visibleRoutes, layers, {
     lanes: !!lanes?.length, badTasks: issues.size, violations: violations?.length ?? 0, geoIssues: geoIssues.filter((i) => i.at).length, idp, routeIndex: (r) => routeIndex.get(r.vehicle_name) ?? 0,
   });
+  // Large scenes: simplified copies for drawing only; edits, validation and the solver keep using `inst`.
+  const kBucket = 2 ** (Math.round(Math.log2(Math.max(view.k, 1e-6)) * 2) / 2);
+  const exactKey = [...multi.map(refKey), selection?.type === 'boundary' ? 'boundary:boundary' : ''].join('|');
+  const disp = useMemo(
+    () => decimateForDisplay(shown, visibleRoutes, lanes, kBucket, new Set(exactKey.split('|'))),
+    [shown, visibleRoutes, lanes, kBucket, exactKey],
+  );
   const originScr = scr([0, 0]);
   const originOnScreen = originScr[0] >= 0 && originScr[0] <= size.width && originScr[1] >= 0 && originScr[1] <= size.height;
   const gridStep = GRID_STEPS.find((g) => g * view.k >= 40) ?? 1000;
@@ -411,25 +419,25 @@ export function FieldEditor(props: FieldEditorProps) {
         <rect className={s.backdrop} width={size.width} height={size.height} />
         {layers.grid && <Grid view={view} step={gridStep} width={size.width} height={size.height} />}
         <g transform={worldTransform(view)}>
-          <polygon data-hit="boundary" className={s.boundary} points={shown.boundary.map((p) => p.join(',')).join(' ')} />
+          <polygon data-hit="boundary" className={s.boundary} points={disp.inst.boundary.map((p) => p.join(',')).join(' ')} />
           {layers.background && background}
-          {layers.plots && shown.plots.map((pl) => (
+          {layers.plots && disp.inst.plots.map((pl) => (
             <g key={pl.id}>
               <polygon className={s.plot} points={pl.polygon.map((p) => p.join(',')).join(' ')} />
               <polygon data-hit="plot" data-id={pl.id} className={s.plotRows} style={{ fill: `url(#rows-${pl.id})` }} points={pl.polygon.map((p) => p.join(',')).join(' ')} />
             </g>
           ))}
-          {layers.lanes && lanes && lanes.length > 0 && (
+          {layers.lanes && disp.lanes && disp.lanes.length > 0 && (
             <g className={s.lanes}>
-              {lanes.map((ln, i) => <polyline key={i} points={ln.map((p) => p.join(',')).join(' ')} />)}
+              {disp.lanes.map((ln, i) => <polyline key={i} points={ln.map((p) => p.join(',')).join(' ')} />)}
             </g>
           )}
-          {layers.corridors && (shown.corridors ?? []).map((c) => (
+          {layers.corridors && (disp.inst.corridors ?? []).map((c) => (
             <polygon key={c.id} data-hit="corridor" data-id={c.id} className={s.corridor} points={c.polygon.map((p) => p.join(',')).join(' ')}>
               <title>{`${c.name ?? c.id} · rows 模式并入通行网络，free 模式仅保留几何`}</title>
             </polygon>
           ))}
-          {layers.obstacles && shown.obstacles.map((o) => (
+          {layers.obstacles && disp.inst.obstacles.map((o) => (
             <polygon
               key={o.id}
               data-hit="obstacle"
@@ -441,7 +449,7 @@ export function FieldEditor(props: FieldEditorProps) {
               <title>{`${o.name ?? OBSTACLE_STYLE[o.kind].label} · ${OBSTACLE_STYLE[o.kind].label} · ${o.id}`}</title>
             </polygon>
           ))}
-          {layers.routes && visibleRoutes.map((r) => (
+          {layers.routes && disp.routes.map((r) => (
             <polyline key={r.vehicle_name} className={s.route} style={{ stroke: r.color }} strokeDasharray={routeDash(routeIndex.get(r.vehicle_name) ?? 0)} points={r.polyline.map((p) => p.join(',')).join(' ')} />
           ))}
           {layers.routes && stops.map((st) => (
@@ -464,7 +472,7 @@ export function FieldEditor(props: FieldEditorProps) {
           const [bx, by] = scr(marquee.b);
           return <rect className={s.marquee} x={Math.min(ax, bx)} y={Math.min(ay, by)} width={Math.abs(bx - ax)} height={Math.abs(by - ay)} />;
         })()}
-        {layers.routes && visibleRoutes.map((r) => <Arrows key={r.vehicle_name} poly={r.polyline} view={view} color={r.color} />)}
+        {layers.routes && disp.routes.map((r) => <Arrows key={r.vehicle_name} poly={r.polyline} view={view} color={r.color} />)}
         {layers.plots && layers.labels && shown.plots.map((pl) => {
           const [cx, cy] = scr(centroid(pl.polygon));
           return (
@@ -547,6 +555,7 @@ export function FieldEditor(props: FieldEditorProps) {
         {originOnScreen && <OriginMark at={originScr} />}
         <AxisCompass x={size.width - 110} y={size.height - 34} />
         <ScaleBar step={gridStep} k={view.k} height={size.height} />
+        {disp.decimated && <text x={size.width - 10} y={size.height - 84} className={s.extent}>{`显示已抽稀 ${disp.shownVertices}/${disp.vertices} 顶点（求解输入不变）`}</text>}
         <text x={size.width - 10} y={size.height - 10} className={s.extent}>{`${(bx1 - bx0).toFixed(0)} × ${(by1 - by0).toFixed(0)} m`}</text>
       </svg>
       <div className={s.panelStack}>
