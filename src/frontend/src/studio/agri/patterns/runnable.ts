@@ -3,14 +3,14 @@
  *
  * 建模纪律：
  * - 点集需求是真实的带需求点集（容量/卸载/趟数），不以轨迹点数代替工作量；
- * - 覆盖模板按作业幅宽计算覆盖面积，覆盖率分母写明（内缩作业区，地头单列）；
+ * - 覆盖模板按作业幅宽计算覆盖面积，区分全田覆盖率与内缩作业区达标率（地头单列）；
  * - 构建器使用既有 FleetInstance 契约；tools/check-agri-contract.mjs
  *   将真实构建产物交给后端 validate_instance 做跨语言回归；
  * - 未关联到当前实例的持久化运行证据时，不预先宣称实验通过。
  */
 import type { FleetInstance } from '../../types';
 import type { AgriCapabilities, AgriTaskPattern, BuilderParam, BuiltScenario } from '../taxonomy';
-import { disc, placeable, rng, round2, type Ring, type XY } from '../geometry';
+import { disc, placeable, rng, round2, validateSeed, type Ring, type XY } from '../geometry';
 
 const num = (v: Record<string, unknown>, k: string) => Number(v[k]);
 const str = (v: Record<string, unknown>, k: string) => String(v[k]);
@@ -105,16 +105,20 @@ export function buildFleetInstance(
     }
   }
   const obstacles: FleetInstance['obstacles'] = [];
+  const obstacleCenters: XY[] = [];
   const obN = v.obstacle_count === undefined ? 0 : bounded(v, 'obstacle_count', 0, 6, true);
   const obR = v.obstacle_r === undefined ? 0 : bounded(v, 'obstacle_r', 0, 40);
   if (obN > 0 && obR <= 0) throw new Error('存在障碍时，障碍半径须大于0');
   for (let i = 0; i < obN; i++) {
     let polygon: Ring | null = null;
     for (let t = 0; t < 200; t++) {
-      const ob = disc(round2(W * (0.3 + 0.5 * rand())), round2(H * (0.3 + 0.5 * rand())), obR, 14);
-      if (ob.every(p => placeable(p, boundary, [], 0.5))) { polygon = ob; break; }
+      const center: XY = [round2(W * (0.3 + 0.5 * rand())), round2(H * (0.3 + 0.5 * rand()))];
+      // Distinct pond obstacles must remain disjoint, with enough passage for the effective footprint.
+      if (obstacleCenters.some(c => Math.hypot(c[0] - center[0], c[1] - center[1]) < 2 * obR + 2 * r + 0.5)) continue;
+      const ob = disc(center[0], center[1], obR, 14);
+      if (ob.every(p => placeable(p, boundary, [], 0.5))) { polygon = ob; obstacleCenters.push(center); break; }
     }
-    if (!polygon) throw new Error('田块无法容纳指定障碍；请减小障碍或增大田块。');
+    if (!polygon) throw new Error('未能放置全部互不重叠且留有通道的障碍；请减少障碍、减小半径或增大田块。');
     obstacles.push({ id: `O${i + 1}`, kind: 'pond', polygon });
   }
   const rings = obstacles.map(o => o.polygon);
@@ -158,6 +162,14 @@ export function buildFleetInstance(
   if (tasks.length !== want) throw new Error('可放置任务点不足；请减少任务/障碍或增大田块。');
   const station = (base: XY): XY => {
     if (placeable(base, boundary, noGo, r + 0.5)) return base;
+    // Include exact inset corners/edge projections: a radial lattice can miss a narrow feasible corner.
+    const inset = r + 0.5;
+    const x = Math.max(inset, Math.min(W - inset, base[0]));
+    const y = Math.max(inset, Math.min(H - inset, base[1]));
+    const anchors: XY[] = [[inset, inset], [W - inset, inset], [inset, H - inset], [W - inset, H - inset],
+      [inset, y], [W - inset, y], [x, inset], [x, H - inset]];
+    anchors.sort((a, b) => Math.hypot(a[0] - base[0], a[1] - base[1]) - Math.hypot(b[0] - base[0], b[1] - base[1]));
+    for (const anchor of anchors) if (placeable(anchor, boundary, noGo, inset)) return anchor;
     for (let rad = 2; rad <= Math.hypot(W, H); rad += 2) for (let k = 0; k < 32; k++) {
       const a = 2 * Math.PI * k / 32;
       const p: XY = [round2(base[0] + rad * Math.cos(a)), round2(base[1] + rad * Math.sin(a))];
@@ -228,6 +240,7 @@ function wrapCoverage(
   inst: Record<string, unknown>, v: Record<string, unknown>, note: string,
   params: BuilderParam[],
 ): BuiltScenario {
+  validateSeed(seed);
   return {
     id: `agri-${id}-${Date.now().toString(36)}-${seed}`,
     title, summary,
@@ -653,21 +666,24 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
       problem_class: 'fleet_routing',
       params: [
         ...P.size(240, 160),
-        ...P.tasks(40, 60), ...P.fleet(4, 500, 0.9).map(p => p.key === 'vehicles' ? { ...p, min: 2 } : p), ...P.robot(0.8),
+        ...P.tasks(40, 60), ...P.fleet(4, 500, 0.9).map(p =>
+          p.key === 'vehicles' ? { ...p, min: 2, help: '总台数：大车取一半向上取整，小车取一半向下取整。' }
+            : p.key === 'capacity' ? { ...p, label: '大车容量', help: '小车容量为大车的1/3，四舍五入且至少为1；仅容量足够的车型可服务对应需求。' }
+              : { ...p, label: '大车速度', help: '小车速度按大车的1.2倍派生。' }), ...P.robot(0.8).map(p => ({ ...p, label: '大车半径', help: '小车半径为大车的一半；放置按大车半径保守校验。' })),
         ...P.depot('sw'), ...P.objective('makespan'), ...P.refill(true), ...P.obstacles(0, 0),
       ],
       build: (v, seed) => {
         const inst = buildFleetInstance(v, seed, {
           word: '集货点', crop: '马铃薯', distribution: 'uniform', travel: 'free',
           plots: null, unload: v.refill_point === false ? 0 : 1,
-          placeRadius: Math.max(1.0, num(v, 'robot_radius')),
+          placeRadius: num(v, 'robot_radius'),
         });
         const cap0 = num(v, 'capacity');
         if (num(v, 'vehicles') < 2) throw new Error('异构机队至少需要2台车（大小车型各至少1台）');
         inst.vehicles = {
           fleet: [
-            { name: '大车', count: Math.max(1, Math.round(num(v, 'vehicles') / 2)), capacity: cap0, speed_mps: num(v, 'speed'), robot_radius: 1.0, payload: 'load' },
-            { name: '小车', count: Math.max(1, Math.floor(num(v, 'vehicles') / 2)), capacity: Math.max(1, Math.round(cap0 / 3)), speed_mps: num(v, 'speed') * 1.2, robot_radius: 0.5, payload: 'load' },
+            { name: '大车', count: Math.max(1, Math.round(num(v, 'vehicles') / 2)), capacity: cap0, speed_mps: num(v, 'speed'), robot_radius: num(v, 'robot_radius'), payload: 'load' },
+            { name: '小车', count: Math.max(1, Math.floor(num(v, 'vehicles') / 2)), capacity: Math.max(1, Math.round(cap0 / 3)), speed_mps: num(v, 'speed') * 1.2, robot_radius: num(v, 'robot_radius') / 2, payload: 'load' },
           ],
           trips: 'multi', travel: 'free',
         };
@@ -683,13 +699,13 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
     environments: ['open_field'], operation: 'transfer', serviceObject: 'point_set',
     vehicleClasses: ['ackermann'], planningProblem: 'multi_visit',
     summary: '最小转弯半径 1.5–10 m 的不可倒车车辆访问作业点；min_turn_radius_m 触发 Dubins 实现。',
-    modeling: '曲率约束进入求解（Dubins 路径族），不是先求欧氏解再事后修圆。',
+    modeling: '先以绕障图距离分配任务/访问顺序，再以 Dubins 航向动态规划或 OMPL 实现曲率约束路径；不声称全局联合最优，无法通过验算时返回无解。',
     refs: ['dubins1957', 'urp_p510'],
     capabilities: cap(
       '点集 + 最小转弯半径完整。',
       '全部可编辑。',
-      ['yes', 'min_turn_radius_m 为契约字段（0–10 m），求解按 Dubins 长度。'],
-      '曲率验算为契约能力（Dubins 长度与半径约束独立复算）。',
+      ['yes', 'min_turn_radius_m 为契约字段；访问顺序按绕障图距离优化，再实现 Dubins 曲率路径，最终按实际路径评分。'],
+      '独立复核采样路径长度、三点曲率及足迹；不是连续 SE(2) 可行性的形式证明。',
       ['no', '执行侧为可原地转向差速模型；曲率约束类别启动执行返回 422 curvature_constrained_execution。'], EXP.dubins,
     ),
     metrics: ['total_distance', 'turn_count', 'nonworking_distance'],
@@ -731,13 +747,13 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
     environments: ['open_field'], operation: 'tillage', serviceObject: 'area',
     vehicleClasses: ['tractor_implement'], planningProblem: 'full_coverage',
     summary: '矩形田全田覆盖：地头内缩、按作业幅宽布行、行排序与转弯连接。',
-    modeling: 'coverage 原生语义：覆盖率分母 = 内缩作业区（validation_policy urp.coverage-interior90/2，≥90%），地头单列，工作/转弯/地头里程分段。',
+    modeling: 'coverage 原生语义：coverage_fraction 分母为全田可作业面积（扣除障碍）；working_area_fraction 分母为内缩作业区，interior90 政策要求后者≥90%；地头单列。',
     refs: ['f2c2023', 'bochtis2008', 'oksanen2009', 'galceran2013'],
     capabilities: {
       defined: { level: 'yes', note: '幅宽、地头宽、转弯半径、行向齐备。' },
       editable: { level: 'partial', note: 'coverage 编辑器支持既有字段；模板参数经构建表单生成。' },
       solvable: { level: 'yes', note: '契约求解器为 Fields2Cover（地头→布行→行排序→转弯路径）；实际可用性由现有算法目录检测；基线不约束转弯半径。' },
-      checkable: { level: 'yes', note: '独立覆盖率复算：分母为内缩作业区，阈值 90%，地头面积单列。' },
+      checkable: { level: 'yes', note: '独立复算全田 coverage_fraction 和内区 working_area_fraction；内区阈值90%，地头面积单列。' },
       simulatable: { level: 'no', note: 'coverage 问题类不在田间仿真准入范围（CONTRACT §5.1）。' },
       experimented: { level: EXP.cov_tillage[0], note: EXP.cov_tillage[1] },
     },
@@ -774,7 +790,7 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
         };
         return wrapCoverage('coverage-tillage', '大田耕整全覆盖',
           `${W}×${H} m · 幅宽 ${num(v, 'swath_width')} m · 地头 ${num(v, 'headland_width')} m`,
-          seed, inst, v, '覆盖率口径：分母 = 内缩作业区（interior90 政策）；地头单列。',
+          seed, inst, v, 'coverage_fraction 为全田占比；working_area_fraction 为内缩作业区占比，interior90 政策要求后者≥90%。',
           RUNNABLE_PATTERNS_REST[5].runnable!.params);
       },
     },
@@ -794,7 +810,7 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
       defined: { level: 'yes', note: '障碍内孔 + 内缩 + 幅宽。' },
       editable: { level: 'partial', note: 'coverage 编辑器支持障碍多边形。' },
       solvable: { level: 'yes', note: '契约求解器为 Fields2Cover 单元分解处理内孔；实际可用性由现有算法目录检测；基线路径可能穿障，必须通过独立验算。' },
-      checkable: { level: 'yes', note: 'interior90 政策：分母 = 内缩作业区（不含障碍）。' },
+      checkable: { level: 'yes', note: 'coverage_fraction 分母为扣障碍的全田面积；working_area_fraction 为内缩作业区，后者须≥90%。' },
       simulatable: { level: 'no', note: 'coverage 不进仿真。' },
       experimented: { level: EXP.cov_obstacle[0], note: EXP.cov_obstacle[1] },
     },

@@ -32,9 +32,10 @@ export function downloadFile(file: { serialized: string; mime: string; fileName:
   if (onDownload) onDownload(blob, file.fileName);
   else {
     const href = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = href; link.download = file.fileName; link.click();
-    window.setTimeout(() => URL.revokeObjectURL(href), 2000);
+    try {
+      const link = document.createElement('a');
+      link.href = href; link.download = file.fileName; link.click();
+    } finally { window.setTimeout(() => URL.revokeObjectURL(href), 2000); }
   }
   return file;
 }

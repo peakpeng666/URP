@@ -69,3 +69,54 @@ def test_reimport_keeps_original_generator(tmp_path, monkeypatch):
     assert restored['provenance']['source_generator'] == 'urp.studio.agri'
     assert restored['provenance']['params'] == saved['provenance']['params']
     assert restored['provenance']['seed'] == 42
+
+
+def test_duplicate_import_preserves_existing_revision_and_content(tmp_path, monkeypatch):
+    monkeypatch.setattr(paths, 'USER_SCENARIOS', tmp_path)
+    monkeypatch.setattr(scenarios, '_builtin', lambda: {})
+    scenarios.import_scenario(payload())
+    target = tmp_path / 'agri-import-test.json'
+    before = target.read_bytes()
+    modified = payload(); modified['title'] = '不能覆盖原草稿'
+    with pytest.raises(scenarios.ScenarioConflict, match='已存在'):
+        scenarios.import_scenario(modified)
+    assert target.read_bytes() == before
+    assert json.loads(before)['revision'] == 1
+
+
+def test_concurrent_import_creates_once(tmp_path, monkeypatch):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+    monkeypatch.setattr(paths, 'USER_SCENARIOS', tmp_path)
+    monkeypatch.setattr(scenarios, '_builtin', lambda: {})
+    barrier = Barrier(2)
+    def attempt(title):
+        obj = payload(); obj['title'] = title
+        barrier.wait(timeout=5)
+        try:
+            scenarios.import_scenario(obj)
+            return title
+        except scenarios.ScenarioConflict:
+            return None
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(attempt, ['first', 'second']))
+    winners = [r for r in results if r is not None]
+    assert len(winners) == 1
+    saved = json.loads((tmp_path / 'agri-import-test.json').read_text())
+    assert saved['title'] == winners[0] and saved['revision'] == 1
+    assert not list(tmp_path.glob('*.tmp'))
+
+
+def test_http_duplicate_import_returns_conflict(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+    from urp_lab.gateway import Config, create_app
+    monkeypatch.setattr(paths, 'USER_SCENARIOS', tmp_path / 'scenarios')
+    monkeypatch.setattr(scenarios, '_builtin', lambda: {})
+    with TestClient(create_app(Config(runtime=tmp_path, background=False, extra_hosts={'testserver'}))) as client:
+        first = client.post('/lab/api/scenarios', json=payload())
+        assert first.status_code == 201, first.text
+        second = client.post('/lab/api/scenarios', json=payload())
+        assert second.status_code == 409, second.text
+        restored = client.get('/lab/api/scenarios/agri-import-test')
+        assert restored.status_code == 200
+        assert restored.json()['revision'] == 1

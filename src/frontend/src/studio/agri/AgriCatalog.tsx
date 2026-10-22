@@ -2,15 +2,20 @@ import { useEffect, useRef, useState } from 'react';
 import { Button, Input, Notice, Select } from '../../lab/ui';
 import { useStudio } from '../store';
 import { ENVIRONMENTS, OPERATIONS, PLANNING_PROBLEMS, SERVICE_OBJECTS, type AgriTaskPattern } from './taxonomy';
-import { patternStatus } from './patterns';
-import { buildPattern, defaultValues, filterPatterns, importPattern, STATUS_LABELS } from './catalog';
+import { AGRI_PATTERNS, patternStatus } from './patterns';
+import { buildPattern, createImportGuard, defaultValues, filterPatterns, importPattern, STATUS_LABELS } from './catalog';
 import { downloadFile, downloadMatrices } from './export';
 import s from '../panels/panels.module.css';
 
-export function AgriCatalog() {
+export function AgriCatalog({ visible = true }: { visible?: boolean } = {}) {
   const [environment, setEnvironment] = useState('');
   const [operation, setOperation] = useState('');
   const [status, setStatus] = useState('');
+  const [downloadError, setDownloadError] = useState('');
+  function download(format: 'json' | 'csv') {
+    try { downloadMatrices(format); setDownloadError(''); }
+    catch (e) { setDownloadError(e instanceof Error ? e.message : String(e)); }
+  }
   const patterns = filterPatterns(environment, operation, status);
   return <section aria-label="农业任务目录" className={s.pad}>
     <p>选择农业任务并调整参数，保存后进入现有任务规划流程。</p>
@@ -25,36 +30,46 @@ export function AgriCatalog() {
     </Select></label>
     <p>当前 {patterns.length} 个模式</p>
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-      <Button size="sm" onClick={() => downloadMatrices('json')}>下载完整矩阵 JSON</Button>
-      <Button size="sm" onClick={() => downloadMatrices('csv')}>下载完整矩阵 CSV</Button>
+      <Button size="sm" onClick={() => download('json')}>下载完整矩阵 JSON</Button>
+      <Button size="sm" onClick={() => download('csv')}>下载完整矩阵 CSV</Button>
     </div>
+    {downloadError && <div role="alert"><Notice tone="error">下载失败：{downloadError}</Notice></div>}
     {!patterns.length && <p role="status">此组合暂无模式，请调整筛选条件。</p>}
-    {patterns.map((p) => <PatternCard key={p.id} pattern={p} />)}
+    {AGRI_PATTERNS.map((p) => <div key={p.id} hidden={!patterns.some((visible) => visible.id === p.id)}><PatternCard pattern={p} active={visible && patterns.some((shown) => shown.id === p.id)} /></div>)}
   </section>;
 }
 
-export function PatternCard({ pattern: p }: { pattern: AgriTaskPattern }) {
+export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPattern; active?: boolean }) {
   const [values, setValues] = useState(() => defaultValues(p));
   const [seed, setSeed] = useState('42');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const pending = useRef(false);
+  const guard = useRef(createImportGuard());
   const mounted = useRef(true);
-  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
+  const activeNow = useRef(active);
+  activeNow.current = active;
+  useEffect(() => { if (!active) guard.current.invalidateNavigation(); }, [active]);
+  useEffect(() => {
+    mounted.current = true;
+    const changed = () => guard.current.invalidateNavigation();
+    window.addEventListener('hashchange', changed);
+    return () => { mounted.current = false; changed(); window.removeEventListener('hashchange', changed); };
+  }, []);
   const notify = useStudio((st) => st.notify);
   const status = patternStatus(p);
   async function submit() {
-    if (pending.current) return;
-    pending.current = true; setBusy(true); setError('');
+    const ticket = guard.current.begin();
+    if (ticket === null) return;
+    setBusy(true); setError('');
     const startingHash = location.hash;
     try {
       const scenario = await importPattern(p, values, seed.trim() ? Number(seed) : NaN);
       notify('ok', `已校验并保存 ${scenario.title}，请在推荐与求解中继续`);
-      if (mounted.current && location.hash === startingHash) location.hash = `#/plan/${encodeURIComponent(scenario.id)}`;
+      if (mounted.current && activeNow.current && guard.current.canNavigate(ticket) && location.hash === startingHash) location.hash = `#/plan/${encodeURIComponent(scenario.id)}`;
     } catch (e) {
       const message = e instanceof Error ? e.message : String(e);
-      setError(message); notify('error', `农业模板导入失败：${message}`);
-    } finally { pending.current = false; setBusy(false); }
+      if (mounted.current) setError(message); notify('error', `农业模板导入失败：${message}`);
+    } finally { guard.current.finish(); if (mounted.current) setBusy(false); }
   }
   return <details className={s.algCard}>
     <summary>{p.name} · {STATUS_LABELS[status]}</summary>

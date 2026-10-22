@@ -15,12 +15,14 @@ try {
   for (const id of ['field-sampling', 'orchard-harvest-transport', 'coverage-tillage']) {
     const scenario = structuredClone(cases.find((x) => x.pattern === id && x.seed === 42).scenario);
     scenario.id = `smoke-${id}-${Date.now().toString(36)}`;
-    scenario.provenance.params = { ...scenario.editable.values, pattern_id: id, builder_version: 'urp.agri.builder/2' };
+    scenario.provenance.params = { ...scenario.editable.values, pattern_id: id, builder_version: 'urp.agri.builder/3' };
     await request('/scenarios', scenario, 201);
     const restored = await request('/scenarios/' + scenario.id);
     assert.equal(restored.id, scenario.id); assert.equal(restored.provenance.seed, 42);
     assert.deepEqual(restored.provenance.params, scenario.provenance.params);
     assert.equal(restored.sim.supported, false);
+    await request('/scenarios', { ...scenario, title: 'must not overwrite' }, 409);
+    assert.deepEqual(await request('/scenarios/' + scenario.id), restored);
     const recommendation = await request('/recommend', { scenario_id: scenario.id });
     const algorithm = id === 'coverage-tillage' ? 'panel.boustrophedon' : 'panel.cluster_first';
     const job = await request('/solve', { scenario_id: scenario.id, algorithms: [{ id: algorithm, params: {} }], label: 'agri compatibility acceptance' }, 202);
@@ -36,6 +38,6 @@ try {
     await fs.writeFile(`${output}/${id}-scenario.json`, JSON.stringify(restored, null, 2));
     await fs.writeFile(`${output}/${id}-recommendation.json`, JSON.stringify(recommendation, null, 2));
     const runs = await request('/runs?scenario_id=' + scenario.id); assert.ok(runs.runs.some((r) => r.run_id === run.run_id));
-    results.push({ id, scenario_id: scenario.id, run_id: run.run_id, state: run.state, status: run.status, check: run.check, record_schema: record.record.schema });
+    results.push({ id, duplicate_import_status: 409, original_preserved: true, provenance_roundtrip: true, scenario_id: scenario.id, run_id: run.run_id, state: run.state, status: run.status, check: run.check, record_schema: record.record.schema });
   }
 } finally { await fs.writeFile(output + '/summary.json', JSON.stringify(results, null, 2)); }

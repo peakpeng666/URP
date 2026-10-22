@@ -10,7 +10,14 @@ export type XY = [number, number];
 export type Ring = XY[];
 
 /** 确定性随机数（mulberry32 变体）：同一种子同一实例，保证可复现。 */
+export function validateSeed(seed: number): void {
+  if (!Number.isSafeInteger(seed) || seed < 0 || seed > 0xffffffff) {
+    throw new Error('随机种子须为 0–4294967295 的整数');
+  }
+}
+
 export function rng(seed: number): () => number {
+  validateSeed(seed);
   let a = seed >>> 0;
   return () => {
     a |= 0;

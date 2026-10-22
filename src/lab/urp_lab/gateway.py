@@ -389,6 +389,8 @@ def create_app(config: Config | None = None) -> FastAPI:
             raise ApiError(501, 'not_implemented', '当前版本不支持导入场景')
         try:
             return fn(body_dict(payload))
+        except module.ScenarioConflict as exc:
+            raise ApiError(409, 'scenario_conflict', str(exc)) from None
         except ValueError as exc:
             raise ApiError(400, 'invalid_scenario', str(exc)) from None
 

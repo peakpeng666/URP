@@ -26,7 +26,44 @@ try {
   const records = [];
   for (const pattern of buildable) for (const seed of [42, 7, 2026]) {
     const values = Object.fromEntries(pattern.runnable.params.map(p => [p.key, p.default]));
-    records.push({ pattern: pattern.id, seed, scenario: pattern.runnable.build(values, seed) });
+    records.push({ group: 'default', pattern: pattern.id, seed, scenario: pattern.runnable.build(values, seed) });
+  }
+  const rejected = [];
+  for (const pattern of buildable) {
+    const defaults = Object.fromEntries(pattern.runnable.params.map(p => [p.key, p.default]));
+    const fleet = pattern.runnable.problem_class === 'fleet_routing';
+    // Wide, unobstructed reference combinations isolate individual numeric bounds.
+    const safe = fleet
+      ? { ...defaults, field_w: 600, field_h: 600, capacity: 5000, demand_per_task: 1, obstacle_count: 0, obstacle_r: 5 }
+      : { ...defaults, field_w: 200, field_h: 100, pond_r: 5, headland_width: 5, swath_width: 8, robot_width: 2 };
+    const cases = [{ name: 'joint-safe', values: safe },
+      { name: 'joint-angle-footprint', values: fleet
+        ? { ...safe, row_angle: 179, robot_radius: 2, vehicles: 3, capacity: 500, demand_per_task: 100, task_count: 4 }
+        : { ...safe, field_w: 40, field_h: 40, headland_width: 0, robot_width: 8, turn_radius: 12, swath_width: 12 } }];
+    for (const param of pattern.runnable.params) {
+      if (param.type !== 'number' || ['field_w', 'field_h'].includes(param.key)) continue;
+      for (const [side, bound] of [['min', param.min], ['max', param.max]]) {
+        if (bound !== undefined) cases.push({ name: `${param.key}-${side}`, values: { ...safe, [param.key]: bound } });
+      }
+    }
+    for (const c of cases) {
+      const seed = c.name === 'joint-angle-footprint' ? 0xffffffff : 0;
+      // Any unexpected builder rejection fails the gate; only the explicit negative cases below may reject.
+      try { records.push({ group: 'boundary', case: c.name, pattern: pattern.id, seed, scenario: pattern.runnable.build(c.values, seed) }); }
+      catch (error) { throw new Error(`${pattern.id}/${c.name}: ${error.message}`); }
+    }
+    const negative = fleet
+      ? [{ name: 'insufficient-capacity', values: { ...defaults, capacity: 1, demand_per_task: 500 }, expected: /单车容量不能小于单点需求/ }]
+      : [{ name: 'empty-interior', values: { ...defaults, field_w: 40, field_h: 40, headland_width: 20 }, expected: /内缩作业区为空/ },
+        { name: 'excessive-grid', values: { ...defaults, field_w: 600, field_h: 600, swath_width: 0.5 }, expected: /田块相对作业幅宽过大/ }];
+    negative.push({ name: 'invalid-seed', values: defaults, seed: -1, expected: /随机种子/ });
+    for (const c of negative) {
+      let message;
+      try { pattern.runnable.build(c.values, c.seed ?? 42); }
+      catch (error) { message = String(error.message); }
+      if (!message || !c.expected.test(message)) throw new Error(`${pattern.id}/${c.name}: expected ${c.expected}, got ${message ?? 'accepted'}`);
+      rejected.push({ pattern: pattern.id, case: c.name, seed: c.seed ?? 42, values: c.values, expected_builder_rejection: message });
+    }
   }
   if (process.argv[3]) fs.writeFileSync(process.argv[3], JSON.stringify(records, null, 2));
   const input = path.join(temp, 'instances.json');fs.writeFileSync(input, JSON.stringify(records));
@@ -35,7 +72,14 @@ try {
     encoding: 'utf8', env: { ...process.env, PYTHONDONTWRITEBYTECODE: '1' }, maxBuffer: 10 * 1024 * 1024,
   });
   if (result.error) throw result.error;
-  if (process.argv[2]) fs.writeFileSync(process.argv[2], result.stdout);
-  process.stdout.write(result.stdout); process.stderr.write(result.stderr);
+  const report = JSON.parse(result.stdout);
+  report.builder_rejections = rejected;
+  report.groups = Object.fromEntries(['default', 'boundary'].map(group => {
+    const selected = report.results.filter(r => r.group === group);
+    return [group, { checked: selected.length, passed: selected.filter(r => r.valid).length }];
+  }));
+  const output = JSON.stringify(report, null, 2) + '\n';
+  if (process.argv[2]) fs.writeFileSync(process.argv[2], output);
+  process.stdout.write(output); process.stderr.write(result.stderr);
   if (result.status !== 0) process.exitCode = result.status ?? 1;
 } finally { fs.rmSync(temp, { recursive: true, force: true }); }

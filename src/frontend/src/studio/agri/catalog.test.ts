@@ -14,7 +14,7 @@ describe('agriculture existing-workbench integration', () => {
   it.each(AGRI_PATTERNS.filter((p) => p.runnable))('UI defaults are buildable: $id', (pattern) => {
     const built = buildPattern(pattern, defaultValues(pattern), 42);
     expect(built.provenance.params.pattern_id).toBe(pattern.id);
-    expect(built.provenance.params.builder_version).toBe('urp.agri.builder/2');
+    expect(built.provenance.params.builder_version).toBe('urp.agri.builder/3');
   });
   it('renders filters, real download actions, editable forms and blocked proposals', () => {
     const html = renderToStaticMarkup(createElement(AgriCatalog));
@@ -49,7 +49,7 @@ describe('agriculture existing-workbench integration', () => {
     expect(request.provenance.pattern).toBe(runnable.id);
     expect(request.editable.values).toEqual(defaultValues(runnable));
     expect(request.provenance.seed).toBe(42);
-    expect(request.provenance.params).toEqual({ ...defaultValues(runnable), pattern_id: runnable.id, builder_version: 'urp.agri.builder/2' });
+    expect(request.provenance.params).toEqual({ ...defaultValues(runnable), pattern_id: runnable.id, builder_version: 'urp.agri.builder/3' });
   });
   it('propagates backend validation failure instead of navigating or inventing success', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({ message: '任务位于障碍物内' }), { status: 400 })));

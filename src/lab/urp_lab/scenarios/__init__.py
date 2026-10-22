@@ -195,12 +195,11 @@ def import_scenario(obj: dict) -> dict:
         'layers': obj.get('layers') if isinstance(obj.get('layers'), dict) else {},
         'origin': 'user',
     }
-    paths.USER_SCENARIOS.mkdir(parents=True, exist_ok=True)
-    target = paths.USER_SCENARIOS / f'{sid}.json'
-    tmp = target.with_suffix('.json.tmp')
-    tmp.write_text(json.dumps(scenario, ensure_ascii=False, indent=1), encoding='utf-8')
-    tmp.replace(target)
-    return summary(scenario)
+    # Import creates a new scenario. Editing uses the revision-aware update endpoint.
+    with _WRITE_LOCK:
+        if (paths.USER_SCENARIOS / f'{sid}.json').exists():
+            raise ScenarioConflict(f'场景 {sid} 已存在；请使用新 ID 导入，或在规划页编辑原场景')
+        return summary(save_user_scenario(scenario, overwrite=False))
 
 
 def save_user_scenario(scenario: dict, overwrite: bool = True, expected_revision: int | None = None) -> dict:

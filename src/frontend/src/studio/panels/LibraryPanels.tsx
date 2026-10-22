@@ -49,7 +49,7 @@ export function ScenarioNavigator() {
   return (
     <div className={s.scroll}>
       <div className={s.pad}><Button size="sm" onClick={() => setCatalog(!catalog)} aria-expanded={catalog}>{catalog ? '返回已有场景' : '打开农业任务目录'}</Button></div>
-      {catalog && <AgriCatalog />}
+      <div hidden={!catalog}><AgriCatalog visible={catalog} /></div>
       <div hidden={catalog}>
       <div className={s.search}>
         <Input placeholder="搜索场景" value={q} onChange={(e) => setQ(e.target.value)} aria-label="搜索场景" />
