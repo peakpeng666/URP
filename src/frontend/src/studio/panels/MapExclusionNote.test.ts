@@ -3,7 +3,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import type { Solution } from '../../lab/types';
 import { exclusionReason, mapCheckIssue, partitionRuns, verifiedPlan } from '../comparison';
-import { MapExclusionNote } from './MapExclusionNote';
+import { MapExclusionNote, verifyText } from './MapExclusionNote';
 
 // Shape copied from a real cvrp map run returned by /lab/api/runs (map_check fields only).
 const collision = {
@@ -48,7 +48,7 @@ describe('MapExclusionNote', () => {
     const html = renderToStaticMarkup(createElement(MapExclusionNote, { run: run(collision) }));
     expect(html).toContain('data-exclusion="map_collision"');
     expect(html).toContain('data-violation-count="1"');
-    expect(html).toContain('算法A · run_abcd：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m &lt; 阈值 0.225 m）。');
+    expect(html).toContain('算法A · run_abcdef123：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m &lt; 阈值 0.225 m）。');
     expect(html).toContain('路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m');
     expect(html).not.toContain('另有');
   });
@@ -63,5 +63,15 @@ describe('MapExclusionNote', () => {
     expect(html).toContain('data-exclusion="map_unchecked"');
     expect(html).toContain('地图碰撞检查未完成，不计入已验算可行解。');
     expect(renderToStaticMarkup(createElement(MapExclusionNote, { run: run(null) }))).toBe('');
+  });
+});
+
+describe('verifyText', () => {
+  it('agrees with verifiedPlan for map collisions and unchecked maps', () => {
+    expect(verifyText(run(collision))).toEqual({ text: '未通过（地图碰撞 1 处）', code: 'map_collision' });
+    expect(verifyText(run({ ...collision, checked: false, collision_free: null })).code).toBe('map_unchecked');
+    expect(verifyText(run(null))).toEqual({ text: '通过', code: 'pass' });
+    expect(verifyText(run(null, { check: { valid: false, errors: ['a', 'b'] } }))).toEqual({ text: '未通过 2 项', code: 'route_fail' });
+    expect(verifyText(run(null, { check: null })).code).toBe('unchecked');
   });
 });

@@ -3,6 +3,16 @@ import { mapCheckIssue, type MapViolationSummary } from '../comparison';
 
 export const MAP_VIOLATIONS_SHOWN = 3;
 
+/** Verify-column text that agrees with verifiedPlan: a passing route check is not "通过" when the map check failed or did not run. */
+export function verifyText(run: Solution): { text: string; code: 'pass' | 'route_fail' | 'map_collision' | 'map_unchecked' | 'unchecked' } {
+  if (!run.check) return { text: '未检查', code: 'unchecked' };
+  if (!run.check.valid) return { text: `未通过${run.check.errors.length ? ` ${run.check.errors.length} 项` : ''}`, code: 'route_fail' };
+  const issue = mapCheckIssue(run);
+  if (issue?.code === 'map_collision') return { text: `未通过（地图碰撞 ${issue.map?.total ?? 0} 处）`, code: 'map_collision' };
+  if (issue) return { text: '路线通过 · 地图未检查', code: 'map_unchecked' };
+  return { text: '通过', code: 'pass' };
+}
+
 const n = (v: number, d: number) => v.toFixed(d);
 
 export function violationText(v: MapViolationSummary): string {
@@ -14,7 +24,7 @@ export function violationText(v: MapViolationSummary): string {
 export function MapExclusionNote({ run, label }: { run: Solution; label?: string }) {
   const issue = mapCheckIssue(run);
   if (!issue || run.check?.valid !== true) return null;
-  const who = label ?? `${run.algorithm?.name ?? run.run_id} · ${run.run_id.slice(0, 8)}`;
+  const who = label ?? `${run.algorithm?.name ?? run.run_id} · ${run.run_id}`;
   if (issue.code === 'map_unchecked' || !issue.map) {
     return <p className="map-exclusion" data-exclusion="map_unchecked" data-run-id={run.run_id}>{who}：地图碰撞检查未完成，不计入已验算可行解。</p>;
   }
