@@ -47,13 +47,17 @@ class RunnerTests(unittest.TestCase):
         from runner.run import classify, installation_step
         with tempfile.TemporaryDirectory() as tmp:
             p=pathlib.Path(tmp)/'log'
-            cases={'apt_signature':'NO_PUBKEY PRIVATE_KEY_ID','apt_source_conflict':'Conflicting values set for option Signed-By PRIVATE_URL','apt_release':'does not have a Release file','apt_hook':'Problem executing scripts APT::Update::Post-Invoke','apt_lock':'Could not get lock PRIVATE_PATH','apt_package_missing':'E: Unable to locate package PRIVATE_NAME'}
+            cases={'apt_dependency_conflict':'The following packages have unmet dependencies:', 'apt_libunwind_conflict':'libunwind-14-dev : Conflicts: libunwind-dev but it is to be installed', 'apt_signature':'NO_PUBKEY PRIVATE_KEY_ID','apt_source_conflict':'Conflicting values set for option Signed-By PRIVATE_URL','apt_release':'does not have a Release file','apt_hook':'Problem executing scripts APT::Update::Post-Invoke','apt_lock':'Could not get lock PRIVATE_PATH','apt_package_missing':'E: Unable to locate package PRIVATE_NAME'}
             for expected,text in cases.items():
                 p.write_text('+URP_SETUP sudo apt-get update\n'+text)
                 self.assertEqual(classify(p,100),expected)
                 self.assertEqual(installation_step(p),'apt_update')
             p.write_text('+URP_SETUP sudo apt-get update\n+URP_SETUP sudo DEBIAN_FRONTEND=noninteractive apt-get install -y PRIVATE_PACKAGE\n')
             self.assertEqual(installation_step(p),'apt_install')
+            p.write_text('libunwind-14-dev libunwind-dev\nUnable to correct problems, you have held broken packages.')
+            self.assertEqual(classify(p,100),'apt_dependency_conflict')
+            p.write_text('Broken libunwind-14-dev:amd64 Conflicts on libunwind-dev:amd64')
+            self.assertEqual(classify(p,100),'apt_libunwind_conflict')
             p.write_text('+URP_SETUP sudo apt-get update\n+URP_SETUP uv sync --locked\n')
             self.assertEqual(installation_step(p),'other')
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Isolated runner lifecycle. All child output is private, never echoed on failure."""
 import argparse, ctypes, json, os, pathlib, re, signal, subprocess, sys, time
-HINTS = frozenset({'none','source_identity','package_install','dependency_fetch','network','disk_full','native_build','registry_identity','unknown','apt_signature','apt_source_conflict','apt_release','apt_hook','apt_lock','apt_package_missing'})
+HINTS = frozenset({'none','source_identity','package_install','dependency_fetch','network','disk_full','native_build','registry_identity','unknown','apt_signature','apt_source_conflict','apt_release','apt_hook','apt_lock','apt_package_missing','apt_dependency_conflict','apt_libunwind_conflict'})
 LIMIT = 65536
 
 def classify(path, exit_code):
@@ -18,6 +18,9 @@ def classify(path, exit_code):
             tail=stream.read(LIMIT).decode('utf-8',errors='replace').lower()
     except OSError:
         return 'unknown'
+    # Require an explicit conflict edge, not mere mention of both packages.
+    unwind=r'(?:libunwind-[0-9]{1,2}-dev[^\n]*conflicts(?::| on)[^\n]*libunwind-dev|libunwind-dev[^\n]*conflicts(?::| on)[^\n]*libunwind-[0-9]{1,2}-dev)'
+    if re.search(unwind,tail):return 'apt_libunwind_conflict'
     markers = (
         ('disk_full', ('no space left on device','disk quota exceeded')),
         ('source_identity', ('source_revision_mismatch','index_revision_mismatch','tracked_blob_mismatch','tracked_file_missing','tracked_symlink_changed','unmerged_index','empty_source_checkout')),
@@ -29,6 +32,7 @@ def classify(path, exit_code):
         ('apt_lock', ('could not get lock','unable to acquire the dpkg frontend lock','unable to lock directory')),
         ('apt_package_missing', ('e: unable to locate package','has no installation candidate','unable to find a source package')),
         ('network', ('temporary failure in name resolution','could not resolve host','network is unreachable','connection timed out','connection reset by peer','certificate verify failed')),
+        ('apt_dependency_conflict', ('following packages have unmet dependencies','unable to correct problems, you have held broken packages','e: unmet dependencies','pkgproblemresolver::resolve generated breaks')),
         ('package_install', ('e: unable to locate package','e: unmet dependencies','dpkg: error','sub-process /usr/bin/dpkg returned an error code')),
         ('dependency_fetch', ('failed to download','failed to fetch','no solution found when resolving dependencies','npm error code eintegrity','npm err! code eintegrity')),
         ('native_build', ('cmake error','ninja: build stopped','collect2: error: ld returned','fatal error:')),

@@ -21,4 +21,12 @@ export UV_PYTHON_INSTALL_DIR="$private/python"
 python3 "$(dirname "$0")/verify_registry.py" "$source_root" > "$private/registry-identity.json"
 # Xtrace is private; reducer publishes only a fixed installation-step enum.
 export PS4='+URP_SETUP '
+set +e
 bash -x setup/ubuntu/setup.sh --components workbench --fields2cover skip
+setup_exit=$?
+set -e
+if [[ "$setup_exit" == 100 ]]; then
+  # Original exit is retained; simulation diagnostics cannot make failure pass.
+  python3 "$(dirname "$0")/apt_diagnostic.py" "$source_root" || true
+fi
+exit "$setup_exit"
