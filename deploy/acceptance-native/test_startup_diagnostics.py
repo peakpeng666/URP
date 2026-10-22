@@ -48,4 +48,33 @@ class StartupDiagnosticsTests(unittest.TestCase):
                 log.write_text('+URP_SETUP '+line+'\n')
                 self.assertEqual(installation_progress(log),expected)
 
+class UndockDiagnosticsTests(unittest.TestCase):
+    def test_exact_fixed_source_action_errors(self):
+        labels={'/undock 动作服务不可用':'undock_server_unavailable','/undock 拒绝目标':'undock_goal_rejected','/undock 未确认取消':'undock_cancel_unconfirmed','/undock 执行预算耗尽':'undock_budget_exhausted','动作取消未收敛':'action_cancel_not_settled','ROS 响应超时':'ros_response_timeout','/undock 状态 5，未到达':'undock_canceled','/undock 状态 6，未到达':'undock_aborted'}
+        for label,code in labels.items():
+            result=project({'errors':[label+' PRIVATE_PATH_URL']},{})
+            self.assertIn(code,result['error_codes'])
+            self.assertNotIn('PRIVATE',json.dumps(result))
+    def test_official_log_events_are_not_inferred_from_generic_abort(self):
+        result=project({}, {'sim':'Received new undock goal PRIVATE\nUndock Goal Exceeded Runtime\nUndock Goal Aborted'})
+        self.assertEqual(result['undock_events'],['aborted','received','runtime_exceeded'])
+        self.assertEqual(project({}, {'sim':'Aborted PRIVATE'})['undock_events'],[])
+        self.assertNotIn('PRIVATE',json.dumps(result))
+    def test_available_scalars_and_unavailable_final_dock(self):
+        report={'stages':[{'name':'undocking','wall_s':12.738},{'name':'failed','wall_s':62.831}], 'final_state':{'robot':{'t_sim':31.5,'speed':0.02,'ground_truth':['PRIVATE_COORDINATES']}}}
+        result=project(report,{})
+        self.assertEqual(result['dock_state_at_undock_entry'],'docked')
+        self.assertEqual(result['final_dock_state'],'unavailable')
+        self.assertEqual(result['final_sim_time_s'],31.5)
+        self.assertEqual(result['final_speed_m_s'],0.02)
+        self.assertEqual(result['error_codes'],[]) # Duration alone is not timeout evidence.
+        self.assertNotIn('PRIVATE',json.dumps(result))
+        self.assertEqual(sanitize(result),result)
+        self.assertEqual(public_project({'state':'FAIL','startup_diagnostics':result},require_runner=False)['state'],'FAIL')
+    def test_invalid_scalars_and_unknown_dock_never_pass_through(self):
+        result=sanitize({'final_sim_time_s':float('inf'),'final_speed_m_s':True,'dock_state_at_undock_entry':'PRIVATE','final_dock_state':'undocked'})
+        self.assertIsNone(result['final_sim_time_s']);self.assertIsNone(result['final_speed_m_s'])
+        self.assertEqual(result['dock_state_at_undock_entry'],'unavailable')
+        self.assertEqual(result['final_dock_state'],'unavailable')
+
 if __name__=='__main__':unittest.main()

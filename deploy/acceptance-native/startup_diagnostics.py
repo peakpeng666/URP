@@ -4,6 +4,8 @@ PHASES={'starting','undocking','localizing','nav2_starting','ready','executing',
 COUNTS=('clock','odom','scan','dock','ground_truth','amcl','global_map','local_map','cmd_vel','nav2_plan')
 COMPONENTS=('session','sim','truth','localization','nav')
 LABELS={'sensors_not_ready':'控制器/传感器未就绪','dock_not_ready':'初始充电座状态不可用','localization_timeout':'AMCL 初始定位超时','initialpose_unavailable':'initialpose 订阅者不可用','nav2_not_active':'Nav2 生命周期未激活','costmap_tf_not_ready':'代价地图/TF 未就绪','sim_launch_error':'官方仿真启动错误','assets_missing':'世界依赖缺失：','required_process_exit':'关键服务 ','required_node_exit':'的子节点意外退出：'}
+LABELS.update({'undock_server_unavailable':'/undock 动作服务不可用','undock_goal_rejected':'/undock 拒绝目标','undock_cancel_unconfirmed':'/undock 未确认取消','undock_budget_exhausted':'/undock 执行预算耗尽','action_cancel_not_settled':'动作取消未收敛','ros_response_timeout':'ROS 响应超时','undock_canceled':'/undock 状态 5，未到达','undock_aborted':'/undock 状态 6，未到达'})
+UNDOCK_EVENTS={'received':'Received new undock goal','cancel_requested':'Received request to cancel undock goal','runtime_exceeded':'Undock Goal Exceeded Runtime','succeeded':'Undock Goal Succeeded','aborted':'Undock Goal Aborted','start_failed':'Undock behavior failed to start','rejected_not_docked':'Robot already undocked, reject'}
 CODES=set(LABELS)|{'launch_process_died','launch_server_failure','launch_uri_missing','segmentation_fault','python_module_missing','python_import_error'}
 SID=re.compile(r'sim_[0-9]{8}T[0-9]{6}_[0-9a-f]{6}\Z')
 
@@ -29,8 +31,9 @@ def sanitize(raw):
     exits=[]
     for row in raw.get('component_exits',[]) if isinstance(raw.get('component_exits'),list) else []:
         if isinstance(row,dict) and row.get('component') in COMPONENTS and type(row.get('exit_code')) is int and -255<=row['exit_code']<=255:exits.append({'component':row['component'],'exit_code':row['exit_code']})
+    events=raw.get('undock_events');events=events if isinstance(events,list) else []
     codes=raw.get('error_codes');codes=codes if isinstance(codes,list) else []
-    return {'report_available':raw.get('report_available') is True,'phase':raw.get('phase') if isinstance(raw.get('phase'),str) and raw['phase'] in PHASES else 'unknown','stages':stages[-20:],'counts':{k:num(counts.get(k),True) for k in COUNTS},'assets_complete':raw.get('assets_complete') if type(raw.get('assets_complete')) is bool else None,'assets_missing_count':num(raw.get('assets_missing_count'),True,100000),'error_codes':sorted({c for c in codes if isinstance(c,str) and c in CODES})[:16],'component_exits':exits[:20]}
+    return {'report_available':raw.get('report_available') is True,'undock_events':sorted({e for e in events if isinstance(e,str) and e in UNDOCK_EVENTS}),'dock_state_at_undock_entry':raw.get('dock_state_at_undock_entry') if raw.get('dock_state_at_undock_entry') == 'docked' else 'unavailable','final_dock_state':'unavailable','final_sim_time_s':num(raw.get('final_sim_time_s'),high=86400),'final_speed_m_s':num(raw.get('final_speed_m_s'),high=20),'phase':raw.get('phase') if isinstance(raw.get('phase'),str) and raw['phase'] in PHASES else 'unknown','stages':stages[-20:],'counts':{k:num(counts.get(k),True) for k in COUNTS},'assets_complete':raw.get('assets_complete') if type(raw.get('assets_complete')) is bool else None,'assets_missing_count':num(raw.get('assets_missing_count'),True,100000),'error_codes':sorted({c for c in codes if isinstance(c,str) and c in CODES})[:16],'component_exits':exits[:20]}
 
 def project(report,logs):
     report=report if isinstance(report,dict) else {};final=report.get('final_state') or {};final=final if isinstance(final,dict) else {}
@@ -40,14 +43,17 @@ def project(report,logs):
     errors+=final.get('errors',[]) if isinstance(final.get('errors'),list) else []
     text='\n'.join(x[:65536] for x in errors[:20] if isinstance(x,str))
     codes=[code for code,label in LABELS.items() if label in text]
-    exits=[]
+    exits=[];events=[]
     for component in COMPONENTS:
         text=logs.get(component,'')
+        events.extend(event for event,label in UNDOCK_EVENTS.items() if label in text)
         codes.extend(code for code,label in LABELS.items() if label in text)
         for marker,code in [('process has died','launch_process_died'),('CRITICAL FAILURE: SERVER','launch_server_failure'),('Unable to find uri','launch_uri_missing'),('Segmentation fault','segmentation_fault'),('ModuleNotFoundError:','python_module_missing'),('ImportError:','python_import_error')]:
             if marker in text:codes.append(code)
         for value in re.findall(r'\bexit code (-?\d{1,3})(?:\D|$)',text):exits.append({'component':component,'exit_code':int(value)})
-    return sanitize({'report_available':bool(report),'phase':final.get('phase') or (stages[-1]['phase'] if stages else 'unknown'),'stages':stages,'counts':{k:report['counts'].get(k,0) for k in COUNTS} if isinstance(report.get('counts'),dict) else {},'assets_complete':assets.get('complete'),'assets_missing_count':len(assets['missing']) if isinstance(assets.get('missing'),list) else None,'error_codes':codes,'component_exits':exits})
+    robot=final.get('robot');robot=robot if isinstance(robot,dict) else {}
+    # Fixed944 gates entry to undocking on latest dock.is_docked; it does not persist final dock state.
+    return sanitize({'report_available':bool(report),'undock_events':events,'dock_state_at_undock_entry':'docked' if any(r.get('phase')=='undocking' for r in stages) else 'unavailable','final_sim_time_s':robot.get('t_sim'),'final_speed_m_s':robot.get('speed'),'phase':final.get('phase') or (stages[-1]['phase'] if stages else 'unknown'),'stages':stages,'counts':{k:report['counts'].get(k,0) for k in COUNTS} if isinstance(report.get('counts'),dict) else {},'assets_complete':assets.get('complete'),'assets_missing_count':len(assets['missing']) if isinstance(assets.get('missing'),list) else None,'error_codes':codes,'component_exits':exits})
 
 def collect(runtime,sid):
     if not isinstance(sid,str) or not SID.fullmatch(sid):return sanitize({})
