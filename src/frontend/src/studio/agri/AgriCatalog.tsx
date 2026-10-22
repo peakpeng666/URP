@@ -5,7 +5,7 @@ import { ENVIRONMENTS, OPERATIONS, PLANNING_PROBLEMS, SERVICE_OBJECTS, type Agri
 import { AGRI_PATTERNS, patternStatus } from './patterns';
 import { buildPattern, createImportGuard, defaultValues, filterPatterns, importPattern, STATUS_LABELS } from './catalog';
 import { downloadFile, downloadMatrices } from './export';
-import { clearDraft, loadDraft, loadFilters, onForeignDraftChange, saveDraft, saveFilters } from './drafts';
+import { clearDraft, lastImport, recordImport, loadDraft, loadFilters, onForeignDraftChange, saveDraft, saveFilters } from './drafts';
 import { extractPreview, previewIssues } from './preview';
 import { PreviewMap } from './PreviewMap';
 import s from '../panels/panels.module.css';
@@ -51,6 +51,7 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
   const [draftNotice, setDraftNotice] = useState(initial.notice);
   const [saveError, setSaveError] = useState('');
   const [open, setOpen] = useState(false);
+  const [prior, setPrior] = useState(() => lastImport(p.id));
   const touched = useRef(false);
   useEffect(() => {
     if (!p.runnable || !touched.current) return;
@@ -91,6 +92,8 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
     const startingHash = location.hash;
     try {
       const scenario = await importPattern(p, values, seed.trim() ? Number(seed) : NaN);
+      const rec = { scenarioId: scenario.id, title: scenario.title, seed, at: new Date().toISOString() };
+      recordImport(p.id, rec); if (mounted.current) setPrior(rec);
       notify('ok', `已校验并保存 ${scenario.title}，请在推荐与求解中继续`);
       if (mounted.current && activeNow.current && guard.current.canNavigate(ticket) && location.hash === startingHash) location.hash = `#/plan/${encodeURIComponent(scenario.id)}`;
     } catch (e) {
@@ -127,6 +130,7 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
             setError('');
           } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
         }}>下载原始场景 JSON</Button>
+        {prior && <Notice tone="info">此模式上次导入为 <a href={`#/plan/${encodeURIComponent(prior.scenarioId)}`}>{prior.title}</a>（种子 {prior.seed}）。再次导入会新建一个场景，不会覆盖你在地图上对那份做的手工编辑；要保留手工成果请继续编辑原场景。</Notice>}
         <Button onClick={resetDraft}>清除草稿并恢复默认</Button>
         <Button onClick={() => void submit()} disabled={busy || !p.runnable}>{busy ? '校验并保存中…' : '校验并导入任务规划'}</Button>
       </fieldset>

@@ -85,3 +85,14 @@ describe('agri preview', () => {
     expect(distToSegment([0, 1], [-1, 0], [1, 0])).toBe(1);
   });
 });
+
+import { lastImport, recordImport } from './drafts';
+describe('last import record', () => {
+  it('remembers the last imported scenario per pattern and tolerates garbage', () => {
+    expect(lastImport(p.id)).toBeNull();
+    recordImport(p.id, { scenarioId: 's1', title: 'T', seed: '3', at: 'x' });
+    expect(lastImport(p.id)?.scenarioId).toBe('s1');
+    local.setItem(`urp.agri.lastImport.v1:${p.id}`, '{bad');
+    expect(lastImport(p.id)).toBeNull();
+  });
+});
