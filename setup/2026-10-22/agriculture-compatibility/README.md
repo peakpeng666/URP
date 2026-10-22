@@ -44,18 +44,18 @@ node src/frontend/tools/check-agri-contract.mjs /tmp/agri-contract.json
 
 ## 第二轮边界与恢复检查
 
-- 同 ID 导入返回 409，保留原场景；新建与编辑复用同一写入锁，场景从 revision 1 起步。规划页编辑继续使用原版本检查接口。
+- 同 ID 导入：内容完全相同（且原场景仍为 revision 1）返回 200 和已有记录（幂等重试）；内容不同或原场景已被编辑，仍返回 409 并保留原场景（见下文“幂等导入”）；新建与编辑复用同一写入锁，场景从 revision 1 起步。规划页编辑继续使用原版本检查接口。
 - 目录筛选保留参数草稿；进行中相同请求去重，旧请求不会在离开再返回后抢导航；冲突后保留参数，主动重试创建新 ID。
 - 场景 ID 使用 `getRandomValues`，兼容局域网 HTTP，不要求改变部署协议；见 [MDN API说明](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/getRandomValues)。
 - 生成器版本升为 `urp.agri.builder/3`。种子边界、障碍互斥、混编车体半径与温室大半径补给点均有反例回归；覆盖率与曲率模型说明按真实计算口径修正。
 - 跨语言回归：默认66/66，边界356/356；另46个固定负例按预期原因拒绝。该轮后端全套396通过、4跳过。
-- 三个代表场景再次完成真实 HTTP 链；逐例重复导入409，原场景保持不变，参数、版本和种子可恢复。
+- 三个代表场景再次完成真实 HTTP 链；逐例重复导入409（当时行为；现相同内容返回 200，见下文），原场景保持不变，参数、版本和种子可恢复。
 
 ## 无 ROS 工作台部署
 
 - 地图场景按已安装资源注册。没有 ROS 地图时，数值工作台及自建农业任务正常使用；已安装但损坏的地图仍报错。
 - 缺失地图的内置场景 ID 仍保留，避免用户导入占用后与恢复地图发生冲突。
-- 空地图目录下完成场景列表、3个农业 HTTP 场景及部署覆盖任务的导入、重复导入409、求解、独立验算和记录恢复。
+- 空地图目录下完成场景列表、3个农业 HTTP 场景及部署覆盖任务的导入、重复导入409（当时行为，同上）、求解、独立验算和记录恢复。
 - Docker 构建检查执行默认覆盖及 `--obstacle` 内孔绕障两种真实业务任务，均经过导入、求解与独立验算。
 - 地图专项12项、导入专项12项通过；整套后端410项通过、4项跳过。部署离线测试49项通过、1项依赖条件跳过。
 - HTTP 检查脚本只输出最小验收摘要，完整 API 响应仅用于内存断言。
@@ -70,3 +70,11 @@ node src/frontend/tools/check-agri-contract.mjs /tmp/agri-contract.json
 - 前端519项、后端430项通过（后端4项环境条件跳过），22个默认求解与独立验算全部通过。
 
 方法依据：[Fields2Cover分解教程](https://fields2cover.github.io/source/tutorials/decomposition.html)、[Shapely几何缓冲说明](https://shapely.readthedocs.io/en/stable/manual.html#object.buffer)。本次未变更锁定的Fields2Cover版本。
+
+
+## 幂等导入（POST /scenarios、/fork）
+
+- `POST /lab/api/scenarios`：同 ID 且内容完全相同（问题类型、规范化实例、标题、坐标系类型、生成参数与种子一致，且原场景仍为 revision 1）返回 **200** 和已有记录，不新建、不改版本；同 ID 但内容不同、或原场景已被编辑，**仍返回 409**，原场景不变。新 ID 仍返回 201。
+- `POST /lab/api/scenarios/{id}/fork`：可选 `client_id`。首次 201；同 `client_id` 且来源、标题、实例一致返回 200 和已有副本；内容不同返回 409；`client_id` 非法返回 400。不带 `client_id` 时行为不变（服务端生成 ID）。
+- 前端在结果不确定（超时/断连/5xx）时先按原 ID 查询再决定是否重发，待定记录存于 sessionStorage；GeoJSON 导入无法由客户端指定 ID，结果不确定时列出候选由用户选择或确认重新导入，不自动认领。
+- 测试：`src/lab/tests/test_scenario_idempotency.py`、`src/lab/tests/test_agri_import_provenance.py::test_http_duplicate_import_is_idempotent_and_changed_content_conflicts`。
