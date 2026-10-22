@@ -76,3 +76,32 @@ describe('legacy source-invalidated records in the primary studio', () => {
     },
   );
 });
+
+describe('experiment panel integrity states', () => {
+  const done = { run_id: 'q-one', scenario_id: 'scene', problem_class: 'coverage', instance: {}, instance_sha256: 'hash',
+    frame: { kind: 'field', units: 'm' }, state: 'done', status: 'feasible', check: { valid: true, errors: [] }, map_check: null,
+    objective: { value: 123.456, unit: 'm', lower_bound: null }, routes: [{ polyline: [[0, 0], [1, 1]] }],
+    algorithm: { id: 'test', name: '测试算法' }, params: {}, metrics: { coverage_fraction: .912, wall_s: 1 } } as unknown as Solution;
+  const show = (r: Solution) => {
+    useStudio.setState({ scenario: { id: 'scene', problem_class: 'coverage' } as Scenario, draft: {},
+      runIds: [r.run_id], focusRun: r.run_id, runs: { [r.run_id]: r }, algorithms: [] });
+    return renderToStaticMarkup(createElement(ExperimentPanel));
+  };
+  it('quarantined: banner with reason, no objective/metrics/check presented as valid, raw kept', () => {
+    const r = { ...done, error: '源码哈希与登记不符', process: { source_identity_verified: false } } as Solution;
+    const html = show(r);
+    expect(html).toContain('已隔离');
+    expect(html).toContain('源码哈希与登记不符');
+    expect(html).not.toContain('123.46');
+    expect(html).not.toContain('91.2%');
+    expect(html).not.toContain('全田块覆盖率');
+    expect(html).not.toContain('计算时间');
+    expect(useStudio.getState().runs[r.run_id]!.objective.value).toBe(123.456);
+  });
+  it('unknown identity: labelled 身份未核验, values from the record, never marked verified', () => {
+    const html = show(done);
+    expect(html).toContain('身份未核验');
+    expect(html).toContain('123.46');
+    expect(html).not.toContain('身份已核验');
+  });
+});
