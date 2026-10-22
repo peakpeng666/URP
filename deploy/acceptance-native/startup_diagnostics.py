@@ -1,5 +1,6 @@
 """Private startup evidence -> bounded fixed-schema diagnostics only."""
 import json,math,pathlib,re
+from resource_uri_diagnostics import project as project_resource_uri, sanitize as sanitize_resource_uri, runtime_failure_codes
 PHASES={'starting','undocking','localizing','nav2_starting','ready','executing','stopping','stopped','failed'}
 COUNTS=('clock','odom','scan','dock','ground_truth','amcl','global_map','local_map','cmd_vel','nav2_plan')
 COMPONENTS=('session','sim','truth','localization','nav')
@@ -96,9 +97,9 @@ def sanitize(raw):
         if isinstance(row,dict) and row.get('component') in COMPONENTS and type(row.get('exit_code')) is int and -255<=row['exit_code']<=255:exits.append({'component':row['component'],'exit_code':row['exit_code']})
     events=raw.get('undock_events');events=events if isinstance(events,list) else []
     codes=raw.get('error_codes');codes=codes if isinstance(codes,list) else []
-    return {'nav_lifecycle':sanitize_nav_lifecycle(raw.get('nav_lifecycle')),'undock_timing':sanitize_undock_timing(raw.get('undock_timing')),'report_available':raw.get('report_available') is True,'undock_events':sorted({e for e in events if isinstance(e,str) and e in UNDOCK_EVENTS}),'dock_state_at_undock_entry':raw.get('dock_state_at_undock_entry') if raw.get('dock_state_at_undock_entry') == 'docked' else 'unavailable','final_dock_state':'unavailable','final_sim_time_s':num(raw.get('final_sim_time_s'),high=86400),'final_speed_m_s':num(raw.get('final_speed_m_s'),high=20),'phase':raw.get('phase') if isinstance(raw.get('phase'),str) and raw['phase'] in PHASES else 'unknown','stages':stages[-20:],'counts':{k:num(counts.get(k),True) for k in COUNTS},'assets_complete':raw.get('assets_complete') if type(raw.get('assets_complete')) is bool else None,'assets_missing_count':num(raw.get('assets_missing_count'),True,100000),'error_codes':sorted({c for c in codes if isinstance(c,str) and c in CODES})[:16],'component_exits':exits[:20]}
+    return {'launch_evidence_version':'runtime_records_v2' if raw.get('launch_evidence_version')=='runtime_records_v2' else 'legacy_or_unavailable','resource_uri_diagnostics':sanitize_resource_uri(raw.get('resource_uri_diagnostics')),'nav_lifecycle':sanitize_nav_lifecycle(raw.get('nav_lifecycle')),'undock_timing':sanitize_undock_timing(raw.get('undock_timing')),'report_available':raw.get('report_available') is True,'undock_events':sorted({e for e in events if isinstance(e,str) and e in UNDOCK_EVENTS}),'dock_state_at_undock_entry':raw.get('dock_state_at_undock_entry') if raw.get('dock_state_at_undock_entry') == 'docked' else 'unavailable','final_dock_state':'unavailable','final_sim_time_s':num(raw.get('final_sim_time_s'),high=86400),'final_speed_m_s':num(raw.get('final_speed_m_s'),high=20),'phase':raw.get('phase') if isinstance(raw.get('phase'),str) and raw['phase'] in PHASES else 'unknown','stages':stages[-20:],'counts':{k:num(counts.get(k),True) for k in COUNTS},'assets_complete':raw.get('assets_complete') if type(raw.get('assets_complete')) is bool else None,'assets_missing_count':num(raw.get('assets_missing_count'),True,100000),'error_codes':sorted({c for c in codes if isinstance(c,str) and c in CODES})[:16],'component_exits':exits[:20]}
 
-def project(report,logs):
+def project(report,logs,*,log_availability=None):
     report=report if isinstance(report,dict) else {};final=report.get('final_state') or {};final=final if isinstance(final,dict) else {}
     stages=[{'phase':r.get('name'),'wall_s':r.get('wall_s')} for r in (report.get('stages',[]) if isinstance(report.get('stages'),list) else []) if isinstance(r,dict)]
     assets=report.get('assets') or {};assets=assets if isinstance(assets,dict) else {}
@@ -106,36 +107,40 @@ def project(report,logs):
     errors+=final.get('errors',[]) if isinstance(final.get('errors'),list) else []
     text='\n'.join(x[:65536] for x in errors[:20] if isinstance(x,str))
     codes=[code for code,label in LABELS.items() if label in text]
+    codes.extend(runtime_failure_codes(logs))
     exits=[];events=[]
     for component in COMPONENTS:
         text=logs.get(component,'')
         events.extend(event for event,label in UNDOCK_EVENTS.items() if label in text)
         codes.extend(code for code,label in LABELS.items() if label in text)
-        for marker,code in [('process has died','launch_process_died'),('CRITICAL FAILURE: SERVER','launch_server_failure'),('Unable to find uri','launch_uri_missing'),('Segmentation fault','segmentation_fault'),('ModuleNotFoundError:','python_module_missing'),('ImportError:','python_import_error')]:
+        for marker,code in [('CRITICAL FAILURE: SERVER','launch_server_failure'),('Segmentation fault','segmentation_fault'),('ModuleNotFoundError:','python_module_missing'),('ImportError:','python_import_error')]:
             if marker in text:codes.append(code)
         for value in re.findall(r'\bexit code (-?\d{1,3})(?:\D|$)',text):exits.append({'component':component,'exit_code':int(value)})
     robot=final.get('robot');robot=robot if isinstance(robot,dict) else {}
     # The pinned session gates undocking on latest dock.is_docked; final dock state is not persisted.
-    return sanitize({'nav_lifecycle':nav_lifecycle(logs),'undock_timing':report.get('undock_timing'),'report_available':bool(report),'undock_events':events,'dock_state_at_undock_entry':'docked' if any(r.get('phase')=='undocking' for r in stages) else 'unavailable','final_sim_time_s':robot.get('t_sim'),'final_speed_m_s':robot.get('speed'),'phase':final.get('phase') or (stages[-1]['phase'] if stages else 'unknown'),'stages':stages,'counts':{k:report['counts'].get(k,0) for k in COUNTS} if isinstance(report.get('counts'),dict) else {},'assets_complete':assets.get('complete'),'assets_missing_count':len(assets['missing']) if isinstance(assets.get('missing'),list) else None,'error_codes':codes,'component_exits':exits})
+    return sanitize({'launch_evidence_version':'runtime_records_v2','resource_uri_diagnostics':project_resource_uri(logs,log_availability),'nav_lifecycle':nav_lifecycle(logs),'undock_timing':report.get('undock_timing'),'report_available':bool(report),'undock_events':events,'dock_state_at_undock_entry':'docked' if any(r.get('phase')=='undocking' for r in stages) else 'unavailable','final_sim_time_s':robot.get('t_sim'),'final_speed_m_s':robot.get('speed'),'phase':final.get('phase') or (stages[-1]['phase'] if stages else 'unknown'),'stages':stages,'counts':{k:report['counts'].get(k,0) for k in COUNTS} if isinstance(report.get('counts'),dict) else {},'assets_complete':assets.get('complete'),'assets_missing_count':len(assets['missing']) if isinstance(assets.get('missing'),list) else None,'error_codes':codes,'component_exits':exits})
 
 def collect(runtime,sid):
     if not isinstance(sid,str) or not SID.fullmatch(sid):return sanitize({})
     root=pathlib.Path(runtime)/'sim'/sid
     if root.is_symlink() or root.parent.is_symlink():return sanitize({})
     def bounded(path,limit):
-        if path.is_symlink() or path.parent.is_symlink() or not path.is_file():return b''
+        if path.is_symlink() or path.parent.is_symlink():return b'','rejected'
+        if not path.is_file():return b'','rejected' if path.exists() else 'missing'
         with path.open('rb') as stream:
             stream.seek(0,2);size=stream.tell()
-            if path.suffix=='.json' and size>limit:return b''
+            if path.suffix=='.json' and size>limit:return b'','rejected'
             stream.seek(max(0,size-limit));data=stream.read(limit)
             # An incomplete first line in a truncated tail is not a log event.
-            return data.split(b'\n',1)[1] if size>limit and b'\n' in data else b'' if size>limit else data
-    try:report=json.loads(bounded(root/'session-report.json',2097152))
+            data=data.split(b'\n',1)[1] if size>limit and b'\n' in data else b'' if size>limit else data
+            return data,'tail_truncated' if size>limit else 'empty' if not data else 'tail_read'
+    try:report=json.loads(bounded(root/'session-report.json',2097152)[0])
     except (ValueError,OSError):report={}
-    logs={}
+    logs={};availability={}
     for component in COMPONENTS:
         try:
             path=pathlib.Path(runtime)/'logs'/('sim-'+sid+'.log') if component=='session' else root/'logs'/(component+'.log')
-            logs[component]=bounded(path,65536).decode('utf-8',errors='replace')
-        except OSError:logs[component]=''
-    return project(report,logs)
+            data,availability[component]=bounded(path,65536)
+            logs[component]=data.decode('utf-8',errors='replace')
+        except OSError:logs[component]='';availability[component]='unreadable'
+    return project(report,logs,log_availability=availability)
