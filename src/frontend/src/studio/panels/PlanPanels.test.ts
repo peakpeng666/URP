@@ -105,3 +105,24 @@ describe('experiment panel integrity states', () => {
     expect(html).not.toContain('身份已核验');
   });
 });
+
+describe('comparison panel ranking excludes invalid runs but lists them', () => {
+  const mk = (id: string, over: Record<string, unknown>) => ({ run_id: id, scenario_id: 'scene', problem_class: 'euclidean_cvrp',
+    instance: { capacity: 3 }, instance_sha256: 'hash', frame: { kind: 'benchmark', units: 'unitless' },
+    objective: { value: 5, unit: 'unitless', lower_bound: null }, state: 'done', status: 'feasible',
+    check: { valid: true, errors: [] }, map_check: null, routes: [{ polyline: [[0, 0], [1, 1]] }], params: {},
+    metrics: { cost: 5 }, algorithm: { id: id, name: `算法${id}` }, process: { source_identity_verified: true }, ...over }) as unknown as Solution;
+  it('a quarantined lower objective is neither shown nor best; failed runs appear in the separate list', () => {
+    const rows = [mk('good-run', {}), mk('quar-run', { objective: { value: 1.234, unit: 'unitless', lower_bound: null }, metrics: { cost: 1.234 },
+      process: { source_identity_verified: false }, error: '源码不符' }), mk('fail-run', { state: 'error', error: '依赖缺失', routes: [] })];
+    useStudio.setState({ scenario: { id: 'scene', problem_class: 'euclidean_cvrp' } as Scenario, draft: { capacity: 3 },
+      runIds: rows.map((r) => r.run_id), runs: Object.fromEntries(rows.map((r) => [r.run_id, r])), focusRun: 'good-run', algorithms: [] });
+    const html = renderToStaticMarkup(createElement(ComparePanel));
+    expect(html).not.toContain('1.23');
+    expect(html).toContain('未参与比较与排名（2）');
+    expect(html).toContain('data-exclusion="quarantined"');
+    expect(html).toContain('data-exclusion="failed"');
+    expect(html).toContain('依赖缺失');
+    expect(html).toContain('已隔离 · 不适用');
+  });
+});

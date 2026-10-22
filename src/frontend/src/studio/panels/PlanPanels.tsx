@@ -41,7 +41,8 @@ import type { Instance, Scenario } from '../../lab/types';
 import { logTimeAxis, unitSuffix } from '../chart';
 import { BackgroundControl, FleetAssetSection, PlanBackground } from '../assets/PlanLayers';
 import { centerMap, ReplayOverlay } from '../experiment/ReplayPanel';
-import { comparable, comparisonKey, currentInput, inputIdentity, requiresCoverageRecheck, resultState, verifiedPlan } from '../comparison';
+import { comparable, currentInput, exclusionReason, inputIdentity, partitionRuns, requiresCoverageRecheck, resultState, verifiedPlan } from '../comparison';
+import { identityState, withoutInvalidatedResults } from '../../lab/views/plan/resultIntegrity';
 import { ProblemEditor } from './ProblemEditor';
 import s from './panels.module.css';
 
@@ -826,8 +827,9 @@ export function ComparePanel() {
   const cols = COLUMNS[st.scenario?.problem_class ?? ''] ?? COLUMNS.euclidean_cvrp;
   const anchor = rows.find((r) => r.run_id === st.focusRun) ?? rows[0];
   const group = anchor ? rows.filter((r) => comparable(r, anchor)) : [];
-  const valid = group.filter(verifiedPlan);
-  const groups = new Set(rows.map(comparisonKey).filter(Boolean));
+  const partition = partitionRuns(rows);
+  const valid = group.filter((r) => verifiedPlan(r) && !exclusionReason(r));
+  const groups = partition.groups;
   const bests = cols.map((c) => {
     if (!c.better) return null;
     const vals = valid.map(c.get).filter((v): v is number => typeof v === 'number' && Number.isFinite(v));
@@ -841,7 +843,7 @@ export function ComparePanel() {
       <div className={s.pad} style={{ paddingBottom: 4 }}>
         <p className={s.meta}>本批 {rows.length} 次运行 · {rows.filter(verifiedPlan).length} 个已验算可行解。最佳值仅在相同输入、目标、单位和时间预算内标记。</p>
         {anchor?.planning && <p className={s.meta}>{anchor.planning.objective_label} · {anchor.planning.objective_unit} · 输入 {anchor.instance_sha256.slice(0, 12)}</p>}
-        {groups.size > 1 && <Notice tone="warn">存在 {groups.size} 种比较口径；当前最佳值只针对选中方案所在组，不跨组排名。</Notice>}
+        {groups.length > 1 && <Notice tone="warn">存在 {groups.length} 种比较口径{groups.some((g) => g.identity === 'unknown') ? '（含身份未核验组）' : ''}；当前最佳值只针对选中方案所在组，不跨组排名。</Notice>}
       </div>
       <div className={s.tableWrap}>
         <table className={s.table}>
@@ -877,23 +879,27 @@ export function ComparePanel() {
                       {historicalInput && <Badge tone="orange" >历史输入</Badge>}
                       {differentParams && <Badge tone="gray">当前参数不同</Badge>}
                       {anchor && !comparable(r, anchor) && <Badge tone="gray">独立口径</Badge>}
+                      {exclusionReason(r) && <Badge tone="orange">不参与排名</Badge>}
+                      {identityState(r) === 'unknown' && r.state === 'done' && <Badge tone="gray">身份未核验</Badge>}
+                      {identityState(r) === 'quarantined' && <Badge tone="red">已隔离</Badge>}
                       {blocked && <Badge tone="orange">{blocked}</Badge>}
                     </div>
                   </td>
                   <td title={state.title}>{state.text === '计算中' ? <span className={s.running}><Spinner /> 计算中</span> : state.text}{state.title ? ' ⓘ' : ''}</td>
                   {cols.map((c, i) => {
-                    const v = r.state === 'done' && r.routes.length ? c.get(r) : null;
-                    const isBest = verifiedPlan(r) && group.includes(r) && typeof v === 'number' && bests[i] != null && Math.abs(v - (bests[i] as number)) < 1e-9 && valid.length > 1;
+                    const shown = withoutInvalidatedResults(r)!;
+                    const v = shown.state === 'done' && shown.routes.length ? c.get(shown) : null;
+                    const isBest = valid.includes(r) && typeof v === 'number' && bests[i] != null && Math.abs(v - (bests[i] as number)) < 1e-9 && valid.length > 1;
                     const unit = typeof c.unit === 'function' ? c.unit(r) : c.unit ?? '';
                     const text = v == null
-                      ? (r.state === 'done' && r.routes.length ? '未记录' : '—')
+                      ? (shown.state === 'done' && shown.routes.length ? '未记录' : '—')
                       : typeof v === 'number'
                         ? `${fmt.num(c.pct ? v * 100 : v, c.digits ?? 2)}${c.pct ? '%' : unit}`
                         : typeof v === 'boolean' ? (v ? '是' : '否') : v;
                     return <td key={c.label} className={s.num} data-best={isBest || undefined}>{text}</td>;
                   })}
                   <td className={s.num}>{fmt.sec(r.metrics.wall_s)}</td>
-                  <td>{requiresCoverageRecheck(r) ? '旧版检查 · 待重验' : r.check ? (r.check.valid ? <span className={s.ok}><Check size={13} /> 通过</span> : <span className={s.bad} title={r.check.errors.join('；')}><X size={13} /> 未通过{r.check.errors.length ? ` ${r.check.errors.length} 项` : ''}</span>) : '未检查'}</td>
+                  <td>{identityState(r) === 'quarantined' ? '已隔离 · 不适用' : requiresCoverageRecheck(r) ? '旧版检查 · 待重验' : r.check ? (r.check.valid ? <span className={s.ok}><Check size={13} /> 通过</span> : <span className={s.bad} title={r.check.errors.join('；')}><X size={13} /> 未通过{r.check.errors.length ? ` ${r.check.errors.length} 项` : ''}</span>) : '未检查'}</td>
                   <td className={s.rowActions} onClick={(e) => e.stopPropagation()}>
                     <a href={exportUrl.run(r.run_id, 'json')} download title="求解结果 JSON（路线与指标）">JSON</a>
                     <a href={exportUrl.run(r.run_id, 'csv')} download title="路线 CSV">CSV</a>
@@ -931,6 +937,16 @@ export function ComparePanel() {
             })}
           </tbody>
         </table>
+        {partition.excluded.length > 0 && (
+          <div className={s.pad}>
+            <h3>未参与比较与排名（{partition.excluded.length}）</h3>
+            <ul className={s.meta} aria-label="未参与比较的运行">
+              {partition.excluded.map(({ run, reason }) => (
+                <li key={run.run_id} data-exclusion={reason.code}>{run.algorithm.name} · {run.run_id.slice(0, 8)} · {resultState(run).text} · {reason.text}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {rows.some((r) => r.error) && <Notice tone="error">{rows.filter((r) => r.error).map((r) => `${r.algorithm.name}：${r.error}`).join('；')}</Notice>}
       </div>
       <Convergence runs={group.filter((r) => r.process?.source_identity_verified !== false)} />
