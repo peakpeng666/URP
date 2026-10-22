@@ -47,7 +47,8 @@ import { comparable, currentInput, exclusionReason, inputIdentity, mapCheckIssue
 import { identityState, withoutInvalidatedResults } from '../../lab/views/plan/resultIntegrity';
 import { RunTrace } from '../experiment/RunTrace';
 import { HistoryRuns } from './HistoryRuns';
-import { MapExclusionNote } from './MapExclusionNote';
+import { MapExclusionNote, verifyText } from './MapExclusionNote';
+import { IntegrityNotice } from '../../lab/views/plan/IntegrityNotice';
 import { SeedBandChart, StatusFlowChart, VerificationChart } from '../researchCharts/RunCharts';
 import { ProblemEditor } from './ProblemEditor';
 import s from './panels.module.css';
@@ -891,10 +892,10 @@ export function ComparePanel() {
               const instance = r.problem_class === 'fleet_routing' ? r.instance as unknown as FleetInstance | undefined : undefined;
               const blocked = instance ? unacceptedPlanReason(instance, planModelSchema(r)) ?? (instance.vehicles?.fleet?.some((item) => (item.min_turn_radius_m ?? 0) > 0) ? '仅规划，未适配执行' : '') : '';
               return (
-                <tr key={r.run_id} aria-selected={st.focusRun === r.run_id} onClick={() => st.focus(r.run_id)}>
+                <tr key={r.run_id} data-run={r.run_id} aria-selected={st.focusRun === r.run_id} onClick={() => st.focus(r.run_id)}>
                   <td>
                     <span className={s.algName} title={`${r.algorithm.origin}${r.algorithm.version ? ` · 版本/源码 ${r.algorithm.version}` : ''}`}>{r.algorithm.name}</span>
-                    <div className={s.meta} title={`冻结 run_id：${r.run_id}；${frozenParams || '参数见原始记录'}`}>{r.run_id.slice(0, 8)} · {frozenParams || '参数见原始记录'}</div>
+                    <div className={s.meta} title={`冻结 run_id：${r.run_id}；${frozenParams || '参数见原始记录'}`}>{r.run_id} · {frozenParams || '参数见原始记录'}</div>
                     <div className={s.row}>
                       {historicalInput && <Badge tone="orange" >历史输入</Badge>}
                       {differentParams && <Badge tone="gray">当前参数不同</Badge>}
@@ -919,7 +920,12 @@ export function ComparePanel() {
                     return <td key={c.label} className={s.num} data-best={isBest || undefined}>{text}</td>;
                   })}
                   <td className={s.num}>{fmt.sec(r.metrics.wall_s)}</td>
-                  <td>{identityState(r) === 'quarantined' ? '已隔离 · 不适用' : requiresCoverageRecheck(r) ? '旧版检查 · 待重验' : r.check ? (r.check.valid ? <span className={s.ok}><Check size={13} /> 通过</span> : <span className={s.bad} title={r.check.errors.join('；')}><X size={13} /> 未通过{r.check.errors.length ? ` ${r.check.errors.length} 项` : ''}</span>) : '未检查'}</td>
+                  <td data-verify={identityState(r) === 'quarantined' ? 'quarantined' : requiresCoverageRecheck(r) ? 'legacy' : verifyText(r).code}>{identityState(r) === 'quarantined' ? '已隔离 · 不适用' : requiresCoverageRecheck(r) ? '旧版检查 · 待重验' : (() => {
+                    const v = verifyText(r);
+                    return v.code === 'pass' ? <span className={s.ok}><Check size={13} /> 通过</span>
+                      : v.code === 'unchecked' ? v.text
+                      : <span className={s.bad} title={v.code === 'route_fail' ? r.check?.errors.join('；') : '路线检查通过，但地图碰撞检查未通过或未完成'}><X size={13} /> {v.text}</span>;
+                  })()}</td>
                   <td className={s.rowActions} onClick={(e) => e.stopPropagation()}>
                     <a href={exportUrl.run(r.run_id, 'json')} download title="求解结果 JSON（路线与指标）">JSON</a>
                     <a href={exportUrl.run(r.run_id, 'csv')} download title="路线 CSV">CSV</a>
@@ -957,13 +963,13 @@ export function ComparePanel() {
             })}
           </tbody>
         </table>
-        {anchor && <div className={s.pad}><RunTrace run={anchor} title="选中方案追溯" /></div>}
+        {anchor && <div className={s.pad} data-selected-run={anchor.run_id}><IntegrityNotice run={anchor} /><RunTrace run={anchor} title="选中方案追溯" /></div>}
         {partition.excluded.length > 0 && (
           <div className={s.pad}>
             <h3>未参与比较与排名（{partition.excluded.length}）</h3>
             <ul className={s.meta} aria-label="未参与比较的运行">
               {partition.excluded.map(({ run, reason }) => (
-                <li key={run.run_id} data-exclusion={reason.code}>{run.algorithm.name} · {run.run_id.slice(0, 8)} · {resultState(run).text} · {reason.text}
+                <li key={run.run_id} data-exclusion={reason.code}>{run.algorithm.name} · {run.run_id} · {resultState(run).text} · {reason.text}
                   {reason.map && <MapExclusionNote run={run} label="碰撞明细" />}</li>
               ))}
             </ul>

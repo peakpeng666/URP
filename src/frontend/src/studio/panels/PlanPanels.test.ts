@@ -144,5 +144,23 @@ describe('comparison panel explains map-check exclusions', () => {
     expect(html).toContain('data-exclusion-summary="map_check"');
     expect(html).toContain('<li data-exclusion="map_collision">');
     expect(html).toContain('路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m');
+    expect(html).toContain('data-verify="map_collision"');
+    expect(html).toContain('未通过（地图碰撞 1 处）');
+    expect(html).not.toMatch(/data-verify="map_collision"><span[^>]*><svg[^]*?<\/svg> 通过/);
+  });
+
+  it('shows full run ids so seeded runs sharing a prefix stay distinguishable, and the quarantine banner for the selected run', () => {
+    const base = { scenario_id: 'scene', problem_class: 'euclidean_cvrp', instance: { capacity: 8 }, instance_sha256: 'hash',
+      frame: { kind: 'map', units: 'm' }, objective: { value: 1, unit: 'm' }, state: 'done', status: 'feasible', map_check: null,
+      check: { valid: true, errors: [] }, routes: [{ polyline: [[0, 0], [1, 1]] }], params: {}, metrics: {}, algorithm: { id: 'test', name: '测试算法' } };
+    const q = { ...base, run_id: 'run_e2e_quarantined_unverified', state: 'error', status: null, process: { source_identity_verified: false } } as unknown as Solution;
+    const l = { ...base, run_id: 'run_e2e_legacy_noidentity' } as unknown as Solution;
+    useStudio.setState({ scenario: { id: 'scene', problem_class: 'euclidean_cvrp' } as Scenario, draft: { capacity: 8 },
+      runIds: [l.run_id, q.run_id], runs: { [l.run_id]: l, [q.run_id]: q }, focusRun: q.run_id, algorithms: [] });
+    const html = renderToStaticMarkup(createElement(ComparePanel));
+    expect(html).toContain('run_e2e_quarantined_unverified · ');
+    expect(html).toContain('run_e2e_legacy_noidentity · ');
+    expect(html).toContain('data-selected-run="run_e2e_quarantined_unverified"');
+    expect(html).toContain('已隔离：');
   });
 });

@@ -72,6 +72,7 @@ export function HistoryRuns() {
             <>
               <HistoryLimitNotice count={rows.length} />
               <p className={s.meta}>最近 {rows.length} 次（上限 {HISTORY_LIMIT}）；加入后按同一比较口径分组，只有已验算可行且身份一致的同口径方案参与排名；已隔离运行不显示数值。</p>
+              <div className={s.tableWrap} data-history-table>
               <table className={s.table}>
                 <thead><tr><th>时间</th><th>算法 · 运行</th><th>状态</th><th>源码身份</th><th>比较资格</th><th /></tr></thead>
                 <tbody>
@@ -87,6 +88,7 @@ export function HistoryRuns() {
                   ))}
                 </tbody>
               </table>
+              </div>
               {!rows.length && <p className={s.hint}>这个场景还没有运行记录。</p>}
             </>
           )}
