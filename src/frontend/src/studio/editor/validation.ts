@@ -5,7 +5,7 @@
  */
 import type { XY } from '../../lab/types';
 import type { FleetInstance } from '../types';
-import { distToPolygon, pointInPolygon } from '../agri/geometry';
+import { distToPolygon, pointInPolygon, segmentsIntersect, selfIntersectionPoint } from '../agri/geometry';
 import { depotsOf } from '../fleet';
 import { OBSTACLE_STYLE, area } from './geometry';
 import type { ItemRef } from './selection';
@@ -26,7 +26,12 @@ export interface GeometryIssue {
   /** Where to zoom: [minX, minY, maxX, maxY] in metres; null when the coordinates themselves are unusable. */
   bounds: [number, number, number, number] | null;
   at: XY | null;
+  /** Non-spatial inputs: the fleet-form field to focus (label text as rendered, nth occurrence). */
+  field?: FormField;
 }
+
+/** `field` matches the input's data-field attribute in the fleet form; `label` is for messages. */
+export interface FormField { field: string; label: string }
 
 export const ISSUE_LABEL: Record<IssueCode, string> = {
   non_finite: '非有限数值',
@@ -56,31 +61,6 @@ function bbox(pts: XY[]): [number, number, number, number] {
 }
 const pointBox = (p: XY, r = 2): [number, number, number, number] => [p[0] - r, p[1] - r, p[0] + r, p[1] + r];
 const overlapBox = (a: number[], b: number[]) => a[0] <= b[2] && b[0] <= a[2] && a[1] <= b[3] && b[1] <= a[3];
-
-const orient = (a: XY, b: XY, c: XY) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
-const onSeg = (a: XY, b: XY, p: XY) => Math.min(a[0], b[0]) <= p[0] && p[0] <= Math.max(a[0], b[0]) && Math.min(a[1], b[1]) <= p[1] && p[1] <= Math.max(a[1], b[1]);
-
-/** Closed-segment intersection test (touching counts). */
-export function segmentsIntersect(a: XY, b: XY, c: XY, d: XY): boolean {
-  const d1 = orient(c, d, a), d2 = orient(c, d, b), d3 = orient(a, b, c), d4 = orient(a, b, d);
-  if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) return true;
-  return (d1 === 0 && onSeg(c, d, a)) || (d2 === 0 && onSeg(c, d, b)) || (d3 === 0 && onSeg(a, b, c)) || (d4 === 0 && onSeg(a, b, d));
-}
-
-/** First pair of non-adjacent edges that meet, with the meeting point (approximate), or null. */
-export function selfIntersection(poly: XY[]): XY | null {
-  const n = poly.length;
-  if (n < 4) return null;
-  for (let i = 0; i < n; i++) {
-    const a = poly[i], b = poly[(i + 1) % n];
-    for (let j = i + 2; j < n; j++) {
-      if (i === 0 && j === n - 1) continue; // shares vertex 0
-      const c = poly[j], d = poly[(j + 1) % n];
-      if (segmentsIntersect(a, b, c, d)) return [(a[0] + b[0] + c[0] + d[0]) / 4, (a[1] + b[1] + c[1] + d[1]) / 4];
-    }
-  }
-  return null;
-}
 
 function polygonsOverlap(a: XY[], b: XY[]): boolean {
   if (!overlapBox(bbox(a), bbox(b))) return false;
@@ -119,9 +99,9 @@ export function validateGeometry(inst: FleetInstance): GeometryIssue[] {
       continue;
     }
     const b = bbox(poly);
-    const x = selfIntersection(poly);
+    const x = selfIntersectionPoint(poly);
     if (x) {
-      push({ code: 'self_intersection', severity: 'error', message: `${name} 边自相交`, target, bounds: b, at: x });
+      push({ code: 'self_intersection', severity: 'error', message: `${name} 边自相交（第 ${x.i + 1} 与第 ${x.j + 1} 条边）`, target, bounds: b, at: x.at });
       continue;
     }
     if (poly.length < 3 || area(poly) < MIN_AREA_M2) {
@@ -178,13 +158,27 @@ export function validateGeometry(inst: FleetInstance): GeometryIssue[] {
   }
 
   const v = inst.vehicles ?? {};
-  const nums: [string, unknown][] = [
-    ['robot_radius', inst.robot_radius], ['vehicles.count', v.count], ['vehicles.capacity', v.capacity], ['vehicles.speed_mps', v.speed_mps],
-    ...(v.fleet ?? []).flatMap((c, i) => [[`fleet[${i}].count`, c.count], [`fleet[${i}].capacity`, c.capacity], [`fleet[${i}].speed_mps`, c.speed_mps], [`fleet[${i}].robot_radius`, c.robot_radius]] as [string, unknown][]),
-    ...(inst.tasks ?? []).map((t) => [`任务 ${t.label ?? t.id} 需求`, t.demand] as [string, unknown]),
+  const classMode = !!v.fleet?.length;
+  type Num = [string, unknown, FormField | null, ItemRef | null];
+  const nums: Num[] = [
+    ['robot_radius', inst.robot_radius, classMode ? { field: 'fleet.0.robot_radius', label: '规划半径' } : { field: 'robot_radius', label: '车体半径' }, null],
+    ['vehicles.count', v.count, classMode ? null : { field: 'vehicles.count', label: '车辆数' }, null],
+    ['vehicles.capacity', v.capacity, classMode ? null : { field: 'vehicles.capacity', label: '单车容量' }, null],
+    ['vehicles.speed_mps', v.speed_mps, classMode ? null : { field: 'vehicles.speed_mps', label: '车速' }, null],
+    ...(v.fleet ?? []).flatMap((c, i) => [
+      [`fleet[${i}].count`, c.count, { field: `fleet.${i}.count`, label: '数量' }, null],
+      [`fleet[${i}].capacity`, c.capacity, { field: `fleet.${i}.capacity`, label: '容量（抽象单位）' }, null],
+      [`fleet[${i}].speed_mps`, c.speed_mps, { field: `fleet.${i}.speed_mps`, label: '车速' }, null],
+      [`fleet[${i}].robot_radius`, c.robot_radius, { field: `fleet.${i}.robot_radius`, label: '规划半径' }, null],
+    ] as Num[]),
+    ...(inst.tasks ?? []).map((t) => [`任务 ${t.label ?? t.id} 需求`, t.demand, null, { type: 'task', id: String(t.id) }] as Num),
   ];
-  for (const [name, val] of nums) {
-    if (val !== undefined && val !== null && !finite(val)) push({ code: 'non_finite', severity: 'error', message: `${name} 不是有限数值（${String(val)}）`, target: null, bounds: null, at: null });
+  for (const [name, val, field, target] of nums) {
+    if (val !== undefined && val !== null && !finite(val)) {
+      const task = target ? inst.tasks.find((t) => String(t.id) === target.id) : undefined;
+      const xy = task && finiteXY(task.xy) ? task.xy : null;
+      push({ code: 'non_finite', severity: 'error', message: `${name} 不是有限数值（${String(val)}）`, target, bounds: xy ? pointBox(xy) : null, at: xy, ...(field ? { field } : {}) });
+    }
   }
   return out;
 }

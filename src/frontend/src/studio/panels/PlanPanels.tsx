@@ -21,6 +21,7 @@ import {
   Trash2,
   Undo2,
   X,
+  BoxSelect,
 } from 'lucide-react';
 import * as Plot from '@observablehq/plot';
 import { exportUrl, fmt } from '../../lab/api';
@@ -82,6 +83,7 @@ function useFocus() {
 /* ------------------------------------------------------------------ map -- */
 const TOOLS = [
   { value: 'select', label: '选择', icon: MousePointer2, title: '选择与拖动 (V)' },
+  { value: 'box', label: '框选', icon: BoxSelect, title: '拖动框选 (B；⌘/Ctrl 加选；选择工具下 Alt/⌘ + 拖动同效)' },
   { value: 'pan', label: '平移', icon: Hand, title: '平移 (H，或按住 Shift 拖动)' },
   { value: 'task', label: '任务点', icon: Plus, title: '点击添加任务点 (T)' },
   { value: 'obstacle', label: '障碍', icon: Shapes, title: '拖动绘制障碍 (O)' },
@@ -376,6 +378,12 @@ export function InspectorPanel() {
   useEffect(() => {
     if (selection) setTab('selection');
   }, [selection]);
+  // The map's issue list asks for a fleet parameter (editor/fieldFocus.ts): open the fleet tab so it can be focused.
+  useEffect(() => {
+    const onFocusField = () => setTab('fleet');
+    window.addEventListener('studio:focus-field', onFocusField);
+    return () => window.removeEventListener('studio:focus-field', onFocusField);
+  }, []);
   if (!sc || !draft) return <EmptyState title="未打开场景" />;
   if (!isFleet(sc)) return <div className={s.scroll}><ProblemEditor key={useStudio.getState().editorSession ?? sc.id} scenario={sc} draft={draft} /><ScenarioInfo /></div>;
   return (
@@ -393,12 +401,12 @@ export function InspectorPanel() {
   );
 }
 
-function Num({ label, value, onChange, min, step = 1, unit }: { label: string; value: number; onChange: (v: number) => void; min?: number; step?: number; unit?: string }) {
+function Num({ label, value, onChange, min, step = 1, unit, field }: { label: string; value: number; onChange: (v: number) => void; min?: number; step?: number; unit?: string; field?: string }) {
   return (
     <label className={s.field}>
       <span>{label}</span>
       <span className={s.inputUnit}>
-        <Input type="number" value={value} min={min} step={step} onChange={(e) => Number.isFinite(e.target.valueAsNumber) && onChange(e.target.valueAsNumber)} />
+        <Input type="number" data-field={field} value={value} min={min} step={step} onChange={(e) => Number.isFinite(e.target.valueAsNumber) && onChange(e.target.valueAsNumber)} />
         {unit && <em>{unit}</em>}
       </span>
     </label>
@@ -427,10 +435,10 @@ function FleetForm() {
       {!classMode ? (
         <>
           <div className={s.grid2}>
-            <Num label="车辆数" value={v.count ?? 1} min={1} onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, count: Math.max(1, Math.round(n)), names: undefined } }))} />
-            <Num label="单车容量" value={v.capacity ?? 1} min={1} onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, capacity: Math.max(1, Math.round(n)) } }))} />
-            <Num label="车速" value={v.speed_mps ?? 1} min={0.1} step={0.1} unit="m/s" onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, speed_mps: n } }))} />
-            <Num label="车体半径" value={inst.robot_radius} min={0.1} step={0.05} unit="m" onChange={(n) => set((i) => ({ ...i, robot_radius: n }))} />
+            <Num field="vehicles.count" label="车辆数" value={v.count ?? 1} min={1} onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, count: Math.max(1, Math.round(n)), names: undefined } }))} />
+            <Num field="vehicles.capacity" label="单车容量" value={v.capacity ?? 1} min={1} onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, capacity: Math.max(1, Math.round(n)) } }))} />
+            <Num field="vehicles.speed_mps" label="车速" value={v.speed_mps ?? 1} min={0.1} step={0.1} unit="m/s" onChange={(n) => set((i) => ({ ...i, vehicles: { ...i.vehicles, speed_mps: n } }))} />
+            <Num field="robot_radius" label="车体半径" value={inst.robot_radius} min={0.1} step={0.05} unit="m" onChange={(n) => set((i) => ({ ...i, robot_radius: n }))} />
           </div>
           <Button size="sm" onClick={() => set((i) => ({ ...i, vehicles: { ...i.vehicles, fleet: fleetClasses(i) } }))}>按类别编辑车队</Button>
         </>
@@ -444,10 +452,10 @@ function FleetForm() {
               </div>
               <label className={s.field}><span>类别名称</span><Input value={item.name ?? `车型 ${index + 1}`} onChange={(e) => setClass(index, { name: e.target.value })} /></label>
               <div className={s.grid2}>
-                <Num label="数量" value={item.count} min={1} onChange={(n) => setClass(index, { count: Math.max(1, Math.round(n)) })} />
-                <Num label="容量（抽象单位）" value={item.capacity} min={1} onChange={(n) => setClass(index, { capacity: Math.max(1, Math.round(n)) })} />
-                <Num label="车速" value={item.speed_mps ?? 1} min={0.1} step={0.1} unit="m/s" onChange={(n) => setClass(index, { speed_mps: n })} />
-                <Num label="规划半径" value={item.robot_radius ?? inst.robot_radius} min={0.1} step={0.05} unit="m" onChange={(n) => setClass(index, { robot_radius: n })} />
+                <Num field={`fleet.${index}.count`} label="数量" value={item.count} min={1} onChange={(n) => setClass(index, { count: Math.max(1, Math.round(n)) })} />
+                <Num field={`fleet.${index}.capacity`} label="容量（抽象单位）" value={item.capacity} min={1} onChange={(n) => setClass(index, { capacity: Math.max(1, Math.round(n)) })} />
+                <Num field={`fleet.${index}.speed_mps`} label="车速" value={item.speed_mps ?? 1} min={0.1} step={0.1} unit="m/s" onChange={(n) => setClass(index, { speed_mps: n })} />
+                <Num field={`fleet.${index}.robot_radius`} label="规划半径" value={item.robot_radius ?? inst.robot_radius} min={0.1} step={0.05} unit="m" onChange={(n) => setClass(index, { robot_radius: n })} />
                 <Num label="最小转弯半径" value={item.min_turn_radius_m ?? 0} min={0} step={0.1} unit="m" onChange={(n) => setClass(index, { min_turn_radius_m: Math.max(0, n) })} />
               </div>
               <label className={s.field}><span>载货语义</span><Select value={item.payload} onChange={(e) => setClass(index, { payload: e.target.value as 'load' | 'none' })}><option value="load">载货 / 采样容量</option><option value="none">不载货（容量不构成约束）</option></Select></label>
