@@ -1,16 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Input, Notice, Select } from '../../lab/ui';
 import { useStudio } from '../store';
 import { ENVIRONMENTS, OPERATIONS, PLANNING_PROBLEMS, SERVICE_OBJECTS, type AgriTaskPattern } from './taxonomy';
 import { AGRI_PATTERNS, patternStatus } from './patterns';
 import { buildPattern, createImportGuard, defaultValues, filterPatterns, importPattern, STATUS_LABELS } from './catalog';
 import { downloadFile, downloadMatrices } from './export';
+import { clearDraft, loadDraft, loadFilters, onForeignDraftChange, saveDraft, saveFilters } from './drafts';
+import { extractPreview, previewIssues } from './preview';
+import { PreviewMap } from './PreviewMap';
 import s from '../panels/panels.module.css';
 
 export function AgriCatalog({ visible = true }: { visible?: boolean } = {}) {
-  const [environment, setEnvironment] = useState('');
-  const [operation, setOperation] = useState('');
-  const [status, setStatus] = useState('');
+  const [initialFilters] = useState(loadFilters);
+  const [environment, setEnvironment] = useState(initialFilters.environment);
+  const [operation, setOperation] = useState(initialFilters.operation);
+  const [status, setStatus] = useState(initialFilters.status);
+  useEffect(() => { saveFilters({ environment, operation, status }); }, [environment, operation, status]);
   const [downloadError, setDownloadError] = useState('');
   function download(format: 'json' | 'csv') {
     try { downloadMatrices(format); setDownloadError(''); }
@@ -40,8 +45,30 @@ export function AgriCatalog({ visible = true }: { visible?: boolean } = {}) {
 }
 
 export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPattern; active?: boolean }) {
-  const [values, setValues] = useState(() => defaultValues(p));
-  const [seed, setSeed] = useState('42');
+  const [initial] = useState(() => (p.runnable ? loadDraft(p, defaultValues(p)) : { values: defaultValues(p), seed: '42', restored: false, notice: '' }));
+  const [values, setValues] = useState(initial.values);
+  const [seed, setSeed] = useState(initial.seed);
+  const [draftNotice, setDraftNotice] = useState(initial.notice);
+  const [saveError, setSaveError] = useState('');
+  const [open, setOpen] = useState(false);
+  const touched = useRef(false);
+  useEffect(() => {
+    if (!p.runnable || !touched.current) return;
+    const t = setTimeout(() => setSaveError(saveDraft(p, values, seed)), 300);
+    return () => clearTimeout(t);
+  }, [p, values, seed]);
+  useEffect(() => onForeignDraftChange(p.id, () => setDraftNotice('另一个标签页修改了这个模式的草稿；本页保留当前内容，刷新后会读取较新的那份。')), [p.id]);
+  const edit = (next: Record<string, unknown>) => { touched.current = true; setValues(next); };
+  const editSeed = (next: string) => { touched.current = true; setSeed(next); };
+  function resetDraft() {
+    clearDraft(p.id); touched.current = false;
+    setValues(defaultValues(p)); setSeed('42'); setDraftNotice('已清除本机草稿，恢复默认参数。'); setSaveError('');
+  }
+  const built = useMemo(() => {
+    if (!open || !p.runnable) return null;
+    try { const b = buildPattern(p, values, seed.trim() ? Number(seed) : NaN); const pv = extractPreview(b); return { preview: pv, issues: previewIssues(pv), error: '' }; }
+    catch (e) { return { preview: null, issues: [], error: e instanceof Error ? e.message : String(e) }; }
+  }, [open, p, values, seed]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const guard = useRef(createImportGuard());
@@ -71,7 +98,7 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
       if (mounted.current) setError(message); notify('error', `农业模板导入失败：${message}`);
     } finally { guard.current.finish(); if (mounted.current) setBusy(false); }
   }
-  return <details className={s.algCard}>
+  return <details className={s.algCard} onToggle={(e) => setOpen((e.currentTarget as HTMLDetailsElement).open)}>
     <summary>{p.name} · {STATUS_LABELS[status]}</summary>
     <p>{p.summary}</p><p>{p.modeling}</p>
     <p>目标：{SERVICE_OBJECTS.find((x) => x.id === p.serviceObject)?.name} / {PLANNING_PROBLEMS.find((x) => x.id === p.planningProblem)?.name}</p>
@@ -79,16 +106,20 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
     {p.approximation && <Notice tone="warn">近似限制：{p.approximation}</Notice>}
     <ul>{Object.entries(p.capabilities).map(([axis, cap]) => <li key={axis}>{({ defined: '定义', editable: '编辑', solvable: '求解', checkable: '验算', simulatable: '仿真', experimented: '实验' } as Record<string, string>)[axis]}：{cap.level} · {cap.note}</li>)}</ul>
     {p.proposal ? <><Notice tone="warn">提案不可提交：{p.proposal.missing.join('；')}</Notice><p>接口草案：{p.proposal.apiDraft}</p></> : <>
+      {draftNotice && <p role="status">{draftNotice}</p>}
+      {saveError && <Notice tone="warn">{saveError}</Notice>}
+      {built?.preview && <PreviewMap preview={built.preview} issues={built.issues} title={p.name} />}
+      {built?.error && <Notice tone="warn">当前参数无法生成预览：{built.error}</Notice>}
       <fieldset disabled={busy} style={{ border: 0, padding: 0 }}>
         {(p.runnable?.params ?? []).map((param) => <label key={param.key} style={{ display: 'block', marginBottom: 8 }}>
           {param.label}{param.unit ? ` (${param.unit})` : ''}
-          {param.type === 'select' ? <Select aria-label={`${p.name} ${param.label}`} value={String(values[param.key])} onChange={(e) => setValues({ ...values, [param.key]: e.target.value })}>
+          {param.type === 'select' ? <Select aria-label={`${p.name} ${param.label}`} value={String(values[param.key])} onChange={(e) => edit({ ...values, [param.key]: e.target.value })}>
             {param.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-          </Select> : param.type === 'boolean' ? <input type="checkbox" aria-label={`${p.name} ${param.label}`} checked={Boolean(values[param.key])} onChange={(e) => setValues({ ...values, [param.key]: e.target.checked })} />
-            : <Input type="number" step="any" min={param.min} max={param.max} aria-label={`${p.name} ${param.label}`} value={typeof values[param.key] === 'number' && Number.isNaN(values[param.key]) ? '' : String(values[param.key])} onChange={(e) => setValues({ ...values, [param.key]: e.target.value === '' ? NaN : Number(e.target.value) })} />}
+          </Select> : param.type === 'boolean' ? <input type="checkbox" aria-label={`${p.name} ${param.label}`} checked={Boolean(values[param.key])} onChange={(e) => edit({ ...values, [param.key]: e.target.checked })} />
+            : <Input type="number" step="any" min={param.min} max={param.max} aria-label={`${p.name} ${param.label}`} value={typeof values[param.key] === 'number' && Number.isNaN(values[param.key]) ? '' : String(values[param.key])} onChange={(e) => edit({ ...values, [param.key]: e.target.value === '' ? NaN : Number(e.target.value) })} />}
           {param.help && <small>{param.help}</small>}
         </label>)}
-        <label>随机种子<Input type="number" min={0} max={4294967295} step={1} aria-label={`${p.name} 随机种子`} value={seed} onChange={(e) => setSeed(e.target.value)} /></label>
+        <label>随机种子<Input type="number" min={0} max={4294967295} step={1} aria-label={`${p.name} 随机种子`} value={seed} onChange={(e) => editSeed(e.target.value)} /></label>
         <Button onClick={() => {
           try {
             const built = buildPattern(p, values, seed.trim() ? Number(seed) : NaN);
@@ -96,6 +127,7 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
             setError('');
           } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
         }}>下载原始场景 JSON</Button>
+        <Button onClick={resetDraft}>清除草稿并恢复默认</Button>
         <Button onClick={() => void submit()} disabled={busy || !p.runnable}>{busy ? '校验并保存中…' : '校验并导入任务规划'}</Button>
       </fieldset>
       <p>保存后可继续编辑地图、选择算法并求解；仿真可用性由当前场景与车型决定。</p>

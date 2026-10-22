@@ -96,3 +96,27 @@ export function round2(x: number): number {
 export function ringPoints(cx: number, cy: number, r: number, n: number, rot = 0): Ring {
   return disc(cx, cy, r, n, rot);
 }
+
+/** 鞋带公式有向面积（逆时针为正）。 */
+export function signedArea(poly: Ring): number {
+  let s = 0;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) s += poly[j][0] * poly[i][1] - poly[i][0] * poly[j][1];
+  return s / 2;
+}
+
+function segmentsCross(a: XY, b: XY, c: XY, d: XY): boolean {
+  const o = (p: XY, q: XY, r: XY) => Math.sign((q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]));
+  return o(a, b, c) * o(a, b, d) < 0 && o(c, d, a) * o(c, d, b) < 0;
+}
+
+/** 非相邻边严格相交即视为自交（简单多边形检查，O(n²)，预览规模足够）。 */
+export function selfIntersects(poly: Ring): boolean {
+  const n = poly.length;
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 2; j < n; j++) {
+      if (i === 0 && j === n - 1) continue;
+      if (segmentsCross(poly[i], poly[(i + 1) % n], poly[j], poly[(j + 1) % n])) return true;
+    }
+  }
+  return false;
+}
