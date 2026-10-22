@@ -7,6 +7,7 @@ import { studio, urls } from '../api';
 import { useStudio } from '../store';
 import type { Analysis, InstanceSpace, Study } from '../types';
 import { logTimeAxis } from '../chart';
+import { ProfileChart } from '../research/AnalysisCharts';
 import s from './panels.module.css';
 
 type ArchiveExperiment = {
@@ -255,10 +256,6 @@ export function AnalysisPanel() {
   const names = useMemo(() => Object.fromEntries((data?.summary ?? []).map((x) => [x.algorithm, x.name ?? x.algorithm])), [data]);
   const nm = (a: string | null) => (a == null ? '无可行解' : names[a] ?? a);
   const color = { legend: true, domain: algs.map((a) => names[a] ?? a), range: PALETTE.slice(0, algs.length) };
-  const profile = useMemo(() => {
-    if (!data) return [];
-    return algs.flatMap((a) => data.performance_profile.taus.map((tau, i) => ({ tau, rho: data.performance_profile.curves[a]?.[i] ?? 0, a: names[a] ?? a })));
-  }, [data, algs, names]);
   if (!studyId) {
     return (
       <div className={s.pad}>
@@ -310,11 +307,7 @@ export function AnalysisPanel() {
           </p>
         )}
         {t.nemenyi && <CdDiagram ranks={t.nemenyi.mean_ranks} cd={t.nemenyi.critical_difference} names={names} />}
-        <div className={s.chart}>
-          <h4>性能剖面（Dolan–Moré）：ρ(τ) = 成本不超过最好值 τ 倍的实例比例</h4>
-          <PlotBox deps={[profile]} make={(w) => profile.length ? Plot.plot({ width: w, height: 230, style: FONT, x: { label: 'τ', grid: true }, y: { label: 'ρ(τ)', domain: [0, 1], grid: true }, color,
-            marks: [Plot.line(profile, { x: 'tau', y: 'rho', stroke: 'a', curve: 'step-after', strokeWidth: 1.8 })] }) : null} />
-        </div>
+        <ProfileChart analysis={data} />
         <div className={s.chart}>
           <h4>相对参照的差距分布（每次运行）</h4>
           <PlotBox deps={[data]} make={(w) => {
