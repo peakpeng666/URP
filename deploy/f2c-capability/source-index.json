@@ -1,13 +1,16 @@
 {
   "files": {
     "PUBLIC_FILE_ALLOWLIST.txt": {
-      "sha256": "0f24dce62566adf520a5535a74bee93b97e266cf43744505f5345c3c15a6354d"
+      "sha256": "7626e7319de3472cbb0ff5d21eb054c446fb9d6b50dd0d5035e8180cf0e8c81d"
     },
     "README.md": {
-      "sha256": "dfe21dad710b7229baece281afa2f82fbade212779ec8d2ad5f0c3e65aee5cee"
+      "sha256": "ee4dbe5e37ab03cbe6b1a14e7b32b89fe4d0f9e8f85f5127c1e95d7e45fd8321"
     },
     "REVIEW_SCOPE.json": {
-      "sha256": "605a8f4a8a9f26c5a5d590aa3cf6040cd9170e6109bcac06f74e24d3bb9c41fa"
+      "sha256": "39fabd8bf7af6b68c1f6d72c4c9238953e9ec86cbaa917e186fbfa2ccff6cce3"
+    },
+    "inputs/canonical-python-stdlib-splits.json": {
+      "sha256": "aa428b9f8f702bddfb83109de5fd4b151b05293610d0656943b679cecc4096ea"
     },
     "inputs/ubuntu-archive-keyring.gpg": {
       "sha256": "80a36b0a6de2f69f49d2df75ef473ccde121e9e190b9ea01d20a4f63778d5c31"
@@ -16,7 +19,7 @@
       "sha256": "b97528e1cd4d8405efdb60ec783e445e6039cbebe40c3a323be96994f878fcd2"
     },
     "recipe/CAPABILITY_INPUTS.md": {
-      "sha256": "4ebf1a673b7bce95334c7a2b396eaf2cd6ab1d267b1644a7b7f65f2ba6877bf5"
+      "sha256": "b897fcf0eea25fe4835769dc2048d01923db786effa2417b5156c376779e7106"
     },
     "recipe/inspect_public_keyring.py": {
       "sha256": "04d5a638564d63cb59db0cee03992ab33b99ecf743c5653db0d1dc211a517325"
@@ -28,7 +31,7 @@
       "sha256": "c6cc5565762e90ca2c408e58686a1478e40a8155aef906704604af5b9bf468f1"
     },
     "recipe/prepare_capability_inputs.py": {
-      "sha256": "08afa2a3e5a0e37645799853cbf0e875fa276a0dd8f8e9d06926ab0e3218935c"
+      "sha256": "38c0305b4b786da93f98db59c944dfbf4b22f1190c1b69241e6d3b9706b39581"
     },
     "recipe/probe_namespace_capabilities.py": {
       "sha256": "dc3aaa2a3fa073405191052626368431f6aff7a4b1d1be753b21118a77735e6b"
@@ -38,6 +41,9 @@
     },
     "recipe/report_capability_status.py": {
       "sha256": "ae3614c78fbbd3c942027e576f1708be569ea1b0cbe4618bb2b128e2902279b8"
+    },
+    "recipe/tests/test_canonical_stdlib_splits.py": {
+      "sha256": "ea94e95108f48aa97828e1be3dba509653ef7922026256695a583a4093a1f510"
     },
     "recipe/tests/test_capability_inputs.py": {
       "sha256": "9afe499c904ad7d6e4f0407d011fb42da3ec94a676eea8adfa8914d8cc42ce49"
@@ -58,13 +64,13 @@
       "sha256": "55d78999ccb4f383c4c5a4fbc73578b6aa6b735ff327f29e80e390554a634af4"
     },
     "recipe/tests/test_workflow_contract.py": {
-      "sha256": "4bebe93853371c62ba054a93055e3a8b9f86504cf1eb9a85a6afe057646cfd12"
+      "sha256": "992a6e503196a7d1e1f159e89a49f163be13e190b7c0c8e78b0f3dea96d70c5e"
     },
     "recipe/verify_workflow_contract.py": {
-      "sha256": "566d6de4e46b601215411662ee9e412afeae69850d1cbeb82833c01c7cb400c9"
+      "sha256": "2c2f6b9cf2bcf934a11b4aaac1d38a2e96ea558ceec2db7fbda9244dce629408"
     }
   },
-  "identity": "jammy-rootless-capability-v5",
+  "identity": "jammy-rootless-capability-v6",
   "schema": 1,
   "scientific_execution": false,
   "scientific_source_context": "18557cfc61f291e8ac5fa4a80d9df212e1df0030",

@@ -48,7 +48,10 @@ PYTHON_PACKAGES = ('libpython3.10-minimal', 'libpython3.10-stdlib')
 PYTHON_OPTIONAL_PACKAGES = {name: 'python3.10' for name in
     ('libpython3.10-dev', 'python3.10-dev', 'libpython3.10-testsuite', 'python3.10-examples')}
 PYTHON_OPTIONAL_PACKAGES.update({'python3-gdbm': 'python3-stdlib-extensions',
-                                 'python3-tk': 'python3-stdlib-extensions'})
+                                 'python3-tk': 'python3-stdlib-extensions',
+                                 'python3-distutils': 'python3-stdlib-extensions',
+                                 'python3-lib2to3': 'python3-stdlib-extensions',
+                                 'python3.10-venv': 'python3.10'})
 PREPARATION_CODES = frozenset({
     'CAP_INPUTS_VERIFIED', 'CAP_SOURCE_REJECTED', 'CAP_HOST_UNSUPPORTED',
     'CAP_INTERPRETER_REJECTED', 'CAP_TOOL_MISSING', 'CAP_METADATA_REJECTED',

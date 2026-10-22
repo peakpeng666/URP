@@ -67,7 +67,7 @@ jobs:
           require(hashlib.sha256(raw).hexdigest()==expected)
           index=json.loads(raw,object_pairs_hook=unique)
           require(index['schema']==1 and index['status']=='reviewed-source')
-          require(index['identity']=='jammy-rootless-capability-v5')
+          require(index['identity']=='jammy-rootless-capability-v6')
           require(1<=len(index['files'])<=64)
           for name,row in index['files'].items():
               require(isinstance(name,str) and not name.startswith('/') and all(x not in ('','.','..') for x in name.split('/')))

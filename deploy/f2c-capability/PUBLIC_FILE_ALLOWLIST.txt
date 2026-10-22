@@ -1,6 +1,7 @@
 PUBLIC_FILE_ALLOWLIST.txt
 README.md
 REVIEW_SCOPE.json
+inputs/canonical-python-stdlib-splits.json
 inputs/ubuntu-archive-keyring.gpg
 inputs/ubuntu-archive-keyring.provenance.json
 recipe/CAPABILITY_INPUTS.md
@@ -12,6 +13,7 @@ recipe/prepare_capability_inputs.py
 recipe/probe_namespace_capabilities.py
 recipe/public_codes.json
 recipe/report_capability_status.py
+recipe/tests/test_canonical_stdlib_splits.py
 recipe/tests/test_capability_inputs.py
 recipe/tests/test_capability_projection.py
 recipe/tests/test_keyring_input.py

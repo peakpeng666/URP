@@ -1,4 +1,4 @@
-# Jammy rootless capability candidate v5
+# Jammy rootless capability candidate v6
 
 This is a separate, diagnostic-only cohort. It does not build or import Fields2Cover, prepare a root filesystem, install packages, modify the host APT database, add subordinate-ID allocations, install setuid programs, change host security settings, or publish artifacts/caches. A successful result is a capability proof, not a scientific/native validation result.
 
@@ -83,3 +83,11 @@ Scientific source context remains `18557cfc61f291e8ac5fa4a80d9df212e1df0030`. Th
 V2 was not published: an additional optimized-Python fixture run exposed assertions being removed from two workflow bootstrap bodies. V3 replaces those security-significant assertions with explicit invariant checks, preserving every predicate and bounded failure output. The normal workflow continues to use its fixed isolated interpreter flags. Both normal and optimized source/index-only fixtures are required. This is not evidence of an observed hosted bypass.
 
 The production preparation success code is `CAP_INPUTS_VERIFIED`; final capability success is exactly `stage=capability status=PASS code=OK`. `PROVED` appears only in synthetic projector fixtures and is not accepted by the production public-code contract.
+
+## V6: exact canonical split-standard-library packages
+
+Hosted v5 run `39830518530`, job `120005121637`, at commit `722fc07459c2ee55987c3d034bcd1d3b2ff491aa` passed anchor and helper stages, then authentication failed with `CAP_RUNTIME_UNAUTHENTICATED`. Namespace proof did not run. The hosted object and precise Python inventory/source-policy predicate remain unknown; no raw installed package identity was reported.
+
+Separately, authenticated official snapshot archive data demonstrates three packages supplying files inside the already scanned Python 3.10 tree: `python3-distutils` (48 files) and `python3-lib2to3` (73 files), both from Source `python3-stdlib-extensions`, and `python3.10-venv` (3 files), from Source `python3.10`. V6 adds exactly these optional owner/Source mappings. It does not install or require the packages, accept other packages from either Source family, admit unverified versions, or alter any signed-index, archive, member, ownership, alias, mode, runtime, or namespace check.
+
+The complete canonical scanned-file inventories and provenance are retained as source-indexed public-data test fixtures in `inputs/canonical-python-stdlib-splits.json`. They demonstrate coverage and negative checks, not a substitute for runtime signature/archive authentication or proof of which package caused the hosted failure. The `pdb.py` hypothesis was disproved: that file belongs to already allowed `libpython3.10-stdlib`; `python3.10` is not added. Lock schema 3 and both existing keyring/member protocols are unchanged.
