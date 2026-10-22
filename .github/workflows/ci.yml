@@ -143,10 +143,44 @@ jobs:
             cohort_b/ails
             cohort_b/sisr
             src/research
-      - name: Install native build and archive-test prerequisites
+      - name: Verify preinstalled native build and archive-test prerequisites
+        shell: bash
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends openjdk-17-jdk-headless g++ zstd
+          set -euo pipefail
+          mkdir -p .local-state/deployment-prerequisites
+          {
+            printf 'Runner image: %s / %s\n' "${ImageOS:-unknown}" "${ImageVersion:-unknown}"
+            # ubuntu-22.04 provides a complete JDK 17 separately from its default Java.
+            # Fail closed on image drift instead of downloading another JDK during smoke tests.
+            if [[ -z "${JAVA_HOME_17_X64:-}" || ! -x "$JAVA_HOME_17_X64/bin/java" || ! -x "$JAVA_HOME_17_X64/bin/javac" ]]; then
+              echo '::error::The runner must provide a complete JDK 17 at JAVA_HOME_17_X64.'
+              exit 1
+            fi
+            export JAVA_HOME="$JAVA_HOME_17_X64"
+            export PATH="$JAVA_HOME/bin:$PATH"
+            printf 'JAVA_HOME=%s\n' "$JAVA_HOME"
+            for tool in java javac g++ zstd; do
+              command -v "$tool" || { echo "::error::Missing required tool: $tool"; exit 1; }
+            done
+            if ! java_version="$(java -version 2>&1)"; then
+              printf '%s\n' "$java_version"; exit 1
+            fi
+            printf '%s\n' "$java_version"
+            if ! javac_version="$(javac -version 2>&1)"; then
+              printf '%s\n' "$javac_version"; exit 1
+            fi
+            printf '%s\n' "$javac_version"
+            java_17_pattern='version[[:space:]]+"17([."]|$)'
+            javac_17_pattern='^javac[[:space:]]+17([.]|$)'
+            if [[ ! "$java_version" =~ $java_17_pattern || ! "$javac_version" =~ $javac_17_pattern ]]; then
+              echo '::error::Both java and javac must report major version 17.'
+              exit 1
+            fi
+            g++ --version
+            zstd --version
+            printf 'JAVA_HOME=%s\n' "$JAVA_HOME" >> "$GITHUB_ENV"
+            printf '%s\n' "$JAVA_HOME/bin" >> "$GITHUB_PATH"
+          } 2>&1 | tee .local-state/deployment-prerequisites/toolchain.txt
       - name: Check installer and publication contracts
         run: |
           for file in install.sh deploy/*.sh setup/ubuntu/*.sh; do bash -n "$file"; done
@@ -158,8 +192,6 @@ jobs:
             URP_PORT=4200 docker compose -f "$file" config --format json | python3 -c 'import json,sys; lab=json.load(sys.stdin)["services"]["lab"]; assert str(lab["environment"]["URP_PORT"]) == "4100"; assert any(str(p["published"]) == "4200" and p["target"] == 4100 for p in lab["ports"])'
           done
       - name: Build and minimally execute native CVRP adapters
-        env:
-          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
         run: |
           source setup/ubuntu/env.sh
           command -v java
@@ -172,6 +204,15 @@ jobs:
         with:
           name: deployment-cohort-smoke
           path: .local-state/cohort-smoke
+          include-hidden-files: true
+          if-no-files-found: warn
+
+      - name: Retain prerequisite toolchain diagnostics
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: deployment-prerequisites
+          path: .local-state/deployment-prerequisites
           include-hidden-files: true
           if-no-files-found: warn
 
