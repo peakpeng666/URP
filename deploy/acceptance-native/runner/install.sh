@@ -4,7 +4,7 @@ set -euo pipefail
 source_root="${1:?source root}"
 private="${2:?private directory}"
 cd "$source_root"
-[[ "$(git rev-parse HEAD)" == 94420cf3b703c564134048e1b074406df901bba3 ]]
+[[ "$(git rev-parse HEAD)" == 18557cfc61f291e8ac5fa4a80d9df212e1df0030 ]]
 python3 "$(dirname "$0")/verify_worktree.py" "$source_root" > "$private/source-identity.json"
 [[ "$(uname -m)" == x86_64 ]]
 # The existing installer itself checks Ubuntu 22.04 and rejects root execution.

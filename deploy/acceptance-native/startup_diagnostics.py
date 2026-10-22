@@ -23,6 +23,29 @@ def session_id(report):
 def num(value,integer=False,high=1e9):
     return value if type(value) in ((int,) if integer else (int,float)) and 0<=value<=high and math.isfinite(value) else None
 
+TIMING_STREAMS=('clock','dock','odom','ground_truth')
+TIMING_TRIGGERS={'none','stop','cancel','simulation_budget','wall_watchdog','clock_invalid','clock_backwards','clock_no_progress'}|{prefix+':'+name for prefix in ('stream_missing','stream_gap') for name in TIMING_STREAMS}
+def sanitize_undock_timing(raw):
+    raw=raw if isinstance(raw,dict) and raw.get('policy')=='undock_dual_clock_v1' else {}
+    def bounded(value,low=0,high=1800):
+        return value if type(value) in (int,float) and low<=value<=high and math.isfinite(value) else None
+    result={'policy':'undock_dual_clock_v1' if raw else 'unavailable'}
+    for key,high in [('simulation_budget_s',1200),('minimum_planned_rtf',10),('wall_watchdog_s',1800),('no_progress_wall_s',1200),('stream_gap_wall_s',1200)]:
+        value=bounded(raw.get(key),high=high);result[key]=value if value is not None and value>0 else None
+    for key in ('elapsed_wall_s','trigger_elapsed_wall_s','total_elapsed_wall_s','max_no_progress_wall_s'):
+        result[key]=bounded(raw.get(key))
+    for key in ('elapsed_sim_s','trigger_elapsed_sim_s','total_elapsed_sim_s'):
+        result[key]=bounded(raw.get(key),low=-86400,high=86400)
+    status=raw.get('terminal_status');statuses={4:'succeeded',5:'canceled',6:'aborted'}
+    result['terminal_status']=statuses.get(status,'unavailable') if type(status) is int else status if isinstance(status,str) and status in statuses.values() else 'unavailable'
+    trigger=raw.get('trigger','unavailable');trigger='none' if trigger is None else trigger
+    result['trigger']=trigger if isinstance(trigger,str) and trigger in TIMING_TRIGGERS else 'unavailable'
+    gaps=raw.get('max_stream_gap_wall_s');gaps=gaps if isinstance(gaps,dict) else {}
+    result['max_stream_gap_wall_s']={key:bounded(gaps.get(key)) for key in TIMING_STREAMS}
+    result['cancel_accepted']=raw.get('cancel_accepted') if type(raw.get('cancel_accepted')) is bool else None
+    result['samples']=num(raw.get('samples'),True,10000000)
+    return result
+
 def sanitize(raw):
     raw=raw if isinstance(raw,dict) else {};counts=raw.get('counts');counts=counts if isinstance(counts,dict) else {}
     stages=[]
@@ -33,7 +56,7 @@ def sanitize(raw):
         if isinstance(row,dict) and row.get('component') in COMPONENTS and type(row.get('exit_code')) is int and -255<=row['exit_code']<=255:exits.append({'component':row['component'],'exit_code':row['exit_code']})
     events=raw.get('undock_events');events=events if isinstance(events,list) else []
     codes=raw.get('error_codes');codes=codes if isinstance(codes,list) else []
-    return {'report_available':raw.get('report_available') is True,'undock_events':sorted({e for e in events if isinstance(e,str) and e in UNDOCK_EVENTS}),'dock_state_at_undock_entry':raw.get('dock_state_at_undock_entry') if raw.get('dock_state_at_undock_entry') == 'docked' else 'unavailable','final_dock_state':'unavailable','final_sim_time_s':num(raw.get('final_sim_time_s'),high=86400),'final_speed_m_s':num(raw.get('final_speed_m_s'),high=20),'phase':raw.get('phase') if isinstance(raw.get('phase'),str) and raw['phase'] in PHASES else 'unknown','stages':stages[-20:],'counts':{k:num(counts.get(k),True) for k in COUNTS},'assets_complete':raw.get('assets_complete') if type(raw.get('assets_complete')) is bool else None,'assets_missing_count':num(raw.get('assets_missing_count'),True,100000),'error_codes':sorted({c for c in codes if isinstance(c,str) and c in CODES})[:16],'component_exits':exits[:20]}
+    return {'undock_timing':sanitize_undock_timing(raw.get('undock_timing')),'report_available':raw.get('report_available') is True,'undock_events':sorted({e for e in events if isinstance(e,str) and e in UNDOCK_EVENTS}),'dock_state_at_undock_entry':raw.get('dock_state_at_undock_entry') if raw.get('dock_state_at_undock_entry') == 'docked' else 'unavailable','final_dock_state':'unavailable','final_sim_time_s':num(raw.get('final_sim_time_s'),high=86400),'final_speed_m_s':num(raw.get('final_speed_m_s'),high=20),'phase':raw.get('phase') if isinstance(raw.get('phase'),str) and raw['phase'] in PHASES else 'unknown','stages':stages[-20:],'counts':{k:num(counts.get(k),True) for k in COUNTS},'assets_complete':raw.get('assets_complete') if type(raw.get('assets_complete')) is bool else None,'assets_missing_count':num(raw.get('assets_missing_count'),True,100000),'error_codes':sorted({c for c in codes if isinstance(c,str) and c in CODES})[:16],'component_exits':exits[:20]}
 
 def project(report,logs):
     report=report if isinstance(report,dict) else {};final=report.get('final_state') or {};final=final if isinstance(final,dict) else {}
@@ -53,7 +76,7 @@ def project(report,logs):
         for value in re.findall(r'\bexit code (-?\d{1,3})(?:\D|$)',text):exits.append({'component':component,'exit_code':int(value)})
     robot=final.get('robot');robot=robot if isinstance(robot,dict) else {}
     # Fixed944 gates entry to undocking on latest dock.is_docked; it does not persist final dock state.
-    return sanitize({'report_available':bool(report),'undock_events':events,'dock_state_at_undock_entry':'docked' if any(r.get('phase')=='undocking' for r in stages) else 'unavailable','final_sim_time_s':robot.get('t_sim'),'final_speed_m_s':robot.get('speed'),'phase':final.get('phase') or (stages[-1]['phase'] if stages else 'unknown'),'stages':stages,'counts':{k:report['counts'].get(k,0) for k in COUNTS} if isinstance(report.get('counts'),dict) else {},'assets_complete':assets.get('complete'),'assets_missing_count':len(assets['missing']) if isinstance(assets.get('missing'),list) else None,'error_codes':codes,'component_exits':exits})
+    return sanitize({'undock_timing':report.get('undock_timing'),'report_available':bool(report),'undock_events':events,'dock_state_at_undock_entry':'docked' if any(r.get('phase')=='undocking' for r in stages) else 'unavailable','final_sim_time_s':robot.get('t_sim'),'final_speed_m_s':robot.get('speed'),'phase':final.get('phase') or (stages[-1]['phase'] if stages else 'unknown'),'stages':stages,'counts':{k:report['counts'].get(k,0) for k in COUNTS} if isinstance(report.get('counts'),dict) else {},'assets_complete':assets.get('complete'),'assets_missing_count':len(assets['missing']) if isinstance(assets.get('missing'),list) else None,'error_codes':codes,'component_exits':exits})
 
 def collect(runtime,sid):
     if not isinstance(sid,str) or not SID.fullmatch(sid):return sanitize({})

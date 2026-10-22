@@ -62,7 +62,7 @@ def main(argv=None):
         bindings=[(Clock,'/clock',lambda m:a.sample('clock',m.clock.sec+m.clock.nanosec/1e9)),(DockStatus,'/dock_status',lambda m:a.sample('dock',m.is_docked)),(Odometry,'/sim_ground_truth_pose',lambda m:a.sample('pose',(m.pose.pose.position.x,m.pose.pose.position.y,math.atan2(2*(m.pose.pose.orientation.w*m.pose.pose.orientation.z+m.pose.pose.orientation.x*m.pose.pose.orientation.y),1-2*(m.pose.pose.orientation.y**2+m.pose.pose.orientation.z**2))))),(Twist,'/diffdrive_controller/cmd_vel_unstamped',lambda m:a.sample('motor',(m.linear.x,m.angular.z))),(WheelStatus,'/wheel_status',lambda m:a.sample('wheel',m.wheels_enabled))]
         subscriptions=[node.create_subscription(typ,topic,callback,qos_profile_sensor_data) for typ,topic,callback in bindings]
         with args.output.with_suffix('.ready').open('x') as stream:json.dump({'ready':True},stream)
-        deadline=time.monotonic()+180;poll=0
+        deadline=time.monotonic()+1200;poll=0
         while not stop and not a.closed and time.monotonic()<deadline:
             if time.monotonic()>=poll:
                 with opener.open('http://127.0.0.1:'+str(args.port)+'/lab/api/sim/state',timeout=.5) as response:

@@ -23,6 +23,12 @@ class Tests(unittest.TestCase):
   r=Accumulator().result();r['status']='deadline';self.assertEqual(project(r),r)
   r['raw']='PRIVATE';self.assertEqual(project(r),{'schema':1,'status':'invalid_schema'});self.assertEqual(project(project(r)),project(r))
   del r['raw'];r['clock_delta_s']=float('inf');self.assertEqual(project(r)['status'],'invalid_schema')
+ def test_long_observed_interval_and_strict_upper_bound(self):
+  from undock_observer.projection import project
+  a=Accumulator();a.phase('undocking',100);a.phase('localizing',1100)
+  r=a.result();r['status']='none';self.assertEqual(project(r)['wall_s'],1000)
+  r['wall_s']=1201;self.assertEqual(project(r)['wall_s'],1201)
+  r['wall_s']=1201.01;self.assertEqual(project(r),{'schema':1,'status':'invalid_schema'})
  def test_lifecycle_normal_owned_only(self):
   with tempfile.TemporaryDirectory() as t:
    process=ObserverProcess([sys.executable,'-c','pass'],os.environ.copy(),pathlib.Path(t)/'log');process.proc.wait(timeout=3);r=process.close();self.assertEqual(r,{'exit_code':0,'forced_kill_count':0,'remaining_owned_count':0})
@@ -35,7 +41,7 @@ class Tests(unittest.TestCase):
    r=process.close(grace=.02);self.assertEqual(r['forced_kill_count'],1);self.assertEqual(r['remaining_owned_count'],0)
 
 class RosLifecycleTests(unittest.TestCase):
- def exercise(self,destroy_error=False,shutdown_error=False,subscription_error=False,import_error=False):
+ def exercise(self,destroy_error=False,shutdown_error=False,subscription_error=False,import_error=False,expect_deadline=False):
   from unittest.mock import Mock,patch
   from types import SimpleNamespace
   import io
@@ -48,17 +54,23 @@ class RosLifecycleTests(unittest.TestCase):
    if shutdown_error:ros.shutdown.side_effect=RuntimeError('PRIVATE_SHUTDOWN')
    if subscription_error:node.create_subscription.side_effect=RuntimeError('PRIVATE_SUBSCRIPTION')
    dependencies=(ros,SimpleNamespace(NO=0),object(),object(),object(),object(),object(),object())
-   opener=Mock();opener.open.side_effect=lambda *a,**k:io.BytesIO(json.dumps({'session_id':sid,'phase':('undocking' if opener.open.call_count==1 else 'failed')}).encode())
+   opener=Mock();opener.open.side_effect=lambda *a,**k:io.BytesIO(json.dumps({'session_id':sid,'phase':('undocking' if expect_deadline or opener.open.call_count==1 else 'failed')}).encode())
+   ticks={'n':0}
+   def clock():ticks['n']+=1;return ticks['n']
    env={'ROS_DOMAIN_ID':'146','ROS_LOCALHOST_ONLY':'1','RMW_IMPLEMENTATION':'rmw_cyclonedds_cpp','URP_ACCEPTANCE_OWNER':'a'*48,'URP_LAB_RUNTIME':str(runtime)}
    with patch.dict(os.environ,env),patch.object(observer,'ros_dependencies',side_effect=ImportError('PRIVATE_IMPORT') if import_error else None,return_value=dependencies),patch.object(observer.urllib.request,'build_opener',return_value=opener),patch.object(observer.signal,'signal'):
-    code=observer.main(['--port','12345','--output',str(output)])
+    if expect_deadline:
+     with patch.object(observer.time,'monotonic',side_effect=clock):code=observer.main(['--port','12345','--output',str(output)])
+     self.assertGreaterEqual(ticks['n'],1200);self.assertLess(ticks['n'],1210)
+    else:code=observer.main(['--port','12345','--output',str(output)])
    result=json.loads(output.read_text());self.assertEqual(project(result),result);self.assertNotIn('PRIVATE',json.dumps(result))
    if not import_error:
     node.destroy_node.assert_called_once();ros.shutdown.assert_called_once()
    else:ros.shutdown.assert_not_called()
    self.assertEqual(result['cleanup_destroy_failed'],destroy_error);self.assertEqual(result['cleanup_shutdown_failed'],shutdown_error)
-   self.assertEqual(code,int(destroy_error or shutdown_error or subscription_error or import_error))
+   self.assertEqual(code,int(destroy_error or shutdown_error or subscription_error or import_error or expect_deadline))
    return result
+ def test_observer_deadline_is_1200_with_cleanup(self):self.assertEqual(self.exercise(expect_deadline=True)['status'],'deadline')
  def test_ros_success_and_shutdown(self):self.assertEqual(self.exercise()['status'],'none')
  def test_destroy_exception_does_not_skip_shutdown(self):self.assertEqual(self.exercise(destroy_error=True)['status'],'cleanup_error')
  def test_shutdown_exception_still_writes_bounded_result(self):self.assertEqual(self.exercise(shutdown_error=True)['status'],'cleanup_error')

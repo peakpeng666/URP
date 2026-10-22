@@ -8,7 +8,7 @@ import tarfile
 ARCHIVE_SHA256 = 'fc1793db9a74ed08926d8cab69688453f546ac8a264e3846d9ea2d641868f84c'
 ARCHIVE_SIZE = 46998880
 HISTORICAL_SOURCE = 'ddb5113e641ba63846431d4e3114efaf85f2fc89'
-SOURCE = '94420cf3b703c564134048e1b074406df901bba3'
+SOURCE = '18557cfc61f291e8ac5fa4a80d9df212e1df0030'
 SELECTED = {
  'evidence/container-tb4-warehouse-headless/export.json': (56157, '189b9ff0e7aaa7ceb2086ecfbe92d8b0e9f4a878b69495d2ac34321ef05c2be8'),
  'evidence/container-tb4-warehouse-headless/sim-follow_path.json': (274286, 'c5ba7189b700a6712c8771ef72c0b81827f1818a9fae7c52cf091708040d3b91'),

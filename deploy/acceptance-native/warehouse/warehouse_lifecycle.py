@@ -22,7 +22,7 @@ def drive(api, run_id, plan, guard, save, clock=time.monotonic, sleep=time.sleep
         attempted=True
         state=api('POST','/sim/session',{'world':'warehouse','spawn':{'x':-5.08,'y':-.75,'yaw':1.570796},
                                          'gui':False,'rviz':False,'localization':'ground_truth'},timeout=60)
-        state=poll('/sim/state',lambda r:r.get('phase') in ('ready','failed','stopped'),600)
+        state=poll('/sim/state',lambda r:r.get('phase') in ('ready','failed','stopped'),1200)
         sid=state.get('session_id')
         if state.get('phase')!='ready' or not isinstance(sid,str) or not re.fullmatch(r'sim_[A-Za-z0-9_]+',sid):raise Rejected('session_not_ready')
         guard()

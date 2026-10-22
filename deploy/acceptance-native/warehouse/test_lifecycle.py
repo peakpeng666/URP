@@ -47,6 +47,32 @@ class LifecycleTests(unittest.TestCase):
         result=drive(api,'replay_id',PLAN,guard or (lambda:None),lambda name,data:saved.update({name:data}),clock.clock,clock.sleep,overall=1000)
         return result,api,saved
 
+    def delayed_readiness(self,ready_at,post_delay=0):
+        api=API();clock=Clock();saved={}
+        def delayed(method,path,data=None,timeout=5):
+            if method=='POST' and path=='/sim/session':clock.now+=post_delay
+            if method=='GET' and path=='/sim/state' and not api.stopping and clock.now<ready_at:
+                return {'phase':'undocking','session_id':'sim_test'}
+            return api(method,path,data,timeout)
+        result=drive(delayed,'replay_id',PLAN,lambda:None,lambda name,data:saved.update({name:data}),clock.clock,clock.sleep,overall=1800)
+        return result,api,clock
+
+    def test_ready_after_600_before_1200_remains_allowed(self):
+        for at in (700,1199):
+            result,api,clock=self.delayed_readiness(at)
+            self.assertTrue(result['passed']);self.assertEqual(clock.now,at)
+            self.assertIn('/sim/runs',[path for _,path,_ in api.calls])
+
+    def test_ready_at_1200_hits_readiness_limit(self):
+        result,api,clock=self.delayed_readiness(1200)
+        self.assertFalse(result['passed']);self.assertEqual(clock.now,1200)
+        self.assertNotIn('/sim/runs',[path for _,path,_ in api.calls]);self.assertTrue(api.stopping)
+
+    def test_1800_outer_deadline_wins_over_fresh_1200_allowance(self):
+        result,api,clock=self.delayed_readiness(1900,post_delay=1000)
+        self.assertFalse(result['passed']);self.assertEqual(clock.now,1800)
+        self.assertNotIn('/sim/runs',[path for _,path,_ in api.calls]);self.assertTrue(api.stopping)
+
     def test_success_uses_original_sim_api_no_solve_and_stops(self):
         result,api,_=self.run_case('success');self.assertTrue(result['passed'])
         paths=[path for _,path,_ in api.calls];self.assertNotIn('/solve',paths)

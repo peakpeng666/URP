@@ -77,4 +77,30 @@ class UndockDiagnosticsTests(unittest.TestCase):
         self.assertEqual(result['dock_state_at_undock_entry'],'unavailable')
         self.assertEqual(result['final_dock_state'],'unavailable')
 
+class UndockTimingProjectionTests(unittest.TestCase):
+    def test_timing_whitelist_and_idempotence(self):
+        from startup_diagnostics import sanitize_undock_timing
+        raw={'policy':'undock_dual_clock_v1','simulation_budget_s':35.,'minimum_planned_rtf':.05,'wall_watchdog_s':700.,'no_progress_wall_s':30.,'stream_gap_wall_s':30.,'elapsed_wall_s':500.,'elapsed_sim_s':33.,'total_elapsed_wall_s':501.,'total_elapsed_sim_s':33.1,'terminal_status':4,'trigger':None,'samples':30000,'cancel_accepted':False,'max_stream_gap_wall_s':{'clock':.1,'dock':.5,'odom':.2,'ground_truth':.2},'start_wall_monotonic_s':123456,'start_sim_s':123,'raw':'PRIVATE'}
+        result=sanitize_undock_timing(raw)
+        self.assertEqual(result['terminal_status'],'succeeded');self.assertEqual(result['trigger'],'none')
+        self.assertEqual(result,sanitize_undock_timing(result));self.assertNotIn('PRIVATE',json.dumps(result));self.assertNotIn('start_sim_s',result);self.assertNotIn('start_wall_monotonic_s',result)
+        projected=project({'undock_timing':raw},{})
+        self.assertEqual(projected['undock_timing'],result);self.assertEqual(sanitize(projected),projected)
+        self.assertEqual(public_project({'state':'FAIL','startup_diagnostics':projected},require_runner=False)['state'],'FAIL')
+    def test_timing_missing_and_malicious_values(self):
+        from startup_diagnostics import sanitize_undock_timing
+        empty=sanitize_undock_timing(None);self.assertEqual(empty['policy'],'unavailable');self.assertIsNone(empty['cancel_accepted']);self.assertIsNone(empty['samples']);self.assertEqual(empty,sanitize_undock_timing(empty))
+        bad={'policy':'undock_dual_clock_v1','terminal_status':{'SECRET':'x'},'trigger':'stream_gap:PRIVATE','samples':True,'cancel_accepted':'true','wall_watchdog_s':float('inf'),'elapsed_wall_s':10**1000,'simulation_budget_s':-1,'max_stream_gap_wall_s':{'clock':float('nan'),'PRIVATE':1}}
+        result=sanitize_undock_timing(bad)
+        self.assertEqual(result['terminal_status'],'unavailable');self.assertEqual(result['trigger'],'unavailable')
+        self.assertIsNone(result['samples']);self.assertIsNone(result['wall_watchdog_s']);self.assertIsNone(result['elapsed_wall_s']);self.assertIsNone(result['max_stream_gap_wall_s']['clock'])
+        self.assertNotIn('PRIVATE',json.dumps(result));self.assertNotIn('SECRET',json.dumps(result))
+    def test_each_explicit_stream_trigger_and_backwards_delta(self):
+        from startup_diagnostics import sanitize_undock_timing
+        for stream in ('clock','dock','odom','ground_truth'):
+            for prefix in ('stream_gap','stream_missing'):
+                trigger=prefix+':'+stream
+                self.assertEqual(sanitize_undock_timing({'policy':'undock_dual_clock_v1','trigger':trigger})['trigger'],trigger)
+        self.assertEqual(sanitize_undock_timing({'policy':'undock_dual_clock_v1','trigger':'clock_backwards','elapsed_sim_s':-1})['elapsed_sim_s'],-1)
+
 if __name__=='__main__':unittest.main()

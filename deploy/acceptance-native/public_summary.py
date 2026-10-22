@@ -7,7 +7,7 @@ from pathlib import Path
 from startup_diagnostics import sanitize as sanitize_startup
 from undock_observer.projection import project as project_observer
 
-SOURCE = '94420cf3b703c564134048e1b074406df901bba3'
+SOURCE = '18557cfc61f291e8ac5fa4a80d9df212e1df0030'
 STATES = {'PASS', 'FAIL', 'ERROR', 'NOT_RUN'}
 FAILURE_STEPS = {'none','unknown','health','services','scenario','recommendation','solve_submit','solve_terminal','solve_validation','map_validation','export','session_start','session_ready','sim_submit','sim_execute','sim_tasks','shutdown'}
 ERROR_KINDS = {'none','unknown','module_missing','source_identity','timeout','runtime','http','value'}

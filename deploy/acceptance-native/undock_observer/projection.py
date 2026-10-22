@@ -14,7 +14,7 @@ def project(raw):
         require(all(type(raw[k]) is bool or raw[k] is None for k in ('dock_first','dock_final','wheel_enabled_final')))
         require(all(count(raw[k]) for k in ('clock_regressions','motor_nonzero_count','invalid_samples')))
         require(isinstance(raw['counts'],dict) and set(raw['counts'])=={'clock','dock','pose','motor','wheel'} and all(count(v) for v in raw['counts'].values()))
-        require(all(scalar(raw[k],limit) for k,limit in [('wall_s',181),('clock_delta_s',1000000),('relative_displacement_m',1000),('relative_rotation_rad',math.pi)]))
+        require(all(scalar(raw[k],limit) for k,limit in [('wall_s',1201),('clock_delta_s',1000000),('relative_displacement_m',1000),('relative_rotation_rad',math.pi)]))
         require(raw['motor_nonzero_count']<=raw['counts']['motor'])
         require(not (raw['cleanup_destroy_failed'] or raw['cleanup_shutdown_failed']) or raw['status']=='cleanup_error')
         return {k:(raw[k].copy() if k=='counts' else raw[k]) for k in sorted(FIELDS)}
