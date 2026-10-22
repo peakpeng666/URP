@@ -26,7 +26,11 @@ export interface GeometryIssue {
   /** Where to zoom: [minX, minY, maxX, maxY] in metres; null when the coordinates themselves are unusable. */
   bounds: [number, number, number, number] | null;
   at: XY | null;
+  /** Non-spatial inputs: the fleet-form field to focus (label text as rendered, nth occurrence). */
+  field?: FormField;
 }
+
+export interface FormField { label: string; index: number }
 
 export const ISSUE_LABEL: Record<IssueCode, string> = {
   non_finite: '非有限数值',
@@ -178,13 +182,27 @@ export function validateGeometry(inst: FleetInstance): GeometryIssue[] {
   }
 
   const v = inst.vehicles ?? {};
-  const nums: [string, unknown][] = [
-    ['robot_radius', inst.robot_radius], ['vehicles.count', v.count], ['vehicles.capacity', v.capacity], ['vehicles.speed_mps', v.speed_mps],
-    ...(v.fleet ?? []).flatMap((c, i) => [[`fleet[${i}].count`, c.count], [`fleet[${i}].capacity`, c.capacity], [`fleet[${i}].speed_mps`, c.speed_mps], [`fleet[${i}].robot_radius`, c.robot_radius]] as [string, unknown][]),
-    ...(inst.tasks ?? []).map((t) => [`任务 ${t.label ?? t.id} 需求`, t.demand] as [string, unknown]),
+  const classMode = !!v.fleet?.length;
+  type Num = [string, unknown, FormField | null, ItemRef | null];
+  const nums: Num[] = [
+    ['robot_radius', inst.robot_radius, { label: classMode ? '规划半径' : '车体半径', index: 0 }, null],
+    ['vehicles.count', v.count, classMode ? null : { label: '车辆数', index: 0 }, null],
+    ['vehicles.capacity', v.capacity, classMode ? null : { label: '单车容量', index: 0 }, null],
+    ['vehicles.speed_mps', v.speed_mps, classMode ? null : { label: '车速', index: 0 }, null],
+    ...(v.fleet ?? []).flatMap((c, i) => [
+      [`fleet[${i}].count`, c.count, { label: '数量', index: i }, null],
+      [`fleet[${i}].capacity`, c.capacity, { label: '容量（抽象单位）', index: i }, null],
+      [`fleet[${i}].speed_mps`, c.speed_mps, { label: '车速', index: i }, null],
+      [`fleet[${i}].robot_radius`, c.robot_radius, { label: '规划半径', index: i }, null],
+    ] as Num[]),
+    ...(inst.tasks ?? []).map((t) => [`任务 ${t.label ?? t.id} 需求`, t.demand, null, { type: 'task', id: String(t.id) }] as Num),
   ];
-  for (const [name, val] of nums) {
-    if (val !== undefined && val !== null && !finite(val)) push({ code: 'non_finite', severity: 'error', message: `${name} 不是有限数值（${String(val)}）`, target: null, bounds: null, at: null });
+  for (const [name, val, field, target] of nums) {
+    if (val !== undefined && val !== null && !finite(val)) {
+      const task = target ? inst.tasks.find((t) => String(t.id) === target.id) : undefined;
+      const xy = task && finiteXY(task.xy) ? task.xy : null;
+      push({ code: 'non_finite', severity: 'error', message: `${name} 不是有限数值（${String(val)}）`, target, bounds: xy ? pointBox(xy) : null, at: xy, ...(field ? { field } : {}) });
+    }
   }
   return out;
 }
