@@ -66,4 +66,6 @@ jobs:
           test "$code" = 403
           grep -q shutdown_forbidden /tmp/shutdown.json
       - name: Agriculture works in the bench image without ROS maps
-        run: python3 deploy/check-agriculture.py --base-url http://127.0.0.1:4100
+        run: |
+          python3 deploy/check-agriculture.py --base-url http://127.0.0.1:4100
+          python3 deploy/check-agriculture.py --base-url http://127.0.0.1:4100 --obstacle

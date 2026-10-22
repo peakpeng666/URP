@@ -31,7 +31,7 @@ def request_json(base, path, body=None, expected=200):
         return json.loads(raw)
 
 
-def run(base, timeout=60):
+def run(base, timeout=60, *, obstacle=False):
     base = base.rstrip("/")
     parsed = urlparse(base)
     require(parsed.scheme == "http" and parsed.hostname in {"localhost", "127.0.0.1", "::1"}
@@ -50,6 +50,10 @@ def run(base, timeout=60):
              "instance": {"field": [[0, 0], [200, 0], [200, 140], [0, 140]], "obstacles": [],
                           "headland_width": 6, "swath_width": 3, "turn_radius": 4.5,
                           "robot_width": 2.2, "start": [3, 3], "route_pattern": "boustrophedon", "angle_deg": None}}
+    if obstacle:
+        # An interior hole forces safe transit connections between split swaths.
+        scene["instance"]["obstacles"] = [[[80, 50], [120, 50], [120, 90], [80, 90]]]
+        params["obstacle_fixture"] = "central-hole-v1"
     request_json(base, "/scenarios", scene, 201)
     restored = request_json(base, "/scenarios/" + scene_id)
     require(restored.get("provenance", {}).get("params") == params and restored["provenance"].get("seed") == 42,
@@ -74,12 +78,13 @@ def run(base, timeout=60):
     provenance = record.get("record", {}).get("scenario", {}).get("provenance", {})
     require(provenance.get("params") == params and provenance.get("seed") == 42, "Record lost reproducibility metadata")
     return {"scene_id": scene_id, "run_id": run_id, "status": "passed", "duplicate_status": 409,
-            "independent_check": True, "metadata_roundtrip": True}
+            "independent_check": True, "metadata_roundtrip": True, "obstacle": obstacle}
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://127.0.0.1:4100")
     parser.add_argument("--timeout", type=float, default=60)
+    parser.add_argument("--obstacle", action="store_true", help="Exercise coverage transit around a fixed interior hole")
     args = parser.parse_args()
-    print(json.dumps(run(args.base_url, args.timeout), indent=2))
+    print(json.dumps(run(args.base_url, args.timeout, obstacle=args.obstacle), indent=2))

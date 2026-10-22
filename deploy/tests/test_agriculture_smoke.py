@@ -50,6 +50,21 @@ class AgricultureSmokeTests(unittest.TestCase):
         self.assertIn(('/scenarios', 409), calls)
         self.assertEqual(calls[-1], ('/runs/run_test/record', 200))
 
+    def test_obstacle_option_adds_fixed_hole_and_preserves_default(self):
+        for obstacle in [False, True]:
+            request, _ = self.fake_api()
+            def inspect(base, path, body=None, expected=200):
+                if path == '/scenarios' and body is not None:
+                    self.assertEqual(bool(body['instance']['obstacles']), obstacle)
+                    if obstacle:
+                        self.assertEqual(body['instance']['obstacles'], [[[80, 50], [120, 50], [120, 90], [80, 90]]])
+                        self.assertEqual(body['provenance']['params']['obstacle_fixture'], 'central-hole-v1')
+                return request(base, path, body, expected)
+            with self.subTest(obstacle=obstacle), patch.object(smoke, 'request_json', inspect):
+                result = smoke.run('http://localhost:4100', obstacle=obstacle)
+            self.assertEqual(result['obstacle'], obstacle)
+            self.assertEqual(result['status'], 'passed')
+
     def test_detects_duplicate_overwrite(self):
         request, _ = self.fake_api(corrupt_duplicate=True)
         with patch.object(smoke, 'request_json', request), self.assertRaisesRegex(RuntimeError, 'Duplicate import'):
