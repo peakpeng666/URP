@@ -4,7 +4,7 @@
       "sha256": "cc14d22e1195d61e844ff01426812552f4bdfc971adb660f53bbff0857435c0d"
     },
     "PREPARATION.md": {
-      "sha256": "aa30834aa7457c394a553b2cdb2f1c4bcea7f94b3eb680cf774bdcab796377a9"
+      "sha256": "b2b53f62d471c6be7252e97f8e5becf30e24988da0ecd0bc3d20647567cf4594"
     },
     "PUBLIC_FILE_ALLOWLIST.txt": {
       "sha256": "feb7750077f018b6b4f57c3e80335de5fc73431091124d7fd84e3c32a17e1a30"
@@ -25,10 +25,10 @@
       "sha256": "70e28d980f06f4d188b77245d9f27c26f7fc9c705fc6bf3d590efd1a6bf06562"
     },
     "recipe/PACKAGE_PREPARATION.md": {
-      "sha256": "1c5197ad0e2e00744c25c04ccf58c45b41819f87ead996270955ad6b8b9ad897"
+      "sha256": "898e7f61d9d3e419bb150c8a68b58db212e0b0660153bde38189e2879ef2ecd3"
     },
     "recipe/README.md": {
-      "sha256": "3281f6a1cd2f32239a78ab709100054a83e2861857797483e95afc426f5868be"
+      "sha256": "babd2012956a6a62023ad9dec4c53ff67a71504de378c1982f15aae10d02271e"
     },
     "recipe/VALIDATION.md": {
       "sha256": "4b5d7d621c810d0d88d1854e2ce97add9942b060017b709befef4fff1aefe65a"
@@ -52,7 +52,7 @@
       "sha256": "b8865c8b8475c33f00609866b627548f188faf78143cba8d425619b1655079c5"
     },
     "recipe/prepare_jammy_packages.py": {
-      "sha256": "55f744ee6054062b8e8c90e49c3ce2cd1641e332e3ddf922b840b2d24c34afc4"
+      "sha256": "a12ed9719a93bcfb0e6e2a5431d7c311f77f906ebecaf621ea32ab00bdc9d49a"
     },
     "recipe/prepare_live.py": {
       "sha256": "1d1b97f6c42f4618ad87d5623c76b0fb09d5d973ed1217522ae09502fa55c426"
@@ -61,7 +61,7 @@
       "sha256": "8d0adf96e35166187f4731bc2b6296f75f21185f58eadf9bc420053bf047d48f"
     },
     "recipe/project_failure_code.py": {
-      "sha256": "9db6e05b80d5d9ebe60c3129f3e639a56726c97ead18c5454aa6f050b1811740"
+      "sha256": "f553ff4a80300cde5d9c34513a582cd0e1ef264fba351ab3c18826cac7acf66e"
     },
     "recipe/reviewed-inputs.template.json": {
       "sha256": "8d902ec58c740d966ad5fc44a678012145128ad7da13768c0025682c6d4df6e2"
@@ -82,10 +82,10 @@
       "sha256": "e1d36bda616278262e5e9508723d6b339f8930e1383adae1e9a4b08391011d92"
     },
     "recipe/tests/test_package_preparation.py": {
-      "sha256": "ddedd335335a7913b5345b45ac629313b5ba7ba655b0d6a20a322c8ca9ea7d32"
+      "sha256": "210c5471b7a492762d1473a59cca935d5a167332fea9f59c7be091c4bc90e42b"
     },
     "recipe/tests/test_structured_failure_projection.py": {
-      "sha256": "439842f996ec7b5e25a180fa876514d90a29dd4f7a13a75f734946c53e6a778a"
+      "sha256": "a765a3aa806ce1275e5af2a086c55d778e2007d8fd98aa048501eb34191dec74"
     },
     "recipe/tests/test_validation.py": {
       "sha256": "84e430799619b907c8950b117c061d29703601017e3c287ea3965a482fe92f6d"

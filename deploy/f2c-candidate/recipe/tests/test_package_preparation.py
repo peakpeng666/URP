@@ -203,6 +203,123 @@ class TestNativeClosureAndAPTPlans(unittest.TestCase):
                 p.parse_archive_uris(text)
 
 
+class TestClosureProvenanceReasons(unittest.TestCase):
+    def setUp(self):
+        self.context = dict(p.DIAGNOSTIC_CONTEXT)
+        p.phase('closure-provenance')
+
+    def tearDown(self):
+        p.DIAGNOSTIC_CONTEXT.clear()
+        p.DIAGNOSTIC_CONTEXT.update(self.context)
+
+    def assert_reason(self, code, call):
+        with self.assertRaises(p.ClosureProvenanceError) as raised:
+            call()
+        self.assertEqual(raised.exception.code, code)
+        receipt = p.failure_diagnostic(raised.exception)
+        self.assertEqual(receipt['code'], code)
+        self.assertEqual(receipt['operation'], 'closure-provenance')
+        self.assertEqual(receipt['exception_class'], 'ClosureProvenanceError')
+        self.assertEqual(set(receipt), {'schema', 'code', 'operation', 'exception_class',
+                                       'http_status', 'errno', 'returncode', 'suite', 'component'})
+        encoded = json.dumps(receipt)
+        self.assertLess(len(encoded), 1024)
+        for private in ('SECRET', '/private', 'https://'):
+            self.assertNotIn(private, encoded)
+
+    def test_missing_package_is_distinct_and_never_runs_native_command(self):
+        roots = {'fixture-root': '1'}
+        with mock.patch.object(p.subprocess, 'run') as native:
+            self.assert_reason('APT_CLOSURE_PACKAGE_UNAVAILABLE', lambda: p.extend_provenance_roots(
+                [row('SECRET_PACKAGE', 'SECRET_VERSION')], {}, roots))
+            native.assert_not_called()
+        self.assertEqual(roots, {'fixture-root': '1'})
+
+    def test_architecture_mismatch_cannot_be_substituted(self):
+        for selected, signed in (('amd64', 'all'), ('all', 'amd64'), ('i386', 'amd64')):
+            with self.subTest(selected=selected, signed=signed), mock.patch.object(p.subprocess, 'run') as native:
+                self.assert_reason('APT_CLOSURE_PACKAGE_UNAVAILABLE', lambda: p.extend_provenance_roots(
+                    [row('SECRET_PACKAGE', 'SECRET_VERSION', selected)],
+                    {('SECRET_PACKAGE', '2', signed): [{}]}, {}))
+                native.assert_not_called()
+
+    def test_downgrade_refusal_and_its_comparison_are_unchanged(self):
+        roots = {}
+        with mock.patch.object(p.subprocess, 'run', return_value=types.SimpleNamespace(returncode=1)) as native:
+            self.assert_reason('APT_CLOSURE_DOWNGRADE_REFUSED', lambda: p.extend_provenance_roots(
+                [row('SECRET_PACKAGE', 'SECRET_INSTALLED_VERSION')],
+                {('SECRET_PACKAGE', 'SECRET_SIGNED_VERSION', 'amd64'): [{}]}, roots))
+            native.assert_called_once_with(['/usr/bin/dpkg', '--compare-versions',
+                'SECRET_SIGNED_VERSION', 'ge', 'SECRET_INSTALLED_VERSION'])
+        self.assertEqual(roots, {})
+
+    def test_unsuccessful_version_comparison_still_fails_closed(self):
+        with mock.patch.object(p.subprocess, 'run', return_value=types.SimpleNamespace(returncode=2)):
+            self.assert_reason('APT_CLOSURE_DOWNGRADE_REFUSED', lambda: p.extend_provenance_roots(
+                [row('SECRET_PACKAGE', 'SECRET_VERSION')], {('SECRET_PACKAGE', '2', 'amd64'): [{}]}, {}))
+
+    def test_unresolved_original_root_is_not_replaced(self):
+        roots = {}
+        with mock.patch.object(p.subprocess, 'run', return_value=types.SimpleNamespace(returncode=0)):
+            self.assert_reason('APT_CLOSURE_PIN_UNRESOLVED', lambda: p.extend_provenance_roots(
+                [row('gcc-11', 'SECRET_VERSION')], {('gcc-11', 'SECRET_SIGNED_VERSION', 'amd64'): [{}]}, roots))
+        self.assertEqual(roots, {})
+
+    def test_unresolved_added_pin_is_not_replaced(self):
+        roots = {'SECRET_PACKAGE': 'SECRET_EXISTING_PIN'}
+        with mock.patch.object(p.subprocess, 'run', return_value=types.SimpleNamespace(returncode=0)):
+            self.assert_reason('APT_CLOSURE_PIN_UNRESOLVED', lambda: p.extend_provenance_roots(
+                [row('SECRET_PACKAGE', 'SECRET_VERSION')],
+                {('SECRET_PACKAGE', 'SECRET_SIGNED_VERSION', 'amd64'): [{}]}, roots))
+        self.assertEqual(roots, {'SECRET_PACKAGE': 'SECRET_EXISTING_PIN'})
+
+    def test_no_progress_is_defensive_and_does_not_run_command(self):
+        with mock.patch.object(p.subprocess, 'run') as native:
+            self.assert_reason('APT_CLOSURE_NO_PROGRESS', lambda: p.extend_provenance_roots([], {}, {}))
+            native.assert_not_called()
+
+    def test_authenticated_upgrade_converges_on_next_exact_solution(self):
+        roots = {}
+        records = {('dependency', '2', 'amd64'): [{}], ('dependency', '3', 'amd64'): [{}]}
+        solution = {'closure': [row('dependency', '1')]}
+        with mock.patch.object(p.subprocess, 'run', return_value=types.SimpleNamespace(returncode=0)) as native:
+            missing = [item for item in solution['closure'] if p.identity(item) not in records]
+            p.extend_provenance_roots(missing, records, roots)
+            self.assertEqual(roots, {'dependency': '3'})
+            solution = {'closure': [row('dependency', roots['dependency'])]}
+            self.assertEqual([item for item in solution['closure'] if p.identity(item) not in records], [])
+            self.assertEqual(native.call_args_list, [
+                mock.call(['/usr/bin/dpkg', '--compare-versions', '3', 'gt', '2']),
+                mock.call(['/usr/bin/dpkg', '--compare-versions', '3', 'ge', '1'])])
+
+    def test_best_version_selection_does_not_assume_index_sort_order(self):
+        records = {('dependency', '3', 'amd64'): [{}], ('dependency', '2', 'amd64'): [{}]}
+        roots = {}
+        with mock.patch.object(p.subprocess, 'run', side_effect=[
+                types.SimpleNamespace(returncode=1), types.SimpleNamespace(returncode=0)]) as native:
+            p.extend_provenance_roots([row('dependency', '1')], records, roots)
+        self.assertEqual(roots, {'dependency': '3'})
+        self.assertEqual(native.call_args_list, [
+            mock.call(['/usr/bin/dpkg', '--compare-versions', '2', 'gt', '3']),
+            mock.call(['/usr/bin/dpkg', '--compare-versions', '3', 'ge', '1'])])
+
+    def test_architecture_all_exact_identity_is_preserved(self):
+        roots = {}
+        with mock.patch.object(p.subprocess, 'run', return_value=types.SimpleNamespace(returncode=0)):
+            p.extend_provenance_roots([row('dependency', '1', 'all')],
+                {('dependency', '2', 'all'): [{}]}, roots)
+        self.assertEqual(roots, {'dependency': '2'})
+
+    def test_unknown_or_tampered_code_cannot_escape_finite_contract(self):
+        with self.assertRaises(ValueError):
+            p.ClosureProvenanceError('SECRET_CODE')
+        error = p.ClosureProvenanceError('APT_CLOSURE_PIN_UNRESOLVED')
+        error.code = 'SECRET_CODE'
+        receipt = p.failure_diagnostic(error)
+        self.assertEqual(receipt['code'], 'APT_INVARIANT_REJECTED')
+        self.assertNotIn('SECRET', json.dumps(receipt))
+
+
 class TestProviderSelectionReasons(unittest.TestCase):
     def setUp(self):
         self.context = dict(p.DIAGNOSTIC_CONTEXT)

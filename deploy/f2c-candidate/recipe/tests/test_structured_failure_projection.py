@@ -47,6 +47,15 @@ class StructuredProjectionTests(unittest.TestCase):
             d = receipt(); d['code'] = code
             self.assertIsNone(M.validated_package_receipt(json.dumps(d)))
 
+    def test_closure_reasons_do_not_disclose_package_or_version(self):
+        for code in ('APT_CLOSURE_PACKAGE_UNAVAILABLE', 'APT_CLOSURE_DOWNGRADE_REFUSED', 'APT_CLOSURE_PIN_UNRESOLVED', 'APT_CLOSURE_NO_PROGRESS'):
+            d = receipt()
+            d.update(code=code, operation='closure-provenance', exception_class='ClosureProvenanceError', http_status=None, suite=None, component=None)
+            self.assertEqual(M.validated_package_receipt(json.dumps(d)), d)
+            for key in ('package', 'version', 'selected_version', 'installed_version'):
+                private = dict(d); private[key] = 'PRIVATE_SENTINEL'
+                self.assertIsNone(M.validated_package_receipt(json.dumps(private)))
+
     def test_accepts_exact_public_receipt(self):
         d = receipt()
         self.assertEqual(M.validated_package_receipt(json.dumps(d)), d)

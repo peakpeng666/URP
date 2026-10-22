@@ -140,3 +140,42 @@ another verifies that archive control mismatch stops before byte verification.
 No early payload cache, extra metadata source, removal permission, or diagnostic
 schema change was introduced.
 
+# Closure-provenance diagnostics (v5)
+
+The v4 hosted attempt stopped at `closure-provenance` with
+`APT_INVARIANT_REJECTED` and `RuntimeError`. It reached native closure resolution,
+but this receipt does not distinguish which provenance condition rejected the
+selected package state. The post-closure provider byte proof had not yet run.
+
+V5 assigns four finite codes through `ClosureProvenanceError`:
+
+- `APT_CLOSURE_PACKAGE_UNAVAILABLE`: no authenticated candidate has the exact
+  selected package name and architecture.
+- `APT_CLOSURE_DOWNGRADE_REFUSED`: the existing dpkg comparison did not establish
+  that the highest authenticated version is at least the selected version.
+- `APT_CLOSURE_PIN_UNRESOLVED`: a missing identity is already an original root
+  or a root added by an earlier provenance pass.
+- `APT_CLOSURE_NO_PROGRESS`: the existing defensive progress check failed.
+
+The progress check is not reachable from the current caller with a nonempty
+missing list if the preceding checks all pass; its direct fixture preserves the
+defensive condition. The existing loop is extracted into a helper for focused
+tests. Candidate selection, version comparisons, pin constraints, root updates,
+and re-resolution behavior are unchanged. There is no automatic downgrade,
+removal, foreign-source acceptance, or architecture substitution.
+
+The nine-field receipt remains closed: no package name, installed or candidate
+version, private path, or raw solver output is added. Fixtures cover every
+rejection, the defensive check, exact authenticated upgrade convergence, index
+ordering, architecture mismatch, Architecture: all, and secret non-disclosure.
+
+Read-only inspection rechecked the three pinned release hashes/sizes and all six
+signed package-index hashes/sizes and parsed 118,009 stanzas. The indexes contain
+exact Architecture: all records, including the pinned libeigen3-dev and
+ca-certificates versions. The [official low-level python-apt API](https://apt-team.pages.debian.net/python-apt/library/apt_pkg.html)
+defines `Version.arch` as including `all`; the different
+[`Package.architecture()` API](https://apt-team.pages.debian.net/python-apt/library/apt.package.html)
+reports native architecture for these packages. The solver uses `Version.arch`.
+This does not establish an architecture defect or replace a native Jammy test.
+No exact hosted package identity or rejecting branch is inferred from the v4
+receipt, and no provenance acceptance rule is relaxed.

@@ -53,11 +53,17 @@ PROVIDER_SELECTION_ERRORS = {
     'APT_PROVIDER_OWNER_MISMATCH': 'pkg-config executable is not owned by selected signed pkgconf provider',
     'APT_PROVIDER_EXECUTABLE_MISSING': 'Provider executable missing',
 }
+CLOSURE_PROVENANCE_ERRORS = {
+    'APT_CLOSURE_PACKAGE_UNAVAILABLE': 'No authenticated Jammy archive for relevant dependency',
+    'APT_CLOSURE_DOWNGRADE_REFUSED': 'Snapshot would downgrade a relevant installed package',
+    'APT_CLOSURE_PIN_UNRESOLVED': 'Cannot close pinned dependency provenance',
+    'APT_CLOSURE_NO_PROGRESS': 'Native closure did not converge',
+}
 DIAGNOSTIC_CODES = frozenset({
     'APT_HTTP_ERROR', 'APT_TLS_ERROR', 'APT_NETWORK_ERROR', 'APT_TIMEOUT',
     'APT_PREREQUISITE_FAILED', 'APT_SUBPROCESS_FAILED', 'APT_METADATA_PARSE_ERROR',
     'APT_FILE_ACCESS_ERROR', 'APT_INVARIANT_REJECTED', 'APT_UNEXPECTED_ERROR',
-} | set(PROVIDER_SELECTION_ERRORS))
+} | set(PROVIDER_SELECTION_ERRORS) | set(CLOSURE_PROVENANCE_ERRORS))
 DIAGNOSTIC_OPERATIONS = frozenset({
     'bootstrap', 'host-check', 'prerequisites', 'base-inventory', 'release-download',
     'signature-verify', 'release-parse', 'index-download', 'index-parse',
@@ -72,6 +78,7 @@ DIAGNOSTIC_CLASSES = frozenset({
     'FileExistsError', 'OSError', 'UnicodeDecodeError', 'LZMAError', 'KeyError',
     'ValueError', 'ModuleNotFoundError', 'ImportError', 'AssertionError', 'TypeError',
     'JSONDecodeError', 'AttributeError', 'AptPkgError', 'OtherError', 'ProviderSelectionError',
+    'ClosureProvenanceError',
 })
 DIAGNOSTIC_ERRNOS = frozenset({-3, -2, 1, 2, 5, 11, 13, 17, 22, 28, 30, 32,
                               36, 40, 95, 101, 104, 110, 111, 113})
@@ -103,6 +110,20 @@ class ProviderSelectionError(RuntimeError):
 def require_provider(value, code):
     if not value:
         raise ProviderSelectionError(code)
+
+
+class ClosureProvenanceError(RuntimeError):
+    """A finite reason for an unchanged closure-provenance acceptance condition."""
+    def __init__(self, code):
+        if code not in CLOSURE_PROVENANCE_ERRORS:
+            raise ValueError('Unknown closure provenance code')
+        super().__init__(CLOSURE_PROVENANCE_ERRORS[code])
+        self.code = code
+
+
+def require_closure(value, code):
+    if not value:
+        raise ClosureProvenanceError(code)
 
 
 def validated_child_receipt(receipt):
@@ -181,6 +202,8 @@ def failure_diagnostic(error):
         code = 'APT_PREREQUISITE_FAILED'
     elif isinstance(error, ProviderSelectionError):
         code = error.code if error.code in PROVIDER_SELECTION_ERRORS else 'APT_INVARIANT_REJECTED'
+    elif isinstance(error, ClosureProvenanceError):
+        code = error.code if error.code in CLOSURE_PROVENANCE_ERRORS else 'APT_INVARIANT_REJECTED'
     elif isinstance(error, RuntimeError):
         code = 'APT_INVARIANT_REJECTED'
     if isinstance(reason, OSError):
@@ -446,6 +469,24 @@ def closure_versions(selected, seeds):
     return list(closure.values())
 
 
+def extend_provenance_roots(missing, records, roots):
+    """Retain the original authenticated upgrade policy; only refine rejection codes."""
+    progress = False
+    for item in missing:
+        choices = [k for k in records if k[0] == item['name'] and k[2] == item['architecture']]
+        require_closure(choices, 'APT_CLOSURE_PACKAGE_UNAVAILABLE')
+        best = choices[0][1]
+        for choice in choices[1:]:
+            if subprocess.run(['/usr/bin/dpkg', '--compare-versions', choice[1], 'gt', best]).returncode == 0:
+                best = choice[1]
+        require_closure(subprocess.run(['/usr/bin/dpkg', '--compare-versions', best, 'ge', item['version']]).returncode == 0,
+                        'APT_CLOSURE_DOWNGRADE_REFUSED')
+        require_closure(item['name'] not in ROOTS and item['name'] not in roots,
+                        'APT_CLOSURE_PIN_UNRESOLVED')
+        roots[item['name']] = best; progress = True
+    require_closure(progress, 'APT_CLOSURE_NO_PROGRESS')
+
+
 def native_solve(input_path, output_path):
     phase('native-solver')
     import apt_pkg  # Only the runner's /usr/bin/python3, never imported by fixture tests.
@@ -655,20 +696,7 @@ def main():
         if not missing:
             break
         phase('closure-provenance')
-        progress = False
-        for item in missing:
-            choices = [k for k in records if k[0] == item['name'] and k[2] == item['architecture']]
-            require(choices, 'No authenticated Jammy archive for relevant dependency: ' + str(item))
-            best = choices[0][1]
-            for choice in choices[1:]:
-                if subprocess.run(['/usr/bin/dpkg', '--compare-versions', choice[1], 'gt', best]).returncode == 0:
-                    best = choice[1]
-            require(subprocess.run(['/usr/bin/dpkg', '--compare-versions', best, 'ge', item['version']]).returncode == 0,
-                    'Snapshot would downgrade a relevant installed package: ' + item['name'])
-            require(item['name'] not in ROOTS and item['name'] not in roots,
-                    'Cannot close pinned dependency provenance: ' + item['name'])
-            roots[item['name']] = best; progress = True
-        require(progress, 'Native closure did not converge')
+        extend_provenance_roots(missing, records, roots)
     validate_transaction(solution['transaction'], base)
     write_json(out / 'transaction.json', solution)
     payloads = out / 'payloads'; payloads.mkdir()
