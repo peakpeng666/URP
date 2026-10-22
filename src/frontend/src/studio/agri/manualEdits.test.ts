@@ -24,4 +24,18 @@ describe('manual edit detection', () => {
     expect(manualEdits(p, { instance: built.instance, provenance: {} }).reproducible).toBe(false);
     expect(manualEdits(p, { instance: built.instance, provenance: { seed: 1, params: {} } }).reason).toMatch('不一致');
   });
+  it('ignores defaults the backend fills in on save (empty corridors, default names, key order)', () => {
+    const q = AGRI_PATTERNS.find((x) => x.id === 'orchard-harvest-transport')!;
+    const b = buildPattern(q, defaultValues(q), 7);
+    const inst = structuredClone(b.instance) as Record<string, unknown> & { vehicles: Record<string, unknown> };
+    const n = Number(inst.vehicles.count);
+    const saved = { ...Object.fromEntries(Object.entries(inst).reverse()), corridors: [],
+      vehicles: { ...inst.vehicles, names: Array.from({ length: n }, (_, i) => `车${i + 1}`) } };
+    expect(manualEdits(q, { ...b, instance: saved }).changes).toEqual([]);
+    const renamed = { ...saved, vehicles: { ...saved.vehicles, names: saved.vehicles.names.map((x, i) => (i ? x : '主车')) } };
+    expect(manualEdits(q, { ...b, instance: renamed }).changes).toContain('车队配置已改动');
+    const lane = { ...saved, corridors: [{ id: 'c1', polyline: [[0, 0], [1, 0]] }] };
+    expect(manualEdits(q, { ...b, instance: lane }).changes).toContain('通道已改动');
+  });
 });
+

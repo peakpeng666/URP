@@ -169,7 +169,7 @@ export function PatternCard({ pattern: p, active = true, focusRequest = 0 }: { p
       {built?.preview && <PreviewMap preview={built.preview} issues={built.issues} title={p.name} onLocate={locateIssue} />}
       {built?.error && <Notice tone="warn">当前参数无法生成预览：{built.error}</Notice>}
       <fieldset disabled={busy} style={{ border: 0, padding: 0 }}>
-        {(p.runnable?.params ?? []).map((param) => <label key={param.key} id={paramAnchor(p.id, param.key)} data-located={located.includes(param.key) || undefined} style={{ display: 'block', marginBottom: 8, outline: located.includes(param.key) ? '2px solid #ff6f00' : undefined, outlineOffset: 2 }}>
+        {(p.runnable?.params ?? []).map((param) => <label key={param.key} id={paramAnchor(p.id, param.key)} data-located={located[0] === param.key ? 'primary' : located.includes(param.key) ? 'related' : undefined} style={{ display: 'block', marginBottom: 8, outline: located[0] === param.key ? '2px solid #ff6f00' : located.includes(param.key) ? '1px dashed #ff6f00' : undefined, outlineOffset: 2 }}>
           {param.label}{param.unit ? ` (${param.unit})` : ''}
           {param.type === 'select' ? <Select aria-label={`${p.name} ${param.label}`} value={String(values[param.key])} onChange={(e) => edit({ ...values, [param.key]: e.target.value })}>
             {param.options?.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
