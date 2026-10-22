@@ -31,6 +31,22 @@ class StructuredProjectionTests(unittest.TestCase):
         self.assertEqual(M.validated_package_receipt(json.dumps(emitted)), emitted)
         self.assertNotIn('PRIVATE_SENTINEL', json.dumps(emitted))
 
+    def test_all_provider_reasons_are_finite_and_hide_private_details(self):
+        codes = {
+            'APT_PROVIDER_COEXISTENCE_REJECTED',
+            'APT_PROVIDER_VERSION_UNAUTHENTICATED',
+            'APT_PROVIDER_CAPABILITY_MISSING',
+            'APT_PROVIDER_OWNER_MISMATCH',
+            'APT_PROVIDER_EXECUTABLE_MISSING',
+        }
+        for code in codes:
+            d = receipt()
+            d.update(code=code, operation='provider-selection', exception_class='ProviderSelectionError', http_status=None, suite=None, component=None)
+            self.assertEqual(M.validated_package_receipt(json.dumps(d)), d)
+        for code in ('APT_PROVIDER_PRIVATE_SENTINEL', '/private/path', 'https://private.invalid/token'):
+            d = receipt(); d['code'] = code
+            self.assertIsNone(M.validated_package_receipt(json.dumps(d)))
+
     def test_accepts_exact_public_receipt(self):
         d = receipt()
         self.assertEqual(M.validated_package_receipt(json.dumps(d)), d)

@@ -203,6 +203,77 @@ class TestNativeClosureAndAPTPlans(unittest.TestCase):
                 p.parse_archive_uris(text)
 
 
+class TestProviderSelectionReasons(unittest.TestCase):
+    def setUp(self):
+        self.context = dict(p.DIAGNOSTIC_CONTEXT)
+        p.phase('provider-selection')
+
+    def tearDown(self):
+        p.DIAGNOSTIC_CONTEXT.clear()
+        p.DIAGNOSTIC_CONTEXT.update(self.context)
+
+    def assert_reason(self, code, call):
+        with mock.patch.object(p.subprocess, 'run') as native:
+            with self.assertRaises(p.ProviderSelectionError) as raised:
+                call()
+            native.assert_not_called()
+        self.assertEqual(raised.exception.code, code)
+        receipt = p.failure_diagnostic(raised.exception)
+        self.assertEqual(receipt['code'], code)
+        self.assertEqual(receipt['exception_class'], 'ProviderSelectionError')
+        self.assertEqual(receipt['operation'], 'provider-selection')
+        self.assertEqual(set(receipt), {'schema', 'code', 'operation', 'exception_class',
+                                       'http_status', 'errno', 'returncode', 'suite', 'component'})
+        encoded = json.dumps(receipt)
+        for private in ('SECRET', '/private', 'https://'):
+            self.assertNotIn(private, encoded)
+
+    def test_coexistence_rejected_without_removing_either_package(self):
+        base = {'pkg-config:amd64': row('pkg-config', 'SECRET_VERSION_ONE'),
+                'pkgconf:amd64': row('pkgconf', 'SECRET_VERSION_TWO')}
+        before = json.dumps(base, sort_keys=True)
+        self.assert_reason('APT_PROVIDER_COEXISTENCE_REJECTED', lambda: p.choose_roots(base, {}))
+        self.assertEqual(json.dumps(base, sort_keys=True), before)
+
+    def test_unauthenticated_version_is_distinct_without_version_output(self):
+        self.assert_reason('APT_PROVIDER_VERSION_UNAUTHENTICATED', lambda: p.choose_roots(
+            {'pkgconf:amd64': row('pkgconf', 'SECRET_VERSION')}, {}))
+
+    def test_missing_capability_is_distinct_without_provides_output(self):
+        self.assert_reason('APT_PROVIDER_CAPABILITY_MISSING', lambda: p.choose_roots(
+            {'pkgconf:amd64': row('pkgconf', '1.8.0-1')},
+            {('pkgconf', '1.8.0-1', 'amd64'): [{'Provides': 'SECRET_PROVIDER'}]}))
+
+    def test_owner_mismatch_is_distinct_without_owner_or_path_output(self):
+        executable = mock.Mock()
+        self.assert_reason('APT_PROVIDER_OWNER_MISMATCH', lambda: p.validate_selected_provider(
+            'SECRET_OWNER: /private/SECRET_PATH', executable))
+        executable.is_file.assert_not_called()
+
+    def test_missing_executable_is_distinct_without_path_output(self):
+        self.assert_reason('APT_PROVIDER_EXECUTABLE_MISSING', lambda: p.validate_selected_provider(
+            'pkgconf: /private/SECRET_PATH', types.SimpleNamespace(is_file=lambda: False)))
+
+    def test_known_signed_provider_and_owner_are_still_accepted(self):
+        base = {'pkgconf:amd64': row('pkgconf', '1.8.0-1')}
+        records = {('pkgconf', '1.8.0-1', 'amd64'): [{'Provides': 'pkg-config (= 0.29-1)'}]}
+        roots, providers = p.choose_roots(base, records)
+        self.assertEqual(providers, {'pkg-config': 'pkgconf'})
+        self.assertEqual(roots['pkgconf'], '1.8.0-1')
+        for owner in ('pkgconf', 'pkgconf:amd64'):
+            p.validate_selected_provider(owner + ': /usr/bin/pkg-config',
+                                         types.SimpleNamespace(is_file=lambda: True))
+
+    def test_pkg_config_only_accepted_without_provider_replacement(self):
+        roots, providers = p.choose_roots({'pkg-config:amd64': row('pkg-config')}, {})
+        self.assertEqual(roots, p.ROOTS)
+        self.assertEqual(providers, {})
+
+    def test_unknown_reason_cannot_be_constructed(self):
+        with self.assertRaisesRegex(ValueError, '^Unknown provider selection code$'):
+            p.ProviderSelectionError('SECRET_CODE /private/path https://private.example')
+
+
 class TestProviderArchiveBytes(unittest.TestCase):
     def archive(self, symlink=False):
         buffer = io.BytesIO()

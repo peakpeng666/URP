@@ -132,9 +132,9 @@ UNSHARE_ERRORS = frozenset({'unshare: unshare failed: Operation not permitted',
                             'unshare: unshare failed: Function not implemented'})
 
 
-PACKAGE_CODES = frozenset('APT_HTTP_ERROR APT_TLS_ERROR APT_NETWORK_ERROR APT_TIMEOUT APT_PREREQUISITE_FAILED APT_SUBPROCESS_FAILED APT_METADATA_PARSE_ERROR APT_FILE_ACCESS_ERROR APT_INVARIANT_REJECTED APT_UNEXPECTED_ERROR'.split())
+PACKAGE_CODES = frozenset('APT_HTTP_ERROR APT_TLS_ERROR APT_NETWORK_ERROR APT_TIMEOUT APT_PREREQUISITE_FAILED APT_SUBPROCESS_FAILED APT_METADATA_PARSE_ERROR APT_FILE_ACCESS_ERROR APT_INVARIANT_REJECTED APT_UNEXPECTED_ERROR APT_PROVIDER_COEXISTENCE_REJECTED APT_PROVIDER_VERSION_UNAUTHENTICATED APT_PROVIDER_CAPABILITY_MISSING APT_PROVIDER_OWNER_MISMATCH APT_PROVIDER_EXECUTABLE_MISSING'.split())
 PACKAGE_OPERATIONS = frozenset('bootstrap host-check prerequisites base-inventory release-download signature-verify release-parse index-download index-parse provider-selection apt-config apt-update native-solver solver-result closure-provenance archive-download archive-control transaction-plan transaction-simulate installation post-install-check provider-verification preparation-receipt'.split())
-PACKAGE_CLASSES = frozenset('RuntimeError CalledProcessError ProcessFailure HTTPError URLError SSLError TimeoutError FileNotFoundError PermissionError FileExistsError OSError UnicodeDecodeError LZMAError KeyError ValueError ModuleNotFoundError ImportError AssertionError TypeError JSONDecodeError AttributeError AptPkgError OtherError'.split())
+PACKAGE_CLASSES = frozenset('RuntimeError CalledProcessError ProcessFailure HTTPError URLError SSLError TimeoutError FileNotFoundError PermissionError FileExistsError OSError UnicodeDecodeError LZMAError KeyError ValueError ModuleNotFoundError ImportError AssertionError TypeError JSONDecodeError AttributeError AptPkgError ProviderSelectionError OtherError'.split())
 PACKAGE_ERRNOS = frozenset([-3,-2,1,2,5,11,13,17,22,28,30,32,36,40,95,101,104,110,111,113])
 PACKAGE_KEYS = frozenset('schema code operation exception_class http_status errno returncode suite component'.split())
 PACKAGE_MARKER = 'SAFE_PACKAGE_DIAGNOSTIC:'

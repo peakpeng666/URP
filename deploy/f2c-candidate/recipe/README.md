@@ -116,3 +116,7 @@ Failure reporting re-verifies the source-index and projector hashes before inspe
 ## Diagnostic-only second cohort
 
 The first hosted package-preparation failure stopped before native build, and its cause is not established from the bounded `UNKNOWN` report. This revision preserves those historical inputs/results and adds a finite nine-field package failure receipt. Only static operation/error categories, bounded HTTP status/errno/return code, and fixed public Ubuntu suite/component names can reach stdout. Original URLs, exception messages, paths, subprocess arguments, inventories and response contents remain excluded. Subprocess and network failures do not trigger a retry or weaken any signature, hash, package or runtime gate. Actual Jammy behavior still requires a separately authorized runner execution.
+
+## Provider-selection diagnostic cohort
+
+The second hosted cohort reached provider selection and stopped on a RuntimeError. This establishes that the installed inventory contained pkgconf, but does not identify which remaining guard rejected it. Signed Jammy metadata declares that pkgconf 1.8.0-1 breaks the pinned pkg-config 0.29.2-1ubuntu3, so coexistence cannot be accepted merely because executable names differ. This revision assigns five finite provider-specific error codes to the existing guards. It changes no source trust, version selection, ownership, transaction, no-removal or no-downgrade condition. It is diagnostic-only, not a claimed correction of the hosted failure.

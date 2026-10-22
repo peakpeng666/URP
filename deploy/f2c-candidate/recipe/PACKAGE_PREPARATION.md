@@ -73,3 +73,32 @@ clean-environment cloud fetch of the pinned official Jammy InRelease raised
 cause of the hosted failure. Existing signature, hash, exact-version, no-removal,
 and installed-state checks remain in force.
 
+# Provider-selection diagnostics (v3)
+
+The second hosted attempt stopped at `provider-selection` with `RuntimeError`
+and `APT_INVARIANT_REJECTED`. This identifies the phase, not the exact rejecting
+condition. The v3 delta assigns five finite codes through `ProviderSelectionError`:
+
+- `APT_PROVIDER_COEXISTENCE_REJECTED`
+- `APT_PROVIDER_VERSION_UNAUTHENTICATED`
+- `APT_PROVIDER_CAPABILITY_MISSING`
+- `APT_PROVIDER_OWNER_MISMATCH`
+- `APT_PROVIDER_EXECUTABLE_MISSING`
+
+The existing nine-field diagnostic schema is unchanged. No installed versions,
+package list, ownership output, file paths, or raw exception messages are exposed.
+All five acceptance predicates are unchanged, and no provider is automatically
+removed or replaced to bypass the rejection.
+
+The authenticated snapshot contains `pkgconf` 1.8.0-1 with
+`Provides: pkg-config (= 0.29-1)` and `Breaks: pkg-config (>= 0.29-1)`.
+The pinned `pkg-config` 0.29.2-1ubuntu3 satisfies that Breaks bound. It declares
+Conflicts/Replaces only against `pkg-config-bin`; pkgconf declares neither of
+those fields. Separate executable names therefore do not justify ignoring the
+authenticated Breaks relationship. No authenticated Jammy payload manifest was
+available in the local cache; Debian pkgconf archives are not Jammy evidence.
+
+The available evidence does not establish which invariant rejected the hosted
+runner. The authenticated pkgconf-only root-selection fixture passes. Retain the
+stopped cohorts; a future finite reason code can guide a narrowly supported fix.
+

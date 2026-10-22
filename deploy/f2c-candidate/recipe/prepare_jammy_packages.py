@@ -46,11 +46,18 @@ KEYRING = Path('/usr/share/keyrings/ubuntu-archive-keyring.gpg')
 # Diagnostic-only output. Never include exception text, command arguments,
 # filenames, environment values, response headers, or unreviewed URL strings.
 DIAGNOSTIC_PREFIX = 'SAFE_PACKAGE_DIAGNOSTIC:'
+PROVIDER_SELECTION_ERRORS = {
+    'APT_PROVIDER_COEXISTENCE_REJECTED': 'Both pkgconf and pkg-config are installed; refuse destructive repair',
+    'APT_PROVIDER_VERSION_UNAUTHENTICATED': 'Installed pkgconf is absent from authenticated snapshot; stop instead of remove',
+    'APT_PROVIDER_CAPABILITY_MISSING': 'Installed pkgconf does not authentically provide pkg-config',
+    'APT_PROVIDER_OWNER_MISMATCH': 'pkg-config executable is not owned by selected signed pkgconf provider',
+    'APT_PROVIDER_EXECUTABLE_MISSING': 'Provider executable missing',
+}
 DIAGNOSTIC_CODES = frozenset({
     'APT_HTTP_ERROR', 'APT_TLS_ERROR', 'APT_NETWORK_ERROR', 'APT_TIMEOUT',
     'APT_PREREQUISITE_FAILED', 'APT_SUBPROCESS_FAILED', 'APT_METADATA_PARSE_ERROR',
     'APT_FILE_ACCESS_ERROR', 'APT_INVARIANT_REJECTED', 'APT_UNEXPECTED_ERROR',
-})
+} | set(PROVIDER_SELECTION_ERRORS))
 DIAGNOSTIC_OPERATIONS = frozenset({
     'bootstrap', 'host-check', 'prerequisites', 'base-inventory', 'release-download',
     'signature-verify', 'release-parse', 'index-download', 'index-parse',
@@ -64,7 +71,7 @@ DIAGNOSTIC_CLASSES = frozenset({
     'SSLError', 'TimeoutError', 'FileNotFoundError', 'PermissionError',
     'FileExistsError', 'OSError', 'UnicodeDecodeError', 'LZMAError', 'KeyError',
     'ValueError', 'ModuleNotFoundError', 'ImportError', 'AssertionError', 'TypeError',
-    'JSONDecodeError', 'AttributeError', 'AptPkgError', 'OtherError',
+    'JSONDecodeError', 'AttributeError', 'AptPkgError', 'OtherError', 'ProviderSelectionError',
 })
 DIAGNOSTIC_ERRNOS = frozenset({-3, -2, 1, 2, 5, 11, 13, 17, 22, 28, 30, 32,
                               36, 40, 95, 101, 104, 110, 111, 113})
@@ -82,6 +89,20 @@ class ProcessFailure(RuntimeError):
         super().__init__('Native subprocess returned nonzero status')
         self.returncode = returncode
         self.child_receipt = child_receipt
+
+
+class ProviderSelectionError(RuntimeError):
+    """A finite reason for an unchanged provider-selection acceptance condition."""
+    def __init__(self, code):
+        if code not in PROVIDER_SELECTION_ERRORS:
+            raise ValueError('Unknown provider selection code')
+        super().__init__(PROVIDER_SELECTION_ERRORS[code])
+        self.code = code
+
+
+def require_provider(value, code):
+    if not value:
+        raise ProviderSelectionError(code)
 
 
 def validated_child_receipt(receipt):
@@ -158,6 +179,8 @@ def failure_diagnostic(error):
         code = 'APT_METADATA_PARSE_ERROR'
     elif isinstance(error, (ImportError, AssertionError)) and operation == 'prerequisites':
         code = 'APT_PREREQUISITE_FAILED'
+    elif isinstance(error, ProviderSelectionError):
+        code = error.code if error.code in PROVIDER_SELECTION_ERRORS else 'APT_INVARIANT_REJECTED'
     elif isinstance(error, RuntimeError):
         code = 'APT_INVARIANT_REJECTED'
     if isinstance(reason, OSError):
@@ -300,17 +323,23 @@ def choose_roots(installed, records):
     roots, providers = dict(ROOTS), {}
     pc = installed.get('pkg-config:amd64')
     conf = installed.get('pkgconf:amd64')
-    require(not (pc and conf), 'Both pkgconf and pkg-config are installed; refuse destructive repair')
+    require_provider(not (pc and conf), 'APT_PROVIDER_COEXISTENCE_REJECTED')
     if conf:
         candidates = records.get(identity(conf), [])
-        require(candidates, 'Installed pkgconf is absent from authenticated snapshot; stop instead of remove')
-        require(any(re.search(r'(^|,\s*)pkg-config(?:\s*\([^)]*\))?(?:,|$)',
+        require_provider(candidates, 'APT_PROVIDER_VERSION_UNAUTHENTICATED')
+        require_provider(any(re.search(r'(^|,\s*)pkg-config(?:\s*\([^)]*\))?(?:,|$)',
                               row.get('Provides', '')) for row in candidates),
-                'Installed pkgconf does not authentically provide pkg-config')
+                         'APT_PROVIDER_CAPABILITY_MISSING')
         del roots['pkg-config']
         roots['pkgconf'] = conf['version']
         providers['pkg-config'] = 'pkgconf'
     return roots, providers
+
+
+def validate_selected_provider(owner, executable):
+    require_provider(all(line.split(': ', 1)[0] in ('pkgconf', 'pkgconf:amd64') for line in owner.splitlines()),
+                     'APT_PROVIDER_OWNER_MISMATCH')
+    require_provider(executable.is_file(), 'APT_PROVIDER_EXECUTABLE_MISSING')
 
 
 def validate_transaction(plan, base):
@@ -575,9 +604,7 @@ def main():
     roots, providers = choose_roots(base, records)
     if providers:
         owner = run(['/usr/bin/dpkg-query', '-S', '/usr/bin/pkg-config'], 'pkg-config-owner')
-        require(all(line.split(': ', 1)[0] in ('pkgconf', 'pkgconf:amd64') for line in owner.splitlines()),
-                'pkg-config executable is not owned by selected signed pkgconf provider')
-        require(Path('/usr/bin/pkg-config').is_file(), 'Provider executable missing')
+        validate_selected_provider(owner, Path('/usr/bin/pkg-config'))
     phase('apt-config')
     for path in ('lists/partial', 'archives/partial', 'empty-conf', 'empty-sources', 'empty-prefs'):
         (out / path).mkdir(parents=True)
