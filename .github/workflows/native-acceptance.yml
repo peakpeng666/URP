@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 125
     env:
       TARGET_SHA: 94420cf3b703c564134048e1b074406df901bba3
-      HARNESS_SHA: 9f064fd8a1e25bf99846b0c88d75db251acbb14e
+      HARNESS_SHA: 340f9df9e61c30f121594297a9690dbdf6d373fc
     steps:
       - name: Run isolated native maze and emit allowlisted result
         shell: bash
@@ -54,6 +54,7 @@ jobs:
               git -C "$base/$dir" checkout --detach FETCH_HEAD
               [[ "$(git -C "$base/$dir" rev-parse HEAD)" == "$sha" ]] || exit 1
             done
+            python3 "$base/harness/deploy/acceptance-native/runner/materialize_checkout.py" "$base/source"
           ) > "$base/bootstrap.log" 2>&1
           bootstrap_rc=$?
           if [[ "$bootstrap_rc" != 0 ]]; then
@@ -71,7 +72,6 @@ jobs:
           if ! python3 "$base/harness/deploy/acceptance-native/public_summary.py" \
             --input "$base/private/summary.json" \
             --runner-status "$base/private/runner-status.json" 2> "$base/reducer.log"; then
-            printf '%s\n' '{"state":"summary_unavailable"}'
             exit 1
           fi
           exit "$rc"
