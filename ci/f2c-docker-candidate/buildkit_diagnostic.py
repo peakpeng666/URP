@@ -6,10 +6,17 @@ process identity, successful preparation, package provenance, or native
 acceptance. Never use this result to change a gate or retry policy.
 """
 import json
+import importlib.util
 import os
 from pathlib import Path
 import re
 import stat
+
+# Pure, source-indexed schema shared with the diagnostic producer; no path search.
+_reference_spec = importlib.util.spec_from_file_location(
+    'urp_package_reference_projection', Path(__file__).resolve().with_name('package_reference.py'))
+_reference = importlib.util.module_from_spec(_reference_spec)
+_reference_spec.loader.exec_module(_reference)
 
 MAX_LOG_BYTES = 16 * 1024 * 1024
 MAX_LINE_BYTES = 16 * 1024
@@ -115,7 +122,8 @@ def _package(value):
 
 def validate_projection(value):
     """Return a fresh closed projection or None; never echo an invalid field."""
-    if type(value) is not dict or set(value) != {'schema', 'source', 'diagnostic_only', 'detail'}:
+    fields = {'schema', 'source', 'diagnostic_only', 'detail'}
+    if type(value) is not dict or set(value) not in (fields, fields | {'reference'}):
         return None
     if type(value['schema']) is not int or value['schema'] != 1 or value['diagnostic_only'] is not True:
         return None
@@ -131,7 +139,23 @@ def validate_projection(value):
         detail = _package(detail)
         if detail is None:
             return None
-    return {'schema': 1, 'source': source, 'diagnostic_only': True, 'detail': detail}
+    result = {'schema': 1, 'source': source, 'diagnostic_only': True, 'detail': detail}
+    if 'reference' in value:
+        if not _reference_failure(source, detail):
+            return None
+        reference = _reference.validate_reference(value['reference'])
+        if reference is None:
+            return None
+        result['reference'] = reference
+    return result
+
+
+def _reference_failure(source, detail):
+    return (source == 'package' and detail.get('code') == 'APT_INVARIANT_REJECTED'
+            and detail.get('operation') == 'post-delta-version'
+            and detail.get('exception_class') == 'RuntimeError'
+            and all(detail.get(key) is None for key in
+                    ('http_status', 'errno', 'returncode', 'suite', 'component')))
 
 
 def _unique_object(pairs):
@@ -146,6 +170,8 @@ def _unique_object(pairs):
 def _parse_lines(stream):
     headers, sources, markers = {}, {}, set()
     failure = None
+    pending_reference = None
+    reference_seen = False
     total = 0
     while True:
         raw = stream.readline(MAX_LINE_BYTES + 1)
@@ -186,6 +212,26 @@ def _parse_lines(stream):
         source = headers.get(vertex)
         if source is None:
             continue
+        if payload.startswith(_reference.PREFIX.encode('ascii')):
+            if (source != 'package' or reference_seen or failure is not None or
+                    not terminated or len(payload) > len(_reference.PREFIX) + _reference.MAX_REFERENCE_BYTES or
+                    any(byte < 32 or byte > 126 for byte in payload)):
+                return None
+            try:
+                raw_reference = json.loads(payload[len(_reference.PREFIX):], object_pairs_hook=_unique_object)
+            except (ValueError, UnicodeError, RecursionError):
+                return None
+            projected_reference = _reference.validate_reference(raw_reference)
+            if projected_reference is None:
+                return None
+            pending_reference = (vertex, projected_reference)
+            reference_seen = True
+            continue
+        if pending_reference is not None and pending_reference[0] == vertex:
+            # Unrelated vertices may interleave, but the same vertex must emit
+            # its one unchanged failure marker immediately after the reference.
+            if not payload.startswith(PACKAGE_PREFIX.encode('ascii')):
+                return None
         if not payload.startswith((BOOTSTRAP_PREFIX.encode('ascii'), PACKAGE_PREFIX.encode('ascii'))):
             continue
         if (not terminated or len(payload) > MAX_MARKER_BYTES or
@@ -208,11 +254,18 @@ def _parse_lines(stream):
         if source in markers:
             return None
         markers.add(source)
-        projected = validate_projection({'schema': 1, 'source': source,
-                                         'diagnostic_only': True, 'detail': detail})
+        envelope = {'schema': 1, 'source': source, 'diagnostic_only': True, 'detail': detail}
+        if pending_reference is not None:
+            if pending_reference[0] != vertex:
+                return None
+            envelope['reference'] = pending_reference[1]
+            pending_reference = None
+        projected = validate_projection(envelope)
         if projected is None or failure is not None:
             return None
         failure = projected
+    if pending_reference is not None:
+        return None
     return failure
 
 

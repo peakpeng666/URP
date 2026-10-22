@@ -6,6 +6,7 @@ Requires native /usr/bin/python3 with python3-apt, gpgv, apt-get, dpkg-deb.
 """
 import argparse
 import hashlib
+import importlib.util
 import io
 import json
 import lzma
@@ -271,6 +272,51 @@ def write_target_reference(error, receipt):
         return None
 
 
+def load_package_reference():
+    """Load only the exact bundled helper, including under isolated Python -I."""
+    path = Path(__file__).resolve().parents[1] / 'package_reference.py'
+    spec = importlib.util.spec_from_file_location('_package_reference_v2', path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def attach_post_delta_reference(error, before, after, transaction, records):
+    """Attach only a closed diagnostic to the original, unchanged rejection."""
+    try:
+        if type(error) is not RuntimeError or DIAGNOSTIC_CONTEXT.get('operation') != 'post-delta-version':
+            return
+        helper = load_package_reference()
+        reference = helper.validate_reference(helper.make_reference(before, after, transaction, records))
+        if reference is not None:
+            error.package_target_reference_v2 = reference
+    except Exception:
+        # Missing or faulty diagnostic code cannot replace the original error.
+        pass
+
+
+def post_delta_reference_marker(error, receipt):
+    """Validate again at the output boundary; never interpolate private inputs."""
+    try:
+        if (type(error) is not RuntimeError or receipt['code'] != 'APT_INVARIANT_REJECTED' or
+                receipt['operation'] != 'post-delta-version' or
+                receipt['exception_class'] != 'RuntimeError' or
+                any(receipt[key] is not None for key in
+                    ('http_status', 'errno', 'returncode', 'suite', 'component'))):
+            return None
+        helper = load_package_reference()
+        reference = helper.validate_reference(getattr(error, 'package_target_reference_v2', None))
+        if reference is None:
+            return None
+        encoded = json.dumps(reference, sort_keys=True, separators=(',', ':'))
+        marker = helper.PREFIX + encoded
+        if not encoded.isascii() or len(encoded.encode('ascii')) > helper.MAX_REFERENCE_BYTES:
+            return None
+        return marker
+    except Exception:
+        return None
+
+
 def emit_failure(error):
     receipt = failure_diagnostic(error)
     encoded = json.dumps(receipt, sort_keys=True, separators=(',', ':'))
@@ -287,6 +333,13 @@ def emit_failure(error):
             pass
     if reference_hash is not None:
         print(TARGET_REFERENCE_PREFIX + reference_hash, file=sys.stderr)
+    marker = post_delta_reference_marker(error, receipt)
+    if marker is not None:
+        try:
+            print(marker, file=sys.stderr)
+        except Exception:
+            # A failed optional diagnostic write must not suppress the original marker.
+            pass
     print(DIAGNOSTIC_PREFIX + encoded, file=sys.stderr, flush=True)
     return receipt
 
@@ -848,8 +901,15 @@ def main():
         phase('post-inventory-delta')
         try:
             validate_inventory_delta(base, after, solution['transaction'])
-        except RuntimeError:
-            phase(post_install_delta_operation(base, after, solution['transaction']))
+        except RuntimeError as error:
+            operation = post_install_delta_operation(base, after, solution['transaction'])
+            phase(operation)
+            if operation == 'post-delta-version':
+                try:
+                    attach_post_delta_reference(error, base, after, solution['transaction'], records)
+                except Exception:
+                    # Even diagnostic argument/helper failures preserve this error.
+                    pass
             raise
         phase('post-closure-verify')
         for row in resolved:

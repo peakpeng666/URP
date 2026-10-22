@@ -9,7 +9,7 @@
       "sha256": "8a147ae2c9bb225985c5cf6aba2a9e08948019b03c92aa4c8438f9eb2af79b6e"
     },
     "README.md": {
-      "sha256": "f52200122f48cf5e2ed8cdcde8864ef34f5a4ce678dd53adb5996d1a690822bd"
+      "sha256": "4b0d27069f43dce6fd77feaeb8c19d5dead37f0d26a963502eff55c2f187d803"
     },
     "SYSTEM_CA_SOURCE_EVIDENCE.md": {
       "sha256": "88559e675023b804c501cd8293e583a6dc9a6831f4015847c5c1e2f9428fcc57"
@@ -21,7 +21,7 @@
       "sha256": "7d5a5d3ce7d6fc2ffe02b8bf0889d3af8c49db36d59e5d14bb38d2720c0bad55"
     },
     "buildkit_diagnostic.py": {
-      "sha256": "b0e222c307911ac0016047c8e1b2d2a15c58eb20191c30419c9e2f1b179d9f6a"
+      "sha256": "1fc031ac0b84c146ee3c4bc3293985826c7a932ff44d7fff32c9bba85df711af"
     },
     "engine_controller.py": {
       "sha256": "427289aeca9418013ee347956732cbfed2c5a3a386245bc7d11e0367dc4cdc1b"
@@ -46,6 +46,9 @@
     },
     "offline_build.py": {
       "sha256": "10904b4d54df3236b2f7d2a7c49f6b84dfd2c4a455c78db8fe8f3587df9ec0e3"
+    },
+    "package_reference.py": {
+      "sha256": "4e7b905aadc23a272d7ebba70acbb5e65ae8496338afd52581730e2926254a7d"
     },
     "preparation/Dockerfile": {
       "sha256": "47b4948bf0b9d3da07e0bda1c789e76f1a21c48ed8627d501d4bd8625bb6d254"
@@ -165,7 +168,7 @@
       "sha256": "1150e001f9c7828826e418489e21bfb9d97e5e2e5a01b2961078dd896d3dce70"
     },
     "preparation/prepare_packages.py": {
-      "sha256": "ee7a2cb0e78810a828e451344455720b4b79189ae318ede28fe1825a5543b8ba"
+      "sha256": "33231b90e690aaf0f9f34c97ddab30cb9c546ca5c2ed4a3815b64886e462ae75"
     },
     "preparation/source-provenance.json": {
       "sha256": "e94d07a8b871da7043de91268eeb67ac84442869586bd2e144f8dea5a0b69360"
@@ -211,6 +214,12 @@
     },
     "tests/test_package_postinstall_diagnostics.py": {
       "sha256": "48909077d8ce32e9eeb545e06c7bbcd307e17779e44a8ed11e5873172ec37914"
+    },
+    "tests/test_package_reference.py": {
+      "sha256": "6b6dbe5d0e7eecd503c7b8f84073fcad6027fa5bba84dbff9f8011851c377278"
+    },
+    "tests/test_package_reference_projection.py": {
+      "sha256": "37c48680baab0cfdd365f0abf1f0e9053276e636f711a0280454f9bdc42f311f"
     },
     "tests/test_preparation_diagnostic.py": {
       "sha256": "61265f0ff17fa651537085e7b3404756e5428a3d982f01c2d8643e3950e89a15"
