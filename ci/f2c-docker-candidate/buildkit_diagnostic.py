@@ -29,9 +29,22 @@ BOOTSTRAP_PHASES = frozenset({
     'signed_root_selection', 'transaction_plan', 'archive_authentication',
     'install_bootstrap', 'post_install_verification', 'receipt',
 })
+BOOTSTRAP_SUBSTEPS = {
+    'prerequisites': ('apt_configuration', 'apt_version', 'base_audit', 'base_inventory', 'base_keyring', 'base_tool_hashes', 'entry', 'evidence_workspace', 'helper_presence', 'platform_identity', 'tool_presence'),
+    'public_ca_seed': ('archive_bytes', 'archive_decode', 'base_unchanged', 'bundle_hash', 'certificate_bundle', 'certificate_data', 'certificate_pem', 'entry', 'index_bytes', 'index_decode', 'index_identity', 'member_listing', 'member_selection', 'package_identity', 'package_parse', 'release_bytes', 'release_parse', 'release_signature', 'release_signer', 'seed_copy'),
+    'signed_metadata': ('entry', 'index_decode', 'index_fetch', 'index_parse', 'release_fetch', 'release_parse', 'release_signature', 'release_signer', 'source_registration'),
+    'apt_metadata_check': ('apt_update', 'base_unchanged', 'configuration_dump', 'entry'),
+    'signed_root_selection': ('candidate_parse', 'candidate_policy', 'entry', 'root_record', 'signed_identity'),
+    'transaction_plan': ('action_checks', 'archive_names', 'archive_names_match', 'archive_names_parse', 'entry', 'initial_simulation', 'installed_identity', 'pinned_simulation', 'signed_identity', 'simulation_compare', 'simulation_parse', 'transaction_record'),
+    'archive_authentication': ('archive_control', 'archive_fetch', 'cache_copy', 'cache_hash', 'cache_name', 'control_identity', 'entry'),
+    'install_bootstrap': ('base_unchanged', 'entry', 'offline_compare', 'offline_parse', 'offline_simulation', 'package_install'),
+    'post_install_verification': ('apt_check', 'audit_clean', 'dpkg_audit', 'entry', 'final_snapshot', 'final_unchanged', 'python_prerequisites', 'root_versions', 'status_parse', 'status_snapshot', 'timestamp', 'transaction_delta'),
+    'receipt': ('entry', 'receipt_inventory', 'receipt_write'),
+}
 BOOTSTRAP_FAILURES = frozenset({'EXPLICIT_CONTAINER_INSTALL_MODE_REQUIRED'} | {
     'BLOCKED_' + phase for phase in BOOTSTRAP_PHASES
-})
+} | {'BLOCKED_' + phase + '__' + substep
+     for phase, substeps in BOOTSTRAP_SUBSTEPS.items() for substep in substeps})
 BOOTSTRAP_SUCCESS = 'BOOTSTRAP_TRANSACTION_VERIFIED_FULL_CLOSURE_PENDING'
 PACKAGE_CODES = frozenset({
     'APT_HTTP_ERROR', 'APT_TLS_ERROR', 'APT_NETWORK_ERROR', 'APT_TIMEOUT',

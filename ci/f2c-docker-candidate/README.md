@@ -214,3 +214,35 @@ selected certificate passes the unchanged PEM validator. This is a local
 read-only parser reproduction, not a new Docker/bootstrap/native run or compiler
 acceptance. Frozen v7 and earlier evidence remain unchanged; only an authorized
 future hosted run can establish progress beyond this corrected incompatibility.
+
+## Review revision 9: finite bootstrap verification substeps
+
+Actual v8 hosted run 39853523735 advanced beyond the prior CA stage and reported
+`BLOCKED_post_install_verification`; isolated compilation did not run. Source
+review and pure transaction/status fixtures found no demonstrated compatibility
+bug explaining the new failure. This revision therefore does not change package
+selection, status/delta semantics, audit criteria or trust checks speculatively.
+
+The existing diagnostic marker now emits an independently allowlisted fixed
+`BLOCKED_<phase>__<substep>` code. Its public schema is unchanged, and historical
+coarse codes remain accepted. All ten bootstrap phases have literal substep
+labels; no package name, path, URL, command, exception text or environment value
+is used to construct a public substep. Post-install labels distinguish status
+snapshot/parsing, exact transaction delta, root versions, APT check, dpkg audit,
+clean audit output, Python prerequisites, final status snapshot/comparison and
+timestamp. Other phases receive similarly bounded operation groups. These are
+best-effort diagnostic labels, not a waiver, authenticated process identity or
+acceptance evidence. The original nonzero failure remains a failure.
+
+The Python prerequisite expression also replaces three assertions with an
+explicit exit-code check of the same Python 3.10, APT 2.4 and default-CA-file
+conditions. Mocked executions verify equivalent gating with optimization both
+disabled and enabled. The actual hosted command used no -O, so this hardening is
+not presented as the reason for its failure or proof of Ubuntu runtime behavior.
+
+A portable regression normalizes only the added substep assignments, the two
+failure-format expansions and this exact prerequisite expression, then matches
+the entire shell script to frozen v8's SHA256. This guards against accidentally
+changing other verification logic. The next authorized run, not local synthetic
+tests, must establish the first failing post-install operation. No Docker, full
+bootstrap, installation or native build is performed by this revision review.

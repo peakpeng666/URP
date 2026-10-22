@@ -6,7 +6,7 @@
   ],
   "files": {
     "README.md": {
-      "sha256": "d827c465b8b41e5e2556eefa54c91442acd9ec28d5eeaebce928de3363aa648b"
+      "sha256": "bc33aa252b71b74b2cc889752608eb02934b80134aeaadf3d5a2fddd368112fc"
     },
     "build-plan-provenance.json": {
       "sha256": "75148a35fab684b3e2784b913d4f654b911331f6ae62215b978fa7366043124f"
@@ -15,7 +15,7 @@
       "sha256": "7d5a5d3ce7d6fc2ffe02b8bf0889d3af8c49db36d59e5d14bb38d2720c0bad55"
     },
     "buildkit_diagnostic.py": {
-      "sha256": "0a4cd6cf82e51b4d56ef7bd5795841a9deb08109a14a89d6c100d09778049907"
+      "sha256": "2e786e4a4366630dc9f95063af7d59c06a3f9d7f036e6d7ebc499a067d393e0b"
     },
     "engine_controller.py": {
       "sha256": "427289aeca9418013ee347956732cbfed2c5a3a386245bc7d11e0367dc4cdc1b"
@@ -60,7 +60,7 @@
       "sha256": "8a92e10d0436086a7ba9a2f13413ff0820b9d4464fb09b0a653ccaa49591843e"
     },
     "preparation/bootstrap/bootstrap.sh": {
-      "sha256": "20f05e01919aef231194b97cdd274fe0994ec7e914b105531a6198aa190d4bb1"
+      "sha256": "e41b8aaa97831d32f67bfeefd52b8d02adaa6791c2518cca2095ba03b8c806e4"
     },
     "preparation/bootstrap/ca-inputs.lock.json": {
       "sha256": "08e361d03124c6f9900d112910d5b0fb1cbd87aaf2df3578357f4c6123d36f36"
@@ -176,8 +176,11 @@
     "stage_build_output.py": {
       "sha256": "6e19497aa5dbd8c5b84170837276c325a3b626ddacc4a80b6ff0ed92e2a02e6e"
     },
+    "tests/test_bootstrap_substeps.py": {
+      "sha256": "e04dfd9efbfa75caa51f04eeafc6d7c961c3f84b7591b20de2d22021b261e225"
+    },
     "tests/test_buildkit_diagnostic.py": {
-      "sha256": "98c4181b76f2571b5882146dd9a852afea6a285b6c4370da18de9e79434555f2"
+      "sha256": "e2e8378948ebde6804ad2df372c4f861b3e9a39c5f04c13ca855cf8b5e27d966"
     },
     "tests/test_buildkit_receipt_integration.py": {
       "sha256": "169591cf911f3fe38a6dd1fa0d966ff800909a311e40329bf5dba4f2a12f9731"

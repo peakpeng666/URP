@@ -276,7 +276,7 @@ class SourceParityTests(unittest.TestCase):
         text = (ROOT / 'preparation/bootstrap/bootstrap.sh').read_text()
         phases = set(re.findall(r'^\s*phase=([a-z_]+)$', text, re.MULTILINE))
         self.assertEqual(phases, d.BOOTSTRAP_PHASES)
-        self.assertIn("printf 'SAFE_BOOTSTRAP_DIAGNOSTIC:BLOCKED_%s\\n' \"$phase\"", text)
+        self.assertIn("printf 'SAFE_BOOTSTRAP_DIAGNOSTIC:BLOCKED_%s__%s\\n' \"$phase\" \"$substep\"", text)
         self.assertIn("'SAFE_BOOTSTRAP_DIAGNOSTIC:EXPLICIT_CONTAINER_INSTALL_MODE_REQUIRED'", text)
         self.assertIn("'SAFE_BOOTSTRAP_DIAGNOSTIC:" + d.BOOTSTRAP_SUCCESS + "'", text)
 
