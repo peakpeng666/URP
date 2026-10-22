@@ -21,10 +21,9 @@ jobs:
     timeout-minutes: 220
     env:
       TARGET_SHA: 3acf840d1a0c16ab1cfcca15744e4ea6609ddb35
-      HARNESS_SHA: 25beb819b1168d8b6156d427afc1b5dc3252dae5
+      HARNESS_SHA: 5770446afd5148b40441503eec4a6f323555ca49
       URP_WAREHOUSE_STARTUP_OBSERVER: '1'
       URP_WAREHOUSE_STARTUP_OBSERVER_DELAY_S: '30'
-      LP_NUM_THREADS: '0'
     steps:
       - name: Run isolated historical warehouse replay and emit allowlisted result
         shell: bash
