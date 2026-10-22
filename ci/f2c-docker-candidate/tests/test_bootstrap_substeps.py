@@ -1,12 +1,11 @@
-"""Pure v9 observability contracts; never execute the provisioning shell.
+"""Pure v9/v10 observability contracts; never execute the provisioning shell.
 
 The pinned digest is the reviewed v8 bootstrap's exact bytes. Removing substep
 assignments and reversing three explicit replacements must recover it, without
 needing a sibling v8 checkout.
-The prerequisite fixture executes the actual inline Python with fake imports,
-not the host's Python-version, apt or certificate configuration.
+The v10 block and two helper-list additions first normalize to exact v9 bytes.
+The prerequisite helper itself is exercised in its dedicated mocked test file.
 """
-import ast
 import hashlib
 import json
 from pathlib import Path
@@ -15,7 +14,6 @@ import shlex
 import subprocess
 import sys
 import tempfile
-from types import SimpleNamespace
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +22,7 @@ import buildkit_diagnostic as d
 
 BOOTSTRAP = ROOT / 'preparation' / 'bootstrap' / 'bootstrap.sh'
 V8_SHA256 = '20f05e01919aef231194b97cdd274fe0994ec7e914b105531a6198aa190d4bb1'
+V9_SHA256 = 'e41b8aaa97831d32f67bfeefd52b8d02adaa6791c2518cca2095ba03b8c806e4'
 ASSIGNMENT = re.compile(r'^[ \t]*(phase|substep)=([a-z][a-z0-9_]*)$')
 SUBSTEP_LINE = re.compile(rb'^[ \t]*substep=[a-z][a-z0-9_]*\n', re.MULTILINE)
 PREREQUISITE_PREFIX = 'run python-apt-prerequisites /usr/bin/python3 -I -B -c '
@@ -45,6 +44,62 @@ V9_PRIVATE = (
 )
 V8_PUBLIC = r'''        printf 'SAFE_BOOTSTRAP_DIAGNOSTIC:BLOCKED_%s\n' "$phase" >&2'''
 V9_PUBLIC = r'''        printf 'SAFE_BOOTSTRAP_DIAGNOSTIC:BLOCKED_%s__%s\n' "$phase" "$substep" >&2'''
+V9_HELPER_LOOP = ('for helper in parse_release.awk parse_packages.awk parse_simulation.awk '
+                  'parse_uris.awk parse_status.awk verify_delta.awk parse_ca_members.awk '
+                  'verify_ca_pem.awk; do')
+V10_HELPER_LOOP = V9_HELPER_LOOP.replace('; do', ' check_python_prerequisites.py; do')
+PYTHON_SUBSTEP_CODES = {
+    61: 'python_import_sys', 62: 'python_import_apt_pkg', 63: 'python_import_ssl',
+    64: 'python_version_check', 65: 'python_version_mismatch',
+    66: 'apt_version_check', 67: 'apt_version_mismatch',
+    68: 'ca_path_check', 69: 'ca_file_missing',
+}
+V10_PREREQUISITE_BLOCK = r'''prerequisite_result=0
+/usr/bin/python3 -I -B "$HELPERS/check_python_prerequisites.py" > "$OUT/logs/python-apt-prerequisites.log" 2>&1 || prerequisite_result=$?
+case "$prerequisite_result" in
+    0) ;;
+    61)
+        substep=python_import_sys
+        fail
+        ;;
+    62)
+        substep=python_import_apt_pkg
+        fail
+        ;;
+    63)
+        substep=python_import_ssl
+        fail
+        ;;
+    64)
+        substep=python_version_check
+        fail
+        ;;
+    65)
+        substep=python_version_mismatch
+        fail
+        ;;
+    66)
+        substep=apt_version_check
+        fail
+        ;;
+    67)
+        substep=apt_version_mismatch
+        fail
+        ;;
+    68)
+        substep=ca_path_check
+        fail
+        ;;
+    69)
+        substep=ca_file_missing
+        fail
+        ;;
+    *)
+        substep=python_execution
+        fail
+        ;;
+esac
+'''
 
 
 def projection(code):
@@ -77,7 +132,7 @@ class BootstrapSubstepTests(unittest.TestCase):
         return d.parse_log(self.log)
 
     def prerequisite(self):
-        lines = [line for line in self.source.splitlines()
+        lines = [line for line in self.normalized_v9().decode('ascii').splitlines()
                  if line.startswith(PREREQUISITE_PREFIX)]
         self.assertEqual(len(lines), 1)
         argv = shlex.split(lines[0], posix=True)
@@ -85,6 +140,22 @@ class BootstrapSubstepTests(unittest.TestCase):
                                     '/usr/bin/python3', '-I', '-B', '-c'])
         self.assertEqual(argv[-1], V9_PREREQUISITE)
         return argv[-1]
+
+    def normalized_v9(self):
+        normalized = self.raw
+        new = V10_PREREQUISITE_BLOCK.encode('ascii')
+        old = (PREREQUISITE_PREFIX + "'" + V9_PREREQUISITE + "'\n").encode('ascii')
+        self.assertEqual(normalized.count(new), 1)
+        self.assertNotIn(old, normalized)
+        normalized = normalized.replace(new, old, 1)
+        new = (V10_HELPER_LOOP + '\n').encode('ascii')
+        old = (V9_HELPER_LOOP + '\n').encode('ascii')
+        self.assertEqual(normalized.count(new), 2)
+        self.assertNotIn(old, normalized)
+        normalized = normalized.replace(new, old, 2)
+        self.assertEqual(hashlib.sha256(normalized).hexdigest(), V9_SHA256,
+                         'A bootstrap byte changed outside the v10 diagnostic block and helper lists')
+        return normalized
 
     def test_source_phase_substep_pairs_equal_exact_finite_mapping(self):
         found = {}
@@ -249,7 +320,7 @@ class BootstrapSubstepTests(unittest.TestCase):
                         self.assertFalse((self.log.parent / 'failure.json').exists())
 
     def test_each_post_install_operation_has_the_intended_label(self):
-        region = self.source.split('phase=post_install_verification\n', 1)[1]
+        region = self.normalized_v9().decode('ascii').split('phase=post_install_verification\n', 1)[1]
         region = region.split('phase=receipt\n', 1)[0]
         operations = {}
         current = None
@@ -282,10 +353,11 @@ class BootstrapSubstepTests(unittest.TestCase):
             'timestamp': [r'''/usr/bin/date -u '+%Y-%m-%dT%H:%M:%SZ' > "$OUT/end-time-utc"'''],
         }
         self.assertEqual(operations, expected)
-        self.assertEqual(set(operations), set(d.BOOTSTRAP_SUBSTEPS['post_install_verification']))
+        self.assertEqual(set(operations), set(d.BOOTSTRAP_SUBSTEPS['post_install_verification'])
+                         - set(PYTHON_SUBSTEP_CODES.values()) - {'python_execution'})
 
     def test_only_declared_shell_changes_restore_exact_v8_bytes(self):
-        normalized, annotations = SUBSTEP_LINE.subn(b'', self.raw)
+        normalized, annotations = SUBSTEP_LINE.subn(b'', self.normalized_v9())
         self.assertGreater(annotations, 0)
         replacements = (
             (V9_PRIVATE, V8_PRIVATE),
@@ -302,68 +374,6 @@ class BootstrapSubstepTests(unittest.TestCase):
         self.assertEqual(hashlib.sha256(normalized).hexdigest(), V8_SHA256,
                          'A non-diagnostic bootstrap byte changed outside the explicit prerequisite hardening')
 
-    def run_prerequisite(self, optimize, version=(3, 10, 12), apt='2.4.14',
-                         cafile='/fixture/ca.pem', import_failure=None,
-                         exception=ModuleNotFoundError):
-        imported = []
-
-        def exit_stub(status):
-            raise SystemExit(status)
-
-        fake_modules = {
-            'sys': SimpleNamespace(version_info=version, exit=exit_stub),
-            'apt_pkg': SimpleNamespace(VERSION=apt),
-            'ssl': SimpleNamespace(get_default_verify_paths=lambda: SimpleNamespace(cafile=cafile)),
-        }
-
-        def import_stub(name, globals=None, locals=None, fromlist=(), level=0):
-            imported.append(name)
-            if name == import_failure:
-                raise exception('fixture import failure')
-            self.assertIn(name, fake_modules, 'The fixture must never import real host modules')
-            self.assertEqual(level, 0)
-            return fake_modules[name]
-
-        code = compile(self.prerequisite(), '<actual-bootstrap-prerequisite>',
-                       'exec', optimize=optimize)
-        namespace = {'__builtins__': {'__import__': import_stub}}
-        try:
-            exec(code, namespace, namespace)
-        except SystemExit as error:
-            self.assertEqual(imported, ['sys', 'apt_pkg', 'ssl'])
-            self.assertIs(type(error.code), int)
-            return error.code
-        self.fail('The actual prerequisite must explicitly exit')
-
-    def test_actual_prerequisite_uses_explicit_check_not_assert(self):
-        self.assertFalse(any(isinstance(node, ast.Assert)
-                             for node in ast.walk(ast.parse(self.prerequisite()))))
-
-    def test_actual_prerequisite_valid_under_normal_and_optimized_python(self):
-        for optimize in (0, 1):
-            for version, apt, cafile in (
-                    ((3, 10, 0), '2.4.0', '/fixture/ca.pem'),
-                    ((3, 10, 99), '2.4.14', '/another/fixture.pem')):
-                with self.subTest(optimize=optimize, version=version, apt=apt):
-                    self.assertEqual(self.run_prerequisite(optimize, version, apt, cafile), 0)
-
-    def test_actual_prerequisite_each_invalid_predicate_fails_even_optimized(self):
-        cases = [{'version': value} for value in ((2, 10, 0), (3, 9, 9), (3, 11, 0), (3,))]
-        cases += [{'apt': value} for value in ('', '2.4', '2.40.1', '2.5.0', '3.0.0')]
-        cases += [{'cafile': value} for value in (None, '', False)]
-        cases.append({'version': (3, 11, 0), 'apt': '2.5.0', 'cafile': None})
-        for optimize in (0, 1):
-            for case in cases:
-                with self.subTest(optimize=optimize, case=case):
-                    self.assertEqual(self.run_prerequisite(optimize, **case), 1)
-
-    def test_actual_prerequisite_import_errors_propagate_even_optimized(self):
-        for optimize in (0, 1):
-            for module in ('sys', 'apt_pkg', 'ssl'):
-                for exception in (ModuleNotFoundError, ImportError):
-                    with self.subTest(optimize=optimize, module=module, exception=exception):
-                        with self.assertRaises(exception):
-                            self.run_prerequisite(optimize, import_failure=module, exception=exception)
 
 
 if __name__ == '__main__':

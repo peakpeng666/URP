@@ -38,7 +38,7 @@ BOOTSTRAP_SUBSTEPS = {
     'transaction_plan': ('action_checks', 'archive_names', 'archive_names_match', 'archive_names_parse', 'entry', 'initial_simulation', 'installed_identity', 'pinned_simulation', 'signed_identity', 'simulation_compare', 'simulation_parse', 'transaction_record'),
     'archive_authentication': ('archive_control', 'archive_fetch', 'cache_copy', 'cache_hash', 'cache_name', 'control_identity', 'entry'),
     'install_bootstrap': ('base_unchanged', 'entry', 'offline_compare', 'offline_parse', 'offline_simulation', 'package_install'),
-    'post_install_verification': ('apt_check', 'audit_clean', 'dpkg_audit', 'entry', 'final_snapshot', 'final_unchanged', 'python_prerequisites', 'root_versions', 'status_parse', 'status_snapshot', 'timestamp', 'transaction_delta'),
+    'post_install_verification': ('apt_check', 'apt_version_check', 'apt_version_mismatch', 'audit_clean', 'ca_file_missing', 'ca_path_check', 'dpkg_audit', 'entry', 'final_snapshot', 'final_unchanged', 'python_execution', 'python_import_apt_pkg', 'python_import_ssl', 'python_import_sys', 'python_prerequisites', 'python_version_check', 'python_version_mismatch', 'root_versions', 'status_parse', 'status_snapshot', 'timestamp', 'transaction_delta'),
     'receipt': ('entry', 'receipt_inventory', 'receipt_write'),
 }
 BOOTSTRAP_FAILURES = frozenset({'EXPLICIT_CONTAINER_INSTALL_MODE_REQUIRED'} | {

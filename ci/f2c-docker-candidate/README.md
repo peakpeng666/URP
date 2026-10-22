@@ -246,3 +246,41 @@ the entire shell script to frozen v8's SHA256. This guards against accidentally
 changing other verification logic. The next authorized run, not local synthetic
 tests, must establish the first failing post-install operation. No Docker, full
 bootstrap, installation or native build is performed by this revision review.
+
+## Review revision 10: individual Python prerequisite results
+
+Actual v9 run 39856071672 / job 120094610005, source index
+`e3d87cd7e48a7968d3fcb8f343c9ba899033ef617748fa8ebe09af3582a59bde`, reached
+`BLOCKED_post_install_verification__python_prerequisites`. Earlier post-install
+status, delta, root-version, APT-check and dpkg-audit operations therefore passed
+in that run. The marker does not distinguish an import exception from a failed
+predicate. No source-backed runtime defect is demonstrated by this observation;
+compilation, image acceptance and fresh-runtime validation have not occurred.
+
+The prerequisite now runs one source-indexed helper in the same isolated system
+Python invocation. Its three imports retain their original order and all occur
+before the three original predicates. It preserves their short-circuit order:
+Python major/minor equals 3.10, `apt_pkg.VERSION.startswith('2.4.')`, and truthy
+`ssl.get_default_verify_paths().cafile`. VERSION denotes APT, not python-apt;
+the CA predicate observes an existing resolved default file, not certificate
+validity or a TLS handshake. Neither condition is weakened or replaced.
+
+Internal exit codes 61–63 distinguish the sys, apt_pkg and ssl import exceptions;
+64/65 distinguish Python-version evaluation failure/mismatch, 66/67 APT-version
+evaluation failure/mismatch, and 68/69 default-CA lookup evaluation failure/false
+result. The shell maps only these codes to literal substep labels. Zero alone
+continues; every other code, including interpreter launch or unexpected failure,
+uses `python_execution` and remains a failure. Ordinary exceptions are converted
+only to nonzero finite codes, never success. No exception text, module value,
+path, command, URL or raw output is added to the public diagnostic schema. Any
+child output remains in the same private ephemeral log, not a durable artifact.
+
+Pure fixtures exercise the actual helper with fake imports under normal and
+optimized Python, compare success/failure to the previous expression, and check
+the extracted shell mapping without executing the provisioning script. These
+fixtures do not observe the hosted Ubuntu interpreter. Exact reverse-normalized
+shell hashes protect every unrelated gate. A subsequent authorized hosted run
+must identify the concrete failing prerequisite; this revision itself performs
+no Docker, full bootstrap, installation, native build or publication. v9 remains
+unchanged. Primary-source distinctions are recorded separately in
+`PYTHON_PREREQUISITE_SOURCES.md`.

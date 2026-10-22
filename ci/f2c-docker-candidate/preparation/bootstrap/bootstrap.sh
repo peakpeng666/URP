@@ -78,7 +78,7 @@ substep=base_keyring
 [ ! -L /usr/share/keyrings/ubuntu-archive-keyring.gpg ] || fail
 [ ! -e "$OUT" ] && [ ! -L "$OUT" ] || fail
 substep=helper_presence
-for helper in parse_release.awk parse_packages.awk parse_simulation.awk parse_uris.awk parse_status.awk verify_delta.awk parse_ca_members.awk verify_ca_pem.awk; do
+for helper in parse_release.awk parse_packages.awk parse_simulation.awk parse_uris.awk parse_status.awk verify_delta.awk parse_ca_members.awk verify_ca_pem.awk check_python_prerequisites.py; do
     [ -f "$HELPERS/$helper" ] && [ ! -L "$HELPERS/$helper" ] || fail
 done
 substep=evidence_workspace
@@ -89,7 +89,7 @@ started=true
     "$OUT/payloads" "$OUT/empty-conf" "$OUT/empty-sources" "$OUT/empty-prefs" "$OUT/empty-trusted" "$OUT/provisioning"
 /usr/bin/cp "$HELPERS/bootstrap.sh" "$OUT/provisioning/bootstrap.sh"
 substep=helper_presence
-for helper in parse_release.awk parse_packages.awk parse_simulation.awk parse_uris.awk parse_status.awk verify_delta.awk parse_ca_members.awk verify_ca_pem.awk; do
+for helper in parse_release.awk parse_packages.awk parse_simulation.awk parse_uris.awk parse_status.awk verify_delta.awk parse_ca_members.awk verify_ca_pem.awk check_python_prerequisites.py; do
     /usr/bin/cp "$HELPERS/$helper" "$OUT/provisioning/$helper"
 done
 substep=base_tool_hashes
@@ -396,7 +396,51 @@ run post-dpkg-audit /usr/bin/dpkg --audit
 substep=audit_clean
 [ ! -s "$OUT/logs/post-dpkg-audit.log" ] || fail
 substep=python_prerequisites
-run python-apt-prerequisites /usr/bin/python3 -I -B -c 'import sys, apt_pkg, ssl; sys.exit(0 if sys.version_info[:2] == (3, 10) and apt_pkg.VERSION.startswith("2.4.") and ssl.get_default_verify_paths().cafile else 1)'
+prerequisite_result=0
+/usr/bin/python3 -I -B "$HELPERS/check_python_prerequisites.py" > "$OUT/logs/python-apt-prerequisites.log" 2>&1 || prerequisite_result=$?
+case "$prerequisite_result" in
+    0) ;;
+    61)
+        substep=python_import_sys
+        fail
+        ;;
+    62)
+        substep=python_import_apt_pkg
+        fail
+        ;;
+    63)
+        substep=python_import_ssl
+        fail
+        ;;
+    64)
+        substep=python_version_check
+        fail
+        ;;
+    65)
+        substep=python_version_mismatch
+        fail
+        ;;
+    66)
+        substep=apt_version_check
+        fail
+        ;;
+    67)
+        substep=apt_version_mismatch
+        fail
+        ;;
+    68)
+        substep=ca_path_check
+        fail
+        ;;
+    69)
+        substep=ca_file_missing
+        fail
+        ;;
+    *)
+        substep=python_execution
+        fail
+        ;;
+esac
 substep=final_snapshot
 /usr/bin/cp /var/lib/dpkg/status "$OUT/final-status"
 substep=final_unchanged

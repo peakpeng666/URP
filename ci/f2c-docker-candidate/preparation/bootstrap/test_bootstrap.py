@@ -100,7 +100,7 @@ class SyntaxAndPins(unittest.TestCase):
         self.assertLess(script.index('phase=public_ca_seed'), script.index('phase=signed_metadata'))
         self.assertIn('ORIGIN=https://snapshot.ubuntu.com/', script)
         self.assertIn('Acquire::https::CaInfo "/opt/urp-bootstrap-evidence/bootstrap-ca.pem";', script)
-        self.assertLess(install, script.index('run python-apt-prerequisites'))
+        self.assertLess(install, script.index('/usr/bin/python3 -I -B "$HELPERS/check_python_prerequisites.py"'))
         for forbidden in ["--allow-unauthenticated", "--allow-downgrades", "trusted=yes", "curl ", "wget ", "sudo ", "docker "]:
             self.assertNotIn(forbidden, script)
 
