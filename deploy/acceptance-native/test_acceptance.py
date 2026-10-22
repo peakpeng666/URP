@@ -196,4 +196,20 @@ class FailureDiagnosticTests(unittest.TestCase):
         self.assertEqual(result,{'simulation_failure_step':'unknown','simulation_error_kind':'unknown'})
         self.assertNotIn('PRIVATE',json.dumps(project(result)))
 
+class ServiceReadinessTests(unittest.TestCase):
+    def test_waits_for_async_probe_without_accepting_starting(self):
+        import itertools
+        from acceptance import wait_for_solver
+        rows=[{'services':[{'id':'solver','state':'starting'}]},{'services':[{'id':'solver','state':'ready'}]}]
+        with patch('acceptance.api',side_effect=rows) as call:
+            wait_for_solver('LOCAL',clock=itertools.count().__next__,sleep=lambda _:None)
+            self.assertEqual(call.call_count,2)
+    def test_terminal_failure_and_timeout_remain_failures(self):
+        import itertools
+        from acceptance import wait_for_solver
+        with patch('acceptance.api',return_value={'services':[{'id':'solver','state':'unavailable'}]}):
+            with self.assertRaises(RuntimeError):wait_for_solver('LOCAL',clock=itertools.count().__next__,sleep=lambda _:None)
+        with patch('acceptance.api',return_value={'services':[{'id':'solver','state':'starting'}]}):
+            with self.assertRaises(TimeoutError):wait_for_solver('LOCAL',timeout=3,clock=itertools.count().__next__,sleep=lambda _:None)
+
 if __name__ == '__main__': unittest.main()

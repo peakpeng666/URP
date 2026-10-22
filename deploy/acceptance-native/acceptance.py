@@ -55,6 +55,16 @@ def verify_source(source):
     from runner.verify_worktree import verify
     return verify(source, SOURCE)
 
+def wait_for_solver(base, timeout=120, clock=time.monotonic, sleep=time.sleep):
+    deadline=clock()+timeout
+    while clock()<deadline:
+        inventory=api(base,'GET','/services',timeout=10)
+        state=next((r.get('state') for r in inventory.get('services',[]) if r.get('id')=='solver'),None)
+        if state in ('ready','running','degraded'):return
+        if state in ('failed','unavailable'):raise RuntimeError('solver_service_unavailable')
+        sleep(.5)
+    raise TimeoutError('solver_service_not_ready')
+
 def failure_diagnostic(report, solutions):
     names={'gateway health':'health','service inventory':'services','load scenario':'scenario','recommendation':'recommendation','submit solve job':'solve_submit','all solver runs terminal':'solve_terminal','recommended run valid and checked':'solve_validation','map check collision-free':'map_validation','start simulation session':'session_start','session ready':'session_ready','submit sim run (follow_path)':'sim_submit','sim run follow_path succeeded':'sim_execute','sim run follow_path reached every task':'sim_tasks','shutdown / process cleanup':'shutdown'}
     failed=next((r.get('name') for r in report.get('steps',[]) if isinstance(r,dict) and r.get('ok') is False),report.get('failed_step'))
@@ -128,6 +138,9 @@ def execute(args):
                 if api(base, 'GET', '/health').get('status') == 'ok': break
             except (OSError, ValueError): pass
             time.sleep(.5)
+        raw['simulation_failure_step']='services'
+        wait_for_solver(base)
+        raw['simulation_failure_step']='none'
         rec = api(base, 'POST', '/recommend', {'scenario_id': 'maze-inspection'}, timeout=60)
         algorithm = rec.get('recommended')
         if not isinstance(algorithm, str) or not algorithm or algorithm.startswith('-'): raise RuntimeError('recommendation_missing')
