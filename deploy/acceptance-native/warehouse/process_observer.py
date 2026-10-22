@@ -1,6 +1,7 @@
 """Bounded read-only gateway-descendant accounting; never an acceptance input.
 
-No cmdline, environment, maps, task/thread sampling or signaling. Identity is
+No cmdline, environment, maps or signaling. Optional bounded thread stat sampling
+is restricted to one verified dominant Ruby lifetime. Process identity is
 PID/start_ticks within this invocation; executable identity changes split CPU
 intervals. Same-image exec cannot be distinguished by this interface. CPU
 seconds are observed matched-interval consumption, not utilization or causality.
@@ -13,6 +14,7 @@ import time
 
 from startup_observer import is_cancellation
 from resource_uri_diagnostics import LAUNCH_GRAPH_PROCESSES
+import thread_observer as thread_diag
 
 MAX_SCAN = 4096
 MAX_OWNED = 128
@@ -86,6 +88,10 @@ def sanitize(raw):
         result['rows'].sort(key=lambda r:(-r['cpu_delta_s'],r['lifetime_id']))
     result['public_rows_omitted']=min(MAX_LIFETIMES,(number(raw.get('public_rows_omitted'), MAX_LIFETIMES, True) or 0)+max(0,len(result['rows'])-MAX_PUBLIC))
     result['rows']=result['rows'][:MAX_PUBLIC]
+    try:result['thread_observation'] = thread_diag.sanitize(raw.get('thread_observation'))
+    except BaseException as exc:
+        if is_cancellation(exc):raise
+        result['thread_observation'] = thread_diag.UNAVAILABLE_OBSERVATION
     return result
 
 
@@ -133,7 +139,8 @@ def ancestry(row): return row['pid'],row['start'],row['ppid'],row['pgid']
 
 class ProcessObserver:
     def __init__(self, gateway, *, reader=None, clock=time.monotonic,
-                 parent_pid=None, ticks=None, page=None):
+                 parent_pid=None, ticks=None, page=None, thread_reader=None):
+        self.thread=None;self.thread_reader=thread_reader;self.thread_chain=None
         self.gateway=gateway  # Exact Popen object from this helper, never API metadata.
         self.reader=reader or ProcReader();self.clock=clock
         self.sid=self.origin=self.last_clock=None
@@ -151,12 +158,21 @@ class ProcessObserver:
         except (OSError,ValueError,IndexError,KeyError,TypeError):
             self.root=None;self.stop('identity_mismatch')
 
+    def thread_call(self,name,*args):
+        if self.thread is None:return
+        try:return getattr(self.thread,name)(*args)
+        except BaseException as exc:
+            self.thread=None
+            self.raw['thread_observation']=thread_diag.UNAVAILABLE_OBSERVATION
+            if is_cancellation(exc):raise
+
     def stop(self,reason):
         if not self.closed:
             self.closed=True;self.raw['end_reason']=reason
             self.raw['status']='partial' if self.raw['snapshots'] else 'unavailable'
             if reason=='window_complete' and not any(self.raw[k] for k in COUNTS if k not in ('snapshots','new_identities','lost_identities','exec_changes')):
                 self.raw['status']='complete' if self.raw['snapshots']>=2 else 'partial'
+            self.thread_call('stop',reason)
 
     def bind(self,sid):
         if self.closed:return
@@ -165,6 +181,11 @@ class ProcessObserver:
         if self.sid is None:
             self.sid=sid;self.origin=self.clock();self.last_clock=self.origin
             if number(self.origin) is None:self.stop('clock_invalid')
+            else:
+                try:self.thread=thread_diag.ThreadObserver(reader=self.thread_reader or thread_diag.ThreadProcReader(),clock=self.clock,origin=self.origin,ticks=self.ticks)
+                except BaseException as exc:
+                    self.raw['thread_observation']=thread_diag.UNAVAILABLE_OBSERVATION
+                    if is_cancellation(exc):raise
 
     def safe(self,name,*args):
         try:return getattr(self,name)(*args)
@@ -189,6 +210,7 @@ class ProcessObserver:
                     if not is_cancellation(exc) and method=='GET' and path=='/sim/state':
                         self.raw['api_read_errors']=min(1000000,self.raw['api_read_errors']+1)
                         self.previous={}  # Never bridge a missed startup observation.
+                        self.thread_call('break_intervals')
                     else:self.stop('read_error')
                 except BaseException:pass
                 raise
@@ -263,6 +285,7 @@ class ProcessObserver:
         self.last_clock=finished
         self.raw['new_identities']+=len(current.keys()-self.previous.keys())
         self.raw['lost_identities']+=len(self.previous.keys()-current.keys())
+        thread_candidates=[]
         for key,(row,exe,exe_id,at) in current.items():
             life=self.lifetimes.get(key)
             if life is None:
@@ -281,11 +304,42 @@ class ProcessObserver:
                 elif at>before:
                     life['cpu_delta_s']+=(row['ticks']-old['ticks'])/self.ticks
                     life['covered_wall_s']+=at-before;life['intervals']+=1
+                    if life['category']!='unavailable':
+                        thread_candidates.append(dict(row=row,exe=exe,exe_id=exe_id,lifetime_id=life['lifetime_id'],category=category(exe),delta_ticks=row['ticks']-old['ticks']))
             # Once a lifetime crosses exec, preserve ambiguity in its label.
         self.previous=current
         self.raw['snapshots']+=1;self.raw['status']='sampling'
         self.raw.setdefault('first_offset_s',offset);self.raw['last_offset_s']=offset
         self.raw['snapshot_span_s']=offset-self.raw['first_offset_s']
         self.raw['rows']=list(self.lifetimes.values())
+        self.thread_call('observe',thread_candidates,self.validate_thread_target)
 
-    def result(self):return sanitize(self.raw)
+    def validate_thread_target(self,pid,start,exe,exe_id):
+        """Fresh bounded ownership proof, never API PID or an asserted role."""
+        if self.closed or self.gateway.returncode is not None:raise ValueError('target_closed')
+        chain=[];seen=set();node=self.reader.stat(pid)
+        if identity(node)!=(pid,start):raise ValueError('target_changed')
+        while node['pid']!=self.gateway.pid:
+            if len(chain)>=64 or node['pid'] in seen:raise ValueError('chain_limit')
+            seen.add(node['pid']);chain.append(node)
+            node=self.reader.stat(node['ppid'])
+        if not chain or ancestry(node)!=self.root:raise ValueError('root_changed')
+        chain.append(node)
+        frozen=tuple(ancestry(link) for link in chain)
+        if self.thread_chain is not None and frozen!=self.thread_chain:raise ValueError('target_chain_changed')
+        for link in chain:
+            if ancestry(self.reader.stat(link['pid']))!=ancestry(link):raise ValueError('chain_changed')
+        if self.reader.exe(pid)!=(exe,exe_id):raise ValueError('exec_changed')
+        latest=self.reader.stat(pid)
+        for link in chain:
+            if ancestry(self.reader.stat(link['pid']))!=ancestry(link):raise ValueError('chain_changed')
+        if self.reader.exe(pid)!=(exe,exe_id):raise ValueError('exec_changed')
+        for link in chain:
+            if ancestry(self.reader.stat(link['pid']))!=ancestry(link):raise ValueError('chain_changed')
+        self.thread_chain=frozen
+        return latest,exe,exe_id
+
+    def result(self):
+        result=self.thread_call('result')
+        if result is not None:self.raw['thread_observation']=result
+        return sanitize(self.raw)

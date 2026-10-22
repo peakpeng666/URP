@@ -51,8 +51,9 @@ also samples gateway descendants during cached `starting` observations between
 object is passed immediately after creation; API PIDs and files are not ownership
 authority. The gateway must remain the original helper child and process-group
 leader. Each descendant's PID/start ticks and complete ancestry are revalidated
-around executable identity reads. No argv, environment, maps, thread enumeration,
-ptrace, signals, packages, application changes or acceptance changes are added.
+around executable identity reads. No argv, environment, maps, ptrace, signals, packages, application changes or
+acceptance changes are added. The target-only thread extension below reads task
+stat entries only for its one independently revalidated selected process.
 
 `warehouse_process_observation` is a separate fixed-schema projection, not part
 of the native observer's 16 KiB result. At most nine snapshots enumerate at most
@@ -90,3 +91,52 @@ and `create3_nodes` names. It does not use that module's command-line/log aliase
 Thus native `motion_control`, `sensors_node`, and `wheel_status_publisher` can be
 distinguished, while an interpreter executing a similarly named script remains
 Python/Ruby. Unknown basenames are never published verbatim.
+
+
+### Target-only thread discriminator
+
+The same observer now includes a nested `thread_observation` fixed-schema
+projection, leaving the existing native observer output and its 16 KiB cap alone.
+After one matched process interval, it may select the unique highest positive
+CPU-delta candidate among the bounded, verified descendant samples, only if that
+candidate is currently Ruby and has not crossed an executable-identity change.
+A tie, no positive interval or a non-Ruby leader does not select a target. Selection
+freezes the actual PID/start/executable and invocation-local process lifetime ID;
+no previous-run identity is used and no later process is silently substituted.
+The complete private source-owned ancestry chain is frozen and checked before
+and after each thread batch, with full chain checks around both exe reads.
+This is not evidence that Ruby has a particular Gazebo launch role.
+
+Only `/proc/<target>/task/<tid>/stat` is added to existing process/exe reads.
+At most 128 thread entries and 128 accounting lifetimes are retained, within the
+same maximum nine snapshots and unchanged 30–38 second window. Selection consumes
+the first process interval, so the thread observation window can be shorter.
+Each thread row is read twice and identity/name/counter consistency checked;
+only adjacent matching process/TID/start/name intervals contribute CPU seconds.
+A rename starts a new accounting lifetime, including across a missed snapshot.
+Per-thread timing uses monotonic second-read completion. Comparable process CPU
+consumption is sampled over the successful thread-batch intervals, timestamped
+after validation completes; counters and timestamps are not atomic. Missing
+threads and differing read times mean thread/process totals need not be equal.
+These are CPU consumption and coverage measurements, not utilization.
+
+Only three public categories are allowed: `leader` (TID equals process PID),
+`named_llvmpipe_worker` (exact names `llvmpipe-0` through `llvmpipe-31`), and
+`unknown_worker`. Three category aggregates include all accounted lifetimes;
+the public top 16 lifetime rows have an explicit omission count. Raw names,
+process/thread IDs, executable paths and exception text are never projected.
+Name provenance is pinned in `thread_observer.py` to official Mesa GitLab sources
+for `mesa-23.2.1`: `lp_rast.c`, `lp_limits.h`, and `u_thread.c`, including retrieved
+SHA256 hashes. Those sources define names, the 32-worker bound, and Linux
+`pthread_setname_np`; they do not establish the installed Mesa version. Arbitrary
+`RenderThread` names are not classified as verified Gazebo workers. Even observed
+llvmpipe-named CPU activity alone is not a rendering/physics root-cause diagnosis.
+
+No-target/ties, scan/lifetime caps, loss, rename, read permissions, counter
+regression, cutoff and continuity gaps are explicit. Reads are bounded in count,
+not a hard real-time preemption guarantee. A batch finishing beyond the unchanged
+cutoff is discarded. Cancellation, cleanup, phase and API-error precedence retain
+the process observer's contracts: ordinary optional diagnostic failures remain
+isolated, exact project cancellations propagate, and original cleanup is still
+attempted once. No new packages, native run, acceptance relaxation or environment
+intervention is required to test this helper-only code.
