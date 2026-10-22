@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { importGeojsonOnce, importScenarioOnce } from './scenarioWrites';
 import { DockviewReact, themeLight, type DockviewApi, type DockviewReadyEvent } from 'dockview-react';
 import 'dockview-react/dist/styles/dockview.css';
 import { Command } from 'cmdk';
@@ -355,7 +356,7 @@ function ComposeBar() {
   async function onFile(f: File) {
     try {
       const obj = JSON.parse(await f.text());
-      const sc = obj.type === 'FeatureCollection' || obj.type === 'Feature' ? await studio.importGeojson(obj, f.name.replace(/\.(geo)?json$/i, '')) : await studio.importScenario(obj);
+      const sc = obj.type === 'FeatureCollection' || obj.type === 'Feature' ? await importGeojsonOnce(obj, f.name.replace(/\.(geo)?json$/i, '')) : await importScenarioOnce(obj);
       location.hash = `#/plan/${encodeURIComponent(sc.id)}`;
       notify('ok', `已导入 ${sc.title}`);
     } catch (e) {
