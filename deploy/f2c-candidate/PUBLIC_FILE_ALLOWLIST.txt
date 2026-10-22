@@ -22,6 +22,7 @@ recipe/prepare_live.py
 recipe/prepare_validation_data.py
 recipe/project_canonical_target.py
 recipe/project_failure_code.py
+recipe/report_candidate_failure.py
 recipe/reviewed-inputs.template.json
 recipe/run_build.py
 recipe/runtime_prepare.py
@@ -33,8 +34,10 @@ recipe/tests/test_package_preparation.py
 recipe/tests/test_structured_failure_projection.py
 recipe/tests/test_validation.py
 recipe/tests/test_validation_data.py
+recipe/tests/test_workflow_projection.py
 recipe/validate_jammy_candidate.py
 recipe/verify_offline_inputs.py
 recipe/verify_validation_build.py
+recipe/verify_workflow_projection.py
 source-index.json
 test_compare_interfaces.py

@@ -4,10 +4,10 @@
       "sha256": "cc14d22e1195d61e844ff01426812552f4bdfc971adb660f53bbff0857435c0d"
     },
     "PREPARATION.md": {
-      "sha256": "30e64d96ecec896340a2877f15c297123ee79c2928f925688449c8c4b1d1391f"
+      "sha256": "ff7416a9551f3463c9a4ef94ecb42741e35a2c58e1cce016b7ae70903f88281e"
     },
     "PUBLIC_FILE_ALLOWLIST.txt": {
-      "sha256": "c3d21f5a899b80e88382f2d0413e0e3d248bd25c464d88fd8a0a2950ee96f324"
+      "sha256": "e3fbb294ed89ad9ed4c86286cc65ce896962d3590b8a12bbe6ecd65185c926b6"
     },
     "build-requirements.lock": {
       "sha256": "20882c0230ae0bd0d73dff6a21c0f069a2c893bff443a7e286a7916c9cbef2c3"
@@ -28,7 +28,7 @@
       "sha256": "795822196a6fe3cf3f630f48883e21297405e8a4a501c1d78888617fb766c858"
     },
     "recipe/README.md": {
-      "sha256": "4e924be69af7e59d2124ba88bfc2293a38a597b3f7aa38ff2db31563b15ebd2f"
+      "sha256": "b902205939027ae8edc45d6dcaee70e84f7486eb996d524179c89240d591672b"
     },
     "recipe/VALIDATION.md": {
       "sha256": "4b5d7d621c810d0d88d1854e2ce97add9942b060017b709befef4fff1aefe65a"
@@ -66,6 +66,9 @@
     "recipe/project_failure_code.py": {
       "sha256": "f553ff4a80300cde5d9c34513a582cd0e1ef264fba351ab3c18826cac7acf66e"
     },
+    "recipe/report_candidate_failure.py": {
+      "sha256": "9745cbf7c579993682a990152d6732feaa41154d5907b00591215fe3684e0752"
+    },
     "recipe/reviewed-inputs.template.json": {
       "sha256": "8d902ec58c740d966ad5fc44a678012145128ad7da13768c0025682c6d4df6e2"
     },
@@ -91,13 +94,16 @@
       "sha256": "101587aa27a2156ca68af04aff5b374cae70556e788925e16e5d1d6afbbbeb43"
     },
     "recipe/tests/test_structured_failure_projection.py": {
-      "sha256": "1ab4570efdf90926af8844d66caab6d0360250b8f91e2e74437a33065a188ab8"
+      "sha256": "88d3b0f68b54828be80c43f94786552dc9e96f50c5230b6be290491b5b3de91d"
     },
     "recipe/tests/test_validation.py": {
       "sha256": "84e430799619b907c8950b117c061d29703601017e3c287ea3965a482fe92f6d"
     },
     "recipe/tests/test_validation_data.py": {
       "sha256": "901162041370a0101cd15df8c3269be30fff8eafe8c5740a7adda611068d90b7"
+    },
+    "recipe/tests/test_workflow_projection.py": {
+      "sha256": "af7f60afea0daccd17e601e00b641aa9503a35d0a5ec330160b1d1afab6d59ce"
     },
     "recipe/validate_jammy_candidate.py": {
       "sha256": "a9b0d232b607708d4192cdbd9d9f02de4b10bf6084904ed61ff75bb069c0a2b2"
@@ -107,6 +113,9 @@
     },
     "recipe/verify_validation_build.py": {
       "sha256": "f1f1c479a89284ab3d869d05e1fc3b31dc1315704abd2e0a5dc3ad0d5824f628"
+    },
+    "recipe/verify_workflow_projection.py": {
+      "sha256": "94b1188d8a434282c02be9146bd84604e366108df873f317280a50079a1bfab5"
     },
     "test_compare_interfaces.py": {
       "sha256": "81313fbbec240509b3113a1386dbded9faaf851f7f87ac81ed947dac8ad3fd3b"

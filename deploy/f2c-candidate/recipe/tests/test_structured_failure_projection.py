@@ -117,7 +117,7 @@ class StructuredProjectionTests(unittest.TestCase):
 
 class CanonicalWorkflowProjectionTests(unittest.TestCase):
     def run_wrapper(self, target, corrupt=False, absent=False):
-        script=textwrap.dedent((R/'candidate-workflow.yml').read_text().split("<<'PY_FAILURE'\n",1)[1].split('\n          PY_FAILURE',1)[0])
+        script=(R/'report_candidate_failure.py').read_text()
         d=receipt()
         d.update(code='APT_CLOSURE_DOWNGRADE_REFUSED',operation='closure-provenance',exception_class='ClosureProvenanceError',http_status=None,suite=None,component=None,returncode=1)
         with tempfile.TemporaryDirectory() as td:

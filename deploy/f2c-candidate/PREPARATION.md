@@ -1,6 +1,6 @@
 # Ubuntu 22.04 Fields2Cover candidate preparation
 
-Status: diagnostic-only v6 preserves every candidate acceptance gate. All 250 pure helper/interface fixtures passed, and independently verified canonical projections against all six retained authenticated indexes passed. Hosted v5 stopped at the downgrade-refused condition before live archive-byte preflight, package mutation, or native build. V6 records the actual comparison return code and authenticates a bounded public target reference; it does not disclose installed versions or change the environment protocol. V6 has not been launched; the actual hosted package identity remains unproven. No native Jammy success or production promotion is claimed.
+Status: v7 repairs a reproduced hermetic test dependency, not a package or native acceptance failure. Hosted v6 stopped in helper tests before APT; the canonical target identity is still unknown. All reporting logic now lives in an indexed module shared by the workflow and tests. Publication requires exact workflow/bootstrap parity and all helper/interface tests in both the source tree and a fresh source-index-only runtime under a clean environment. V6 canonical metadata verification and all scientific, transaction, provenance and offline-isolation gates are unchanged. No native Jammy success or production promotion is claimed.
 
 ## Verified upstream inputs
 
