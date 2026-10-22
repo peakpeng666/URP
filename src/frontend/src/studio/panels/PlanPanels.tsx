@@ -44,6 +44,7 @@ import { centerMap, ReplayOverlay } from '../experiment/ReplayPanel';
 import { comparable, currentInput, exclusionReason, inputIdentity, partitionRuns, requiresCoverageRecheck, resultState, verifiedPlan } from '../comparison';
 import { identityState, withoutInvalidatedResults } from '../../lab/views/plan/resultIntegrity';
 import { RunTrace } from '../experiment/RunTrace';
+import { HistoryRuns } from './HistoryRuns';
 import { SeedBandChart, StatusFlowChart, VerificationChart } from '../researchCharts/RunCharts';
 import { ProblemEditor } from './ProblemEditor';
 import s from './panels.module.css';
@@ -838,13 +839,14 @@ export function ComparePanel() {
     return vals.length ? (c.better === 'min' ? Math.min(...vals) : Math.max(...vals)) : null;
   });
   if (!rows.length) {
-    return <EmptyState icon={CircleDashed} title="还没有方案" detail="在“推荐与求解”里勾选算法后点击对比，结果会出现在这里。" />;
+    return <><EmptyState icon={CircleDashed} title="还没有方案" detail="在“推荐与求解”里勾选算法后点击对比，结果会出现在这里。" /><HistoryRuns /></>;
   }
   return (
     <div className={s.compare}>
       <div className={s.pad} style={{ paddingBottom: 4 }}>
         <p className={s.meta}>本批 {rows.length} 次运行 · {rows.filter(verifiedPlan).length} 个已验算可行解。最佳值仅在相同输入、目标、单位和时间预算内标记。</p>
         {anchor?.planning && <p className={s.meta}>{anchor.planning.objective_label} · {anchor.planning.objective_unit} · 输入 {anchor.instance_sha256.slice(0, 12)}</p>}
+        <HistoryRuns />
         {groups.length > 1 && <Notice tone="warn">存在 {groups.length} 种比较口径{groups.some((g) => g.identity === 'unknown') ? '（含身份未核验组）' : ''}；当前最佳值只针对选中方案所在组，不跨组排名。</Notice>}
       </div>
       <div className={s.tableWrap}>
