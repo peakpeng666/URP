@@ -66,7 +66,7 @@ def snapshot():
         try:
             text = (path / 'stat').read_text()
             fields = text[text.rindex(')') + 2:].split()
-            rows[int(path.name)] = (int(fields[1]), fields[19])
+            rows[int(path.name)] = (int(fields[1]), fields[19], fields[0])
         except (OSError, ValueError, IndexError):
             pass
     return rows
@@ -75,7 +75,7 @@ def descendants(rows, roots):
     result = set(roots)
     changed = True
     while changed:
-        new = {pid for pid, (ppid, _) in rows.items() if ppid in result}
+        new = {pid for pid, row in rows.items() if row[0] in result}
         changed = not new.issubset(result)
         result |= new
     return result
@@ -89,7 +89,7 @@ def run(args):
     os.chmod(private, 0o700)
     root = pathlib.Path(args.source).resolve()
     harness = pathlib.Path(args.harness).resolve()
-    status = {'stage': 'installation', 'exit_code': 1, 'cleanup_remaining': 0}
+    status = {'stage': 'installation', 'exit_code': 1, 'cleanup_remaining': 0, 'forced_kill_count': 0}
     owned = {}
     current = None
     env = os.environ.copy()
@@ -156,13 +156,19 @@ def run(args):
     except Exception:
         status['exit_code'] = 1
     finally:
+        forced_kills = set()
         for sig, seconds in ((signal.SIGTERM,20),(signal.SIGKILL,5)):
             end = time.monotonic()+seconds
             while True:
                 rows = track()
                 live = {pid for pid,stamp in owned.items() if rows.get(pid,(None,None))[1] == stamp}
                 for pid in live:
-                    try: os.kill(pid,sig)
+                    # Zombies cannot receive a meaningful signal; reap them below.
+                    if rows[pid][2] == 'Z': continue
+                    try:
+                        os.kill(pid,sig)
+                        if sig == signal.SIGKILL:
+                            forced_kills.add((pid,owned[pid]))
                     except (ProcessLookupError, PermissionError): pass
                 if not live or time.monotonic() >= end: break
                 # Reap direct children, preventing their zombies looking alive.
@@ -172,15 +178,29 @@ def run(args):
                 time.sleep(.2)
         rows = snapshot()
         status['cleanup_remaining'] = sum(rows.get(pid,(None,None))[1] == stamp for pid,stamp in owned.items())
-        if status['cleanup_remaining']: status['exit_code'] = 1
+        status['forced_kill_count'] = len(forced_kills)
+        if status['cleanup_remaining'] or status['forced_kill_count']: status['exit_code'] = 1
         if stop:
             status['exit_code'] = 1
         logfile = private / ('install.log' if status['stage'] == 'installation' else 'acceptance.log')
         status['failure_hint'] = classify(logfile, status['exit_code'])
+        if status['stage']=='installation' and status['failure_hint'] in ('unknown','apt_dependency_conflict'):
+            solver_hint=classify(private/'apt-solver.log',status['exit_code'])
+            if solver_hint.startswith('apt_'):status['failure_hint']=solver_hint
         status['installation_step'] = installation_step(logfile) if status['stage']=='installation' else 'not_applicable'
         if stop:
             status['exit_code'] = 1
             status['failure_hint'] = 'unknown'
+        status['apt_projection'] = {'status':'not_run','dependencies':[]}
+        projection=private/'apt-dependencies.json'
+        if projection.exists():
+            try:
+                if projection.is_symlink() or projection.stat().st_size>32768:raise ValueError('invalid_projection')
+                status['apt_projection']=json.loads(projection.read_text())
+            except Exception:
+                status['apt_projection']={'status':'invalid_projection','dependencies':[]}
+        elif (private/'apt-solver.log').exists():
+            status['apt_projection']={'status':'metadata_unavailable','dependencies':[]}
         (private/'runner-status.json').write_text(json.dumps(status))
     return status
 

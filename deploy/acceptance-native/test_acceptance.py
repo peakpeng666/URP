@@ -34,7 +34,7 @@ class AcceptanceTests(unittest.TestCase):
     def valid(self): return derive(*self.evidence())
 
     def test_complete_physical_evidence_passes(self):
-        self.assertEqual(project(self.valid())['state'],'PASS')
+        self.assertEqual(project(self.valid(),{'exit_code':0,'cleanup_remaining':0,'forced_kill_count':0})['state'],'PASS')
 
     def test_ready_only_fails(self):
         raw=self.valid();raw['state']='PASS';raw['trajectory_samples']=None
@@ -76,7 +76,7 @@ class AcceptanceTests(unittest.TestCase):
     def test_wrapper_failure_overrides_simulation_pass(self):
         for runner in ({},{'exit_code':1,'cleanup_remaining':0},{'exit_code':0,'cleanup_remaining':1}):
             self.assertEqual(project(self.valid(),runner)['state'],'FAIL')
-        self.assertEqual(project(self.valid(),{'exit_code':0,'cleanup_remaining':0})['state'],'PASS')
+        self.assertEqual(project(self.valid(),{'exit_code':0,'cleanup_remaining':0,'forced_kill_count':0})['state'],'PASS')
 
     def test_source_wrong_commit_stops(self):
         with patch('runner.verify_worktree.subprocess.check_output',return_value=b'0'*40):
@@ -122,4 +122,23 @@ class AcceptanceTests(unittest.TestCase):
         finally:
             if p.poll() is None: p.kill();p.wait()
 
-if __name__=='__main__': unittest.main()
+
+
+
+class AptPublicProjectionTests(unittest.TestCase):
+    def test_public_apt_projection_is_strict(self):
+        from public_summary import apt_projection
+        edge={'package':'root','package_version':'1.0','relation':'depends','dependency':'lib-a','version_relation':'ge','dependency_version':'2.0'}
+        self.assertEqual(apt_projection({'status':'verified','dependencies':[edge]}),('verified',[edge]))
+        for bad in [dict(edge,url='PRIVATE_URL'),dict(edge,package='PRIVATE/PATH'),dict(edge,relation='PRIVATE'),dict(edge,dependency_version='http://private'),dict(edge,version_relation='any')]:
+            result=apt_projection({'status':'verified','dependencies':[bad]})
+            self.assertEqual(result,('invalid_projection',[]))
+            self.assertNotIn('PRIVATE',json.dumps(result))
+        self.assertEqual(apt_projection({'status':'verified','dependencies':[edge]*21}),('invalid_projection',[]))
+    def test_missing_or_nonzero_forced_kill_cannot_pass(self):
+        # Even a nominal PASS input cannot bypass missing supervisor evidence.
+        raw={'state':'PASS'}
+        for runner in (None,{}, {'exit_code':0,'cleanup_remaining':0}, {'exit_code':0,'cleanup_remaining':0,'forced_kill_count':1}):
+            self.assertEqual(project(raw,runner)['state'],'FAIL')
+
+if __name__ == '__main__': unittest.main()

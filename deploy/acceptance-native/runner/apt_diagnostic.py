@@ -14,12 +14,19 @@ def solver_command(source):
     if not all(re.fullmatch(r'[a-z0-9][a-z0-9+.-]*',x) for x in packages):raise ValueError('invalid_package_list')
     return ['apt-get','--simulate','-o','Debug::pkgProblemResolver=yes','install','--no-install-recommends',*BASE,*packages]
 
-def diagnose(source):
+def diagnose(source, private):
     # No sudo, no update/download/install action: simulation explicitly disables locks.
     env=dict(os.environ,LC_ALL='C',LANG='C')
-    try:
-        result=subprocess.run(solver_command(source),env=env,timeout=90,check=False)
-        print('URP_APT_SOLVER_EXIT_'+str(result.returncode),flush=True)
-    except subprocess.TimeoutExpired:print('URP_APT_SOLVER_TIMEOUT',flush=True)
+    private=pathlib.Path(private)
+    log=private/'apt-solver.log'
+    with log.open('wb') as stream:
+        try:
+            result=subprocess.run(solver_command(source),env=env,timeout=90,check=False,stdout=stream,stderr=subprocess.STDOUT)
+            print('URP_APT_SOLVER_EXIT_'+str(result.returncode),flush=True)
+        except subprocess.TimeoutExpired:print('URP_APT_SOLVER_TIMEOUT',flush=True)
+    subprocess.run(['/usr/bin/python3',str(pathlib.Path(__file__).with_name('apt_projection.py')),
+                    '--source',str(source),'--log',str(log),'--output',str(private/'apt-dependencies.json')],
+                   env=env,timeout=90,check=False)
 
-if __name__=='__main__':diagnose(sys.argv[1])
+
+if __name__=='__main__':diagnose(sys.argv[1],sys.argv[2])

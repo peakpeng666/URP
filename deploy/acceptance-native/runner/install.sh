@@ -27,6 +27,6 @@ setup_exit=$?
 set -e
 if [[ "$setup_exit" == 100 ]]; then
   # Original exit is retained; simulation diagnostics cannot make failure pass.
-  python3 "$(dirname "$0")/apt_diagnostic.py" "$source_root" || true
+  python3 "$(dirname "$0")/apt_diagnostic.py" "$source_root" "$private" || true
 fi
 exit "$setup_exit"

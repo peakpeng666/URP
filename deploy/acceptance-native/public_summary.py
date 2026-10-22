@@ -26,6 +26,26 @@ def number(v, integer=False, low=0, high=1e9):
 def digest(v, length=64):
     return v if isinstance(v, str) and re.fullmatch('[0-9a-f]{%d}' % length, v) else None
 
+def apt_projection(value):
+    states={'not_run','verified','no_verified_edges','metadata_unavailable','tree_limit','invalid_projection'}
+    invalid=('invalid_projection',[])
+    if not isinstance(value,dict) or set(value)!={'status','dependencies'}:return invalid
+    state=value['status'];edges=value['dependencies']
+    if not isinstance(state,str) or state not in states or not isinstance(edges,list) or len(edges)>20:return invalid
+    if state!='verified':return (state,[]) if not edges else invalid
+    out=[]
+    keys={'package','package_version','relation','dependency','version_relation','dependency_version'}
+    for e in edges:
+        if not isinstance(e,dict) or set(e)!=keys or not all(isinstance(v,str) for v in e.values()):return invalid
+        if not all(re.fullmatch(r'[a-z0-9][a-z0-9+.-]{0,119}',e[k]) for k in ('package','dependency')):return invalid
+        if not re.fullmatch(r'[A-Za-z0-9.+:~\-]{1,120}',e['package_version']):return invalid
+        if e['dependency_version'] and not re.fullmatch(r'[A-Za-z0-9.+:~\-]{1,120}',e['dependency_version']):return invalid
+        if e['relation'] not in ('depends','predepends','conflicts','breaks') or e['version_relation'] not in ('any','eq','ge','le','gt','lt'):return invalid
+        if (e['version_relation']=='any') != (e['dependency_version']==''):return invalid
+        out.append({k:e[k] for k in sorted(keys)})
+    return ('verified',out) if out else ('no_verified_edges',[])
+
+
 def project(raw, runner=None):
     raw = raw if isinstance(raw, dict) else {}
     result = {'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
@@ -49,6 +69,9 @@ def project(raw, runner=None):
     result['runner_stage'] = 'unknown'
     result['runner_exit_code'] = None
     result['runner_cleanup_remaining'] = None
+    result['forced_kill_count'] = None
+    result['apt_metadata_status'] = 'not_run'
+    result['apt_dependencies'] = []
     if runner is not None:
         runner = runner if isinstance(runner, dict) else {}
         step = runner.get('installation_step')
@@ -58,11 +81,13 @@ def project(raw, runner=None):
         result['runner_stage'] = runner.get('stage') if runner.get('stage') in ('installation', 'simulation') else 'unknown'
         result['runner_exit_code'] = number(runner.get('exit_code'), True, -255, 255)
         result['runner_cleanup_remaining'] = number(runner.get('cleanup_remaining'), True)
-        if result['runner_exit_code'] != 0 or result['runner_cleanup_remaining'] != 0:
+        result['forced_kill_count'] = number(runner.get('forced_kill_count'), True)
+        result['apt_metadata_status'], result['apt_dependencies'] = apt_projection(runner.get('apt_projection', {'status':'not_run','dependencies':[]}))
+        if result['runner_exit_code'] != 0 or result['runner_cleanup_remaining'] != 0 or result['forced_kill_count'] != 0:
             result['state'] = 'FAIL'
     # A public PASS cannot be forged by an incomplete/ready-only input.
     if result['state'] == 'PASS':
-        if not (result['source_sha'] == SOURCE and result['harness_sha'] and
+        if not (result['runner_exit_code'] == 0 and result['runner_cleanup_remaining'] == 0 and result['forced_kill_count'] == 0 and result['source_sha'] == SOURCE and result['harness_sha'] and
                 all(result[k] is True for k in BOOLS) and all(result[k] is not None for k in HASHES) and
                 (result['tasks_total'] or 0) > 0 and result['tasks_total'] == result['tasks_reached'] and
                 (result['trajectory_samples'] or 0) >= 2 and

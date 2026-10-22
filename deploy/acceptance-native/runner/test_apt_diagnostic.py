@@ -17,11 +17,14 @@ class AptDiagnosticTests(unittest.TestCase):
             with patch('runner.apt_diagnostic.subprocess.check_output',side_effect=[TARGET.encode(),b'original\n']):
                 with self.assertRaisesRegex(ValueError,'tracked_blob_mismatch'):solver_command(root)
     def test_diagnostic_never_executes_real_apt_in_test(self):
-        with patch('runner.apt_diagnostic.solver_command',return_value=['apt-get','--simulate']) as command, patch('runner.apt_diagnostic.subprocess.run',return_value=Mock(returncode=100)) as run, patch('builtins.print') as output:
-            diagnose('/isolated')
-            self.assertEqual(run.call_args.kwargs['timeout'],90)
-            self.assertFalse(run.call_args.kwargs['check'])
-            self.assertEqual(run.call_args.kwargs['env']['LC_ALL'],'C')
-            output.assert_called_once_with('URP_APT_SOLVER_EXIT_100',flush=True)
+        with tempfile.TemporaryDirectory() as tmp, patch('runner.apt_diagnostic.solver_command',return_value=['apt-get','--simulate']), patch('runner.apt_diagnostic.subprocess.run',return_value=Mock(returncode=100)) as run, patch('builtins.print') as output:
+            diagnose('/isolated',tmp)
+            self.assertEqual(run.call_args_list[0].kwargs['timeout'],90)
+            self.assertFalse(run.call_args_list[0].kwargs['check'])
+            self.assertEqual(run.call_args_list[0].kwargs['env']['LC_ALL'],'C')
+            self.assertIn('stdout',run.call_args_list[0].kwargs)
+            self.assertEqual(run.call_args_list[1].args[0][0],'/usr/bin/python3')
+            self.assertIn('--output',run.call_args_list[1].args[0])
+            output.assert_any_call('URP_APT_SOLVER_EXIT_100',flush=True)
 
 if __name__=='__main__':unittest.main()
