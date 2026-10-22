@@ -1,6 +1,7 @@
 name: Isolated native acceptance
 on:
-  pull_request:
+  push:
+    branches: [fix/agriculture-compatibility-20261022]
     paths:
       - .github/workflows/native-acceptance.yml
   workflow_dispatch:
@@ -13,16 +14,13 @@ jobs:
   maze:
     if: >-
       github.repository == 'peakpeng666/URP' &&
-      ((github.event_name == 'pull_request' &&
-      github.event.pull_request.head.repo.full_name == 'peakpeng666/URP' &&
-      github.head_ref == 'fix/agriculture-compatibility-20261022') ||
-      (github.event_name == 'workflow_dispatch' &&
-      github.ref == 'refs/heads/fix/agriculture-compatibility-20261022'))
+      github.ref == 'refs/heads/fix/agriculture-compatibility-20261022' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-22.04
     timeout-minutes: 125
     env:
       TARGET_SHA: 94420cf3b703c564134048e1b074406df901bba3
-      HARNESS_SHA: 340f9df9e61c30f121594297a9690dbdf6d373fc
+      HARNESS_SHA: f754482182b1fd0c676f0055c47d9b8a79fa511a
     steps:
       - name: Run isolated native maze and emit allowlisted result
         shell: bash
