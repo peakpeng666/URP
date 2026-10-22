@@ -5,6 +5,7 @@ import math
 import re
 from pathlib import Path
 from startup_diagnostics import sanitize as sanitize_startup
+from undock_observer.projection import project as project_observer
 
 SOURCE = '94420cf3b703c564134048e1b074406df901bba3'
 STATES = {'PASS', 'FAIL', 'ERROR', 'NOT_RUN'}
@@ -85,7 +86,7 @@ def host_repair_projection(raw):
 def project(raw, runner=None, *, require_runner=True):
     raw = raw if isinstance(raw, dict) else {}
     startup = sanitize_startup(raw.get('startup_diagnostics'))
-    result = {'startup_diagnostics': startup, 'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
+    result = {'undock_observer':project_observer(raw.get('undock_observer')),'startup_diagnostics': startup, 'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
               'harness_sha': digest(raw.get('harness_sha'), 40),
               'stage': raw.get('stage') if raw.get('stage') in ('maze', 'warehouse') else 'unknown',
               'state': raw.get('state') if isinstance(raw.get('state'), str) and raw.get('state') in STATES else 'ERROR',
@@ -96,6 +97,9 @@ def project(raw, runner=None, *, require_runner=True):
     for k in NUMBERS: result[k] = number(raw.get(k))
     for k in COUNTS: result[k] = number(raw.get(k), True)
     for k in BOOLS: result[k] = raw.get(k) if type(raw.get(k)) is bool else None
+    observer_process=raw.get('undock_observer_process')
+    observer_process=observer_process if isinstance(observer_process,dict) else {}
+    result['undock_observer_process']={k:number(observer_process.get(k),True,low,high) for k,low,high in [('exit_code',-255,255),('forced_kill_count',0,1000000),('remaining_owned_count',0,1000000)]}
     codes = raw.get('process_exit_codes', {})
     result['process_exit_codes'] = {k: number(codes.get(k), True, -255, 255) if isinstance(codes, dict) else None
                                     for k in ('full_loop', 'gateway')}

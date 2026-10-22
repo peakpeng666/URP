@@ -18,6 +18,8 @@ import urllib.request
 
 from public_summary import SOURCE, project
 from startup_diagnostics import session_id, collect
+from undock_observer.lifecycle import ObserverProcess
+from undock_observer.projection import project as project_observer
 
 def sha(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()).hexdigest()
@@ -115,7 +117,7 @@ def execute(args):
     runtime = private / 'runtime'; runtime.mkdir(mode=0o700)
     output = private / 'full-loop'
     token = secrets.token_hex(24)
-    gateway = loop = None; base = None; forced = False; sid = None
+    gateway = loop = observer = None; base = None; forced = False; sid = None
     try:
         if args.stage != 'maze': raise RuntimeError('warehouse_replay_not_implemented')
         source = args.source.resolve(); verify_source(source)
@@ -148,6 +150,12 @@ def execute(args):
         cmd = [str(python), str(source / 'src/lab/e2e/full_loop.py'), '--gateway', base,
                '--scenario', 'maze-inspection', '--algorithms', algorithm, '--modes', 'follow_path',
                '--localization', 'ground_truth', '--budget', '1800', '--runtime', str(runtime), '--output', str(output)]
+        observer_output=private/'undock-observer.json'
+        observer_env=dict(env,RMW_IMPLEMENTATION='rmw_cyclonedds_cpp')
+        observer=ObserverProcess(['bash','-c','source /opt/ros/humble/setup.bash && exec bash "$1/setup/profile.sh" simulation /usr/bin/python3 "${@:2}"','observer',str(source),
+            str(Path(__file__).resolve().parent/'undock_observer/observer.py'),'--port',str(port),'--output',str(observer_output)],
+            observer_env,private/'undock-observer.log')
+        if not observer.wait_ready(observer_output.with_suffix('.ready')):raise RuntimeError('observer_startup_failed')
         with (private / 'full-loop.log').open('w') as log:
             loop = subprocess.Popen(cmd, cwd=source, env=env, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
             raw['process_exit_codes']['full_loop'] = loop.wait(timeout=2220)
@@ -178,6 +186,14 @@ def execute(args):
         # Raw diagnostic is private, never printed or forwarded by projection.
         (private / 'harness-error.txt').write_text(type(exc).__name__ + ': ' + str(exc))
     finally:
+        if observer is not None:
+            try:
+                receipt=observer.close()
+                raw['undock_observer_process']=receipt
+                if receipt['exit_code']!=0 or receipt['forced_kill_count'] or receipt['remaining_owned_count']:forced=True
+            except Exception:forced=True
+            try:raw['undock_observer']=project_observer(read(private/'undock-observer.json',{}))
+            except Exception:pass
         if base and gateway and gateway.poll() is None:
             try: api(base, 'POST', '/shutdown', {}, timeout=10)
             except Exception: pass
