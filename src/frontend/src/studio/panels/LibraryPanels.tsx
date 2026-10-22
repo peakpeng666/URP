@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { importGeojsonOnce, importScenarioOnce } from '../scenarioWrites';
 import { BookOpen, Code2, Copy, Download, FileUp, Sprout } from 'lucide-react';
 import { lab, useLabResource } from '../../lab/api';
 import { Badge, Button, EmptyState, Input, Notice, Segmented, Select, Spinner } from '../../lab/ui';
@@ -37,8 +38,8 @@ export function ScenarioNavigator() {
     try {
       const obj = JSON.parse(await file.text());
       const sc = obj.type === 'FeatureCollection' || obj.type === 'Feature'
-        ? await studio.importGeojson(obj, file.name.replace(/\.(geo)?json$/i, ''))
-        : await studio.importScenario(obj);
+        ? await importGeojsonOnce(obj, file.name.replace(/\.(geo)?json$/i, ''))
+        : await importScenarioOnce(obj);
       location.hash = `#/plan/${encodeURIComponent(sc.id)}`;
       res.reload();
       notify('ok', `已导入 ${sc.title}`);
