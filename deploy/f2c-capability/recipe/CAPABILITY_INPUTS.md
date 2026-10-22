@@ -9,12 +9,12 @@ upgrade, downgrade, remove, or substitute anything.
 
 ## Source and bootstrap boundary
 
-`prepare_capability_inputs.py` is stdlib-only. Its sole project-code dependency
-is `jammy_metadata.py`, copied unchanged from the reviewed Jammy package preparer:
+`prepare_capability_inputs.py` and its new `keyring_input.py` helper are stdlib-only. The metadata dependency
+`jammy_metadata.py` remains copied unchanged from the reviewed Jammy package preparer:
 
 `3ef3c611be036f06331e4c2f0567fa75db27072270b075c72dc1231a4644f558`
 
-The externally anchored source index covers both files and the probe. Metadata
+The externally anchored source index covers these modules, public-keyring data/provenance, and the probe. Metadata
 code executes the exact bytes whose digest was checked, not a loader's second
 read. Only its metadata/download/parsing routines are used; no APT solver or
 transaction entry point is invoked.
@@ -26,6 +26,14 @@ authenticates those existing executables and relevant shared-library bytes too.
 `dpkg-deb --field` and `--fsys-tarfile` inspect DATA; maintainer scripts and archive
 executables are never run. The command grammar permits only these read-only
 bootstrap modes, never helper, shell, package-install, or extraction commands.
+
+## Separate immutable public-data trust anchor
+
+The private-public-keyring-v1 protocol uses the exact indexed Canonical public-keyring bytes and independently documented full direct-signer fingerprint. It does not bootstrap its key from the same signed package chain that needs that key. The source data and provenance are externally hash-anchored before adoption; the fixed private copy is caller-owned, mode 0600, under a fresh mode-0700 directory, with no aliases or extra links. Its manifest is separate from host/runtime installed-file attribution.
+
+A fully sealed memory file holds the already verified bytes. WRITE, GROW, SHRINK and SEAL protections, identity, exact size/hash and position are checked; only its internally generated `/proc/self/fd/N` and explicit inherited descriptor are accepted by the fixed verifier command. Mutable pathname rechecks alone are not the consumption guarantee. The descriptor closes before subsequent helpers. No default, additional or host keyring is accepted, and verifier success still requires the exact full direct signing fingerprint in machine status. Public-key packet inspection is not a substitute for the actual InRelease signature check.
+
+Only the unused host public-keyring requirement and its installed ubuntu-keyring attribution are removed. All other root-owned/non-writable host-file and archive matching predicates remain. The private data is not a host installed-package file and receives no general root-ownership exemption. Initial Python/gpgv/dpkg bootstrap trust remains as above; later archive authentication is not retroactive.
 
 ## Official package evidence
 
@@ -73,7 +81,7 @@ default/hwcaps library candidates are authenticated, not merely the first one.
 Unsupported formats or foreign runtime providers fail closed. This is a narrow
 tool/runtime closure, not the runner's whole scientific package closure.
 
-`capability-inputs.lock.json` binds source bytes, boot ID, caller IDs/groups,
+`capability-inputs.lock.json` uses schema 2 and protocol `private-public-keyring-v1`, with a separate `trust_anchor` data manifest. It binds source bytes, boot ID, caller IDs/groups,
 host configuration, optional subordinate-ID-file absence, metadata/archive
 evidence, tools, Python sources, and runtime files. It is exclusive and mode
 0600. `verify_lock(root, expected_lock_sha256)` rechecks the exact lock digest

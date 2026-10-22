@@ -1,49 +1,67 @@
 {
   "files": {
     "PUBLIC_FILE_ALLOWLIST.txt": {
-      "sha256": "34df472646dc00f67f0a68966a4c34b22da4d58f49b239a83707faefaa250a71"
+      "sha256": "d507d73eacc888e263477688954dfbeb501211c3a80823034474ea457f082343"
     },
     "README.md": {
-      "sha256": "80ae424442b23f7e900b2e67f7387b2fa6b171a1611365d6ad424630a409a561"
+      "sha256": "00e6e73a92611d9eebc64ffea70d50d86714972809df5b2ff611ecde9c39ccf9"
     },
     "REVIEW_SCOPE.json": {
-      "sha256": "0064232776220d151f572b7be12393e72792b27d8f8b2e2a4d73f168c153ace6"
+      "sha256": "4f52c1ccb3e237a66e693b8b091fb6fee9fe0eef41c2330fd9ff36401aa06ac5"
+    },
+    "inputs/ubuntu-archive-keyring.gpg": {
+      "sha256": "80a36b0a6de2f69f49d2df75ef473ccde121e9e190b9ea01d20a4f63778d5c31"
+    },
+    "inputs/ubuntu-archive-keyring.provenance.json": {
+      "sha256": "b97528e1cd4d8405efdb60ec783e445e6039cbebe40c3a323be96994f878fcd2"
     },
     "recipe/CAPABILITY_INPUTS.md": {
-      "sha256": "636ff4f287bf977acdcb4a2bb26adbf972fdd0eca8b7880c8e654863fd023ba6"
+      "sha256": "4f497240956eb9e5ce61f3de8ec2e95aeaacc433414fa702ea6db91b52f769e9"
+    },
+    "recipe/inspect_public_keyring.py": {
+      "sha256": "04d5a638564d63cb59db0cee03992ab33b99ecf743c5653db0d1dc211a517325"
     },
     "recipe/jammy_metadata.py": {
       "sha256": "3ef3c611be036f06331e4c2f0567fa75db27072270b075c72dc1231a4644f558"
     },
+    "recipe/keyring_input.py": {
+      "sha256": "c6cc5565762e90ca2c408e58686a1478e40a8155aef906704604af5b9bf468f1"
+    },
     "recipe/prepare_capability_inputs.py": {
-      "sha256": "e64eb03dec179037d7242eb82b8c3add669395808627410290a7ec1c832d077a"
+      "sha256": "35eb1e224f31d8f4587b37a1aa8840bfefa6f80b397d8309f6d409586123031d"
     },
     "recipe/probe_namespace_capabilities.py": {
-      "sha256": "867fc9ea5dfa06858d3ec40367e8a7308373187c6d350690db2a09b66f2a9958"
+      "sha256": "17a350451115ff7011c7e9ab9c4105ed04a26697965d107b316ce8b053f0b762"
     },
     "recipe/public_codes.json": {
-      "sha256": "21d8e1ad7d74471c160545b0b1f5bab4d1104e09839911e21b37654729ce8369"
+      "sha256": "652e220d2ef81145439d1105867803118312619c3c0751d10f58a3ed90e1eab1"
     },
     "recipe/report_capability_status.py": {
       "sha256": "ae3614c78fbbd3c942027e576f1708be569ea1b0cbe4618bb2b128e2902279b8"
     },
     "recipe/tests/test_capability_inputs.py": {
-      "sha256": "9149ba58f9f536d34106d4d698b0fdfa52bb84ae2d63612eecc393675166ff2e"
+      "sha256": "6596b07a2258a0ee636bccfd734988ae982502c0f3a438574ee938afa9962e7e"
     },
     "recipe/tests/test_capability_projection.py": {
       "sha256": "9752b713009704da8b4dff4e69b821043ec76289130d5f0aee39a28884d3ef65"
     },
+    "recipe/tests/test_keyring_input.py": {
+      "sha256": "cfaf65ae4b8ef5ac33a20e1e2fe68c117d31e448d0a8187196cc5e33dc9f53bb"
+    },
     "recipe/tests/test_namespace_capabilities.py": {
-      "sha256": "e83c88532758d747359cee1bc1866179bb5a8407259cf0ef7f4e7cf4b2fca972"
+      "sha256": "893ebf1d8d3b1c4a482c39b39d3e29a92a89aa0de7161f78b33da504980527f2"
+    },
+    "recipe/tests/test_public_keyring.py": {
+      "sha256": "55d78999ccb4f383c4c5a4fbc73578b6aa6b735ff327f29e80e390554a634af4"
     },
     "recipe/tests/test_workflow_contract.py": {
-      "sha256": "ac206755ba885e433b44fb1a0c5ef0667299279cb8759193f86b683a4f2a01e1"
+      "sha256": "0444e52eee30a2479ec1de649058d216e45a29ab43f9cbe9ad93549a9f11783e"
     },
     "recipe/verify_workflow_contract.py": {
-      "sha256": "692b96c3cafa3bd4b0ac3ad8cb0ad62558fffb911bd7479ad03566a43b866fa1"
+      "sha256": "dc829e7d4b65d0c4380981beb73e54d2cfea5279f32e50c702a350507cafe488"
     }
   },
-  "identity": "jammy-rootless-capability-v3",
+  "identity": "jammy-rootless-capability-v4",
   "schema": 1,
   "scientific_execution": false,
   "scientific_source_context": "18557cfc61f291e8ac5fa4a80d9df212e1df0030",

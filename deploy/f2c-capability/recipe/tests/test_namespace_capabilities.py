@@ -403,9 +403,16 @@ class CompositionTests(NoNativeCase):
 
 
 class OrchestrationTests(NoNativeCase):
+    def test_old_or_unrecognized_lock_protocol_is_rejected_before_host_calls(self):
+        for schema,protocol in ((1,'private-public-keyring-v1'),(2,None),(2,'host-keyring-v1')):
+            with self.subTest(schema=schema,protocol=protocol):
+                self.failure('LOCK_INVALID',p._execute_locked,Path('/unused'),
+                    {'schema':schema,'protocol':protocol,'status':'authenticated-existing-tools'},
+                    'a'*64,'b'*64,lambda:None)
+
     def harness(self, helper_error=None, cleanup_error=None, exit_code=0):
         stack = contextlib.ExitStack()
-        lock = {'schema': 1, 'status': 'authenticated-existing-tools', 'scope': 'namespace-capability-only',
+        lock = {'schema': 2, 'protocol': 'private-public-keyring-v1', 'status': 'authenticated-existing-tools', 'scope': 'namespace-capability-only',
                 'source_index_sha256': 'a' * 64, 'host': {**host(), 'boot_id': 'boot', 'pycache_prefix': '/private/absent-pycache'},
                 'tools': {n: {'name': n} for n in p.TOOL_NAMES}, 'source_files': {p.SOURCE_NAME: {}},
                 'nss': {'providers': {'passwd': ['files', 'systemd'], 'group': ['files', 'systemd']},

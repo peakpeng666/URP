@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "identity": "jammy-rootless-capability-v3",
+  "identity": "jammy-rootless-capability-v4",
   "scope": "diagnostic-only-existing-facilities",
   "scientific_source_context": "18557cfc61f291e8ac5fa4a80d9df212e1df0030",
   "prior_cohort": {
@@ -85,5 +85,26 @@
     "published": false,
     "optimized_python_fixture_failures": 3
   },
-  "v3_change_scope": "explicit-equivalent-bootstrap-invariants-under-optimization"
+  "v3_change_scope": "explicit-equivalent-bootstrap-invariants-under-optimization",
+  "keyring_protocol": {
+    "lock_schema": 2,
+    "protocol": "private-public-keyring-v1",
+    "input_sha256": "80a36b0a6de2f69f49d2df75ef473ccde121e9e190b9ea01d20a4f63778d5c31",
+    "input_bytes": 3607,
+    "direct_signer": "F6ECB3762474EDA9D21B7022871920D1991BC93C",
+    "host_keyring_authenticated": false
+  },
+  "preserved_capability_v3": {
+    "run": "39821091519",
+    "job": "119972238938",
+    "commit": "989f6a654d17b7d8633f87428e3431e555667329",
+    "source_index_sha256": "ebcce3f5f973a1355d06acad1f853d76492f02eb07eae8a9fa93ab4d0a49e4bb",
+    "observed_anchor": "PASS",
+    "observed_helper_stage": "PASS",
+    "observed_hosted_fixture_count": null,
+    "authentication_code": "CAP_MODE_REJECTED",
+    "subject": "ARCHIVE_KEYRING",
+    "check": "COMPONENT_WRITABLE",
+    "namespace": "SKIPPED"
+  }
 }

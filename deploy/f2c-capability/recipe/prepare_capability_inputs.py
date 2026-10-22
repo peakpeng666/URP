@@ -21,6 +21,15 @@ import sys
 import tarfile
 
 SNAPSHOT = '20261021T000000Z'
+PROTOCOL = 'private-public-keyring-v1'
+KEYRING_SOURCE_PATH = 'inputs/ubuntu-archive-keyring.gpg'
+KEYRING_PROVENANCE_PATH = 'inputs/ubuntu-archive-keyring.provenance.json'
+KEYRING_SOURCE_SHA256 = '80a36b0a6de2f69f49d2df75ef473ccde121e9e190b9ea01d20a4f63778d5c31'
+KEYRING_SOURCE_SIZE = 3607
+KEYRING_SIGNER = 'F6ECB3762474EDA9D21B7022871920D1991BC93C'
+KEYRING_CODES = frozenset({'CAP_KEYRING_SOURCE_REJECTED', 'CAP_KEYRING_PATH_REJECTED',
+    'CAP_KEYRING_STATE_CHANGED', 'CAP_KEYRING_SEAL_REJECTED',
+    'CAP_KEYRING_FD_REJECTED', 'CAP_KEYRING_COMMAND_REJECTED'})
 METADATA_SOURCE_SHA256 = '3ef3c611be036f06331e4c2f0567fa75db27072270b075c72dc1231a4644f558'
 TOOLS = {'python': '/usr/bin/python3.10', 'unshare': '/usr/bin/unshare',
          'newuidmap': '/usr/bin/newuidmap', 'newgidmap': '/usr/bin/newgidmap'}
@@ -28,8 +37,7 @@ TOOL_PACKAGES = {'python': 'python3.10-minimal', 'unshare': 'util-linux',
                  'newuidmap': 'uidmap', 'newgidmap': 'uidmap'}
 BOOTSTRAP_TOOLS = {'gpgv': '/usr/bin/gpgv', 'dpkg_query': '/usr/bin/dpkg-query', 'dpkg_deb': '/usr/bin/dpkg-deb'}
 HOST_FILES = ('/etc/passwd', '/etc/group', '/etc/nsswitch.conf',
-              '/etc/ld.so.cache', '/usr/lib/os-release', '/var/lib/dpkg/status',
-              '/usr/share/keyrings/ubuntu-archive-keyring.gpg')
+              '/etc/ld.so.cache', '/usr/lib/os-release', '/var/lib/dpkg/status')
 OPTIONAL_HOST_FILES = ('/etc/subuid', '/etc/subgid')
 PYTHON_PATHS = ['/usr/lib/python310.zip', '/usr/lib/python3.10', '/usr/lib/python3.10/lib-dynload']
 PYTHON_PACKAGES = ('libpython3.10-minimal', 'libpython3.10-stdlib')
@@ -45,7 +53,7 @@ PREPARATION_CODES = frozenset({
     'CAP_RUNTIME_UNAUTHENTICATED', 'CAP_CONFIGURATION_REJECTED',
     'CAP_STATE_CHANGED', 'CAP_LOCK_REJECTED', 'CAP_IO_FAILED', 'CAP_UNEXPECTED_ERROR',
     'CAP_LOGINUID_UNSUPPORTED', 'CAP_NSCD_PRESENT', 'CAP_NSS_UNSUPPORTED', 'CAP_NSS_PROVIDER_UNAUTHENTICATED',
-} | {'CAP_' + name.upper() + suffix for name in TOOLS for suffix in
+} | KEYRING_CODES | {'CAP_' + name.upper() + suffix for name in TOOLS for suffix in
      ('_MISSING', '_PACKAGE_UNAUTHENTICATED', '_OWNER_REJECTED', '_BYTES_REJECTED', '_MODE_REJECTED')})
 FILE_KEYS = frozenset('path resolved_path sha256 uid gid mode device inode size nlink aliases'.split())
 LIBDIRS = ('/lib/x86_64-linux-gnu', '/usr/lib/x86_64-linux-gnu', '/lib', '/usr/lib')
@@ -192,7 +200,8 @@ def source_anchor(root, expected):
     need(type(index.get('schema')) is int and index.get('schema') == 1 and index.get('status') == 'reviewed-source' and
          type(index.get('files')) is dict, 'CAP_SOURCE_REJECTED')
     required = {'recipe/prepare_capability_inputs.py', 'recipe/jammy_metadata.py',
-                'recipe/probe_namespace_capabilities.py'}
+                'recipe/probe_namespace_capabilities.py', 'recipe/keyring_input.py',
+                KEYRING_SOURCE_PATH, KEYRING_PROVENANCE_PATH}
     need(required.issubset(index['files']), 'CAP_SOURCE_REJECTED')
     result = {'source-index.json': measured}
     for name, entry in index['files'].items():
@@ -203,7 +212,32 @@ def source_anchor(root, expected):
              row['sha256'] == entry['sha256'], 'CAP_SOURCE_REJECTED')
         result[name] = row
     need(result['recipe/jammy_metadata.py']['sha256'] == METADATA_SOURCE_SHA256, 'CAP_SOURCE_REJECTED')
+    need(result[KEYRING_SOURCE_PATH]['sha256'] == KEYRING_SOURCE_SHA256 and
+         result[KEYRING_SOURCE_PATH]['size'] == KEYRING_SOURCE_SIZE, 'CAP_KEYRING_SOURCE_REJECTED')
     return result
+
+
+def keyring_module(root, source_files):
+    # No importlib/path loader or candidate sys.path entry: execute only held
+    # bytes with the exact already anchored measurement.
+    name = 'recipe/keyring_input.py'
+    need(type(source_files) is dict and name in source_files, 'CAP_SOURCE_REJECTED')
+    row, raw = measure(root / name, 4 * 1024 * 1024, False, subject='SOURCE_INPUT')
+    need(row == source_files[name], 'CAP_SOURCE_REJECTED')
+    module = types.ModuleType('capability_private_keyring')
+    module.__file__ = str(root / name)
+    exec(compile(raw, module.__file__, 'exec'), module.__dict__)
+    need(module.PROTOCOL == PROTOCOL and module.SHA256 == KEYRING_SOURCE_SHA256 and
+         module.SIZE == KEYRING_SOURCE_SIZE and module.SIGNER == KEYRING_SIGNER and
+         module.CODES == KEYRING_CODES, 'CAP_SOURCE_REJECTED')
+    return module
+
+
+def keyring_checked(module, operation, *args):
+    try:
+        return operation(*args)
+    except module.KeyringError as error:
+        raise PreparationError(error.code) from None
 
 
 def metadata_module(root):
@@ -229,28 +263,66 @@ def runtime_flags(root):
 def command(argv, out, label, limit=256 * 1024 * 1024):
     """Only the declared, read-only bootstrap programs may be invoked here."""
     allowed = (len(argv) == 3 and argv[0] == '/usr/bin/dpkg-query' and argv[1] == '--search' or
-               len(argv) == 3 and argv[0] == '/usr/bin/dpkg-deb' and argv[1] in ('--field', '--fsys-tarfile') or
-               len(argv) == 5 and argv[:3] == ['/usr/bin/gpgv', '--status-fd=1', '--keyring'] and
-               argv[3] == '/usr/share/keyrings/ubuntu-archive-keyring.gpg')
+               len(argv) == 3 and argv[0] == '/usr/bin/dpkg-deb' and argv[1] in ('--field', '--fsys-tarfile'))
     need(allowed and type(argv[-1]) is str and argv[-1].startswith('/') and
          re.fullmatch('[a-z0-9-]{1,64}', label), 'CAP_RUNTIME_UNSUPPORTED')
     env = {'PATH': '/usr/bin:/bin', 'LC_ALL': 'C', 'LANG': 'C', 'HOME': str(out)}
-    result = subprocess.run(argv, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=120)
+    result = subprocess.run(argv, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=120,
+                            close_fds=True, pass_fds=())
     need(len(result.stdout) <= limit and len(result.stderr) <= 1024 * 1024, 'CAP_IO_FAILED')
     with (out / (label + '.stderr')).open('xb') as stream:
         stream.write(result.stderr)
     return result.returncode, result.stdout
 
 
-def load_metadata(root, m, out):
+def signature_command(module, held, suite, out):
+    argv, pass_fds = keyring_checked(module, held.command, suite)
+    env = {'PATH': '/usr/bin:/bin', 'LC_ALL': 'C', 'LANG': 'C', 'HOME': str(out)}
+    result = subprocess.run(argv, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            timeout=120, close_fds=True, pass_fds=pass_fds)
+    keyring_checked(module, held.command_fds, argv)
+    need(len(result.stdout) <= 1024 * 1024 and len(result.stderr) <= 1024 * 1024,
+         'CAP_METADATA_REJECTED')
+    with (out / (suite + '.stderr')).open('xb') as stream:
+        stream.write(result.stderr)
+    return result.returncode, result.stdout
+
+
+def valid_signature_status(raw):
+    # A real machine-status line and the direct signing fingerprint are required.
+    # Optional primary-fingerprint fields do not broaden this signer policy.
+    if type(raw) is not bytes or len(raw) > 1024 * 1024:
+        return False
+    signatures = []
+    failures = {b'BADSIG', b'ERRSIG', b'NO_PUBKEY', b'NODATA', b'FAILURE'}
+    for line in raw.splitlines():
+        if len(line) > 4096 or not line.startswith(b'[GNUPG:] '):
+            return False
+        fields = line[9:].split(b' ')
+        if fields[0] in failures:
+            return False
+        if fields[0] == b'VALIDSIG':
+            if (len(fields) not in (10, 11) or
+                    re.fullmatch(b'[0-9A-F]{40}', fields[1]) is None or
+                    re.fullmatch(b'[0-9]{4}-[0-9]{2}-[0-9]{2}', fields[2]) is None or
+                    any(re.fullmatch(b'[0-9]+', value) is None for value in fields[3:9]) or
+                    re.fullmatch(b'[0-9A-Fa-f]{2}', fields[9]) is None or
+                    (len(fields) == 11 and re.fullmatch(b'[0-9A-F]{40}', fields[10]) is None)):
+                return False
+            signatures.append(fields[1].decode('ascii'))
+    return signatures == [KEYRING_SIGNER]
+
+
+def load_metadata(root, m, out, keyring, held):
     directory = root / 'metadata' / ('snapshot-' + SNAPSHOT)
     directory.mkdir(parents=True, mode=0o700)
     records, evidence = {}, {}
     for suite, expected in m.RELEASE_HASHES.items():
         release = directory / (suite + '.InRelease')
         m.download_verified(m.ORIGIN + 'dists/' + suite + '/InRelease', release, m.RELEASE_SIZES[suite], expected)
-        rc, result = command(['/usr/bin/gpgv', '--status-fd=1', '--keyring', str(m.KEYRING), str(release)], out, suite)
-        need(rc == 0 and ('[GNUPG:] VALIDSIG ' + m.SIGNER + ' ').encode() in result, 'CAP_METADATA_REJECTED')
+        rc, result = signature_command(keyring, held, suite, out)
+        need(rc == 0 and m.SIGNER == KEYRING_SIGNER and valid_signature_status(result),
+             'CAP_METADATA_REJECTED')
         payload = m.cleartext(release.read_text())
         header = m.fields(payload.split('MD5Sum:', 1)[0])
         need(header.get('Origin') == 'Ubuntu' and header.get('Suite') == suite and
@@ -654,6 +726,7 @@ def prepare(root, expected):
          sys.executable == TOOLS['python'], 'CAP_HOST_UNSUPPORTED')
     prefix = runtime_flags(root)
     m = metadata_module(root)
+    keyring = keyring_module(root, source_files)
     release = m.os_values(Path('/usr/lib/os-release').read_text())
     need(release.get('ID') == 'ubuntu' and release.get('VERSION_ID') == '22.04', 'CAP_HOST_UNSUPPORTED')
     need(os.geteuid() == os.getuid() != 0 and os.getegid() == os.getgid(), 'CAP_HOST_UNSUPPORTED')
@@ -682,7 +755,11 @@ def prepare(root, expected):
             'boot_id': boot_id, 'pycache_prefix': prefix, 'python_path': list(sys.path),
             'loginuid': loginuid_value()}
     try:
-        records, metadata_files = load_metadata(root, m, out)
+        with keyring_checked(keyring, keyring.create, root) as held:
+            records, metadata_files = load_metadata(root, m, out, keyring, held)
+            trust_anchor = held.manifest
+        # The keyring fd is closed before inventory, package authentication, or
+        # any later helper/namespace-capability phase.
     except PreparationError:
         raise
     except Exception:
@@ -693,14 +770,14 @@ def prepare(root, expected):
     stdlib = python_files()
     authenticate_python(auth, stdlib)
     bootstrap = {name: auth.authenticate(path) for name, path in BOOTSTRAP_TOOLS.items()}
-    auth.authenticate('/usr/share/keyrings/ubuntu-archive-keyring.gpg', 'ubuntu-keyring')
     initial = list(TOOLS.values()) + list(BOOTSTRAP_TOOLS.values()) + [path for path in stdlib if path.endswith('.so')]
     cache = loader_cache(Path('/etc/ld.so.cache').read_bytes())
     nss = nss_inputs(Path('/etc/nsswitch.conf').read_text(), cache)
     authenticate_nss(auth, nss)
     initial.extend(nss['fallback_paths'])
     runtime = runtime_closure(auth, initial, cache)
-    lock = {'schema': 1, 'status': 'authenticated-existing-tools', 'scope': 'namespace-capability-only',
+    lock = {'schema': 2, 'protocol': PROTOCOL, 'trust_anchor': trust_anchor,
+        'status': 'authenticated-existing-tools', 'scope': 'namespace-capability-only',
         'source_index_sha256': expected, 'snapshot': SNAPSHOT, 'host': host, 'tools': tools,
         'host_files': host_files, 'source_files': source_files, 'runtime_files': auth.files,
         'bootstrap_files': bootstrap, 'nss': nss,
@@ -713,7 +790,7 @@ def prepare(root, expected):
 
 
 def verify_state(root, lock):
-    need(type(lock.get('schema')) is int and lock.get('schema') == 1 and lock.get('status') == 'authenticated-existing-tools' and
+    need(type(lock.get('schema')) is int and lock.get('schema') == 2 and lock.get('protocol') == PROTOCOL and lock.get('status') == 'authenticated-existing-tools' and
          lock.get('scope') == 'namespace-capability-only' and lock.get('snapshot') == SNAPSHOT,
          'CAP_LOCK_REJECTED')
     need(set(lock['tools']) == set(TOOLS) and all(lock['tools'][name]['path'] == path for name, path in TOOLS.items()), 'CAP_LOCK_REJECTED')
@@ -735,7 +812,12 @@ def verify_state(root, lock):
     need((os.getuid(), os.getgid(), sorted(os.getgroups())) ==
          (lock['host']['uid'], lock['host']['gid'], lock['host']['groups']) and
          Path('/proc/sys/kernel/random/boot_id').read_text().strip() == lock['host']['boot_id'], 'CAP_STATE_CHANGED')
-    need(source_anchor(root, lock['source_index_sha256']) == lock['source_files'], 'CAP_SOURCE_REJECTED')
+    source_files = source_anchor(root, lock['source_index_sha256'])
+    need(source_files == lock['source_files'], 'CAP_SOURCE_REJECTED')
+    keyring = keyring_module(root, source_files)
+    keyring_checked(keyring, keyring.verify_manifest, root, lock.get('trust_anchor'))
+    need('/usr/share/keyrings/ubuntu-archive-keyring.gpg' not in lock['runtime_files'] and
+         str(Path(root) / keyring.PRIVATE_PATH) not in lock['runtime_files'], 'CAP_LOCK_REJECTED')
     for mapping, root_owned in ((lock['tools'], True), (lock['bootstrap_files'], True), (lock['runtime_files'], True),
                                 (lock['host_files'], True), (lock['metadata_files'], False)):
         for row in mapping.values():

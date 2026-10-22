@@ -99,10 +99,17 @@ class Fixtures(unittest.TestCase):
 
     def sources(self):
         paths = ('recipe/prepare_capability_inputs.py', 'recipe/jammy_metadata.py',
-                 'recipe/probe_namespace_capabilities.py')
+                 'recipe/probe_namespace_capabilities.py', 'recipe/keyring_input.py',
+                 M.KEYRING_SOURCE_PATH, M.KEYRING_PROVENANCE_PATH)
         (self.root / 'recipe').mkdir()
         files = {}
+        for name, value in (('KEYRING_SOURCE_SHA256', M.digest(M.KEYRING_SOURCE_PATH.encode())),
+                            ('KEYRING_SOURCE_SIZE', len(M.KEYRING_SOURCE_PATH.encode()))):
+            patcher = mock.patch.object(M, name, value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
         for path in paths:
+            (self.root / path).parent.mkdir(parents=True, exist_ok=True)
             (self.root / path).write_bytes(path.encode())
             files[path] = {'sha256': M.digest(path.encode())}
         index = {'schema': 1, 'status': 'reviewed-source', 'files': files}
@@ -159,7 +166,7 @@ class Fixtures(unittest.TestCase):
         unused, expected, metadata_hash = self.sources()
         with mock.patch.object(M, 'METADATA_SOURCE_SHA256', metadata_hash):
             result = M.source_anchor(self.root, expected)
-        self.assertEqual(len(result), 4)
+        self.assertEqual(len(result), 7)
 
     def test_source_anchor_rejects_changed_source(self):
         unused, expected, metadata_hash = self.sources()
@@ -206,6 +213,41 @@ class Fixtures(unittest.TestCase):
         with mock.patch.object(M, 'measure', return_value=({}, b'raise AssertionError("executed")')):
             self.fails('CAP_SOURCE_REJECTED', M.metadata_module, self.root)
 
+    def test_keyring_executes_held_source_anchored_bytes_without_import_search(self):
+        raw = ('PROTOCOL = ' + repr(M.PROTOCOL) + '\nSHA256 = ' + repr(M.KEYRING_SOURCE_SHA256) +
+               '\nSIZE = ' + repr(M.KEYRING_SOURCE_SIZE) + '\nSIGNER = ' + repr(M.KEYRING_SIGNER) +
+               '\nCODES = frozenset(' + repr(sorted(M.KEYRING_CODES)) + ')\nVALUE = 19\n').encode()
+        row = {'sha256': M.digest(raw)}
+        prior_path = list(M.sys.path)
+        with mock.patch.object(M, 'measure', return_value=(row, raw)) as reading, \
+             mock.patch.object(Path, 'read_bytes', side_effect=AssertionError('unchecked reread')):
+            result = M.keyring_module(self.root, {'recipe/keyring_input.py': row})
+        self.assertEqual(result.VALUE, 19)
+        self.assertEqual(M.sys.path, prior_path)
+        reading.assert_called_once()
+
+    def test_keyring_loader_rejects_unanchored_or_replaced_module_before_exec(self):
+        raw = b'raise AssertionError("unverified module executed")'
+        with mock.patch.object(M, 'measure', return_value=({'sha256': M.digest(raw)}, raw)) as reading:
+            self.fails('CAP_SOURCE_REJECTED', M.keyring_module, self.root, {})
+            reading.assert_not_called()
+            self.fails('CAP_SOURCE_REJECTED', M.keyring_module, self.root,
+                       {'recipe/keyring_input.py': {'sha256': '0' * 64}})
+
+    def test_keyring_source_pin_independent_of_self_consistent_source_index(self):
+        unused, expected, metadata_hash = self.sources()
+        with mock.patch.object(M, 'METADATA_SOURCE_SHA256', metadata_hash), \
+             mock.patch.object(M, 'KEYRING_SOURCE_SHA256', '0' * 64):
+            self.fails('CAP_KEYRING_SOURCE_REJECTED', M.source_anchor, self.root, expected)
+
+    def test_schema_one_or_wrong_protocol_cannot_reuse_old_lock(self):
+        for schema, protocol in ((1, M.PROTOCOL), (2, 'legacy-host-keyring'), (2, None)):
+            lock = {'schema': schema, 'protocol': protocol, 'status': 'authenticated-existing-tools',
+                    'scope': 'namespace-capability-only', 'snapshot': M.SNAPSHOT}
+            with mock.patch.object(M, 'verify_interpreter') as interpreter:
+                self.fails('CAP_LOCK_REJECTED', M.verify_state, self.root, lock)
+            interpreter.assert_not_called()
+
     def runtime_context(self, path=None, prefix=None):
         stack = contextlib.ExitStack()
         stack.enter_context(mock.patch.object(M.sys, 'flags', types.SimpleNamespace(isolated=1, no_site=1, dont_write_bytecode=1)))
@@ -250,9 +292,9 @@ class Fixtures(unittest.TestCase):
         module.RELEASE_SIZES = {'jammy': 1}
         module.ORIGIN = 'https://snapshot.ubuntu.com/ubuntu/20261021T000000Z/'
         module.KEYRING = '/usr/share/keyrings/ubuntu-archive-keyring.gpg'
-        module.SIGNER = 'A' * 40
-        with mock.patch.object(M, 'command', return_value=(1, b'bad signature')):
-            self.fails('CAP_METADATA_REJECTED', M.load_metadata, self.root, module, self.root)
+        module.SIGNER = M.KEYRING_SIGNER
+        with mock.patch.object(M, 'signature_command', return_value=(1, b'bad signature')):
+            self.fails('CAP_METADATA_REJECTED', M.load_metadata, self.root, module, self.root, mock.Mock(), mock.Mock())
         module.package_index_rows.assert_not_called()
         self.assertEqual(module.download_verified.call_count, 1)
 
@@ -262,9 +304,9 @@ class Fixtures(unittest.TestCase):
         module.RELEASE_SIZES = {'jammy': 1}
         module.ORIGIN = 'https://snapshot.ubuntu.com/ubuntu/20261021T000000Z/'
         module.KEYRING = '/usr/share/keyrings/ubuntu-archive-keyring.gpg'
-        module.SIGNER = 'A' * 40
-        with mock.patch.object(M, 'command', return_value=(0, b'[GNUPG:] VALIDSIG ' + b'B' * 40 + b' ')):
-            self.fails('CAP_METADATA_REJECTED', M.load_metadata, self.root, module, self.root)
+        module.SIGNER = M.KEYRING_SIGNER
+        with mock.patch.object(M, 'signature_command', return_value=(0, b'[GNUPG:] VALIDSIG ' + b'B' * 40 + b' ')):
+            self.fails('CAP_METADATA_REJECTED', M.load_metadata, self.root, module, self.root, mock.Mock(), mock.Mock())
         module.package_index_rows.assert_not_called()
 
     def test_readonly_command_keeps_stderr_private(self):
@@ -645,12 +687,42 @@ class Fixtures(unittest.TestCase):
             self.fails('CAP_LOCK_REJECTED', M.check_nss_state, lock, {})
 
     def state_before_runtime(self):
-        return {'schema': 1, 'status': 'authenticated-existing-tools', 'scope': 'namespace-capability-only',
+        return {'schema': 2, 'protocol': M.PROTOCOL, 'status': 'authenticated-existing-tools', 'scope': 'namespace-capability-only',
                 'snapshot': M.SNAPSHOT, 'tools': {name: {'path': path} for name, path in M.TOOLS.items()},
                 'bootstrap_files': {name: {'path': path} for name, path in M.BOOTSTRAP_TOOLS.items()},
                 'host_files': {path: {} for path in M.HOST_FILES},
                 'absent_paths': list(M.OPTIONAL_HOST_FILES) + ['/etc/ld.so.preload', M.PYTHON_PATHS[0], M.NSCD_SOCKET],
                 'host': {'python_path': M.PYTHON_PATHS, 'loginuid': '4294967295'}}
+
+    def test_verify_state_rechecks_anchored_private_anchor_before_runtime_files(self):
+        lock = self.state_before_runtime()
+        lock['host'].update(uid=os.getuid(), gid=os.getgid(), groups=sorted(os.getgroups()),
+                            boot_id='0' * 36, pycache_prefix=str(self.root / 'unused-pycache'))
+        lock.update(source_index_sha256='0' * 64, source_files={'anchored': True},
+                    trust_anchor={'private-anchor': True}, runtime_files={})
+        keyring = mock.Mock()
+        with mock.patch.object(M.os.path, 'lexists', return_value=False), \
+             mock.patch.object(M, 'loginuid_value', return_value=lock['host']['loginuid']), \
+             mock.patch.object(M, 'verify_interpreter'), \
+             mock.patch.object(M, 'runtime_flags', return_value=lock['host']['pycache_prefix']), \
+             mock.patch.object(Path, 'read_text', return_value=lock['host']['boot_id']), \
+             mock.patch.object(M, 'source_anchor', return_value=lock['source_files']) as anchor, \
+             mock.patch.object(M, 'keyring_module', return_value=keyring) as loader, \
+             mock.patch.object(M, 'keyring_checked', side_effect=M.PreparationError('CAP_KEYRING_STATE_CHANGED')) as checked, \
+             mock.patch.object(M, 'measure') as measure:
+            self.fails('CAP_KEYRING_STATE_CHANGED', M.verify_state, self.root, lock)
+        anchor.assert_called_once_with(self.root, lock['source_index_sha256'])
+        loader.assert_called_once_with(self.root, lock['source_files'])
+        checked.assert_called_once_with(keyring, keyring.verify_manifest, self.root, lock['trust_anchor'])
+        measure.assert_not_called()
+
+    def test_prepare_failed_source_anchor_never_loads_keyring(self):
+        with mock.patch.object(M, 'source_anchor', side_effect=M.PreparationError('CAP_SOURCE_REJECTED')), \
+             mock.patch.object(M, 'keyring_module') as keyring, \
+             mock.patch.object(M, 'metadata_module') as metadata:
+            self.fails('CAP_SOURCE_REJECTED', M.prepare, self.root, '0' * 64)
+        keyring.assert_not_called()
+        metadata.assert_not_called()
 
     def test_state_requires_nscd_absence_in_lock(self):
         lock = self.state_before_runtime()
@@ -680,7 +752,7 @@ class Fixtures(unittest.TestCase):
         self.fails('CAP_BYTES_REJECTED', M.verify_member, row, members)
 
     def test_mode_exports_match_fixed_reviewed_subjects(self):
-        fixed = set(M.HOST_FILES) | set(M.OPTIONAL_HOST_FILES) | set(M.TOOLS.values()) | set(M.BOOTSTRAP_TOOLS.values()) | {'/etc/ld.so.preload'}
+        fixed = set(M.HOST_FILES) | set(M.OPTIONAL_HOST_FILES) | set(M.TOOLS.values()) | set(M.BOOTSTRAP_TOOLS.values()) | {'/etc/ld.so.preload', '/usr/share/keyrings/ubuntu-archive-keyring.gpg'}
         self.assertEqual(set(M.MODE_FIXED_SUBJECTS), fixed)
         self.assertEqual(M.MODE_SUBJECTS, set(M.MODE_FIXED_SUBJECTS.values()) | {'SOURCE_INPUT', 'RUNTIME_INPUT', 'UNKNOWN'})
         self.assertEqual(M.MODE_CODES, {code for code in M.PREPARATION_CODES if code.endswith('_MODE_REJECTED')})

@@ -1,4 +1,4 @@
-# Jammy rootless capability candidate v3
+# Jammy rootless capability candidate v4
 
 This is a separate, diagnostic-only cohort. It does not build or import Fields2Cover, prepare a root filesystem, install packages, modify the host APT database, add subordinate-ID allocations, install setuid programs, change host security settings, or publish artifacts/caches. A successful result is a capability proof, not a scientific/native validation result.
 
@@ -9,6 +9,16 @@ Hosted capability v1 run `39815381470`, job `119952469283`, at commit `f17b6bb1e
 V2 adds only finite `subject` and `check` labels to authentication mode-failure receipts and their verified projection. All ownership, write-bit, alias, type, size, executable and setuid rejection predicates remain intact. Labels come from reviewed static categories, never runtime paths, usernames, UID/mode values or exception text. Malformed or unknown diagnostic combinations project `UNKNOWN`.
 
 The exact official runner-image source applies `chmod -R 777 /usr/share` late in provisioning. That conflicts with the protected-ancestor requirement for the configured Ubuntu keyring if the state persists; a mocked fixture reproduces that rejection without opening any file. It is not evidence that this was the failed object in the hosted run. V2 does not change modes, bypass checks, substitute a keyring or introduce a new trust source.
+
+## V4: authenticated public-keyring data input
+
+The subsequent hosted capability run `39821091519`, job `119972238938`, at commit `989f6a654d17b7d8633f87428e3431e555667329` passed anchor and helper stages, then reported `stage=authentication status=FAIL code=CAP_MODE_REJECTED subject=ARCHIVE_KEYRING check=COMPONENT_WRITABLE`. Namespace proof did not run. This establishes only the first rejected input, not success of any later facility.
+
+V4 replaces reliance on the unused writable host public-keyring file with a separately source-anchored public-data input. The exact unmodified Canonical download is 3,607 bytes, SHA256 `80a36b0a6de2f69f49d2df75ef473ccde121e9e190b9ea01d20a4f63778d5c31`. The independently documented direct signer remains `F6ECB3762474EDA9D21B7022871920D1991BC93C`. Public packet inspection proves the inventory and fingerprint, not cryptographic signature validity; the future hosted verifier must still validate each frozen InRelease signature.
+
+The reviewed bytes are copied into a fresh private data input and consumed through a held, fully sealed memory-file descriptor. Only the exact internally generated descriptor path is accepted by the verifier command; no default or extra keyring is permitted. The descriptor is closed before later authentication/helper work. Lock schema 2 and protocol `private-public-keyring-v1` distinguish this data trust anchor from authenticated installed-package files. The old host keyring is neither repaired nor described as authenticated. All other executable, runtime, control-file, metadata/package, NSS, helper and namespace predicates remain enforced. No general writable-path exception or host permission change is introduced.
+
+This is a new trust-input protocol, not a claim that v1 or v3 passed. Its externally reviewed source-index anchor is independent of the Ubuntu metadata/package chain it authenticates; downloading a key and its checksum together at runtime would not provide that guarantee. Initial platform, interpreter and verifier trust remains explicit. A successful capability proof would still not authorize or establish a rootfs/native build.
 
 ## Why this candidate exists
 
