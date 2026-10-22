@@ -138,3 +138,20 @@ export function loadFilters(): CatalogFilters {
 export function saveFilters(f: CatalogFilters): void {
   try { storage('session')?.setItem(FILTER_KEY, JSON.stringify(f)); } catch { /* 忽略 */ }
 }
+
+/** 每个模式最近一次导入的场景，用于再次生成前提示：新导入只会新建场景，不会覆盖已在地图上手工编辑过的那份。 */
+export interface LastImport { scenarioId: string; title: string; seed: string; at: string }
+const lastKey = (patternId: string) => `urp.agri.lastImport.v1:${patternId}`;
+
+export function recordImport(patternId: string, rec: LastImport): void {
+  try { storage('local')?.setItem(lastKey(patternId), JSON.stringify(rec)); } catch { /* 忽略 */ }
+}
+
+export function lastImport(patternId: string): LastImport | null {
+  try {
+    const raw = storage('local')?.getItem(lastKey(patternId));
+    if (!raw) return null;
+    const v = JSON.parse(raw) as Partial<LastImport>;
+    return typeof v.scenarioId === 'string' && typeof v.title === 'string' ? { scenarioId: v.scenarioId, title: v.title, seed: String(v.seed ?? ''), at: String(v.at ?? '') } : null;
+  } catch { return null; }
+}
