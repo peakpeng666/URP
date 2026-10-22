@@ -6,7 +6,7 @@ import { Badge, Button, EmptyState, Input, Notice, Spinner } from '../../lab/ui'
 import { studio, urls } from '../api';
 import { useStudio } from '../store';
 import type { Analysis, InstanceSpace, Study } from '../types';
-import { logTimeAxis } from '../chart';
+import { AnytimeChart, CdChart, EcdfCharts, GapTimeChart, ProfileChart } from '../researchCharts/AnalysisCharts';
 import s from './panels.module.css';
 
 type ArchiveExperiment = {
@@ -255,10 +255,6 @@ export function AnalysisPanel() {
   const names = useMemo(() => Object.fromEntries((data?.summary ?? []).map((x) => [x.algorithm, x.name ?? x.algorithm])), [data]);
   const nm = (a: string | null) => (a == null ? '无可行解' : names[a] ?? a);
   const color = { legend: true, domain: algs.map((a) => names[a] ?? a), range: PALETTE.slice(0, algs.length) };
-  const profile = useMemo(() => {
-    if (!data) return [];
-    return algs.flatMap((a) => data.performance_profile.taus.map((tau, i) => ({ tau, rho: data.performance_profile.curves[a]?.[i] ?? 0, a: names[a] ?? a })));
-  }, [data, algs, names]);
   if (!studyId) {
     return (
       <div className={s.pad}>
@@ -309,12 +305,9 @@ export function AnalysisPanel() {
             Nemenyi 临界差 CD = {fmt.num(t.nemenyi?.critical_difference, 2)}（α = {t.alpha}，k = {t.k}，N = {t.n}）。
           </p>
         )}
-        {t.nemenyi && <CdDiagram ranks={t.nemenyi.mean_ranks} cd={t.nemenyi.critical_difference} names={names} />}
-        <div className={s.chart}>
-          <h4>性能剖面（Dolan–Moré）：ρ(τ) = 成本不超过最好值 τ 倍的实例比例</h4>
-          <PlotBox deps={[profile]} make={(w) => profile.length ? Plot.plot({ width: w, height: 230, style: FONT, x: { label: 'τ', grid: true }, y: { label: 'ρ(τ)', domain: [0, 1], grid: true }, color,
-            marks: [Plot.line(profile, { x: 'tau', y: 'rho', stroke: 'a', curve: 'step-after', strokeWidth: 1.8 })] }) : null} />
-        </div>
+        <CdChart analysis={data} />
+        <ProfileChart analysis={data} />
+        <EcdfCharts analysis={data} />
         <div className={s.chart}>
           <h4>相对参照的差距分布（每次运行）</h4>
           <PlotBox deps={[data]} make={(w) => {
@@ -323,24 +316,8 @@ export function AnalysisPanel() {
               marks: [Plot.boxX(pts, { x: 'gap', y: 'algorithm' }), Plot.dot(pts, { x: 'gap', y: 'algorithm', r: 2.5, fill: 'algorithm', fillOpacity: 0.7 })], color: { ...color, legend: false } }) : null;
           }} />
         </div>
-        {data.anytime.grid.length > 0 && (
-          <div className={s.chart}>
-            <h4>随时间收敛：当前最好解差距的中位数</h4>
-            <PlotBox deps={[data]} make={(w) => {
-              const rows = Object.entries(data.anytime.median).flatMap(([a, ys]) => ys.map((y, i) => ({ a: nm(a), t: data.anytime.grid[i], y })).filter((r) => r.y != null));
-              return rows.length ? Plot.plot({ width: w, height: 220, style: FONT, x: logTimeAxis(rows.map((r) => r.t)), y: { label: '差距 (%)', grid: true }, color,
-                marks: [Plot.line(rows, { x: 't', y: 'y', stroke: 'a', curve: 'step-after', strokeWidth: 1.8 })] }) : null;
-            }} />
-          </div>
-        )}
-        <div className={s.chart}>
-          <h4>运行时间 vs 差距</h4>
-          <PlotBox deps={[data]} make={(w) => {
-            const pts = data.scatter.filter((p) => p.gap != null && p.time != null).map((p) => ({ ...p, algorithm: nm(p.algorithm) }));
-            return pts.length ? Plot.plot({ width: w, height: 220, style: FONT, x: logTimeAxis(pts.map((p) => p.time as number), '用时'), y: { label: '差距 (%)', grid: true }, color,
-              marks: [Plot.dot(pts, { x: 'time', y: 'gap', fill: 'algorithm', r: 3, fillOpacity: 0.7 })] }) : null;
-          }} />
-        </div>
+        <AnytimeChart analysis={data} />
+        <GapTimeChart analysis={data} />
         {space && space.points.length >= 3 && (
           <div className={s.chart}>
             <h4>实例空间（{space.method}）：每个实例按最佳算法着色，阴影为该算法的“足迹”</h4>
@@ -370,48 +347,3 @@ export function AnalysisPanel() {
     </div>
   );
 }
-
-function CdDiagram({ ranks, cd, names }: { ranks: Record<string, number>; cd: number; names: Record<string, string> }) {
-  const items = Object.entries(ranks).sort((a, b) => a[1] - b[1]);
-  const k = items.length;
-  if (k < 2) return null;
-  const W = 640;
-  const x = (r: number) => 60 + ((r - 1) / Math.max(1, k - 1)) * (W - 120);
-  const groups: [number, number][] = [];
-  for (let i = 0; i < k; i++) {
-    let j = i;
-    while (j + 1 < k && items[j + 1][1] - items[i][1] <= cd) j++;
-    if (j > i && !groups.some(([a, b]) => a <= i && b >= j)) groups.push([i, j]);
-  }
-  const half = Math.ceil(k / 2);
-  return (
-    <div className={s.chart}>
-      <h4>临界差图（Demšar 2006）：粗线连接的算法之间无显著差异</h4>
-      <svg width="100%" viewBox={`0 0 ${W} ${70 + 22 * half}`} style={{ font: '11px Inter, PingFang SC, sans-serif' }}>
-        <line x1={x(1)} x2={x(k)} y1={30} y2={30} stroke="#333" />
-        {Array.from({ length: k }, (_, i) => (
-          <g key={i}>
-            <line x1={x(i + 1)} x2={x(i + 1)} y1={26} y2={34} stroke="#333" />
-            <text x={x(i + 1)} y={20} textAnchor="middle">{i + 1}</text>
-          </g>
-        ))}
-        <line x1={x(1)} x2={x(1) + (cd / Math.max(1, k - 1)) * (W - 120)} y1={8} y2={8} stroke="#e5352b" strokeWidth={2} />
-        <text x={x(1) + (cd / Math.max(1, k - 1)) * (W - 120) + 6} y={11} fill="#e5352b">CD = {cd.toFixed(2)}</text>
-        {items.map(([a, r], i) => {
-          const left = i < half;
-          const y = 50 + 22 * (left ? i : k - 1 - i);
-          return (
-            <g key={a}>
-              <polyline points={`${x(r)},30 ${x(r)},${y} ${left ? 40 : W - 40},${y}`} fill="none" stroke="#555" />
-              <text x={left ? 36 : W - 36} y={y + 4} textAnchor={left ? 'end' : 'start'}>{names[a] ?? a} ({r.toFixed(2)})</text>
-            </g>
-          );
-        })}
-        {groups.map(([i, j], g) => (
-          <line key={g} x1={x(items[i][1]) - 3} x2={x(items[j][1]) + 3} y1={38 + 5 * g} y2={38 + 5 * g} stroke="#1d1d1f" strokeWidth={3} strokeLinecap="round" />
-        ))}
-      </svg>
-    </div>
-  );
-}
-

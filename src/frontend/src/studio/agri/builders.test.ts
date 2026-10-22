@@ -47,8 +47,8 @@ function deepKeys(o: unknown, prefix = ''): string[] {
 const buildable = AGRI_PATTERNS.filter((p) => p.runnable);
 
 describe('可构建模式规模', () => {
-  it('22 个模式可构建（14 可运行 + 8 近似）', () => {
-    expect(buildable).toHaveLength(22);
+  it('23 个模式可构建（含行间机械除草覆盖近似）', () => {
+    expect(buildable).toHaveLength(23);
   });
 });
 
@@ -136,8 +136,8 @@ describe('fleet_routing 构建产物的放置与容量', () => {
 describe('coverage 构建产物', () => {
   const covPatterns = buildable.filter((p) => p.runnable!.problem_class === 'coverage');
 
-  it('共 2 个 coverage 模板', () => {
-    expect(covPatterns).toHaveLength(2);
+  it('共 3 个 coverage 模板', () => {
+    expect(covPatterns).toHaveLength(3);
   });
 
   it.each(covPatterns.map((p) => [p.id, p] as const))(

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { lShape, ringPoints, segDist, selfIntersection, selfIntersects, type Ring, type XY } from '../agri/geometry';
+import { lShape, ringPoints, segDist, selfIntersectionPoint, selfIntersects, type Ring, type XY } from '../agri/geometry';
 
 /** Independent brute force: do two non-adjacent edges come within ~0 of each other? */
 function bruteForce(r: Ring): boolean {
@@ -19,38 +19,39 @@ function bruteForce(r: Ring): boolean {
   return false;
 }
 
-const cases: [string, Ring, boolean][] = [
-  ['square', [[0, 0], [4, 0], [4, 4], [0, 4]], false],
-  ['triangle', [[0, 0], [4, 0], [2, 3]], false],
-  ['L shape (concave)', lShape(10, 8), false],
-  ['circle-ish 24-gon', ringPoints(0, 0, 5, 24), false],
-  ['star (concave, simple)', [[0, 3], [1, 1], [3, 1], [1.5, -0.5], [2, -3], [0, -1.5], [-2, -3], [-1.5, -0.5], [-3, 1], [-1, 1]], false],
-  ['bow-tie', [[0, 0], [4, 4], [4, 0], [0, 4]], true],
-  ['pentagram', ringPoints(0, 0, 5, 5).map((_, k, a) => a[(k * 2) % 5]), true],
-  ['figure eight (6 vertices)', [[0, 0], [2, 2], [4, 0], [4, 2], [2, 0], [0, 2]], true],
-  ['degenerate: two points', [[0, 0], [1, 1]], false],
-  ['degenerate: collinear triangle', [[0, 0], [1, 0], [2, 0]], false],
-  ['degenerate: collinear quad (doubles back)', [[0, 0], [2, 0], [1, 0], [3, 0]], true],
-  ['collinear touching: vertex on a non-adjacent edge', [[0, 0], [4, 0], [4, 4], [2, 0], [0, 4]], true],
-  ['collinear overlap of non-adjacent edges', [[0, 0], [4, 0], [4, 2], [3, 2], [3, 0], [1, 0], [1, 2], [0, 2]], true],
-  ['repeated vertex (pinch)', [[0, 0], [2, 0], [2, 2], [0, 0], [-2, 2], [-2, 0]], true],
-  ['zero-area spike', [[0, 0], [4, 0], [4, 4], [2, 4], [2, 6], [2, 4], [0, 4]], true],
+/** [name, ring, any contact (selfIntersectionPoint), strict crossing (Luna's selfIntersects)] */
+const cases: [string, Ring, boolean, boolean][] = [
+  ['square', [[0, 0], [4, 0], [4, 4], [0, 4]], false, false],
+  ['triangle', [[0, 0], [4, 0], [2, 3]], false, false],
+  ['L shape (concave)', lShape(10, 8), false, false],
+  ['circle-ish 24-gon', ringPoints(0, 0, 5, 24), false, false],
+  ['star (concave, simple)', [[0, 3], [1, 1], [3, 1], [1.5, -0.5], [2, -3], [0, -1.5], [-2, -3], [-1.5, -0.5], [-3, 1], [-1, 1]], false, false],
+  ['bow-tie', [[0, 0], [4, 4], [4, 0], [0, 4]], true, true],
+  ['pentagram', ringPoints(0, 0, 5, 5).map((_, k, a) => a[(k * 2) % 5]), true, true],
+  ['figure eight (6 vertices)', [[0, 0], [2, 2], [4, 0], [4, 2], [2, 0], [0, 2]], true, true],
+  ['degenerate: two points', [[0, 0], [1, 1]], false, false],
+  ['degenerate: collinear triangle', [[0, 0], [1, 0], [2, 0]], false, false],
+  ['degenerate: collinear quad (doubles back)', [[0, 0], [2, 0], [1, 0], [3, 0]], true, false],
+  ['collinear touching: vertex on a non-adjacent edge', [[0, 0], [4, 0], [4, 4], [2, 0], [0, 4]], true, false],
+  ['collinear overlap of non-adjacent edges', [[0, 0], [4, 0], [4, 2], [3, 2], [3, 0], [1, 0], [1, 2], [0, 2]], true, false],
+  ['repeated vertex (pinch)', [[0, 0], [2, 0], [2, 2], [0, 0], [-2, 2], [-2, 0]], true, false],
+  ['zero-area spike', [[0, 0], [4, 0], [4, 4], [2, 4], [2, 6], [2, 4], [0, 4]], true, false],
 ];
 
-describe('agri selfIntersection agrees with selfIntersects', () => {
-  for (const [name, ring, expected] of cases) {
+describe('selfIntersectionPoint is consistent with agri selfIntersects', () => {
+  for (const [name, ring, contact, crossing] of cases) {
     it(name, () => {
-      const hit = selfIntersection(ring);
-      expect(selfIntersects(ring)).toBe(expected);
-      expect(hit !== null).toBe(selfIntersects(ring));
-      expect(bruteForce(ring)).toBe(expected);
+      const hit = selfIntersectionPoint(ring);
+      expect(selfIntersects(ring)).toBe(crossing);
+      expect(hit !== null).toBe(contact);
+      expect(bruteForce(ring)).toBe(contact);
+      // Every strict crossing Luna reports is also reported here (ours additionally flags touching / collinear contact).
+      if (selfIntersects(ring)) expect(hit).not.toBeNull();
       if (hit) {
         expect(hit.i).toBeLessThan(hit.j);
         const n = ring.length;
-        const onI = segDist(hit.at, ring[hit.i], ring[(hit.i + 1) % n]);
-        const onJ = segDist(hit.at, ring[hit.j], ring[(hit.j + 1) % n]);
-        expect(onI).toBeLessThan(1e-9);
-        expect(onJ).toBeLessThan(1e-9);
+        expect(segDist(hit.at, ring[hit.i], ring[(hit.i + 1) % n])).toBeLessThan(1e-9);
+        expect(segDist(hit.at, ring[hit.j], ring[(hit.j + 1) % n])).toBeLessThan(1e-9);
       }
     });
   }

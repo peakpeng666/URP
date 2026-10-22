@@ -5,7 +5,7 @@
  */
 import type { XY } from '../../lab/types';
 import type { FleetInstance } from '../types';
-import { distToPolygon, pointInPolygon, segmentsIntersect, selfIntersection } from '../agri/geometry';
+import { distToPolygon, pointInPolygon, segmentsIntersect, selfIntersectionPoint } from '../agri/geometry';
 import { depotsOf } from '../fleet';
 import { OBSTACLE_STYLE, area } from './geometry';
 import type { ItemRef } from './selection';
@@ -99,7 +99,7 @@ export function validateGeometry(inst: FleetInstance): GeometryIssue[] {
       continue;
     }
     const b = bbox(poly);
-    const x = selfIntersection(poly);
+    const x = selfIntersectionPoint(poly);
     if (x) {
       push({ code: 'self_intersection', severity: 'error', message: `${name} 边自相交（第 ${x.i + 1} 与第 ${x.j + 1} 条边）`, target, bounds: b, at: x.at });
       continue;

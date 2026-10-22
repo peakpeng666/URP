@@ -7,8 +7,9 @@ import {
 } from './patterns';
 import {
   ENVIRONMENTS, OPERATIONS, PLANNING_PROBLEMS, SERVICE_OBJECTS,
-  type AgriCapabilities, type AgriTaskPattern, type CapLevel,
+  type AgriTaskPattern, type CapLevel,
 } from './taxonomy';
+import { catalogStats, type CapAxis } from './evidence';
 
 export interface MatrixCell {
   patterns: AgriTaskPattern[];
@@ -54,18 +55,9 @@ export function operationServiceMatrix(): OpServiceRow[] {
   });
 }
 
-type CapAxis = keyof AgriCapabilities;
-
-const AXES: CapAxis[] = ['defined', 'editable', 'solvable', 'checkable', 'simulatable', 'experimented'];
-
-/** 六维能力声明的分布；不是运行成功率或实验统计。 */
+/** 六维能力声明的分布；不是运行成功率或实验统计。与界面摘要、导出同源（evidence.catalogStats）。 */
 export function capabilitySummary(): Record<CapAxis, Record<CapLevel, number>> {
-  const out = {} as Record<CapAxis, Record<CapLevel, number>>;
-  for (const axis of AXES) {
-    out[axis] = { yes: 0, partial: 0, no: 0 };
-    for (const p of AGRI_PATTERNS) out[axis][p.capabilities[axis].level] += 1;
-  }
-  return out;
+  return catalogStats().capabilities;
 }
 
 export interface GapReport {

@@ -97,6 +97,30 @@ export function ringPoints(cx: number, cy: number, r: number, n: number, rot = 0
   return disc(cx, cy, r, n, rot);
 }
 
+/** 鞋带公式有向面积（逆时针为正）。 */
+export function signedArea(poly: Ring): number {
+  let s = 0;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) s += poly[j][0] * poly[i][1] - poly[i][0] * poly[j][1];
+  return s / 2;
+}
+
+function segmentsCross(a: XY, b: XY, c: XY, d: XY): boolean {
+  const o = (p: XY, q: XY, r: XY) => Math.sign((q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]));
+  return o(a, b, c) * o(a, b, d) < 0 && o(c, d, a) * o(c, d, b) < 0;
+}
+
+/** 非相邻边严格相交即视为自交（简单多边形检查，O(n²)，预览规模足够）。 */
+export function selfIntersects(poly: Ring): boolean {
+  const n = poly.length;
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 2; j < n; j++) {
+      if (i === 0 && j === n - 1) continue;
+      if (segmentsCross(poly[i], poly[(i + 1) % n], poly[j], poly[(j + 1) % n])) return true;
+    }
+  }
+  return false;
+}
+
 /** 闭线段相交（含端点接触与共线重叠）。 */
 export function segmentsIntersect(a: XY, b: XY, c: XY, d: XY): boolean {
   const o = (p: XY, q: XY, r: XY) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
@@ -106,8 +130,8 @@ export function segmentsIntersect(a: XY, b: XY, c: XY, d: XY): boolean {
   return (d1 === 0 && on(c, d, a)) || (d2 === 0 && on(c, d, b)) || (d3 === 0 && on(a, b, c)) || (d4 === 0 && on(a, b, d));
 }
 
-/** 环的首个非相邻边相交：边下标 i<j（边 i 为 ring[i]→ring[i+1]）与交点；简单多边形返回 null。 */
-export function selfIntersection(ring: Ring): { i: number; j: number; at: XY } | null {
+/** 环的首个非相邻边相交（含端点接触/共线重叠，比 selfIntersects 的严格相交更严）：边下标 i<j（边 i 为 ring[i]→ring[i+1]）与交点；简单多边形返回 null。 */
+export function selfIntersectionPoint(ring: Ring): { i: number; j: number; at: XY } | null {
   const n = ring.length;
   if (n < 4) return null;
   for (let i = 0; i < n; i++) {
@@ -129,9 +153,4 @@ export function selfIntersection(ring: Ring): { i: number; j: number; at: XY } |
     }
   }
   return null;
-}
-
-/** 环是否自相交（任一对非相邻边相交或接触）。 */
-export function selfIntersects(ring: Ring): boolean {
-  return selfIntersection(ring) !== null;
 }
