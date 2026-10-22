@@ -154,7 +154,7 @@ def main() -> int:
                                                                         'gui': args.gui, 'rviz': args.rviz,'localization':args.localization}, timeout=60)
             session_started = code in (200, 202)
             step('start simulation session', session_started, response=state)
-            end = deadline(420)
+            end = deadline(1200)  # Includes bounded 700s Undock; still capped by overall budget.
             phases = []
             while time.monotonic() < end:
                 code, state, _ = api.call('GET', '/lab/api/sim/state')

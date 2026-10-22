@@ -15,7 +15,7 @@ log = logging.getLogger('urp_lab.sim')
 
 POLL_S = 0.25
 IDLE_PROBE_S = 5.0
-READY_TIMEOUT_S = 900.0
+READY_TIMEOUT_S = 1200.0
 SIM_FINAL = ('succeeded', 'failed', 'canceled')
 
 

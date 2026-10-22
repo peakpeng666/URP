@@ -72,6 +72,81 @@ class Processes(OwnedProcesses):
             p=subprocess.Popen(command,stdout=stream,stderr=subprocess.STDOUT,env={**self.env,**(extra_env or {})},start_new_session=True)
         self.children.append((name,p,path,command)); return path
 
+class UndockTiming:
+    """Startup-only dual-clock policy; cleanup always uses monotonic wall time.
+
+    0.05 is a chosen supported-runtime planning bound, not a measured guarantee.
+    35 ROS seconds allows the official 30-second server runtime plus 5 delivery.
+    30 wall seconds bounds pauses and missing streams without Nav2's 3s rule.
+    """
+    required=('clock','dock','odom','ground_truth')
+
+    def __init__(self,simulation_budget_s=35.,minimum_planned_rtf=.05,
+                 no_progress_wall_s=30.,stream_gap_wall_s=30.):
+        values=(simulation_budget_s,minimum_planned_rtf,no_progress_wall_s,stream_gap_wall_s)
+        if not all(math.isfinite(v) and v>0 for v in values):raise ValueError('Undock timing bounds must be finite and positive')
+        self.simulation_budget_s=simulation_budget_s
+        self.wall_watchdog_s=simulation_budget_s/minimum_planned_rtf
+        if not math.isfinite(self.wall_watchdog_s):raise ValueError('Undock wall watchdog must be finite')
+        self.no_progress_wall_s=no_progress_wall_s;self.stream_gap_wall_s=stream_gap_wall_s
+        self.data=dict(policy='undock_dual_clock_v1',simulation_budget_s=simulation_budget_s,
+            minimum_planned_rtf=minimum_planned_rtf,wall_watchdog_s=self.wall_watchdog_s,
+            no_progress_wall_s=no_progress_wall_s,stream_gap_wall_s=stream_gap_wall_s,
+            required_streams=list(self.required),samples=0,trigger=None,
+            max_stream_gap_wall_s={k:0. for k in self.required},max_no_progress_wall_s=0.)
+
+    def safe_sim(self,sim,phase):
+        if math.isfinite(sim):return sim
+        # Reports use allow_nan=False. Never leak invalid readings into evidence
+        # or replace an unavailable origin with a fabricated zero/later reading.
+        self.data.update(invalid_clock_observed=True,invalid_clock_phase=phase)
+        return None
+
+    def elapsed_sim(self,sim):
+        return sim-self.start_sim if sim is not None and self.start_sim is not None else None
+
+    def start(self,wall,sim):
+        sim=self.safe_sim(sim,'start')
+        self.start_wall=wall;self.start_sim=sim;self.last_sim=sim;self.last_progress_wall=wall
+        self.data.update(start_wall_monotonic_s=wall,start_sim_s=sim,start_clock_valid=sim is not None)
+
+    def observe(self,wall,sim,at):
+        sim=self.safe_sim(sim,'observe')
+        self.data.update(last_wall_monotonic_s=wall,last_sim_s=sim,last_clock_valid=sim is not None,
+                         elapsed_wall_s=wall-self.start_wall,elapsed_sim_s=self.elapsed_sim(sim))
+        self.data['samples']+=1
+        gaps={k:None if k not in at else max(0.,wall-at[k]) for k in self.required}
+        for k,gap in gaps.items():
+            if gap is not None:self.data['max_stream_gap_wall_s'][k]=max(self.data['max_stream_gap_wall_s'][k],gap)
+        idle=wall-self.last_progress_wall
+        self.data['max_no_progress_wall_s']=max(self.data['max_no_progress_wall_s'],idle)
+        if sim is None or self.start_sim is None:return 'clock_invalid'
+        if sim<self.last_sim:return 'clock_backwards'
+        if sim>self.last_sim:self.last_progress_wall=wall
+        self.last_sim=sim
+        for k,gap in gaps.items():
+            if gap is None:return 'stream_missing:'+k
+            if gap>=self.stream_gap_wall_s:return 'stream_gap:'+k
+        if wall-self.last_progress_wall>=self.no_progress_wall_s:return 'clock_no_progress'
+        if sim-self.start_sim>=self.simulation_budget_s:return 'simulation_budget'
+        if wall-self.start_wall>=self.wall_watchdog_s:return 'wall_watchdog'
+        return None
+
+    def trigger(self,reason,wall,sim):
+        if self.data['trigger'] is None:
+            sim=self.safe_sim(sim,'trigger')
+            self.data.update(trigger=reason,trigger_wall_monotonic_s=wall,trigger_sim_s=sim,
+                             trigger_clock_valid=sim is not None,
+                             trigger_elapsed_wall_s=wall-self.start_wall,trigger_elapsed_sim_s=self.elapsed_sim(sim))
+
+    def finish(self,wall,sim,status):
+        # Terminal processing may cross a deadline. Record, do not invent a trigger.
+        sim=self.safe_sim(sim,'finish')
+        self.data.update(terminal_status=status,finished_wall_monotonic_s=wall,finished_sim_s=sim,
+                         finished_clock_valid=sim is not None,
+                         total_elapsed_wall_s=wall-self.start_wall,total_elapsed_sim_s=self.elapsed_sim(sim))
+
+
 class Session:
     def __init__(self,args):
         self.args=args; self.runtime=Path(args.runtime); (self.runtime/'logs').mkdir(parents=True,exist_ok=True); (self.runtime/'runs').mkdir(exist_ok=True)
@@ -221,7 +296,8 @@ class Session:
     def future(self,f,seconds=15,allow_stop=False):
         self.wait(f.done,seconds,'ROS 响应超时',allow_stop=allow_stop);return f.result()
 
-    def action(self,typ,topic,goal,seconds,record=True):
+    def action(self,typ,topic,goal,seconds,record=True,timing=None):
+        if timing is not None and topic!='/undock':raise ValueError('Dual-clock timing is Undock-only')
         client=ActionClient(self.node,typ,topic);self.actions.append(client)
         self.wait(client.server_is_ready,25,f'{topic} 动作服务不可用')
         feedback=[]
@@ -229,19 +305,26 @@ class Session:
         if not handle.accepted:raise RuntimeError(f'{topic} 拒绝目标')
         future=handle.get_result_async();self.goal=(handle,future);end=time.monotonic()+seconds
         cancel_reason=None;cancel_time=None;cancel_accepted=False
+        if timing is not None:
+            timing.start(time.monotonic(),self.sim_time());self.report['undock_timing']=timing.data
+            self.st['undock_timing']=timing.data
         while not future.done():
             if cancel_reason is None:
                 # Capture the trigger while the goal is pending, never infer a
                 # timeout afterward from time spent processing a terminal result.
+                trigger=timing.observe(time.monotonic(),self.sim_time(),self.at) if timing is not None else None
                 if self.stop.is_set():cancel_reason='stop'
                 elif self.cancel.is_set():cancel_reason='cancel'
+                elif timing is not None:cancel_reason=trigger
                 elif time.monotonic()>end:cancel_reason='budget'
                 if cancel_reason is not None:
+                    if timing is not None:timing.trigger(cancel_reason,time.monotonic(),self.sim_time())
                     ack=handle.cancel_goal_async()
                     # A terminal result may win the race with the cancel reply.
                     # Stop must not interrupt cleanup's bounded monotonic waits.
                     self.wait(lambda:ack.done() or future.done(),8,'ROS 响应超时',allow_stop=True)
                     if ack.done():cancel_accepted=bool(ack.result().goals_canceling)
+                    if timing is not None:timing.data['cancel_accepted']=cancel_accepted
                     cancel_time=time.monotonic()
             if future.done():break
             if cancel_reason is not None and time.monotonic()-cancel_time>12:
@@ -253,9 +336,11 @@ class Session:
                 if any(time.monotonic()-self.at.get(k,0)>3 for k in ('clock','scan','odom','ground_truth')):
                     raise RuntimeError('执行中传感器/时钟数据超时')
         reply=future.result();self.goal=None
+        if timing is not None:timing.finish(time.monotonic(),self.sim_time(),reply.status)
         if record and self.execution:
             self.execution['nav2'].append(dict(action=topic,status=reply.status,status_text={4:'SUCCEEDED',5:'CANCELED',6:'ABORTED'}.get(reply.status,str(reply.status)),t_sim=self.sim_time(),feedback_count=len(feedback),cancel_requested=cancel_reason is not None,cancel_reason=cancel_reason,cancel_accepted=cancel_accepted))
         if self.stop.is_set() or self.cancel.is_set():raise Interrupted('会话停止请求' if self.stop.is_set() else '执行取消请求')
+        if timing is not None and cancel_reason is not None:raise TimeoutError(f'{topic} timing guard: {cancel_reason}')
         if cancel_reason=='budget':raise TimeoutError(f'{topic} 执行预算耗尽')
         if reply.status!=4:raise RuntimeError(f'{topic} 状态 {reply.status}，未到达')
         return reply
@@ -277,7 +362,8 @@ class Session:
         self.wait(ready,90,'控制器/传感器未就绪')
         if self.args.web:self.web_bridges()
         self.wait(lambda:self.latest['dock'].is_docked,15,'初始充电座状态不可用')
-        self.phase('undocking');self.action(Undock,'/undock',Undock.Goal(),50,False)
+        self.phase('undocking');undock_timing=UndockTiming()
+        self.action(Undock,'/undock',Undock.Goal(),undock_timing.wall_watchdog_s,False,timing=undock_timing)
         self.phase('localizing')
         tf_env={'LD_PRELOAD':str(self.tf_fix)} if self.tf_fix else {}
         self.processes.start('localization',['ros2','launch','turtlebot4_navigation','localization.launch.py','use_sim_time:=true',f'map:=/opt/ros/humble/share/turtlebot4_navigation/maps/{world}.yaml',f'params:={self.runtime}/localization.yaml'],tf_env)
