@@ -179,3 +179,68 @@ reports native architecture for these packages. The solver uses `Version.arch`.
 This does not establish an architecture defect or replace a native Jammy test.
 No exact hosted package identity or rejecting branch is inferred from the v4
 receipt, and no provenance acceptance rule is relaxed.
+
+# Canonical signed-target projection (v6)
+
+The v5 hosted receipt identifies `APT_CLOSURE_DOWNGRADE_REFUSED`, but not the
+selected package or comparator status. V6 keeps every acceptance predicate and
+the nine-field receipt unchanged. It records the actual final dpkg comparison
+return code in the existing `returncode` field. A nonzero value still rejects:
+status 1 distinguishes a false comparison from status 2, a comparison error.
+No installed version or other arbitrary host string is published.
+
+For this rejection only, the producer selects the same highest authenticated
+record already used by the guard. It carries that record's zero-based package
+stanza ordinal, suite, and component into an exclusive, mode-0600
+`package-target-reference.json`. The exact five keys are `schema`, `snapshot`,
+`suite`, `component`, and `stanza`. The sidecar contains no package/version string.
+If creation fails or the file already exists, the original failure receipt is
+still emitted, without a target marker. A successful write emits
+`SAFE_PACKAGE_TARGET_REFERENCE:<sidecar SHA256>` immediately before the terminal
+`SAFE_PACKAGE_DIAGNOSTIC:` line. Neither marker contains raw exception text.
+
+The independent, stdlib-only `project_canonical_target.project(root, receipt,
+log_path)` returns `{}` on any invalid or unavailable proof. Otherwise its exact
+seven keys are `canonical_package`, `canonical_version`,
+`canonical_architecture`, `target_snapshot`, `target_suite`, `target_component`,
+and `target_stanza`. The workflow must authenticate this helper's source before
+calling it. It neither imports the producer nor reads installed state, runs
+native commands, or accesses the network.
+
+The helper requires the exact terminal marker pair and matching nine-field
+receipt, then binds the sidecar bytes to the adjacent hash. It independently
+checks the three previously signature-verified InRelease byte hashes and exact
+sizes embedded in the reviewed source. From that pinned signed document it
+derives the compressed and uncompressed index SHA256/size entries. It checks
+both hashes, the fixed decoded size, the exact package-stanza count, and the
+selected ordinal before extracting canonical fields. Paths are fixed beneath
+`metadata/snapshot-20261021T000000Z/`; sidecar values cannot select arbitrary
+files. Every path component is opened without following symlinks. Input files
+must be regular, singly linked, bounded, and stable throughout their read.
+
+The sidecar is at most 512 bytes; only the final 4096 log bytes are read. Indexes
+are at most 16 MiB compressed and 64,332,414 bytes decoded. Decoding permits at
+most eight complete XZ streams with a shared total-size bound and a 128 MiB
+memory limit per stream. Invalid or truncated trailing data is rejected. This
+matters for the real jammy main/universe indexes, which each append a valid
+32-byte empty XZ stream. Duplicate control/JSON fields are rejected. The fixed
+package-name and version bounds are 60 and 54 characters, respectively, with
+closed ASCII syntax; architecture is only `amd64` or `all`.
+
+The marker binds a reference to the preserved terminal event and detects a
+changed valid ordinal without matching log evidence. It is not remote
+attestation: replacing both a reference and its terminal log can select another
+authentic public record. Such alteration still cannot inject arbitrary host
+strings into canonical output. A canonical target identifies the authenticated
+comparison target, not the installed version or proof of a successful build.
+
+Fixtures cover forged or duplicate references, unknown targets, wrong index or
+release bytes, canonical-field syntax, aliases and special files, concatenated
+XZ bounds, terminal binding, and status 1 versus 2. Read-only private probes also
+projected each of the six real retained indexes' final stanzas, confirming counts
+6,090 / 58,923 / 21,642 / 5,960 / 20,377 / 5,017 and exact decoded hashes/sizes.
+A separate real-index probe projected updates/main stanza 1632 as `libpq-dev`
+`14.24-0ubuntu0.22.04.1` `amd64`. These failure references were synthetic; they
+do not identify the actual hosted offender. Raw metadata is not published with
+the recipe, and no native execution, installation, downgrade, or removal was
+performed for these checks.

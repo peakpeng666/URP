@@ -46,6 +46,12 @@ KEYRING = Path('/usr/share/keyrings/ubuntu-archive-keyring.gpg')
 # Diagnostic-only output. Never include exception text, command arguments,
 # filenames, environment values, response headers, or unreviewed URL strings.
 DIAGNOSTIC_PREFIX = 'SAFE_PACKAGE_DIAGNOSTIC:'
+TARGET_REFERENCE_PREFIX = 'SAFE_PACKAGE_TARGET_REFERENCE:'
+INDEX_STANZA_COUNTS = {
+    ('jammy', 'main'): 6090, ('jammy', 'universe'): 58923,
+    ('jammy-updates', 'main'): 21642, ('jammy-updates', 'universe'): 5960,
+    ('jammy-security', 'main'): 20377, ('jammy-security', 'universe'): 5017,
+}
 PROVIDER_SELECTION_ERRORS = {
     'APT_PROVIDER_COEXISTENCE_REJECTED': 'Both pkgconf and pkg-config are installed; refuse destructive repair',
     'APT_PROVIDER_VERSION_UNAUTHENTICATED': 'Installed pkgconf is absent from authenticated snapshot; stop instead of remove',
@@ -114,11 +120,13 @@ def require_provider(value, code):
 
 class ClosureProvenanceError(RuntimeError):
     """A finite reason for an unchanged closure-provenance acceptance condition."""
-    def __init__(self, code):
+    def __init__(self, code, returncode=None, reference=None):
         if code not in CLOSURE_PROVENANCE_ERRORS:
             raise ValueError('Unknown closure provenance code')
         super().__init__(CLOSURE_PROVENANCE_ERRORS[code])
         self.code = code
+        self.returncode = returncode
+        self.reference = reference
 
 
 def require_closure(value, code):
@@ -204,6 +212,9 @@ def failure_diagnostic(error):
         code = error.code if error.code in PROVIDER_SELECTION_ERRORS else 'APT_INVARIANT_REJECTED'
     elif isinstance(error, ClosureProvenanceError):
         code = error.code if error.code in CLOSURE_PROVENANCE_ERRORS else 'APT_INVARIANT_REJECTED'
+        if code == 'APT_CLOSURE_DOWNGRADE_REFUSED':
+            rc = error.returncode
+            returncode = rc if type(rc) is int and -255 <= rc <= 255 else None
     elif isinstance(error, RuntimeError):
         code = 'APT_INVARIANT_REJECTED'
     if isinstance(reason, OSError):
@@ -222,9 +233,45 @@ def failure_diagnostic(error):
             'component': component if component in ('main', 'universe') else None}
 
 
+def canonical_target_reference(record):
+    """Reference only authenticated-index coordinates, never installed strings."""
+    suite, component, stanza = record.get('_suite'), record.get('_component'), record.get('_stanza')
+    if (type(suite) is not str or type(component) is not str or
+            (suite, component) not in INDEX_STANZA_COUNTS or type(stanza) is not int or
+            not 0 <= stanza < INDEX_STANZA_COUNTS[(suite, component)]):
+        return None
+    return {'schema': 1, 'snapshot': SNAPSHOT, 'suite': suite, 'component': component, 'stanza': stanza}
+
+
+def write_target_reference(error, receipt):
+    """Failure-only sidecar. If unavailable, retain the original closed receipt."""
+    if (DIAGNOSTIC_ROOT is None or not isinstance(error, ClosureProvenanceError) or
+            receipt['code'] != 'APT_CLOSURE_DOWNGRADE_REFUSED' or
+            receipt['operation'] != 'closure-provenance'):
+        return None
+    try:
+        ref = error.reference
+        if type(ref) is not dict or set(ref) != {'schema', 'snapshot', 'suite', 'component', 'stanza'}:
+            return None
+        if type(ref['schema']) is not int or ref['schema'] != 1 or ref['snapshot'] != SNAPSHOT:
+            return None
+        checked = canonical_target_reference({'_suite': ref['suite'], '_component': ref['component'], '_stanza': ref['stanza']})
+        if checked != ref:
+            return None
+        data = (json.dumps(checked, sort_keys=True, separators=(',', ':')) + '\n').encode('ascii')
+        fd = os.open(DIAGNOSTIC_ROOT / 'package-target-reference.json',
+                     os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+        with os.fdopen(fd, 'wb') as stream:
+            stream.write(data)
+        return hashlib.sha256(data).hexdigest()
+    except (OSError, ValueError, TypeError, KeyError):
+        return None
+
+
 def emit_failure(error):
     receipt = failure_diagnostic(error)
     encoded = json.dumps(receipt, sort_keys=True, separators=(',', ':'))
+    reference_hash = write_target_reference(error, receipt)
     # Do not overwrite a previous cohort, follow aliases, or let diagnostics mask
     # the original failure. A missing file never means preparation succeeded.
     if DIAGNOSTIC_ROOT is not None:
@@ -235,6 +282,8 @@ def emit_failure(error):
                 stream.write(encoded + '\n')
         except OSError:
             pass
+    if reference_hash is not None:
+        print(TARGET_REFERENCE_PREFIX + reference_hash, file=sys.stderr)
     print(DIAGNOSTIC_PREFIX + encoded, file=sys.stderr, flush=True)
     return receipt
 
@@ -479,8 +528,11 @@ def extend_provenance_roots(missing, records, roots):
         for choice in choices[1:]:
             if subprocess.run(['/usr/bin/dpkg', '--compare-versions', choice[1], 'gt', best]).returncode == 0:
                 best = choice[1]
-        require_closure(subprocess.run(['/usr/bin/dpkg', '--compare-versions', best, 'ge', item['version']]).returncode == 0,
-                        'APT_CLOSURE_DOWNGRADE_REFUSED')
+        comparison = subprocess.run(['/usr/bin/dpkg', '--compare-versions', best, 'ge', item['version']])
+        if comparison.returncode != 0:
+            record = records[(item['name'], best, item['architecture'])][0]
+            raise ClosureProvenanceError('APT_CLOSURE_DOWNGRADE_REFUSED', comparison.returncode,
+                                         canonical_target_reference(record))
         require_closure(item['name'] not in ROOTS and item['name'] not in roots,
                         'APT_CLOSURE_PIN_UNRESOLVED')
         roots[item['name']] = best; progress = True
@@ -651,8 +703,8 @@ def main():
             shutil.copyfile(index, target)
             signed_files.append(file_row(root, index))
             phase('index-parse', suite, component)
-            for row in package_index_rows(index.read_bytes()):
-                row.update(_suite=suite, _component=component)
+            for stanza, row in enumerate(package_index_rows(index.read_bytes())):
+                row.update(_suite=suite, _component=component, _stanza=stanza)
                 records.setdefault(package_identity(row), []).append(row)
     phase('provider-selection')
     roots, providers = choose_roots(base, records)

@@ -19,7 +19,7 @@ jobs:
     env:
       SOURCE_COMMIT: 18557cfc61f291e8ac5fa4a80d9df212e1df0030
       # Filled only after independent review of every source-index entry.
-      REVIEWED_SOURCE_INDEX_SHA256: 786fc09c26fdffb3b07a71e098dacde34c4d03c962e85ae3db297c12daa7320a
+      REVIEWED_SOURCE_INDEX_SHA256: b58fbc2ade7e43974a0c25deed4be7ef200e2568500659e5f2ff496102d90799
       PYTHONDONTWRITEBYTECODE: '1'
       UV_NO_CACHE: '1'
     steps:
@@ -226,6 +226,28 @@ jobs:
                           for key in ('operation','exception_class','http_status','errno','returncode','suite','component'):
                               value=checked[key]
                               if value is not None: details+=' '+key+'='+str(value)
+                          if checked['code']=='APT_CLOSURE_DOWNGRADE_REFUSED':
+                              target={}
+                              try:
+                                  canonical_helper=root/'recipe/project_canonical_target.py'
+                                  canonical_bytes=canonical_helper.read_bytes()
+                                  assert not canonical_helper.is_symlink() and hashlib.sha256(canonical_bytes).hexdigest()==index['files']['recipe/project_canonical_target.py']['sha256']
+                                  canonical={'__name__':'verified_canonical_projector','__file__':str(canonical_helper)}
+                                  exec(compile(canonical_bytes,str(canonical_helper),'exec'),canonical)
+                                  target=canonical['project'](root,checked,str(log))
+                                  assert set(target)=={'canonical_package','canonical_version','canonical_architecture','target_snapshot','target_suite','target_component','target_stanza'}
+                                  assert re.fullmatch('[a-z0-9][a-z0-9+.-]{0,127}',target['canonical_package'])
+                                  assert re.fullmatch('[0-9][A-Za-z0-9.+:~-]{0,127}',target['canonical_version'])
+                                  assert target['canonical_architecture'] in ('amd64','all')
+                                  assert target['target_snapshot']=='20261021T000000Z'
+                                  assert target['target_suite'] in ('jammy','jammy-updates','jammy-security')
+                                  assert target['target_component'] in ('main','universe')
+                                  assert type(target['target_stanza']) is int and 0<=target['target_stanza']<200000
+                              except Exception:
+                                  target={}
+                              details+=' target_status='+('VERIFIED' if target else 'UNAVAILABLE')
+                              for key in ('canonical_package','canonical_version','canonical_architecture','target_snapshot','target_suite','target_component','target_stanza'):
+                                  if target: details+=' '+key+'='+str(target[key])
                   break
           except Exception:
               details='code=UNKNOWN'

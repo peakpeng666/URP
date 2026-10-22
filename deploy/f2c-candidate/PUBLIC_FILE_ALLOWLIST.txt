@@ -20,10 +20,12 @@ recipe/live_inputs.py
 recipe/prepare_jammy_packages.py
 recipe/prepare_live.py
 recipe/prepare_validation_data.py
+recipe/project_canonical_target.py
 recipe/project_failure_code.py
 recipe/reviewed-inputs.template.json
 recipe/run_build.py
 recipe/runtime_prepare.py
+recipe/tests/test_canonical_target.py
 recipe/tests/test_failure_projection.py
 recipe/tests/test_guards.py
 recipe/tests/test_live_preparation.py

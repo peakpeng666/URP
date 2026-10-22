@@ -1,5 +1,7 @@
 """Closed-schema package diagnostics; fixtures never disclose private strings."""
 import importlib.util
+import hashlib
+import textwrap
 import json
 from pathlib import Path
 import subprocess
@@ -111,5 +113,52 @@ class StructuredProjectionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             p=Path(td)/'private.log';p.write_text(M.PACKAGE_MARKER+json.dumps(receipt()))
             self.assertEqual(M.project_details('native_validation',str(p)),{'code':'UNKNOWN'})
+
+
+class CanonicalWorkflowProjectionTests(unittest.TestCase):
+    def run_wrapper(self, target, corrupt=False, absent=False):
+        script=textwrap.dedent((R/'candidate-workflow.yml').read_text().split("<<'PY_FAILURE'\n",1)[1].split('\n          PY_FAILURE',1)[0])
+        d=receipt()
+        d.update(code='APT_CLOSURE_DOWNGRADE_REFUSED',operation='closure-provenance',exception_class='ClosureProvenanceError',http_status=None,suite=None,component=None,returncode=1)
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);(root/'recipe').mkdir();(root/'private-workflow-evidence').mkdir()
+            generic=(R/'project_failure_code.py').read_bytes()
+            (root/'recipe/project_failure_code.py').write_bytes(generic)
+            canonical=('def project(root,receipt,log_path):\n    return '+repr(target)+'\n').encode()
+            if not absent:(root/'recipe/project_canonical_target.py').write_bytes(canonical+(b'# changed' if corrupt else b''))
+            index={'files':{'recipe/project_failure_code.py':{'sha256':hashlib.sha256(generic).hexdigest()},'recipe/project_canonical_target.py':{'sha256':hashlib.sha256(canonical).hexdigest()}}}
+            raw=json.dumps(index).encode();(root/'source-index.json').write_bytes(raw)
+            (root/'private-workflow-evidence/packages.log').write_text('PRIVATE_SENTINEL /private/path https://private.invalid\n'+M.PACKAGE_MARKER+json.dumps(d)+'\n')
+            env={'PATH':'/usr/bin:/bin','LANG':'C.UTF-8','LC_ALL':'C.UTF-8','CANDIDATE_ROOT':td,'REVIEWED_SOURCE_INDEX_SHA256':hashlib.sha256(raw).hexdigest(),'FAILED_STAGE':'packages'}
+            result=subprocess.run([sys.executable,'-I','-B','-'],input=script,text=True,capture_output=True,env=env,check=True)
+            self.assertEqual(result.stderr,'')
+            self.assertNotIn('PRIVATE_SENTINEL',result.stdout)
+            self.assertNotIn('/private/path',result.stdout)
+            self.assertNotIn('https://private.invalid',result.stdout)
+            return result.stdout
+
+    def target(self):
+        return dict(canonical_package='libpq-dev',canonical_version='14.24-0ubuntu0.22.04.1',canonical_architecture='amd64',target_snapshot='20261021T000000Z',target_suite='jammy-updates',target_component='main',target_stanza=123)
+
+    def test_verified_canonical_target(self):
+        out=self.run_wrapper(self.target())
+        self.assertIn('target_status=VERIFIED canonical_package=libpq-dev',out)
+        self.assertIn('returncode=1',out)
+
+    def test_invalid_canonical_outputs_never_disclosed(self):
+        for key,value in [('canonical_package','PRIVATE_SENTINEL'),('canonical_version','https://private.invalid'),('canonical_architecture','/private/path'),('target_suite','PRIVATE_SENTINEL'),('target_component','PRIVATE_SENTINEL'),('target_snapshot','PRIVATE_SENTINEL'),('target_stanza',True),('installed_version','PRIVATE_SENTINEL')]:
+            with self.subTest(key=key):
+                target=self.target();target[key]=value
+                out=self.run_wrapper(target)
+                self.assertIn('code=APT_CLOSURE_DOWNGRADE_REFUSED',out)
+                self.assertIn('target_status=UNAVAILABLE',out)
+                self.assertNotIn('canonical_package=',out)
+
+    def test_changed_helper_is_not_executed(self):
+        self.assertIn('target_status=UNAVAILABLE',self.run_wrapper(self.target(),corrupt=True))
+
+    def test_missing_helper_retains_original_failure(self):
+        self.assertIn('code=APT_CLOSURE_DOWNGRADE_REFUSED',self.run_wrapper(self.target(),absent=True))
+        self.assertIn('target_status=UNAVAILABLE',self.run_wrapper({},absent=True))
 
 if __name__ == '__main__': unittest.main()

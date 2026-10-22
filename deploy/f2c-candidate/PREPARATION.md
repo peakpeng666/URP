@@ -1,6 +1,6 @@
 # Ubuntu 22.04 Fields2Cover candidate preparation
 
-Status: the portable candidate recipe and its diagnostic-only v5 revision are source-reviewed. All 213 pure helper/interface fixtures passed. Hosted v4 passed ownership parsing and native dependency resolution, then stopped in closure provenance before live archive-byte preflight, package mutation, or native build. V5 adds finite closure reason codes without changing source trust, version, architecture, or transaction gates. V5 has not been launched; no native Jammy success or production promotion is claimed.
+Status: diagnostic-only v6 preserves every candidate acceptance gate. All 250 pure helper/interface fixtures passed, and independently verified canonical projections against all six retained authenticated indexes passed. Hosted v5 stopped at the downgrade-refused condition before live archive-byte preflight, package mutation, or native build. V6 records the actual comparison return code and authenticates a bounded public target reference; it does not disclose installed versions or change the environment protocol. V6 has not been launched; the actual hosted package identity remains unproven. No native Jammy success or production promotion is claimed.
 
 ## Verified upstream inputs
 

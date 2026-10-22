@@ -130,3 +130,7 @@ The correction accepts only the exact known owner and optional exact matched div
 ## Closure-provenance diagnostic cohort (v5)
 
 The fourth hosted cohort passed strict ownership parsing and native dependency resolution, then rejected unresolved closure provenance. It had not yet reached live alias/archive byte preflight, which follows authenticated closure download. The receipt did not identify whether an exact package/architecture was unavailable, the signed candidate would downgrade a selected version, or an unresolved dependency was already pinned. This revision distinguishes those unchanged guards and the defensive no-progress guard using finite codes only. It does not disclose package/version strings, change architecture normalization, broaden source trust, remove packages, or permit downgrades. Hosted completion and the exact current failing invariant remain unproven.
+
+### Authenticated canonical target diagnostic (v6)
+
+The v5 cohort stopped at the downgrade-refused condition. V6 retains the nine-field diagnostic envelope and every acceptance gate, while recording the actual comparison return code and a bounded reference to the existing authenticated target record. The independently anchored canonical projector derives the public package name, target version and architecture from fixed authenticated Ubuntu index bytes. It never renders an installed version or arbitrary host/error text. Unavailable or invalid evidence yields `target_status=UNAVAILABLE`, not a guessed identity. No container/rootfs protocol change is included.

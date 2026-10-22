@@ -206,11 +206,13 @@ class TestNativeClosureAndAPTPlans(unittest.TestCase):
 class TestClosureProvenanceReasons(unittest.TestCase):
     def setUp(self):
         self.context = dict(p.DIAGNOSTIC_CONTEXT)
+        self.diagnostic_root = p.DIAGNOSTIC_ROOT
         p.phase('closure-provenance')
 
     def tearDown(self):
         p.DIAGNOSTIC_CONTEXT.clear()
         p.DIAGNOSTIC_CONTEXT.update(self.context)
+        p.DIAGNOSTIC_ROOT = self.diagnostic_root
 
     def assert_reason(self, code, call):
         with self.assertRaises(p.ClosureProvenanceError) as raised:
@@ -318,6 +320,82 @@ class TestClosureProvenanceReasons(unittest.TestCase):
         receipt = p.failure_diagnostic(error)
         self.assertEqual(receipt['code'], 'APT_INVARIANT_REJECTED')
         self.assertNotIn('SECRET', json.dumps(receipt))
+
+    def test_best_signed_record_supplies_reference_and_actual_comparison_rc(self):
+        records = {('SECRET_PACKAGE', '2', 'amd64'): [{'_suite': 'jammy', '_component': 'main', '_stanza': 1}],
+                   ('SECRET_PACKAGE', '3', 'amd64'): [{'_suite': 'jammy-updates', '_component': 'main', '_stanza': 42}]}
+        for rc in (1, 2, -9):
+            with self.subTest(rc=rc), mock.patch.object(p.subprocess, 'run', side_effect=[
+                    types.SimpleNamespace(returncode=0), types.SimpleNamespace(returncode=rc)]) as native:
+                with self.assertRaises(p.ClosureProvenanceError) as raised:
+                    p.extend_provenance_roots([row('SECRET_PACKAGE', 'SECRET_INSTALLED_VERSION')], records, {})
+                error = raised.exception
+                self.assertEqual(error.reference, {'schema': 1, 'snapshot': p.SNAPSHOT,
+                    'suite': 'jammy-updates', 'component': 'main', 'stanza': 42})
+                receipt = p.failure_diagnostic(error)
+                self.assertEqual(receipt['returncode'], rc)
+                self.assertNotIn('SECRET', json.dumps(receipt))
+                self.assertEqual(native.call_args_list, [
+                    mock.call(['/usr/bin/dpkg', '--compare-versions', '3', 'gt', '2']),
+                    mock.call(['/usr/bin/dpkg', '--compare-versions', '3', 'ge', 'SECRET_INSTALLED_VERSION'])])
+
+    def test_reference_contains_no_host_or_record_strings(self):
+        record = {'Package': 'SECRET_PACKAGE', 'Version': 'SECRET_VERSION',
+                  '_suite': 'jammy', '_component': 'main', '_stanza': 0}
+        ref = p.canonical_target_reference(record)
+        self.assertEqual(set(ref), {'schema', 'snapshot', 'suite', 'component', 'stanza'})
+        self.assertNotIn('SECRET', json.dumps(ref))
+        for changed in ({'_stanza': True}, {'_stanza': -1}, {'_stanza': 6090},
+                        {'_suite': 'SECRET'}, {'_component': '../private'}, {'_suite': []}):
+            self.assertIsNone(p.canonical_target_reference(dict(record, **changed)))
+
+    def test_sidecar_is_exclusive_private_and_bound_to_adjacent_terminal_receipt(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p.DIAGNOSTIC_ROOT = Path(temp)
+            ref = p.canonical_target_reference({'_suite': 'jammy', '_component': 'main', '_stanza': 0})
+            error = p.ClosureProvenanceError('APT_CLOSURE_DOWNGRADE_REFUSED', 1, ref)
+            output = io.StringIO()
+            with mock.patch.object(p.sys, 'stderr', output):
+                receipt = p.emit_failure(error)
+            target = Path(temp) / 'package-target-reference.json'
+            data = target.read_bytes()
+            self.assertEqual(target.stat().st_mode & 0o777, 0o600)
+            self.assertEqual(json.loads(data), ref)
+            lines = output.getvalue().splitlines()
+            self.assertEqual(len(lines), 2)
+            self.assertEqual(lines[0], p.TARGET_REFERENCE_PREFIX + hashlib.sha256(data).hexdigest())
+            self.assertEqual(json.loads(lines[1][len(p.DIAGNOSTIC_PREFIX):]), receipt)
+            output = io.StringIO()
+            with mock.patch.object(p.sys, 'stderr', output):
+                p.emit_failure(error)
+            self.assertEqual(target.read_bytes(), data)
+            self.assertNotIn(p.TARGET_REFERENCE_PREFIX, output.getvalue())
+
+    def test_sidecar_only_for_exact_downgrade_phase_and_schema(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p.DIAGNOSTIC_ROOT = Path(temp)
+            ref = p.canonical_target_reference({'_suite': 'jammy', '_component': 'main', '_stanza': 0})
+            for invalid in (dict(ref, schema=True), dict(ref, SECRET='private'), dict(ref, snapshot='SECRET')):
+                error = p.ClosureProvenanceError('APT_CLOSURE_DOWNGRADE_REFUSED', 1, invalid)
+                self.assertIsNone(p.write_target_reference(error, p.failure_diagnostic(error)))
+            error = p.ClosureProvenanceError('APT_CLOSURE_PIN_UNRESOLVED', 1, ref)
+            self.assertIsNone(p.write_target_reference(error, p.failure_diagnostic(error)))
+            p.phase('native-solver')
+            error = p.ClosureProvenanceError('APT_CLOSURE_DOWNGRADE_REFUSED', 1, ref)
+            self.assertIsNone(p.write_target_reference(error, p.failure_diagnostic(error)))
+            self.assertFalse((Path(temp) / 'package-target-reference.json').exists())
+
+    def test_sidecar_does_not_follow_alias_or_wait_on_fifo(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); p.DIAGNOSTIC_ROOT = root
+            original = root / 'private'; original.write_bytes(b'SECRET')
+            path = root / 'package-target-reference.json'; path.symlink_to(original)
+            ref = p.canonical_target_reference({'_suite': 'jammy', '_component': 'main', '_stanza': 0})
+            error = p.ClosureProvenanceError('APT_CLOSURE_DOWNGRADE_REFUSED', 1, ref)
+            self.assertIsNone(p.write_target_reference(error, p.failure_diagnostic(error)))
+            self.assertEqual(original.read_bytes(), b'SECRET')
+            path.unlink(); os.mkfifo(path)
+            self.assertIsNone(p.write_target_reference(error, p.failure_diagnostic(error)))
 
 
 class TestProviderSelectionReasons(unittest.TestCase):
