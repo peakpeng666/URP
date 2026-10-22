@@ -30,7 +30,9 @@ def selected_edges(text):
 
 
 def official(origin):
-    site=origin.site.lower();suite=origin.archive
+    site=getattr(origin,'site',None);suite=getattr(origin,'archive',None)
+    if not isinstance(site,str) or not isinstance(suite,str):return False
+    site=site.lower()
     return origin.trusted and ((origin.origin=='Ubuntu' and (site=='archive.ubuntu.com' or site.endswith('.archive.ubuntu.com') or site=='security.ubuntu.com') and suite in {'jammy','jammy-updates','jammy-security','jammy-backports'}) or (origin.origin=='ROS' and site=='packages.ros.org' and suite=='jammy'))
 
 
@@ -45,12 +47,13 @@ def metadata_lookup(cache):
         versions=[pkg.candidate,pkg.installed]
         seen=set()
         for v in versions:
-            if v is None or v.version in seen:continue
+            if v is None or not isinstance(v.version,str) or v.version in seen:continue
             seen.add(v.version)
             if not VERSION.fullmatch(v.version) or not any(official(o) for o in v.origins):continue
             for typ,relation in RELATIONS.items():
-                for group in v.get_dependencies(typ):
-                    for dep in group.or_dependencies:
+                for group in (v.get_dependencies(typ) or ()):
+                    for dep in (group.or_dependencies or ()):
+                        if not isinstance(dep.name,str) or not isinstance(dep.version,str) or not isinstance(dep.relation,str):continue
                         if not re.fullmatch(NAME,dep.name) or dep.relation not in OPS:continue
                         if dep.version and not VERSION.fullmatch(dep.version):continue
                         result.append({'package':name,'package_version':v.version,'relation':relation,'dependency':dep.name,'version_relation':OPS[dep.relation],'dependency_version':dep.version})

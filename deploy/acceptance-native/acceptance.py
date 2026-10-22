@@ -170,7 +170,9 @@ def execute(args):
         raw['process_exit_codes']['gateway'] = gateway.returncode if gateway else None
         raw['remaining_owned_process_count'] = len(owned(token))
         raw['cleanup_pass'] = bool(raw.get('cleanup_pass') and not forced and raw['remaining_owned_process_count'] == 0)
-        result = project(raw)
+        # This private stage result precedes supervisor cleanup. The public CLI
+        # independently requires the final runner-status receipt.
+        result = project(raw, require_runner=False)
         args.summary.parent.mkdir(parents=True, exist_ok=True)
         args.summary.write_text(json.dumps(result, indent=2, allow_nan=False))
     return 0 if result['state'] == 'PASS' else 1

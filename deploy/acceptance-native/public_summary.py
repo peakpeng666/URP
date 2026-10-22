@@ -67,7 +67,18 @@ def registry_projection(raw):
             'mirror_identities_verified':number(raw.get('mirror_identities_verified'),True,0,100000)}
 
 
-def project(raw, runner=None):
+def host_repair_projection(raw):
+    raw=raw if isinstance(raw,dict) else {}
+    allowed={'pkgconf','r-base-dev','libunwind-14-dev','libc++-14-dev','libc++abi-14-dev','libc++-dev','libc++abi-dev','libmagickwand-dev','libmagickwand-6.q16-dev','libmagickcore-6.q16-dev','libmagickcore-dev'}
+    reasons=('none','unknown','opt_in_missing','host_not_allowed','platform_not_allowed','setup_exit_not_allowed','already_attempted','source_identity','conflict_not_confirmed','removal_not_allowed','replacement_plan_incomplete','package_safety_unknown','package_state_changed','simulation_failed','plan_too_large','apply_failed','command_timeout','check_failed')
+    removed=raw.get('planned_removals')
+    removed=sorted(set(removed)) if isinstance(removed,list) and len(removed)<=11 and all(isinstance(x,str) and x in allowed for x in removed) else []
+    return {'state':raw.get('state') if raw.get('state') in ('applied','blocked') else 'not_run',
+            'reason':raw.get('reason') if raw.get('reason') in reasons else 'unknown',
+            'planned_removals':removed,'planned_removal_count':len(removed),'apply_exit_code':number(raw.get('apply_exit_code'),True,-255,255)}
+
+
+def project(raw, runner=None, *, require_runner=True):
     raw = raw if isinstance(raw, dict) else {}
     result = {'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
               'harness_sha': digest(raw.get('harness_sha'), 40),
@@ -98,9 +109,11 @@ def project(raw, runner=None):
     result['apt_fallback_error'] = 'not_measured'
     result['apt_dependencies'] = []
     result['registry_diagnostic'] = registry_projection(None)
+    result['host_apt_repair'] = host_repair_projection(None)
     if runner is not None:
         runner = runner if isinstance(runner, dict) else {}
         result['registry_diagnostic'] = registry_projection(runner.get('registry_diagnostic'))
+        result['host_apt_repair'] = host_repair_projection(runner.get('host_apt_repair'))
         step = runner.get('installation_step')
         result['installation_step'] = step if step in ('unknown', 'apt_update', 'apt_install', 'other', 'not_applicable', 'registry_check') else 'unknown'
         hint = runner.get('failure_hint')
@@ -124,7 +137,7 @@ def project(raw, runner=None):
             result['state'] = 'FAIL'
     # A public PASS cannot be forged by an incomplete/ready-only input.
     if result['state'] == 'PASS':
-        if not (result['runner_exit_code'] == 0 and result['runner_cleanup_remaining'] == 0 and result['forced_kill_count'] == 0 and result['source_sha'] == SOURCE and result['harness_sha'] and
+        if not ((not require_runner or (result['runner_exit_code'] == 0 and result['runner_cleanup_remaining'] == 0 and result['forced_kill_count'] == 0)) and result['source_sha'] == SOURCE and result['harness_sha'] and
                 all(result[k] is True for k in BOOLS) and all(result[k] is not None for k in HASHES) and
                 (result['tasks_total'] or 0) > 0 and result['tasks_total'] == result['tasks_reached'] and
                 (result['trajectory_samples'] or 0) >= 2 and

@@ -10,7 +10,7 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(result.returncode,1)
             self.assertEqual(json.loads(result.stdout),{'stage':'installation','state':'running'});self.assertEqual(result.stderr,'')
             status=json.loads((root/'private/runner-status.json').read_text())
-            self.assertEqual(status,{'stage':'installation','exit_code':7,'cleanup_remaining':0,'forced_kill_count':0,'failure_hint':'unknown','installation_step':'unknown','apt_projection':{'status':'not_run','dependencies':[]},'registry_diagnostic':{}})
+            self.assertEqual(status,{'stage':'installation','exit_code':7,'cleanup_remaining':0,'forced_kill_count':0,'failure_hint':'unknown','installation_step':'unknown','apt_projection':{'status':'not_run','dependencies':[]},'registry_diagnostic':{},'host_apt_repair':{}})
             self.assertIn('PRIVATE_TEST_MARKER',(root/'private/install.log').read_text())
 
     def test_successful_task_needing_forced_cleanup_fails(self):

@@ -36,6 +36,19 @@ class AcceptanceTests(unittest.TestCase):
     def test_complete_physical_evidence_passes(self):
         self.assertEqual(project(self.valid(),{'exit_code':0,'cleanup_remaining':0,'forced_kill_count':0})['state'],'PASS')
 
+    def test_private_stage_then_supervisor_projection(self):
+        stage=project(self.valid(),require_runner=False)
+        self.assertEqual(stage['state'],'PASS')
+        self.assertEqual(project(stage)['state'],'FAIL')
+        good={'exit_code':0,'cleanup_remaining':0,'forced_kill_count':0}
+        self.assertEqual(project(stage,good)['state'],'PASS')
+        for key in good:
+            bad=dict(good);bad[key]=1
+            self.assertEqual(project(stage,bad)['state'],'FAIL')
+        for field in ('trajectory_motion_verified','cleanup_pass','source_identity_verified'):
+            bad=self.valid();bad[field]=False
+            self.assertEqual(project(bad,require_runner=False)['state'],'FAIL')
+
     def test_ready_only_fails(self):
         raw=self.valid();raw['state']='PASS';raw['trajectory_samples']=None
         self.assertEqual(project(raw)['state'],'FAIL')
@@ -162,5 +175,14 @@ class MetadataDiagnosticProjectionTests(unittest.TestCase):
         self.assertEqual(result['apt_metadata_status'],'metadata_unavailable')
         diagnostic['metadata_error']='PRIVATE_EXCEPTION'
         self.assertNotIn('PRIVATE',json.dumps(project({}, {'apt_projection':diagnostic})))
+
+class HostRepairProjectionTests(unittest.TestCase):
+    def test_only_fixed_removal_names_are_public(self):
+        from public_summary import host_repair_projection
+        result=host_repair_projection({'state':'applied','reason':'none','planned_removals':['pkgconf','libunwind-14-dev'],'apply_exit_code':0})
+        self.assertEqual(result['planned_removal_count'],2)
+        bad=host_repair_projection({'state':'PRIVATE','reason':'PRIVATE','planned_removals':['PRIVATE_PACKAGE'],'raw':'PRIVATE'})
+        self.assertNotIn('PRIVATE',json.dumps(bad))
+        self.assertEqual(bad['planned_removal_count'],0)
 
 if __name__ == '__main__': unittest.main()

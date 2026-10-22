@@ -102,6 +102,9 @@ def run(args):
                URP_BIND_HOST='127.0.0.1', URP_RMW='rmw_cyclonedds_cpp',
                UV_PYTHON_INSTALL_DIR=str(private/'python'),
                PATH=str(private/'home/.local/bin') + ':' + env.get('PATH', ''))
+    # CLI opt-in is required even if the caller exports the environment variable.
+    env.pop('URP_HOST_APT_REPAIR',None)
+    if getattr(args,'allow_host_apt_repair',False):env['URP_HOST_APT_REPAIR']='1'
     stop = False
     def interrupted(signum, frame):
         nonlocal stop
@@ -151,7 +154,8 @@ def run(args):
         number = display.read_text().strip()
         if not number.isdigit(): raise RuntimeError('display_not_ready')
         env['DISPLAY'] = ':'+number
-        rc = child([str(root/'src/lab/.venv/bin/python'), str(harness/'acceptance.py'), '--source',str(root),'--private-dir',str(private/'harness-private'),'--harness-sha',args.harness_sha,'--summary',str(private/'summary.json'),'--stage',args.stage], 'acceptance.log', time.monotonic()+3600)
+        entry = harness / ('warehouse/warehouse_acceptance.py' if args.stage == 'warehouse' else 'acceptance.py')
+        rc = child([str(root/'src/lab/.venv/bin/python'), str(entry), '--source',str(root),'--private-dir',str(private/'harness-private'),'--harness-sha',args.harness_sha,'--summary',str(private/'summary.json'),'--stage',args.stage], 'acceptance.log', time.monotonic()+3600)
         status['exit_code'] = rc
     except Exception:
         status['exit_code'] = 1
@@ -214,10 +218,18 @@ def run(args):
                 status['apt_projection']={'status':'invalid_projection','dependencies':[]}
         elif (private/'apt-solver.log').exists():
             status['apt_projection']={'status':'metadata_unavailable','dependencies':[]}
+        repair_file=private/'host-apt-repair.json'
+        status['host_apt_repair']={}
+        if repair_file.exists():
+            try:
+                if repair_file.is_symlink() or repair_file.stat().st_size>4096:raise ValueError('invalid_repair_summary')
+                status['host_apt_repair']=json.loads(repair_file.read_text())
+            except Exception:pass
         (private/'runner-status.json').write_text(json.dumps(status))
     return status
 
 if __name__ == '__main__':
     p=argparse.ArgumentParser();p.add_argument('--source',required=True);p.add_argument('--harness',required=True);p.add_argument('--private-dir',required=True);p.add_argument('--stage',choices=['maze','warehouse'],default='maze');p.add_argument('--harness-sha',required=True)
+    p.add_argument('--allow-host-apt-repair',action='store_true')
     try: result=run(p.parse_args());sys.exit(0 if result['exit_code']==0 else 1)
     except Exception: sys.exit(1)

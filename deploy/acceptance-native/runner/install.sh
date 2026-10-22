@@ -28,5 +28,15 @@ set -e
 if [[ "$setup_exit" == 100 ]]; then
   # Original exit is retained; simulation diagnostics cannot make failure pass.
   python3 "$(dirname "$0")/apt_diagnostic.py" "$source_root" "$private" || true
+  if [[ "${URP_HOST_APT_REPAIR:-}" == 1 ]] && python3 "$(dirname "$0")/host_apt_repair.py" --source "$source_root" --private-dir "$private" --setup-exit "$setup_exit"; then
+    # One retry only, still the unchanged pinned installer and original options.
+    set +e
+    bash -x setup/ubuntu/setup.sh --components workbench --fields2cover skip
+    setup_exit=$?
+    set -e
+    if [[ "$setup_exit" == 100 ]]; then
+      python3 "$(dirname "$0")/apt_diagnostic.py" "$source_root" "$private" || true
+    fi
+  fi
 fi
 exit "$setup_exit"
