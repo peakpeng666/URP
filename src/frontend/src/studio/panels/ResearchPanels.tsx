@@ -7,7 +7,7 @@ import { studio, urls } from '../api';
 import { useStudio } from '../store';
 import type { Analysis, InstanceSpace, Study } from '../types';
 import { logTimeAxis } from '../chart';
-import { EcdfCharts, ProfileChart } from '../research/AnalysisCharts';
+import { AnytimeChart, EcdfCharts, ProfileChart } from '../research/AnalysisCharts';
 import s from './panels.module.css';
 
 type ArchiveExperiment = {
@@ -317,16 +317,7 @@ export function AnalysisPanel() {
               marks: [Plot.boxX(pts, { x: 'gap', y: 'algorithm' }), Plot.dot(pts, { x: 'gap', y: 'algorithm', r: 2.5, fill: 'algorithm', fillOpacity: 0.7 })], color: { ...color, legend: false } }) : null;
           }} />
         </div>
-        {data.anytime.grid.length > 0 && (
-          <div className={s.chart}>
-            <h4>随时间收敛：当前最好解差距的中位数</h4>
-            <PlotBox deps={[data]} make={(w) => {
-              const rows = Object.entries(data.anytime.median).flatMap(([a, ys]) => ys.map((y, i) => ({ a: nm(a), t: data.anytime.grid[i], y })).filter((r) => r.y != null));
-              return rows.length ? Plot.plot({ width: w, height: 220, style: FONT, x: logTimeAxis(rows.map((r) => r.t)), y: { label: '差距 (%)', grid: true }, color,
-                marks: [Plot.line(rows, { x: 't', y: 'y', stroke: 'a', curve: 'step-after', strokeWidth: 1.8 })] }) : null;
-            }} />
-          </div>
-        )}
+        <AnytimeChart analysis={data} />
         <div className={s.chart}>
           <h4>运行时间 vs 差距</h4>
           <PlotBox deps={[data]} make={(w) => {
