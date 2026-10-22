@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 """Isolated runner lifecycle. All child output is private, never echoed on failure."""
 import argparse, ctypes, json, os, pathlib, re, signal, subprocess, sys, time
-HINTS = frozenset({'none','source_identity','package_install','dependency_fetch','network','disk_full','native_build','registry_identity','unknown','apt_signature','apt_source_conflict','apt_release','apt_hook','apt_lock','apt_package_missing','apt_dependency_conflict','apt_libunwind_conflict'})
+HINTS = frozenset({'none','source_identity','package_install','dependency_fetch','network','disk_full','native_build','registry_identity','unknown','apt_signature','apt_source_conflict','apt_release','apt_hook','apt_lock','apt_package_missing','apt_dependency_conflict','apt_libunwind_conflict','stage_timeout','cancelled'})
 LIMIT = 65536
+
+class StageDeadlineExceeded(TimeoutError):
+    """The supervisor's stage budget expired, not an inferred APT error."""
+
+class StageCancelled(Exception):
+    """Explicit interruption is distinct from deadline expiry."""
 
 def classify(path, exit_code):
     if exit_code == 0:
@@ -18,6 +24,10 @@ def classify(path, exit_code):
             tail=stream.read(LIMIT).decode('utf-8',errors='replace').lower()
     except OSError:
         return 'unknown'
+    # A successfully repaired attempt is historical evidence. Only inspect
+    # output after the latest wrapper-owned attempt boundary in this tail.
+    boundaries=list(re.finditer(r'^urp_install_attempt_start [12]\r?$',tail,re.MULTILINE))
+    if boundaries:tail=tail[boundaries[-1].end():]
     # Require an explicit conflict edge, not mere mention of both packages.
     unwind=r'(?:libunwind-[0-9]{1,2}-dev[^\n]*conflicts(?::| on)[^\n]*libunwind-dev|libunwind-dev[^\n]*conflicts(?::| on)[^\n]*libunwind-[0-9]{1,2}-dev)'
     if re.search(unwind,tail):return 'apt_libunwind_conflict'
@@ -253,7 +263,7 @@ def run(args):
     os.chmod(private, 0o700)
     root = pathlib.Path(args.source).resolve()
     harness = pathlib.Path(args.harness).resolve()
-    status = {'stage': 'installation', 'exit_code': 1, 'cleanup_remaining': 0, 'forced_kill_count': 0}
+    status = {'stage': 'installation', 'exit_code': 1, 'cleanup_remaining': 0, 'forced_kill_count': 0, 'termination_reason': 'unknown'}
     owned = {}
     current = None
     env = os.environ.copy()
@@ -318,10 +328,13 @@ def run(args):
                         if apt_observation is not None:progress.update(apt_observation.public(now))
                     print(json.dumps(progress),flush=True)
                     next_progress=time.monotonic()+120
-                if stop or time.monotonic() > deadline:
-                    raise TimeoutError('owned_stage_timeout')
+                if stop:
+                    raise StageCancelled()
+                if time.monotonic() > deadline:
+                    raise StageDeadlineExceeded()
                 time.sleep(0.2)
             track()
+            status['termination_reason']='completed' if current.returncode==0 else 'child_exit'
             return current.returncode
     try:
         rc = child(['bash', str(pathlib.Path(__file__).with_name('install.sh')), str(root), str(private)], 'install.log', time.monotonic()+3600)
@@ -346,7 +359,14 @@ def run(args):
         entry = harness / ('warehouse/warehouse_acceptance.py' if args.stage == 'warehouse' else 'acceptance.py')
         rc = child([str(root/'src/lab/.venv/bin/python'), str(entry), '--source',str(root),'--private-dir',str(private/'harness-private'),'--harness-sha',args.harness_sha,'--summary',str(private/'summary.json'),'--stage',args.stage], 'acceptance.log', time.monotonic()+(9000 if args.stage == 'warehouse' else 3600))
         status['exit_code'] = rc
+    except StageDeadlineExceeded:
+        status['termination_reason']='stage_timeout'
+        status['exit_code'] = 1
+    except StageCancelled:
+        status['termination_reason']='cancelled'
+        status['exit_code'] = 1
     except Exception:
+        status['termination_reason']='supervisor_error'
         status['exit_code'] = 1
     finally:
         forced_kills = set()
@@ -375,9 +395,10 @@ def run(args):
         if status['cleanup_remaining'] or status['forced_kill_count']: status['exit_code'] = 1
         if stop:
             status['exit_code'] = 1
+            status['termination_reason']='cancelled'
         logfile = private / ('install.log' if status['stage'] == 'installation' else 'acceptance.log')
         status['failure_hint'] = classify(logfile, status['exit_code'])
-        if status['stage']=='installation' and status['failure_hint'] in ('unknown','apt_dependency_conflict'):
+        if status['termination_reason']=='child_exit' and status['exit_code']==100 and status['stage']=='installation' and status['failure_hint'] in ('unknown','apt_dependency_conflict'):
             solver_hint=classify(private/'apt-solver.log',status['exit_code'])
             if solver_hint.startswith('apt_'):status['failure_hint']=solver_hint
         trace=private/'installation-trace.log'
@@ -385,7 +406,7 @@ def run(args):
         status['installation_step'] = installation_step(step_log) if status['stage']=='installation' else 'not_applicable'
         if stop:
             status['exit_code'] = 1
-            status['failure_hint'] = 'unknown'
+            status['failure_hint'] = 'cancelled'
         status['registry_diagnostic'] = {}
         registry=private/'registry-identity.json'
         if registry.exists():
@@ -399,8 +420,19 @@ def run(args):
             category=registry_status.get('error')
             if category in ('integrity_mismatch','source_not_allowlisted','lock_invalid'):status['failure_hint']='registry_identity'
             elif category in ('http','timeout','tls','network'):status['failure_hint']='network'
+        # A supervisor-observed reason outranks all private log heuristics,
+        # including a previous registry or resolver failure.
+        if status['termination_reason'] in ('stage_timeout','cancelled'):
+            status['failure_hint']=status['termination_reason']
+        elif status['termination_reason']=='supervisor_error':
+            status['failure_hint']='unknown'
         status['apt_projection'] = {'status':'not_run','dependencies':[]}
+        status['apt_projection_scope']='not_run'
         projection=private/'apt-dependencies.json'
+        if projection.exists():status['apt_projection_scope']='current_attempt'
+        elif (private/'apt-dependencies-before-repair.json').exists():
+            projection=private/'apt-dependencies-before-repair.json'
+            status['apt_projection_scope']='before_repair'
         if projection.exists():
             try:
                 if projection.is_symlink() or projection.stat().st_size>32768:raise ValueError('invalid_projection')

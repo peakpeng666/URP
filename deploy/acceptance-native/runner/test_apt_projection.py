@@ -41,6 +41,54 @@ class ProjectionTests(unittest.TestCase):
 
 
 class MetadataErrorsTests(unittest.TestCase):
+    def test_type_errors_name_the_exact_bounded_api_operation(self):
+        import pathlib,tempfile
+        from unittest.mock import patch
+        from runner.apt_projection import collect
+        from public_summary import project as public_project
+        class BrokenVersions:
+            @property
+            def candidate(self):raise TypeError('PRIVATE_VERSION_PATH')
+        class BrokenOrigins:
+            version='1.0'
+            @property
+            def origins(self):raise TypeError('PRIVATE_ORIGIN_URL')
+        class BrokenGroups:
+            version='1.0'
+            origins=[S(site='archive.ubuntu.com',trusted=True,origin='Ubuntu',archive='jammy')]
+            def get_dependencies(self,typ):raise TypeError('PRIVATE_DEPENDENCY_DATA')
+        class BrokenContains(dict):
+            def __contains__(self,name):raise TypeError('PRIVATE_CACHE_VALUE')
+        cases=[('cache_membership',BrokenContains()),
+               ('version_selection',{'root':BrokenVersions()}),
+               ('origin_records',{'root':pkg(BrokenOrigins())}),
+               ('dependency_groups',{'root':pkg(BrokenGroups())})]
+        for operation,cache in cases:
+            with self.subTest(operation=operation),tempfile.TemporaryDirectory() as tmp:
+                log=pathlib.Path(tmp)/'log';log.write_text('Broken root:amd64 Depends on dep:amd64')
+                with patch('runner.apt_diagnostic.solver_command',return_value=['unused']*6+['root']),patch('runner.apt_projection.importlib.import_module',return_value=S(Cache=lambda:cache)):
+                    result=collect('/unused',log,pathlib.Path(tmp)/'out.json')
+                self.assertEqual(result['metadata_error'],'api_type')
+                self.assertEqual(result['metadata_phase'],'metadata_project')
+                self.assertEqual(result['metadata_operation'],operation)
+                self.assertEqual(result['dependencies'],[])
+                self.assertNotIn('PRIVATE',json.dumps(result))
+                public=public_project({}, {'apt_projection':result})
+                self.assertEqual(public['apt_metadata_operation'],operation)
+                self.assertEqual(public['apt_metadata_status'],'metadata_unavailable')
+                result['metadata_operation']='PRIVATE_OPERATION'
+                self.assertEqual(public_project({}, {'apt_projection':result})['apt_metadata_operation'],'not_run')
+
+    def test_supported_api_contract_still_verifies_official_edges(self):
+        from runner.apt_projection import METADATA_OPERATIONS
+        observed=[]
+        cache={'root':pkg(version(edges=[('Depends','dep','>=','2')])),
+               'dep':pkg(version(name='2'))}
+        result=project('Broken root:amd64 Depends on dep:amd64',metadata_lookup(cache,observed.append),['root'])
+        self.assertEqual(result['status'],'verified')
+        self.assertTrue(set(observed)<=METADATA_OPERATIONS)
+        self.assertIn('dependency_fields',observed)
+
     def test_fixed_exception_categories(self):
         from runner.apt_projection import error_category
         self.assertEqual(error_category(ModuleNotFoundError('PRIVATE')),'import_missing')

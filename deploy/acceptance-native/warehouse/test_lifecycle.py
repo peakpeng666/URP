@@ -194,13 +194,25 @@ class LifecycleTests(unittest.TestCase):
         self.assertFalse(physical_evidence(sim,session,life,PLAN)['cleanup_pass'])
 
     def good(self):
+        from historical_fuel import ARCHIVE_SHA256,SELECTED_SHA256,COHORT,ALIAS_PROJECTION
         return {'state':'PASS','source_sha':SOURCE,'harness_sha':'a'*40,
+                'raw_resource_manifest_sha256':'2c3acde82c25c0372c8793225abcbc94d4e74be4b441ad130de7c3a475790d66',
+                'raw_resources_match_historical':False,'historical_alias_projection':ALIAS_PROJECTION,
+                'resource_cache_cohort':COHORT,'historical_cache_verified':True,'historical_fuel_archive_sha256':ARCHIVE_SHA256,
+                'historical_selected_manifest_sha256':SELECTED_SHA256,'historical_materialized_file_count':61,
                 **{k:'b'*64 for k in HASHES},**{k:True for k in BOOLS},
                 'tasks_total':5,'tasks_reached':5,'trajectory_samples':2,'actual_length_m':1,
                 'remaining_owned_process_count':0,'gateway_exit_code':0,'physical_budget_s':649.6,
                 'overall_wall_budget_s':7200,'execution_protocol':receipt('warehouse',649.6,policy_record(),policy_record()),
                 'historical_resource_count':45,'current_resource_count':45,'missing_resource_count':0,
                 'additional_resource_count':0,'changed_resource_count':0}
+
+    def test_historical_cache_provenance_required_and_idempotent(self):
+        row=self.good();first=project(row,require_runner=False);self.assertEqual(first,project(first,require_runner=False))
+        for key,value in [('resource_cache_cohort','current_official_assets_v1'),('historical_cache_verified',False),
+                          ('historical_fuel_archive_sha256','0'*64),('historical_selected_manifest_sha256',None),
+                          ('historical_materialized_file_count',55),('historical_alias_projection',None),('raw_resource_manifest_sha256','0'*64),('raw_resources_match_historical',True)]:
+            changed=dict(row);changed[key]=value;self.assertEqual(project(changed,require_runner=False)['state'],'FAIL')
 
     def test_projection_replay_pass_has_no_fake_solver_or_full_loop(self):
         result=project(self.good(),require_runner=False);self.assertEqual(result['state'],'PASS');self.assertFalse(result['solver_executed'])

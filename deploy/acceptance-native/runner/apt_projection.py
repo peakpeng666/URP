@@ -9,6 +9,9 @@ NAME=r'[a-z0-9][a-z0-9+.-]{0,119}'
 RELATIONS={'Depends':'depends','PreDepends':'predepends','Conflicts':'conflicts','Breaks':'breaks'}
 OPS={'':'any','=':'eq','>=':'ge','<=':'le','>>':'gt','<<':'lt','>':'gt','<':'lt'}
 VERSION=re.compile(r'[A-Za-z0-9.+:~\-]{1,120}\Z')
+METADATA_OPERATIONS=frozenset({'not_run','cache_membership','package_lookup',
+    'version_selection','version_identity','origin_records','origin_validation',
+    'dependency_groups','dependency_alternatives','dependency_fields','complete'})
 
 
 def selected_edges(text):
@@ -36,23 +39,38 @@ def official(origin):
     return origin.trusted and ((origin.origin=='Ubuntu' and (site=='archive.ubuntu.com' or site.endswith('.archive.ubuntu.com') or site=='security.ubuntu.com') and suite in {'jammy','jammy-updates','jammy-security','jammy-backports'}) or (origin.origin=='ROS' and site=='packages.ros.org' and suite=='jammy'))
 
 
-def metadata_lookup(cache):
+def metadata_lookup(cache,observe=None):
+    # Only a fixed operation name crosses this callback, never an API value,
+    # exception string, package name, source URI or stack frame.
+    observe=observe or (lambda operation: None)
     memo={}
     def lookup(name):
         if name in memo:return memo[name]
         result=[];memo[name]=result
-        if not re.fullmatch(NAME,name) or name not in cache:return result
+        if not re.fullmatch(NAME,name):return result
+        observe('cache_membership')
+        if name not in cache:return result
+        observe('package_lookup')
         pkg=cache[name]
         # Select only current candidate/installed records with a public official origin.
+        observe('version_selection')
         versions=[pkg.candidate,pkg.installed]
         seen=set()
         for v in versions:
+            observe('version_identity')
             if v is None or not isinstance(v.version,str) or v.version in seen:continue
             seen.add(v.version)
-            if not VERSION.fullmatch(v.version) or not any(official(o) for o in v.origins):continue
+            if not VERSION.fullmatch(v.version):continue
+            observe('origin_records')
+            origins=v.origins
+            observe('origin_validation')
+            if not any(official(o) for o in origins):continue
             for typ,relation in RELATIONS.items():
+                observe('dependency_groups')
                 for group in (v.get_dependencies(typ) or ()):
+                    observe('dependency_alternatives')
                     for dep in (group.or_dependencies or ()):
+                        observe('dependency_fields')
                         if not isinstance(dep.name,str) or not isinstance(dep.version,str) or not isinstance(dep.relation,str):continue
                         if not re.fullmatch(NAME,dep.name) or dep.relation not in OPS:continue
                         if dep.version and not VERSION.fullmatch(dep.version):continue
@@ -98,10 +116,14 @@ def error_category(exc):
 
 
 def collect(source,log,output):
-    result={'status':'metadata_unavailable','dependencies':[],'metadata_phase':'module_import','metadata_error':'none'}
+    result={'status':'metadata_unavailable','dependencies':[],'metadata_phase':'module_import','metadata_error':'none','metadata_operation':'not_run'}
     def phase(name):
         result['metadata_phase']=name
         pathlib.Path(output).write_text(json.dumps(result,sort_keys=True))
+    def operation(name):
+        # In-memory only to avoid per-edge filesystem work; the exception or
+        # success path persists it once. A hard subprocess timeout stays unknown.
+        result['metadata_operation']=name if name in METADATA_OPERATIONS else 'not_run'
     try:
         phase('module_import')
         apt=importlib.import_module('apt')
@@ -119,8 +141,9 @@ def collect(source,log,output):
         phase('cache_open')
         cache=apt.Cache()
         phase('metadata_project')
-        result.update(project(text,metadata_lookup(cache),roots))
+        result.update(project(text,metadata_lookup(cache,operation),roots))
         result['metadata_phase']='complete'
+        operation('complete')
     except Exception as exc:
         result['metadata_error']=error_category(exc)
     pathlib.Path(output).write_text(json.dumps(result,sort_keys=True))

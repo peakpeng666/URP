@@ -9,7 +9,7 @@ from execution_diagnostics import sanitize as sanitize_execution
 from execution_protocol import sanitize as sanitize_protocol, protocol_ok
 from undock_observer.projection import project as project_observer
 
-SOURCE = 'a5df23833c28ca146dac6558573845fae44dda1a'
+SOURCE = '3acf840d1a0c16ab1cfcca15744e4ea6609ddb35'
 STATES = {'PASS', 'FAIL', 'ERROR', 'NOT_RUN'}
 FAILURE_STEPS = {'none','unknown','health','services','scenario','recommendation','solve_submit','solve_terminal','solve_validation','map_validation','export','session_start','session_ready','sim_submit','sim_execute','sim_tasks','shutdown'}
 ERROR_KINDS = {'none','unknown','module_missing','source_identity','timeout','runtime','http','value'}
@@ -35,7 +35,9 @@ def digest(v, length=64):
 def apt_projection(value):
     states={'not_run','verified','no_verified_edges','metadata_unavailable','tree_limit','invalid_projection','membership_only'}
     invalid=('invalid_projection',[])
-    if not isinstance(value,dict) or set(value) not in ({'status','dependencies'},{'status','dependencies','metadata_phase','metadata_error'},{'status','dependencies','metadata_phase','metadata_error','evidence','fallback_error'}):return invalid
+    if not isinstance(value,dict):return invalid
+    keys=set(value)-{'metadata_operation'}
+    if keys not in ({'status','dependencies'},{'status','dependencies','metadata_phase','metadata_error'},{'status','dependencies','metadata_phase','metadata_error','evidence','fallback_error'}):return invalid
     state=value['status'];edges=value['dependencies']
     if not isinstance(state,str) or state not in states or not isinstance(edges,list) or len(edges)>20:return invalid
     if state=='membership_only':
@@ -111,6 +113,7 @@ def project(raw, runner=None, *, require_runner=True):
     result['simulation_error_kind'] = raw.get('simulation_error_kind') if isinstance(raw.get('simulation_error_kind'),str) and raw.get('simulation_error_kind') in ERROR_KINDS else 'unknown'
     result['installation_step'] = 'unknown'
     result['runner_failure_hint'] = 'unknown'
+    result['runner_termination_reason'] = 'unknown'
     result['runner_stage'] = 'unknown'
     result['runner_exit_code'] = None
     result['runner_cleanup_remaining'] = None
@@ -118,6 +121,8 @@ def project(raw, runner=None, *, require_runner=True):
     result['apt_metadata_status'] = 'not_run'
     result['apt_metadata_phase'] = 'not_run'
     result['apt_metadata_error'] = 'not_measured'
+    result['apt_metadata_operation'] = 'not_run'
+    result['apt_diagnostic_scope'] = 'unknown'
     result['apt_evidence'] = 'not_measured'
     result['apt_fallback_error'] = 'not_measured'
     result['apt_dependencies'] = []
@@ -130,12 +135,16 @@ def project(raw, runner=None, *, require_runner=True):
         step = runner.get('installation_step')
         result['installation_step'] = step if step in ('unknown', 'apt_update', 'apt_install', 'other', 'not_applicable', 'registry_check') else 'unknown'
         hint = runner.get('failure_hint')
-        result['runner_failure_hint'] = hint if hint in ('none', 'source_identity', 'package_install', 'dependency_fetch', 'network', 'disk_full', 'native_build', 'registry_identity', 'apt_signature', 'apt_source_conflict', 'apt_release', 'apt_hook', 'apt_lock', 'apt_package_missing', 'apt_dependency_conflict', 'apt_libunwind_conflict', 'unknown') else 'unknown'
+        result['runner_failure_hint'] = hint if hint in ('none', 'source_identity', 'package_install', 'dependency_fetch', 'network', 'disk_full', 'native_build', 'registry_identity', 'apt_signature', 'apt_source_conflict', 'apt_release', 'apt_hook', 'apt_lock', 'apt_package_missing', 'apt_dependency_conflict', 'apt_libunwind_conflict', 'stage_timeout', 'cancelled', 'unknown') else 'unknown'
+        reason=runner.get('termination_reason')
+        result['runner_termination_reason']=reason if reason in ('completed','child_exit','stage_timeout','cancelled','supervisor_error') else 'unknown'
         result['runner_stage'] = runner.get('stage') if runner.get('stage') in ('installation', 'simulation') else 'unknown'
         result['runner_exit_code'] = number(runner.get('exit_code'), True, -255, 255)
         result['runner_cleanup_remaining'] = number(runner.get('cleanup_remaining'), True)
         result['forced_kill_count'] = number(runner.get('forced_kill_count'), True)
         result['apt_metadata_status'], result['apt_dependencies'] = apt_projection(runner.get('apt_projection', {'status':'not_run','dependencies':[]}))
+        scope=runner.get('apt_projection_scope')
+        result['apt_diagnostic_scope']=scope if scope in ('not_run','current_attempt','before_repair') else 'unknown'
         diagnostic=runner.get('apt_projection')
         if isinstance(diagnostic,dict):
             result['apt_evidence']='apt_cache_membership' if diagnostic.get('evidence')=='apt_cache_membership' else 'official_metadata' if diagnostic.get('status')=='verified' else 'not_measured'
@@ -145,8 +154,10 @@ def project(raw, runner=None, *, require_runner=True):
             phase=diagnostic.get('metadata_phase');error=diagnostic.get('metadata_error')
             result['apt_metadata_phase']=phase if phase in ('module_import','source_identity','log_read','cache_open','metadata_project','complete','dependency_install','subprocess') else 'not_run'
             result['apt_metadata_error']=error if error in ('none','import_missing','import_error','api_attribute','api_type','api_key','command_failed','validation','filesystem','apt_system','apt_runtime','unknown','subprocess_exit','subprocess_timeout','subprocess_os','invalid_output','dependency_install_failed','dependency_install_timeout') else 'not_measured'
+            operation=diagnostic.get('metadata_operation')
+            result['apt_metadata_operation']=operation if operation in ('cache_membership','package_lookup','version_selection','version_identity','origin_records','origin_validation','dependency_groups','dependency_alternatives','dependency_fields','complete') else 'not_run'
 
-        if result['runner_exit_code'] != 0 or result['runner_cleanup_remaining'] != 0 or result['forced_kill_count'] != 0:
+        if result['runner_exit_code'] != 0 or result['runner_cleanup_remaining'] != 0 or result['forced_kill_count'] != 0 or result['runner_termination_reason'] in ('child_exit','stage_timeout','cancelled','supervisor_error'):
             result['state'] = 'FAIL'
     # A public PASS cannot be forged by an incomplete/ready-only input.
     if result['state'] == 'PASS':

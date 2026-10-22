@@ -1,4 +1,5 @@
 """Separate fixed projection for rechecked historical replay, not a solver run."""
+from historical_fuel import ARCHIVE_SHA256 as FUEL_ARCHIVE_SHA, SELECTED_SHA256 as FUEL_SELECTED_SHA, COHORT as FUEL_COHORT, ALIAS_PROJECTION
 import argparse
 import json
 import math
@@ -47,7 +48,15 @@ def project(raw, runner=None, *, require_runner=True):
             'historical_map_bytes_identity':'not_recorded','historical_execution_identity_status':'not_recorded',
             'historical_counts_semantics':'tasks_reached_single_route_not_trials',
             'api_spawn_yaw':1.570796,'expected_session_spawn_yaw':1.5708,
-            'runner_failure_hint':'unknown','runner_stage':'unknown','runner_exit_code':None,'runner_cleanup_remaining':None,'runner_forced_kill_count':None}
+            'runner_failure_hint':'unknown','runner_termination_reason':'unknown','runner_stage':'unknown','runner_exit_code':None,'runner_cleanup_remaining':None,'runner_forced_kill_count':None}
+    result['raw_resource_manifest_sha256']=digest(raw.get('raw_resource_manifest_sha256'))
+    result['raw_resources_match_historical']=raw.get('raw_resources_match_historical') if type(raw.get('raw_resources_match_historical')) is bool else None
+    result['historical_alias_projection']=ALIAS_PROJECTION if raw.get('historical_alias_projection')==ALIAS_PROJECTION else None
+    result['resource_cache_cohort']=FUEL_COHORT if raw.get('resource_cache_cohort')==FUEL_COHORT else None
+    result['historical_fuel_archive_sha256']=digest(raw.get('historical_fuel_archive_sha256'))
+    result['historical_selected_manifest_sha256']=digest(raw.get('historical_selected_manifest_sha256'))
+    result['historical_materialized_file_count']=number(raw.get('historical_materialized_file_count'),True,0,61)
+    result['historical_cache_verified']=raw.get('historical_cache_verified') if type(raw.get('historical_cache_verified')) is bool else None
     for key in HASHES: result[key]=digest(raw.get(key))
     for key in BOOLS: result[key]=raw.get(key) if type(raw.get(key)) is bool else None
     for key in COUNTS: result[key]=number(raw.get(key),True)
@@ -57,21 +66,28 @@ def project(raw, runner=None, *, require_runner=True):
     if runner is not None:
         runner=runner if isinstance(runner,dict) else {}
         diagnostic=runner_projection({},runner)
-        for key in ('installation_step','registry_diagnostic','host_apt_repair','apt_metadata_status','apt_metadata_phase','apt_metadata_error','apt_evidence','apt_fallback_error','apt_dependencies'):
+        for key in ('installation_step','runner_termination_reason','registry_diagnostic','host_apt_repair','apt_metadata_status','apt_metadata_phase','apt_metadata_error','apt_metadata_operation','apt_diagnostic_scope','apt_evidence','apt_fallback_error','apt_dependencies'):
             result[key]=diagnostic[key]
         hint=runner.get('failure_hint')
-        result['runner_failure_hint']=hint if hint in ('none','source_identity','package_install','dependency_fetch','network','disk_full','native_build','registry_identity','apt_signature','apt_source_conflict','apt_release','apt_hook','apt_lock','apt_package_missing','apt_dependency_conflict','apt_libunwind_conflict','unknown') else 'unknown'
+        result['runner_failure_hint']=hint if hint in ('none','source_identity','package_install','dependency_fetch','network','disk_full','native_build','registry_identity','apt_signature','apt_source_conflict','apt_release','apt_hook','apt_lock','apt_package_missing','apt_dependency_conflict','apt_libunwind_conflict','stage_timeout','cancelled','unknown') else 'unknown'
         result['runner_stage']=runner.get('stage') if runner.get('stage') in ('installation','simulation') else 'unknown'
         result['runner_exit_code']=number(runner.get('exit_code'),True,-255,255)
         result['runner_cleanup_remaining']=number(runner.get('cleanup_remaining'),True)
         result['runner_forced_kill_count']=number(runner.get('forced_kill_count'),True)
-        if result['runner_forced_kill_count'] != 0 or result['runner_exit_code'] != 0 or result['runner_cleanup_remaining'] != 0: result['state']='FAIL'
+        if result['runner_forced_kill_count'] != 0 or result['runner_exit_code'] != 0 or result['runner_cleanup_remaining'] != 0 or result['runner_termination_reason'] in ('child_exit','stage_timeout','cancelled','supervisor_error'): result['state']='FAIL'
     if require_runner and runner is None and result['state']=='PASS': result['state']='FAIL'
     if result['state']=='PASS' and not (
         result['source_sha']==SOURCE and result['harness_sha'] and all(result[k] is not None for k in HASHES)
         and all(result[k] is True for k in BOOLS) and result['tasks_total']==result['tasks_reached']==5
         and (result['trajectory_samples'] or 0)>=2 and (result['actual_length_m'] or 0)>0
         and result['remaining_owned_process_count']==0 and result['gateway_exit_code']==0
+        and result['resource_cache_cohort']==FUEL_COHORT and result['historical_cache_verified'] is True
+        and result['historical_fuel_archive_sha256']==FUEL_ARCHIVE_SHA and result['historical_selected_manifest_sha256']==FUEL_SELECTED_SHA
+        and result['historical_materialized_file_count']==61
+        and result['historical_alias_projection']==ALIAS_PROJECTION
+        and (result['raw_resource_manifest_sha256'],result['raw_resources_match_historical']) in (
+            ('2c3acde82c25c0372c8793225abcbc94d4e74be4b441ad130de7c3a475790d66',False),
+            ('64f4c3b93af78800aefc036c58035a8556401c82627f55409a16483d12dc7055',True))
         and result['historical_resource_count']==result['current_resource_count']==45
         and all(result[k]==0 for k in ('missing_resource_count','additional_resource_count','changed_resource_count'))
         and protocol_ok(result['execution_protocol'],'warehouse')

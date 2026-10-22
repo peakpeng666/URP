@@ -10,7 +10,7 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(result.returncode,1)
             self.assertEqual(json.loads(result.stdout),{'stage':'installation','state':'running'});self.assertEqual(result.stderr,'')
             status=json.loads((root/'private/runner-status.json').read_text())
-            self.assertEqual(status,{'stage':'installation','exit_code':7,'cleanup_remaining':0,'forced_kill_count':0,'failure_hint':'unknown','installation_step':'unknown','apt_projection':{'status':'not_run','dependencies':[]},'registry_diagnostic':{},'host_apt_repair':{}})
+            self.assertEqual(status,{'stage':'installation','exit_code':7,'cleanup_remaining':0,'forced_kill_count':0,'failure_hint':'unknown','installation_step':'unknown','apt_projection':{'status':'not_run','dependencies':[]},'registry_diagnostic':{},'host_apt_repair':{},'termination_reason':'child_exit','apt_projection_scope':'not_run'})
             self.assertIn('PRIVATE_TEST_MARKER',(root/'private/install.log').read_text())
 
     def test_successful_task_needing_forced_cleanup_fails(self):
@@ -61,6 +61,8 @@ class RunnerTests(unittest.TestCase):
             self.assertNotEqual(status['exit_code'],0)
             self.assertEqual(status['cleanup_remaining'],0)
             self.assertEqual(stderr,'')
+            self.assertEqual(status['termination_reason'],'cancelled')
+            self.assertEqual(status['failure_hint'],'cancelled')
 
     def test_bounded_failure_hints(self):
         from runner.run import classify, LIMIT
@@ -144,7 +146,7 @@ class InstallationProgressTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=pathlib.Path(tmp);source=root/'source';private=root/'private';bin_dir=root/'bin'
             (source/'setup/ubuntu').mkdir(parents=True);private.mkdir();bin_dir.mkdir()
-            for command,body in {'git':'echo a5df23833c28ca146dac6558573845fae44dda1a', 'python3':'exit 0'}.items():
+            for command,body in {'git':'echo 3acf840d1a0c16ab1cfcca15744e4ea6609ddb35', 'python3':'exit 0'}.items():
                 stub=bin_dir/command;stub.write_text('#!/bin/bash\n'+body+'\n');stub.chmod(0o755)
             # Fake installer only: no apt, network, dependencies or actual source changes.
             (source/'setup/ubuntu/setup.sh').write_text("uv() { head -c 131072 /dev/zero; }; uv sync --locked; exit 7\n")

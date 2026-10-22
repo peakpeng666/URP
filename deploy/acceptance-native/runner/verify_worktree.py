@@ -6,7 +6,7 @@ CRLF/attributes disagreement only when the actual bytes equal the committed blob
 No reset, renormalization, index write or source mutation is performed.
 """
 import hashlib, os, pathlib, subprocess, sys
-TARGET = 'a5df23833c28ca146dac6558573845fae44dda1a'
+TARGET = '3acf840d1a0c16ab1cfcca15744e4ea6609ddb35'
 
 def verify(root, expected=TARGET):
     root = pathlib.Path(root).resolve()

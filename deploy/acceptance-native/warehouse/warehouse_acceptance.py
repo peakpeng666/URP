@@ -17,6 +17,7 @@ from urllib.parse import urlsplit
 from historical_input import SOURCE, ARCHIVE_SIZE, from_archive, from_directory, canonical_sha
 from recheck import build_record, public_receipt
 from resource_identity import compare
+from historical_fuel import download_archive as download_fuel_archive, materialize, verify_cache, canonicalize_assets, ALIAS_PROJECTION
 from warehouse_lifecycle import drive, physical_evidence, OVERALL_WALL_S
 from warehouse_public_summary import project, digest
 
@@ -56,17 +57,11 @@ def map_snapshot(maps):
     return {'current_map_bytes_sha256':canonical_sha(value),'current_map_fingerprint_sha256':maps.fingerprint('warehouse')}
 
 
-def preload_fuel(source, private, env):
-    # Uses only the fixed source's existing official version-pinned asset mechanism.
-    # Its logs and downloaded models never leave the ephemeral runner checkout.
-    script=source/'deploy/fetch-fuel.sh';cache=source/'setup/2026-10-15/cache/ignition-fuel'
-    deadline=time.monotonic()+900
-    for model in FUEL_MODELS:
-        with (private/'fuel-fetch.log').open('ab') as stream:
-            p=subprocess.Popen(['bash',str(script),str(cache)],cwd=source,env=dict(env,URP_FUEL_ONLY=model),
-                               stdin=subprocess.DEVNULL,stdout=stream,stderr=subprocess.STDOUT,start_new_session=True)
-            if p.wait(timeout=max(1,min(300,deadline-time.monotonic())))!=0:raise ValueError('fuel_fetch_failed')
-            if time.monotonic()>=deadline:raise ValueError('fuel_prefetch_deadline')
+def preload_fuel(source,private,env):
+    # Separate historical cohort: never download current Fuel or overwrite a cache.
+    cache=source/'setup/2026-10-15/cache/ignition-fuel'
+    if cache.exists() or cache.is_symlink():raise ValueError('historical_cache_destination_exists')
+    return materialize(download_fuel_archive(private),cache)
 
 
 def execute(a):
@@ -98,8 +93,16 @@ def execute(a):
         from urp_research.turn_modes.checker import check
         # No directory override in production CLI. Local JSON fixtures are test-only.
         inputs=from_archive(a.archive or download_archive(private))
-        preload_fuel(source,private,env)
-        resources=compare(inputs['evidence/native-tb4-session/world-assets.json'],inspect_world('warehouse'))
+        cache_receipt=preload_fuel(source,private,env)
+        raw.update(cache_receipt)
+        raw_assets=inspect_world('warehouse')
+        raw_resources=compare(inputs['evidence/native-tb4-session/world-assets.json'],raw_assets)
+        raw.update(raw_resource_manifest_sha256=raw_resources['current_resource_manifest_sha256'],
+                   raw_resources_match_historical=raw_resources['resources_match_historical'],historical_alias_projection=ALIAS_PROJECTION)
+        save('raw-world-assets.json',raw_assets)
+        canonical_assets=canonicalize_assets(raw_assets,source/'setup/2026-10-15/cache/ignition-fuel')
+        save('canonical-world-assets.json',canonical_assets)
+        resources=compare(inputs['evidence/native-tb4-session/world-assets.json'],canonical_assets)
         raw.update(resources)
         if resources['resources_match_historical'] is not True:raise ValueError('historical_resources_mismatch')
         map_before=map_snapshot(maps);adapter_before=adapter_identity()
@@ -114,6 +117,12 @@ def execute(a):
         finally:db.close()
         def guard():
             try:
+                if verify_cache(source/'setup/2026-10-15/cache/ignition-fuel')!=cache_receipt:
+                    raise ValueError('historical_cache_provenance_changed')
+            except Exception:
+                raw['historical_cache_verified']=False
+                raise
+            try:
                 verify_source(source)
                 if adapter_identity()!=adapter_before or execution_manifest()['sha256']!=record['reproducibility']['execution_sha256']:raise ValueError('current_execution_identity_changed')
             except Exception:
@@ -123,7 +132,10 @@ def execute(a):
                 raw['map_identity_verified']=False
                 raise ValueError('current_map_identity_changed')
             try:
-                checked=compare(inputs['evidence/native-tb4-session/world-assets.json'],inspect_world('warehouse'))
+                current_assets=inspect_world('warehouse')
+                if compare(inputs['evidence/native-tb4-session/world-assets.json'],current_assets)!=raw_resources:
+                    raise ValueError('raw_resource_identity_changed')
+                checked=compare(inputs['evidence/native-tb4-session/world-assets.json'],canonicalize_assets(current_assets,source/'setup/2026-10-15/cache/ignition-fuel'))
                 if checked!=resources:
                     raw.update(checked)
                     raise ValueError('current_resources_changed')

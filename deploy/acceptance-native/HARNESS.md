@@ -1,6 +1,6 @@
 # Real simulation acceptance harness
 
-Execution source is fixed to a5df23833c28ca146dac6558573845fae44dda1a. The harness package is checked out at a separate fixed commit supplied by the wrapper; both identities appear independently in the allowlisted summary. A fresh clean source checkout is mandatory, not the dirty local audit checkout.
+Execution source is fixed to 3acf840d1a0c16ab1cfcca15744e4ea6609ddb35. The harness package is checked out at a separate fixed commit supplied by the wrapper; both identities appear independently in the allowlisted summary. A fresh clean source checkout is mandatory, not the dirty local audit checkout.
 
 Interface:
 
@@ -30,7 +30,7 @@ execution_protocol.py verifies the original requested policy and both API submis
 
 ## Simulation freshness protocol v2
 
-The next cohort requires `simulation_execution_v2` / `execution_budget_v2`: source freshness is 3 simulation seconds, receipt and source-progress liveness are each 30 wall seconds, future stamp tolerance is 3 simulation seconds, and only ground truth permits a zero-stamp clock-at-receive fallback. Requested and terminal frozen policies must both exactly match. The source pin is the reviewed v2 commit `a5df23833c28ca146dac6558573845fae44dda1a`. Route geometry, tasks, selected-clock budgets, wall watchdogs, physical predicates and cleanup gates are unchanged. Earlier v1 observations retain their v1 label and are not accepted as the new cohort.
+The next cohort requires `simulation_execution_v2` / `execution_budget_v2`: source freshness is 3 simulation seconds, receipt and source-progress liveness are each 30 wall seconds, future stamp tolerance is 3 simulation seconds, and only ground truth permits a zero-stamp clock-at-receive fallback. Requested and terminal frozen policies must both exactly match. The source pin is the reviewed v2 commit `3acf840d1a0c16ab1cfcca15744e4ea6609ddb35`. Route geometry, tasks, selected-clock budgets, wall watchdogs, physical predicates and cleanup gates are unchanged. Earlier v1 observations retain their v1 label and are not accepted as the new cohort.
 
 Execution diagnostics expose separate atomic trigger and latest observations, plus at most 8 recent observations, all in a fixed schema. Per-stream receipt/source/freshness/progress ages are relative, finite and range-limited; negative ages are retained for fault diagnosis. Zero-stamped ground truth keeps source age unavailable rather than inventing measurement age. Absolute clocks, source stamps, paths, identifiers and raw messages are never projected. Missing or malformed evidence remains null. Diagnostic observations do not create a PASS or establish real-time feasibility.
 Legacy or unavailable observations deliberately retain `diagnostics: null`; they are not claimed to validate the new schema's `execution_observation_v1` constant. A fallback ground-truth row always projects `source_age_sim_s: null`, including inconsistent private input that supplies a numeric age.
