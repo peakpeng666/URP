@@ -95,7 +95,7 @@ class ProjectionTests(unittest.TestCase):
         before = copy.deepcopy(raw)
         result = sanitize(raw)
         self.assertEqual(raw, before)
-        self.assertEqual(set(result), {'status', 'session_identity_verified',
+        self.assertEqual(set(result), {'observer_trigger_wall_s', 'status', 'session_identity_verified',
             'observer_exit_code', 'observer_watchdog_expired', 'observer_cleanup_complete',
             'output_bytes', 'output_limited', 'observation_duration_s', 'cleanup_delay_s',
             'observer_leader_reaped', 'observer_group_signal_requested', 'sampling_end_reason', 'native_stats', 'ros_clock', 'ros_api', 'schema_version', 'timing_origin', 'cutoff_semantics', 'ros_clock_source', 'startup_observation_policy'})

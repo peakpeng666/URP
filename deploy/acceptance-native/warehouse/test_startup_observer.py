@@ -15,7 +15,7 @@ import threading
 import unittest
 from unittest.mock import patch, Mock
 
-from startup_observer import Observer, ENABLE, HARD_WALL_S
+from startup_observer import Observer, ENABLE, DELAY, HARD_WALL_S
 from startup_observer_child import Measurements, ECHO, INFO, MAX_BYTES, main as child_main
 from startup_observation_schema import sanitize
 
@@ -65,6 +65,39 @@ class ObserverTests(unittest.TestCase):
     def tearDown(self):
         self.obs.safe('close')
         self.temp.cleanup()
+
+    def test_late_window_is_opt_in_and_preserves_default(self):
+        self.assertEqual(self.obs.trigger_s, 5)
+        obs = Observer({ENABLE: '1', DELAY: '30'}, self.temp.name, '/known/source', clock=self.clock)
+        obs.bind('sim_fixture')
+        with patch.object(obs, 'start') as start:
+            self.clock.value += 29.9
+            obs.observe(row())
+            start.assert_not_called()
+            self.clock.value += .1
+            obs.observe(row())
+            start.assert_called_once_with()
+        self.assertEqual(obs.close()['observer_trigger_wall_s'], 30)
+
+    def test_invalid_delay_does_not_mutate_control_response(self):
+        for delay in ('31', 'PRIVATE', 30, None, {}, []):
+            obs = Observer({ENABLE: '1', DELAY: delay}, self.temp.name, '/known/source', clock=self.clock,
+                           popen=lambda *args, **kwargs: self.fail('must not start'))
+            obs.bind('sim_fixture')
+            value = row()
+            self.assertIs(obs.wrap(lambda *args: value)('GET', '/sim/state'), value)
+            result = obs.close()
+            self.assertEqual(result['status'], 'unavailable')
+            self.assertIsNone(result['observer_trigger_wall_s'])
+
+    def test_late_window_never_starts_after_phase_departure(self):
+        obs = Observer({ENABLE: '1', DELAY: '30'}, self.temp.name, '/known/source', clock=self.clock)
+        obs.bind('sim_fixture')
+        self.clock.value += 31
+        with patch.object(obs, 'start') as start:
+            obs.observe(row(phase='failed'))
+            start.assert_not_called()
+        self.assertEqual(obs.close()['sampling_end_reason'], 'startup_left')
 
     def test_disabled_has_no_mutation_or_side_effect(self):
         self.obs = Observer({}, self.temp.name, '/known/source', popen=lambda *a, **k:self.fail())

@@ -140,6 +140,7 @@ def sanitize(raw):
         'schema_version': 1,
         'startup_observation_policy': _enum(raw.get('startup_observation_policy'), ('starting_phase_v2',), 'unknown'),
         'timing_origin': 'validated_session_binding',
+        'observer_trigger_wall_s': _number(raw.get('observer_trigger_wall_s'), 30) if _number(raw.get('observer_trigger_wall_s'), 30) in (5, 30) else None,
         'cutoff_semantics': 'matched_cached_startup_phase_only',
         'ros_clock_source': 'direct_subscription',
         'status': _enum(raw.get('status'), STATUSES),

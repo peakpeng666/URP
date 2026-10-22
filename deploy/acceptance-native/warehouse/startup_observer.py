@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from startup_observation_schema import sanitize, STATE_PHASES
 
 ENABLE = 'URP_WAREHOUSE_STARTUP_OBSERVER'
+DELAY = 'URP_WAREHOUSE_STARTUP_OBSERVER_DELAY_S'
 TRIGGER_S = 5.0
 HARD_WALL_S = 12.0
 RESULT_BYTES = 16384
@@ -26,6 +27,8 @@ def is_cancellation(exc):
 class Observer:
     def __init__(self, env, private, source, *, clock=time.monotonic, popen=subprocess.Popen):
         self.enabled = env.get(ENABLE) == '1'
+        delay = env.get(DELAY, '5')
+        self.trigger_s = {'5': TRIGGER_S, '30': 30.0}.get(delay) if type(delay) is str else None
         self.env = dict(env)
         self.private = Path(private)
         self.source = Path(source)
@@ -36,12 +39,16 @@ class Observer:
         self.buffer = bytearray()
         self.lock = threading.RLock()
         self.raw = {'status': 'not_started' if self.enabled else 'disabled',
+                    'observer_trigger_wall_s': self.trigger_s,
                     'startup_observation_policy': 'starting_phase_v2',
                     'sampling_end_reason': 'unobserved' if self.enabled else 'disabled',
                     'observer_watchdog_expired': False, 'output_limited': False,
                     'observer_group_signal_requested': 'none',
                     'cleanup_delay_s': 0.0, 'ros_api': {'availability': 'no_samples', 'samples': 0,
                                                      'state_responses': 0, 'starting_error_responses': 0}}
+        if self.enabled and self.trigger_s is None:
+            self.closed = True
+            self.raw.update(status='unavailable', sampling_end_reason='error')
 
     def safe(self, name, *args):
         """Ordinary diagnostic failures cannot replace control outcomes."""
@@ -151,7 +158,7 @@ class Observer:
             section['availability'] = 'available'
             section.setdefault('first', snap)
             section['last'] = snap
-        if self.proc is None and self.raw['status'] == 'not_started' and self.clock() - self.origin >= TRIGGER_S:
+        if self.proc is None and self.raw['status'] == 'not_started' and self.clock() - self.origin >= self.trigger_s:
             self.start()
         if self.proc is not None and self.proc.returncode is None:
             if snap is not None:
