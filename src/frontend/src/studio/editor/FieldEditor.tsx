@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent as RPointerEvent, type ReactNode, type WheelEvent as RWheelEvent } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type PointerEvent as RPointerEvent, type ReactNode, type WheelEvent as RWheelEvent } from 'react';
 import { useElementSize } from '../../lib/useElementSize';
 import { fitView, toScreen, toWorld, worldTransform, zoomAt, type View } from '../../lab/canvas/view';
 import type { XY } from '../../lab/types';
@@ -21,6 +21,7 @@ import {
 } from './geometry';
 import { fromSelection, itemPoints, itemsInBox, liveRefs, refKey, sameRef, toSelection, translateItems, type ItemRef } from './selection';
 import { SelectionPanel } from './SelectionPanel';
+import { ALL_LAYERS, AxisCompass, KindPattern, LayerLegendPanel, OriginMark, legendEntries, routeDash, type LayerKey, type Layers } from './legend';
 import s from './editor.module.css';
 
 export interface FieldEditorProps {
@@ -74,6 +75,9 @@ export function FieldEditor(props: FieldEditorProps) {
   // Multi-selection lives here; the store keeps the primary item (first of the list) as its single selection.
   const [picked, setPicked] = useState<ItemRef[]>([]);
   const [marquee, setMarquee] = useState<{ a: XY; b: XY } | null>(null);
+  const [layers, setLayers] = useState<Layers>(ALL_LAYERS);
+  const toggleLayer = useCallback((k: LayerKey) => setLayers((l) => ({ ...l, [k]: !l[k] })), []);
+  const idp = useId().replace(/:/g, '');
   const multi = useMemo(() => liveRefs(inst, picked), [inst, picked]);
   useEffect(() => {
     const r = fromSelection(selection);
@@ -342,6 +346,12 @@ export function FieldEditor(props: FieldEditorProps) {
   }
 
   const scr = (p: XY) => toScreen(view, p[0], p[1]);
+  const routeIndex = useMemo(() => new Map(routes.map((r, i) => [r.vehicle_name, i] as const)), [routes]);
+  const legend = legendEntries(shown, visibleRoutes, layers, {
+    lanes: !!lanes?.length, badTasks: issues.size, violations: violations?.length ?? 0, idp, routeIndex: (r) => routeIndex.get(r.vehicle_name) ?? 0,
+  });
+  const originScr = scr([0, 0]);
+  const originOnScreen = originScr[0] >= 0 && originScr[0] <= size.width && originScr[1] >= 0 && originScr[1] <= size.height;
   const gridStep = GRID_STEPS.find((g) => g * view.k >= 40) ?? 1000;
   const [bx0, by0, bx1, by1] = boundsOf(shown);
   const playbackPos = useMemo(() => {
@@ -378,42 +388,45 @@ export function FieldEditor(props: FieldEditorProps) {
               <line x1="0" y1="1.5" x2="3" y2="1.5" className={s.cropRow} />
             </pattern>
           ))}
+          {(Object.keys(OBSTACLE_STYLE) as (keyof typeof OBSTACLE_STYLE)[]).map((k) => <KindPattern key={k} id={`${idp}-ob-${k}`} kind={k} u={1.6} />)}
         </defs>
         <rect className={s.backdrop} width={size.width} height={size.height} />
-        <Grid view={view} step={gridStep} width={size.width} height={size.height} />
+        {layers.grid && <Grid view={view} step={gridStep} width={size.width} height={size.height} />}
         <g transform={worldTransform(view)}>
           <polygon data-hit="boundary" className={s.boundary} points={shown.boundary.map((p) => p.join(',')).join(' ')} />
-          {background}
-          {shown.plots.map((pl) => (
+          {layers.background && background}
+          {layers.plots && shown.plots.map((pl) => (
             <g key={pl.id}>
               <polygon className={s.plot} points={pl.polygon.map((p) => p.join(',')).join(' ')} />
               <polygon data-hit="plot" data-id={pl.id} className={s.plotRows} style={{ fill: `url(#rows-${pl.id})` }} points={pl.polygon.map((p) => p.join(',')).join(' ')} />
             </g>
           ))}
-          {lanes && lanes.length > 0 && (
+          {layers.lanes && lanes && lanes.length > 0 && (
             <g className={s.lanes}>
               {lanes.map((ln, i) => <polyline key={i} points={ln.map((p) => p.join(',')).join(' ')} />)}
             </g>
           )}
-          {(shown.corridors ?? []).map((c) => (
+          {layers.corridors && (shown.corridors ?? []).map((c) => (
             <polygon key={c.id} data-hit="corridor" data-id={c.id} className={s.corridor} points={c.polygon.map((p) => p.join(',')).join(' ')}>
               <title>{`${c.name ?? c.id} · rows 模式并入通行网络，free 模式仅保留几何`}</title>
             </polygon>
           ))}
-          {shown.obstacles.map((o) => (
+          {layers.obstacles && shown.obstacles.map((o) => (
             <polygon
               key={o.id}
               data-hit="obstacle"
               data-id={o.id}
               className={s.obstacle}
-              style={{ fill: OBSTACLE_STYLE[o.kind].fill, stroke: OBSTACLE_STYLE[o.kind].stroke }}
+              style={{ fill: `url(#${idp}-ob-${o.kind})`, stroke: OBSTACLE_STYLE[o.kind].stroke }}
               points={o.polygon.map((p) => p.join(',')).join(' ')}
-            />
+            >
+              <title>{`${o.name ?? OBSTACLE_STYLE[o.kind].label} · ${OBSTACLE_STYLE[o.kind].label} · ${o.id}`}</title>
+            </polygon>
           ))}
-          {visibleRoutes.map((r) => (
-            <polyline key={r.vehicle_name} className={s.route} style={{ stroke: r.color }} points={r.polyline.map((p) => p.join(',')).join(' ')} />
+          {layers.routes && visibleRoutes.map((r) => (
+            <polyline key={r.vehicle_name} className={s.route} style={{ stroke: r.color }} strokeDasharray={routeDash(routeIndex.get(r.vehicle_name) ?? 0)} points={r.polyline.map((p) => p.join(',')).join(' ')} />
           ))}
-          {stops.map((st) => (
+          {layers.routes && stops.map((st) => (
             <line key={st.key} className={s.stopLink} style={{ stroke: st.color }} x1={st.xy[0]} y1={st.xy[1]} x2={st.stop[0]} y2={st.stop[1]} />
           ))}
           {overlay?.(view)}
@@ -433,8 +446,8 @@ export function FieldEditor(props: FieldEditorProps) {
           const [bx, by] = scr(marquee.b);
           return <rect className={s.marquee} x={Math.min(ax, bx)} y={Math.min(ay, by)} width={Math.abs(bx - ax)} height={Math.abs(by - ay)} />;
         })()}
-        {visibleRoutes.map((r) => <Arrows key={r.vehicle_name} poly={r.polyline} view={view} color={r.color} />)}
-        {shown.plots.map((pl) => {
+        {layers.routes && visibleRoutes.map((r) => <Arrows key={r.vehicle_name} poly={r.polyline} view={view} color={r.color} />)}
+        {layers.plots && layers.labels && shown.plots.map((pl) => {
           const [cx, cy] = scr(centroid(pl.polygon));
           return (
             <text key={pl.id} x={cx} y={cy} className={s.plotLabel}>
@@ -446,11 +459,11 @@ export function FieldEditor(props: FieldEditorProps) {
           const poly = shape.target === 'obstacle' ? obstacleShape(obstacleKind, shape.a, shape.b) : rect(shape.a, shape.b);
           return <polygon className={s.rubber} points={poly.map((p) => scr(p).join(',')).join(' ')} />;
         })()}
-        {(violations ?? []).map((p, i) => {
+        {layers.issues && (violations ?? []).map((p, i) => {
           const [x, y] = scr(p);
           return <circle key={i} cx={x} cy={y} r={9} className={s.violation} />;
         })}
-        {shown.tasks.map((t) => {
+        {layers.tasks && shown.tasks.map((t) => {
           const [x, y] = scr(t.xy);
           const owner = taskOwner.get(t.id);
           const bad = issues.get(t.id);
@@ -459,15 +472,16 @@ export function FieldEditor(props: FieldEditorProps) {
             <g key={t.id} data-hit="task" data-id={t.id} className={s.taskG}>
               <title>{`${t.label} · 需求 ${t.demand}${owner ? ` · ${owner.vehicle} 第 ${owner.trip} 趟第 ${owner.order} 站` : ''}${bad ? ` · ${bad}` : ''}`}</title>
               {sel && <circle cx={x} cy={y} r={11} className={s.taskHalo} />}
-              <circle cx={x} cy={y} r={owner ? 6.5 : 5.5} className={bad ? s.taskBad : s.task} style={owner ? { stroke: owner.color } : undefined} />
-              {owner && view.k > 1.1 && (
+              <circle cx={x} cy={y} r={owner ? 6.5 : 5.5} className={bad ? s.taskBad : s.task} strokeDasharray={bad ? '2 2' : undefined} style={owner ? { stroke: owner.color } : undefined} />
+              {bad && <text x={x + 7} y={y + 4} className={s.taskBadMark}>!</text>}
+              {owner && layers.labels && view.k > 1.1 && (
                 <text x={x} y={y + 3} className={s.order} style={{ fill: owner.color }}>{owner.order}</text>
               )}
-              {view.k > 2.2 && <text x={x + 9} y={y - 7} className={s.taskLabel}>{t.label}</text>}
+              {layers.labels && view.k > 2.2 && <text x={x + 9} y={y - 7} className={s.taskLabel}>{t.label}</text>}
             </g>
           );
         })}
-        {(shown.unload_points ?? []).map((xy, index) => {
+        {layers.depots && (shown.unload_points ?? []).map((xy, index) => {
           const [x, y] = scr(xy);
           const selected = selection?.type === 'unload' && selection.index === index;
           return (
@@ -479,7 +493,7 @@ export function FieldEditor(props: FieldEditorProps) {
             </g>
           );
         })}
-        {depotsOf(shown).map((xy, index) => (
+        {layers.depots && depotsOf(shown).map((xy, index) => (
           <Depot key={`${index}-${xy.join(',')}`} xy={scr(xy)} index={index} selected={selection?.type === 'depot' && (selection.index ?? 0) === index} />
         ))}
         {playbackPos.map(({ r, xy, heading }) => {
@@ -496,11 +510,14 @@ export function FieldEditor(props: FieldEditorProps) {
             const [x, y] = scr(p);
             return <rect key={i} data-hit="vertex" data-id={`${selTarget}:${selId}:${i}`} x={x - 4.5} y={y - 4.5} width={9} height={9} className={s.vertex} />;
           })}
+        {originOnScreen && <OriginMark at={originScr} />}
+        <AxisCompass x={size.width - 110} y={size.height - 34} />
         <ScaleBar step={gridStep} k={view.k} height={size.height} />
         <text x={size.width - 10} y={size.height - 10} className={s.extent}>{`${(bx1 - bx0).toFixed(0)} × ${(by1 - by0).toFixed(0)} m`}</text>
       </svg>
       <div className={s.panelStack}>
         <SelectionPanel inst={inst} refs={multi} editable={editable} onEdit={onEdit} onSelectRefs={selectRefs} />
+        <LayerLegendPanel layers={layers} onToggle={toggleLayer} entries={legend} />
       </div>
     </div>
   );
