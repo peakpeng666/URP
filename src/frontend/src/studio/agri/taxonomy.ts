@@ -9,7 +9,7 @@
  * 本文件只含分类学常量与类型，不含构建逻辑（构建器见 patterns/）。
  */
 
-/** 六维独立能力等级：每个模式按轴分别标注，不用一个"支持/不支持"概括。 */
+/** 六维能力声明：每个模式按轴分别标注；不是测试结果，experimented 仅凭可追溯运行证据。 */
 export type CapLevel = 'yes' | 'partial' | 'no';
 
 export interface CapNote {
@@ -27,7 +27,7 @@ export interface AgriCapabilities {
   solvable: CapNote;
   /** 独立验算：是否有独立于求解器的几何/容量/可行性验算。 */
   checkable: CapNote;
-  /** 仿真适配：是否可进入 Gazebo 执行（契约 sim 仅同质差速 ≤15 台）。 */
+  /** 仿真适配：是否满足执行入口的模型/数量/资产等准入条件；规划可行不代表可执行。 */
   simulatable: CapNote;
   /** 实验验证：是否有真实运行记录（提交→求解→验算→导出）。 */
   experimented: CapNote;
@@ -173,9 +173,13 @@ export interface AgriTaskPattern {
   name: string;
   environments: EnvironmentId[];
   operation: OperationId;
+  /** 目录所描述的目标作业对象；代理实际对象见 proxyModel。 */
   serviceObject: (typeof SERVICE_OBJECTS)[number]['id'];
   vehicleClasses: string[];
+  /** 目标规划问题，不表示现有适配器原生支持。 */
   planningProblem: ProblemId;
+  /** 可提交近似模型实际表达的对象/问题。不得当作目标模型的可行性证明。 */
+  proxyModel?: { serviceObject: (typeof SERVICE_OBJECTS)[number]['id']; planningProblem: ProblemId; note: string };
   summary: string;
   /** 建模纪律声明：该模式如何忠实表达作业语义（不用中心点代替整行等）。 */
   modeling: string;
@@ -185,7 +189,7 @@ export interface AgriTaskPattern {
   /** 若为近似模式，必须显式声明近似点与差距。 */
   approximation?: string;
   metrics: string[];
-  /** 可运行模式的构建器；近似/提案模式没有。 */
+  /** 可运行或近似模式的构建器；提案模式没有。 */
   runnable?: {
     problem_class: string;
     params: BuilderParam[];

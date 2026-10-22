@@ -3,7 +3,7 @@
  *
  * 纪律：
  * - 每个提案给出 missing（缺口字段/组件清单）与 apiDraft（接口草案），等待确认后再实现；
- * - fixtures/ 下有真实数据示例（含 meta.status='proposal' 与 blocked_by），
+ * - fixtures/ 下有合成接口示例（非实测数据）（含 meta.status='proposal' 与 blocked_by），
  *   但构建产物不得把未实现键当作已生效约束提交（导入即校验拒绝）；
  * - 边界纪律：涉及新增求解器/数据库迁移/ROS 控制的，提交接口方案与差异清单等待确认。
  */
@@ -51,11 +51,11 @@ export const PROPOSAL_PATTERNS: AgriTaskPattern[] = [
     envs: ['orchard', 'open_field', 'vineyard'], op: 'intertillage', obj: 'row_set', prob: 'row_service',
     vehicles: ['tractor_implement', 'diff_drive'],
     summary: '每条作物行是必须服务的线段（含方向），行序列与出入行点联合优化。',
-    modeling: '行服务必须表达必须服务的线段及方向，不用中心点代替整行；服务成本 = 行长 × 作业速度。',
+    modeling: '行服务必须表达必须服务的线段及方向，不用中心点代替整行；服务时间 = 行长 / 作业速度；距离成本与时间成本不得混用。',
     refs: ['bochtis2009', 'oksanen2009'], metrics: ['service_completion', 'deadhead_distance', 'turn_count'],
-    defined: 'yes', definedNote: 'fixture 含带方向线段行集与行端点。',
+    defined: 'partial', definedNote: 'fixture 仅含方向线段与端点；容量 CARP 仍缺弧需求、车辆容量和作业速度。',
     gap: 'fleet_routing 适配器拒绝 line_tasks（400，输入保留）。',
-    missing: ['line_tasks（validate.py 拒绝键）', '行序列 + 出入行点联合优化', '行方向约束成本'],
+    missing: ['line_tasks（validate.py 拒绝键）', '行序列 + 出入行点联合优化', '行方向约束成本', '弧需求与车辆容量', '服务速度与时间成本量纲'],
     apiDraft: 'instance.line_tasks: [{p1, p2, direction, width_m}]；route 增 line_sequence；check 复算每行覆盖与方向。',
     fixtures: ['fixtures/carp_rows_orchard.json', 'fixtures/row_service_directed_terraced.json'],
   }),
@@ -83,7 +83,7 @@ export const PROPOSAL_PATTERNS: AgriTaskPattern[] = [
     defined: 'yes', definedNote: 'fixture 含 9 条行走道与压实面积指标名。',
     gap: '行走道网络与压实测量模型缺失。',
     missing: ['tramline_network 字段', '轮载/接地比压 → 压实模型或测量依据'],
-    apiDraft: 'instance.tramlines: [{p1, p2, width_m}]；check 复核所有轮迹落在行走道；metrics.compressed_area_m2。',
+    apiDraft: 'instance.tramlines: [{p1, p2, width_m}]；check 复核所有轮迹落在行走道；metrics.compacted_area_m2。',
     fixtures: ['fixtures/ctf_9tramlines.json'],
   }),
   makeProposal({

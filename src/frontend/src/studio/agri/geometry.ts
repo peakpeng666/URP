@@ -2,8 +2,8 @@
  * 农业场景构建用的几何工具：确定性随机、多边形包含/距离、可放置性检查。
  *
  * 可放置性规则镜像后端 validate.py：位置必须在边界内、距边界 ≥ r、
- * 不在任何障碍内且距障碍 ≥ r。构建器与后端共用同一套规则，
- * 避免"前端能放、后端 400"的偏差（混合机队半径见 builders 镜像测试）。
+ * 不在任何障碍内且距障碍 ≥ r。这是前端保守预检查，不替代后端Shapely校验；
+ * tools/check-agri-contract.mjs 使用真实后端验证所有构建器。
  */
 
 export type XY = [number, number];
@@ -47,6 +47,9 @@ export function distToPolygon(p: XY, poly: Ring): number {
 
 /** 后端 validate.py 放置校验的镜像：在边界内、离边界 ≥ r、不在障碍内、离障碍 ≥ r。 */
 export function placeable(p: XY, boundary: Ring, obstacles: Ring[], r: number): boolean {
+  const finitePoint = (xy: XY) => xy.length === 2 && xy.every(Number.isFinite);
+  if (!finitePoint(p) || !Number.isFinite(r) || r < 0) return false;
+  if ([boundary, ...obstacles].some(ring => ring.length < 3 || !ring.every(finitePoint))) return false;
   if (!pointInPolygon(p, boundary)) return false;
   if (distToPolygon(p, boundary) < r) return false;
   for (const ob of obstacles) {

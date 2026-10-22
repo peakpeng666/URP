@@ -173,10 +173,21 @@ def import_scenario(obj: dict) -> dict:
     validate_frame(pc, frame)
     default_unit = {'turn_routing': 'cm_equivalent' if frame['kind'] == 'map' else 'synthetic_integer_cost',
                     'point_to_point': 'm', 'coverage': 'm' if frame['kind'] != 'benchmark' else 'unitless'}.get(pc, 'euclidean')
+    source = obj.get('provenance') if isinstance(obj.get('provenance'), dict) else {}
+    source_params = source.get('params') if isinstance(source.get('params'), dict) else {}
+    # Keep generator inputs for reproducibility; importing never grants execution capability.
+    try:
+        source_params = json.loads(json.dumps(source_params, allow_nan=False))
+    except (TypeError, ValueError) as exc:
+        raise ValueError('生成参数须为有限数值组成的 JSON 对象') from exc
+    source_seed = source.get('seed')
+    if source_seed is not None and (isinstance(source_seed, bool) or not isinstance(source_seed, int)):
+        raise ValueError('生成种子须为整数')
     scenario = {
         'id': sid, 'title': str(obj.get('title') or sid)[:80], 'summary': str(obj.get('summary') or '用户导入场景')[:400],
         'problem_class': pc, 'frame': frame, 'cost_unit': str(obj.get('cost_unit') or default_unit),
-        'provenance': {'generator': 'user_import', 'params': {}, 'seed': None,
+        'provenance': {'generator': 'user_import', 'params': source_params, 'seed': source_seed,
+                       'source_generator': str(source.get('source_generator') or source.get('generator') or '')[:120],
                        'note': note + (' 原始说明：' + str(obj['provenance'].get('note'))[:300]
                                        if isinstance(obj.get('provenance'), dict) and obj['provenance'].get('note') else '')},
         'sim': sim, 'instance': inst,

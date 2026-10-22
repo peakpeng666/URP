@@ -1,5 +1,5 @@
 /**
- * 覆盖矩阵的真实导出：环境×规划问题、作业×服务对象、能力汇总、缺口报告。
+ * 目录声明矩阵的导出：环境×规划问题、作业×服务对象、能力汇总、缺口报告。
  * 全部由 AGRI_PATTERNS 计算，不手写——文档中的矩阵必须与代码目录一致。
  */
 import {
@@ -58,7 +58,7 @@ type CapAxis = keyof AgriCapabilities;
 
 const AXES: CapAxis[] = ['defined', 'editable', 'solvable', 'checkable', 'simulatable', 'experimented'];
 
-/** 六维能力的真实分布。 */
+/** 六维能力声明的分布；不是运行成功率或实验统计。 */
 export function capabilitySummary(): Record<CapAxis, Record<CapLevel, number>> {
   const out = {} as Record<CapAxis, Record<CapLevel, number>>;
   for (const axis of AXES) {
@@ -77,6 +77,8 @@ export interface GapReport {
   problemsProposalOnly: string[];
   /** 无任何模式的规划问题。 */
   problemsWithout: string[];
+  /** 无非近似、已声明可求解且可验算模板的目标问题（仍非运行证明）。 */
+  problemsWithoutNativeSupport: string[];
 }
 
 export function gapReport(): GapReport {
@@ -93,5 +95,10 @@ export function gapReport(): GapReport {
   const problemsWithout = PLANNING_PROBLEMS.filter(
     (prob) => !AGRI_PATTERNS.some((p) => p.planningProblem === prob.id),
   ).map((p) => p.name);
-  return { envsWithout, opsWithout, problemsProposalOnly, problemsWithout };
+  const problemsWithoutNativeSupport = PLANNING_PROBLEMS.filter(
+    (prob) => !AGRI_PATTERNS.some((p) => p.planningProblem === prob.id
+      && patternStatus(p) === 'runnable' && !p.proxyModel
+      && p.capabilities.solvable.level === 'yes' && p.capabilities.checkable.level === 'yes'),
+  ).map((p) => p.name);
+  return { envsWithout, opsWithout, problemsProposalOnly, problemsWithout, problemsWithoutNativeSupport };
 }

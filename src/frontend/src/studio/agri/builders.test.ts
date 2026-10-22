@@ -9,8 +9,9 @@
  */
 import { describe, expect, it } from 'vitest';
 import { AGRI_PATTERNS } from './patterns';
-import { placeable, type Ring, type XY } from './geometry';
+import { placeable } from './geometry';
 import type { BuiltScenario } from './taxonomy';
+import type { FleetInstance } from '../types';
 
 const SEEDS = [42, 7, 2026];
 
@@ -89,17 +90,23 @@ describe('fleet_routing 构建产物的放置与容量', () => {
     '%s：任务点/车库/卸载点按 fleet 最大半径通过镜像放置校验', (_id, pattern) => {
       for (const seed of SEEDS) {
         const built = pattern.runnable!.build(defaultsOf(pattern), seed) as BuiltScenario;
-        const inst = built.instance as unknown as {
-          boundary: Ring; obstacles: Ring[]; depot: XY; unload_points?: XY[];
-          tasks: { x: number; y: number; demand: number }[];
-        };
+        const inst = built.instance as unknown as FleetInstance;
+        const obstacles = inst.obstacles.map((o) => o.polygon);
         const r = effectiveRadius(built.instance);
-        for (const t of inst.tasks) {
-          expect(placeable([t.x, t.y], inst.boundary, inst.obstacles, r), `${_id} 任务点 ${t.x},${t.y}`).toBe(true);
+        for (const plot of inst.plots) expect(plot.polygon.length).toBeGreaterThanOrEqual(3);
+        for (const obstacle of inst.obstacles) expect(obstacle.polygon.length).toBeGreaterThanOrEqual(3);
+        for (const task of inst.tasks) {
+          expect(Number.isInteger(task.id)).toBe(true);
+          expect(task.id).toBeGreaterThan(0);
+          expect(task.xy).toHaveLength(2);
+          expect(task.xy.every(Number.isFinite)).toBe(true);
         }
-        expect(placeable(inst.depot, inst.boundary, inst.obstacles, r), `${_id} depot`).toBe(true);
+        for (const t of inst.tasks) {
+          expect(placeable(t.xy, inst.boundary, obstacles, r), `${_id} 任务点 ${t.xy}`).toBe(true);
+        }
+        expect(placeable(inst.depot, inst.boundary, obstacles, r), `${_id} depot`).toBe(true);
         for (const u of inst.unload_points ?? []) {
-          expect(placeable(u, inst.boundary, inst.obstacles, r), `${_id} unload`).toBe(true);
+          expect(placeable(u, inst.boundary, obstacles, r), `${_id} unload`).toBe(true);
         }
       }
     },

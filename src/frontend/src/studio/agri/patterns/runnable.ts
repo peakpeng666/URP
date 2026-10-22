@@ -4,10 +4,11 @@
  * 建模纪律：
  * - 点集需求是真实的带需求点集（容量/卸载/趟数），不以轨迹点数代替工作量；
  * - 覆盖模板按作业幅宽计算覆盖面积，覆盖率分母写明（内缩作业区，地头单列）；
- * - 构建器放置规则镜像后端 validate.py（含 fleet 类别半径取 max），
- *   builders.test.ts 用镜像校验器守住这条对齐；
- * - 试验记录（EXP）只写真实发生的运行，数值来自后端返回。
+ * - 构建器使用既有 FleetInstance 契约；tools/check-agri-contract.mjs
+ *   将真实构建产物交给后端 validate_instance 做跨语言回归；
+ * - 未关联到当前实例的持久化运行证据时，不预先宣称实验通过。
  */
+import type { FleetInstance } from '../../types';
 import type { AgriCapabilities, AgriTaskPattern, BuilderParam, BuiltScenario } from '../taxonomy';
 import { disc, placeable, rng, round2, type Ring, type XY } from '../geometry';
 
@@ -17,8 +18,8 @@ const str = (v: Record<string, unknown>, k: string) => String(v[k]);
 /** 参数表公共片段。 */
 export const P = {
   size: (w: number, h: number): BuilderParam[] => [
-    { key: 'field_w', label: '田块宽度', unit: 'm', type: 'number', default: w, min: 40, max: 600 },
-    { key: 'field_h', label: '田块高度', unit: 'm', type: 'number', default: h, min: 40, max: 600 },
+    { key: 'field_w', label: '田块宽度', unit: 'm', type: 'number', default: w, min: 20, max: 600 },
+    { key: 'field_h', label: '田块高度', unit: 'm', type: 'number', default: h, min: 20, max: 600 },
   ],
   rows: (deg: number): BuilderParam[] => [
     { key: 'row_angle', label: '行向角', unit: '°', type: 'number', default: deg, min: 0, max: 179 },
@@ -71,163 +72,129 @@ interface FleetSpec {
   placeRadius?: number;
 }
 
-interface FleetVehicles {
-  count?: number;
-  capacity?: number;
-  speed_mps?: number;
-  trips?: 'multi' | 'single';
-  travel?: 'rows' | 'free';
-  fleet?: {
-    name: string; count: number; capacity: number; speed_mps: number;
-    robot_radius?: number; payload?: string; min_turn_radius_m?: number;
-  }[];
-}
-
-interface FleetInstance {
-  boundary: Ring;
-  plots: Ring[];
-  obstacles: Ring[];
-  rows?: [XY, XY][];
-  depot: XY;
-  depots?: XY[];
-  unload_points?: XY[];
-  tasks: { id: string; x: number; y: number; demand: number }[];
-  vehicles: FleetVehicles;
-  objective: 'total_distance' | 'makespan';
-  robot_radius: number;
-  units: 'm';
-  meta: { task_word: string; margin_m: number; road_m: number };
-}
-
 /** 构建点集需求实例；放置校验镜像后端（半径取 max(基础半径, fleet 类别半径)）。 */
 export function buildFleetInstance(
   v: Record<string, unknown>, seed: number, spec: FleetSpec,
 ): FleetInstance {
   const rand = rng(seed);
-  const W = num(v, 'field_w');
-  const H = num(v, 'field_h');
+  const W = bounded(v, 'field_w', 20, 600);
+  const H = bounded(v, 'field_h', 20, 600);
   const boundary: Ring = [[0, 0], [W, 0], [W, H], [0, H]];
-  const r = Math.max(num(v, 'robot_radius'), spec.placeRadius ?? 0);
-
-  // 地块划分
+  const r = Math.max(bounded(v, 'robot_radius', 0.3, 2), spec.placeRadius ?? 0);
+  const demand = bounded(v, 'demand_per_task', 1, 500, true);
+  const want = bounded(v, 'task_count', 4, 200, true);
+  const capacity = bounded(v, 'capacity', 1, 5000, true);
+  if (capacity < demand) throw new Error('单车容量不能小于单点需求；请修改容量或需求，不会自动增容。');
+  const count = bounded(v, 'vehicles', 1, 15, true);
+  const speed = bounded(v, 'speed', 0.3, 3);
+  const angle = v.row_angle === undefined ? 0 : bounded(v, 'row_angle', 0, 179);
+  const objective = str(v, 'objective');
+  if (objective !== 'makespan' && objective !== 'total_distance') throw new Error('未知优化目标');
+  if (!['sw', 'n', 'e'].includes(str(v, 'depot_at'))) throw new Error('未知车库方位');
   const margin = spec.plots?.margin ?? 0;
-  const plots: Ring[] = [];
+  if (W <= 2 * margin || H <= 2 * margin) throw new Error(`田块宽高须大于两侧边距 ${2 * margin} m`);
+  const plots: FleetInstance['plots'] = [];
   if (spec.plots) {
-    const { cols, rows: prow } = spec.plots;
+    const { cols, rows } = spec.plots;
     const cw = (W - 2 * margin) / cols;
-    const ch = (H - 2 * margin) / prow;
-    for (let i = 0; i < cols; i++) {
-      for (let j = 0; j < prow; j++) {
-        plots.push([
-          [round2(margin + i * cw), round2(margin + j * ch)],
-          [round2(margin + (i + 1) * cw), round2(margin + j * ch)],
-          [round2(margin + (i + 1) * cw), round2(margin + (j + 1) * ch)],
-          [round2(margin + i * cw), round2(margin + (j + 1) * ch)],
-        ]);
-      }
+    const ch = (H - 2 * margin) / rows;
+    for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
+      plots.push({ id: `P${plots.length + 1}`, name: `地块${plots.length + 1}`, crop: spec.crop, rows_deg: angle,
+        polygon: [[margin + i * cw, margin + j * ch], [margin + (i + 1) * cw, margin + j * ch],
+          [margin + (i + 1) * cw, margin + (j + 1) * ch], [margin + i * cw, margin + (j + 1) * ch]] });
     }
   }
-
-  // 内部障碍（池塘等）：随机位置但保证自身可放置
-  const obstacles: Ring[] = [];
-  const obN = Math.round(num(v, 'obstacle_count') || 0);
-  const obR = num(v, 'obstacle_r') || 0;
-  for (let i = 0; i < obN && obR > 0; i++) {
-    for (let t = 0; t < 40; t++) {
-      const cx = W * (0.3 + 0.5 * rand());
-      const cy = H * (0.3 + 0.5 * rand());
-      const ob = disc(round2(cx), round2(cy), obR, 14);
-      const cornersOK = ob.every((p) => placeable(p, boundary, [], 0.5));
-      if (cornersOK) { obstacles.push(ob); break; }
+  const obstacles: FleetInstance['obstacles'] = [];
+  const obN = v.obstacle_count === undefined ? 0 : bounded(v, 'obstacle_count', 0, 6, true);
+  const obR = v.obstacle_r === undefined ? 0 : bounded(v, 'obstacle_r', 0, 40);
+  if (obN > 0 && obR <= 0) throw new Error('存在障碍时，障碍半径须大于0');
+  for (let i = 0; i < obN; i++) {
+    let polygon: Ring | null = null;
+    for (let t = 0; t < 200; t++) {
+      const ob = disc(round2(W * (0.3 + 0.5 * rand())), round2(H * (0.3 + 0.5 * rand())), obR, 14);
+      if (ob.every(p => placeable(p, boundary, [], 0.5))) { polygon = ob; break; }
     }
+    if (!polygon) throw new Error('田块无法容纳指定障碍；请减小障碍或增大田块。');
+    obstacles.push({ id: `O${i + 1}`, kind: 'pond', polygon });
   }
-
-  // rows 模式下：作物行在地块内；车库/补给点的 noGo = plots ∪ obstacles
+  const rings = obstacles.map(o => o.polygon);
+  const noGo = spec.travel === 'rows' ? [...plots.map(p => p.polygon), ...rings] : rings;
+  // The backend owns the actual lane graph. These lines only distribute service points;
+  // crop and rows_deg above are the canonical inputs to that graph, not a second rows schema.
   const rowLines: [XY, XY][] = [];
-  const noGoForStation = spec.travel === 'rows' ? [...plots, ...obstacles] : obstacles;
   if (spec.distribution === 'rows') {
-    const src = plots.length ? plots : [boundary];
-    for (const pl of src) {
-      const xs = pl.map((p) => p[0]);
-      const ys = pl.map((p) => p[1]);
-      const x0 = Math.min(...xs); const x1 = Math.max(...xs);
-      const y0 = Math.min(...ys); const y1 = Math.max(...ys);
-      const spacing = 6;
-      for (let x = x0 + spacing / 2; x < x1; x += spacing) {
-        rowLines.push([[round2(x), round2(y0 + 1)], [round2(x), round2(y1 - 1)]]);
-      }
-    }
-  }
-
-  // 任务点：rows 时落在作物行上，否则均匀散布；均以半径 r 做可放置校验
-  const demand = Math.round(num(v, 'demand_per_task'));
-  const want = Math.round(num(v, 'task_count'));
-  const tasks: FleetInstance['tasks'] = [];
-  let guard = 0;
-  while (tasks.length < want && guard++ < want * 200) {
-    let p: XY;
-    if (spec.distribution === 'rows' && rowLines.length) {
-      const ln = rowLines[Math.floor(rand() * rowLines.length)];
-      const t = 0.08 + 0.84 * rand();
-      p = [round2(ln[0][0] + (ln[1][0] - ln[0][0]) * t), round2(ln[0][1] + (ln[1][1] - ln[0][1]) * t)];
-    } else {
-      p = [round2(margin + (W - 2 * margin) * rand()), round2(margin + (H - 2 * margin) * rand())];
-    }
-    if (placeable(p, boundary, obstacles, r)) {
-      tasks.push({ id: `${spec.word}${tasks.length + 1}`, x: p[0], y: p[1], demand });
-    }
-  }
-
-  // 车库：按方位选基点，再以 r+0.5 在 noGo 外做环形搜索
-  const base: XY = str(v, 'depot_at') === 'n' ? [round2(W / 2), round2(H - margin / 2)]
-    : str(v, 'depot_at') === 'e' ? [round2(W - margin / 2), round2(H / 2)]
-      : [round2(Math.max(margin / 2, 4)), round2(Math.max(margin / 2, 4))];
-  let depot: XY = base;
-  if (!placeable(base, boundary, noGoForStation, r + 0.5)) {
-    for (let rad = 2; rad <= 40; rad += 2) {
-      let placed: XY | null = null;
-      for (let k = 0; k < 16; k++) {
-        const a = (2 * Math.PI * k) / 16;
-        const cand: XY = [round2(base[0] + rad * Math.cos(a)), round2(base[1] + rad * Math.sin(a))];
-        if (placeable(cand, boundary, noGoForStation, r + 0.5)) { placed = cand; break; }
-      }
-      if (placed) { depot = placed; break; }
-    }
-  }
-
-  // 田头补给/卸载点：同理
-  const unload: XY[] = [];
-  if ((spec.unload ?? 1) === 1 && v.refill_point !== false) {
-    const ub: XY = [round2(Math.min(W - 6, depot[0] + 12)), round2(depot[1])];
-    let placed: XY | null = null;
-    if (placeable(ub, boundary, noGoForStation, r + 0.5)) placed = ub;
-    if (!placed) {
-      for (let rad = 2; rad <= 40 && !placed; rad += 2) {
-        for (let k = 0; k < 16; k++) {
-          const a = (2 * Math.PI * k) / 16;
-          const cand: XY = [round2(ub[0] + rad * Math.cos(a)), round2(ub[1] + rad * Math.sin(a))];
-          if (placeable(cand, boundary, noGoForStation, r + 0.5)) placed = cand;
+    for (const pl of plots.length ? plots.map(p => p.polygon) : [boundary]) {
+      const x0 = Math.min(...pl.map(p => p[0])) + 1;
+      const x1 = Math.max(...pl.map(p => p[0])) - 1;
+      const y0 = Math.min(...pl.map(p => p[1])) + 1;
+      const y1 = Math.max(...pl.map(p => p[1])) - 1;
+      if (x1 <= x0 || y1 <= y0) throw new Error('地块过窄，无法布置作业点');
+      const theta = angle * Math.PI / 180, dx = Math.cos(theta), dy = Math.sin(theta);
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, extent = Math.hypot(x1 - x0, y1 - y0);
+      for (let offset = -extent; offset <= extent; offset += 6) {
+        const x = cx - dy * offset, y = cy + dx * offset;
+        let lo = -Infinity, hi = Infinity;
+        for (const [origin, direction, lower, upper] of [[x, dx, x0, x1], [y, dy, y0, y1]]) {
+          if (Math.abs(direction) < 1e-10) { if (origin < lower || origin > upper) hi = -Infinity; }
+          else { const a = (lower - origin) / direction, b = (upper - origin) / direction;
+            lo = Math.max(lo, Math.min(a, b)); hi = Math.min(hi, Math.max(a, b)); }
         }
+        if (hi > lo) rowLines.push([[round2(x + lo * dx), round2(y + lo * dy)], [round2(x + hi * dx), round2(y + hi * dy)]]);
       }
     }
-    unload.push(placed ?? [round2(ub[0] + 5), round2(ub[1] + 5)]);
+    if (!rowLines.length) throw new Error('地块无法布置指定方向的作业点');
   }
-
-  const capacity = Math.max(Math.round(num(v, 'capacity')), demand);
-  return {
-    boundary, plots, obstacles,
-    rows: rowLines.length ? rowLines : undefined,
-    depot,
-    unload_points: unload.length ? unload : undefined,
-    tasks,
-    vehicles: {
-      count: Math.round(num(v, 'vehicles')), capacity,
-      speed_mps: num(v, 'speed'), trips: 'multi', travel: spec.travel,
-    },
-    objective: str(v, 'objective') as 'total_distance' | 'makespan',
-    robot_radius: r, units: 'm',
-    meta: { task_word: spec.word, margin_m: margin, road_m: margin },
+  const tasks: FleetInstance['tasks'] = [];
+  for (let guard = 0; tasks.length < want && guard < want * 200; guard++) {
+    let p: XY;
+    if (rowLines.length) {
+      const line = rowLines[Math.floor(rand() * rowLines.length)], t = 0.08 + 0.84 * rand();
+      p = [round2(line[0][0] + (line[1][0] - line[0][0]) * t), round2(line[0][1] + (line[1][1] - line[0][1]) * t)];
+    } else p = [round2(margin + (W - 2 * margin) * rand()), round2(margin + (H - 2 * margin) * rand())];
+    if (placeable(p, boundary, rings, r) && !tasks.some(t => Math.hypot(t.xy[0] - p[0], t.xy[1] - p[1]) < 0.01)) {
+      tasks.push({ id: tasks.length + 1, label: `${spec.word}${tasks.length + 1}`, xy: p, demand });
+    }
+  }
+  if (tasks.length !== want) throw new Error('可放置任务点不足；请减少任务/障碍或增大田块。');
+  const station = (base: XY): XY => {
+    if (placeable(base, boundary, noGo, r + 0.5)) return base;
+    for (let rad = 2; rad <= Math.hypot(W, H); rad += 2) for (let k = 0; k < 32; k++) {
+      const a = 2 * Math.PI * k / 32;
+      const p: XY = [round2(base[0] + rad * Math.cos(a)), round2(base[1] + rad * Math.sin(a))];
+      if (placeable(p, boundary, noGo, r + 0.5)) return p;
+    }
+    throw new Error('没有满足净空的车库/补给点；请增大边距或减小机器人半径。');
   };
+  const depot = station(str(v, 'depot_at') === 'n' ? [round2(W / 2), round2(H - margin / 2)]
+    : str(v, 'depot_at') === 'e' ? [round2(W - margin / 2), round2(H / 2)]
+      : [round2(Math.max(margin / 2, 4)), round2(Math.max(margin / 2, 4))]);
+  const unload = (spec.unload ?? 1) === 1 && v.refill_point !== false
+    ? [station([round2(Math.min(W - 6, depot[0] + 12)), depot[1]])] : [];
+  return { boundary, plots, obstacles, depot, unload_points: unload.length ? unload : undefined, tasks,
+    vehicles: { count, capacity, speed_mps: speed, trips: 'multi', travel: spec.travel },
+    objective, robot_radius: r, units: 'm', meta: { task_word: spec.word, margin_m: margin, road_m: margin } };
+}
+
+/** Validate instead of silently changing the user's experiment. */
+function bounded(v: Record<string, unknown>, key: string, min: number, max: number, integer = false): number {
+  const value = v[key];
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < min || value > max || (integer && !Number.isInteger(value))) {
+    throw new Error(`${key} 须为 ${min}–${max} 范围内的${integer ? '整数' : '有限数值'}`);
+  }
+  return value;
+}
+
+function coverageGeometry(v: Record<string, unknown>, pond = false) {
+  const W = bounded(v, 'field_w', 20, 600), H = bounded(v, 'field_h', 20, 600);
+  const head = bounded(v, 'headland_width', 0, 20), width = bounded(v, 'robot_width', 0.5, 8);
+  const swath = bounded(v, 'swath_width', 0.5, 12);
+  bounded(v, 'turn_radius', 1, 12);
+  if (Math.min(W, H) <= 2 * head) throw new Error('地头宽度过大，内缩作业区为空');
+  if (W * H / (swath * swath) > 200000) throw new Error('田块相对作业幅宽过大，请增大幅宽或缩小田块');
+  if (pond) { const radius = bounded(v, 'pond_r', 5, 40);
+    if (radius + head + width / 2 >= Math.min(W * 0.45, H * 0.5)) throw new Error('池塘及安全间距超出田块；请减小池塘或增大田块'); }
+  const inset = Math.max(head / 2, width / 2 + 0.01);
+  return { W, H, start: [inset, inset] as XY };
 }
 
 function wrapFleet(
@@ -247,9 +214,9 @@ function wrapFleet(
     editable: { params, values: { ...v } },
     layers: {
       boundary: inst.boundary,
-      plots: inst.plots,
-      obstacles: inst.obstacles,
-      rows: inst.rows ?? [],
+      plots: inst.plots.map(p => p.polygon),
+      obstacles: inst.obstacles.map(o => o.polygon),
+      rows: [],
       depot: inst.depot,
       unload_points: inst.unload_points ?? [],
     },
@@ -280,13 +247,13 @@ function wrapCoverage(
 
 const cap = (
   defined: string, editable: string, solvable: [AgriCapabilities['solvable']['level'], string],
-  checkable: string, sim: [AgriCapabilities['simulatable']['level'], string],
+  checkable: string | [AgriCapabilities['checkable']['level'], string], sim: [AgriCapabilities['simulatable']['level'], string],
   experimented: [AgriCapabilities['experimented']['level'], string],
 ): AgriCapabilities => ({
   defined: { level: 'yes', note: defined },
   editable: { level: 'yes', note: editable },
   solvable: { level: solvable[0], note: solvable[1] },
-  checkable: { level: 'yes', note: checkable },
+  checkable: typeof checkable === 'string' ? { level: 'yes', note: checkable } : { level: checkable[0], note: checkable[1] },
   simulatable: { level: sim[0], note: sim[1] },
   experimented: { level: experimented[0], note: experimented[1] },
 });
@@ -294,23 +261,24 @@ const cap = (
 const SIM_DIFF_NOTE = '同构差速、无曲率约束、≤15 台时可申请进入生成的田间 Gazebo 世界（串行预约执行）；其余组合执行入口按契约返回 422。';
 const FLEET_CHECK = 'fleet.check 独立复算容量、趟次、作业位置与通行约束（rows 时重生成作物行核对路线不斜穿作物）。';
 
-// 2026-10-21/22 真实运行批次：种子 42，网关 0.1.0，独立验算均为后端真实返回；详见 docs/agriculture/复现与失败案例.md。
-// （沙箱回收后于 10-22 重建代码；数值为当时后端真实返回，重建后以同种子复测核对。）
-const EXP: Record<string, [AgriCapabilities['experimented']['level'], string]> = {
-  orchard_harvest: ['yes', '实测对比（种子 42，预算 5 s）：ortools.fleet 1461.23 s < panel.cluster_first 1674.55 s，均 feasible 且独立验算通过；另经 UI 导入→求解→验算→刷新恢复全链验证。'],
-  orchard_spray: ['yes', '实测对比（种子 42，预算 5 s）：ortools.fleet 1787.79 s < panel.cluster_first 2057.16 s，均 feasible 且独立验算通过。'],
-  spot_spray: ['yes', '实测对比（种子 42，预算 2 s）：ortools.fleet 与 pyvrp.fleet 均 680.62 m 持平，均 feasible 且独立验算通过。'],
-  field_sampling: ['yes', '实测对比（种子 42，预算 5 s）：pyvrp.fleet 791.02 m < ortools.fleet 813.95 m，均 feasible 且独立验算通过。'],
-  grain_cart: ['yes', '实测对比（种子 42，预算 2 s）：ortools.fleet 551.27 s < pyvrp.fleet 846.56 s，均 feasible 且独立验算通过。'],
-  mixed_fleet: ['yes', '实测对比（种子 42，预算 5 s）：ortools.fleet 835.79 s < pyvrp.fleet 1318.14 s，均 feasible 且独立验算通过；首次提交曾因 fleet 类别半径大于基础半径被后端 400 拒绝，构建器修复后通过（见失败案例文档）。'],
-  tea_leaf: ['yes', '实测对比（种子 42，预算 2 s）：pyvrp.fleet 680.80 s < ortools.fleet 688.18 s，均 feasible 且独立验算通过；另经 UI 提交 3 算法对比（含 savings 基线）并验证刷新恢复。'],
-  dubins: ['yes', '实测对比（种子 42，预算 5 s）：ortools.fleet 与 pyvrp.fleet 均 636.73 m，feasible 且曲率验算通过；首次运行因网关环境缺 ompl 记 state=error，装依赖并重启网关后复算成功，两次记录均保留。'],
-  cov_tillage: ['partial', '单算法基线（种子 42，预算 3 s）：panel.boustrophedon 8210.0 m，feasible，独立扫掠验算通过（分母=内缩作业区，阈值 90%）；本环境 f2c 不可用，无横向对比。'],
-  cov_obstacle: ['partial', '单算法基线（种子 42，预算 3 s）：panel.boustrophedon 返回 no_solution，独立验算判 invalid——连接段/足迹越界或穿障，内缩区覆盖率 0.8153 < 0.9；作为诚实失败基线保留，未粉饰为通过。'],
-  greenhouse: ['yes', '实测对比（种子 42，预算 5 s）：pyvrp.fleet 743.07 s < ortools.fleet 836.59 s，均 feasible 且独立验算通过。'],
-  multi_field: ['yes', '实测对比（种子 42，预算 5 s）：ortools.fleet 645.47 s < pyvrp.fleet 653.84 s，均 feasible 且独立验算通过。'],
-  pasture: ['yes', '实测对比（种子 42，预算 5 s）：ortools.fleet 与 pyvrp.fleet 均 1141.42 m 持平，均 feasible 且独立验算通过。'],
-  bale: ['yes', '实测对比（种子 42，预算 5 s）：ortools.fleet 1875.11 s < pyvrp.fleet 2012.67 s，均 feasible 且独立验算通过。'],
+// No historical run IDs or immutable input/response bundle were delivered with these templates.
+// Capability of a solver is not evidence of an experiment for this generated instance.
+const UNVERIFIED: [AgriCapabilities['experimented']['level'], string] = ['no', '本版本模板尚无关联的持久化运行证据；请提交真实求解并检查独立验算结果，不将历史文案视为通过。'];
+const EXP = {
+  orchard_harvest: UNVERIFIED,
+  orchard_spray: UNVERIFIED,
+  spot_spray: UNVERIFIED,
+  field_sampling: UNVERIFIED,
+  grain_cart: UNVERIFIED,
+  mixed_fleet: UNVERIFIED,
+  tea_leaf: UNVERIFIED,
+  dubins: UNVERIFIED,
+  cov_tillage: UNVERIFIED,
+  cov_obstacle: UNVERIFIED,
+  greenhouse: UNVERIFIED,
+  multi_field: UNVERIFIED,
+  pasture: UNVERIFIED,
+  bale: UNVERIFIED,
 };
 
 export const RUNNABLE_PATTERNS: AgriTaskPattern[] = [
@@ -358,13 +326,13 @@ export const RUNNABLE_PATTERNS: AgriTaskPattern[] = [
     environments: ['orchard'], operation: 'spraying_spot', serviceObject: 'point_set',
     vehicleClasses: ['diff_drive'], planningProblem: 'multi_trip_refill',
     summary: '把果树行上的喷药对象离散为带药量需求的点，药箱容量驱动多趟补给。',
-    modeling: '近似：真实喷施是连续行服务（雾滴沿行沉积），此处按 CONESA 式离散目标集合建模；连续行服务见提案「行服务 CARP」。',
+    modeling: '近似：连续行喷施退化为点需求代理，不表达全行服务或沉积；文献仅提供选择性施药路线规划背景，连续行服务见提案「行服务 CARP」。',
     refs: ['conesa2016', 'jensen2015', 'urp_p510'],
     capabilities: cap(
       '点需求 + 药箱容量 + 补给点语义完整。',
       '全部参数与几何可编辑。',
-      ['partial', '求解本身真实可行；但“整行连续喷施”被离散为点集，漏喷/重喷与沉积不在验算范围。'],
-      FLEET_CHECK,
+      ['partial', '仅对代理点访问求解；“整行连续喷施”被离散为点集，漏喷/重喷与沉积不在验算范围。'],
+      ['partial', `${FLEET_CHECK} 仅验算代理模型，不含 approximation 所列缺失约束。`],
       ['partial', SIM_DIFF_NOTE], EXP.orchard_spray,
     ),
     approximation: '行服务 → 点集：每棵树/每个喷施位一个点；不能表达“沿整行必须连续开启喷头”的约束。',
@@ -537,7 +505,7 @@ export const RUNNABLE_PATTERNS: AgriTaskPattern[] = [
       '多区域 + 点集 + 容量齐备；路网缺失显式声明。',
       '全部可编辑。',
       ['yes', 'fleet_routing 原生语义（free 通行）。'],
-      FLEET_CHECK,
+      ['partial', `${FLEET_CHECK} 仅验算代理模型，不含 approximation 所列缺失约束。`],
       ['partial', SIM_DIFF_NOTE], EXP.multi_field,
     ),
     approximation: '田块间转场为欧氏近似；真实农场路网（机耕道宽度/限高/单行）不在契约内。',
@@ -608,7 +576,7 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
       '点需求 + 容量 + 卸载完整。',
       '全部可编辑。',
       ['yes', 'fleet_routing 原生语义。'],
-      FLEET_CHECK,
+      ['partial', `${FLEET_CHECK} 仅验算代理模型，不含 approximation 所列缺失约束。`],
       ['partial', SIM_DIFF_NOTE], EXP.tea_leaf,
     ),
     approximation: '无坡度近似：茶园多在坡地，本模式平面化；坡地风险约束路径见提案。',
@@ -685,7 +653,7 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
       problem_class: 'fleet_routing',
       params: [
         ...P.size(240, 160),
-        ...P.tasks(40, 60), ...P.fleet(4, 500, 0.9), ...P.robot(0.8),
+        ...P.tasks(40, 60), ...P.fleet(4, 500, 0.9).map(p => p.key === 'vehicles' ? { ...p, min: 2 } : p), ...P.robot(0.8),
         ...P.depot('sw'), ...P.objective('makespan'), ...P.refill(true), ...P.obstacles(0, 0),
       ],
       build: (v, seed) => {
@@ -694,11 +662,12 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
           plots: null, unload: v.refill_point === false ? 0 : 1,
           placeRadius: Math.max(1.0, num(v, 'robot_radius')),
         });
-        const cap0 = Math.max(Math.round(num(v, 'capacity')), Math.round(num(v, 'demand_per_task')));
+        const cap0 = num(v, 'capacity');
+        if (num(v, 'vehicles') < 2) throw new Error('异构机队至少需要2台车（大小车型各至少1台）');
         inst.vehicles = {
           fleet: [
-            { name: '大车', count: Math.max(1, Math.round(num(v, 'vehicles') / 2)), capacity: cap0, speed_mps: num(v, 'speed'), robot_radius: 1.0 },
-            { name: '小车', count: Math.max(1, Math.floor(num(v, 'vehicles') / 2)), capacity: Math.max(1, Math.round(cap0 / 3)), speed_mps: num(v, 'speed') * 1.2, robot_radius: 0.5 },
+            { name: '大车', count: Math.max(1, Math.round(num(v, 'vehicles') / 2)), capacity: cap0, speed_mps: num(v, 'speed'), robot_radius: 1.0, payload: 'load' },
+            { name: '小车', count: Math.max(1, Math.floor(num(v, 'vehicles') / 2)), capacity: Math.max(1, Math.round(cap0 / 3)), speed_mps: num(v, 'speed') * 1.2, robot_radius: 0.5, payload: 'load' },
           ],
           trips: 'multi', travel: 'free',
         };
@@ -736,12 +705,12 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
         const inst = buildFleetInstance(v, seed, {
           word: '作业点', crop: '小麦', distribution: 'uniform', travel: 'free', plots: null,
         });
-        const turn = Math.min(10, Math.max(1.5, num(v, 'turn_radius')));
+        const turn = bounded(v, 'turn_radius', 1.5, 10);
         inst.vehicles = {
           fleet: [
             {
               name: '阿克曼作业车', count: Math.round(num(v, 'vehicles')),
-              capacity: Math.max(Math.round(num(v, 'capacity')), 1), speed_mps: num(v, 'speed'),
+              capacity: num(v, 'capacity'), speed_mps: num(v, 'speed'),
               robot_radius: num(v, 'robot_radius'), payload: 'load', min_turn_radius_m: turn,
             },
           ],
@@ -767,7 +736,7 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
     capabilities: {
       defined: { level: 'yes', note: '幅宽、地头宽、转弯半径、行向齐备。' },
       editable: { level: 'partial', note: 'coverage 编辑器支持既有字段；模板参数经构建表单生成。' },
-      solvable: { level: 'yes', note: '契约求解器为 Fields2Cover（地头→布行→行排序→转弯路径）；本验收环境 f2c 无 wheel 未安装，实测由 panel.boustrophedon 基线承担。' },
+      solvable: { level: 'yes', note: '契约求解器为 Fields2Cover（地头→布行→行排序→转弯路径）；实际可用性由现有算法目录检测；基线不约束转弯半径。' },
       checkable: { level: 'yes', note: '独立覆盖率复算：分母为内缩作业区，阈值 90%，地头面积单列。' },
       simulatable: { level: 'no', note: 'coverage 问题类不在田间仿真准入范围（CONTRACT §5.1）。' },
       experimented: { level: EXP.cov_tillage[0], note: EXP.cov_tillage[1] },
@@ -791,14 +760,15 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
         },
       ],
       build: (v, seed) => {
-        const W = num(v, 'field_w'); const H = num(v, 'field_h');
+        const { W, H, start } = coverageGeometry(v);
+        if (!['boustrophedon', 'snake', 'spiral'].includes(str(v, 'route_pattern'))) throw new Error('未知覆盖模式');
         const inst = {
           field: [[0, 0], [W, 0], [W, H], [0, H]],
           headland_width: num(v, 'headland_width'),
           swath_width: num(v, 'swath_width'),
           turn_radius: num(v, 'turn_radius'),
           robot_width: num(v, 'robot_width'),
-          start: [num(v, 'headland_width') / 2, num(v, 'headland_width') / 2],
+          start,
           route_pattern: str(v, 'route_pattern'),
           angle_deg: null,
         };
@@ -823,7 +793,7 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
     capabilities: {
       defined: { level: 'yes', note: '障碍内孔 + 内缩 + 幅宽。' },
       editable: { level: 'partial', note: 'coverage 编辑器支持障碍多边形。' },
-      solvable: { level: 'yes', note: '契约求解器为 Fields2Cover 单元分解处理内孔；本验收环境 f2c 不可用，实测由 panel.boustrophedon 基线承担（基线未通过独立验算，见实验记录）。' },
+      solvable: { level: 'yes', note: '契约求解器为 Fields2Cover 单元分解处理内孔；实际可用性由现有算法目录检测；基线路径可能穿障，必须通过独立验算。' },
       checkable: { level: 'yes', note: 'interior90 政策：分母 = 内缩作业区（不含障碍）。' },
       simulatable: { level: 'no', note: 'coverage 不进仿真。' },
       experimented: { level: EXP.cov_obstacle[0], note: EXP.cov_obstacle[1] },
@@ -840,7 +810,7 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
         { key: 'pond_r', label: '池塘半径', unit: 'm', type: 'number', default: 18, min: 5, max: 40, help: '内部圆形障碍。' },
       ],
       build: (v, seed) => {
-        const W = num(v, 'field_w'); const H = num(v, 'field_h');
+        const { W, H, start } = coverageGeometry(v, true);
         const pond = disc(W * 0.55, H * 0.5, num(v, 'pond_r'), 14);
         const inst = {
           field: [[0, 0], [W, 0], [W, H], [0, H]],
@@ -849,7 +819,7 @@ export const RUNNABLE_PATTERNS_REST: AgriTaskPattern[] = [
           swath_width: num(v, 'swath_width'),
           turn_radius: num(v, 'turn_radius'),
           robot_width: num(v, 'robot_width'),
-          start: [num(v, 'headland_width') / 2, num(v, 'headland_width') / 2],
+          start,
           route_pattern: 'boustrophedon',
           angle_deg: null,
         };

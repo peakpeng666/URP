@@ -205,3 +205,10 @@ function deepHas(o: unknown, key: string): boolean {
     ([k, v]) => k === key || deepHas(v, key),
   );
 }
+
+// Proposal fixtures are illustrative inputs, not measured agricultural datasets.
+it('全部提案 fixture 明确标注合成设计来源', () => {
+  for (const [name, fixture] of Object.entries(ALL)) {
+    expect((fixture.meta as { data_origin?: string }).data_origin, name).toBe('synthetic_design_example');
+  }
+});

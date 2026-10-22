@@ -1,6 +1,6 @@
 /**
  * 矩阵与能力快照测试：矩阵由目录计算（不手写），
- * 能力快照是真实分布的锁定值——改动目录必须同步更新快照，防止口径漂移。
+ * 能力快照是目录声明的锁定值（非实测）——改动目录必须同步更新快照，防止口径漂移。
  */
 import { describe, expect, it } from 'vitest';
 import { capabilitySummary, envProblemMatrix, gapReport, operationServiceMatrix } from './matrix';
@@ -38,15 +38,15 @@ describe('矩阵一致性', () => {
   });
 });
 
-describe('能力快照（真实分布，勿手改）', () => {
+describe('能力声明快照（非实验成功率）', () => {
   it('六维分布与目录一致', () => {
     expect(capabilitySummary()).toEqual({
-      defined: { yes: 27, partial: 12, no: 0 },
+      defined: { yes: 26, partial: 13, no: 0 },
       editable: { yes: 20, partial: 2, no: 17 },
       solvable: { yes: 13, partial: 9, no: 17 },
-      checkable: { yes: 22, partial: 0, no: 17 },
+      checkable: { yes: 11, partial: 11, no: 17 },
       simulatable: { yes: 0, partial: 9, no: 30 },
-      experimented: { yes: 12, partial: 2, no: 25 },
+      experimented: { yes: 0, partial: 0, no: 39 },
     });
   });
 
