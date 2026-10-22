@@ -180,7 +180,7 @@ hash_check "$OUT/ca-seed/ca-certificates.deb" 29ca037f49f7a4b41d67ad72946c2e541f
 [ "$(/usr/bin/stat -c %s "$OUT/ca-seed/ca-certificates.deb")" = 139540 ] || fail
 # dpkg-deb only decodes a data tar here. It does not run maintainer scripts.
 /usr/bin/dpkg-deb --fsys-tarfile "$OUT/ca-seed/ca-certificates.deb" > "$OUT/ca-seed/data.tar" 2> "$OUT/logs/ca-seed-data-tar.log" || fail
-/usr/bin/tar --list --verbose --numeric-owner --full-time --file "$OUT/ca-seed/data.tar" > "$OUT/ca-seed/members.txt" 2> "$OUT/logs/ca-seed-tar-list.log" || fail
+/usr/bin/tar --list --verbose --numeric-owner --full-time --quoting-style=literal --file "$OUT/ca-seed/data.tar" > "$OUT/ca-seed/members.txt" 2> "$OUT/logs/ca-seed-tar-list.log" || fail
 /usr/bin/awk -f "$HELPERS/parse_ca_members.awk" "$OUT/ca-seed/members.txt" > "$OUT/ca-seed/cert-members.txt" || fail
 : > "$OUT/bootstrap-ca.pem"
 while IFS= read -r member; do

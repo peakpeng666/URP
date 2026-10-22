@@ -182,3 +182,35 @@ This is diagnostic structure only. It changes no preparation/build acceptance,
 package/source pins or isolation setting, does not infer the initial run's cause,
 and does not constitute image, compiler or fresh-runtime acceptance. Raw logs
 remain private and ephemeral. v6 is preserved as an immutable predecessor.
+
+## Review revision 8: pinned Mozilla certificate filename compatibility
+
+Hosted run 39852207219 reported `BLOCKED_public_ca_seed`. The compiler Dockerfile
+COPY destination and shell SEED directory already agree; this revision does not
+change them. The public phase marker does not identify its first failed check.
+
+Read-only retrieval of the already-pinned public Ubuntu CA package verified its
+139540-byte size and SHA256
+`29ca037f49f7a4b41d67ad72946c2e541f3ae52d8f6ab1495d2af09aa391144b`.
+Data-only archive inspection, without package installation or maintainer-script
+execution, demonstrates an unavoidable v7 parser failure on these exact bytes:
+its 120 regular Mozilla certificate members include
+`NetLock_Arany_=Class_Gold=_Főtanúsítvány.crt`. Under LC_ALL=C, GNU tar's default
+listing escapes its UTF-8 bytes. The old strict ASCII basename predicate rejects
+the member (exit 47 after 66 accepted names), independently of the unobserved
+hosted substep. Literal listing alone would still reject its '=' and UTF-8.
+
+The fix explicitly selects literal tar listing and permits only that one exact
+additional basename alongside the existing ASCII pattern. It does not permit
+general Unicode or '=' names. Prefix, regular-file type, field count, size,
+member-count, duplicate and traversal checks remain intact. Selected data is
+still read only to stdout and validated as public certificate PEM; no archive
+member is extracted onto the system or executed. All signature, signer, fixed
+hash/size, signed-index/package identity and subsequent installation gates stay
+unchanged, as do base/source pins, execution isolation and workflow semantics.
+
+Against the exact archive, the new parser selects all 120 certificates and every
+selected certificate passes the unchanged PEM validator. This is a local
+read-only parser reproduction, not a new Docker/bootstrap/native run or compiler
+acceptance. Frozen v7 and earlier evidence remain unchanged; only an authorized
+future hosted run can establish progress beyond this corrected incompatibility.

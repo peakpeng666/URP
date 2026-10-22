@@ -7,7 +7,9 @@ index($0,prefix) {
     if ($6==prefix && substr($1,1,1)=="d" && NF==6) next
     if (NF!=6 || substr($1,1,1)!="-" || index($6,prefix)!=1 || $3 !~ /^[0-9]+$/ || $3+0<=0 || $3+0>65536) reject()
     name=substr($6,length(prefix)+1)
-    if (name !~ /^[A-Za-z0-9_+().,-]+\.crt$/ || name ~ /\.\./ || seen[$6]++) reject()
+    # Exact non-ASCII basename present in the hash-pinned Mozilla CA archive.
+    # Listing uses literal quoting; no generic Unicode/path whitelist expansion.
+    if ((name !~ /^[A-Za-z0-9_+().,-]+\.crt$/ && name != "NetLock_Arany_=Class_Gold=_Főtanúsítvány.crt") || name ~ /\.\./ || seen[$6]++) reject()
     if (++n>512) reject()
     print $6
 }
