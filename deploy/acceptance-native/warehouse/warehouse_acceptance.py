@@ -21,6 +21,7 @@ from resource_identity import compare
 from historical_fuel import download_archive as download_fuel_archive, materialize, verify_cache, canonicalize_assets, ALIAS_PROJECTION
 from warehouse_lifecycle import drive, physical_evidence, OVERALL_WALL_S
 from warehouse_public_summary import project, digest
+from startup_observer import Observer, is_cancellation
 
 FUEL_MODELS=('Warehouse','shelf_big','shelf','Chair','foldable_chair','MaleVisitorOnPhone','Table','Jersey Barrier','Casual female')
 
@@ -73,7 +74,7 @@ def execute(a):
     from acceptance import api, owned, signal_owned, verify_source, read
     from startup_diagnostics import collect
     from execution_diagnostics import collect as collect_execution
-    source=a.source.resolve();token=secrets.token_hex(24);gateway=None;base=None;forced=False;sid=None
+    source=a.source.resolve();token=secrets.token_hex(24);gateway=None;base=None;forced=False;sid=None;observer=None
     raw={'state':'ERROR','source_sha':SOURCE,'harness_sha':a.harness_sha,'overall_wall_budget_s':OVERALL_WALL_S}
     diagnostic={'harness':{'phase':'preflight'},'session_report':'unavailable'}
     raw['warehouse_diagnostics']=diagnostic
@@ -81,6 +82,7 @@ def execute(a):
     def observed_session(value):
         nonlocal sid
         sid=value
+        if observer is not None:observer.safe('bind',value)
     def save(name,obj):(private/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2,allow_nan=False))
     try:
         if a.stage!='warehouse' or not digest(a.harness_sha,40):raise ValueError('warehouse_arguments_invalid')
@@ -177,7 +179,15 @@ def execute(a):
         if persisted!=record:raise ValueError('gateway_import_readback_mismatch')
         diagnostic['harness']['gateway_record_verified']=True
         mark('lifecycle')
-        lifecycle=drive(lambda method,path,data=None,timeout=5:api(base,method,path,data,timeout),record['run_id'],plan,guard,save,on_session=observed_session)
+        api_call=lambda method,path,data=None,timeout=5:api(base,method,path,data,timeout)
+        if env.get('URP_WAREHOUSE_STARTUP_OBSERVER')=='1':
+            try:
+                observer=Observer(env,private,source)
+                api_call=observer.wrap(api_call)
+            except BaseException as exc:
+                if is_cancellation(exc):raise
+                observer=None;raw['warehouse_startup_observation']={'status':'unavailable'}
+        lifecycle=drive(api_call,record['run_id'],plan,guard,save,on_session=observed_session)
         diagnostic['lifecycle']=lifecycle['diagnostics']
         raw['execution_protocol']=lifecycle['execution_protocol']
         raw['execution_diagnostics']=collect_execution(lifecycle['result'],[record],source)
@@ -216,6 +226,13 @@ def execute(a):
         diagnostic['harness'].update(failure_phase=diagnostic['harness']['phase'],**describe_failure(exc))
         raw['state']='ERROR';(private/'harness-error.txt').write_text(type(exc).__name__+': '+str(exc))
     finally:
+        observer_cancellation=None
+        if observer is not None:
+            try:observer.safe('close')
+            except BaseException as exc:
+                observer_cancellation=exc
+                if raw.get('state')=='PASS':raw['state']='ERROR'
+            raw['warehouse_startup_observation']=observer.raw
         if base and gateway and gateway.poll() is None:
             try:api(base,'POST','/shutdown',{},timeout=10)
             except Exception as exc:diagnostic['harness']['gateway_shutdown_exception_kind']=describe_failure(exc)['exception_kind']
@@ -238,6 +255,7 @@ def execute(a):
         try:raw['startup_diagnostics']=collect(runtime,sid)
         except Exception:diagnostic['harness']['startup_collection_failed']=True
         summary=project(raw,require_runner=False);a.summary.parent.mkdir(parents=True,exist_ok=True);a.summary.write_text(json.dumps(summary,indent=2,allow_nan=False))
+        if observer_cancellation is not None:raise observer_cancellation
     return 0 if summary['state']=='PASS' else 1
 
 
