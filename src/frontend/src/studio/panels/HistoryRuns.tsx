@@ -13,7 +13,13 @@ import { comparable, exclusionReason, resultState } from '../comparison';
 import { useStudio } from '../store';
 import s from './panels.module.css';
 
+// GET /runs accepts only scenario_id and limit (no offset/cursor/before), so there is no paging.
 export const HISTORY_LIMIT = 200;
+
+export function HistoryLimitNotice({ count, limit = HISTORY_LIMIT }: { count: number; limit?: number }) {
+  if (count < limit) return null;
+  return <Notice tone="warn">只显示最近 {limit} 条：接口不支持分页，更早的运行未列出（可在 #/runs 按场景筛选查看最近 100 条）。</Notice>;
+}
 
 export interface HistoryRow { run: Solution; inBatch: boolean; state: string; identity: string; exclusion: string | null; comparableToAnchor: boolean | null }
 
@@ -64,6 +70,7 @@ export function HistoryRuns() {
           {error && <Notice tone="error">{error}</Notice>}
           {data?.scenario === scenarioId && (
             <>
+              <HistoryLimitNotice count={rows.length} />
               <p className={s.meta}>最近 {rows.length} 次（上限 {HISTORY_LIMIT}）；加入后按同一比较口径分组，只有已验算可行且身份一致的同口径方案参与排名；已隔离运行不显示数值。</p>
               <table className={s.table}>
                 <thead><tr><th>时间</th><th>算法 · 运行</th><th>状态</th><th>源码身份</th><th>比较资格</th><th /></tr></thead>

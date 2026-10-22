@@ -50,3 +50,12 @@ describe('historical runs entry', () => {
     expect(renderToStaticMarkup(createElement(ComparePanel))).toContain('历史运行（本场景');
   });
 });
+
+describe('history limit notice', () => {
+  it('appears exactly when the result count reaches the limit', async () => {
+    const { HistoryLimitNotice, HISTORY_LIMIT } = await import('./HistoryRuns');
+    expect(HISTORY_LIMIT).toBe(200);
+    expect(renderToStaticMarkup(createElement(HistoryLimitNotice, { count: 200 }))).toContain('只显示最近 200 条');
+    expect(renderToStaticMarkup(createElement(HistoryLimitNotice, { count: 199 }))).toBe('');
+  });
+});
