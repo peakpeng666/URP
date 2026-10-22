@@ -30,6 +30,7 @@ log = logging.getLogger('urp_lab.jobs')
 GRACE_S = 2.0
 DEFAULT_TIME_LIMIT_S = 60.0
 LOG_TAIL_BYTES = 4096
+NODE_VERSION_TIMEOUT_S = 2.0
 FINAL = ('done', 'error', 'timeout', 'canceled')
 _RESULT_KEYS = ('status', 'objective', 'routes', 'check', 'map_check', 'raw_result', 'trace', 'planning', 'trace_contract')
 
@@ -54,6 +55,26 @@ def _execution_files() -> list[Path]:
     return sorted({p for root in roots for p in root.rglob('*.py')} | set(optional))
 
 
+def _node_version(node: str) -> str:
+    """Probe the selected runtime; retry a transient timeout once, never its value."""
+    for attempt in range(2):
+        try:
+            version = subprocess.run([node, '--version'], capture_output=True, text=True,
+                                     timeout=NODE_VERSION_TIMEOUT_S, check=True).stdout.strip()
+        except subprocess.TimeoutExpired as exc:
+            # A cold executable or loaded runner can exceed the short probe
+            # budget. run() kills and waits for that child before this retry.
+            # Partial timeout output is not runtime identity evidence.
+            if attempt == 0:
+                continue
+            raise SourceChangedError(f'无法核对 Node 执行版本：{exc}') from exc
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise SourceChangedError(f'无法核对 Node 执行版本：{exc}') from exc
+        if not version:
+            raise SourceChangedError('无法核对 Node 执行版本：版本输出为空。')
+        return version
+
+
 def execution_manifest() -> dict:
     """Bind first-party code, learned/JS paths, and native planner artifacts."""
     try:
@@ -69,14 +90,7 @@ def execution_manifest() -> dict:
         except importlib.metadata.PackageNotFoundError:
             packages[name] = None
     node = shutil.which('node')
-    if node:
-        try:
-            node_version = subprocess.run([node, '--version'], capture_output=True, text=True,
-                                          timeout=2, check=True).stdout.strip()
-        except (OSError, subprocess.SubprocessError) as exc:
-            raise SourceChangedError(f'无法核对 Node 执行版本：{exc}') from exc
-    else:
-        node_version = None
+    node_version = _node_version(node) if node else None
     identity = {'files': files, 'python': sys.version, 'python_executable': str(Path(sys.executable).absolute()),
                 'python_prefix': str(Path(sys.prefix).resolve()),
                 'packages': packages, 'native_dependencies': native,
