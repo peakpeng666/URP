@@ -46,6 +46,19 @@ def apt_projection(value):
     return ('verified',out) if out else ('no_verified_edges',[])
 
 
+def registry_projection(raw):
+    raw=raw if isinstance(raw,dict) else {}
+    phases=('lock_parse','source_policy','metadata_fetch','integrity_check','complete')
+    errors=('none','http','timeout','tls','network','metadata_invalid','integrity_mismatch','source_not_allowlisted','lock_invalid','unknown')
+    return {'phase':raw.get('phase') if raw.get('phase') in phases else 'unknown',
+            'status':raw.get('status') if raw.get('status') in ('passed','failed') else 'not_measured',
+            'error':raw.get('error') if raw.get('error') in errors else 'unknown',
+            'http_status':number(raw.get('http_status'),True,100,599),
+            'mirror_index':number(raw.get('mirror_index'),True,1,100000),
+            'attempts':number(raw.get('attempts'),True,0,3),
+            'mirror_identities_verified':number(raw.get('mirror_identities_verified'),True,0,100000)}
+
+
 def project(raw, runner=None):
     raw = raw if isinstance(raw, dict) else {}
     result = {'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
@@ -72,10 +85,12 @@ def project(raw, runner=None):
     result['forced_kill_count'] = None
     result['apt_metadata_status'] = 'not_run'
     result['apt_dependencies'] = []
+    result['registry_diagnostic'] = registry_projection(None)
     if runner is not None:
         runner = runner if isinstance(runner, dict) else {}
+        result['registry_diagnostic'] = registry_projection(runner.get('registry_diagnostic'))
         step = runner.get('installation_step')
-        result['installation_step'] = step if step in ('unknown', 'apt_update', 'apt_install', 'other', 'not_applicable') else 'unknown'
+        result['installation_step'] = step if step in ('unknown', 'apt_update', 'apt_install', 'other', 'not_applicable', 'registry_check') else 'unknown'
         hint = runner.get('failure_hint')
         result['runner_failure_hint'] = hint if hint in ('none', 'source_identity', 'package_install', 'dependency_fetch', 'network', 'disk_full', 'native_build', 'registry_identity', 'apt_signature', 'apt_source_conflict', 'apt_release', 'apt_hook', 'apt_lock', 'apt_package_missing', 'apt_dependency_conflict', 'apt_libunwind_conflict', 'unknown') else 'unknown'
         result['runner_stage'] = runner.get('stage') if runner.get('stage') in ('installation', 'simulation') else 'unknown'

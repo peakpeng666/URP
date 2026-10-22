@@ -191,6 +191,19 @@ def run(args):
         if stop:
             status['exit_code'] = 1
             status['failure_hint'] = 'unknown'
+        status['registry_diagnostic'] = {}
+        registry=private/'registry-identity.json'
+        if registry.exists():
+            try:
+                if registry.is_symlink() or registry.stat().st_size>4096:raise ValueError('invalid_registry_diagnostic')
+                status['registry_diagnostic']=json.loads(registry.read_text())
+            except Exception:pass
+        registry_status=status['registry_diagnostic']
+        if not stop and isinstance(registry_status,dict) and registry_status.get('status')=='failed' and status['stage']=='installation':
+            status['installation_step']='registry_check'
+            category=registry_status.get('error')
+            if category in ('integrity_mismatch','source_not_allowlisted','lock_invalid'):status['failure_hint']='registry_identity'
+            elif category in ('http','timeout','tls','network'):status['failure_hint']='network'
         status['apt_projection'] = {'status':'not_run','dependencies':[]}
         projection=private/'apt-dependencies.json'
         if projection.exists():
