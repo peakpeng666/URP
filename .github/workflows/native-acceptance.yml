@@ -1,0 +1,77 @@
+name: Isolated native acceptance
+on:
+  pull_request:
+    paths:
+      - .github/workflows/native-acceptance.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: isolated-native-acceptance
+  cancel-in-progress: false
+jobs:
+  maze:
+    if: >-
+      github.repository == 'peakpeng666/URP' &&
+      ((github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == 'peakpeng666/URP' &&
+      github.head_ref == 'fix/agriculture-compatibility-20261022') ||
+      (github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/fix/agriculture-compatibility-20261022'))
+    runs-on: ubuntu-22.04
+    timeout-minutes: 125
+    env:
+      TARGET_SHA: 94420cf3b703c564134048e1b074406df901bba3
+      HARNESS_SHA: 9f064fd8a1e25bf99846b0c88d75db251acbb14e
+    steps:
+      - name: Run isolated native maze and emit allowlisted result
+        shell: bash
+        run: |
+          set +e
+          set -uo pipefail
+          umask 077
+          # No checkout action: its progress logs expose paths. Public fetch only.
+          base="$(mktemp -d "$RUNNER_TEMP/urp-acceptance.XXXXXX" 2>/dev/null)" || { printf '%s\n' '{"state":"bootstrap_failed"}'; exit 1; }
+          mkdir "$base/source" "$base/harness" 2>/dev/null || { printf '%s\n' '{"state":"bootstrap_failed"}'; exit 1; }
+          bootstrap_rc=0
+          (
+            set -e
+            [[ "$TARGET_SHA" =~ ^[0-9a-f]{40}$ ]] && [[ "$HARNESS_SHA" =~ ^[0-9a-f]{40}$ ]] || exit 1
+            for pair in "source:$TARGET_SHA" "harness:$HARNESS_SHA"; do
+              dir="${pair%%:*}"; sha="${pair#*:}"
+              git -C "$base/$dir" init
+              git -C "$base/$dir" remote add origin https://github.com/peakpeng666/URP.git
+              git -C "$base/$dir" config credential.helper ''
+              git -C "$base/$dir" config remote.origin.promisor true
+              git -C "$base/$dir" config remote.origin.partialclonefilter blob:none
+              git -C "$base/$dir" fetch --filter=blob:none --depth=1 origin "$sha"
+              git -C "$base/$dir" sparse-checkout init --cone
+              if [[ "$dir" == source ]]; then
+                git -C "$base/$dir" sparse-checkout set deploy setup src/lab src/frontend src/backend src/research tools data/packages data/backend data/research
+              else
+                git -C "$base/$dir" sparse-checkout set deploy/acceptance-native
+              fi
+              git -C "$base/$dir" checkout --detach FETCH_HEAD
+              [[ "$(git -C "$base/$dir" rev-parse HEAD)" == "$sha" ]] || exit 1
+            done
+          ) > "$base/bootstrap.log" 2>&1
+          bootstrap_rc=$?
+          if [[ "$bootstrap_rc" != 0 ]]; then
+            printf '%s\n' '{"state":"bootstrap_failed"}'
+            exit 1
+          fi
+          rc=0
+          python3 "$base/harness/deploy/acceptance-native/runner/run.py" \
+            --source "$base/source" \
+            --harness "$base/harness/deploy/acceptance-native" \
+            --private-dir "$base/private" --stage maze --harness-sha "$HARNESS_SHA" \
+            2> "$base/supervisor.log" || rc=$?
+          # Reducer has no passthrough of arbitrary strings, errors, paths or JSON.
+          # It must check runner-status cleanup before saying simulation passed.
+          if ! python3 "$base/harness/deploy/acceptance-native/public_summary.py" \
+            --input "$base/private/summary.json" \
+            --runner-status "$base/private/runner-status.json" 2> "$base/reducer.log"; then
+            printf '%s\n' '{"state":"summary_unavailable"}'
+            exit 1
+          fi
+          exit "$rc"
