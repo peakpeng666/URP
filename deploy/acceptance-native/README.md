@@ -8,7 +8,7 @@
 - 验收工具使用另一固定提交；工作流分别检出两个完整SHA。
 - 安装调用项目既有workbench流程，并跳过可选Fields2Cover组件。
 - HOME、Python环境、运行库和实验输出位于本次runner临时目录；使用Xvfb软件渲染。
-- 原始Git blob校验处理仓库既有换行符属性差异，安装前后均验证源码内容。
+- 新建检出目录先还原Git属性声明的换行转换，再逐字节校验原始Git blob；安装前后均验证源码内容。
 
 ## 通过条件
 
@@ -27,7 +27,7 @@
 ```sh
 python acceptance.py --source SOURCE --private-dir NEW_DIRECTORY --summary SUMMARY --harness-sha COMMIT --stage maze
 python public_summary.py --input SUMMARY --runner-status RUNNER_STATUS
-python -m unittest -v test_acceptance runner.test_runner runner.test_worktree
+python -m unittest -v test_acceptance runner.test_runner runner.test_worktree runner.test_materialize
 ```
 
 公开摘要只含固定状态、数值、布尔值和摘要哈希；缺测值标null。完整日志与运行数据留在临时目录，不上传artifact或缓存。工作流不发布镜像，不修改部署分支，不使用付费runner。
