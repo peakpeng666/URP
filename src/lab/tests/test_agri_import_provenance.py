@@ -107,7 +107,7 @@ def test_concurrent_import_creates_once(tmp_path, monkeypatch):
     assert not list(tmp_path.glob('*.tmp'))
 
 
-def test_http_duplicate_import_returns_conflict(tmp_path, monkeypatch):
+def test_http_duplicate_import_is_idempotent_and_changed_content_conflicts(tmp_path, monkeypatch):
     from fastapi.testclient import TestClient
     from urp_lab.gateway import Config, create_app
     monkeypatch.setattr(paths, 'USER_SCENARIOS', tmp_path / 'scenarios')
@@ -116,7 +116,11 @@ def test_http_duplicate_import_returns_conflict(tmp_path, monkeypatch):
         first = client.post('/lab/api/scenarios', json=payload())
         assert first.status_code == 201, first.text
         second = client.post('/lab/api/scenarios', json=payload())
-        assert second.status_code == 409, second.text
+        assert second.status_code == 200, second.text
+        assert second.json()['id'] == first.json()['id']
+        changed = payload(); changed['instance']['swath_width'] = 4
+        third = client.post('/lab/api/scenarios', json=changed)
+        assert third.status_code == 409, third.text
         restored = client.get('/lab/api/scenarios/agri-import-test')
         assert restored.status_code == 200
         assert restored.json()['revision'] == 1
