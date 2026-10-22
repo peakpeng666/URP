@@ -102,3 +102,41 @@ The available evidence does not establish which invariant rejected the hosted
 runner. The authenticated pkgconf-only root-selection fixture passes. Retain the
 stopped cohorts; a future finite reason code can guide a narrowly supported fix.
 
+# Authenticated pkgconf diversion handling (v4)
+
+The v3 hosted receipt identifies `APT_PROVIDER_OWNER_MISMATCH`. Investigation
+demonstrated an ownership-parser defect, without claiming that the unavailable
+hosted stdout has been recovered. The signed Jammy `pkgconf` 1.8.0-1 amd64 archive
+has size 35280 and SHA256
+`257c91d3c0d18e2e0856cb7e86cb4ddf18b91fc40df5bcc45ebaccb25d4e6d37`.
+Its preinst registers a pkgconf-owned diversion from `/usr/bin/pkg-config` to
+`/usr/bin/pkg-config.real`. Its data archive contains the canonical relative
+`/usr/bin/pkg-config -> pkgconf` symlink and the regular `/usr/bin/pkgconf` binary.
+The archive and scripts were inspected only as data, never installed or executed.
+
+The [official Jammy dpkg-query manual](https://manpages.ubuntu.com/manpages/jammy/man1/dpkg-query.1.html)
+documents diversion records in `-S` output. A read-only query against synthetic
+private dpkg metadata on Debian reproduced this exact successful stdout:
+
+    diversion by pkgconf from: /usr/bin/pkg-config
+    diversion by pkgconf to: /usr/bin/pkg-config.real
+    pkgconf: /usr/bin/pkg-config
+
+This is format evidence, not a Jammy runner test. The v4 parser accepts only one
+exact pkgconf or pkgconf:amd64 owner line for the canonical path, optionally with
+both exact diversion lines above. Duplicate records, missing halves, other/local
+diversions, wrong paths, arbitrary warnings, and unknown text still fail closed.
+Only the ownership query separates stderr into a private log; stderr is never
+parsed as ownership evidence. Other subprocess behavior is unchanged.
+
+Ownership parsing is provisional. After the complete native closure's archive
+hashes and control identities are verified, and before transaction planning or
+installation, the existing `verify_provider_member` machinery compares the live
+canonical symlink and executable bytes with the authenticated pkgconf archive.
+This proof applies to both plain-owner and diversion forms. No preceding step
+invokes pkgconf. Post-install verification remains mandatory. A fixture with a
+nonempty planned transaction proves that byte mismatch prevents planning/install;
+another verifies that archive control mismatch stops before byte verification.
+No early payload cache, extra metadata source, removal permission, or diagnostic
+schema change was introduced.
+

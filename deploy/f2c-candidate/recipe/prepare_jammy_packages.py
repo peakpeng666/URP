@@ -337,7 +337,17 @@ def choose_roots(installed, records):
 
 
 def validate_selected_provider(owner, executable):
-    require_provider(all(line.split(': ', 1)[0] in ('pkgconf', 'pkgconf:amd64') for line in owner.splitlines()),
+    # dpkg-query -S reports package-owned diversions as well as actual owners.
+    # These exact diversion paths are declared by the authenticated Jammy
+    # pkgconf preinst; arbitrary text or other diversion forms are not evidence.
+    lines = owner.splitlines()
+    direct = {'pkgconf: /usr/bin/pkg-config', 'pkgconf:amd64: /usr/bin/pkg-config'}
+    diverted = {'diversion by pkgconf from: /usr/bin/pkg-config',
+                'diversion by pkgconf to: /usr/bin/pkg-config.real'}
+    observed = set(lines)
+    owners = observed & direct
+    require_provider(len(owner) <= 1024 and len(lines) == len(observed)
+                     and len(owners) == 1 and observed - owners in (set(), diverted),
                      'APT_PROVIDER_OWNER_MISMATCH')
     require_provider(executable.is_file(), 'APT_PROVIDER_EXECUTABLE_MISSING')
 
@@ -546,12 +556,15 @@ def main():
     logs = out / 'logs'; logs.mkdir()
     env = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LC_ALL': 'C', 'LANG': 'C',
            'HOME': str(out), 'DEBIAN_FRONTEND': 'noninteractive'}
-    def run(argv, label, privileged=False):
+    def run(argv, label, privileged=False, separate_stderr=False):
         command = list(argv)
         if privileged and os.geteuid() != 0:
             command = ['/usr/bin/sudo', '-n', '/usr/bin/env'] + [k + '=' + v for k, v in env.items()] + command
-        result = subprocess.run(command, env=env, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        result = subprocess.run(command, env=env, text=True, stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE if separate_stderr else subprocess.STDOUT)
         (logs / (label + '.log')).write_text(result.stdout)
+        if separate_stderr:
+            (logs / (label + '.stderr.log')).write_text(result.stderr)
         if result.returncode != 0:
             child = parse_child_receipt(result.stdout) if label == 'native-solver' else None
             raise ProcessFailure(result.returncode, child)
@@ -603,7 +616,7 @@ def main():
     phase('provider-selection')
     roots, providers = choose_roots(base, records)
     if providers:
-        owner = run(['/usr/bin/dpkg-query', '-S', '/usr/bin/pkg-config'], 'pkg-config-owner')
+        owner = run(['/usr/bin/dpkg-query', '-S', '/usr/bin/pkg-config'], 'pkg-config-owner', separate_stderr=True)
         validate_selected_provider(owner, Path('/usr/bin/pkg-config'))
     phase('apt-config')
     for path in ('lists/partial', 'archives/partial', 'empty-conf', 'empty-sources', 'empty-prefs'):
@@ -673,8 +686,18 @@ def main():
         resolved.append({**item, 'suite': record['_suite'], 'component': record['_component'],
                          'archive': file_row(root, path), 'archive_filename': record['Filename'],
                          'archive_size': int(record['Size']), 'archive_sha256': record['SHA256']})
-    phase('transaction-plan')
     actual = {r['name']: r for r in resolved}
+    if providers:
+        # Ownership text remains provisional until the complete closure has
+        # authenticated payload hashes and exact control identities. No earlier
+        # step invokes pkgconf. Prove the live alias and binary before planning
+        # or applying any transaction; keep the independent post-install proof.
+        phase('provider-verification')
+        provider = actual[providers['pkg-config']]
+        provider_archive = root / provider['archive']['ref']['path']
+        data_tar = subprocess.check_output(['/usr/bin/dpkg-deb', '--fsys-tarfile', str(provider_archive)])
+        verify_provider_member(data_tar, Path('/'))
+    phase('transaction-plan')
     pins = [row['name'] + '=' + row['version'] for row in solution['transaction']]
     require(Path('/var/lib/dpkg/status').read_bytes() == base_status, 'Package database changed during preparation')
     install_command = ['/usr/bin/apt-get', '--no-install-recommends', '--no-remove', '--no-download', 'install'] + pins

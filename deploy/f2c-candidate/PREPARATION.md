@@ -1,6 +1,6 @@
 # Ubuntu 22.04 Fields2Cover candidate preparation
 
-Status: official-input research and a complete portable preparation/build/validation template are implemented and source-reviewed. All 196 pure helper/interface fixtures passed. The first hosted cohort stopped during package preparation before any native build; its bounded report did not establish the cause. The second hosted cohort narrowed rejection to provider selection, without identifying the exact invariant. This provider-specific diagnostic revision has not been launched. No native Jammy build/import, application repository modification, or production promotion is claimed.
+Status: official-input research and a complete portable preparation/build/validation template are implemented and source-reviewed. All 201 pure helper/interface fixtures passed. The first hosted cohort stopped during package preparation before any native build; its bounded report did not establish the cause. The second hosted cohort narrowed rejection to provider selection, without identifying the exact invariant. The third hosted cohort identified ownership parsing rejection. Authenticated package scripts and a private synthetic dpkg database demonstrate the canonical diversion-format defect corrected here. This correction has not been launched. No native Jammy build/import, application repository modification, or production promotion is claimed.
 
 ## Verified upstream inputs
 

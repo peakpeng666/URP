@@ -19,7 +19,7 @@ jobs:
     env:
       SOURCE_COMMIT: 18557cfc61f291e8ac5fa4a80d9df212e1df0030
       # Filled only after independent review of every source-index entry.
-      REVIEWED_SOURCE_INDEX_SHA256: b071c92b35a4ee828c82488e065f510252712bb0f6e26dc2ce14299e0a648896
+      REVIEWED_SOURCE_INDEX_SHA256: 974f61e2d792b82ac3f1fc9ed5af9d1836fe0a5777707b95cf2cb2eefb12993c
       PYTHONDONTWRITEBYTECODE: '1'
       UV_NO_CACHE: '1'
     steps:

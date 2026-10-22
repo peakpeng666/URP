@@ -4,7 +4,7 @@
       "sha256": "cc14d22e1195d61e844ff01426812552f4bdfc971adb660f53bbff0857435c0d"
     },
     "PREPARATION.md": {
-      "sha256": "a06dacd820168a7eb663e7ab3ef44df1d7d5c0c7349315831002fdc0ec5ab4ba"
+      "sha256": "aa30834aa7457c394a553b2cdb2f1c4bcea7f94b3eb680cf774bdcab796377a9"
     },
     "PUBLIC_FILE_ALLOWLIST.txt": {
       "sha256": "feb7750077f018b6b4f57c3e80335de5fc73431091124d7fd84e3c32a17e1a30"
@@ -25,10 +25,10 @@
       "sha256": "70e28d980f06f4d188b77245d9f27c26f7fc9c705fc6bf3d590efd1a6bf06562"
     },
     "recipe/PACKAGE_PREPARATION.md": {
-      "sha256": "e8e5610f33f2724e2f90fa2998f72afdb84d6b7b32136e6c1003cd2e9d1a4dcf"
+      "sha256": "1c5197ad0e2e00744c25c04ccf58c45b41819f87ead996270955ad6b8b9ad897"
     },
     "recipe/README.md": {
-      "sha256": "5b1d186e49881e6afd6d8416cba52c65eb8be0f4ac92c387015431246a426bd3"
+      "sha256": "3281f6a1cd2f32239a78ab709100054a83e2861857797483e95afc426f5868be"
     },
     "recipe/VALIDATION.md": {
       "sha256": "4b5d7d621c810d0d88d1854e2ce97add9942b060017b709befef4fff1aefe65a"
@@ -52,7 +52,7 @@
       "sha256": "b8865c8b8475c33f00609866b627548f188faf78143cba8d425619b1655079c5"
     },
     "recipe/prepare_jammy_packages.py": {
-      "sha256": "89ea8bc975c1232617ec0c6b612c37a0ab3ce0c62f5064939413c0789aaa975b"
+      "sha256": "55f744ee6054062b8e8c90e49c3ce2cd1641e332e3ddf922b840b2d24c34afc4"
     },
     "recipe/prepare_live.py": {
       "sha256": "1d1b97f6c42f4618ad87d5623c76b0fb09d5d973ed1217522ae09502fa55c426"
@@ -82,7 +82,7 @@
       "sha256": "e1d36bda616278262e5e9508723d6b339f8930e1383adae1e9a4b08391011d92"
     },
     "recipe/tests/test_package_preparation.py": {
-      "sha256": "43d7bcb6a071c9dc77e0a48c00bc609f446c421109fec872e0eeb0f5d24ecc57"
+      "sha256": "ddedd335335a7913b5345b45ac629313b5ba7ba655b0d6a20a322c8ca9ea7d32"
     },
     "recipe/tests/test_structured_failure_projection.py": {
       "sha256": "439842f996ec7b5e25a180fa876514d90a29dd4f7a13a75f734946c53e6a778a"

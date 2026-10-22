@@ -206,11 +206,13 @@ class TestNativeClosureAndAPTPlans(unittest.TestCase):
 class TestProviderSelectionReasons(unittest.TestCase):
     def setUp(self):
         self.context = dict(p.DIAGNOSTIC_CONTEXT)
+        self.diagnostic_root = p.DIAGNOSTIC_ROOT
         p.phase('provider-selection')
 
     def tearDown(self):
         p.DIAGNOSTIC_CONTEXT.clear()
         p.DIAGNOSTIC_CONTEXT.update(self.context)
+        p.DIAGNOSTIC_ROOT = self.diagnostic_root
 
     def assert_reason(self, code, call):
         with mock.patch.object(p.subprocess, 'run') as native:
@@ -252,7 +254,7 @@ class TestProviderSelectionReasons(unittest.TestCase):
 
     def test_missing_executable_is_distinct_without_path_output(self):
         self.assert_reason('APT_PROVIDER_EXECUTABLE_MISSING', lambda: p.validate_selected_provider(
-            'pkgconf: /private/SECRET_PATH', types.SimpleNamespace(is_file=lambda: False)))
+            'pkgconf: /usr/bin/pkg-config', types.SimpleNamespace(is_file=lambda: False)))
 
     def test_known_signed_provider_and_owner_are_still_accepted(self):
         base = {'pkgconf:amd64': row('pkgconf', '1.8.0-1')}
@@ -272,6 +274,120 @@ class TestProviderSelectionReasons(unittest.TestCase):
     def test_unknown_reason_cannot_be_constructed(self):
         with self.assertRaisesRegex(ValueError, '^Unknown provider selection code$'):
             p.ProviderSelectionError('SECRET_CODE /private/path https://private.example')
+
+    def test_exact_paired_pkgconf_diversion_accepted_provisionally(self):
+        for owner in ('pkgconf', 'pkgconf:amd64'):
+            output = ('diversion by pkgconf from: /usr/bin/pkg-config\n'
+                      'diversion by pkgconf to: /usr/bin/pkg-config.real\n'
+                      + owner + ': /usr/bin/pkg-config\n')
+            p.validate_selected_provider(output, types.SimpleNamespace(is_file=lambda: True))
+
+    def test_owner_grammar_rejects_every_unrecognized_or_partial_form(self):
+        owner = 'pkgconf: /usr/bin/pkg-config\n'
+        start = 'diversion by pkgconf from: /usr/bin/pkg-config\n'
+        end = 'diversion by pkgconf to: /usr/bin/pkg-config.real\n'
+        for output in ('', owner + owner, start + end, owner + start, owner + end,
+                       owner + start + end + end, owner + 'warning: SECRET\n',
+                       owner + start.replace('pkgconf', 'LOCAL') + end,
+                       owner + start + end.replace('pkg-config.real', 'SECRET_TARGET'),
+                       owner.replace('pkgconf', 'SECRET_OWNER'),
+                       owner.replace('/usr/bin/pkg-config', '/private/SECRET_PATH'),
+                       owner + '\n', owner + 'x' * 2000):
+            with self.subTest(output=output):
+                self.assert_reason('APT_PROVIDER_OWNER_MISMATCH', lambda: p.validate_selected_provider(
+                    output, types.SimpleNamespace(is_file=lambda: True)))
+
+    def mocked_preflight(self, bad_control=False, diversion=True):
+        """Full main entry up to proof failure; all process calls and payloads are fixtures."""
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            metadata = root / 'metadata' / ('snapshot-' + p.SNAPSHOT); metadata.mkdir(parents=True)
+            package_data = b'fixture archive, never executed or parsed as a real deb'
+            package_hash = hashlib.sha256(package_data).hexdigest()
+            dependency_data = b'second fixture archive'
+            dependency_hash = hashlib.sha256(dependency_data).hexdigest()
+            package = ('Package: pkgconf\nVersion: 1.8.0-1\nArchitecture: amd64\n'
+                       'Provides: pkg-config (= 0.29-1)\nFilename: pool/universe/p/pkgconf/fixture.deb\n'
+                       f'Size: {len(package_data)}\nSHA256: {package_hash}\n\n'
+                       'Package: fixture-dependency\nVersion: 1\nArchitecture: amd64\n'
+                       'Filename: pool/universe/f/fixture/fixture.deb\n'
+                       f'Size: {len(dependency_data)}\nSHA256: {dependency_hash}\n\n')
+            index = lzma.compress(package.encode()); index_hash = hashlib.sha256(index).hexdigest()
+            release = ('-----BEGIN PGP SIGNED MESSAGE-----\nHash: SHA512\n\n'
+                       'Origin: Ubuntu\nSuite: jammy\nCodename: jammy\nMD5Sum:\nSHA256:\n'
+                       f' {index_hash} {len(index)} main/binary-amd64/Packages.xz\n'
+                       f' {index_hash} {len(index)} universe/binary-amd64/Packages.xz\n'
+                       '-----BEGIN PGP SIGNATURE-----\nfixture\n').encode()
+            (metadata / 'jammy.InRelease').write_bytes(release)
+            for component in ('main', 'universe'):
+                (metadata / ('jammy.' + component + '.amd64.Packages.xz')).write_bytes(index)
+            keyring = root / 'fixture-keyring'; keyring.write_bytes(b'fixture')
+            direct = 'pkgconf: /usr/bin/pkg-config\n'
+            owner = ('diversion by pkgconf from: /usr/bin/pkg-config\n'
+                     'diversion by pkgconf to: /usr/bin/pkg-config.real\n' + direct)
+            if not diversion:
+                owner = direct
+            calls = []
+            def process(argv, **kwargs):
+                calls.append(list(argv))
+                output, error = '', ''
+                if argv[0] == '/usr/bin/dpkg-query':
+                    self.assertEqual(kwargs['stderr'], subprocess.PIPE)
+                    output, error = owner, 'warning: PRIVATE_WARNING is not ownership evidence\n'
+                elif argv[0] == '/usr/bin/gpgv':
+                    output = '[GNUPG:] VALIDSIG ' + p.SIGNER + ' fixture\n'
+                elif argv[0] == '/usr/bin/dpkg-deb':
+                    output = (control('pkgconf', 'WRONG' if bad_control else '1.8.0-1')
+                              if package_hash in argv[2] else control('fixture-dependency'))
+                elif argv[0] == '/usr/bin/apt-get':
+                    self.assertIn(argv[1:], (['--version'], ['update']), 'Transaction work must not precede provider proof')
+                    output = 'apt 2.4.fixture\n'
+                elif '--native-solve' in argv:
+                    solution = {'transaction': [{'name': 'fixture-dependency', 'version': '1',
+                                'architecture': 'amd64', 'action': 'install', 'old_version': None}],
+                                'closure': [row('pkgconf', '1.8.0-1'), row('fixture-dependency')]}
+                    Path(argv[-1]).write_text(json.dumps(solution))
+                else:
+                    self.assertEqual(argv[:4], ['/usr/bin/python3', '-I', '-B', '-c'])
+                return types.SimpleNamespace(returncode=0, stdout=output, stderr=error)
+            def output(argv, **kwargs):
+                return 'amd64\n' if argv[0] == '/usr/bin/dpkg' else b'fixture data tar'
+            original_read = Path.read_bytes; original_is_file = Path.is_file
+            def read(path):
+                return control('pkgconf', '1.8.0-1').encode() if str(path) == '/var/lib/dpkg/status' else original_read(path)
+            def is_file(path):
+                return True if str(path) in ('/usr/bin/gpgv', '/usr/bin/pkg-config') else original_is_file(path)
+            def payload(record, destination):
+                destination.write_bytes(package_data if record['Package'] == 'pkgconf' else dependency_data)
+            with mock.patch.object(p.sys, 'argv', [str(SCRIPT), '--root', str(root), '--install']), \
+                 mock.patch.object(p, 'KEYRING', keyring), mock.patch.object(p, 'check_host'), \
+                 mock.patch.object(p, 'RELEASE_HASHES', {'jammy': hashlib.sha256(release).hexdigest()}), \
+                 mock.patch.object(p, 'RELEASE_SIZES', {'jammy': len(release)}), \
+                 mock.patch.object(Path, 'read_bytes', read), mock.patch.object(Path, 'is_file', is_file), \
+                 mock.patch.object(p.subprocess, 'run', side_effect=process), \
+                 mock.patch.object(p.subprocess, 'check_output', side_effect=output), \
+                 mock.patch.object(p, 'download_payload', side_effect=payload), \
+                 mock.patch.object(p, 'verify_provider_member', side_effect=RuntimeError('Fixture byte mismatch')) as verify:
+                with self.assertRaisesRegex(RuntimeError, 'Archive control identity mismatch' if bad_control else 'Fixture byte mismatch'):
+                    p.main()
+                if bad_control:
+                    verify.assert_not_called()
+                else:
+                    verify.assert_called_once_with(b'fixture data tar', Path('/'))
+            self.assertFalse(any('install' in argv or '--assume-yes' in argv for argv in calls))
+            self.assertTrue((root / 'package-preparation/apt.conf').exists())
+            self.assertTrue(json.loads((root / 'package-preparation/transaction.json').read_text())['transaction'])
+            self.assertEqual((root / 'package-preparation/logs/pkg-config-owner.log').read_text(), owner)
+            self.assertIn('PRIVATE_WARNING', (root / 'package-preparation/logs/pkg-config-owner.stderr.log').read_text())
+
+    def test_provider_byte_failure_prevents_transaction_planning_and_install(self):
+        self.mocked_preflight()
+
+    def test_provider_control_mismatch_prevents_byte_proof_and_install(self):
+        self.mocked_preflight(bad_control=True)
+
+    def test_plain_pkgconf_owner_also_requires_preinstall_byte_proof(self):
+        self.mocked_preflight(diversion=False)
 
 
 class TestProviderArchiveBytes(unittest.TestCase):
