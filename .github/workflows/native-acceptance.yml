@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 125
     env:
-      TARGET_SHA: 18557cfc61f291e8ac5fa4a80d9df212e1df0030
-      HARNESS_SHA: d285711480e89d3f2459b71247587990eb57350d
+      TARGET_SHA: 4423a4f9731cbb099433b565f3daa0b41af67f49
+      HARNESS_SHA: 00f81dd770b5dea5393ce6f57f1862bf85aac060
     steps:
       - name: Run isolated native maze and emit allowlisted result
         shell: bash
@@ -81,10 +81,10 @@ jobs:
       github.ref == 'refs/heads/fix/agriculture-compatibility-20261022' &&
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-22.04
-    timeout-minutes: 125
+    timeout-minutes: 220
     env:
-      TARGET_SHA: 18557cfc61f291e8ac5fa4a80d9df212e1df0030
-      HARNESS_SHA: d285711480e89d3f2459b71247587990eb57350d
+      TARGET_SHA: 4423a4f9731cbb099433b565f3daa0b41af67f49
+      HARNESS_SHA: 00f81dd770b5dea5393ce6f57f1862bf85aac060
     steps:
       - name: Run isolated historical warehouse replay and emit allowlisted result
         shell: bash
