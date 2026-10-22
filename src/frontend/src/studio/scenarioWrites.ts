@@ -3,7 +3,7 @@ import { lab, LabApiError } from '../lab/api';
 import type { Scenario } from '../lab/types';
 import { studio } from './api';
 import type { FleetScenario } from './types';
-import { clientScenarioId, containsSubmittedValue, contentDigest, createOnce, mismatch } from './pendingWrites';
+import { clientScenarioId, containsSubmittedValue, contentDigest, createOnce, forgetWrite, importScenarioOnce as importScenarioOnceWith, mismatch, pendingWrite } from './pendingWrites';
 
 type ForkBody = { instance?: unknown; title?: string };
 
@@ -28,30 +28,38 @@ export function forkScenarioOnce(sourceId: string, body: ForkBody = {}, kind: 'f
 
 /** Scenario JSON import: the id is part of the submitted document. */
 export function importScenarioOnce(obj: unknown): Promise<Scenario> {
-  const doc = obj as { id?: unknown; problem_class?: unknown; instance?: unknown };
-  const id = typeof doc?.id === 'string' ? doc.id.trim().toLowerCase() : '';
-  if (!id) return studio.importScenario(obj); // the server reports the missing id
-  return createOnce<Scenario>({
-    key: `import:${contentDigest(obj)}`,
-    kind: 'import',
-    id: () => id,
-    send: () => studio.importScenario(obj),
-    recover: async (sid) => {
-      const found = await lab.scenario(sid);
-      if (found.id !== sid || found.problem_class !== doc.problem_class
-        || (found as Scenario & { origin?: string }).origin !== 'user'
-        || !containsSubmittedValue(found.instance, doc.instance)) throw mismatch(sid);
-      return found;
-    },
-  });
+  return importScenarioOnceWith(obj, (doc) => studio.importScenario(doc));
 }
 
+export interface ImportCandidate { id: string; title: string }
+
 /**
- * GeoJSON import: the endpoint names the scenario itself, so recovery after an uncertain outcome
- * looks for the user scenario this import produced (same title) before writing again.
+ * The GeoJSON endpoint names the scenario itself and records no source hash, so after an uncertain
+ * outcome nothing identifies the write safely. The caller must choose: adopt one listed candidate or
+ * confirm a re-import. Nothing is claimed or re-created automatically.
  */
-export function importGeojsonOnce(geojson: unknown, title?: string): Promise<FleetScenario> {
-  const key = `geojson:${contentDigest({ geojson, title: title ?? null })}`;
+export class UncertainImportError extends Error {
+  constructor(readonly key: string, readonly candidates: ImportCandidate[]) {
+    super(candidates.length
+      ? `上次 GeoJSON 导入结果不确定：找到 ${candidates.length} 个可能的已保存场景（${candidates.map((c) => c.id).join('、')}），请选择其一，或确认未保存后重新导入`
+      : '上次 GeoJSON 导入结果不确定，场景列表中没有可确认的同名场景；请确认未保存后再重新导入');
+    this.name = 'UncertainImportError';
+  }
+}
+
+export const geojsonImportKey = (geojson: unknown, title?: string) => `geojson:${contentDigest({ geojson, title: title ?? null })}`;
+
+export type GeojsonResolution = { adopt: string } | { reimport: true };
+
+export async function importGeojsonOnce(geojson: unknown, title?: string, resolution?: GeojsonResolution): Promise<FleetScenario> {
+  const key = geojsonImportKey(geojson, title);
+  if (resolution && 'adopt' in resolution) {
+    const found = (await lab.scenario(resolution.adopt)) as unknown as FleetScenario;
+    if ((found as { origin?: string }).origin !== 'user') throw new LabApiError('只能选择“我的场景”中的记录', 'invalid_choice', 400);
+    forgetWrite(key);
+    return found;
+  }
+  if (resolution && 'reimport' in resolution) forgetWrite(key);
   return createOnce<FleetScenario>({
     key,
     kind: 'geojson',
@@ -59,10 +67,13 @@ export function importGeojsonOnce(geojson: unknown, title?: string): Promise<Fle
     send: () => studio.importGeojson(geojson, title),
     recover: async () => {
       const { scenarios } = await lab.scenarios();
-      const hit = scenarios.filter((x) => (x as { origin?: string }).origin === 'user' && x.title === title);
-      if (hit.length !== 1) throw new LabApiError('未找到该 GeoJSON 的保存结果', 'not_found', 404);
-      return (await lab.scenario(hit[0]!.id)) as unknown as FleetScenario;
+      const candidates = scenarios.filter((x) => (x as { origin?: string }).origin === 'user' && x.title === title)
+        .map((x) => ({ id: x.id, title: x.title }));
+      throw new UncertainImportError(key, candidates);
     },
     acceptForeignId: true,
   });
 }
+
+/** True while a GeoJSON import with this content still awaits the user's decision. */
+export const geojsonImportPending = (geojson: unknown, title?: string) => !!pendingWrite(geojsonImportKey(geojson, title));

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { importGeojsonOnce, importScenarioOnce } from './scenarioWrites';
+import { importGeojsonOnce, importScenarioOnce, UncertainImportError } from './scenarioWrites';
 import { DockviewReact, themeLight, type DockviewApi, type DockviewReadyEvent } from 'dockview-react';
 import 'dockview-react/dist/styles/dockview.css';
 import { Command } from 'cmdk';
@@ -360,6 +360,8 @@ function ComposeBar() {
       location.hash = `#/plan/${encodeURIComponent(sc.id)}`;
       notify('ok', `已导入 ${sc.title}`);
     } catch (e) {
+      // Uncertain GeoJSON outcomes need an explicit choice; the scenario library import offers it.
+      if (e instanceof UncertainImportError) { notify('error', `${e.message}。请在场景库中重新选择该文件导入以确认。`); return; }
       notify('error', `导入失败：${(e as Error).message}`);
     }
   }

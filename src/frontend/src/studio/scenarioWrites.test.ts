@@ -108,16 +108,75 @@ describe('idempotent scenario import', () => {
   });
 });
 
-describe('idempotent GeoJSON import', () => {
-  it('after an uncertain outcome, finds the scenario it produced instead of importing again', async () => {
+describe('GeoJSON import with an uncertain outcome', () => {
+  const geo = { type: 'FeatureCollection', features: [] };
+  const list = (scenarios: unknown[]) => () => json({ scenarios });
+  it('never auto-claims a same-title scenario: it lists candidates for the user to choose', async () => {
     const fetch = vi.fn().mockImplementationOnce(lost)
-      .mockImplementationOnce(() => json({ scenarios: [{ id: 'geo-1', title: 'field', origin: 'user' }] }))
-      .mockImplementationOnce(() => json({ id: 'geo-1', title: 'field' }));
+      .mockImplementationOnce(list([{ id: 'geo-1', title: 'field', origin: 'user' }, { id: 'geo-2', title: 'field', origin: 'user' }, { id: 'b', title: 'field', origin: 'builtin' }]));
+    vi.stubGlobal('fetch', fetch);
+    const { importGeojsonOnce, UncertainImportError } = await load();
+    await expect(importGeojsonOnce(geo, 'field')).rejects.toThrow();
+    const err = await importGeojsonOnce(geo, 'field').catch((e) => e);
+    expect(err).toBeInstanceOf(UncertainImportError);
+    expect(err.candidates).toEqual([{ id: 'geo-1', title: 'field' }, { id: 'geo-2', title: 'field' }]);
+    expect(fetch.mock.calls.filter((c) => c[1]?.method === 'POST')).toHaveLength(1);
+  });
+  it('a single candidate is still only a suggestion, not adopted', async () => {
+    const fetch = vi.fn().mockImplementationOnce(lost).mockImplementationOnce(list([{ id: 'geo-1', title: 'field', origin: 'user' }]));
     vi.stubGlobal('fetch', fetch);
     const { importGeojsonOnce } = await load();
-    await expect(importGeojsonOnce({ type: 'FeatureCollection', features: [] }, 'field')).rejects.toThrow();
-    expect((await importGeojsonOnce({ type: 'FeatureCollection', features: [] }, 'field')).id).toBe('geo-1');
+    await expect(importGeojsonOnce(geo, 'field')).rejects.toThrow();
+    await expect(importGeojsonOnce(geo, 'field')).rejects.toThrow('请选择其一');
+  });
+  it('no safe match: reports the uncertain state instead of re-creating silently', async () => {
+    const fetch = vi.fn().mockImplementationOnce(lost).mockImplementation(list([]));
+    vi.stubGlobal('fetch', fetch);
+    const { importGeojsonOnce } = await load();
+    await expect(importGeojsonOnce(geo, 'field')).rejects.toThrow();
+    await expect(importGeojsonOnce(geo, 'field')).rejects.toThrow('确认未保存后再重新导入');
+    await expect((await load()).importGeojsonOnce(geo, 'field')).rejects.toThrow('结果不确定'); // survives reload
     expect(fetch.mock.calls.filter((c) => c[1]?.method === 'POST')).toHaveLength(1);
+  });
+  it('explicit choices: adopt a listed user scenario, or confirm a single re-import', async () => {
+    const fetch = vi.fn().mockImplementationOnce(lost)
+      .mockImplementationOnce(() => json({ id: 'geo-1', title: 'field', origin: 'user' }));
+    vi.stubGlobal('fetch', fetch);
+    const mod = await load();
+    await expect(mod.importGeojsonOnce(geo, 'field')).rejects.toThrow();
+    expect((await mod.importGeojsonOnce(geo, 'field', { adopt: 'geo-1' })).id).toBe('geo-1');
+    expect(mod.geojsonImportPending(geo, 'field')).toBe(false);
+    fetch.mockImplementationOnce(lost).mockImplementationOnce(() => json({ id: 'geo-9', title: 'field' }, 201));
+    await expect(mod.importGeojsonOnce(geo, 'field')).rejects.toThrow();
+    expect((await mod.importGeojsonOnce(geo, 'field', { reimport: true })).id).toBe('geo-9');
+    expect(fetch.mock.calls.filter((c) => c[1]?.method === 'POST')).toHaveLength(3);
+  });
+});
+
+describe('import entry points that mint a fresh id per click (MapToTaskMap, lab ScenarioList)', () => {
+  it('a retry with a new id but the same content reads back the first id', async () => {
+    let first = '';
+    const fetch = vi.fn().mockImplementationOnce((_u, o) => { first = JSON.parse(o.body).id; return lost(); })
+      .mockImplementationOnce(() => json({ id: first, problem_class: 'fleet_routing', origin: 'user', instance }));
+    vi.stubGlobal('fetch', fetch);
+    const { importScenarioOnce } = await load();
+    const doc = (id: string) => ({ id, title: 't', problem_class: 'fleet_routing', instance });
+    await expect(importScenarioOnce(doc('tm-aaa'))).rejects.toThrow();
+    expect((await importScenarioOnce(doc('tm-bbb'))).id).toBe('tm-aaa');
+    expect(methods(fetch)).toEqual(['POST /lab/api/scenarios', 'GET /lab/api/scenarios/tm-aaa']);
+  });
+  it('the lab variant uses the caller\'s sender and resubmits the original id after a 404', async () => {
+    const bodies: string[] = [];
+    const fetch = vi.fn().mockImplementationOnce(lost).mockImplementationOnce(() => json({}, 404))
+      .mockImplementationOnce((_u, o) => { bodies.push(JSON.parse(o.body).id); return json({ id: bodies[0], title: 't' }, 201); });
+    vi.stubGlobal('fetch', fetch);
+    vi.resetModules();
+    const { importScenarioOnce } = await import('../lab/pendingWrites');
+    const { lab } = await import('../lab/api');
+    const doc = (id: string) => ({ id, problem_class: 'coverage', instance });
+    await expect(importScenarioOnce(doc('x-1'), (d) => lab.importScenario(d))).rejects.toThrow();
+    expect((await importScenarioOnce(doc('x-2'), (d) => lab.importScenario(d))).id).toBe('x-1');
+    expect(bodies).toEqual(['x-1']);
   });
 });
 
