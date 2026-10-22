@@ -53,6 +53,11 @@ PROCESS_NAMES={'ruby $(which ign) gazebo':'gazebo','ign gazebo':'gazebo','gz sim
                'create':'entity_create','robot_state_publisher':'robot_state_publisher',
                'parameter_bridge':'parameter_bridge','image_bridge':'image_bridge',
                'turtlebot4_node':'turtlebot4_node','create3_nodes':'create3_nodes'}
+# Exact executable labels from the public Humble launch graph.
+# Classification only: it does not assert which installed process failed.
+LAUNCH_GRAPH_PROCESSES = ('hazards_vector_publisher', 'interface_buttons_node', 'ir_intensity_vector_publisher', 'kidnap_estimator_publisher', 'mock_publisher', 'motion_control', 'pose_republisher_node', 'robot_state', 'sensors_node', 'spawner', 'static_transform_publisher', 'turtlebot4_ignition_hmi_node', 'ui_mgr', 'wheel_status_publisher')
+PROCESS_NAMES.update({name: name for name in LAUNCH_GRAPH_PROCESSES})
+PROCESSES.update(LAUNCH_GRAPH_PROCESSES)
 MARKERS={
     'Configured and activated':'controller_activated_marker',
     'Loading SDF world file[':'world_load_marker',

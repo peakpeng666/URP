@@ -6,6 +6,35 @@ from public_summary import project as maze_public
 from warehouse.warehouse_public_summary import project as warehouse_public
 
 class ResourceUriDiagnosticsTests(unittest.TestCase):
+    def test_public_launch_graph_catalog_matches_exact_allowlist(self):
+        data=json.loads((pathlib.Path(__file__).parent/'fixtures/launch_process_catalog.json').read_text())
+        self.assertEqual(set(data['added_process_names']),set(r.LAUNCH_GRAPH_PROCESSES))
+        self.assertEqual(set(data['added_process_names']),set().union(*(set(x['executables']) for x in data['sources']))-{'turtlebot4_node'})
+        for name in data['added_process_names']:
+            with self.subTest(name=name):
+                self.assertEqual(r.PROCESS_NAMES[name],name)
+                line=f'[ERROR] [{name}-17]: process has died [pid 1234, exit code 1, cmd PRIVATE]'
+                row=self.events(line)[0]
+                self.assertEqual(row['process'],name)
+                self.assertEqual(row['exit_code'],1)
+                self.assertEqual(row['context'],'no_shutdown_marker')
+                self.assertNotIn('PRIVATE',json.dumps(row))
+    def test_launch_graph_labels_do_not_match_private_prefix_or_suffix(self):
+        for name in r.LAUNCH_GRAPH_PROCESSES:
+            for unknown in ('PRIVATE_'+name,name+'_PRIVATE','/PRIVATE/'+name):
+                row=self.events(f'[ERROR] [{unknown}-1]: process has died [pid 12, exit code 1, cmd PRIVATE]')[0]
+                self.assertEqual(row['process'],'unknown')
+                self.assertNotIn('PRIVATE',json.dumps(row))
+    def test_launch_graph_classification_preserves_shutdown_and_counts(self):
+        line='[ERROR] [spawner-7]: process has died [pid 123, exit code 1, cmd PRIVATE]'
+        rows=self.events(line+'\n'+line+'\nsending signal SIGTERM\n'+line)
+        self.assertEqual({(x['context'],x['count'],x['process'],x['exit_code']) for x in rows},
+                         {('before_shutdown_marker',2,'spawner',1),('at_or_after_shutdown_marker',1,'spawner',1)})
+    def test_launch_catalog_does_not_change_failure_code_detection(self):
+        for name in r.LAUNCH_GRAPH_PROCESSES:
+            text=f'[{name}-2]: process has died [pid 32, exit code 1, cmd PRIVATE]'
+            self.assertEqual(r.runtime_failure_codes({'sim':text}),{'launch_process_died'})
+
     def events(self,text):return r.project({'sim':text})['events']
     def test_all_nine_exact_world_references(self):
         for key,owner,name,_ in r.MODELS:
