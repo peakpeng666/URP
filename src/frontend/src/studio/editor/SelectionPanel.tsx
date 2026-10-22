@@ -53,7 +53,8 @@ export function SelectionPanel({ inst, refs, editable, onEdit, onSelectRefs }: S
   const my = Number(dy);
   const moveOk = Number.isFinite(mx) && Number.isFinite(my) && (mx !== 0 || my !== 0);
   return (
-    <div className={s.panel} aria-label="选择与精确输入">
+    <details className={s.panel} open aria-label="选择与精确输入">
+      <summary className={s.panelSummary}>选择与精确输入{refs.length ? ` · 已选 ${refs.length}` : ''}</summary>
       <div className={s.panelTitle}>按类型选择</div>
       <div className={s.chips}>
         {counts.map(([t, n]) => (
@@ -84,6 +85,6 @@ export function SelectionPanel({ inst, refs, editable, onEdit, onSelectRefs }: S
           <button type="button" disabled={!moveOk} onClick={() => { onEdit((i) => translateItems(i, refs, mx, my)); setDx('0'); setDy('0'); }}>平移</button>
         </div>
       )}
-    </div>
+    </details>
   );
 }

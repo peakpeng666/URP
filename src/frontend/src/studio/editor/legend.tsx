@@ -84,18 +84,22 @@ export function legendEntries(inst: FleetInstance, routes: FleetRoute[], layers:
 
 export function LayerLegendPanel({ layers, onToggle, entries }: { layers: Layers; onToggle: (k: LayerKey) => void; entries: LegendEntry[] }) {
   return (
-    <div className={s.panel} aria-label="图层与图例">
-      <div className={s.panelTitle}>图层</div>
+    <>
+    <details className={s.panel} open aria-label="图层">
+      <summary className={s.panelSummary}>图层</summary>
       <div className={s.layerGrid}>
         {LAYERS.map((l) => (
           <label key={l.key}><input type="checkbox" checked={layers[l.key]} onChange={() => onToggle(l.key)} /> {l.label}</label>
         ))}
       </div>
-      <div className={s.panelTitle}>图例</div>
+    </details>
+    <details className={s.panel} open aria-label="图例">
+      <summary className={s.panelSummary}>图例</summary>
       <ul className={s.legendList}>
         {entries.map((e) => <li key={e.key}>{e.swatch}<span>{e.label}</span></li>)}
       </ul>
-    </div>
+    </details>
+    </>
   );
 }
 

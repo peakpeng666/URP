@@ -211,12 +211,7 @@
   pointer-events: none;
 }
 .panel {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 232px;
-  max-height: calc(100% - 16px);
-  overflow: auto;
+  flex: 0 0 auto;
   padding: 8px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.94);
@@ -225,23 +220,88 @@
   color: #333;
   user-select: none;
 }
-.panel + .panel {
-  margin-top: 6px;
+.editorShell {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+.editorShell[data-narrow="true"] {
+  flex-direction: column;
+}
+.editorShell > .editor {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  width: auto;
+  height: auto;
 }
 .panelStack {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 240px;
+  flex: 0 0 260px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-height: calc(100% - 16px);
+  padding: 6px;
   overflow: auto;
+  background: #f4f5f1;
+  /* Left of the map, so the page's vehicle legend (top-right of the stage) never lands on it. */
+  order: -1;
+  border-right: 1px solid #d6d8d0;
+  -webkit-overflow-scrolling: touch;
 }
-.panelStack .panel {
-  position: static;
-  max-height: none;
+.panelStack[hidden] {
+  display: none;
+}
+.editorShell[data-narrow="true"] .panelStack {
+  flex: 0 0 auto;
+  max-height: 42%;
+  order: 0;
+  border-right: 0;
+  border-top: 1px solid #d6d8d0;
+}
+.sideToggle {
+  position: absolute;
+  z-index: 2;
+  bottom: 40px;
+  left: 8px;
+  min-height: 32px;
+  padding: 4px 10px;
+  font: inherit;
+  font-size: 12px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.panelSummary {
+  font-weight: 600;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  list-style-position: inside;
+}
+.panelStack .panel button,
+.panelStack .panel input[type="checkbox"] {
+  touch-action: manipulation;
+}
+@media (pointer: coarse) {
+  .panelSummary,
+  .sideToggle,
+  .panel button,
+  .layerGrid label {
+    min-height: 44px;
+  }
+  .layerGrid input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+  }
+  .numField input {
+    min-height: 36px;
+    font-size: 16px;
+  }
 }
 .panelTitle {
   font-weight: 600;

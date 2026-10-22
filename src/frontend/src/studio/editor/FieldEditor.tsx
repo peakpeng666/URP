@@ -66,6 +66,11 @@ const GRID_STEPS = [0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500];
 export function FieldEditor(props: FieldEditorProps) {
   const { inst, routes, hidden, playback, tool, obstacleKind, selection, editable, fitKey, lanes, violations, background, overlay, onEdit, onSelect, onCursor } = props;
   const [box, size] = useElementSize<HTMLDivElement>();
+  const [outer, outerSize] = useElementSize<HTMLDivElement>();
+  // Panels sit beside the map (wide) or below it (narrow / portrait), never on top; the whole side can be collapsed.
+  const narrow = outerSize.width > 0 && (outerSize.width < 720 || outerSize.height > outerSize.width * 1.1);
+  const [sideOpen, setSideOpen] = useState<boolean | null>(null);
+  const sideShown = sideOpen ?? !narrow;
   const [view, setView] = useState<View>({ k: 1, tx: 0, ty: 0 });
   const [preview, setPreview] = useState<FleetInstance | null>(null);
   const [shape, setShape] = useState<{ a: XY; b: XY; target: PolyTarget } | null>(null);
@@ -399,7 +404,11 @@ export function FieldEditor(props: FieldEditorProps) {
   const selId = selection && 'id' in selection ? String(selection.id) : 'boundary';
 
   return (
+    <div ref={outer} className={s.editorShell} data-narrow={narrow} data-side={sideShown}>
     <div ref={box} className={s.editor} data-tool={tool}>
+      <button type="button" className={s.sideToggle} aria-expanded={sideShown} aria-controls={`${idp}-side`} onClick={() => setSideOpen(!sideShown)}>
+        {sideShown ? (narrow ? '▾ 收起面板' : '◂ 收起面板') : (narrow ? '▴ 面板' : '▸ 面板')}
+      </button>
       <svg
         ref={svg}
         className={s.svg}
@@ -563,7 +572,8 @@ export function FieldEditor(props: FieldEditorProps) {
         {disp.decimated && <text x={size.width - 10} y={size.height - 84} className={s.extent}>{`显示已抽稀 ${disp.shownVertices}/${disp.vertices} 顶点（求解输入不变）`}</text>}
         <text x={size.width - 10} y={size.height - 10} className={s.extent}>{`${(bx1 - bx0).toFixed(0)} × ${(by1 - by0).toFixed(0)} m`}</text>
       </svg>
-      <div className={s.panelStack}>
+    </div>
+      <div id={`${idp}-side`} className={s.panelStack} hidden={!sideShown}>
         <SelectionPanel inst={inst} refs={multi} editable={editable} onEdit={onEdit} onSelectRefs={selectRefs} />
         <IssuesPanel issues={geoIssues} focused={focusLive?.key ?? null} onLocate={locateIssue} />
         <LayerLegendPanel layers={layers} onToggle={toggleLayer} entries={legend} />
