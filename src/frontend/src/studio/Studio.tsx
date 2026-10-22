@@ -56,6 +56,7 @@ const DecisionPanel = lazy(() => import('./experiment/DecisionPanel').then((m) =
 const FiguresPanel = lazy(() => import('./figures/FiguresPanel').then((m) => ({ default: m.FiguresPanel })));
 import './dock.css';
 import s from './studio.module.css';
+import { isBoxSelectShortcut } from './editor/shortcuts';
 
 const PANELS = {
   map: { title: '地图', C: MapPanel },
@@ -511,6 +512,10 @@ function useShortcuts(api: React.RefObject<DockviewApi | null>) {
       if (mod && e.key.toLowerCase() === 's') {
         e.preventDefault();
         void flushSave();
+        return;
+      }
+      if (isBoxSelectShortcut(e)) {
+        st.setTool('box');
         return;
       }
       if (mod) return;

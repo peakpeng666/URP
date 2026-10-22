@@ -79,7 +79,7 @@ function useFocus() {
 /* ------------------------------------------------------------------ map -- */
 const TOOLS = [
   { value: 'select', label: '选择', icon: MousePointer2, title: '选择与拖动 (V)' },
-  { value: 'box', label: '框选', icon: BoxSelect, title: '拖动框选（⌘/Ctrl 加选；选择工具下 Alt/⌘ + 拖动同效）' },
+  { value: 'box', label: '框选', icon: BoxSelect, title: '拖动框选 (B；⌘/Ctrl 加选；选择工具下 Alt/⌘ + 拖动同效)' },
   { value: 'pan', label: '平移', icon: Hand, title: '平移 (H，或按住 Shift 拖动)' },
   { value: 'task', label: '任务点', icon: Plus, title: '点击添加任务点 (T)' },
   { value: 'obstacle', label: '障碍', icon: Shapes, title: '拖动绘制障碍 (O)' },
