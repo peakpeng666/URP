@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Read-only APT solver after install failure; stdout must remain private."""
 import json, os, pathlib, re, subprocess, sys
-TARGET='4423a4f9731cbb099433b565f3daa0b41af67f49'
+TARGET='a5df23833c28ca146dac6558573845fae44dda1a'
 BASE=['python3','curl','ca-certificates','gnupg','git','zstd']
 
 def solver_command(source):

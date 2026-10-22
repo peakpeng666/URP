@@ -2,7 +2,7 @@
 Budgets remain planner-selected seconds. This does not measure real-time feasibility.
 """
 import math
-PROTOCOL='simulation_execution_v1'
+PROTOCOL='simulation_execution_v2'
 ENVELOPES={'maze':(900,1800),'warehouse':(5400,7200)}
 OUTER={'maze':('full_loop',3600,7500),'warehouse':('warehouse_lifecycle',9000,13200)}
 STREAMS=['clock','scan','odom','ground_truth']
@@ -13,11 +13,13 @@ def expected_policy(planner_budget_s,stage):
     budget=seconds(planner_budget_s)
     if not isinstance(stage,str) or stage not in ENVELOPES or budget is None:raise ValueError('invalid_execution_protocol')
     watchdog,_=ENVELOPES[stage]
-    return {'policy':'execution_budget_v1','planner_budget_s':budget,
+    return {'policy':'execution_budget_v2','planner_budget_s':budget,
       'planner_formula':'path_length_over_0.10mps_plus_60s_clamped_90_1800_v1',
       'requested':{'budget_s':None,'time_basis':'simulation','wall_watchdog_s':watchdog},
       'effective':{'budget_s':budget,'time_basis':'simulation','wall_watchdog_s':watchdog,
-        'clock_no_progress_wall_s':30.0,'telemetry_stale_wall_s':3.0,
+        'clock_no_progress_wall_s':30.0,'telemetry_stale_sim_s':3.0,
+        'telemetry_receipt_wall_s':30.0,'telemetry_progress_wall_s':30.0,
+        'telemetry_future_skew_sim_s':3.0,'telemetry_zero_stamp_fallback':['ground_truth'],
         'scope':'shared_approach_and_all_legs','navigate_wall_cap_s':None,'required_streams':STREAMS.copy()},
       'budget_provenance':'planner'}
 
@@ -37,7 +39,7 @@ def receipt(stage,planner_budget_s,submitted,terminal):
     if not isinstance(stage,str) or stage not in ENVELOPES:return sanitize({})
     watchdog,overall=ENVELOPES[stage]
     linked=isinstance(submitted,dict) and isinstance(terminal,dict) and all(isinstance(submitted.get(k),str) and submitted[k] and submitted[k]==terminal.get(k) for k in ('run_id','session_id','sim_run_id'))
-    return sanitize({'protocol':PROTOCOL,'stage':stage,'time_basis':'simulation','mode':'follow_path',
+    return sanitize({'protocol':PROTOCOL,'execution_policy':'execution_budget_v2','source_freshness_sim_s':3.0,'receipt_liveness_wall_s':30.0,'source_progress_wall_s':30.0,'future_skew_sim_s':3.0,'zero_stamp_fallback':'ground_truth','stage':stage,'time_basis':'simulation','mode':'follow_path',
       'selected_clock_budget_s':planner_budget_s,'wall_watchdog_s':watchdog,'overall_wall_budget_s':overall,
       'outer_scope':OUTER[stage][0],'runner_stage_wall_budget_s':OUTER[stage][1],'job_wall_budget_s':OUTER[stage][2],'installation_wall_budget_s':3600,
       'budget_origin':'planner','requested_policy_verified':matches_policy(submitted,stage,planner_budget_s),
@@ -48,7 +50,14 @@ def sanitize(raw):
     raw=raw if isinstance(raw,dict) else {}
     def enum(key,allowed):
         value=raw.get(key);return value if isinstance(value,str) and value in allowed else None
-    return {'protocol':enum('protocol',{PROTOCOL}),'stage':enum('stage',set(ENVELOPES)),
+    return {'protocol':enum('protocol',{PROTOCOL,'simulation_execution_v1'}),
+      'execution_policy':enum('execution_policy',{'execution_budget_v1','execution_budget_v2'}),
+      'source_freshness_sim_s':seconds(raw.get('source_freshness_sim_s'),3),
+      'receipt_liveness_wall_s':seconds(raw.get('receipt_liveness_wall_s'),30),
+      'source_progress_wall_s':seconds(raw.get('source_progress_wall_s'),30),
+      'future_skew_sim_s':seconds(raw.get('future_skew_sim_s'),3),
+      'zero_stamp_fallback':enum('zero_stamp_fallback',{'ground_truth'}),
+      'stage':enum('stage',set(ENVELOPES)),
       'time_basis':enum('time_basis',{'simulation'}),'mode':enum('mode',{'follow_path'}),
       'selected_clock_budget_s':seconds(raw.get('selected_clock_budget_s')),
       'wall_watchdog_s':seconds(raw.get('wall_watchdog_s'),7200),
@@ -65,7 +74,7 @@ def sanitize(raw):
 def protocol_ok(raw,stage):
     if not isinstance(stage,str) or stage not in ENVELOPES:return False
     value=sanitize(raw);watchdog,overall=ENVELOPES[stage]
-    return (value['protocol']==PROTOCOL and value['stage']==stage and value['time_basis']=='simulation' and value['mode']=='follow_path' and value['budget_origin']=='planner' and value['selected_clock_budget_s'] is not None and value['wall_watchdog_s']==watchdog and value['overall_wall_budget_s']==overall and value['outer_scope']==OUTER[stage][0] and value['runner_stage_wall_budget_s']==OUTER[stage][1] and value['job_wall_budget_s']==OUTER[stage][2] and value['installation_wall_budget_s']==3600 and value['requested_policy_verified'] and value['terminal_policy_verified'])
+    return (value['protocol']==PROTOCOL and value['execution_policy']=='execution_budget_v2' and value['source_freshness_sim_s']==3 and value['receipt_liveness_wall_s']==30 and value['source_progress_wall_s']==30 and value['future_skew_sim_s']==3 and value['zero_stamp_fallback']=='ground_truth' and value['stage']==stage and value['time_basis']=='simulation' and value['mode']=='follow_path' and value['budget_origin']=='planner' and value['selected_clock_budget_s'] is not None and value['wall_watchdog_s']==watchdog and value['overall_wall_budget_s']==overall and value['outer_scope']==OUTER[stage][0] and value['runner_stage_wall_budget_s']==OUTER[stage][1] and value['job_wall_budget_s']==OUTER[stage][2] and value['installation_wall_budget_s']==3600 and value['requested_policy_verified'] and value['terminal_policy_verified'])
 
 def maze_receipt(report,sim,solutions,source):
     report=report if isinstance(report,dict) else {}

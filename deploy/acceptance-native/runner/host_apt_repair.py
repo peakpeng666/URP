@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Opt-in repair for a disposable GitHub hosted VM, never a default local action."""
 import argparse, hashlib, json, os, pathlib, platform, re, subprocess
-TARGET='4423a4f9731cbb099433b565f3daa0b41af67f49'
+TARGET='a5df23833c28ca146dac6558573845fae44dda1a'
 ALLOW=frozenset(('pkgconf','r-base-dev','libunwind-14-dev','libc++-14-dev','libc++abi-14-dev','libc++-dev','libc++abi-dev','libmagickwand-dev','libmagickwand-6.q16-dev','libmagickcore-6.q16-dev','libmagickcore-dev'))
 ARGS=['install','--no-install-recommends','pkg-config','libunwind-dev','pkgconf-','libunwind-14-dev-']
 NEEDED={('pkgconf','pkg-config'),('libunwind-14-dev','libunwind-dev')}

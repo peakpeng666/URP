@@ -4,7 +4,7 @@
 
 ## 版本与环境
 
-- 执行源码固定为4423a4f9731cbb099433b565f3daa0b41af67f49。
+- 执行源码固定为a5df23833c28ca146dac6558573845fae44dda1a。
 - 验收工具使用另一固定提交；工作流分别检出两个完整SHA。
 - 安装调用项目既有workbench流程，并跳过可选Fields2Cover组件。
 - GitHub临时主机通过显式参数启用APT冲突处理：先模拟精确包替换并检查移除清单，通过后执行，最后重试原安装器一次。本地默认不启用。
@@ -17,7 +17,7 @@
 
 明确选择simulation执行时钟，仅follow_path，不按观测耗时或RTF改写预算。maze保留规划器约103秒的选定时钟预算，wall watchdog为900秒，full_loop外层1800秒、runner模拟阶段3600秒、job125分钟。库房保留649.6秒的选定时钟预算，watchdog5400秒，lifecycle外层7200秒、runner模拟阶段9000秒、job220分钟。两个阶段安装上限均3600秒；预载、就绪和独立有界清理不跳过。不同作用域分别公开，7200秒不是整个job预算。
 
-原始请求、queued及terminal的冻结执行策略必须一致，且无budget覆盖；身份、路线和全部物理验收条件不变。公开摘要将规划预算与观测耗时分开，明确不测量实时可行性。接驳仍按项目契约交由Nav2规划，但与所有路线段共享执行时钟。该协议要求已审查的execution_budget_v1应用源码，源pin已统一更新为已审查提交；本地测试不等同原生验收。
+原始请求、queued及terminal的冻结执行策略必须一致，且无budget覆盖；身份、路线和全部物理验收条件不变。公开摘要将规划预算与观测耗时分开，明确不测量实时可行性。接驳仍按项目契约交由Nav2规划，但与所有路线段共享执行时钟。该协议要求已审查的execution_budget_v2应用源码，源pin已统一更新为已审查提交；本地测试不等同原生验收。
 
 ## 文件与接口
 
@@ -36,3 +36,5 @@ python -m unittest -v test_acceptance runner.test_runner runner.test_worktree ru
 公开摘要包含固定状态、数值、布尔值和摘要哈希；缺测值标null。安装失败时列出经软件包缓存核对的依赖诊断，并标注核验方式。完整日志与运行数据留在临时目录，不上传artifact或缓存。工作流不发布镜像，不修改部署分支，不使用付费runner。
 
 库房回放工具位于warehouse目录。它保留历史五任务几何和起点，重新进行路线、地图、45项资源及当前执行身份校验，并通过原有网关执行；不重复调用求解器。maze失败或清理不合格时，库房job跳过。
+
+新的 simulation_execution_v2 cohort 保持路线和选定时钟预算不变，仅将执行新鲜度协议明确为 3 sim 秒 source freshness、30 wall 秒 receipt/source-progress guards，并保留独立 wall watchdog。只有 ground_truth 允许零 stamp fallback，测量年龄仍未知。原子 trigger 相对年龄及最多 8 条固定 schema 观测可公开；旧 v1 cohort 仅保留历史标签，不视为新版策略验收通过。

@@ -1,4 +1,5 @@
 """Private execution records -> enums/scalars only. Never participates in PASS."""
+from execution_freshness_diagnostics import project as freshness_projection
 import importlib
 import math
 from pathlib import Path
@@ -16,13 +17,14 @@ ERRORS={
  'endpoint_error':'段控制器到达，但真值端点误差',
  'action_aborted':'状态 6，未到达','action_canceled':'状态 5，未到达'}
 ERRORS['execution_timing_guard']='execution timing guard:'
-TRIGGERS={'budget','stop','cancel','simulation_budget','wall_watchdog','clock_missing','clock_invalid','clock_backwards','clock_no_progress'}|{prefix+':'+stream for prefix in ('stream_missing','stream_stale','stream_timestamp_invalid') for stream in ('clock','scan','odom','ground_truth')}
+TRIGGERS={'budget','stop','cancel','simulation_budget','wall_watchdog','clock_missing','clock_invalid','clock_backwards','clock_no_progress'}|{prefix+':'+stream for prefix in ('stream_missing','stream_stale','stream_timestamp_invalid','stream_stale_wall','stream_timing_missing','stream_stamp_missing','stream_stamp_invalid','stream_stamp_backwards','stream_clock_backwards','stream_stamp_future','stream_stale_sim','stream_no_progress') for stream in ('clock','scan','odom','ground_truth')}
 def timing(raw):
     raw=mapping(raw);gaps=mapping(raw.get('max_stream_gap_wall_s'))
-    result={'policy':enum(raw.get('policy'),{'execution_budget_v1'}),'trigger':enum(raw.get('trigger'),TRIGGERS),'terminal_state':enum(raw.get('terminal_state'),{'succeeded','failed','canceled'}),'samples':number(raw.get('samples'),10000000,True),'max_no_progress_wall_s':number(raw.get('max_no_progress_wall_s'),10000),'max_stream_gap_wall_s':{k:number(gaps.get(k),10000) for k in ('clock','scan','odom','ground_truth')}}
+    result={'policy':enum(raw.get('policy'),{'execution_budget_v1','execution_budget_v2'}),'trigger':enum(raw.get('trigger'),TRIGGERS),'terminal_state':enum(raw.get('terminal_state'),{'succeeded','failed','canceled'}),'samples':number(raw.get('samples'),10000000,True),'max_no_progress_wall_s':number(raw.get('max_no_progress_wall_s'),10000),'max_stream_gap_wall_s':{k:number(gaps.get(k),10000) for k in ('clock','scan','odom','ground_truth')}}
     for key in ('elapsed_wall_s','trigger_elapsed_wall_s','total_elapsed_wall_s'):result[key]=number(raw.get(key),10000)
     for key in ('elapsed_sim_s','trigger_elapsed_sim_s','total_elapsed_sim_s'):
         value=raw.get(key);result[key]=value if type(value) in (int,float) and -86400<=value<=86400 and math.isfinite(value) else None
+    result.update(freshness_projection(raw))
     return result
 
 RECON={'not_attempted','missing_solution','source_unavailable','plan_rejected','geometry_mismatch','reconstructed'}

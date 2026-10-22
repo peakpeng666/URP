@@ -1,6 +1,6 @@
 # Real simulation acceptance harness
 
-Execution source is fixed to 4423a4f9731cbb099433b565f3daa0b41af67f49. The harness package is checked out at a separate fixed commit supplied by the wrapper; both identities appear independently in the allowlisted summary. A fresh clean source checkout is mandatory, not the dirty local audit checkout.
+Execution source is fixed to a5df23833c28ca146dac6558573845fae44dda1a. The harness package is checked out at a separate fixed commit supplied by the wrapper; both identities appear independently in the allowlisted summary. A fresh clean source checkout is mandatory, not the dirty local audit checkout.
 
 Interface:
 
@@ -27,3 +27,10 @@ The pinned application uses an Undock-only 35-second simulation budget, a 700-se
 Only follow_path is submitted. CLI opt-in for maze is --execution-time-basis simulation --execution-wall-watchdog 900; --execution-budget is not supplied. The reviewed application's planner budget remains selected-clock seconds, not measured runtime: approximately103 for maze and649.6 for the fixed warehouse route. Maze layers are watchdog900, full_loop1800, runner-stage3600 seconds and job125 minutes. Warehouse layers are watchdog5400, lifecycle7200, runner-stage9000 seconds and job220 minutes. Installation remains separately capped at3600 seconds. Preload, readiness and cleanup retain their existing checks and finite deadlines. These scopes are not interchangeable.
 
 execution_protocol.py verifies the original requested policy and both API submission/terminal metadata against the immutable planner budget, simulation basis, shared approach/all-legs scope and unchanged stream guards. Missing/mismatched policy blocks PASS in addition to, never instead of, every existing physical predicate. Public timing projection excludes absolute clocks, coordinates and arbitrary text. No real-time feasibility claim follows from this simulation-time experiment. Source pins now target the reviewed execution-policy source commit; no native run is claimed by this local validation.
+
+## Simulation freshness protocol v2
+
+The next cohort requires `simulation_execution_v2` / `execution_budget_v2`: source freshness is 3 simulation seconds, receipt and source-progress liveness are each 30 wall seconds, future stamp tolerance is 3 simulation seconds, and only ground truth permits a zero-stamp clock-at-receive fallback. Requested and terminal frozen policies must both exactly match. The source pin is the reviewed v2 commit `a5df23833c28ca146dac6558573845fae44dda1a`. Route geometry, tasks, selected-clock budgets, wall watchdogs, physical predicates and cleanup gates are unchanged. Earlier v1 observations retain their v1 label and are not accepted as the new cohort.
+
+Execution diagnostics expose separate atomic trigger and latest observations, plus at most 8 recent observations, all in a fixed schema. Per-stream receipt/source/freshness/progress ages are relative, finite and range-limited; negative ages are retained for fault diagnosis. Zero-stamped ground truth keeps source age unavailable rather than inventing measurement age. Absolute clocks, source stamps, paths, identifiers and raw messages are never projected. Missing or malformed evidence remains null. Diagnostic observations do not create a PASS or establish real-time feasibility.
+Legacy or unavailable observations deliberately retain `diagnostics: null`; they are not claimed to validate the new schema's `execution_observation_v1` constant. A fallback ground-truth row always projects `source_age_sim_s: null`, including inconsistent private input that supplies a numeric age.

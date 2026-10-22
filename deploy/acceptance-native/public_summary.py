@@ -9,7 +9,7 @@ from execution_diagnostics import sanitize as sanitize_execution
 from execution_protocol import sanitize as sanitize_protocol, protocol_ok
 from undock_observer.projection import project as project_observer
 
-SOURCE = '4423a4f9731cbb099433b565f3daa0b41af67f49'
+SOURCE = 'a5df23833c28ca146dac6558573845fae44dda1a'
 STATES = {'PASS', 'FAIL', 'ERROR', 'NOT_RUN'}
 FAILURE_STEPS = {'none','unknown','health','services','scenario','recommendation','solve_submit','solve_terminal','solve_validation','map_validation','export','session_start','session_ready','sim_submit','sim_execute','sim_tasks','shutdown'}
 ERROR_KINDS = {'none','unknown','module_missing','source_identity','timeout','runtime','http','value'}
