@@ -44,7 +44,7 @@ import { centerMap, ReplayOverlay } from '../experiment/ReplayPanel';
 import { comparable, currentInput, exclusionReason, inputIdentity, partitionRuns, requiresCoverageRecheck, resultState, verifiedPlan } from '../comparison';
 import { identityState, withoutInvalidatedResults } from '../../lab/views/plan/resultIntegrity';
 import { RunTrace } from '../experiment/RunTrace';
-import { SeedBandChart } from '../research/RunCharts';
+import { SeedBandChart, VerificationChart } from '../research/RunCharts';
 import { ProblemEditor } from './ProblemEditor';
 import s from './panels.module.css';
 
@@ -954,6 +954,7 @@ export function ComparePanel() {
       </div>
       <Convergence runs={group.filter((r) => r.process?.source_identity_verified !== false)} />
       <SeedBandChart runs={group} />
+      <VerificationChart runs={rows} />
     </div>
   );
 }
