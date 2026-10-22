@@ -7,7 +7,7 @@ import { studio, urls } from '../api';
 import { useStudio } from '../store';
 import type { Analysis, InstanceSpace, Study } from '../types';
 import { logTimeAxis } from '../chart';
-import { ProfileChart } from '../research/AnalysisCharts';
+import { EcdfCharts, ProfileChart } from '../research/AnalysisCharts';
 import s from './panels.module.css';
 
 type ArchiveExperiment = {
@@ -308,6 +308,7 @@ export function AnalysisPanel() {
         )}
         {t.nemenyi && <CdDiagram ranks={t.nemenyi.mean_ranks} cd={t.nemenyi.critical_difference} names={names} />}
         <ProfileChart analysis={data} />
+        <EcdfCharts analysis={data} />
         <div className={s.chart}>
           <h4>相对参照的差距分布（每次运行）</h4>
           <PlotBox deps={[data]} make={(w) => {
