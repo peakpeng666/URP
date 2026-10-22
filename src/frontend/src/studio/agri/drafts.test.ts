@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AGRI_PATTERNS } from './patterns';
 import { defaultValues, buildPattern } from './catalog';
-import { clearDraft, draftKey, DRAFT_SCHEMA, loadDraft, loadFilters, saveDraft, saveFilters } from './drafts';
+import { clearDraft, debouncedDraftWriter, draftKey, DRAFT_SCHEMA, loadDraft, loadFilters, saveDraft, saveFilters } from './drafts';
 import { extractPreview, previewIssues } from './preview';
 import { selfIntersects, signedArea } from './geometry';
 import { pointInPolygon as editorPip, distToSegment } from '../editor/geometry';
@@ -94,5 +94,23 @@ describe('last import record', () => {
     expect(lastImport(p.id)?.scenarioId).toBe('s1');
     local.setItem(`urp.agri.lastImport.v1:${p.id}`, '{bad');
     expect(lastImport(p.id)).toBeNull();
+  });
+});
+
+describe('debouncedDraftWriter', () => {
+  it('flushes a pending write once and never writes twice', async () => {
+    const { vi } = await import('vitest');
+    vi.useFakeTimers();
+    try {
+      let n = 0;
+      const w = debouncedDraftWriter(() => { n += 1; }, 300);
+      expect(w.pending()).toBe(true);
+      w.flush(); expect(n).toBe(1); expect(w.pending()).toBe(false);
+      vi.advanceTimersByTime(500); w.flush(); expect(n).toBe(1);
+      const w2 = debouncedDraftWriter(() => { n += 1; }, 300);
+      vi.advanceTimersByTime(300); expect(n).toBe(2); w2.flush(); expect(n).toBe(2);
+      const w3 = debouncedDraftWriter(() => { n += 1; }, 300);
+      w3.cancel(); vi.advanceTimersByTime(500); w3.flush(); expect(n).toBe(2);
+    } finally { vi.useRealTimers(); }
   });
 });
