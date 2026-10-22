@@ -4,10 +4,11 @@ import { useStudio } from '../store';
 import { ENVIRONMENTS, OPERATIONS, PLANNING_PROBLEMS, SERVICE_OBJECTS, type AgriTaskPattern } from './taxonomy';
 import { AGRI_PATTERNS, patternStatus } from './patterns';
 import { buildPattern, createImportGuard, defaultValues, filterPatterns, importPattern, STATUS_LABELS } from './catalog';
-import { downloadFile, downloadMatrices } from './export';
+import { downloadFile, downloadMatrices, evidenceFile } from './export';
 import { clearDraft, lastImport, recordImport, loadDraft, loadFilters, onForeignDraftChange, saveDraft, debouncedDraftWriter, saveFilters } from './drafts';
 import { extractPreview, previewIssues } from './preview';
 import { PreviewMap } from './PreviewMap';
+import { CAP_AXES, CAP_AXIS_LABELS, CAP_LEVEL_LABELS, capabilityEvidence, catalogStats } from './evidence';
 import { issueFields, type PreviewIssue } from './preview';
 const paramAnchor = (pattern: string, key: string) => `agri-param-${pattern}-${key}`;
 import { manualEdits, type ManualEditReport } from './manualEdits';
@@ -37,10 +38,11 @@ export function AgriCatalog({ visible = true }: { visible?: boolean } = {}) {
     <label>模式状态<Select aria-label="模式状态" value={status} onChange={(e) => setStatus(e.target.value)}>
       <option value="">全部状态</option>{Object.entries(STATUS_LABELS).map(([id, label]) => <option key={id} value={id}>{label}</option>)}
     </Select></label>
-    <p>当前 {patterns.length} 个模式</p>
+    <CatalogSummary shown={patterns} />
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
       <Button size="sm" onClick={() => download('json')}>下载完整矩阵 JSON</Button>
       <Button size="sm" onClick={() => download('csv')}>下载完整矩阵 CSV</Button>
+      <Button size="sm" onClick={() => { try { downloadFile(evidenceFile()); setDownloadError(''); } catch (e) { setDownloadError(e instanceof Error ? e.message : String(e)); } }}>下载能力依据 CSV</Button>
     </div>
     {downloadError && <div role="alert"><Notice tone="error">下载失败：{downloadError}</Notice></div>}
     {!patterns.length && <p role="status">此组合暂无模式，请调整筛选条件。</p>}
@@ -145,7 +147,7 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
     <p>目标：{SERVICE_OBJECTS.find((x) => x.id === p.serviceObject)?.name} / {PLANNING_PROBLEMS.find((x) => x.id === p.planningProblem)?.name}</p>
     {p.proxyModel && <Notice tone="warn">实际代理：{SERVICE_OBJECTS.find((x) => x.id === p.proxyModel!.serviceObject)?.name} / {PLANNING_PROBLEMS.find((x) => x.id === p.proxyModel!.planningProblem)?.name}。{p.proxyModel.note}</Notice>}
     {p.approximation && <Notice tone="warn">近似限制：{p.approximation}</Notice>}
-    <ul>{Object.entries(p.capabilities).map(([axis, cap]) => <li key={axis}>{({ defined: '定义', editable: '编辑', solvable: '求解', checkable: '验算', simulatable: '仿真', experimented: '实验' } as Record<string, string>)[axis]}：{cap.level} · {cap.note}</li>)}</ul>
+    <CapabilityList pattern={p} />
     {p.proposal ? <><Notice tone="warn">提案不可提交：{p.proposal.missing.join('；')}</Notice><p>接口草案：{p.proposal.apiDraft}</p></> : <>
       {draftNotice && <p role="status">{draftNotice}</p>}
       {saveError && <Notice tone="warn">{saveError}</Notice>}
@@ -180,4 +182,27 @@ export function PatternCard({ pattern: p, active = true }: { pattern: AgriTaskPa
     </>}
     {error && <div role="alert"><Notice tone="error">{error}</Notice></div>}
   </details>;
+}
+
+/** 当前筛选与全目录的状态和能力统计；与矩阵导出同源。 */
+function CatalogSummary({ shown }: { shown: AgriTaskPattern[] }) {
+  const cur = catalogStats(shown); const all = catalogStats();
+  return <div aria-label="目录统计" style={{ fontSize: 12 }}>
+    <p role="status">当前 {cur.total} 个模式（全目录 {all.total} 个）：{(Object.keys(STATUS_LABELS) as (keyof typeof STATUS_LABELS)[]).map((k) => `${STATUS_LABELS[k]} ${cur.status[k]}`).join('，')}。</p>
+    <table><caption>当前筛选下的六维能力声明（支持/部分/不支持），不是运行或实验结果</caption>
+      <thead><tr><th scope="col">维度</th>{CAP_AXES.map((a) => <th key={a} scope="col">{CAP_AXIS_LABELS[a]}</th>)}</tr></thead>
+      <tbody>{(['yes', 'partial', 'no'] as const).map((lv) => <tr key={lv}><th scope="row">{CAP_LEVEL_LABELS[lv]}</th>{CAP_AXES.map((a) => <td key={a}>{cur.capabilities[a][lv]}</td>)}</tr>)}</tbody>
+    </table>
+    {all.conflicts.length > 0 && <Notice tone="warn">{all.conflicts.length} 项能力声明超出依据：{all.conflicts.map((c) => `${c.pattern}/${CAP_AXIS_LABELS[c.axis]}`).join('，')}</Notice>}
+  </div>;
+}
+
+function CapabilityList({ pattern }: { pattern: AgriTaskPattern }) {
+  const ev = capabilityEvidence(pattern);
+  return <dl aria-label={`${pattern.name} 能力与依据`} style={{ fontSize: 12 }}>
+    {CAP_AXES.map((a) => <div key={a} data-axis={a} data-level={ev[a].level}>
+      <dt>{CAP_AXIS_LABELS[a]}：{CAP_LEVEL_LABELS[ev[a].level]}</dt>
+      <dd>{ev[a].note}<br />依据：{ev[a].basis.join('；')}{ev[a].conflict && <><br /><strong style={{ color: '#c62828' }}>{ev[a].conflict}</strong></>}</dd>
+    </div>)}
+  </dl>;
 }
