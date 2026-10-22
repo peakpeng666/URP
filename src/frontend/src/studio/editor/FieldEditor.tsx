@@ -19,6 +19,8 @@ import {
   translate,
   vehicleOfTask,
 } from './geometry';
+import { fromSelection, itemPoints, itemsInBox, liveRefs, refKey, sameRef, toSelection, translateItems, type ItemRef } from './selection';
+import { SelectionPanel } from './SelectionPanel';
 import s from './editor.module.css';
 
 export interface FieldEditorProps {
@@ -51,7 +53,9 @@ type Drag =
   | { kind: 'unload'; index: number; from: XY; orig: XY }
   | { kind: 'poly'; target: PolyTarget; id: string; from: XY; orig: XY[] }
   | { kind: 'vertex'; target: PolyTarget | 'boundary'; id: string; index: number }
-  | { kind: 'shape'; target: PolyTarget; from: XY; to: XY };
+  | { kind: 'shape'; target: PolyTarget; from: XY; to: XY }
+  | { kind: 'marquee'; from: XY; to: XY; add: boolean }
+  | { kind: 'multi'; from: XY; refs: ItemRef[]; orig: FleetInstance };
 
 const GRID_STEPS = [0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500];
 
@@ -67,6 +71,19 @@ export function FieldEditor(props: FieldEditorProps) {
   // Until the user pans or zooms, the map refits whenever its panel resizes.
   const touched = useRef(false);
   const shown = preview ?? inst;
+  // Multi-selection lives here; the store keeps the primary item (first of the list) as its single selection.
+  const [picked, setPicked] = useState<ItemRef[]>([]);
+  const [marquee, setMarquee] = useState<{ a: XY; b: XY } | null>(null);
+  const multi = useMemo(() => liveRefs(inst, picked), [inst, picked]);
+  useEffect(() => {
+    const r = fromSelection(selection);
+    if (!r) setPicked((cur) => (cur.length > 1 ? cur : []));
+    else setPicked((cur) => (cur.some((x) => sameRef(x, r)) ? cur : [r]));
+  }, [selection]);
+  const selectRefs = useCallback((refs: ItemRef[]) => {
+    setPicked(refs);
+    onSelect(toSelection(refs[0]));
+  }, [onSelect]);
 
   const fit = useCallback(() => {
     if (!size.width || !size.height) return;
@@ -135,6 +152,25 @@ export function FieldEditor(props: FieldEditorProps) {
     }
     if (e.button !== 0) return;
     if (tool === 'select' || !editable) {
+      const additive = e.ctrlKey || e.metaKey;
+      const ref: ItemRef | null =
+        hit === 'task' || hit === 'obstacle' || hit === 'plot' || hit === 'corridor' || hit === 'unload' ? { type: hit, id } :
+        hit === 'depot' ? { type: 'depot', id: String(Number(id || 0)) } : null;
+      if (ref && additive) {
+        const next = multi.some((x) => sameRef(x, ref)) ? multi.filter((x) => !sameRef(x, ref)) : [...multi, ref];
+        selectRefs(next);
+        return;
+      }
+      if (ref && multi.length > 1 && multi.some((x) => sameRef(x, ref))) {
+        if (editable) drag.current = { kind: 'multi', from: p, refs: multi, orig: inst };
+        return;
+      }
+      if (ref) setPicked([ref]);
+      if (!hit && (e.altKey || additive)) {
+        drag.current = { kind: 'marquee', from: p, to: p, add: additive };
+        setMarquee({ a: p, b: p });
+        return;
+      }
       if (hit === 'vertex' && editable) {
         const [target, owner, index] = id.split(':');
         drag.current = { kind: 'vertex', target: target as PolyTarget | 'boundary', id: owner, index: Number(index) };
@@ -171,6 +207,7 @@ export function FieldEditor(props: FieldEditorProps) {
         onSelect({ type: 'boundary' });
         return;
       }
+      setPicked([]);
       onSelect(null);
       drag.current = { kind: 'pan', sx: e.clientX, sy: e.clientY, view };
       return;
@@ -218,6 +255,15 @@ export function FieldEditor(props: FieldEditorProps) {
       setShape({ a: d.from, b: p, target: d.target });
       return;
     }
+    if (d.kind === 'marquee') {
+      d.to = p;
+      setMarquee({ a: d.from, b: p });
+      return;
+    }
+    if (d.kind === 'multi') {
+      setPreview(translateItems(d.orig, d.refs, round(p[0] - d.from[0]), round(p[1] - d.from[1])));
+      return;
+    }
     const base = preview ?? inst;
     if (d.kind === 'task') {
       const xy: XY = [round(d.orig[0] + p[0] - d.from[0]), round(d.orig[1] + p[1] - d.from[1])];
@@ -247,6 +293,12 @@ export function FieldEditor(props: FieldEditorProps) {
     const d = drag.current;
     drag.current = null;
     if (!d) return;
+    if (d.kind === 'marquee') {
+      setMarquee(null);
+      const found = itemsInBox(inst, d.from, d.to);
+      selectRefs(d.add ? [...multi, ...found.filter((r) => !multi.some((x) => sameRef(x, r)))] : found);
+      return;
+    }
     if (d.kind === 'shape') {
       setShape(null);
       const small = Math.hypot(d.to[0] - d.from[0], d.to[1] - d.from[1]) < 0.8;
@@ -367,6 +419,20 @@ export function FieldEditor(props: FieldEditorProps) {
           {overlay?.(view)}
           {selPoly && <polygon className={s.selected} points={selPoly.map((p) => p.join(',')).join(' ')} />}
         </g>
+        {multi.length > 1 && multi.map((r) => {
+          const pts = itemPoints(shown, r);
+          if (!pts) return null;
+          if (pts.length === 1) {
+            const [x, y] = scr(pts[0]);
+            return <circle key={refKey(r)} cx={x} cy={y} r={13} className={s.multiSel} />;
+          }
+          return <polygon key={refKey(r)} className={s.multiSel} points={pts.map((q) => scr(q).join(',')).join(' ')} />;
+        })}
+        {marquee && (() => {
+          const [ax, ay] = scr(marquee.a);
+          const [bx, by] = scr(marquee.b);
+          return <rect className={s.marquee} x={Math.min(ax, bx)} y={Math.min(ay, by)} width={Math.abs(bx - ax)} height={Math.abs(by - ay)} />;
+        })()}
         {visibleRoutes.map((r) => <Arrows key={r.vehicle_name} poly={r.polyline} view={view} color={r.color} />)}
         {shown.plots.map((pl) => {
           const [cx, cy] = scr(centroid(pl.polygon));
@@ -433,6 +499,9 @@ export function FieldEditor(props: FieldEditorProps) {
         <ScaleBar step={gridStep} k={view.k} height={size.height} />
         <text x={size.width - 10} y={size.height - 10} className={s.extent}>{`${(bx1 - bx0).toFixed(0)} × ${(by1 - by0).toFixed(0)} m`}</text>
       </svg>
+      <div className={s.panelStack}>
+        <SelectionPanel inst={inst} refs={multi} editable={editable} onEdit={onEdit} onSelectRefs={selectRefs} />
+      </div>
     </div>
   );
 }
