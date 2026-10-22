@@ -114,6 +114,24 @@ APT_EVENTS = (
     ('lock_wait', r'^Waiting for cache lock:'),
 )
 
+APT_TRANSPORT_SIGNALS = {
+    'dns': ('could not resolve', 'temporary failure resolving'),
+    'timeout': ('connection timed out', 'connection timeout', 'timed out waiting'),
+    'connection_refused': ('connection refused',),
+    'connection_reset': ('connection reset by peer',),
+    'connection_failed': ('connection failed', 'could not connect'),
+    'network_unreachable': ('network is unreachable',),
+    'tls': ('certificate verification failed', 'certificate verify failed', 'could not handshake'),
+    'hash_mismatch': ('hash sum mismatch', 'file has unexpected size'),
+}
+APT_HOST_GROUPS = {
+    'packages.ros.org': 'ros',
+    'packages.osrfoundation.org': 'gazebo',
+    'archive.ubuntu.com': 'ubuntu',
+    'azure.archive.ubuntu.com': 'ubuntu',
+    'security.ubuntu.com': 'ubuntu',
+}
+
 class AptOutputObservation:
     """Lower-bound event counts AFTER phase detection, not package totals.
 
@@ -128,6 +146,27 @@ class AptOutputObservation:
         self.counts={name:0 for name,_ in APT_EVENTS}
         self.truncated=False
         self.last_activity=None
+        self.transport={name:0 for name in (*APT_TRANSPORT_SIGNALS,'http_429','http_4xx','http_5xx')}
+        self.hosts={name:0 for name in ('ros','gazebo','ubuntu','other')}
+
+    def transport_line(self,line):
+        """Count known output signals only; never emit hostnames or error text."""
+        lowered=line.casefold()
+        for name,needles in APT_TRANSPORT_SIGNALS.items():
+            if any(needle in lowered for needle in needles):
+                self.transport[name]=min(100000,self.transport[name]+1)
+        if line[:1].isspace() or line.startswith('E: Failed to fetch '):
+            status=re.search(r'(?:^|\s)([45][0-9]{2})\s+[A-Za-z]',line)
+            if status:
+                code=status.group(1)
+                name='http_429' if code=='429' else ('http_5xx' if code.startswith('5') else 'http_4xx')
+                self.transport[name]=min(100000,self.transport[name]+1)
+        record=re.match(r'^(?:Get|Ign|Err):[0-9]+\s+https?://([^/\s]+)',line)
+        if record:
+            # Credentials, paths, query strings and unknown hosts stay private.
+            authority=record.group(1).rsplit('@',1)[-1].split(':',1)[0].lower()
+            group=APT_HOST_GROUPS.get(authority,'other')
+            self.hosts[group]=min(100000,self.hosts[group]+1)
 
     def size(self):
         try:
@@ -161,6 +200,7 @@ class AptOutputObservation:
                 # Revisit only the unfinished trailing line on the next sample.
                 self.offset=size-(len(raw)-end-1)
                 for line in raw[:end+1].decode('utf-8',errors='replace').splitlines():
+                    self.transport_line(line)
                     for name,pattern in APT_EVENTS:
                         if re.match(pattern,line):
                             self.last_event=name
@@ -171,6 +211,8 @@ class AptOutputObservation:
     def public(self,now):
         return {'apt_output_last_observed_event':self.last_event,
                 'apt_output_observed_event_counts':dict(self.counts),
+                'apt_transport_observed_signal_counts':dict(self.transport),
+                'apt_source_group_observed_event_counts':dict(self.hosts),
                 'apt_output_observation_truncated':self.truncated,
                 'apt_output_seconds_since_observed_activity':None if self.last_activity is None else min(3600,max(0,int(now-self.last_activity)))}
 
@@ -302,7 +344,7 @@ def run(args):
         if not number.isdigit(): raise RuntimeError('display_not_ready')
         env['DISPLAY'] = ':'+number
         entry = harness / ('warehouse/warehouse_acceptance.py' if args.stage == 'warehouse' else 'acceptance.py')
-        rc = child([str(root/'src/lab/.venv/bin/python'), str(entry), '--source',str(root),'--private-dir',str(private/'harness-private'),'--harness-sha',args.harness_sha,'--summary',str(private/'summary.json'),'--stage',args.stage], 'acceptance.log', time.monotonic()+3600)
+        rc = child([str(root/'src/lab/.venv/bin/python'), str(entry), '--source',str(root),'--private-dir',str(private/'harness-private'),'--harness-sha',args.harness_sha,'--summary',str(private/'summary.json'),'--stage',args.stage], 'acceptance.log', time.monotonic()+(9000 if args.stage == 'warehouse' else 3600))
         status['exit_code'] = rc
     except Exception:
         status['exit_code'] = 1

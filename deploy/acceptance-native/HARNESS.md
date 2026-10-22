@@ -1,6 +1,6 @@
 # Real simulation acceptance harness
 
-Execution source is fixed to 18557cfc61f291e8ac5fa4a80d9df212e1df0030. The harness package is checked out at a separate fixed commit supplied by the wrapper; both identities appear independently in the allowlisted summary. A fresh clean source checkout is mandatory, not the dirty local audit checkout.
+Execution source is fixed to 4423a4f9731cbb099433b565f3daa0b41af67f49. The harness package is checked out at a separate fixed commit supplied by the wrapper; both identities appear independently in the allowlisted summary. A fresh clean source checkout is mandatory, not the dirty local audit checkout.
 
 Interface:
 
@@ -13,10 +13,17 @@ PASS requires full-loop PASS, terminal simulation succeeded, at least two finite
 
 The only public path is public_summary.py, which rebuilds fixed keys and enums, finite bounded numbers, booleans and hex digests. Arbitrary strings, original errors, URLs, absolute paths, API responses and unknown keys are discarded. Absent measurements remain null with not_measured availability. TF/clock live diagnostics are not presently sampled and are not claimed as zero. Raw API outputs, runtime, logs and reports stay beneath the runner temporary directory, never uploaded or cached. The wrapper's final cleanup result can overturn an earlier PASS.
 
-Warehouse is explicitly NOT_RUN. Passing --stage warehouse fails before gateway startup until a reviewed frozen-JSON replay adapter is supplied. It must reuse the recovered five-task geometry and exact spawn, not solve a replacement route. Reconstructed 650-second budget and original missing timing must be disclosed in that subsequent adapter.
+Warehouse uses the independently rechecked frozen five-task witness, exact recovered spawn and unchanged resource/map/route checks. No replacement solver is run. The planner-selected649.6-second budget is preserved and explicitly uses simulation time. Historical missing timing is not invented.
 
 Local tests exercise projection, every success gate, missing measurements, corrupt/nonfinite inputs, source mismatch, wrapper cleanup override and a real tagged child cleanup. They are harness tests, not ROS/Gazebo acceptance. No simulator or installer was run during development.
 
 ## Startup timing policy
 
-The pinned application uses an Undock-only 35-second simulation budget, a 700-second monotonic wall watchdog, and 30-second clock-progress and required-stream guards. Readiness polling is capped at 1200 wall seconds and remains bounded by the existing overall polling deadline. Cancellation and cleanup have their own bounded wall waits. Nav2 execution budgets, route geometry, collision checks and success criteria are unchanged. The observer records an observed interval, not exact action acceptance/result times.
+The pinned application uses an Undock-only 35-second simulation budget, a 700-second monotonic wall watchdog, and 30-second clock-progress and required-stream guards. Readiness polling is capped at 1200 wall seconds and remains bounded by the existing overall polling deadline. Cancellation and cleanup have their own bounded wall waits. Route geometry, collision checks and physical success criteria are unchanged. The opt-in execution-clock protocol below changes execution time basis explicitly, not the planner-selected budget. The observer records an observed interval, not exact action acceptance/result times.
+
+
+## Explicit execution-clock protocol
+
+Only follow_path is submitted. CLI opt-in for maze is --execution-time-basis simulation --execution-wall-watchdog 900; --execution-budget is not supplied. The reviewed application's planner budget remains selected-clock seconds, not measured runtime: approximately103 for maze and649.6 for the fixed warehouse route. Maze layers are watchdog900, full_loop1800, runner-stage3600 seconds and job125 minutes. Warehouse layers are watchdog5400, lifecycle7200, runner-stage9000 seconds and job220 minutes. Installation remains separately capped at3600 seconds. Preload, readiness and cleanup retain their existing checks and finite deadlines. These scopes are not interchangeable.
+
+execution_protocol.py verifies the original requested policy and both API submission/terminal metadata against the immutable planner budget, simulation basis, shared approach/all-legs scope and unchanged stream guards. Missing/mismatched policy blocks PASS in addition to, never instead of, every existing physical predicate. Public timing projection excludes absolute clocks, coordinates and arbitrary text. No real-time feasibility claim follows from this simulation-time experiment. Source pins now target the reviewed execution-policy source commit; no native run is claimed by this local validation.

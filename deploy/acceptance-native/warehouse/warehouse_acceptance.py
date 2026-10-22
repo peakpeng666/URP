@@ -17,7 +17,7 @@ from urllib.parse import urlsplit
 from historical_input import SOURCE, ARCHIVE_SIZE, from_archive, from_directory, canonical_sha
 from recheck import build_record, public_receipt
 from resource_identity import compare
-from warehouse_lifecycle import drive, physical_evidence
+from warehouse_lifecycle import drive, physical_evidence, OVERALL_WALL_S
 from warehouse_public_summary import project, digest
 
 FUEL_MODELS=('Warehouse','shelf_big','shelf','Chair','foldable_chair','MaleVisitorOnPhone','Table','Jersey Barrier','Casual female')
@@ -76,8 +76,9 @@ def execute(a):
     sys.path.insert(0,str(frozen))
     from acceptance import api, owned, signal_owned, verify_source, read
     from startup_diagnostics import collect
+    from execution_diagnostics import collect as collect_execution
     source=a.source.resolve();token=secrets.token_hex(24);gateway=None;base=None;forced=False;sid=None
-    raw={'state':'ERROR','source_sha':SOURCE,'harness_sha':a.harness_sha,'overall_wall_budget_s':1800}
+    raw={'state':'ERROR','source_sha':SOURCE,'harness_sha':a.harness_sha,'overall_wall_budget_s':OVERALL_WALL_S}
     def save(name,obj):(private/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2,allow_nan=False))
     try:
         if a.stage!='warehouse' or not digest(a.harness_sha,40):raise ValueError('warehouse_arguments_invalid')
@@ -103,7 +104,7 @@ def execute(a):
         if resources['resources_match_historical'] is not True:raise ValueError('historical_resources_mismatch')
         map_before=map_snapshot(maps);adapter_before=adapter_identity()
         record,plan=build_record(inputs,check,map_check,to_sim_plan,execution_manifest,lambda:maps.fingerprint('warehouse'),adapter_before)
-        raw.update(public_receipt(record));raw.update(resources);raw.update(source_sha=SOURCE,harness_sha=a.harness_sha,overall_wall_budget_s=1800,state='ERROR',**map_before)
+        raw.update(public_receipt(record));raw.update(resources);raw.update(source_sha=SOURCE,harness_sha=a.harness_sha,overall_wall_budget_s=OVERALL_WALL_S,state='ERROR',**map_before)
         save('new-record.json',record);save('current-plan.json',plan)
         db=Store(runtime/'lab.sqlite3')
         try:
@@ -145,6 +146,8 @@ def execute(a):
         persisted=api(base,'GET','/runs/'+record['run_id'])
         if persisted!=record:raise ValueError('gateway_import_readback_mismatch')
         lifecycle=drive(lambda method,path,data=None,timeout=5:api(base,method,path,data,timeout),record['run_id'],plan,guard,save)
+        raw['execution_protocol']=lifecycle['execution_protocol']
+        raw['execution_diagnostics']=collect_execution(lifecycle['result'],[record],source)
         sid=lifecycle['session_id']
         import re
         if not isinstance(sid,str) or not re.fullmatch(r'sim_[A-Za-z0-9_]+',sid):raise ValueError('session_identity_missing')

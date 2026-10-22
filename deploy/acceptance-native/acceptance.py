@@ -19,6 +19,7 @@ import urllib.request
 from public_summary import SOURCE, project
 from startup_diagnostics import session_id, collect
 from execution_diagnostics import collect as collect_execution
+from execution_protocol import maze_receipt
 from undock_observer.lifecycle import ObserverProcess
 from undock_observer.projection import project as project_observer
 
@@ -150,7 +151,7 @@ def execute(args):
         if not isinstance(algorithm, str) or not algorithm or algorithm.startswith('-'): raise RuntimeError('recommendation_missing')
         cmd = [str(python), str(source / 'src/lab/e2e/full_loop.py'), '--gateway', base,
                '--scenario', 'maze-inspection', '--algorithms', algorithm, '--modes', 'follow_path',
-               '--localization', 'ground_truth', '--budget', '1800', '--runtime', str(runtime), '--output', str(output)]
+               '--localization', 'ground_truth', '--execution-time-basis', 'simulation', '--execution-wall-watchdog', '900', '--budget', '1800', '--runtime', str(runtime), '--output', str(output)]
         observer_output=private/'undock-observer.json'
         observer_env=dict(env,RMW_IMPLEMENTATION='rmw_cyclonedds_cpp')
         observer=ObserverProcess(['bash','-c','source /opt/ros/humble/setup.bash && exec bash "$1/setup/profile.sh" simulation /usr/bin/python3 "${@:2}"','observer',str(source),
@@ -168,6 +169,7 @@ def execute(args):
         session = read(runtime / 'sim' / sid / 'session-report.json', {})
         derive(report, read(output / 'sim-follow_path.json', {}), read(output / 'solutions.json', []), session, raw)
         raw['execution_diagnostics'] = collect_execution(read(output / 'sim-follow_path.json', {}), read(output / 'solutions.json', []), source)
+        raw['execution_protocol'] = maze_receipt(report, read(output / 'sim-follow_path.json', {}), read(output / 'solutions.json', []), source)
         # Hash actual verified overlay files, but never expose their paths.
         compat = session.get('compatibility') or {}
         binary = {k: hashlib.sha256(Path(compat[k]).read_bytes()).hexdigest() for k in ('tf', 'gui') if compat.get(k)}

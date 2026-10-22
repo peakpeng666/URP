@@ -15,6 +15,16 @@ ERRORS={
  'stop_requested':'会话停止请求','cancel_requested':'执行取消请求',
  'endpoint_error':'段控制器到达，但真值端点误差',
  'action_aborted':'状态 6，未到达','action_canceled':'状态 5，未到达'}
+ERRORS['execution_timing_guard']='execution timing guard:'
+TRIGGERS={'budget','stop','cancel','simulation_budget','wall_watchdog','clock_missing','clock_invalid','clock_backwards','clock_no_progress'}|{prefix+':'+stream for prefix in ('stream_missing','stream_stale','stream_timestamp_invalid') for stream in ('clock','scan','odom','ground_truth')}
+def timing(raw):
+    raw=mapping(raw);gaps=mapping(raw.get('max_stream_gap_wall_s'))
+    result={'policy':enum(raw.get('policy'),{'execution_budget_v1'}),'trigger':enum(raw.get('trigger'),TRIGGERS),'terminal_state':enum(raw.get('terminal_state'),{'succeeded','failed','canceled'}),'samples':number(raw.get('samples'),10000000,True),'max_no_progress_wall_s':number(raw.get('max_no_progress_wall_s'),10000),'max_stream_gap_wall_s':{k:number(gaps.get(k),10000) for k in ('clock','scan','odom','ground_truth')}}
+    for key in ('elapsed_wall_s','trigger_elapsed_wall_s','total_elapsed_wall_s'):result[key]=number(raw.get(key),10000)
+    for key in ('elapsed_sim_s','trigger_elapsed_sim_s','total_elapsed_sim_s'):
+        value=raw.get(key);result[key]=value if type(value) in (int,float) and -86400<=value<=86400 and math.isfinite(value) else None
+    return result
+
 RECON={'not_attempted','missing_solution','source_unavailable','plan_rejected','geometry_mismatch','reconstructed'}
 def mapping(x):return x if isinstance(x,dict) else {}
 def number(x,high=1e6,integer=False):
@@ -28,10 +38,10 @@ def sanitize(raw):
         if topic is None:continue
         actions.append({'action':topic,'status':number(a.get('status'),6,True),
             'cancel_requested':boolean(a.get('cancel_requested')),
-            'cancel_reason':enum(a.get('cancel_reason'),{'budget','stop','cancel'}),
+            'cancel_reason':enum(a.get('cancel_reason'),TRIGGERS),
             'cancel_accepted':boolean(a.get('cancel_accepted'))})
     codes=raw.get('error_codes');codes=sorted({x for x in codes if isinstance(x,str) and x in ERRORS}) if isinstance(codes,list) else []
-    return {'error_codes':codes,'error_present':boolean(raw.get('error_present')),
+    return {'execution_timing':timing(raw.get('execution_timing')),'error_codes':codes,'error_present':boolean(raw.get('error_present')),
       'actions':actions[-128:],'actions_total':number(raw.get('actions_total'),1e6,True),
       'actions_truncated':boolean(raw.get('actions_truncated')),
       'controller':enum(raw.get('controller'),{'FollowPath','FollowCoverage'}),
@@ -84,7 +94,7 @@ def collect(sim,solutions,source=None,planner=None):
         if topic:actions.append(dict(action,action=topic))
     progress=mapping(sim.get('progress'));budget=number(sim.get('budget_s'),1800)
     if budget==0:budget=None
-    result=dict(error_codes=[code for code,marker in ERRORS.items() if marker in error],error_present=bool(error),actions=actions,
+    result=dict(execution_timing=sim.get('execution_timing'),error_codes=[code for code,marker in ERRORS.items() if marker in error],error_present=bool(error),actions=actions,
         actions_total=len(nav),actions_truncated=len(nav)>128,controller=sim.get('controller'),
         leg=progress.get('leg'),legs_total=progress.get('legs_total'),
         leg_result_count=len(sim['leg_results']) if isinstance(sim.get('leg_results'),list) else None,

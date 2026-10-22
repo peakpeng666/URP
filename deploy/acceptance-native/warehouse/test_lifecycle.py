@@ -6,11 +6,17 @@ import tempfile
 import unittest
 from unittest.mock import Mock, patch
 
-from warehouse_lifecycle import drive, physical_evidence
+from warehouse_lifecycle import drive, physical_evidence, OVERALL_WALL_S, EXECUTION_POLL_WALL_S
 from warehouse_public_summary import project, HASHES, BOOLS
+from execution_protocol import expected_policy, receipt
 from historical_input import SOURCE
 
 PLAN={'path':[[0,0],[1,0]],'tasks':[{'task':i,'label':str(i),'xy':[i,0]} for i in range(5)],'budget_s':649.6}
+
+def policy_record():
+    return {'run_id':'replay_id','session_id':'sim_test','sim_run_id':'sim_run_test',
+            'mode':'follow_path','budget_s':PLAN['budget_s'],'time_basis':'simulation','wall_watchdog_s':5400,
+            'budget_policy':expected_policy(PLAN['budget_s'],'warehouse')}
 
 class Clock:
     def __init__(self):self.now=0
@@ -19,9 +25,10 @@ class Clock:
 
 class API:
     def __init__(self,case='success'):
-        self.case=case;self.calls=[];self.stopping=False
+        self.case=case;self.calls=[];self.timeouts=[];self.stopping=False
     def __call__(self,method,path,data=None,timeout=5):
         self.calls.append((method,path,data))
+        self.timeouts.append((method,path,timeout))
         if method=='DELETE':self.stopping=True;return {'phase':'stopping'}
         if path=='/sim/session':
             if self.case=='start_uncertain':raise TimeoutError('private start error')
@@ -30,13 +37,13 @@ class API:
             if self.stopping:return {'phase':'failed' if self.case=='cleanup_failed' else 'stopped','session_id':'sim_other' if self.case=='cleanup_identity_changed' else None,'errors':[]}
             return {'phase':'failed' if self.case=='startup_failed' else 'ready','session_id':'sim_test'}
         if method=='POST' and path=='/sim/runs':
-            row={'run_id':'replay_id','session_id':'sim_test','sim_run_id':'sim_run_test','planned':{'path':copy.deepcopy(PLAN['path'])},'tasks':copy.deepcopy(PLAN['tasks'])}
+            row={**policy_record(),'run_id':'replay_id','session_id':'sim_test','sim_run_id':'sim_run_test','planned':{'path':copy.deepcopy(PLAN['path'])},'tasks':copy.deepcopy(PLAN['tasks'])}
             if self.case=='plan_changed':row['planned']['path'][0][0]=9
             if self.case=='identity_changed':row['run_id']='other'
             return row
         if path=='/sim/runs/sim_run_test':
             if self.case=='timeout':return {'state':'executing'}
-            return {'run_id':'replay_id','session_id':'sim_test','sim_run_id':'sim_run_test','state':'failed' if self.case=='sim_failed' else 'succeeded','finished_utc':'now',
+            return {**policy_record(),'run_id':'replay_id','session_id':'sim_test','sim_run_id':'sim_run_test','state':'failed' if self.case=='sim_failed' else 'succeeded','finished_utc':'now',
                     'planned':{'path':copy.deepcopy(PLAN['path'])},'tasks':[dict(t,state='reached') for t in PLAN['tasks']],
                     'mode':'follow_path','localization':{'mode':'ground_truth'},'world':'warehouse'}
         raise AssertionError('unexpected API path')
@@ -44,17 +51,17 @@ class API:
 class LifecycleTests(unittest.TestCase):
     def run_case(self,case,guard=None):
         api=API(case);clock=Clock();saved={}
-        result=drive(api,'replay_id',PLAN,guard or (lambda:None),lambda name,data:saved.update({name:data}),clock.clock,clock.sleep,overall=1000)
+        result=drive(api,'replay_id',PLAN,guard or (lambda:None),lambda name,data:saved.update({name:data}),clock.clock,clock.sleep)
         return result,api,saved
 
-    def delayed_readiness(self,ready_at,post_delay=0):
+    def delayed_readiness(self,ready_at,post_delay=0,overall=OVERALL_WALL_S):
         api=API();clock=Clock();saved={}
         def delayed(method,path,data=None,timeout=5):
             if method=='POST' and path=='/sim/session':clock.now+=post_delay
             if method=='GET' and path=='/sim/state' and not api.stopping and clock.now<ready_at:
                 return {'phase':'undocking','session_id':'sim_test'}
             return api(method,path,data,timeout)
-        result=drive(delayed,'replay_id',PLAN,lambda:None,lambda name,data:saved.update({name:data}),clock.clock,clock.sleep,overall=1800)
+        result=drive(delayed,'replay_id',PLAN,lambda:None,lambda name,data:saved.update({name:data}),clock.clock,clock.sleep,overall=overall)
         return result,api,clock
 
     def test_ready_after_600_before_1200_remains_allowed(self):
@@ -68,9 +75,18 @@ class LifecycleTests(unittest.TestCase):
         self.assertFalse(result['passed']);self.assertEqual(clock.now,1200)
         self.assertNotIn('/sim/runs',[path for _,path,_ in api.calls]);self.assertTrue(api.stopping)
 
-    def test_1800_outer_deadline_wins_over_fresh_1200_allowance(self):
-        result,api,clock=self.delayed_readiness(1900,post_delay=1000)
-        self.assertFalse(result['passed']);self.assertEqual(clock.now,1800)
+    def test_7200_outer_deadline_wins_over_fresh_1200_allowance(self):
+        result,api,clock=self.delayed_readiness(7500,post_delay=6500)
+        self.assertFalse(result['passed']);self.assertEqual(clock.now,7200)
+        self.assertNotIn('/sim/runs',[path for _,path,_ in api.calls]);self.assertTrue(api.stopping)
+
+    def test_old_outer_budget_rejected_before_start(self):
+        result,api,clock=self.delayed_readiness(0,overall=1800)
+        self.assertFalse(result['passed']);self.assertEqual(api.calls,[])
+
+    def test_slow_startup_cannot_dispatch_without_full_wall_envelope(self):
+        result,api,clock=self.delayed_readiness(1681,post_delay=500)
+        self.assertFalse(result['passed']);self.assertEqual(clock.now,1681)
         self.assertNotIn('/sim/runs',[path for _,path,_ in api.calls]);self.assertTrue(api.stopping)
 
     def test_success_uses_original_sim_api_no_solve_and_stops(self):
@@ -80,6 +96,74 @@ class LifecycleTests(unittest.TestCase):
         start=next(body for method,path,body in api.calls if path=='/sim/session' and method=='POST')
         self.assertEqual(start['localization'],'ground_truth');self.assertFalse(start['gui']);self.assertFalse(start['rviz'])
         self.assertEqual(start['spawn']['yaw'],1.570796)
+        submitted=next(body for method,path,body in api.calls if path=='/sim/runs' and method=='POST')
+        self.assertEqual(submitted,{'run_id':'replay_id','mode':'follow_path','time_basis':'simulation','wall_watchdog_s':5400})
+        self.assertIn(('POST','/sim/runs',30),api.timeouts)
+        self.assertEqual(result['execution_protocol']['selected_clock_budget_s'],649.6)
+        self.assertTrue(result['execution_protocol']['requested_policy_verified'])
+        self.assertTrue(result['execution_protocol']['terminal_policy_verified'])
+
+    def test_terminal_poll_uses_watchdog_plus_finalization_not_sim_budget(self):
+        for terminal_at in (1000,EXECUTION_POLL_WALL_S-1,EXECUTION_POLL_WALL_S):
+            with self.subTest(terminal_at=terminal_at):
+                api=API();clock=Clock()
+                def delayed(method,path,data=None,timeout=5):
+                    if method=='GET' and path=='/sim/runs/sim_run_test' and clock.now<terminal_at:return {'state':'executing'}
+                    return api(method,path,data,timeout)
+                result=drive(delayed,'replay_id',PLAN,lambda:None,lambda *args:None,clock.clock,clock.sleep)
+                self.assertEqual(result['passed'],terminal_at<EXECUTION_POLL_WALL_S)
+                self.assertEqual(clock.now,terminal_at)
+                self.assertTrue(api.stopping)
+                self.assertEqual(PLAN['budget_s'],649.6)
+
+    def test_requested_and_terminal_policy_must_each_match_exact_plan(self):
+        mutations=[
+            lambda row:row.pop('budget_policy'),
+            lambda row:row.update(budget_s=650),
+            lambda row:row.update(time_basis='wall'),
+            lambda row:row.update(wall_watchdog_s=5401),
+            lambda row:row.update(mode='nav2_waypoints'),
+            lambda row:row['budget_policy']['requested'].update(budget_s=649.6),
+            lambda row:row['budget_policy']['requested'].update(time_basis=None),
+            lambda row:row['budget_policy']['requested'].update(wall_watchdog_s=5401),
+            lambda row:row['budget_policy']['effective'].update(budget_s=650),
+            lambda row:row['budget_policy']['effective'].update(time_basis='wall'),
+            lambda row:row['budget_policy']['effective'].update(wall_watchdog_s=5401),
+            lambda row:row['budget_policy'].update(budget_provenance='explicit'),
+            lambda row:row['budget_policy'].update(planner_budget_s=650),
+        ]
+        for location in ('submitted','terminal'):
+            for mutate in mutations:
+                with self.subTest(location=location,mutation=mutate):
+                    api=API();clock=Clock();saved={}
+                    def changed(method,path,data=None,timeout=5):
+                        row=api(method,path,data,timeout)
+                        if (location=='submitted' and method=='POST' and path=='/sim/runs') or (location=='terminal' and method=='GET' and path=='/sim/runs/sim_run_test'):mutate(row)
+                        return row
+                    result=drive(changed,'replay_id',PLAN,lambda:None,lambda name,row:saved.update({name:row}),clock.clock,clock.sleep)
+                    self.assertFalse(result['passed']);self.assertTrue(api.stopping)
+                    self.assertFalse(result['execution_protocol'][('requested' if location=='submitted' else 'terminal')+'_policy_verified'])
+                    self.assertEqual(saved['lifecycle.json']['execution_protocol'],result['execution_protocol'])
+
+    def test_wall_and_sim_durations_never_replace_planner_budget(self):
+        api=API();clock=Clock()
+        def measured(method,path,data=None,timeout=5):
+            row=api(method,path,data,timeout)
+            if path=='/sim/runs/sim_run_test':row['metrics']={'duration_sim_s':123,'duration_wall_s':4000}
+            return row
+        result=drive(measured,'replay_id',PLAN,lambda:None,lambda *args:None,clock.clock,clock.sleep)
+        self.assertTrue(result['passed']);self.assertEqual(result['execution_protocol']['selected_clock_budget_s'],649.6)
+        self.assertFalse(result['execution_protocol']['real_time_feasibility_measured'])
+
+    def test_response_received_after_poll_deadline_cannot_pass(self):
+        for suffix,late_at in (('/sim/state',1200),('/sim/runs/sim_run_test',EXECUTION_POLL_WALL_S)):
+            with self.subTest(suffix=suffix):
+                api=API();clock=Clock()
+                def late(method,path,data=None,timeout=5):
+                    if method=='GET' and path==suffix and not api.stopping:clock.now=late_at
+                    return api(method,path,data,timeout)
+                result=drive(late,'replay_id',PLAN,lambda:None,lambda *args:None,clock.clock,clock.sleep)
+                self.assertFalse(result['passed']);self.assertTrue(api.stopping)
 
     def test_every_failure_attempts_session_cleanup_and_never_passes(self):
         for case in ('start_uncertain','startup_failed','plan_changed','identity_changed','cleanup_identity_changed','timeout','sim_failed','cleanup_failed'):
@@ -114,6 +198,7 @@ class LifecycleTests(unittest.TestCase):
                 **{k:'b'*64 for k in HASHES},**{k:True for k in BOOLS},
                 'tasks_total':5,'tasks_reached':5,'trajectory_samples':2,'actual_length_m':1,
                 'remaining_owned_process_count':0,'gateway_exit_code':0,'physical_budget_s':649.6,
+                'overall_wall_budget_s':7200,'execution_protocol':receipt('warehouse',649.6,policy_record(),policy_record()),
                 'historical_resource_count':45,'current_resource_count':45,'missing_resource_count':0,
                 'additional_resource_count':0,'changed_resource_count':0}
 
@@ -136,6 +221,21 @@ class LifecycleTests(unittest.TestCase):
             row=self.good();row[field]=None;self.assertEqual(project(row,require_runner=False)['state'],'FAIL',field)
         for field in HASHES:
             row=self.good();row[field]=None;self.assertEqual(project(row,require_runner=False)['state'],'FAIL',field)
+
+    def test_missing_or_mismatched_clock_protocol_cannot_pass(self):
+        for field,value in (('requested_policy_verified',False),('terminal_policy_verified',False),
+                            ('selected_clock_budget_s',650),('wall_watchdog_s',900),
+                            ('overall_wall_budget_s',1800),('time_basis','wall'),('mode','nav2_waypoints')):
+            row=self.good();row['execution_protocol'][field]=value
+            self.assertEqual(project(row,require_runner=False)['state'],'FAIL',field)
+        row=self.good();row.pop('execution_protocol')
+        self.assertEqual(project(row,require_runner=False)['state'],'FAIL')
+
+    def test_clock_projection_drops_raw_errors_and_nonfinite_values(self):
+        row=self.good();row['execution_protocol'].update(secret='/private/token',time_basis='SECRET',wall_watchdog_s=float('inf'))
+        row['execution_diagnostics']={'budget_policy':{'secret':'SECRET'},'execution_timing':{'secret':'SECRET'},'error':'SECRET'}
+        result=project(row,require_runner=False);text=json.dumps(result,allow_nan=False)
+        self.assertEqual(result['state'],'FAIL');self.assertNotIn('SECRET',text);self.assertNotIn('/private',text)
 
     def test_missing_resources_and_wrapper_failure_override_pass(self):
         raw=self.good();raw['resources_match_historical']=None

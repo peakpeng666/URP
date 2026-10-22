@@ -10,7 +10,7 @@ export BASH_XTRACEFD=3
 phase() { printf 'URP_INSTALL_PHASE %s\n' "$1" >&3; }
 phase source_identity
 cd "$source_root"
-[[ "$(git rev-parse HEAD)" == 18557cfc61f291e8ac5fa4a80d9df212e1df0030 ]]
+[[ "$(git rev-parse HEAD)" == 4423a4f9731cbb099433b565f3daa0b41af67f49 ]]
 python3 "$(dirname "$0")/verify_worktree.py" "$source_root" > "$private/source-identity.json"
 [[ "$(uname -m)" == x86_64 ]]
 # The existing installer itself checks Ubuntu 22.04 and rejects root execution.

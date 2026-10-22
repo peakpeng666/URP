@@ -13,6 +13,7 @@ from unittest.mock import patch
 
 from acceptance import derive, owned, signal_owned, verify_source
 from public_summary import SOURCE, project
+from execution_protocol import expected_policy, receipt
 
 class AcceptanceTests(unittest.TestCase):
     def evidence(self):
@@ -29,6 +30,8 @@ class AcceptanceTests(unittest.TestCase):
         raw = {'source_sha': SOURCE,'harness_sha':'a'*40,'stage':'maze',
                'overlay_source_sha256':'c'*64,'overlay_binary_sha256':'d'*64,
                'remaining_owned_process_count':0,'process_exit_codes':{'gateway':0,'full_loop':0}}
+        protocol_record=dict(mode='follow_path',run_id='test',session_id='test-session',sim_run_id='test-sim',budget_s=103,time_basis='simulation',wall_watchdog_s=900,budget_policy=expected_policy(103,'maze'))
+        raw['execution_protocol']=receipt('maze',103,protocol_record,protocol_record)
         return report,sim,[solution],session,raw
 
     def valid(self): return derive(*self.evidence())

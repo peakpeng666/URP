@@ -8,6 +8,8 @@ import sys
 sys.path.insert(0,str(Path(__file__).resolve().parent.parent))
 from public_summary import project as runner_projection
 from startup_diagnostics import sanitize as sanitize_startup
+from execution_diagnostics import sanitize as sanitize_execution
+from execution_protocol import sanitize as sanitize_protocol, protocol_ok
 from historical_input import SOURCE, HISTORICAL_SOURCE
 
 HASHES = ('historical_routes_sha256', 'historical_planned_sha256', 'current_plan_sha256',
@@ -33,12 +35,15 @@ def digest(value, length=64):
 def project(raw, runner=None, *, require_runner=True):
     raw=raw if isinstance(raw,dict) else {}
     state=raw.get('state');state=state if state in ('PASS','FAIL','ERROR','NOT_RUN') else 'ERROR'
-    result={'startup_diagnostics':sanitize_startup(raw.get('startup_diagnostics')),'schema_version':1,'stage':'warehouse','state':state,'warehouse_state':state,
+    result={'startup_diagnostics':sanitize_startup(raw.get('startup_diagnostics')),
+            'execution_diagnostics':sanitize_execution(raw.get('execution_diagnostics')),
+            'execution_protocol':sanitize_protocol(raw.get('execution_protocol')),
+            'schema_version':1,'stage':'warehouse','state':state,'warehouse_state':state,
             'source_sha':digest(raw.get('source_sha'),40),'harness_sha':digest(raw.get('harness_sha'),40),
             'historical_source_sha':HISTORICAL_SOURCE,'route_origin':'historical_fixed_witness',
             'solver_executed':False,'physical_budget_origin':'source_reconstructed_not_observed',
-            'physical_budget_s':number(raw.get('physical_budget_s')),
-            'overall_wall_budget_s':number(raw.get('overall_wall_budget_s')),
+            'physical_budget_s':number(raw.get('physical_budget_s'),high=1800),
+            'overall_wall_budget_s':number(raw.get('overall_wall_budget_s'),high=7200),
             'historical_map_bytes_identity':'not_recorded','historical_execution_identity_status':'not_recorded',
             'historical_counts_semantics':'tasks_reached_single_route_not_trials',
             'api_spawn_yaw':1.570796,'expected_session_spawn_yaw':1.5708,
@@ -69,6 +74,9 @@ def project(raw, runner=None, *, require_runner=True):
         and result['remaining_owned_process_count']==0 and result['gateway_exit_code']==0
         and result['historical_resource_count']==result['current_resource_count']==45
         and all(result[k]==0 for k in ('missing_resource_count','additional_resource_count','changed_resource_count'))
+        and protocol_ok(result['execution_protocol'],'warehouse')
+        and result['overall_wall_budget_s']==7200
+        and result['execution_protocol']['selected_clock_budget_s']==result['physical_budget_s']
         and result['physical_budget_s'] is not None and abs(result['physical_budget_s']-649.6)<1e-7):
         result['state']='FAIL'
     result['warehouse_state']=result['state']

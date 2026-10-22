@@ -144,7 +144,7 @@ class InstallationProgressTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=pathlib.Path(tmp);source=root/'source';private=root/'private';bin_dir=root/'bin'
             (source/'setup/ubuntu').mkdir(parents=True);private.mkdir();bin_dir.mkdir()
-            for command,body in {'git':'echo 18557cfc61f291e8ac5fa4a80d9df212e1df0030', 'python3':'exit 0'}.items():
+            for command,body in {'git':'echo 4423a4f9731cbb099433b565f3daa0b41af67f49', 'python3':'exit 0'}.items():
                 stub=bin_dir/command;stub.write_text('#!/bin/bash\n'+body+'\n');stub.chmod(0o755)
             # Fake installer only: no apt, network, dependencies or actual source changes.
             (source/'setup/ubuntu/setup.sh').write_text("uv() { head -c 131072 /dev/zero; }; uv sync --locked; exit 7\n")

@@ -23,7 +23,7 @@ class IntegrationTests(unittest.TestCase):
         self.assertIn("needs.maze.result == 'success'",warehouse['if'])
         for stage,job in self.workflow['jobs'].items():
             self.assertEqual(job['runs-on'],'ubuntu-22.04')
-            self.assertEqual(job['env']['TARGET_SHA'],'18557cfc61f291e8ac5fa4a80d9df212e1df0030')
+            self.assertEqual(job['env']['TARGET_SHA'],'4423a4f9731cbb099433b565f3daa0b41af67f49')
             script=job['steps'][0]['run']
             self.assertIn('--stage '+stage,script)
             self.assertIn('materialize_checkout.py',script)

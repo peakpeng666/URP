@@ -6,9 +6,10 @@ import re
 from pathlib import Path
 from startup_diagnostics import sanitize as sanitize_startup
 from execution_diagnostics import sanitize as sanitize_execution
+from execution_protocol import sanitize as sanitize_protocol, protocol_ok
 from undock_observer.projection import project as project_observer
 
-SOURCE = '18557cfc61f291e8ac5fa4a80d9df212e1df0030'
+SOURCE = '4423a4f9731cbb099433b565f3daa0b41af67f49'
 STATES = {'PASS', 'FAIL', 'ERROR', 'NOT_RUN'}
 FAILURE_STEPS = {'none','unknown','health','services','scenario','recommendation','solve_submit','solve_terminal','solve_validation','map_validation','export','session_start','session_ready','sim_submit','sim_execute','sim_tasks','shutdown'}
 ERROR_KINDS = {'none','unknown','module_missing','source_identity','timeout','runtime','http','value'}
@@ -87,7 +88,7 @@ def host_repair_projection(raw):
 def project(raw, runner=None, *, require_runner=True):
     raw = raw if isinstance(raw, dict) else {}
     startup = sanitize_startup(raw.get('startup_diagnostics'))
-    result = {'execution_diagnostics':sanitize_execution(raw.get('execution_diagnostics')),'undock_observer':project_observer(raw.get('undock_observer')),'startup_diagnostics': startup, 'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
+    result = {'execution_protocol':sanitize_protocol(raw.get('execution_protocol')),'execution_diagnostics':sanitize_execution(raw.get('execution_diagnostics')),'undock_observer':project_observer(raw.get('undock_observer')),'startup_diagnostics': startup, 'schema_version': 1, 'source_sha': digest(raw.get('source_sha'), 40),
               'harness_sha': digest(raw.get('harness_sha'), 40),
               'stage': raw.get('stage') if raw.get('stage') in ('maze', 'warehouse') else 'unknown',
               'state': raw.get('state') if isinstance(raw.get('state'), str) and raw.get('state') in STATES else 'ERROR',
@@ -149,7 +150,7 @@ def project(raw, runner=None, *, require_runner=True):
             result['state'] = 'FAIL'
     # A public PASS cannot be forged by an incomplete/ready-only input.
     if result['state'] == 'PASS':
-        if not ((not require_runner or (result['runner_exit_code'] == 0 and result['runner_cleanup_remaining'] == 0 and result['forced_kill_count'] == 0)) and result['source_sha'] == SOURCE and result['harness_sha'] and
+        if not (protocol_ok(result['execution_protocol'],'maze') and (not require_runner or (result['runner_exit_code'] == 0 and result['runner_cleanup_remaining'] == 0 and result['forced_kill_count'] == 0)) and result['source_sha'] == SOURCE and result['harness_sha'] and
                 all(result[k] is True for k in BOOLS) and all(result[k] is not None for k in HASHES) and
                 (result['tasks_total'] or 0) > 0 and result['tasks_total'] == result['tasks_reached'] and
                 (result['trajectory_samples'] or 0) >= 2 and
