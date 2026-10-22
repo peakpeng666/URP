@@ -1,4 +1,5 @@
 /** Traceability of one run: what was solved, by what, with which seed/budget. Unknown stays 未知, never 0. */
+import { MapExclusionNote } from '../panels/MapExclusionNote';
 import { Copy } from 'lucide-react';
 import type { Solution } from '../../lab/types';
 import { IDENTITY_LABEL, identityState } from '../../lab/views/plan/resultIntegrity';
@@ -66,6 +67,7 @@ export function RunTrace({ run, title = '可追溯信息' }: { run: Solution; ti
         <span>参数</span><span className={a.mono}>{t.params}</span>
         <span>源码身份</span><span>{t.identity}</span>
       </div>
+      <MapExclusionNote run={run} label="本运行" />
     </>
   );
 }

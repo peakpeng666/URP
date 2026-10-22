@@ -128,3 +128,21 @@ describe('comparison panel ranking excludes invalid runs but lists them', () => 
     expect(html).toContain('href="#/plan/scene"');
   });
 });
+
+describe('comparison panel explains map-check exclusions', () => {
+  it('shows the collision note under the batch summary and in the excluded list', () => {
+    const r = { run_id: 'run_map_fail1', scenario_id: 'scene', problem_class: 'euclidean_cvrp', instance: { capacity: 8 }, instance_sha256: 'hash',
+      frame: { kind: 'map', units: 'm' }, objective: { value: 54.9, unit: 'm' }, state: 'done', status: 'feasible',
+      check: { valid: true, errors: [] }, routes: [{ polyline: [[0, 0], [1, 1]] }], params: {}, metrics: {}, algorithm: { id: 'test', name: '测试算法' },
+      map_check: { checked: true, collision_free: false, min_clearance_m: 0, robot_radius_m: 0.175, margin_m: 0.05, violation_count: 1,
+        violations: [{ route: 0, segment: 0, point: [-7.582459016393442, 3.3599180327868856], clearance_m: 0 }] },
+    } as unknown as Solution;
+    useStudio.setState({ scenario: { id: 'scene', problem_class: 'euclidean_cvrp' } as Scenario, draft: { capacity: 8 },
+      runIds: [r.run_id], runs: { [r.run_id]: r }, focusRun: r.run_id, algorithms: [] });
+    const html = renderToStaticMarkup(createElement(ComparePanel));
+    expect(html).toContain('本批 1 次运行 · 0 个已验算可行解');
+    expect(html).toContain('data-exclusion-summary="map_check"');
+    expect(html).toContain('<li data-exclusion="map_collision">');
+    expect(html).toContain('路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m');
+  });
+});
