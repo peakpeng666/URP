@@ -43,10 +43,13 @@ def mode_diagnostic_valid(mode, code, subject, check):
             return False
     return True
 
-def project(root, outcomes, code_bytes):
+def project(root, outcomes, code_bytes, helper_projector=None, helper_identity_bytes=None):
     if set(outcomes)!=set(STAGES) or any(not isinstance(v,str) or v not in OUTCOMES for v in outcomes.values()):
         return 'stage=report status=FAIL code=UNKNOWN'
     stage=next((s for s in STAGES if outcomes[s]!='success'),None)
+    if stage=='helper_tests' and helper_projector is not None:
+        try: return helper_projector(root,helper_identity_bytes)
+        except Exception: return 'stage=helper_tests status=FAIL code=HELPER_TESTS_FAILED phase=UNKNOWN'
     if stage in {'checkout','anchor','helper_tests'}:
         return 'stage='+stage+' status=FAIL code='+stage.upper()+'_FAILED'
     try:
@@ -97,6 +100,6 @@ def project(root, outcomes, code_bytes):
 def main():
     root=Path(__file__).resolve().parent.parent
     outcomes={s:os.environ.get('OUTCOME_'+s.upper(),'') for s in STAGES}
-    print(project(root,outcomes,globals().get('_VERIFIED_PUBLIC_CODES_BYTES')))
+    print(project(root,outcomes,globals().get('_VERIFIED_PUBLIC_CODES_BYTES'),globals().get('_VERIFIED_HELPER_PROJECTOR'),globals().get('_VERIFIED_HELPER_IDENTITIES_BYTES')))
 
 if __name__ in {'__main__','verified_capability_report'}: main()

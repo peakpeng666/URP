@@ -14,9 +14,11 @@ MAX_SAMPLES = 128
 STREAMS = ('clock', 'odom', 'scan', 'dock', 'ground_truth', 'cmd_vel')
 STATUSES = frozenset(('disabled', 'not_started', 'running', 'complete', 'failed',
                       'unavailable', 'interrupted', 'bounded_stop'))
-END_REASONS = frozenset(('unobserved', 'disabled', 'window_complete', 'startup_left',
+END_REASONS = frozenset(('unobserved', 'disabled', 'window_complete', 'startup_left', 'invalid_state',
                         'cleanup_started', 'identity_mismatch', 'error', 'bounded_stop'))
 PHASES = frozenset(('starting', 'assets', 'launching', 'sensors'))
+STATE_PHASES = PHASES | frozenset(('undocking', 'localizing', 'nav2_starting', 'ready',
+                                 'executing', 'failed', 'stopping', 'stopped'))
 NATIVE_AVAILABILITY = frozenset(('unavailable', 'no_messages', 'available', 'invalid',
                                 'type_mismatch', 'command_error', 'output_limited'))
 CLOCK_AVAILABILITY = frozenset(('unavailable', 'no_messages', 'available', 'invalid',
@@ -83,6 +85,18 @@ def _api_snapshot(value):
             'age_s': {key: _number(ages.get(key), 7200) for key in STREAMS}}
 
 
+def _api_state(value):
+    if type(value) is not dict:
+        return None
+    receipt = _number(value.get('receipt_wall_s'), 7200)
+    if receipt is None:
+        return None
+    return {'receipt_wall_s': receipt, 'phase': _enum(value.get('phase'), STATE_PHASES, 'unknown'),
+            'errors_present': _boolean(value.get('errors_present')),
+            'error_count': _number(value.get('error_count'), 10000, integer=True),
+            'telemetry_present': _boolean(value.get('telemetry_present'))}
+
+
 def _advanced(count, first, last, field):
     if (count is None or count < 2 or first is None or last is None
             or last['receipt_wall_s'] < first['receipt_wall_s']):
@@ -124,6 +138,7 @@ def sanitize(raw):
         api_first = api_last = None
     return {
         'schema_version': 1,
+        'startup_observation_policy': _enum(raw.get('startup_observation_policy'), ('starting_phase_v2',), 'unknown'),
         'timing_origin': 'validated_session_binding',
         'cutoff_semantics': 'matched_cached_startup_phase_only',
         'ros_clock_source': 'direct_subscription',
@@ -158,6 +173,10 @@ def sanitize(raw):
             'sim_time_advanced': _advanced(clock_count if clock_available else None, clock_first, clock_last, 'sim_time_s'),
         },
         'ros_api': {
+            'state_responses': _number(api.get('state_responses'), MAX_SAMPLES, integer=True),
+            'starting_error_responses': _number(api.get('starting_error_responses'), MAX_SAMPLES, integer=True),
+            'first_state': _api_state(api.get('first_state')),
+            'last_state': _api_state(api.get('last_state')),
             'availability': _enum(api.get('availability'), API_AVAILABILITY),
             'samples': api_count,
             'first': api_first, 'last': api_last,

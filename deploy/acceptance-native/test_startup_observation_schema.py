@@ -42,6 +42,32 @@ def complete_observation():
 
 
 class ProjectionTests(unittest.TestCase):
+    def test_phase_policy_and_state_receipts_are_finite_and_private(self):
+        raw={'startup_observation_policy':'starting_phase_v2','ros_api':{
+            'state_responses':3,'starting_error_responses':2,
+            'first_state':{'receipt_wall_s':2,'phase':'starting','errors_present':True,'error_count':1,'telemetry_present':False},
+            'last_state':{'receipt_wall_s':90,'phase':'failed','errors_present':True,'error_count':1,'telemetry_present':True,'errors':['PRIVATE']}}}
+        out=sanitize(raw)
+        self.assertEqual(out['startup_observation_policy'],'starting_phase_v2')
+        self.assertEqual(out['ros_api']['last_state']['phase'],'failed')
+        self.assertEqual(out['ros_api']['starting_error_responses'],2)
+        self.assertNotIn('PRIVATE',json.dumps(out));self.assertEqual(sanitize(out),out)
+
+    def test_historical_missing_state_receipts_remain_unknown(self):
+        out=sanitize({'schema_version':1,'status':'not_started','sampling_end_reason':'startup_left'})
+        self.assertEqual(out['startup_observation_policy'],'unknown')
+        self.assertIsNone(out['ros_api']['first_state']);self.assertIsNone(out['ros_api']['state_responses'])
+        self.assertIsNone(out['ros_api']['starting_error_responses'])
+
+    def test_invalid_state_receipts_cannot_leak_or_fabricate_counts(self):
+        raw={'startup_observation_policy':'PRIVATE','ros_api':{'state_responses':True,'starting_error_responses':-1,
+            'first_state':{'receipt_wall_s':float('inf'),'phase':'PRIVATE'},
+            'last_state':{'receipt_wall_s':2,'phase':'PRIVATE','error_count':10**999,'errors_present':'PRIVATE','telemetry_present':2}}}
+        out=sanitize(raw);self.assertNotIn('PRIVATE',json.dumps(out,allow_nan=False))
+        self.assertIsNone(out['ros_api']['first_state']);self.assertIsNone(out['ros_api']['state_responses'])
+        self.assertIsNone(out['ros_api']['last_state']['error_count'])
+        self.assertEqual(out['ros_api']['last_state']['phase'],'unknown')
+
     def test_missing_is_unavailable_not_a_measured_zero(self):
         result = sanitize(None)
         self.assertEqual(result['status'], 'unavailable')
@@ -72,12 +98,12 @@ class ProjectionTests(unittest.TestCase):
         self.assertEqual(set(result), {'status', 'session_identity_verified',
             'observer_exit_code', 'observer_watchdog_expired', 'observer_cleanup_complete',
             'output_bytes', 'output_limited', 'observation_duration_s', 'cleanup_delay_s',
-            'observer_leader_reaped', 'observer_group_signal_requested', 'sampling_end_reason', 'native_stats', 'ros_clock', 'ros_api', 'schema_version', 'timing_origin', 'cutoff_semantics', 'ros_clock_source'})
+            'observer_leader_reaped', 'observer_group_signal_requested', 'sampling_end_reason', 'native_stats', 'ros_clock', 'ros_api', 'schema_version', 'timing_origin', 'cutoff_semantics', 'ros_clock_source', 'startup_observation_policy'})
         self.assertEqual(set(result['native_stats']), {'availability', 'publisher_state',
             'samples', 'invalid_samples', 'first', 'last', 'sim_time_advanced', 'iterations_advanced', 'last_receipt_age_at_window_end_s'})
         self.assertEqual(set(result['ros_clock']), {'availability', 'messages',
             'invalid_messages', 'first', 'last', 'sim_time_advanced', 'last_receipt_age_at_window_end_s'})
-        self.assertEqual(set(result['ros_api']), {'availability', 'samples', 'first', 'last', 'observer_window_first', 'observer_window_last'})
+        self.assertEqual(set(result['ros_api']), {'availability', 'samples', 'first', 'last', 'observer_window_first', 'observer_window_last', 'state_responses', 'starting_error_responses', 'first_state', 'last_state'})
         self.assertEqual(set(result['ros_api']['first']['counts']), set(STREAMS))
         self.assertEqual(set(result['ros_api']['first']['age_s']), set(STREAMS))
 

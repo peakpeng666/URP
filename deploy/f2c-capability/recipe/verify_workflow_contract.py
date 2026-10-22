@@ -67,7 +67,7 @@ jobs:
           require(hashlib.sha256(raw).hexdigest()==expected)
           index=json.loads(raw,object_pairs_hook=unique)
           require(index['schema']==1 and index['status']=='reviewed-source')
-          require(index['identity']=='jammy-rootless-capability-v6')
+          require(index['identity']=='jammy-rootless-capability-v7')
           require(1<=len(index['files'])<=64)
           for name,row in index['files'].items():
               require(isinstance(name,str) and not name.startswith('/') and all(x not in ('','.','..') for x in name.split('/')))
@@ -90,8 +90,30 @@ jobs:
           test ! -e "$CAPABILITY_PYCACHE" && test ! -L "$CAPABILITY_PYCACHE"
           /usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 LC_ALL=C.UTF-8 \
             /usr/bin/python3.10 -I -B -S -X "pycache_prefix=$CAPABILITY_PYCACHE" \
-            -m unittest discover -s "$CANDIDATE_ROOT/recipe/tests" -p 'test_*.py' -q \
-            >"$CANDIDATE_ROOT/private-evidence/tests.log" 2>&1
+            - "$CANDIDATE_ROOT" "$REVIEWED_SOURCE_INDEX_SHA256" \
+            >"$CANDIDATE_ROOT/private-evidence/tests.log" 2>&1 <<'PY_HELPERS'
+          import hashlib,json,pathlib,stat,sys
+          def require(value):
+              if not value: raise ValueError('Bootstrap invariant rejected')
+          def regular(path):
+              require(not any(p.is_symlink() for p in (path,*path.parents)))
+              st=path.stat()
+              require(stat.S_ISREG(st.st_mode) and st.st_nlink==1 and st.st_size<=2000000)
+              return path.read_bytes()
+          root=pathlib.Path(sys.argv[1])
+          raw=regular(root/'source-index.json')
+          require(hashlib.sha256(raw).hexdigest()==sys.argv[2])
+          index=json.loads(raw)
+          verified={}
+          for name in ('recipe/helper_test_reporter.py','inputs/helper-test-identities.json'):
+              data=regular(root/name)
+              require(hashlib.sha256(data).hexdigest()==index['files'][name]['sha256'])
+              verified[name]=data
+          helper=root/'recipe/helper_test_reporter.py'
+          namespace={'__name__':'verified_helper_test_reporter','__file__':str(helper)}
+          exec(compile(verified['recipe/helper_test_reporter.py'],str(helper),'exec'),namespace)
+          raise SystemExit(namespace['run'](root,verified['inputs/helper-test-identities.json']))
+          PY_HELPERS
           echo 'stage=helper_tests status=PASS'
       - name: Authenticate existing host facilities without installation
         id: authentication
@@ -142,16 +164,19 @@ jobs:
               require(hashlib.sha256(raw).hexdigest()==os.environ['REVIEWED_SOURCE_INDEX_SHA256'])
               index=json.loads(raw)
               verified={}
-              for name in ('recipe/report_capability_status.py','recipe/public_codes.json'):
+              for name in ('recipe/report_capability_status.py','recipe/public_codes.json','recipe/helper_test_reporter.py','inputs/helper-test-identities.json'):
                   path=root/name
                   require(not any(p.is_symlink() for p in (path,*path.parents)))
                   require(path.stat().st_nlink==1)
                   data=path.read_bytes()
                   require(hashlib.sha256(data).hexdigest()==index['files'][name]['sha256'])
                   verified[name]=data
+              diagnostic=root/'recipe/helper_test_reporter.py'
+              namespace={'__name__':'verified_helper_test_reporter','__file__':str(diagnostic)}
+              exec(compile(verified['recipe/helper_test_reporter.py'],str(diagnostic),'exec'),namespace)
               helper=root/'recipe/report_capability_status.py'
               data=verified['recipe/report_capability_status.py']
-              exec(compile(data,str(helper),'exec'),{'__name__':'verified_capability_report','__file__':str(helper),'_VERIFIED_PUBLIC_CODES_BYTES':verified['recipe/public_codes.json']})
+              exec(compile(data,str(helper),'exec'),{'__name__':'verified_capability_report','__file__':str(helper),'_VERIFIED_PUBLIC_CODES_BYTES':verified['recipe/public_codes.json'],'_VERIFIED_HELPER_PROJECTOR':namespace['project'],'_VERIFIED_HELPER_IDENTITIES_BYTES':verified['inputs/helper-test-identities.json']})
           except Exception:
               print('stage=report status=FAIL code=UNKNOWN')
           PY_REPORT

@@ -41,7 +41,7 @@
     },
     "scope": "Canonical coverage correction only; no relaxed verification or installation"
   },
-  "identity": "jammy-rootless-capability-v6",
+  "identity": "jammy-rootless-capability-v7",
   "keyring_protocol": {
     "direct_signer": "F6ECB3762474EDA9D21B7022871920D1991BC93C",
     "host_keyring_authenticated": false,
@@ -117,6 +117,19 @@
     "run_id": 39830518530,
     "source_index_sha256": "8e3d1cb8f1ca6bda2d36a652a9aed6ad8a89fe42c9c055ed9ed72fb06b2f1d75"
   },
+  "preserved_capability_v6": {
+    "anchor": "PASS",
+    "authentication": "NOT_RUN",
+    "expected_fixture_count_from_source_review": 331,
+    "failed_test_or_precheck": "UNKNOWN",
+    "helper_tests": "HELPER_TESTS_FAILED",
+    "job": "120015179220",
+    "namespace": "NOT_RUN",
+    "observed_hosted_fixture_count": null,
+    "published_commit": "53a7b973d6c4fa6978d1186916e6814bea0ae080",
+    "source_index_sha256": "4e3584a9687f730c11eb7a31e9abf474e95b2dac6b4fd0a45cf13b8f6b4af8f0",
+    "workflow_run": "39833370249"
+  },
   "preserved_unpublished_v2": {
     "optimized_python_fixture_failures": 3,
     "published": false,
@@ -162,5 +175,25 @@
   "scientific_source_context": "18557cfc61f291e8ac5fa4a80d9df212e1df0030",
   "scope": "diagnostic-only-existing-facilities",
   "v2_change_scope": "finite-mode-subject-check-diagnostics-only",
-  "v3_change_scope": "explicit-equivalent-bootstrap-invariants-under-optimization"
+  "v3_change_scope": "explicit-equivalent-bootstrap-invariants-under-optimization",
+  "v7_change_scope": {
+    "authentication_and_namespace_bytes": "unchanged from v6",
+    "count_semantics": "Explicit COMPLETE/INCOMPLETE runner marker; incomplete counts are snapshots, not final totals",
+    "identity_manifest": "inputs/helper-test-identities.json",
+    "identity_manifest_role": "public-output-allowlist-only; does not gate collection or execution",
+    "kind": "bounded-helper-test-diagnostics-only",
+    "mixed_runtime_compatibility_replay": {
+      "full_fixture_count": 331,
+      "host_stdlib_result": "PASS",
+      "hosted_failure_explained": false,
+      "new_fixture_count": 24,
+      "official_python310_unittest_source_result": "PASS",
+      "source_archive_sha256": "ee09afbc981a4aaa00053f019eab6b45dcc4dbeb4ca4fcc4277eff539e09f228",
+      "target_python310_interpreter_executed": false,
+      "unittest_python_files": 13
+    },
+    "raw_test_output": "private ephemeral log only",
+    "stock_discovery_and_exit_semantics_preserved": true,
+    "subprocess_fixtures": "Fixed -I -B -S flags and clean environment"
+  }
 }

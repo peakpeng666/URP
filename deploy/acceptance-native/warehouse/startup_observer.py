@@ -10,7 +10,7 @@ import threading
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from startup_observation_schema import sanitize
+from startup_observation_schema import sanitize, STATE_PHASES
 
 ENABLE = 'URP_WAREHOUSE_STARTUP_OBSERVER'
 TRIGGER_S = 5.0
@@ -36,10 +36,12 @@ class Observer:
         self.buffer = bytearray()
         self.lock = threading.RLock()
         self.raw = {'status': 'not_started' if self.enabled else 'disabled',
+                    'startup_observation_policy': 'starting_phase_v2',
                     'sampling_end_reason': 'unobserved' if self.enabled else 'disabled',
                     'observer_watchdog_expired': False, 'output_limited': False,
                     'observer_group_signal_requested': 'none',
-                    'cleanup_delay_s': 0.0, 'ros_api': {'availability': 'no_samples', 'samples': 0}}
+                    'cleanup_delay_s': 0.0, 'ros_api': {'availability': 'no_samples', 'samples': 0,
+                                                     'state_responses': 0, 'starting_error_responses': 0}}
 
     def safe(self, name, *args):
         """Ordinary diagnostic failures cannot replace control outcomes."""
@@ -107,15 +109,36 @@ class Observer:
     def observe(self, row):
         if self.closed or self.sid is None:
             return
-        if not isinstance(row, dict) or row.get('session_id') != self.sid or row.get('world') != 'warehouse':
+        if not isinstance(row, dict):
+            self.raw['ros_api']['availability'] = 'invalid'
+            self.cutoff('invalid_state')
+            return
+        if row.get('session_id') != self.sid or row.get('world') != 'warehouse':
             self.raw['ros_api']['availability'] = 'identity_mismatch'
             self.cutoff('identity_mismatch')
             return
+        # These are cached gateway state observations, not exact transition times.
+        errors = row.get('errors')
+        state = {'receipt_wall_s': self.clock() - self.origin, 'phase': row.get('phase'),
+                 'errors_present': bool(errors) if isinstance(errors, list) else None,
+                 'error_count': len(errors) if isinstance(errors, list) else None,
+                 'telemetry_present': isinstance(row.get('telemetry'), dict)}
+        section = self.raw['ros_api']
+        section['state_responses'] = min(128, section['state_responses'] + 1)
+        section.setdefault('first_state', state)
+        section['last_state'] = state
         # Exact source uses 'starting' until ready() and docking checks finish.
+        # SimClient can temporarily add polling errors in that phase before the
+        # control HTTP server is ready; errors alone are not phase departure.
         # In particular failed/stopping/ready/undocking are never sampled.
-        if row.get('phase') != 'starting' or row.get('errors'):
+        if not isinstance(row.get('phase'), str) or row['phase'] not in STATE_PHASES:
+            self.cutoff('invalid_state')
+            return
+        if row['phase'] != 'starting':
             self.cutoff('startup_left')
             return
+        if state['errors_present']:
+            section['starting_error_responses'] = min(128, section['starting_error_responses'] + 1)
         telemetry = row.get('telemetry')
         snap = None
         if isinstance(telemetry, dict):

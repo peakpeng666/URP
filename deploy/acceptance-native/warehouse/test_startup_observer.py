@@ -10,8 +10,10 @@ import sys
 import tempfile
 import time
 import types
+import textwrap
+import threading
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 from startup_observer import Observer, ENABLE, HARD_WALL_S
 from startup_observer_child import Measurements, ECHO, INFO, MAX_BYTES, main as child_main
@@ -26,6 +28,30 @@ class Clock:
 def row(phase='starting', sid='sim_fixture', count=26):
     return {'phase': phase, 'session_id': sid, 'world': 'warehouse', 'errors': [],
             'telemetry': {'counts': {'clock': count, 'cmd_vel': 0}, 'age_s': {'clock': 4.0}}}
+
+
+def actual_source_client(clock):
+    """Execute the exact frozen source excerpts, without importing ROS/services."""
+    fixture=json.loads((Path(__file__).parent/'fixtures/startup_api_3acf.json').read_text())
+    source={k:v for item in fixture['sources'] for k,v in item['functions'].items()}
+    http=Mock(return_value=(None,'PRIVATE_TRANSPORT_DETAIL'))
+    namespace={'json':json,'copy':copy,'time':types.SimpleNamespace(monotonic=clock),
+               'bridge_known_issues':lambda:[], 'http_json':http}
+    exec(source['stopped_state'],namespace)
+    methods=[v for k,v in source.items() if k.startswith('SimClient.')]
+    exec('class SimClient:\n'+ '\n\n'.join(textwrap.indent(m,'    ') for m in methods),namespace)
+    exec(source['Session.state'],namespace)
+    client=namespace['SimClient']()
+    client.state=namespace['stopped_state']();client._fails=0;client._last_json='';client.bus=None;client.url='http://fixture'
+    client._handle_execution=lambda ex:None
+    client.services=types.SimpleNamespace(_lock=threading.RLock(),_busy={},sim_adopted=None,
+        sim_meta={'session_id':'sim_fixture','world':'warehouse','spawn':{'x':-5.08,'y':-.75,'yaw':1.570796}},
+        sim_alive=lambda:True,changed=lambda:None)
+    def success():
+        session=types.SimpleNamespace(lock=threading.RLock(),st={**client.current_state(),'errors':[]},
+            execution=None,counts={'clock':26,'dock':1,'scan':4,'ground_truth':8},at={'clock':clock()-4},tf_age=None)
+        http.return_value=(200,namespace['state'](session));client.poll_once()
+    return client,http,success
 
 
 class ObserverTests(unittest.TestCase):
@@ -174,9 +200,85 @@ class ObserverTests(unittest.TestCase):
             self.assertEqual(obs.raw['ros_api']['last']['counts']['clock'],26)
             self.assertTrue(obs.closed)
 
-    def test_errors_in_cached_startup_cut_off(self):
+    def test_errors_in_cached_startup_are_observed_not_phase_departure(self):
         value=row();value['errors']=['PRIVATE'];self.obs.observe(value)
-        self.assertTrue(self.obs.closed)
+        self.assertFalse(self.obs.closed)
+        self.assertEqual(self.obs.raw['ros_api']['starting_error_responses'],1)
+        self.assertEqual(sanitize(self.obs.raw)['ros_api']['last_state']['error_count'],1)
+
+    def test_real_api_transient_errors_without_telemetry_still_launch_at_five(self):
+        client,http,success=actual_source_client(self.clock)
+        for _ in range(3):client.poll_once()
+        state=client.current_state()
+        self.assertEqual(state['phase'],'starting');self.assertTrue(state['errors']);self.assertNotIn('telemetry',state)
+        self.clock.value=102;self.obs.observe(state)
+        self.assertFalse(self.obs.closed);self.assertIsNone(self.obs.proc)
+        def start():self.obs.raw['status']='running'
+        with patch.object(self.obs,'start',side_effect=start) as launched:
+            self.clock.value=105;self.obs.observe(client.current_state());launched.assert_called_once_with()
+            self.clock.value=106;success();self.obs.observe(client.current_state());launched.assert_called_once_with()
+        out=sanitize(self.obs.raw)
+        self.assertEqual(out['startup_observation_policy'],'starting_phase_v2')
+        self.assertEqual(out['ros_api']['samples'],1)
+        self.assertEqual(out['ros_api']['state_responses'],3)
+        self.assertEqual(out['ros_api']['starting_error_responses'],2)
+        self.assertEqual(out['ros_api']['first_state']['errors_present'],True)
+        self.assertEqual(out['ros_api']['last_state']['errors_present'],False)
+        self.assertEqual(out['ros_api']['last']['counts']['clock'],26)
+        self.assertNotIn('PRIVATE',json.dumps(out))
+
+    def test_real_api_starting_success_after_transient_error_can_launch(self):
+        client,http,success=actual_source_client(self.clock)
+        for _ in range(3):client.poll_once()
+        self.obs.observe(client.current_state())
+        self.clock.value=106;success()
+        with patch.object(self.obs,'start') as launched:self.obs.observe(client.current_state());launched.assert_called_once_with()
+        self.assertFalse(self.obs.closed)
+
+    def test_real_api_busy_stopping_is_permanent_cutoff(self):
+        client,http,success=actual_source_client(self.clock)
+        client.poll_once();client.services._busy['sim']='stopping'
+        self.obs.observe(client.current_state())
+        client.services._busy.clear();self.clock.value=106;success()
+        with patch.object(self.obs,'start') as launched:self.obs.observe(client.current_state());launched.assert_not_called()
+        out=sanitize(self.obs.raw)
+        self.assertEqual(out['sampling_end_reason'],'startup_left')
+        self.assertEqual(out['ros_api']['last_state']['phase'],'stopping')
+        self.assertFalse(out['ros_api']['last_state']['telemetry_present'])
+
+    def test_invalid_phase_is_not_reported_as_phase_departure(self):
+        self.obs.observe(row(phase={'PRIVATE':'value'}))
+        out=sanitize(self.obs.raw)
+        self.assertEqual(out['sampling_end_reason'],'invalid_state')
+        self.assertEqual(out['ros_api']['last_state']['phase'],'unknown')
+        self.assertNotIn('PRIVATE',json.dumps(out))
+
+    def test_real_api_lifecycle_keeps_not_ready_failure_and_one_delete(self):
+        from warehouse_lifecycle import drive
+        client,http,success=actual_source_client(self.clock);calls=[];gets=0;stopped=False
+        def api(method,path,data=None,timeout=5):
+            nonlocal gets,stopped
+            calls.append((method,path))
+            if method=='POST':return client.current_state()
+            if method=='DELETE':stopped=True;return {'session_id':'sim_fixture','world':'warehouse','phase':'stopped','errors':[]}
+            if stopped:return {'session_id':'sim_fixture','world':'warehouse','phase':'stopped','errors':[]}
+            gets+=1
+            if gets<=6:client.poll_once()
+            elif gets==7:success()
+            else:client.state.update(phase='failed',errors=['PRIVATE_FAILURE'])
+            return client.current_state()
+        def sleep(seconds):self.clock.value+=seconds
+        def start():self.obs.raw['status']='running'
+        with patch.object(self.obs,'start',side_effect=start) as launched:
+            out=drive(self.obs.wrap(api),'fixture',{'budget_s':30},lambda:None,lambda *args:None,
+                      clock=self.clock,sleep=sleep,on_session=self.obs.bind)
+        launched.assert_called_once_with()
+        self.assertFalse(out['passed']);self.assertEqual(out['diagnostics']['failure_code'],'session_not_ready')
+        self.assertEqual(calls.count(('POST','/sim/session')),1);self.assertEqual(calls.count(('DELETE','/sim/session')),1)
+        self.assertEqual(len(calls),11)
+        observed=sanitize(self.obs.raw)
+        self.assertEqual(observed['ros_api']['last_state']['phase'],'failed')
+        self.assertEqual(observed['ros_api']['last_state']['error_count'],1)
         self.assertNotIn('PRIVATE',json.dumps(sanitize(self.obs.raw)))
 
     def test_api_sample_count_and_fields_bounded(self):
