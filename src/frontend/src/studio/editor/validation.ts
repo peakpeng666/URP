@@ -30,7 +30,8 @@ export interface GeometryIssue {
   field?: FormField;
 }
 
-export interface FormField { label: string; index: number }
+/** `field` matches the input's data-field attribute in the fleet form; `label` is for messages. */
+export interface FormField { field: string; label: string }
 
 export const ISSUE_LABEL: Record<IssueCode, string> = {
   non_finite: '非有限数值',
@@ -160,15 +161,15 @@ export function validateGeometry(inst: FleetInstance): GeometryIssue[] {
   const classMode = !!v.fleet?.length;
   type Num = [string, unknown, FormField | null, ItemRef | null];
   const nums: Num[] = [
-    ['robot_radius', inst.robot_radius, { label: classMode ? '规划半径' : '车体半径', index: 0 }, null],
-    ['vehicles.count', v.count, classMode ? null : { label: '车辆数', index: 0 }, null],
-    ['vehicles.capacity', v.capacity, classMode ? null : { label: '单车容量', index: 0 }, null],
-    ['vehicles.speed_mps', v.speed_mps, classMode ? null : { label: '车速', index: 0 }, null],
+    ['robot_radius', inst.robot_radius, classMode ? { field: 'fleet.0.robot_radius', label: '规划半径' } : { field: 'robot_radius', label: '车体半径' }, null],
+    ['vehicles.count', v.count, classMode ? null : { field: 'vehicles.count', label: '车辆数' }, null],
+    ['vehicles.capacity', v.capacity, classMode ? null : { field: 'vehicles.capacity', label: '单车容量' }, null],
+    ['vehicles.speed_mps', v.speed_mps, classMode ? null : { field: 'vehicles.speed_mps', label: '车速' }, null],
     ...(v.fleet ?? []).flatMap((c, i) => [
-      [`fleet[${i}].count`, c.count, { label: '数量', index: i }, null],
-      [`fleet[${i}].capacity`, c.capacity, { label: '容量（抽象单位）', index: i }, null],
-      [`fleet[${i}].speed_mps`, c.speed_mps, { label: '车速', index: i }, null],
-      [`fleet[${i}].robot_radius`, c.robot_radius, { label: '规划半径', index: i }, null],
+      [`fleet[${i}].count`, c.count, { field: `fleet.${i}.count`, label: '数量' }, null],
+      [`fleet[${i}].capacity`, c.capacity, { field: `fleet.${i}.capacity`, label: '容量（抽象单位）' }, null],
+      [`fleet[${i}].speed_mps`, c.speed_mps, { field: `fleet.${i}.speed_mps`, label: '车速' }, null],
+      [`fleet[${i}].robot_radius`, c.robot_radius, { field: `fleet.${i}.robot_radius`, label: '规划半径' }, null],
     ] as Num[]),
     ...(inst.tasks ?? []).map((t) => [`任务 ${t.label ?? t.id} 需求`, t.demand, null, { type: 'task', id: String(t.id) }] as Num),
   ];

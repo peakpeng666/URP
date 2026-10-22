@@ -1,18 +1,26 @@
 import type { FormField } from './validation';
 
 /**
- * Scroll to and focus a fleet-parameter input in the inspector form, found by its rendered label text
- * (nth occurrence, so fleet class i maps to the i-th "车速" etc.). The form lives in panels/PlanPanels.tsx,
- * which owns its tab state; a `studio:focus-field` event is also dispatched so that panel can switch to its
- * fleet tab once it listens for it. Returns false when the field is not on screen (e.g. another tab is open).
+ * Ask the inspector to open its fleet tab (InspectorPanel listens for `studio:focus-field`), then scroll to and
+ * focus the input carrying `data-field`. The tab renders on the next frame, so the lookup retries briefly.
+ * `onDone(false)` when the field never appears (e.g. no inspector on screen).
  */
-export function focusFormField(f: FormField, root: ParentNode = document): boolean {
+export function focusFormField(f: FormField, onDone?: (ok: boolean) => void, root: ParentNode = document, tries = 10): void {
   window.dispatchEvent(new CustomEvent('studio:focus-field', { detail: f }));
-  const labels = [...root.querySelectorAll('label')].filter((l) => l.querySelector('span')?.textContent?.trim() === f.label);
-  const input = labels[f.index]?.querySelector('input');
-  if (!input) return false;
-  input.scrollIntoView({ block: 'center', behavior: 'smooth' });
-  input.focus({ preventScroll: true });
-  input.select();
-  return true;
+  const attempt = (left: number) => {
+    const input = findField(f.field, root);
+    if (input) {
+      input.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+      input.focus({ preventScroll: true });
+      input.select?.();
+      onDone?.(true);
+    } else if (left > 0) requestAnimationFrame(() => attempt(left - 1));
+    else onDone?.(false);
+  };
+  attempt(tries);
+}
+
+export function findField(field: string, root: ParentNode = document): HTMLInputElement | null {
+  const esc = typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(field) : field.replace(/["\\]/g, '\\$&');
+  return root.querySelector<HTMLInputElement>(`input[data-field="${esc}"]`);
 }

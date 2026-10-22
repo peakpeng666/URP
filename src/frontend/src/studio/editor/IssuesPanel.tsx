@@ -12,7 +12,8 @@ export function IssuesPanel({ issues, focused, onLocate }: { issues: GeometryIss
   const locate = (i: GeometryIssue) => {
     setMissing(null);
     if (i.field && !i.target) {
-      if (!focusFormField(i.field)) setMissing(`未找到「${i.field.label}」输入框：请打开右侧检查器的「车队」标签后再点此项。`);
+      const label = i.field.label;
+      focusFormField(i.field, (ok) => { if (!ok) setMissing(`未找到「${label}」输入框：请先打开检查器面板。`); });
       return;
     }
     onLocate(i);

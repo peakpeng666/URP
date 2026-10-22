@@ -84,11 +84,11 @@ describe('non-finite vehicle parameters point at their form field', () => {
     i.vehicles.speed_mps = Infinity;
     i.tasks[0].demand = NaN;
     const issues = validateGeometry(i);
-    expect(issues.find((x) => x.message.startsWith('vehicles.speed_mps'))!.field).toEqual({ label: '车速', index: 0 });
+    expect(issues.find((x) => x.message.startsWith('vehicles.speed_mps'))!.field).toEqual({ field: 'vehicles.speed_mps', label: '车速' });
     expect(issues.find((x) => x.message.includes('需求'))!.target).toEqual({ type: 'task', id: '1' });
     i.vehicles = { fleet: [{ count: 1, capacity: 2, payload: 'load' }, { count: NaN, capacity: 2, payload: 'load', speed_mps: NaN }] };
     i.tasks[0].demand = 1;
     const f = validateGeometry(i).map((x) => x.field);
-    expect(f).toEqual([{ label: '数量', index: 1 }, { label: '车速', index: 1 }]);
+    expect(f).toEqual([{ field: 'fleet.1.count', label: '数量' }, { field: 'fleet.1.speed_mps', label: '车速' }]);
   });
 });
