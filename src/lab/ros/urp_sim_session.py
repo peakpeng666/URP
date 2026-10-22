@@ -210,16 +210,16 @@ class Session:
                 self.tf_age=self.sim_time()-stamp(t.header.stamp)
             except Exception: self.tf_age=None
 
-    def wait(self,condition,seconds,label,allow_cancel=False):
+    def wait(self,condition,seconds,label,allow_cancel=False,allow_stop=False):
         end=time.monotonic()+seconds
         while time.monotonic()<end:
-            self.spin()
+            self.spin(allow_stop=allow_stop)
             if condition():return
             if allow_cancel and self.cancel.is_set():raise Interrupted('执行取消请求')
         raise TimeoutError(label)
 
-    def future(self,f,seconds=15):
-        self.wait(f.done,seconds,'ROS 响应超时');return f.result()
+    def future(self,f,seconds=15,allow_stop=False):
+        self.wait(f.done,seconds,'ROS 响应超时',allow_stop=allow_stop);return f.result()
 
     def action(self,typ,topic,goal,seconds,record=True):
         client=ActionClient(self.node,typ,topic);self.actions.append(client)
@@ -227,22 +227,36 @@ class Session:
         feedback=[]
         handle=self.future(client.send_goal_async(goal,feedback_callback=lambda m:feedback.append(str(m.feedback))))
         if not handle.accepted:raise RuntimeError(f'{topic} 拒绝目标')
-        future=handle.get_result_async();self.goal=(handle,future);end=time.monotonic()+seconds;cancel_sent=False;cancel_time=None
+        future=handle.get_result_async();self.goal=(handle,future);end=time.monotonic()+seconds
+        cancel_reason=None;cancel_time=None;cancel_accepted=False
         while not future.done():
-            if (self.cancel.is_set() or self.stop.is_set() or time.monotonic()>end) and not cancel_sent:
-                response=self.future(handle.cancel_goal_async(),8);cancel_sent=True;cancel_time=time.monotonic()
-                if not response.goals_canceling:raise RuntimeError(f'{topic} 未确认取消')
-            if cancel_sent and time.monotonic()-cancel_time>12:raise TimeoutError('动作取消未收敛')
+            if cancel_reason is None:
+                # Capture the trigger while the goal is pending, never infer a
+                # timeout afterward from time spent processing a terminal result.
+                if self.stop.is_set():cancel_reason='stop'
+                elif self.cancel.is_set():cancel_reason='cancel'
+                elif time.monotonic()>end:cancel_reason='budget'
+                if cancel_reason is not None:
+                    ack=handle.cancel_goal_async()
+                    # A terminal result may win the race with the cancel reply.
+                    # Stop must not interrupt cleanup's bounded monotonic waits.
+                    self.wait(lambda:ack.done() or future.done(),8,'ROS 响应超时',allow_stop=True)
+                    if ack.done():cancel_accepted=bool(ack.result().goals_canceling)
+                    cancel_time=time.monotonic()
+            if future.done():break
+            if cancel_reason is not None and time.monotonic()-cancel_time>12:
+                if not cancel_accepted:raise RuntimeError(f'{topic} 未确认取消')
+                raise TimeoutError('动作取消未收敛')
             # Shutdown is checked here so cancellation can complete before shutdown begins.
             self.spin(allow_stop=True)
-            if not self.shutting and not cancel_sent and topic in ('/follow_path','/navigate_to_pose'):
+            if not self.shutting and cancel_reason is None and topic in ('/follow_path','/navigate_to_pose'):
                 if any(time.monotonic()-self.at.get(k,0)>3 for k in ('clock','scan','odom','ground_truth')):
                     raise RuntimeError('执行中传感器/时钟数据超时')
         reply=future.result();self.goal=None
         if record and self.execution:
-            self.execution['nav2'].append(dict(action=topic,status=reply.status,status_text={4:'SUCCEEDED',5:'CANCELED',6:'ABORTED'}.get(reply.status,str(reply.status)),t_sim=self.sim_time(),feedback_count=len(feedback),cancel_accepted=cancel_sent))
+            self.execution['nav2'].append(dict(action=topic,status=reply.status,status_text={4:'SUCCEEDED',5:'CANCELED',6:'ABORTED'}.get(reply.status,str(reply.status)),t_sim=self.sim_time(),feedback_count=len(feedback),cancel_requested=cancel_reason is not None,cancel_reason=cancel_reason,cancel_accepted=cancel_accepted))
         if self.stop.is_set() or self.cancel.is_set():raise Interrupted('会话停止请求' if self.stop.is_set() else '执行取消请求')
-        if time.monotonic()>end:raise TimeoutError(f'{topic} 执行预算耗尽')
+        if cancel_reason=='budget':raise TimeoutError(f'{topic} 执行预算耗尽')
         if reply.status!=4:raise RuntimeError(f'{topic} 状态 {reply.status}，未到达')
         return reply
 
@@ -460,10 +474,23 @@ class Session:
     def cancel_active(self):
         if self.goal:
             h,f=self.goal
-            if not f.done():
-                try:self.future(h.cancel_goal_async(),5);self.future(f,8)
-                except Exception as exc:self.st['errors'].append('取消活动目标失败：'+str(exc))
-            self.goal=None
+            try:
+                if not f.done():
+                    ack=h.cancel_goal_async()
+                    self.wait(lambda:ack.done() or f.done(),5,'ROS 响应超时',allow_stop=True)
+                    if not f.done():
+                        # Even an empty acknowledgement may race a terminal result.
+                        # It is not proof that the active goal has stopped.
+                        ack.result()
+                        self.wait(f.done,8,'ROS 响应超时',allow_stop=True)
+                reply=f.result()
+                if reply.status not in (4,5,6):raise RuntimeError('活动目标结果不是终态')
+            except Exception as exc:
+                self.st['errors'].append('取消活动目标失败：'+str(exc))
+                # Retain ownership for shutdown's retry, and never advertise ready
+                # or let another execution overwrite a possibly still active goal.
+                self.stop.set()
+            else:self.goal=None
 
     def settle(self):
         end=time.monotonic()+1.0
