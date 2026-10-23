@@ -81,6 +81,8 @@ def select(rule, m, rho, wall, groups, train, base, cand, rng):
                 key = (int(feas[residual, c].sum()) if len(residual) else 0, -float(rho[train, c].mean()))
             if best_key is None or key > best_key:
                 best, best_key = c, key
+        if best is None:                          # fewer candidates than the requested capacity
+            break
         chosen.append(best)
     return chosen
 
@@ -163,13 +165,13 @@ def evaluate(dirs: list[Path], base_cfgs: list[str], cand_cfgs: list[str], verdi
             'static_tries': field_ci(acc['tries'][k] / norm), 'logit_first_try': field_ci(acc['logit_first'][k] / norm),
             'logit_stop_rho': field_ci(acc['logit_rho'][k] / norm),
             'selection_frequency': dict(sorted(freq.items(), key=lambda kv: -kv[1])), 'selections': len(sel_lists)}
-    pn = np.maximum(n_eval[k], 1.0)
+    pn = np.maximum(n_eval, 1.0)
     out['per_instance'] = {
         'groups': [groups[i] for i in k],
-        'first': {f'{rule}@{m}': (per[(rule, m)]['first'] / pn).tolist() for (rule, m) in per},
-        'logit_first': {f'{rule}@{m}': (per[(rule, m)]['logit_first'] / pn).tolist() for (rule, m) in per},
-        'rho': {f'{rule}@{m}': (per[(rule, m)]['rho'] / pn).tolist() for (rule, m) in per},
-        'control_first': (control['first'][k] / pn).tolist(), 'control_rho': (control['rho'][k] / pn).tolist()}
+        'first': {f'{rule}@{m}': (per[(rule, m)]['first'] / pn)[k].tolist() for (rule, m) in per},
+        'logit_first': {f'{rule}@{m}': (per[(rule, m)]['logit_first'] / pn)[k].tolist() for (rule, m) in per},
+        'rho': {f'{rule}@{m}': (per[(rule, m)]['rho'] / pn)[k].tolist() for (rule, m) in per},
+        'control_first': (control['first'] / pn)[k].tolist(), 'control_rho': (control['rho'] / pn)[k].tolist()}
     return out
 
 

@@ -225,18 +225,18 @@
   ]
  },
  {
-  "key": "fig8_three_verdicts",
-  "lang": "en",
+  "key": "fig9_admission_rules",
+  "lang": "zh",
   "files": [
-   "fig8_three_verdicts_en.pdf",
-   "fig8_three_verdicts_en.svg",
-   "fig8_three_verdicts_en.png"
+   "fig9_admission_rules_zh.pdf",
+   "fig9_admission_rules_zh.svg",
+   "fig9_admission_rules_zh.png"
   ],
-  "source_csv": "fig8_three_verdicts.csv",
-  "caption": "Feasible paths under three executability verdicts (development side; 140 Dutch fields × 3 machine profiles, 1728 officially feasible paths as denominator). Official: sampled-point curvature only; fillet: every corner must be roundable by a minimum-radius arc inside its adjacent long chords and the rounded path must pass the unchanged official checker (1 cm deviation tolerance; 0.5/2 cm identical); strict: every chord densified to 2 cm. Labels give counts and share of the profile's officially feasible paths; 14 fillet-unverifiable paths (hash not reproduced) count as infeasible.",
+  "source_csv": "fig9_admission_rules.csv",
+  "caption": "准入规则 × 库容量（开发侧，留出田块）。上排为首选可行率，下排为停止时的惩罚成本比减 1；左列为官方判定，右列为倒圆判定。每条规则只用外层训练田块选择成员，评价在外层测试田块；误差线为按田块自助法 95% 区间，灰色点线为旧库（L0）单独使用时的同一指标及其区间。容量 m 为在 L0 之上新增的成员数；随机规则每个划分抽 20 次。",
   "size_mm": [
-   90.0,
-   46.8
+   190.0,
+   117.8
   ]
  },
  {
@@ -252,6 +252,36 @@
   "size_mm": [
    190.0,
    104.5
+  ]
+ },
+ {
+  "key": "fig8_three_verdicts",
+  "lang": "en",
+  "files": [
+   "fig8_three_verdicts_en.pdf",
+   "fig8_three_verdicts_en.svg",
+   "fig8_three_verdicts_en.png"
+  ],
+  "source_csv": "fig8_three_verdicts.csv",
+  "caption": "Feasible paths under three executability verdicts (development side; 140 Dutch fields × 3 machine profiles, 1728 officially feasible paths as denominator). Official: sampled-point curvature only; fillet: every corner must be roundable by a minimum-radius arc inside its adjacent long chords and the rounded path must pass the unchanged official checker (1 cm deviation tolerance; 0.5/2 cm identical); strict: every chord densified to 2 cm. Labels give counts and share of the profile's officially feasible paths; 14 fillet-unverifiable paths (hash not reproduced) count as infeasible.",
+  "size_mm": [
+   90.0,
+   46.8
+  ]
+ },
+ {
+  "key": "fig9_admission_rules",
+  "lang": "en",
+  "files": [
+   "fig9_admission_rules_en.pdf",
+   "fig9_admission_rules_en.svg",
+   "fig9_admission_rules_en.png"
+  ],
+  "source_csv": "fig9_admission_rules.csv",
+  "caption": "Admission rule × library capacity (development side, held-out fields). Top: first-try feasibility; bottom: stop penalised cost ratio minus 1. Left: official verdict; right: fillet verdict. Each rule selects members using outer-training fields only and is evaluated on outer-test fields; error bars are field-bootstrap 95 % intervals; grey dotted lines are the old library (L0) alone with its interval. Capacity m counts members added to L0; the random rule draws 20 candidate sets per split.",
+  "size_mm": [
+   190.0,
+   117.8
   ]
  },
  {

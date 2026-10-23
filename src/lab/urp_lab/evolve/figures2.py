@@ -109,9 +109,9 @@ def admission_rules(adm: dict, st: Style):
             ax.set_xlabel(st.t('库容量 m（新增成员数）', 'Library capacity m (added members)'))
             ax.grid()
         a.set_ylim(min(80, min(r['mean'] for r in rows if r['metric'] == 'first_try') - 4), 102)
-        panel_label(a, 'ab'[r], st)
-        panel_label(b, 'cd'[r], st)
-    a.legend(loc='lower right', ncols=2, fontsize=st.fs - 1.5)
+        panel_label(a, 'ac'[r], st)
+        panel_label(b, 'bd'[r], st)
+    axs[0][0].legend(loc='lower right', ncols=2, fontsize=st.fs - 1.5)
     cap = {'zh': '准入规则 × 库容量（开发侧，留出田块）。上排为首选可行率，下排为停止时的惩罚成本比减 1；左列为官方判定，右列为倒圆判定。'
                  '每条规则只用外层训练田块选择成员，评价在外层测试田块；误差线为按田块自助法 95% 区间，灰色点线为旧库（L0）单独使用时的同一指标及其区间。'
                  '容量 m 为在 L0 之上新增的成员数；随机规则每个划分抽 20 次。',
@@ -187,7 +187,7 @@ def write(out: Path) -> list[str]:
     index = [e for e in index if e.get('key') not in keys]
     produced = []
     vc_path = out / 'verdict_comparison.json'
-    adm_path = out / 'admission' / 'admission_rules.json'
+    adm_path = out.parent / 'evolve-candidates-20261024' / 'admission' / 'admission_rules.json'
     dyn_path = out.parent / 'evolve-dynamic-20261024' / 'summary.json'
     vc = json.loads(vc_path.read_text(encoding='utf-8')) if vc_path.exists() else None
     adm = json.loads(adm_path.read_text(encoding='utf-8')) if adm_path.exists() else None
