@@ -4,6 +4,7 @@
     .venv/bin/python -m urp_lab.evolve plan --out NEW_DIR [--families coverage,fleet] [--limit N]
     .venv/bin/python -m urp_lab.evolve run --out DIR --workers 16 --cores 8-23
     .venv/bin/python -m urp_lab.evolve audit --out DIR
+    .venv/bin/python -m urp_lab.evolve reverify --out DIR --workers 16 --cores 8-23
     .venv/bin/python -m urp_lab.evolve policy --out DIR
     .venv/bin/python -m urp_lab.evolve experience --out FILE
 """
@@ -43,6 +44,10 @@ def main(argv=None):
     for name in ('audit', 'policy', 'figures'):
         p = sub.add_parser(name)
         p.add_argument('--out', required=True)
+    p = sub.add_parser('reverify')
+    p.add_argument('--out', required=True)
+    p.add_argument('--workers', type=int, default=16)
+    p.add_argument('--cores', default='8-23')
     p = sub.add_parser('experience')
     p.add_argument('--out', required=True)
     args = ap.parse_args(argv)
@@ -62,13 +67,18 @@ def main(argv=None):
         if 'coverage' in families:
             cj, excluded = plans.coverage_plan(fields)
             jobs += cj
+        if 'repair' in families:
+            cj, excluded = plans.repair_plan(fields)
+            jobs += cj
         if 'fleet' in families:
             jobs += plans.fleet_plan(fields)
         out = Path(args.out)
         plan = {'run_id': args.run_id or out.name, 'created_utc': sweep.utc(), 'note': args.note,
-                'purpose': '互补性审计（开发侧）：真实田块覆盖配置与多车算法组合；封存测试田块不在计划内',
+                'purpose': '互补性审计（开发侧）：真实田块覆盖配置与多车算法组合；封存测试田块不在计划内'
+                if 'repair' not in families else '回路②候选成员（局部 Dubins 修补）准入实验（开发侧）；封存测试田块不在计划内',
                 'fields': fields, 'families': sorted(families), 'excluded': excluded, 'timeout_s': 300.0,
                 'profiles': instances.PROFILES, 'coverage_portfolio': plans.COVERAGE_PORTFOLIO,
+                'repair_portfolio': plans.REPAIR_PORTFOLIO if 'repair' in families else {},
                 'fleet_portfolio': plans.FLEET_PORTFOLIO, 'workbench_default': plans.WORKBENCH_DEFAULT,
                 'field_manifest_rule': instances.manifest()['rule'], 'code': sweep.code_identity(), 'jobs': jobs}
         digest = sweep.write_plan(out, plan)
@@ -93,6 +103,9 @@ def main(argv=None):
     elif args.cmd == 'figures':
         from . import figures
         print('\n'.join(figures.write(Path(args.out))))
+    elif args.cmd == 'reverify':
+        from . import reverify
+        print(json.dumps(reverify.run(Path(args.out), args.workers, _cores(args.cores)), ensure_ascii=False, indent=1))
     elif args.cmd == 'experience':
         from . import experience
         print(json.dumps(experience.write(Path(args.out)), ensure_ascii=False, indent=1)[:4000])

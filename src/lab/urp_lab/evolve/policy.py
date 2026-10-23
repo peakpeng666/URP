@@ -297,12 +297,19 @@ def prequential(ds: dict, feature_sets=('size', 'agri')) -> dict:
 # ------------------------------------------------------------------ deployable model
 
 def export_model(ds: dict, kind: str, fs: str, cv_summary: dict, path: Path) -> dict:
-    """Fit on all development instances and write a fingerprinted model document (cf. models/cvrp-knn-v1.json)."""
+    """Fit on all development instances and write a fingerprinted model document (cf. models/cvrp-knn-v1.json).
+
+    ``kind='static'`` exports the experience-derived fixed try-order (no per-instance model); the feature
+    scaler and training cloud are still recorded because the recommender keeps its scope gates for it."""
     keep = np.where(ds['solvable'])[0]
     names = F.FEATURE_SETS[fs]
     X = design(ds['feats'], names)
-    model = fit(kind, X[keep], ds['rho'][keep])
-    sc = model['scaler']
+    if kind == 'static':
+        model = fit('static', None, ds['rho'][keep])
+        sc = Scaler(X[keep])
+    else:
+        model = fit(kind, X[keep], ds['rho'][keep])
+        sc = model['scaler']
     Z = sc(X[keep])
     # Scope: leave-one-field-out nearest-neighbour distance quantile in the scaled feature space.
     groups = ds['groups'][keep]
@@ -320,10 +327,11 @@ def export_model(ds: dict, kind: str, fs: str, cv_summary: dict, path: Path) -> 
                 'training': {'instances': int(len(keep)), 'fields': int(len(set(groups))),
                              'instance_keys_sha256': hashlib.sha256('\n'.join(ds['m']['keys'][i] for i in keep).encode()).hexdigest()}}
     artifact['train_Z'] = Z.tolist()            # scaled training features: needed by the out-of-scope gate
+    artifact['train_rho_mean'] = ds['rho'][keep].mean(axis=0).tolist()
     if kind == 'logit':
         artifact['logit'] = model['logit']
         artifact['mu'] = model['mu'].tolist()
-    else:
+    elif kind in ('knn1', 'knn5'):
         artifact['train_rho'] = ds['rho'][keep].tolist()
         artifact['k'] = 1 if kind == 'knn1' else 5
     payload = json.dumps(artifact, sort_keys=True, separators=(',', ':')).encode()

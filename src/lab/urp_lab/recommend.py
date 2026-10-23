@@ -87,7 +87,8 @@ def _coverage_order(scenario, instance, score, why, params_hint):
         first = order[0]
         if first['algorithm_id'] in score:
             score[first['algorithm_id']] += 5
-            why[first['algorithm_id']].insert(0, '学习型尝试顺序（开发侧留出田块评估，封存测试未运行）：先试 ' +
+            label = '经验静态尝试顺序' if model['prediction'].get('kind') == 'static' else '学习型尝试顺序'
+            why[first['algorithm_id']].insert(0, f'{label}（开发侧留出田块评估，封存测试未运行）：先试 ' +
                                               '，失败再试 '.join(config_label(s['config']) for s in order[:3]))
             params_hint = dict(params_hint, **first['params'])
     return model, params_hint

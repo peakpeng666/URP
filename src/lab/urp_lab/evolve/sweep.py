@@ -106,16 +106,31 @@ def _hash_polylines(routes) -> str | None:
     return hashlib.sha256(json.dumps([r.get('polyline') for r in routes], separators=(',', ':')).encode()).hexdigest()
 
 
+def solve(scenario, inst, algorithm: str, params: dict) -> dict:
+    """Dispatch one solve. Registered catalog algorithms go through ``run_algorithm``; ``evolve.*`` research
+    candidates execute here and are wrapped into the same result envelope — their validity is decided only by
+    the unchanged independent checker inside the candidate itself."""
+    if algorithm == 'evolve.f2c_repair':
+        from . import repair
+        routes, check, metrics, raw = repair.solve_full_repaired(inst, params)
+        return {'status': 'feasible' if routes else 'no_solution',
+                'objective': {'value': sum(r['cost'] for r in routes) if routes else None, 'unit': 'm'},
+                'routes': routes, 'check': check, 'metrics': metrics, 'raw_result': raw,
+                'algorithm': {'id': 'evolve.f2c_repair', 'name': '覆盖全流程+局部 Dubins 修补（研究候选）',
+                              'version': f"evolve.f2c_repair+{raw.get('binding') or 'local'}"}}
+    from ..solvers import run_algorithm
+    return run_algorithm(scenario, inst, algorithm, params)
+
+
 def execute(job: dict) -> dict:
     """Run one job in this process and return its record (never raises)."""
-    from ..solvers import run_algorithm
     t0, c0 = time.perf_counter(), time.process_time()
     rec = {'job_id': job['job_id'], 'family': job['family'], 'config': job['config'], 'algorithm': job['algorithm'],
            'params': job['params'], 'instance': job['instance'], 'started_utc': utc(), 'pid': os.getpid(),
            'affinity': sorted(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else None}
     try:
         scenario, inst = build(job)
-        result = run_algorithm(scenario, inst, job['algorithm'], dict(job['params']))
+        result = solve(scenario, inst, job['algorithm'], dict(job['params']))
         metrics = result.get('metrics') or {}
         keep = COVERAGE_METRICS if job['family'] == 'coverage' else FLEET_METRICS
         check = result.get('check') or {}

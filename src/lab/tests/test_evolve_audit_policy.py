@@ -117,3 +117,33 @@ def test_split_rule():
     assert instances.split_of('ee_field_130') == 'dev'
     assert instances.split_of('ee_field_131') == 'sealed'
     assert instances.split_of('lt_field_1') == 'sealed'
+
+
+def test_repair_portfolio_and_labels():
+    from urp_lab.evolve import plans
+    assert len(plans.REPAIR_PORTFOLIO) == 6
+    assert all(c.startswith(('repair:none/', 'repair:boustrophedon/')) for c in plans.REPAIR_PORTFOLIO)
+    assert all(a == 'evolve.f2c_repair' and p['turn_model'] == 'dubins' for a, p in plans.REPAIR_PORTFOLIO.values())
+    assert plans.config_label('repair:none/n_swath') == '修补·不分解·最少作业行'
+
+
+def test_export_static_model_is_fingerprinted_and_greedy(tmp_path):
+    """A static export carries the greedy order, training means and the scope cloud — no learned payload."""
+    from urp_lab.evolve import features as F
+    from urp_lab.evolve import plans
+    rng = np.random.default_rng(5)
+    configs = list(plans.COVERAGE_PORTFOLIO)
+    n, k = 30, len(configs)
+    cost = np.where(rng.random((n, k)) < 0.5, 1.0 + rng.random((n, k)), np.nan)
+    rho, solvable = audit.rho(cost, policy.PENALTY)
+    feats = [{name: float(v) for name, v in zip(F.COVERAGE, rng.random(len(F.COVERAGE)) * 10)} for _ in range(n)]
+    groups = np.array([f'g{i % 10}' for i in range(n)])
+    ds = {'m': {'keys': [f'k{i}' for i in range(n)]}, 'rho': rho, 'solvable': solvable, 'feats': feats,
+          'groups': groups, 'configs': configs, 'wall': np.ones((n, k))}
+    doc = policy.export_model(ds, 'static', 'agri', {'note': 'test'}, tmp_path / 'm.json')
+    art = doc['artifact']
+    assert art['kind'] == 'static' and 'logit' not in art and 'train_rho' not in art
+    assert art['static_order'] == policy.fit('static', None, rho[solvable])['static']
+    assert len(art['train_rho_mean']) == k and len(art['train_Z']) == int(solvable.sum())
+    payload = json.dumps(art, sort_keys=True, separators=(',', ':')).encode()
+    assert doc['artifact_sha256'] == __import__('hashlib').sha256(payload).hexdigest()

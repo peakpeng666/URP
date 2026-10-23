@@ -21,8 +21,17 @@ FLEET_BUDGET = {'time_limit_s': 3, 'seed': 42}       # system default, as regist
 FLEET_PORTFOLIO = {a: (a, dict(FLEET_BUDGET)) for a in
                    ('pyvrp.fleet', 'ortools.fleet', 'panel.savings_fleet', 'panel.sweep', 'panel.cluster_first')}
 
+# Loop-② repair candidates: the same full-pipeline parameters behind a local Dubins repair of curvature
+# defects. Trapezoidal decomposition is excluded (main-audit timeouts and structural infeasibility), and the
+# single-cell adapters are excluded (their failures are structural, not curvature defects).
+REPAIR_DECOMPOSITIONS = ('none', 'boustrophedon')
+REPAIR_PORTFOLIO = {f'repair:{d}/{o}': ('evolve.f2c_repair', {'decomposition': d, 'swath_objective': o, 'turn_model': 'dubins'})
+                    for d, o in itertools.product(REPAIR_DECOMPOSITIONS, OBJECTIVES)}
+
 
 def config_label(name: str) -> str:
+    if name.startswith('repair:'):
+        return '修补·' + config_label('full:' + name[7:])
     if name.startswith('full:'):
         d, o = name[5:].split('/')
         return f'{LABELS[d]}·{LABELS[o]}'
@@ -49,6 +58,22 @@ def coverage_plan(fields: list[str], profiles=tuple(I.PROFILES), timeout_s: floa
             continue
         for name, (alg, params) in COVERAGE_PORTFOLIO.items():
             jobs.append({'job_id': _job_id('cov', fid, prof, name), 'family': 'coverage', 'config': name, 'algorithm': alg,
+                         'params': params, 'instance': {'field': fid, 'profile': prof}, 'timeout_s': timeout_s})
+    return jobs, excluded
+
+
+def repair_plan(fields: list[str], profiles=tuple(I.PROFILES), timeout_s: float = 300.0) -> tuple[list[dict], list[dict]]:
+    """Repair-candidate jobs on the same admitted coverage instances as ``coverage_plan`` (identical admission
+    rule, so the two runs' instance sets can be merged cell-by-cell for the admission analysis)."""
+    jobs, excluded = [], []
+    for fid, prof in itertools.product(fields, profiles):
+        _sc, inst = I.coverage_instance(fid, prof)
+        adm = I.coverage_admission(inst)
+        if not adm['admitted']:
+            excluded.append({'field': fid, 'profile': prof, 'reason': adm['reason']})
+            continue
+        for name, (alg, params) in REPAIR_PORTFOLIO.items():
+            jobs.append({'job_id': _job_id('rep', fid, prof, name), 'family': 'coverage', 'config': name, 'algorithm': alg,
                          'params': params, 'instance': {'field': fid, 'profile': prof}, 'timeout_s': timeout_s})
     return jobs, excluded
 

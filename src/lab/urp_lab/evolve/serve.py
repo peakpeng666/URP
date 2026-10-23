@@ -90,16 +90,24 @@ def recommend(scenario: dict, instance: dict) -> dict:
         outside = [art['features'][j] for j in range(len(x)) if x[j] < lo[j] - 1e-9 or x[j] > hi[j] + 1e-9]
         if len(outside) > 2:
             return dict(base, status='out_of_scope', reason='多个田块特征超出训练范围：' + '、'.join(outside[:4]) + '；当前使用规则')
-        scores = _scores(art, z)
-        rank = {j: t for t, j in enumerate(art['static_order'])}
-        order = sorted(range(len(art['configs'])), key=lambda j: (scores[j], rank[j]))
+        if art['kind'] == 'static':
+            scores = np.array(art['train_rho_mean'])
+            order = list(art['static_order'])
+        else:
+            scores = _scores(art, z)
+            rank = {j: t for t, j in enumerate(art['static_order'])}
+            order = sorted(range(len(art['configs'])), key=lambda j: (scores[j], rank[j]))
+        from .plans import config_label
         steps = []
         for j in order:
             name = art['configs'][j]
             alg, params = art['config_params'][name]
-            steps.append({'config': name, 'algorithm_id': alg, 'params': params, 'expected_ratio': float(scores[j])})
-        return dict(base, status='available', reason='开发侧分组交叉验证（留出田块）评估的实验策略；封存测试未运行。先按顺序尝试，独立验算失败再试下一项。',
-                    prediction={'order': steps, 'profile': prof, 'nearest_distance': nn, 'features': feats},
+            steps.append({'config': name, 'label': config_label(name), 'algorithm_id': alg, 'params': params,
+                          'expected_ratio': float(scores[j])})
+        what = ('开发侧数据拟合的静态尝试顺序（经验顺序，非逐实例学习模型）' if art['kind'] == 'static'
+                else '开发侧分组交叉验证（留出田块）评估的实验策略')
+        return dict(base, status='available', reason=what + '；封存测试未运行。先按顺序尝试，独立验算失败再试下一项。',
+                    prediction={'order': steps, 'kind': art['kind'], 'profile': prof, 'nearest_distance': nn, 'features': feats},
                     features_outside_range=outside)
     except Exception as exc:  # noqa: BLE001 - a broken model must never break the recommender
         return dict(base, status='unavailable', reason='覆盖尝试顺序模型不可用：' + str(exc)[:200])

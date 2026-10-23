@@ -110,3 +110,23 @@ def test_non_coverage_problems_are_untouched(model_at, tmp_path):
     model_at(_model(tmp_path))
     out = serve.recommend({'problem_class': 'fleet_routing'}, {})
     assert out['status'] == 'not_applicable'
+
+
+def test_static_kind_serves_experience_order(model_at, tmp_path):
+    path = _model(tmp_path)
+    doc = json.loads(path.read_text())
+    art = doc['artifact']
+    art.update(kind='static', static_order=[3, 1, 0, 2], train_rho_mean=[2.0] * len(art['configs']))
+    for key in ('train_rho', 'k'):
+        art.pop(key, None)
+    doc['artifact_sha256'] = hashlib.sha256(json.dumps(art, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    path.write_text(json.dumps(doc))
+    model_at(path)
+    sc, inst = _scenario()
+    r = recommend.recommend(sc, inst)
+    sel = r['learned_selector']
+    assert sel['status'] == 'available', sel['reason']
+    assert sel['prediction']['kind'] == 'static'
+    assert [s['config'] for s in sel['prediction']['order']] == [art['configs'][j] for j in art['static_order']]
+    assert '经验' in sel['reason'] and '封存测试未运行' in sel['reason']
+    assert r['policy'] == 'coverage-order-v1'

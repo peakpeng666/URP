@@ -33,7 +33,7 @@ def _cv_policy(rho, wall, groups, feats, kind: str, fs: str | None, repeats: int
     ``keep`` fixes the denominator (instances solvable by the extended library) so old and new libraries are
     compared on the same instances and the same yardstick (ratios to the extended library's per-instance best)."""
     keep = np.asarray(keep)
-    X = policy.design(feats, F.FEATURE_SETS[fs]) if fs else None
+    X = policy.design(feats, F.FEATURE_SETS[fs or 'agri'])   # rows for every policy kind; static ignores the values
     uniq = np.array(sorted(set(groups[keep])))
     first = np.zeros(len(rho))
     stop = np.zeros(len(rho))
@@ -44,8 +44,8 @@ def _cv_policy(rho, wall, groups, feats, kind: str, fs: str | None, repeats: int
         for fold in range(folds):
             test = np.array([i for i in keep if fold_of[groups[i]] == fold])
             train = np.array([i for i in keep if fold_of[groups[i]] != fold])
-            model = policy.fit(kind, X[train] if X is not None else None, rho[train])
-            orders = policy.order(model, X[test] if X is not None else None, rng)
+            model = policy.fit(kind, X[train] if kind in policy.LEARNED else None, rho[train])
+            orders = policy.order(model, X[test], rng)
             for i, o in zip(test, orders):
                 e = policy.execute(o, rho[i], wall[i])
                 first[i] += e['first_feasible'] / repeats

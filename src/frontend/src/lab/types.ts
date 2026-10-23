@@ -139,7 +139,11 @@ export interface Recommendation {
     scope?: string;
     reason: string | null;
     required: string[];
-    prediction: unknown;
+    prediction: {
+      kind?: string;
+      order?: { config: string; label?: string; algorithm_id: string; expected_ratio?: number }[];
+      [k: string]: unknown;
+    } | null;
   };
   ranking: {
     algorithm_id: string;
