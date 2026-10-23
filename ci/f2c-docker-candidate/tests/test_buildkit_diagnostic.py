@@ -122,9 +122,9 @@ class BuildkitDiagnosticTests(unittest.TestCase):
         self.assertIsNone(self.parse(header() + output('PRIVATE ' + d.BOOTSTRAP_PREFIX + 'BLOCKED_signed_metadata')))
 
     def test_duplicate_and_rebound_headers_are_ambiguous(self):
-        fixtures = [header() + header() + bootstrap(),
-                    header() + bootstrap() + header(),
-                    header() + header(vertex=16) + bootstrap(),
+        for data in (header() + header() + bootstrap(), header() + bootstrap() + header()):
+            self.assertEqual(self.parse(data)['source'], 'bootstrap')
+        fixtures = [header() + header(vertex=16) + bootstrap(),
                     header(command='RUN echo PRIVATE') + header() + bootstrap(),
                     header() + header(command='RUN echo PRIVATE') + bootstrap(),
                     header() + header('package', 14) + package(vertex=14)]

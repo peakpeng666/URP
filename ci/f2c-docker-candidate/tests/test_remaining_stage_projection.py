@@ -71,8 +71,8 @@ class RemainingStageProjectionTests(unittest.TestCase):
   self.assertIsNone(self.parse(header('closure_verify')+output(value)+output(value)))
  def test_conflicting_stage_failures_rejected(self):
   self.assertIsNone(self.parse(header('closure_verify')+header('inputs_freeze',21)+output(receipt('closure_verify'))+output(receipt('inputs_freeze'),21)))
- def test_duplicate_header_binding_rejected(self):
-  self.assertIsNone(self.parse(header('closure_verify')+header('closure_verify')+output(receipt('closure_verify'))))
+ def test_identical_header_repeat_is_idempotent(self):
+  self.assertEqual(self.parse(header('closure_verify')+header('closure_verify')+output(receipt('closure_verify')))['source'], 'closure_verify')
  def test_unknown_fields_codes_substages_classes_rejected(self):
   for key in ('stage','code','substage','exception_class'):
    value=receipt('closure_verify');value[key]=PRIVATE
@@ -115,7 +115,10 @@ class RemainingStageProjectionTests(unittest.TestCase):
   (state/'preparation-stderr.log').write_text(json.dumps({'schema':1,'stage':'image_build','code':'UNCLASSIFIED_PREPARATION_FAILURE','exception_type':'CalledProcessError'}))
   for stage in STAGES:
    value=receipt(stage)
-   (state/'prepared/preparation.log').write_text(header(stage)+output(value)+'#20 ERROR: '+PRIVATE+'\n')
+   args={'WORKLOAD_UID':1001,'WORKLOAD_GID':1001,'BOOTSTRAP_SHA':'a'*64,'INPUT_SOURCE_SHA':'b'*64}
+   (state/'prepared/buildkit-args.json').write_text(json.dumps(args))
+   framed=header(stage).replace(d.RUN_COMMANDS[stage],d.render_run_commands(args)[stage])
+   (state/'prepared/preparation.log').write_text(framed+output(value)+'#20 ERROR: '+PRIVATE+'\n')
    result=public.project(state)
    self.assertEqual(result['buildkit_failure_detail']['detail'],value)
    self.assertEqual(result['buildkit_structure']['failed_stage'],stage)
@@ -123,7 +126,7 @@ class RemainingStageProjectionTests(unittest.TestCase):
    self.assertNotIn(PRIVATE,json.dumps(result))
  def test_source_index_only_isolated_receipt_all_stages(self):
   stage_root=Path(self.tmp.name)/'indexed';stage_root.mkdir()
-  members=('public_receipt.py','preparation_diagnostic.py','buildkit_diagnostic.py','package_reference.py','preparation_stage_diagnostic.py')
+  members=('public_receipt.py','preparation_diagnostic.py','buildkit_diagnostic.py','package_reference.py','preparation_stage_diagnostic.py','buildkit_census.py')
   index={'files':{}}
   for name in members:
    data=(ROOT/name).read_bytes();(stage_root/name).write_bytes(data)
@@ -147,7 +150,10 @@ class RemainingStageProjectionTests(unittest.TestCase):
    for stage in STAGES:
     with self.subTest(stage=stage,optimized=optimized):
      value=receipt(stage)
-     (state/'prepared/preparation.log').write_text(header(stage)+output(value)+'#20 ERROR: '+PRIVATE+'\n')
+     args={'WORKLOAD_UID':1001,'WORKLOAD_GID':1001,'BOOTSTRAP_SHA':'a'*64,'INPUT_SOURCE_SHA':'b'*64}
+     (state/'prepared/buildkit-args.json').write_text(json.dumps(args))
+     framed=header(stage).replace(d.RUN_COMMANDS[stage],d.render_run_commands(args)[stage])
+     (state/'prepared/preparation.log').write_text(framed+output(value)+'#20 ERROR: '+PRIVATE+'\n')
      run=subprocess.run([sys.executable,'-I','-B']+(['-O'] if optimized else [])+[str(relocated/'public_receipt.py'),'--state',str(state)],cwd=self.tmp.name,capture_output=True,text=True,timeout=10)
      self.assertEqual(run.returncode,1);self.assertEqual(run.stderr,'')
      result=json.loads(run.stdout)

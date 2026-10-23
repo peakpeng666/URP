@@ -5,6 +5,9 @@
     "preparation/runtime"
   ],
   "files": {
+    "BUILDKIT_BINDING_SOURCE_EVIDENCE.md": {
+      "sha256": "202cbad301e315cbb634619d20cb3dd903e068e89d6f8555a820c23131b782f1"
+    },
     "CONTROL_FIELD_SOURCE_EVIDENCE.md": {
       "sha256": "d90b11f930215ed44210e51b057acf933d35582cc36bd9e179f4dcfc3d1d5947"
     },
@@ -15,7 +18,7 @@
       "sha256": "8a147ae2c9bb225985c5cf6aba2a9e08948019b03c92aa4c8438f9eb2af79b6e"
     },
     "README.md": {
-      "sha256": "982699cdfb2c323376f08c57ec2d8518a49dfc847a11386697c8ee2471561c9f"
+      "sha256": "b6ec6ea667c1ad3f18b25a13f22ef9000940393a2e737afd555c86382cbca23a"
     },
     "SYSTEM_CA_SOURCE_EVIDENCE.md": {
       "sha256": "88559e675023b804c501cd8293e583a6dc9a6831f4015847c5c1e2f9428fcc57"
@@ -26,8 +29,11 @@
     "build_plan.py": {
       "sha256": "7d5a5d3ce7d6fc2ffe02b8bf0889d3af8c49db36d59e5d14bb38d2720c0bad55"
     },
+    "buildkit_census.py": {
+      "sha256": "d0b36cd67060de0ffd99a82fcb574492daa3881febfb9d19b2fbb89d6549014a"
+    },
     "buildkit_diagnostic.py": {
-      "sha256": "9f37f42973b205c306a517c220d1c7addcb5fef1edc5fa8dad8444e92058de03"
+      "sha256": "2dadd4d48eb85bfacceed20110f0245931622f1d32f65a5c84d7de787ea0249c"
     },
     "engine_controller.py": {
       "sha256": "13cdabf3c7a65e0ee61534fd76ddaa41cc217d4f36e7858e697288353ead8650"
@@ -171,7 +177,7 @@
       "sha256": "df63d1f1721614b8bf47b17ce02e0a0983c563fda068b15ed791727c59eac954"
     },
     "preparation/prepare_image.py": {
-      "sha256": "1150e001f9c7828826e418489e21bfb9d97e5e2e5a01b2961078dd896d3dce70"
+      "sha256": "8bc1fc8865706130bdf51f45f76d3af613cc0d54c425480285b037068322687f"
     },
     "preparation/prepare_packages.py": {
       "sha256": "f87c3338c764a0950092cb24784c8a2af8b5716844253773481fe42aba937510"
@@ -195,7 +201,7 @@
       "sha256": "30a74c9934e801a8b102d9c7863d73850d65670661af612580f7d25337887839"
     },
     "public_receipt.py": {
-      "sha256": "2cdb3193ccd40a95d2644c272314465f588b7810988f10c4ba546128578855d6"
+      "sha256": "7deb401970c65f11de15c207c00ecab1377ebdf275c06f6d15f1ce44f13e3df9"
     },
     "render_push_workflow.py": {
       "sha256": "3d408802ce8d13c1161bacddb3d542cd5d4ebb925d6d449534655b33230cda6a"
@@ -212,14 +218,20 @@
     "tests/test_bootstrap_substeps.py": {
       "sha256": "656b34118ca88729abf4ed81277dda16c9359b6280b2de1b1815f9f2e137db8a"
     },
+    "tests/test_buildkit_argument_receipt.py": {
+      "sha256": "103d6e76ebe8d6a8dd11c5828086cfc925b78dc51f2aabba6fe3f0f8e9f99b82"
+    },
+    "tests/test_buildkit_census.py": {
+      "sha256": "99127cda09127395acc6901937fa8be53d01dca1565c17b896a75f1f3733e1b4"
+    },
     "tests/test_buildkit_diagnostic.py": {
-      "sha256": "e2e8378948ebde6804ad2df372c4f861b3e9a39c5f04c13ca855cf8b5e27d966"
+      "sha256": "f16daf6cbf547255a38abb2602ef9452c56539165218662fc820eb86ab341876"
     },
     "tests/test_buildkit_receipt_integration.py": {
       "sha256": "169591cf911f3fe38a6dd1fa0d966ff800909a311e40329bf5dba4f2a12f9731"
     },
     "tests/test_buildkit_structure.py": {
-      "sha256": "10513c39c8c81118e39bbda80bb1ac02614c2b3beb019102648a2aeba8a3e530"
+      "sha256": "1096eeaae0de43d6e88fa3343ad1ac65c4e0f23e444b91fd5c8476b7c30f4e19"
     },
     "tests/test_control_fields.py": {
       "sha256": "81684b7c7d97672a2514ffa4c3c7b05ae7066ef8a10b5858584d2b3318090e0b"
@@ -243,7 +255,7 @@
       "sha256": "6b6dbe5d0e7eecd503c7b8f84073fcad6027fa5bba84dbff9f8011851c377278"
     },
     "tests/test_package_reference_projection.py": {
-      "sha256": "4c287538d0e01185b7231eebacf7ac2f9ae8be6132b1a8a8a680868d0b521c4c"
+      "sha256": "5fe564806523877bb63911c8038ada4f3112caf6032cc79528df0353a7fb41cf"
     },
     "tests/test_preparation_diagnostic.py": {
       "sha256": "61265f0ff17fa651537085e7b3404756e5428a3d982f01c2d8643e3950e89a15"
@@ -261,7 +273,10 @@
       "sha256": "e71571fd17f2ba35a6090531fb6109b4ef181a660df2c68240d37a96c78bfa35"
     },
     "tests/test_remaining_stage_projection.py": {
-      "sha256": "f838bbfaa7c12e4c9b3669c59b9b713699a2d7d558361dd5ca1f339878a50c5c"
+      "sha256": "bed91f4664744ae079f1bf5707e4be094ff1a703f59f30d8fee19c1ea49f23c8"
+    },
+    "tests/test_rendered_buildkit_binding.py": {
+      "sha256": "c426fa0fac6545a1449499727d212d8430a5bb823a87880d330133e076678e95"
     },
     "tests/test_review_hardening.py": {
       "sha256": "ae1e4f05739399fc26050255a34e5131f929e73f3939a2e97472a45c0affbeb2"

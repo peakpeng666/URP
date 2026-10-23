@@ -191,12 +191,12 @@ class BuildkitStructureTests(unittest.TestCase):
     def test_duplicate_or_rebound_headers_make_failure_unknown(self):
         known = header('bootstrap')
         unknown = '#7 [internal] PRIVATE_COMMAND\n'
-        fixtures = [known + known + error(),
-                    known + error() + known,
-                    known + unknown + error(),
+        for raw in (known + known + error(), known + error() + known,
+                    known + error() + '#9 [internal] PRIVATE\n#9 [internal] PRIVATE\n'):
+            self.assertEqual(self.inspect(raw)['failed_stage'], 'bootstrap')
+        fixtures = [known + unknown + error(),
                     unknown + known + error(),
-                    known + header('package') + error(),
-                    known + error() + '#9 [internal] PRIVATE\n#9 [internal] PRIVATE\n']
+                    known + header('package') + error()]
         for raw in fixtures:
             with self.subTest(raw=raw):
                 result = self.inspect(raw)

@@ -420,7 +420,7 @@ class PackageReferenceReceiptTests(unittest.TestCase):
             # the relocated isolated interpreter.
             members = ('public_receipt.py', 'preparation_diagnostic.py',
                        'buildkit_diagnostic.py', 'package_reference.py',
-                       'preparation_stage_diagnostic.py')
+                       'preparation_stage_diagnostic.py', 'buildkit_census.py')
             for member in members:
                 shutil.copyfile(ROOT / member, staged / member)
             source_hash = freeze.freeze(staged)

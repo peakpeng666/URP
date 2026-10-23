@@ -56,6 +56,34 @@ def write(path,raw,mode=0o644):
     with path.open('xb') as f:f.write(raw)
     path.chmod(mode)
 
+def record_buildkit_args(out, command):
+    """Best-effort diagnostic binding from the exact already-constructed argv.
+
+    Never changes command selection or gates, and never prints argument values.
+    """
+    try:
+        rows = {}
+        for i, value in enumerate(command):
+            if value == '--build-arg':
+                key, raw = command[i + 1].split('=', 1)
+                if key in rows:
+                    return False
+                rows[key] = raw
+        if set(rows) != {'WORKLOAD_UID', 'WORKLOAD_GID', 'INPUT_SOURCE_SHA', 'BOOTSTRAP_SHA'}:
+            return False
+        for key in ('WORKLOAD_UID', 'WORKLOAD_GID'):
+            raw = rows[key]
+            if not re.fullmatch('[1-9][0-9]{0,9}', raw) or int(raw) > 4294967294:
+                return False
+            rows[key] = int(raw)
+        if any(not re.fullmatch('[0-9a-f]{64}', rows[key]) for key in ('INPUT_SOURCE_SHA', 'BOOTSTRAP_SHA')):
+            return False
+        write(out / 'buildkit-args.json', json.dumps(rows, sort_keys=True).encode('ascii') + b'\n', 0o600)
+        return True
+    except Exception:
+        return False
+
+
 def anchor_copy(source,target,expected):
     require(re.fullmatch('[0-9a-f]{64}',expected),'SOURCE_ANCHOR_FORMAT')
     raw=read_file(source/'source-index.json');require(digest(raw)==expected,'SOURCE_ANCHOR')
@@ -162,6 +190,7 @@ def execute(source,application,uv,bootstrap_lock,bootstrap_sha,source_sha,out):
          '--build-arg','INPUT_SOURCE_SHA='+input_sha,'--build-arg','BOOTSTRAP_SHA='+bootstrap_sha,
          '--iidfile',str(iid),str(context)]
     PREPARATION_STAGE="image_build"
+    record_buildkit_args(out, cmd)
     run_private(cmd,out/'preparation.log')
     PREPARATION_STAGE="image_inspection"
     image=read_file(iid,128).decode().strip();require(re.fullmatch('sha256:[0-9a-f]{64}',image),'IMAGE_ID')

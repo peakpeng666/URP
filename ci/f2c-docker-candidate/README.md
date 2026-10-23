@@ -372,3 +372,11 @@ Finite failure diagnostics and exact structural header mapping now cover all
 five RUN stages after package preparation. See PREPARATION_STAGE_DIAGNOSTICS.md.
 This does not identify the actual compiler14 failure or establish any successful
 native/runtime acceptance. Original gates and error/exit behavior are retained.
+
+### v16 rendered BuildKit headers and finite census
+
+Diagnostic binding uses the exact known build arguments to render fixed RUN
+names and permits identical header repeats documented by the official producer.
+A separate finite census reports unbound candidates without accepting them as
+failure details. See BUILDKIT_BINDING_SOURCE_EVIDENCE.md. The lost compiler15
+private log cannot be replayed; this is not a claim about its actual root cause.
