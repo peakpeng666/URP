@@ -15,24 +15,17 @@ import numpy as np
 
 from ..figures.style import Style, apply, color, dash, figure, fit_height, marker, panel_label, qlabel
 from . import plans
+from . import terms as T
 
-FAMILY_LABEL = {'cvrp_archive': ('CVRP 冻结基线（4505 项）', 'CVRP frozen baseline (4505 runs)'),
-                'fleet:total_distance': ('真实田块多车·总里程', 'Real-field fleet, total distance'),
-                'fleet:makespan': ('真实田块多车·最晚完成', 'Real-field fleet, makespan'),
-                'coverage': ('真实田块覆盖配置', 'Real-field coverage configurations')}
-PROFILE_LABEL = {'robot_s': ('小型机器人', 'Small robot'), 'tractor_m': ('中型农机', 'Mid tractor'), 'sprayer_l': ('大型喷杆', 'Large sprayer')}
-POLICY_LABEL = {'default': ('现行默认', 'Current default'), 'static': ('静态尝试顺序', 'Static try-order'),
-                'static-online': ('在线静态顺序', 'Online static order'), 'sbs': ('单一最好', 'SBS'),
-                'oracle': ('逐实例最好', 'Oracle (VBS)'), 'random': ('随机顺序', 'Random order')}
+FAMILY_LABEL = {**T.FAMILY, 'cvrp_archive': ('CVRP 基准（4505 次运行）', 'CVRP benchmark (4505 runs)')}
+PROFILE_LABEL = T.PROFILE
+POLICY_LABEL = T.POLICY
+OWN_KEYS = ('fig1_headroom', 'fig2_coverage_feasibility', 'fig3_shapley', 'fig4_try_order', 'fig5_learning_curve',
+            'fig6_instance_space', 'fig7_execution_feedback')
 
 
 def _policy_label(name: str, st: Style) -> str:
-    if name in POLICY_LABEL:
-        return st.t(*POLICY_LABEL[name])
-    kind, _, fs = name.partition(':')
-    k = {'knn1': ('1NN', '1NN'), 'knn5': ('5NN', '5NN'), 'logit': ('逻辑回归', 'Logistic')}[kind]
-    f = {'agri': ('农业特征', 'agri. features'), 'size': ('规模特征', 'size features')}[fs]
-    return st.t(f'{k[0]}·{f[0]}', f'{k[1]}, {f[1]}')
+    return T.policy_label(name, st.lang)
 
 
 def _save(fig, out: Path, key: str, st: Style, caption: dict, rows: list[dict], index: list):
@@ -82,19 +75,20 @@ def headroom(audit: dict, st: Style):
     a.set_yticks(y, labels)
     a.set_xscale('log')
     a.set_xlim(1e-3, 300)
-    a.set_xlabel(qlabel(st, '单一最好相对逐实例最好的平均成本差', 'Mean cost excess of SBS over VBS', '%'))
+    a.set_xlabel(qlabel(st, 'VBS–SBS 差距', 'VBS–SBS gap', '%'))
     b.set_yticks(y, [''] * len(y))
-    b.set_xlabel(qlabel(st, 'SBS 失败而其他配置可行的实例', 'Instances solved only by non-SBS configurations', '%'))
+    b.set_xlabel(qlabel(st, '仅非 SBS 配置可行的实例', 'Instances feasible only for non-SBS configurations', '%'))
     b.set_xlim(0, max(5.0, max(r['feasible_gap_pct'] for r in rows) * 1.35))
     for ax in (a, b):
         ax.grid(axis='x', which='major')
     panel_label(a, 'a', st)
     panel_label(b, 'b', st)
-    cap = {'zh': '选择收益上限的互补性审计（开发侧）。(a) 单一最好配置（SBS，平均惩罚成本比最低）相对逐实例最好（VBS）的平均成本差，误差线为按田块/底本自助法 95% 区间，横轴为对数；'
-                 '(b) 只有非 SBS 配置能通过独立验算的实例比例。成本比以每个实例的最好可行成本为 1，未通过验算记惩罚值 2；无任何配置可行的实例不计入成本差。',
-           'en': 'Complementarity audit of the selection headroom (development data). (a) Mean cost excess of the single best configuration (SBS, lowest mean penalised ratio) '
-                 'over the per-instance best (VBS), with field/base-instance bootstrap 95% intervals, log scale; (b) share of instances that only non-SBS configurations solve '
-                 'under the independent checker. Ratios are relative to the best feasible cost per instance; failures count as 2; unsolved instances are excluded from (a).'}
+    cap = {'zh': '各任务族的算法选择余量（开发集）。(a) 单一最优配置（SBS，平均惩罚化成本比最低）相对虚拟最优配置（VBS）的平均惩罚化成本比之差，误差线为按田块/基准实例自助 95% 置信区间，'
+                 '横轴为对数刻度；(b) 仅非 SBS 配置通过独立检验的实例比例。成本比以各实例最优可行成本为 1，不可行解计 2；无可行配置的实例不计入 (a)。',
+           'en': 'Algorithm-selection headroom by task family (development set). (a) Mean penalised cost-ratio gap between the single best solver (SBS, lowest mean penalised '
+                 'ratio) and the virtual best solver (VBS), with field/base-instance bootstrap 95% CIs, log scale; (b) share of instances feasible only for non-SBS '
+                 'configurations under the independent checker. Ratios are relative to the best feasible cost per instance; infeasible results count as 2; instances '
+                 'without a feasible configuration are excluded from (a).'}
     return fig, cap, rows
 
 
@@ -127,17 +121,17 @@ def coverage_feasibility(audit: dict, matrix_csv: Path, st: Style):
         vbs = 100 * np.mean(any_by_prof.get(p, [False]))
         ax.axhline(vbs, color=color(pi), ls=dash(pi + 1), lw=0.7)
         rows += [{'profile': p, 'config': c, 'feasible_pct': v, 'vbs_pct': vbs} for c, v in zip(configs, vals)]
-    ax.set_xticks(x, [plans.config_label(c) if st.lang == 'zh' else c.replace('full:', '') for c in configs], rotation=40, ha='right')
-    ax.set_ylabel(qlabel(st, '通过独立验算的实例', 'Instances passing the independent check', '%'))
+    ax.set_xticks(x, [T.config_label(c, st.lang) for c in configs], rotation=40, ha='right')
+    ax.set_ylabel(qlabel(st, '通过独立检验的实例', 'Instances passing the independent check', '%'))
     ax.set_ylim(0, 105)
     ax.grid(axis='y')
     ax.legend(loc='upper right', ncols=3)
     d = cov.get('workbench_default') or {}
-    cap = {'zh': f"Fields2Cover 配置在荷兰开发田块上的可行率（按机具分组）。柱为各配置通过足迹、采样曲率与内缩区覆盖≥90% 检查的比例，虚线为任一配置可行（VBS）的比例；"
-                 f"共 {cov['instances']} 个田块×机具实例。现行默认配置（牛耕分解·最少作业行）可行 {d.get('feasible')} 个。",
-           'en': f"Feasibility of Fields2Cover configurations on the Dutch development fields by machine profile. Bars: share passing the footprint, sampled-curvature and "
-                 f"≥90% inner-coverage checks; dashed lines: share solved by any configuration (VBS); {cov['instances']} field × profile instances. "
-                 f"The current default (boustrophedon decomposition, fewest swaths) is feasible on {d.get('feasible')}."}
+    cap = {'zh': f"Fields2Cover 配置在荷兰开发集田块上的可行率（按机型分组）。柱为通过足迹、采样曲率与内缩区覆盖率 ≥ 90% 检验的实例比例，虚线为任一配置可行（VBS）的比例；"
+                 f"共 {cov['instances']} 个田块 × 机型实例。工作台默认配置（{T.config_label(d.get('config', plans.WORKBENCH_DEFAULT))}）可行 {d.get('feasible')} 个。",
+           'en': f"Feasibility of Fields2Cover configurations on the Dutch development fields by machine type. Bars: share passing the footprint, sampled-curvature and "
+                 f"≥ 90% inner-coverage checks; dashed lines: share solved by any configuration (VBS); {cov['instances']} field × machine instances. "
+                 f"The workbench default ({T.config_label(d.get('config', plans.WORKBENCH_DEFAULT), 'en')}) is feasible on {d.get('feasible')}."}
     return fig, cap, rows
 
 
@@ -147,18 +141,18 @@ def shapley_bars(audit: dict, st: Style):
     fig, axs = figure(st, 0.55)
     ax = axs[0][0]
     y = np.arange(len(sh))[::-1]
-    ax.barh(y + 0.18, [r['shapley'] for r in sh], 0.34, color=color(0), label=st.t('Shapley 值', 'Shapley value'))
+    ax.barh(y + 0.18, [r['shapley'] for r in sh], 0.34, color=color(0), label=st.t('Shapley 贡献', 'Shapley contribution'))
     ax.barh(y - 0.18, [r['marginal'] for r in sh], 0.34, color=color(1), hatch='///', edgecolor='white', lw=0,
             label=st.t('边际贡献', 'Marginal contribution'))
-    ax.set_yticks(y, [plans.config_label(r['config']) if st.lang == 'zh' else r['config'].replace('full:', '') for r in sh])
-    ax.set_xlabel(st.t('对组合价值 v(S) 的贡献（惩罚成本比单位）', 'Contribution to portfolio value v(S) (penalised-ratio units)'))
+    ax.set_yticks(y, [T.config_label(r['config'], st.lang) for r in sh])
+    ax.set_xlabel(st.t('对组合价值 v(S) 的贡献（惩罚化成本比单位）', 'Contribution to portfolio value v(S) (penalised-ratio units)'))
     ax.grid(axis='x')
     ax.legend(loc='lower right')
-    cap = {'zh': '覆盖配置对逐实例最好组合的贡献。v(S) 为实例平均的 [2 − min_{a∈S} ρ]；Shapley 值按全部子集精确计算（Fréchette 等 2016），边际贡献为从完整组合移除该配置后的价值损失。'
-                 '边际贡献接近零而 Shapley 值不为零表示与其他配置可相互替代。',
-           'en': 'Contributions of coverage configurations to the per-instance-best portfolio. v(S) is the instance mean of [2 − min_{a∈S} ρ]; Shapley values are exact over all '
+    cap = {'zh': '覆盖配置对虚拟最优组合的贡献。v(S) 为实例平均的 [2 − min_{a∈S} ρ]；Shapley 贡献按全部子集精确计算（Fréchette 等，2016），边际贡献为自完整组合移除该配置后的价值损失。'
+                 '边际贡献近零而 Shapley 贡献非零，表示该配置与其他配置可相互替代。',
+           'en': 'Contributions of coverage configurations to the virtual-best portfolio. v(S) is the instance mean of [2 − min_{a∈S} ρ]; Shapley contributions are exact over all '
                  'subsets (Fréchette et al. 2016); the marginal contribution is the loss when the configuration is removed from the full portfolio. A near-zero marginal '
-                 'contribution with a non-zero Shapley value indicates substitutability.'}
+                 'contribution with a non-zero Shapley contribution indicates substitutability.'}
     return fig, cap, [{'config': r['config'], 'shapley': r['shapley'], 'marginal': r['marginal']} for r in sh]
 
 
@@ -169,7 +163,7 @@ def try_order(audit: dict, policy: dict | None, st: Style):
     ax = axs[0][0]
     t = [c['tries'] for c in curve]
     feas = [100 * c['feasible'] / cov['solvable'] for c in curve]
-    ax.plot(t, feas, color=color(0), marker=marker(0), ls=dash(0), label=st.t('静态贪心顺序（全体开发数据）', 'Static greedy order (all development data)'))
+    ax.plot(t, feas, color=color(0), marker=marker(0), ls=dash(0), label=st.t('贪心静态顺序（全样本拟合）', 'Greedy static order (fitted on all data)'))
     ax.axhline(100, color='#555555', ls=':', lw=0.7)
     rows = [{'tries': a, 'feasible_pct_of_solvable': b, 'config': c['config']} for a, b, c in zip(t, feas, curve)]
     if policy:
@@ -179,15 +173,15 @@ def try_order(audit: dict, policy: dict | None, st: Style):
                 ax.scatter([p['tries']], [100.0], marker=marker(i + 1), color=color(i + 1), zorder=5, s=14,
                            label=st.t(f"{_policy_label(n, st)}：平均尝试 {p['tries']:.2f} 次", f"{_policy_label(n, st)}: {p['tries']:.2f} tries"))
                 rows.append({'policy': n, 'mean_tries_to_feasible_cv': p['tries'], 'first_try_feasible_cv': p['first_try_feasible']})
-    ax.set_xlabel(st.t('尝试的配置数', 'Configurations tried'))
-    ax.set_ylabel(qlabel(st, '可解实例中已得到可行路径', 'Solvable instances with a feasible path', '%'))
+    ax.set_xlabel(st.t('已尝试的配置数', 'Configurations tried'))
+    ax.set_ylabel(qlabel(st, '已获可行路径的可解实例', 'Solvable instances with a feasible path', '%'))
     ax.set_xticks(t)
     ax.set_ylim(0, 104)
     ax.grid()
     ax.legend(loc='lower right')
-    cap = {'zh': '尝试顺序与可行率。曲线为在全体开发数据上按边际收益贪心排列的固定顺序（描述性，非留出评价）；散点为分组交叉验证中各策略得到首个可行路径所需的平均尝试次数（留出田块）。',
-           'en': 'Try-order and feasibility. The curve is a fixed order chosen greedily on all development data (descriptive, not held out); markers give the mean number of tries '
-                 'to the first feasible path for each policy under field-grouped cross-validation (held-out fields).'}
+    cap = {'zh': '尝试顺序与可行率。曲线为在全部开发集数据上按边际收益贪心构造的固定顺序（样本内）；散点为田块分组交叉验证中各策略获得首个可行路径所需的平均尝试次数（留出田块）。',
+           'en': 'Try-order and feasibility. The curve is a fixed order built greedily by marginal gain on all development data (in-sample); markers give the mean number of '
+                 'attempts to the first feasible path for each policy under field-grouped cross-validation (held-out fields).'}
     return fig, cap, rows
 
 
@@ -211,15 +205,15 @@ def learning_curve(policy: dict, st: Style):
         ax.axvline(preq['cold_start_fields'] + 0.5, color='#777777', ls=':', lw=0.6)
         ax.set_xlabel(st.t('已处理田块数', 'Fields processed'))
         ax.grid()
-    a.set_ylabel(st.t('累计遗憾（成本比 − 1 之和）', 'Cumulative regret (Σ ratio − 1)'))
-    b.set_ylabel(st.t('累计首选失败次数', 'Cumulative first-choice failures'))
+    a.set_ylabel(st.t('累积遗憾 Σ(成本比 − 1)', 'Cumulative regret Σ(ratio − 1)'))
+    b.set_ylabel(st.t('累积首次尝试失败次数', 'Cumulative first-try failures'))
     a.legend(loc='upper left', fontsize=st.fs - 1.5)
     panel_label(a, 'a', st)
     panel_label(b, 'b', st)
-    cap = {'zh': f"先测后学（prequential）评价：按 {preq['orders']} 个随机田块顺序逐块处理，每块先用当前策略决定尝试顺序并记账，再把该田块的全部结果加入经验库。"
-                 f"前 {preq['cold_start_fields']} 块使用冷启动顺序（现行默认优先），竖虚线后启用学习策略。实线为均值，阴影为第 10–90 百分位。",
+    cap = {'zh': f"先测后学（prequential）评价：按 {preq['orders']} 个随机田块顺序逐块处理，每块先由当前策略决定尝试顺序并计分，再将该田块的全部结果并入经验库。"
+                 f"前 {preq['cold_start_fields']} 块采用冷启动顺序（默认配置优先），竖虚线后启用学习策略。实线为均值，阴影为第 10–90 百分位。",
            'en': f"Prequential (test-then-train) evaluation over {preq['orders']} random field orders: each field is first decided by the current policy and scored, then all of its "
-                 f"results enter the experience base. The first {preq['cold_start_fields']} fields use the cold-start order (current default first); learned policies start "
+                 f"results enter the experience base. The first {preq['cold_start_fields']} fields use the cold-start order (default first); learned policies start "
                  f"after the dotted line. Lines: mean; bands: 10th–90th percentiles."}
     return fig, cap, rows
 
@@ -234,26 +228,27 @@ def instance_space(policy_ds, st: Style):
     P = (Z - Z[keep].mean(axis=0)) @ Vt[:2].T
     best = np.argmin(policy_ds['rho'], axis=1)
     configs = policy_ds['configs']
-    fig, axs = figure(st, 0.8)
+    fig, axs = figure(st, 1.15)
     ax = axs[0][0]
     rows = []
     shown = sorted(set(best[keep]), key=lambda j: -int((best[keep] == j).sum()))
     for rank, j in enumerate(shown):
         sel = keep & (best == j)
         ax.scatter(P[sel, 0], P[sel, 1], s=8, color=color(rank), marker=marker(rank), lw=0.3, edgecolor='white',
-                   label=plans.config_label(configs[j]) if st.lang == 'zh' else configs[j].replace('full:', ''))
+                   label=T.config_label(configs[j], st.lang))
     if (~keep).any():
-        ax.scatter(P[~keep, 0], P[~keep, 1], s=10, color='#222222', marker='x', lw=0.6, label=st.t('无配置可行', 'Unsolved'))
+        ax.scatter(P[~keep, 0], P[~keep, 1], s=10, color='#222222', marker='x', lw=0.6, label=st.t('无可行配置', 'No feasible configuration'))
     for i in range(len(P)):
         rows.append({'instance': policy_ds['m']['keys'][i], 'pc1': float(P[i, 0]), 'pc2': float(P[i, 1]),
                      'best_config': configs[best[i]] if keep[i] else None})
     var = S ** 2 / (S ** 2).sum()
     ax.set_xlabel(st.t(f'主成分 1（{100 * var[0]:.1f}% 方差）', f'PC1 ({100 * var[0]:.1f}% variance)'))
     ax.set_ylabel(st.t(f'主成分 2（{100 * var[1]:.1f}% 方差）', f'PC2 ({100 * var[1]:.1f}% variance)'))
-    ax.legend(loc='best', fontsize=st.fs - 1.5, markerscale=1.4)
+    handles, labels = ax.get_legend_handles_labels()
+    fig.legend(handles, labels, loc='outside lower center', ncols=2, fontsize=st.fs - 1.5, markerscale=1.4, frameon=False)
     ax.grid()
-    cap = {'zh': '实例空间（农业结构特征的主成分投影，Smith-Miles 实例空间分析的线性简化）。颜色/标记为该实例上成本比最低的配置，× 为没有任何配置通过独立验算的实例。',
-           'en': 'Instance space (principal components of the agricultural features; a linear simplification of Smith-Miles instance space analysis). Colour/marker: '
+    cap = {'zh': '实例空间：农艺结构特征的主成分投影（Smith-Miles 实例空间分析的线性简化）。颜色与标记表示该实例上成本比最低的配置，× 为无配置通过独立检验的实例。',
+           'en': 'Instance space: principal components of the agronomic features (a linear simplification of Smith-Miles instance space analysis). Colour and marker: '
                  'configuration with the lowest ratio on the instance; ×: no configuration passes the independent checker.'}
     return fig, cap, rows
 
@@ -283,19 +278,19 @@ def execution_feedback(summary: dict, episodes_path: Path, st: Style):
     ax.plot(lim, lim, color='#555555', ls=':', lw=0.7, label=st.t('实际 = 规划', 'actual = planned'))
     ax.set_xlim(lim)
     ax.set_ylim(lim)
-    ax.set_xlabel(qlabel(st, '规划用时（匀速代理）', 'Planned duration (constant-speed proxy)', 's'))
-    ax.set_ylabel(qlabel(st, '仿真驾驶用时（扣除排队等待）', 'Simulated driving time (queue waits removed)', 's'))
+    ax.set_xlabel(qlabel(st, '规划时间（恒速模型）', 'Planned duration (constant-speed model)', 's'))
+    ax.set_ylabel(qlabel(st, '仿真驾驶时间（扣除排队等待）', 'Simulated driving time (queue waits removed)', 's'))
     ax.legend(loc='upper left')
     ax.grid()
     fe = summary['field_execution']
     s = fe.get('vehicle_driving_over_planned') or {}
-    cap = {'zh': f"执行反馈信号：{fe['succeeded']} 场成功田间仿真中 {len(rows)} 台次车辆的规划用时与仿真驾驶用时（已扣除串行预约的排队等待）。驾驶/规划比中位数 "
-                 f"{s.get('median', float('nan')):.3f}，第 10–90 百分位 {s.get('p10', float('nan')):.3f}–{s.get('p90', float('nan')):.3f}；会话含同一方案的重复执行，"
-                 f"不同方案 {fe.get('distinct_plans')} 个。差值来自加减速、转向与跟踪，是执行反馈学习要校正的对象；样本量小，仿真结果不外推为实车。",
+    cap = {'zh': f"执行反馈信号：{fe['succeeded']} 场成功田间仿真中 {len(rows)} 次车辆运行的规划时间与仿真驾驶时间（已扣除串行预约的排队等待）。驾驶/规划时间比中位数 "
+                 f"{s.get('median', float('nan')):.3f}，第 10–90 百分位 {s.get('p10', float('nan')):.3f}–{s.get('p90', float('nan')):.3f}；会话包含同一方案的重复执行，"
+                 f"共 {fe.get('distinct_plans')} 个不同方案。二者之差源于加减速、转向与跟踪误差，即执行反馈学习的校正对象。",
            'en': f"Execution-feedback signal: planned duration versus simulated driving time (serial-reservation queue waits removed) for {len(rows)} vehicle runs in "
                  f"{fe['succeeded']} successful field simulations. Median driving/planned ratio {s.get('median', float('nan')):.3f} (10th–90th percentile "
-                 f"{s.get('p10', float('nan')):.3f}–{s.get('p90', float('nan')):.3f}); sessions repeat plans ({fe.get('distinct_plans')} distinct). The gap comes from "
-                 f"acceleration, turning and tracking and is what execution-feedback learning must correct; small sample, not extrapolated to real vehicles."}
+                 f"{s.get('p10', float('nan')):.3f}–{s.get('p90', float('nan')):.3f}); sessions repeat plans ({fe.get('distinct_plans')} distinct). The gap arises from "
+                 f"acceleration, turning and tracking error and is the quantity execution-feedback learning corrects."}
     return fig, cap, rows
 
 
@@ -338,5 +333,7 @@ def write(out: Path) -> list[str]:
             with apply(st):
                 fig, cap, rows = execution_feedback(summary, exp_path, st)
                 _save(fig, target, 'fig7_execution_feedback', st, cap, rows, index)
-    (target / 'index.json').write_text(json.dumps(index, ensure_ascii=False, indent=1), encoding='utf-8')
+    index_path = target / 'index.json'
+    others = [e for e in json.loads(index_path.read_text(encoding='utf-8')) if e.get('key') not in OWN_KEYS] if index_path.exists() else []
+    index_path.write_text(json.dumps(index + others, ensure_ascii=False, indent=1), encoding='utf-8')
     return [f"{i['key']} [{i['lang']}] {i['size_mm']}" for i in index]
