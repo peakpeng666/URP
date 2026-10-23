@@ -208,5 +208,65 @@
    90.0,
    55.8
   ]
+ },
+ {
+  "key": "fig8_three_verdicts",
+  "lang": "zh",
+  "files": [
+   "fig8_three_verdicts_zh.pdf",
+   "fig8_three_verdicts_zh.svg",
+   "fig8_three_verdicts_zh.png"
+  ],
+  "source_csv": "fig8_three_verdicts.csv",
+  "caption": "三种可执行性判定下的可行路径数（开发侧，荷兰 140 块田 × 3 机具，1728 条官方可行路径为分母）。官方判定只在原始采样点检查曲率；倒圆判定要求拐角能用最小转弯半径圆弧在相邻直段内倒圆、且倒圆后通过未修改的官方检查（偏离容差 1 cm，0.5/2 cm 结果相同）；严格判定把每条弦加密到 2 cm。柱顶为条数与占该机具官方可行数的比例；倒圆判定另有 14 条因重跑无法再现记录路径而标为无法核验，按不可行计入。",
+  "size_mm": [
+   90.0,
+   46.8
+  ]
+ },
+ {
+  "key": "fig10_dynamic_value",
+  "lang": "zh",
+  "files": [
+   "fig10_dynamic_value_zh.pdf",
+   "fig10_dynamic_value_zh.svg",
+   "fig10_dynamic_value_zh.png"
+  ],
+  "source_csv": "fig10_dynamic_value.csv",
+  "caption": "动态任务流中重排策略相对「只插入」的里程与平均响应变化（开发侧，规划层仿真；180 条流，30 块田 × 3 到达密度 × 2 车队规模）。负值更好；误差线为按流自助法 95% 区间。实心标记为 2 车、空心为 4 车；每流 40 个任务、其中 30 个在班次内到达，重排为 PyVRP 0.3 s 开放路线优化。计时为匀速代理，不是 Gazebo 执行。",
+  "size_mm": [
+   190.0,
+   104.5
+  ]
+ },
+ {
+  "key": "fig8_three_verdicts",
+  "lang": "en",
+  "files": [
+   "fig8_three_verdicts_en.pdf",
+   "fig8_three_verdicts_en.svg",
+   "fig8_three_verdicts_en.png"
+  ],
+  "source_csv": "fig8_three_verdicts.csv",
+  "caption": "Feasible paths under three executability verdicts (development side; 140 Dutch fields × 3 machine profiles, 1728 officially feasible paths as denominator). Official: sampled-point curvature only; fillet: every corner must be roundable by a minimum-radius arc inside its adjacent long chords and the rounded path must pass the unchanged official checker (1 cm deviation tolerance; 0.5/2 cm identical); strict: every chord densified to 2 cm. Labels give counts and share of the profile's officially feasible paths; 14 fillet-unverifiable paths (hash not reproduced) count as infeasible.",
+  "size_mm": [
+   90.0,
+   46.8
+  ]
+ },
+ {
+  "key": "fig10_dynamic_value",
+  "lang": "en",
+  "files": [
+   "fig10_dynamic_value_en.pdf",
+   "fig10_dynamic_value_en.svg",
+   "fig10_dynamic_value_en.png"
+  ],
+  "source_csv": "fig10_dynamic_value.csv",
+  "caption": "Change in total distance and mean response of re-planning policies versus insertion-only in dynamic task streams (development side, planning-level simulation; 180 streams, 30 fields × 3 arrival densities × 2 fleet sizes). Lower is better; error bars are stream bootstrap 95 % intervals. Filled markers: 2 vehicles; open: 4. Each stream has 40 tasks, 30 released during the shift; re-optimisation is a 0.3 s open-route PyVRP solve. Timing uses the constant-speed proxy, not a Gazebo execution.",
+  "size_mm": [
+   190.0,
+   104.5
+  ]
  }
 ]

@@ -66,3 +66,17 @@ def test_wilson_bounds():
     lo, hi = D.wilson(10, 10)
     assert abs(lo - 0.7225) < 1e-3 and hi == 1.0
     assert D.wilson(0, 0) == [None, None]
+
+
+def test_route_budget_probe_smoke():
+    """The probe replays a recorded task and reports per-setting hash counts (F2C + field cache required)."""
+    import pytest
+    pytest.importorskip('fields2cover')
+    from urp_lab.library import fields
+    if not fields.status()['downloaded']:
+        pytest.skip('Fields2Benchmark not cached')
+    from urp_lab.evolve import route_determinism as R
+    out = R.probe('evolve-audit-20261023', '8792aeb4e5a72873', repeats=1, workers=2, cores=(0, 1),
+                  settings=('default', 'time_limit_10s'), write=False)
+    assert set(out) == {'default', 'time_limit_10s'}
+    assert all(isinstance(v[0], int) for v in out.values())

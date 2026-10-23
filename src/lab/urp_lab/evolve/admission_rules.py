@@ -22,10 +22,11 @@ import json
 from pathlib import Path
 
 import numpy as np
+from scipy import stats
 
 from . import audit, policy
 from . import features as F
-from .verdicts import dataset_from
+from .verdicts import dataset_from, _holm
 
 RULES = ('R1_single', 'R2_vbs', 'R3_policy', 'R4_residual', 'random')
 CAPACITIES = (1, 2, 4)
@@ -162,6 +163,64 @@ def evaluate(dirs: list[Path], base_cfgs: list[str], cand_cfgs: list[str], verdi
             'static_tries': field_ci(acc['tries'][k] / norm), 'logit_first_try': field_ci(acc['logit_first'][k] / norm),
             'logit_stop_rho': field_ci(acc['logit_rho'][k] / norm),
             'selection_frequency': dict(sorted(freq.items(), key=lambda kv: -kv[1])), 'selections': len(sel_lists)}
+    pn = np.maximum(n_eval[k], 1.0)
+    out['per_instance'] = {
+        'groups': [groups[i] for i in k],
+        'first': {f'{rule}@{m}': (per[(rule, m)]['first'] / pn).tolist() for (rule, m) in per},
+        'logit_first': {f'{rule}@{m}': (per[(rule, m)]['logit_first'] / pn).tolist() for (rule, m) in per},
+        'rho': {f'{rule}@{m}': (per[(rule, m)]['rho'] / pn).tolist() for (rule, m) in per},
+        'control_first': (control['first'][k] / pn).tolist(), 'control_rho': (control['rho'][k] / pn).tolist()}
+    return out
+
+
+def _field_means(values, groups) -> np.ndarray:
+    by = {}
+    for g, v in zip(groups, values):
+        by.setdefault(g, []).append(float(v))
+    return np.array([np.mean(v) for v in by.values()])
+
+
+def compare(result: dict, B: int = 2000) -> dict:
+    """Per-field paired rule comparisons (two-sided Wilcoxon, bootstrap CI, Holm within metric × capacity)
+    and the Jaccard overlap of each rule's top-m selected members."""
+    groups = result['per_instance']['groups']
+    out = {'families': [], 'selection_overlap': {}}
+    for metric in ('first', 'logit_first', 'rho'):
+        for m in CAPACITIES:
+            names = [f'{rule}@{m}' for rule in RULES] + ['control']
+            vals = {}
+            for n in names:
+                if n == 'control':
+                    vals[n] = result['per_instance']['control_rho' if metric == 'rho' else 'control_first']
+                else:
+                    vals[n] = result['per_instance'][metric][n]
+            means = {n: _field_means(vals[n], groups) for n in names}
+            recs = []
+            for i, a in enumerate(names):
+                for b in names[i + 1:]:
+                    d = means[a] - means[b]
+                    nz = d[np.abs(d) > 1e-12]
+                    p = float(stats.wilcoxon(nz).pvalue) if len(nz) >= 10 else None
+                    rng = np.random.default_rng(7)
+                    boots = [rng.choice(d, len(d), replace=True).mean() for _ in range(B)]
+                    recs.append({'a': a, 'b': b, 'mean_diff': float(d.mean()),
+                                 'ci95': [float(x) for x in np.percentile(boots, [2.5, 97.5])],
+                                 'p_two_sided': p, 'fields': int(len(d)), 'nonzero': int(len(nz))})
+            raw = {f"{r['a']}|{r['b']}": r['p_two_sided'] for r in recs}
+            holm = _holm(raw)
+            for r in recs:
+                r['p_holm'] = holm[f"{r['a']}|{r['b']}"]
+            out['families'].append({'metric': metric, 'capacity': m, 'comparisons': recs})
+    for m in CAPACITIES:
+        top = {}
+        for rule in RULES:
+            freq = result['rules'][f'{rule}@{m}']['selection_frequency']
+            top[rule] = set(list(freq)[:m])
+        for i, a in enumerate(RULES):
+            for b in RULES[i + 1:]:
+                out['selection_overlap'][f'{a}|{b}@{m}'] = {
+                    'jaccard': len(top[a] & top[b]) / max(1, len(top[a] | top[b])),
+                    'a': sorted(top[a]), 'b': sorted(top[b])}
     return out
 
 
@@ -169,5 +228,7 @@ def write(dirs: list[Path], base_cfgs: list[str], cand_cfgs: list[str], out_dir:
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     res = {v: evaluate(dirs, base_cfgs, cand_cfgs, v) for v in ('official', 'fillet')}
+    for v in res:
+        res[v]['pairwise'] = compare(res[v])
     (out_dir / 'admission_rules.json').write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding='utf-8')
     return {v: {k: (r['static_first_try'][0], list(r['selection_frequency'])[:3]) for k, r in res[v]['rules'].items()} for v in res}
