@@ -34,3 +34,7 @@
 所有来源是保全与待集成材料，未把多个候选自动拼成新的已验收主线。
 
 补充副本静态检查：503 个 Python 文件、488 个 JSON、12 个 shell 脚本及补充 ZIP 中 6,624 个 JSON 均通过语法/格式检查；这不是多个候选的集成或物理验收。完整结果见 [validation.json](snapshot/validation.json)。
+
+## 重新连接后的暂存区核验
+
+已完成32,425项重连校验，原主工作区和7个关联工作树未变化。两处暂存区共132项与工作树逐字节一致，HEAD与index载荷分开保存；见 [逐项证据](snapshot/index-evidence.json)、[恢复步骤](snapshot/index-restoration.md)。本轮仍没有启动实验、服务或清理原件。

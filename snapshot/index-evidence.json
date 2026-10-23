@@ -1,0 +1,3407 @@
+{
+  "scope": "The two original worktrees with staged changes; original indexes were read only.",
+  "sources": [
+    {
+      "source_id": "worktree-labpatch-5065046",
+      "head_commit": "5065046d7b7e0b6b682bda46ca3a6c9b42ee8c84",
+      "original_index_sha256_before": "e34dc8030d82c4c17530135e218e0300041ee559ca3743b522583b45427cd35c",
+      "original_index_sha256_after": "e34dc8030d82c4c17530135e218e0300041ee559ca3743b522583b45427cd35c",
+      "index_unchanged_during_capture": true,
+      "staged_paths": 5,
+      "all_stage_zero_equal_working": true,
+      "rows": [
+        {
+          "path": "src/lab/tests/agri_contract_bridge.py",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "1b9310181297b3760e9fb9bef0375b8a5baf9535",
+              "sha256": "abbc8138f7cec28a8e057c2cbfcac2aa1989de8ad7e6e4da9cd57bebffe551f5",
+              "bytes": 3120,
+              "payload": "preserved/index-evidence/labpatch-5065046/index-stage-0/src/lab/tests/agri_contract_bridge.py",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "abbc8138f7cec28a8e057c2cbfcac2aa1989de8ad7e6e4da9cd57bebffe551f5",
+            "git_blob_of_raw_bytes": "1b9310181297b3760e9fb9bef0375b8a5baf9535",
+            "bytes": 3120,
+            "mode": "100644",
+            "payload": "preserved/worktrees/labpatch-5065046/src/lab/tests/agri_contract_bridge.py"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/lab/tests/test_agri_import_provenance.py",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "2be085daa7aff33076d893d32ac6906b25ef9659",
+              "sha256": "fe3d55516abe173a43c39b5431797c602460bc3c926043bc7ba1b36f9f073c76",
+              "bytes": 5988,
+              "payload": "preserved/index-evidence/labpatch-5065046/index-stage-0/src/lab/tests/test_agri_import_provenance.py",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "fe3d55516abe173a43c39b5431797c602460bc3c926043bc7ba1b36f9f073c76",
+            "git_blob_of_raw_bytes": "2be085daa7aff33076d893d32ac6906b25ef9659",
+            "bytes": 5988,
+            "mode": "100644",
+            "payload": "preserved/worktrees/labpatch-5065046/src/lab/tests/test_agri_import_provenance.py"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/lab/tests/test_scenario_idempotency.py",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "8c05170b2e8e205d925998b81d79428fbf6e4d69",
+              "sha256": "a067f28dd13b193bc4a9b816cc4a7ba8a29ae35b222f7d7de87e0ac7c9ce804a",
+              "bytes": 5146,
+              "payload": "preserved/index-evidence/labpatch-5065046/index-stage-0/src/lab/tests/test_scenario_idempotency.py",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "a067f28dd13b193bc4a9b816cc4a7ba8a29ae35b222f7d7de87e0ac7c9ce804a",
+            "git_blob_of_raw_bytes": "8c05170b2e8e205d925998b81d79428fbf6e4d69",
+            "bytes": 5146,
+            "mode": "100644",
+            "payload": "preserved/worktrees/labpatch-5065046/src/lab/tests/test_scenario_idempotency.py"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/lab/urp_lab/gateway.py",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "51a66ae762f264a13ffcf5e25d4da0b665cb0266",
+              "sha256": "2c02415a72d6a15eae85434a12270634c7e60b835c76a54bd222d9e46f305dc5",
+              "bytes": 46179,
+              "payload": "preserved/index-evidence/labpatch-5065046/index-stage-0/src/lab/urp_lab/gateway.py",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "83751b59d319f8e5df60a842f24dd1f2e2102181",
+            "sha256": "c8a0e78c7a6755a182563247e69abff27899d0aeeca14924e654a9d235524532",
+            "bytes": 43045,
+            "payload": "preserved/index-evidence/labpatch-5065046/head/src/lab/urp_lab/gateway.py"
+          },
+          "working_version": {
+            "sha256": "2c02415a72d6a15eae85434a12270634c7e60b835c76a54bd222d9e46f305dc5",
+            "git_blob_of_raw_bytes": "51a66ae762f264a13ffcf5e25d4da0b665cb0266",
+            "bytes": 46179,
+            "mode": "100644",
+            "payload": "preserved/worktrees/labpatch-5065046/src/lab/urp_lab/gateway.py"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/lab/urp_lab/scenarios/__init__.py",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "1cf7b482eb5ff1276b4533dde43c0d652b26328c",
+              "sha256": "283ade59147ce6ba8fa3ec119c12cdc8552da10770222849de22ad830a2125b4",
+              "bytes": 11800,
+              "payload": "preserved/index-evidence/labpatch-5065046/index-stage-0/src/lab/urp_lab/scenarios/__init__.py",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "acea63cb8dc665b3fd8496d9dda6e739454c5bfc",
+            "sha256": "202f9c5f734d7b43a22d3f12dc3f9988da7867ac9fe0ed7bab5b7277c81fc55c",
+            "bytes": 10914,
+            "payload": "preserved/index-evidence/labpatch-5065046/head/src/lab/urp_lab/scenarios/__init__.py"
+          },
+          "working_version": {
+            "sha256": "283ade59147ce6ba8fa3ec119c12cdc8552da10770222849de22ad830a2125b4",
+            "git_blob_of_raw_bytes": "1cf7b482eb5ff1276b4533dde43c0d652b26328c",
+            "bytes": 11800,
+            "mode": "100644",
+            "payload": "preserved/worktrees/labpatch-5065046/src/lab/urp_lab/scenarios/__init__.py"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        }
+      ]
+    },
+    {
+      "source_id": "worktree-verify-5065046",
+      "head_commit": "5065046d7b7e0b6b682bda46ca3a6c9b42ee8c84",
+      "original_index_sha256_before": "85474ca8531ab95510301aaa42c4b2cace751fda15dbf1fa0ca7e3903c831e41",
+      "original_index_sha256_after": "85474ca8531ab95510301aaa42c4b2cace751fda15dbf1fa0ca7e3903c831e41",
+      "index_unchanged_during_capture": true,
+      "staged_paths": 127,
+      "all_stage_zero_equal_working": true,
+      "rows": [
+        {
+          "path": "src/frontend/src/data/workspace-api.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "015d434418b1084c887a6d294fce9d9de58911d9",
+              "sha256": "bd76cbc7321a9e4f9bac7b6093a348ce9e95f4d2fe4c0b397d501e30c6d8be94",
+              "bytes": 7992,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/data/workspace-api.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "cdbb7c7ca5b15ebba42fa349ad4c7202134c8f99",
+            "sha256": "4ca048cc4922d6179cc5fde94dcdcb94898c24d8a4e53d4a87684d6a508cf8c1",
+            "bytes": 7868,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/data/workspace-api.ts"
+          },
+          "working_version": {
+            "sha256": "bd76cbc7321a9e4f9bac7b6093a348ce9e95f4d2fe4c0b397d501e30c6d8be94",
+            "git_blob_of_raw_bytes": "015d434418b1084c887a6d294fce9d9de58911d9",
+            "bytes": 7992,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/data/workspace-api.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/lab/pendingWrites.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "c0b6a611a3f4d04dc2fa9f529a29abaeed6d0ecd",
+              "sha256": "a17b6039f705e1aa7f16658de5fd545c2cf7a09de4fcb5986fe8d62f25b66040",
+              "bytes": 8828,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/lab/pendingWrites.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "a17b6039f705e1aa7f16658de5fd545c2cf7a09de4fcb5986fe8d62f25b66040",
+            "git_blob_of_raw_bytes": "c0b6a611a3f4d04dc2fa9f529a29abaeed6d0ecd",
+            "bytes": 8828,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/lab/pendingWrites.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/lab/types.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "ea2cfb6f493b6be987bedb3d82aefd91c4d008da",
+              "sha256": "c2d814e87a93881c94d8a7e1cd97675bec2d1b1036fa217dd42f2c57fda58a7f",
+              "bytes": 11277,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/lab/types.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "28dff5486715a4e21579bb56276ecefafa980d6a",
+            "sha256": "b9778b8962e84a2513f2202a6d8939acbe45d2c0a01bd51944876c64293b18bf",
+            "bytes": 11079,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/lab/types.ts"
+          },
+          "working_version": {
+            "sha256": "c2d814e87a93881c94d8a7e1cd97675bec2d1b1036fa217dd42f2c57fda58a7f",
+            "git_blob_of_raw_bytes": "ea2cfb6f493b6be987bedb3d82aefd91c4d008da",
+            "bytes": 11277,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/lab/types.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/lab/views/Runs.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "66ac7a8600ad49f8022795930d396996c799826d",
+              "sha256": "536aced1eba8db1e25dae65def8bd9a1912e79f24c7400a71544a960163adda1",
+              "bytes": 5024,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/lab/views/Runs.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "ce7383a46d2a1ee45bbd663223b0727d7976fcff",
+            "sha256": "002779ff9082d53dd09ba440311b37d3fa48a3d375cf6359c68396a161862d41",
+            "bytes": 4663,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/lab/views/Runs.tsx"
+          },
+          "working_version": {
+            "sha256": "536aced1eba8db1e25dae65def8bd9a1912e79f24c7400a71544a960163adda1",
+            "git_blob_of_raw_bytes": "66ac7a8600ad49f8022795930d396996c799826d",
+            "bytes": 5024,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/lab/views/Runs.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/lab/views/plan/IntegrityNotice.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "ce0ea8a32a66e5bed64057f7c4d0524837428630",
+              "sha256": "ee17dc37662ac2a469f097136986f520ab5fc0f0bff6dc8c6473849cd95d0cf8",
+              "bytes": 743,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/lab/views/plan/IntegrityNotice.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "ee17dc37662ac2a469f097136986f520ab5fc0f0bff6dc8c6473849cd95d0cf8",
+            "git_blob_of_raw_bytes": "ce0ea8a32a66e5bed64057f7c4d0524837428630",
+            "bytes": 743,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/lab/views/plan/IntegrityNotice.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/lab/views/plan/PlanView.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "82f6ed037b8dc85d54cb6d97f20070827b0579b3",
+              "sha256": "18f39c6b45333488e374850c056eca504d3c3ce52af0faf287a5ce502812c240",
+              "bytes": 11441,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/lab/views/plan/PlanView.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "8b0c20d09ed7197f2b9e2bcafe3e896b5656b808",
+            "sha256": "8e54c24ec982299c268f2ba8af05f7fce9905830b3fa961303c0b7e59fdba12f",
+            "bytes": 11153,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/lab/views/plan/PlanView.tsx"
+          },
+          "working_version": {
+            "sha256": "18f39c6b45333488e374850c056eca504d3c3ce52af0faf287a5ce502812c240",
+            "git_blob_of_raw_bytes": "82f6ed037b8dc85d54cb6d97f20070827b0579b3",
+            "bytes": 11441,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/lab/views/plan/PlanView.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/lab/views/plan/ScenarioList.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "c0ef6d452e0a844fb934481940ca17b4669d7481",
+              "sha256": "8d983aac36557343fd520b513fd696c92139d064b4ad495819cd21e93c7b3e45",
+              "bytes": 4479,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/lab/views/plan/ScenarioList.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "9c7e0b7fcc232f8d6500852e97b6a1a757ddd07a",
+            "sha256": "1f37d83433e753adcccec95cc524a857a97375a78cf4628ab95400167a32b8f6",
+            "bytes": 4387,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/lab/views/plan/ScenarioList.tsx"
+          },
+          "working_version": {
+            "sha256": "8d983aac36557343fd520b513fd696c92139d064b4ad495819cd21e93c7b3e45",
+            "git_blob_of_raw_bytes": "c0ef6d452e0a844fb934481940ca17b4669d7481",
+            "bytes": 4479,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/lab/views/plan/ScenarioList.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/lab/views/plan/resultIntegrity.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "6a2ac8425a22ef902905a5f2bad4526e86bf0f4e",
+              "sha256": "58e51d425bec8c69fcff6d2499a648b9f641c625a9b4a51f219fb475f07f1e31",
+              "bytes": 5463,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/lab/views/plan/resultIntegrity.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "58e51d425bec8c69fcff6d2499a648b9f641c625a9b4a51f219fb475f07f1e31",
+            "git_blob_of_raw_bytes": "6a2ac8425a22ef902905a5f2bad4526e86bf0f4e",
+            "bytes": 5463,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/lab/views/plan/resultIntegrity.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/lab/views/plan/resultIntegrity.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "d9435ddd4a597b928d15f4b4503b602846aaa25b",
+              "sha256": "2962dcee610262ae2e86d3d5364fe70ab4ee27f5c5469456928ffcd3b69ae78c",
+              "bytes": 2256,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/lab/views/plan/resultIntegrity.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "2962dcee610262ae2e86d3d5364fe70ab4ee27f5c5469456928ffcd3b69ae78c",
+            "git_blob_of_raw_bytes": "d9435ddd4a597b928d15f4b4503b602846aaa25b",
+            "bytes": 2256,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/lab/views/plan/resultIntegrity.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/Studio.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "66e8467d8f22265279c810085c0abd24ed6a8b0b",
+              "sha256": "ef3b60a987b85e473170862eadf1dec7605be11f2657b886bb4a3c1892e5a1de",
+              "bytes": 26812,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/Studio.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "8378c903855d8638b023d7a7e75015c08df9a233",
+            "sha256": "11479940e4cd34b03d5b5964d2100e28ea352208f9de57035f26d95f2323b9d4",
+            "bytes": 26327,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/Studio.tsx"
+          },
+          "working_version": {
+            "sha256": "ef3b60a987b85e473170862eadf1dec7605be11f2657b886bb4a3c1892e5a1de",
+            "git_blob_of_raw_bytes": "66e8467d8f22265279c810085c0abd24ed6a8b0b",
+            "bytes": 26812,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/Studio.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/agri/AgriCatalog.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "368c40505a826aea015f6d3467948b75b499917e",
+              "sha256": "623b19f72f10a5ef4e92b0b649c83e1232bfa1637b21a23a6337794b039bfe34",
+              "bytes": 17130,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/AgriCatalog.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "623b19f72f10a5ef4e92b0b649c83e1232bfa1637b21a23a6337794b039bfe34",
+            "git_blob_of_raw_bytes": "368c40505a826aea015f6d3467948b75b499917e",
+            "bytes": 17130,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/AgriCatalog.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/GeneratedFrom.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "1c720277a6e3c701abcc37704c6b2ab45789e8bb",
+              "sha256": "5c2600bf3b1114c7af3a1a3b10fd9bb3948146e2ce4e4e8f280ddb1075f3c5e7",
+              "bytes": 2857,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/GeneratedFrom.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "5c2600bf3b1114c7af3a1a3b10fd9bb3948146e2ce4e4e8f280ddb1075f3c5e7",
+            "git_blob_of_raw_bytes": "1c720277a6e3c701abcc37704c6b2ab45789e8bb",
+            "bytes": 2857,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/GeneratedFrom.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/PreviewMap.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "453113666b98d5d61be6b3ff86a45590b2ec5caa",
+              "sha256": "b13e3500d432045487092298e9921dd4be59764dde0b96277d29b8e5949566f2",
+              "bytes": 6858,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/PreviewMap.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "b13e3500d432045487092298e9921dd4be59764dde0b96277d29b8e5949566f2",
+            "git_blob_of_raw_bytes": "453113666b98d5d61be6b3ff86a45590b2ec5caa",
+            "bytes": 6858,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/PreviewMap.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/agri.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "6388d315d58f8317e739e652d4cfc77e995ba760",
+              "sha256": "2cc2ffb84fbf23923496443525fc7dbc897e1cb9434468d54803345cb9275ce5",
+              "bytes": 5469,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/agri.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "2cc2ffb84fbf23923496443525fc7dbc897e1cb9434468d54803345cb9275ce5",
+            "git_blob_of_raw_bytes": "6388d315d58f8317e739e652d4cfc77e995ba760",
+            "bytes": 5469,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/agri.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/builders.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "94a295c11af69fb541e5a2164d6a4cf8f9897ad1",
+              "sha256": "618b6e6c1a82e606fcedc2839d070e25e75200bf318cdc7c0ad1701df5df4cb7",
+              "bytes": 6728,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/builders.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "618b6e6c1a82e606fcedc2839d070e25e75200bf318cdc7c0ad1701df5df4cb7",
+            "git_blob_of_raw_bytes": "94a295c11af69fb541e5a2164d6a4cf8f9897ad1",
+            "bytes": 6728,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/builders.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/catalog-lifecycle.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "190315dd902309fa5695df66f309cc96aea7a197",
+              "sha256": "72e2934cda3c4fa3c369a374069932e13cc53c8d8a04ec2a62b03762f013ac08",
+              "bytes": 13362,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/catalog-lifecycle.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "72e2934cda3c4fa3c369a374069932e13cc53c8d8a04ec2a62b03762f013ac08",
+            "git_blob_of_raw_bytes": "190315dd902309fa5695df66f309cc96aea7a197",
+            "bytes": 13362,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/catalog-lifecycle.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/catalog-persist.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "9b1875c7e49cceb95f06b32f624a4e6e57f8fcde",
+              "sha256": "11c444cd67044191a1a43d2b95146af6bc59089e3ac4c5cda12415e78a6b2c7a",
+              "bytes": 2969,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/catalog-persist.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "11c444cd67044191a1a43d2b95146af6bc59089e3ac4c5cda12415e78a6b2c7a",
+            "git_blob_of_raw_bytes": "9b1875c7e49cceb95f06b32f624a4e6e57f8fcde",
+            "bytes": 2969,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/catalog-persist.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/catalog.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "618cc9bec25cef2d2a8b95b8960dd2734c546081",
+              "sha256": "d06f4b68fd38b489732768cad73cf0f2ca01f0618d9597c2f9c80d76be327920",
+              "bytes": 5986,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/catalog.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "d06f4b68fd38b489732768cad73cf0f2ca01f0618d9597c2f9c80d76be327920",
+            "git_blob_of_raw_bytes": "618cc9bec25cef2d2a8b95b8960dd2734c546081",
+            "bytes": 5986,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/catalog.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/catalog.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "0c7dbdfdbaa3b8dddc448c8105eed3e402f5a68c",
+              "sha256": "2c0e53d9353fff78324a6f7ff1cc776c315cd3460e7705fa7a86eb4c99660ca7",
+              "bytes": 7720,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/catalog.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "2c0e53d9353fff78324a6f7ff1cc776c315cd3460e7705fa7a86eb4c99660ca7",
+            "git_blob_of_raw_bytes": "0c7dbdfdbaa3b8dddc448c8105eed3e402f5a68c",
+            "bytes": 7720,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/catalog.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/drafts.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "9dfe5d44c16c3bc663e77d67ebc8c8871f9fd9c6",
+              "sha256": "c6ef9aafd60b90f213468bf143d82d0f815d18e34bda723f917f8317cc346d07",
+              "bytes": 10308,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/drafts.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "c6ef9aafd60b90f213468bf143d82d0f815d18e34bda723f917f8317cc346d07",
+            "git_blob_of_raw_bytes": "9dfe5d44c16c3bc663e77d67ebc8c8871f9fd9c6",
+            "bytes": 10308,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/drafts.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/drafts.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "c469d3279419170536b0c2f14d73292199837dbf",
+              "sha256": "da0236023d04ecaf7df02352a7da6b20e916fd35d942f05ca7e57420793ffbe1",
+              "bytes": 9215,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/drafts.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "da0236023d04ecaf7df02352a7da6b20e916fd35d942f05ca7e57420793ffbe1",
+            "git_blob_of_raw_bytes": "c469d3279419170536b0c2f14d73292199837dbf",
+            "bytes": 9215,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/drafts.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/evidence.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "17c3a6c765c98d8ac624bae1107be39f6eb7f7dd",
+              "sha256": "b8437aa8b316c92d7fc410f39ba2a9d79052753da2d3fccb42fdbde3bd34b6e5",
+              "bytes": 2588,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/evidence.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "b8437aa8b316c92d7fc410f39ba2a9d79052753da2d3fccb42fdbde3bd34b6e5",
+            "git_blob_of_raw_bytes": "17c3a6c765c98d8ac624bae1107be39f6eb7f7dd",
+            "bytes": 2588,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/evidence.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/evidence.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "abd800d5e959fb8f9a3a7ef5c10e09762e25b339",
+              "sha256": "5c8c4b628183316ac58ae0e34e11c9366126361293d16101b9f6f1f8d3a549a8",
+              "bytes": 4667,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/evidence.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "5c8c4b628183316ac58ae0e34e11c9366126361293d16101b9f6f1f8d3a549a8",
+            "git_blob_of_raw_bytes": "abd800d5e959fb8f9a3a7ef5c10e09762e25b339",
+            "bytes": 4667,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/evidence.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/export.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "172ce7d06ae5ebc1cd0822ba2d2033c94f081f14",
+              "sha256": "a476f3be795cd9a95f91a8a65c3747333d6e75a4f6e9290f6f35e14eb5d8fd29",
+              "bytes": 3546,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/export.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "a476f3be795cd9a95f91a8a65c3747333d6e75a4f6e9290f6f35e14eb5d8fd29",
+            "git_blob_of_raw_bytes": "172ce7d06ae5ebc1cd0822ba2d2033c94f081f14",
+            "bytes": 3546,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/export.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "86adbc0bc9b3dee62bb880e94ce38fd40bfc5478",
+              "sha256": "980a82a9b02b4f4987a9943bca0274d056438ef8a3f8470c35f172f5e3cc5901",
+              "bytes": 8856,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "980a82a9b02b4f4987a9943bca0274d056438ef8a3f8470c35f172f5e3cc5901",
+            "git_blob_of_raw_bytes": "86adbc0bc9b3dee62bb880e94ce38fd40bfc5478",
+            "bytes": 8856,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/airground_1uav_2ugv.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "1fbd465667bbd082fff767d5105cba27e55853d8",
+              "sha256": "cc41770c4148efc725761306b55082c065b9347fa9dab55499ed94d7134f256c",
+              "bytes": 749,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/airground_1uav_2ugv.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "cc41770c4148efc725761306b55082c065b9347fa9dab55499ed94d7134f256c",
+            "git_blob_of_raw_bytes": "1fbd465667bbd082fff767d5105cba27e55853d8",
+            "bytes": 749,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/airground_1uav_2ugv.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/bpattern_12rows.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "d64ddf3f80d6c166b92f08d26ac866940c5c97c2",
+              "sha256": "a15f845feaf2c4a12453427882b38bc01f784f0170a380b904b1e9c504a5d370",
+              "bytes": 1632,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/bpattern_12rows.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "a15f845feaf2c4a12453427882b38bc01f784f0170a380b904b1e9c504a5d370",
+            "git_blob_of_raw_bytes": "d64ddf3f80d6c166b92f08d26ac866940c5c97c2",
+            "bytes": 1632,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/bpattern_12rows.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/carp_rows_orchard.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "e9ddea87b57476a945ade7637293c8492a3624b0",
+              "sha256": "b7136957273812490ae22b65c4acedabda5c4961ed88ae5e7d55d9bc78460e65",
+              "bytes": 1273,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/carp_rows_orchard.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "b7136957273812490ae22b65c4acedabda5c4961ed88ae5e7d55d9bc78460e65",
+            "git_blob_of_raw_bytes": "e9ddea87b57476a945ade7637293c8492a3624b0",
+            "bytes": 1273,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/carp_rows_orchard.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/ctf_9tramlines.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "fd813352d150a9afb84c020bd040a00952689d7b",
+              "sha256": "81e5ee882ff2d36ccdce498c7ea956bf59caf97bd89d479e11621271fadd3cb0",
+              "bytes": 921,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/ctf_9tramlines.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "81e5ee882ff2d36ccdce498c7ea956bf59caf97bd89d479e11621271fadd3cb0",
+            "git_blob_of_raw_bytes": "fd813352d150a9afb84c020bd040a00952689d7b",
+            "bytes": 921,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/ctf_9tramlines.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/dynamic_stream_50events.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "69cc8a29afa13cbbb1b65d485b7a84781f4f5df2",
+              "sha256": "604b11dbcd595db06aa5c4f93bab35138ddc9e806b9940c6f08aa41d69e05268",
+              "bytes": 4290,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/dynamic_stream_50events.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "604b11dbcd595db06aa5c4f93bab35138ddc9e806b9940c6f08aa41d69e05268",
+            "git_blob_of_raw_bytes": "69cc8a29afa13cbbb1b65d485b7a84781f4f5df2",
+            "bytes": 4290,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/dynamic_stream_50events.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/dynobst_herd_2.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "678b9b32eaf4508aa965cdcf2aa41d75bbdbf33a",
+              "sha256": "d0944581d6abb2ff02b6b2e03c205b2c863610babdc87b634d1ffbf348f51606",
+              "bytes": 1360,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/dynobst_herd_2.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "d0944581d6abb2ff02b6b2e03c205b2c863610babdc87b634d1ffbf348f51606",
+            "git_blob_of_raw_bytes": "678b9b32eaf4508aa965cdcf2aa41d75bbdbf33a",
+            "bytes": 1360,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/dynobst_herd_2.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/feeding_2barns_3shifts.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "717f41c0647cca7d4d5959e33642081f72432066",
+              "sha256": "38ba60a6670347e3864d8d6a544af06c30e7d4950f095d241d632b6f165e6b52",
+              "bytes": 1236,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/feeding_2barns_3shifts.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "38ba60a6670347e3864d8d6a544af06c30e7d4950f095d241d632b6f165e6b52",
+            "git_blob_of_raw_bytes": "717f41c0647cca7d4d5959e33642081f72432066",
+            "bytes": 1236,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/feeding_2barns_3shifts.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/harvester_rendezvous.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "ceb9b866a73dd1ba2fdb740ad08c6a9df80b6bec",
+              "sha256": "2521c11ed1b213d06b3f0be3d2a70bba675dfec1baba12fc22def7b2e9a16f9f",
+              "bytes": 710,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/harvester_rendezvous.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "2521c11ed1b213d06b3f0be3d2a70bba675dfec1baba12fc22def7b2e9a16f9f",
+            "git_blob_of_raw_bytes": "ceb9b866a73dd1ba2fdb740ad08c6a9df80b6bec",
+            "bytes": 710,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/harvester_rendezvous.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/paddy_rows_10.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "5f4727bb496995199e673375c3150f7656ce0d23",
+              "sha256": "bf9b90da3dcd12ee26f6f5ae7f2608460c9dbd5001e45704fd05d6645f935259",
+              "bytes": 1258,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/paddy_rows_10.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "bf9b90da3dcd12ee26f6f5ae7f2608460c9dbd5001e45704fd05d6645f935259",
+            "git_blob_of_raw_bytes": "5f4727bb496995199e673375c3150f7656ce0d23",
+            "bytes": 1258,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/paddy_rows_10.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/parallel_4robots_1lane.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "6fff82118587e8634261296eece5d36bad8472d2",
+              "sha256": "cdbe4bb2ee9902382f5376ffa8d006100dcaaf5d35358bfa72c02bba1fbbb5f5",
+              "bytes": 700,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/parallel_4robots_1lane.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "cdbe4bb2ee9902382f5376ffa8d006100dcaaf5d35358bfa72c02bba1fbbb5f5",
+            "git_blob_of_raw_bytes": "6fff82118587e8634261296eece5d36bad8472d2",
+            "bytes": 700,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/parallel_4robots_1lane.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/pd_warehouse_20.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "2f10a22657d5b46ed6bf936f926e3b1e8c8486b2",
+              "sha256": "2dfc6d784d51153f2d14cdf504f77448b742b43828ccc8bc37ed08673b302158",
+              "bytes": 1541,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/pd_warehouse_20.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "2dfc6d784d51153f2d14cdf504f77448b742b43828ccc8bc37ed08673b302158",
+            "git_blob_of_raw_bytes": "2f10a22657d5b46ed6bf936f926e3b1e8c8486b2",
+            "bytes": 1541,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/pd_warehouse_20.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/ponds_4_gates.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "31a6eff817bd4a5f182a279c3d86af002a43816b",
+              "sha256": "90ef92ad501fd7ed2660b0994077cc5a72c85f64f415c2fee130aa4a8dcf72ef",
+              "bytes": 838,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/ponds_4_gates.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "90ef92ad501fd7ed2660b0994077cc5a72c85f64f415c2fee130aa4a8dcf72ef",
+            "git_blob_of_raw_bytes": "31a6eff817bd4a5f182a279c3d86af002a43816b",
+            "bytes": 838,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/ponds_4_gates.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/row_service_directed_terraced.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "d8a03b4c97f02d29547da4ab917967c75c341c0c",
+              "sha256": "b0d0e913f3baeb673ff519a4ca10c91aa327818f83e208a18f0c8bd0dff4d789",
+              "bytes": 926,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/row_service_directed_terraced.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "b0d0e913f3baeb673ff519a4ca10c91aa327818f83e208a18f0c8bd0dff4d789",
+            "git_blob_of_raw_bytes": "d8a03b4c97f02d29547da4ab917967c75c341c0c",
+            "bytes": 926,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/row_service_directed_terraced.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/selective_patches.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "f423af732cfbd3f322f984dc15f85ca82eff8eaf",
+              "sha256": "530d987199bf4db8caf37e1d7e82ca3bbfe5ace41b0b309cabbbdf948ae3fa57",
+              "bytes": 1343,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/selective_patches.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "530d987199bf4db8caf37e1d7e82ca3bbfe5ace41b0b309cabbbdf948ae3fa57",
+            "git_blob_of_raw_bytes": "f423af732cfbd3f322f984dc15f85ca82eff8eaf",
+            "bytes": 1343,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/selective_patches.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/slope_terraces.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "d4369030876992652ea776c900148e8bfb78ebed",
+              "sha256": "42750904b8b27a74b1d2e9ca95a3947ae22b83bb855eab0dc405ef35c66fbb56",
+              "bytes": 862,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/slope_terraces.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "42750904b8b27a74b1d2e9ca95a3947ae22b83bb855eab0dc405ef35c66fbb56",
+            "git_blob_of_raw_bytes": "d4369030876992652ea776c900148e8bfb78ebed",
+            "bytes": 862,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/slope_terraces.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/sweep_turn_headland.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "f4c5116c82ff0524bd894c075b56e8d1d2efe978",
+              "sha256": "299e05102d2c2052db02bcf40622a70dc9a805c33f38af24f159295e8a1518e0",
+              "bytes": 634,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/sweep_turn_headland.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "299e05102d2c2052db02bcf40622a70dc9a805c33f38af24f159295e8a1518e0",
+            "git_blob_of_raw_bytes": "f4c5116c82ff0524bd894c075b56e8d1d2efe978",
+            "bytes": 634,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/sweep_turn_headland.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/timewindow_harvest.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "518ef2b1d7b65eb448f526a7a39d15580fbbefe3",
+              "sha256": "7c61b5ee911246aff21fcd61a17ee590e1cc13d61467aa6bd8543893a962a052",
+              "bytes": 1432,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/timewindow_harvest.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "7c61b5ee911246aff21fcd61a17ee590e1cc13d61467aa6bd8543893a962a052",
+            "git_blob_of_raw_bytes": "518ef2b1d7b65eb448f526a7a39d15580fbbefe3",
+            "bytes": 1432,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/timewindow_harvest.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/fixtures/uav_energy_survey.json",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "382851ede4ca251f0fc74a5bd0d81fa3cf3981b4",
+              "sha256": "d366518b00cb32dee559bf9ec088ed5e9e776db0e44319fef1f0da309a54d7cb",
+              "bytes": 487,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/fixtures/uav_energy_survey.json",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "d366518b00cb32dee559bf9ec088ed5e9e776db0e44319fef1f0da309a54d7cb",
+            "git_blob_of_raw_bytes": "382851ede4ca251f0fc74a5bd0d81fa3cf3981b4",
+            "bytes": 487,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/fixtures/uav_energy_survey.json"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/geometry.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "f914cf1619235fde407fcedb898213e8653aa6cb",
+              "sha256": "95cfedc398d869f0306b60ceae8fef39c35683f07830074cced4b165a098c351",
+              "bytes": 6372,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/geometry.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "95cfedc398d869f0306b60ceae8fef39c35683f07830074cced4b165a098c351",
+            "git_blob_of_raw_bytes": "f914cf1619235fde407fcedb898213e8653aa6cb",
+            "bytes": 6372,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/geometry.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/manualEdits.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "7397c209fb11efaeee62c48999e78a41cb24fd3c",
+              "sha256": "03c358710e71a08286f3dd98a86401ed73dd5aac5f35e549ab4dfcf951581b97",
+              "bytes": 2611,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/manualEdits.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "03c358710e71a08286f3dd98a86401ed73dd5aac5f35e549ab4dfcf951581b97",
+            "git_blob_of_raw_bytes": "7397c209fb11efaeee62c48999e78a41cb24fd3c",
+            "bytes": 2611,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/manualEdits.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/manualEdits.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "12eedf2c1f05da2469c5808e8a769d9140550add",
+              "sha256": "b505807bb79dbd35e673079f2604bd3e68636d266515dc9f6678ad8fcbc76e64",
+              "bytes": 4988,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/manualEdits.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "b505807bb79dbd35e673079f2604bd3e68636d266515dc9f6678ad8fcbc76e64",
+            "git_blob_of_raw_bytes": "12eedf2c1f05da2469c5808e8a769d9140550add",
+            "bytes": 4988,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/manualEdits.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/matrix.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "fd0c13b1c4c109f170fbd9db53f03093c957aa60",
+              "sha256": "d6447d9fd71c5c66fafb390b4c57327c6e05242255a0d240daa6f3914528b8c2",
+              "bytes": 2283,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/matrix.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "d6447d9fd71c5c66fafb390b4c57327c6e05242255a0d240daa6f3914528b8c2",
+            "git_blob_of_raw_bytes": "fd0c13b1c4c109f170fbd9db53f03093c957aa60",
+            "bytes": 2283,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/matrix.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/matrix.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "b69264fd569d021fa39f7e429692caf34c64e0ee",
+              "sha256": "00952f9edf70507df592a469b28bdb008561fad4a7a2f925d97d97f02569c42b",
+              "bytes": 3615,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/matrix.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "00952f9edf70507df592a469b28bdb008561fad4a7a2f925d97d97f02569c42b",
+            "git_blob_of_raw_bytes": "b69264fd569d021fa39f7e429692caf34c64e0ee",
+            "bytes": 3615,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/matrix.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/patterns/approx.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "e88fc8fdd8746147a41d7e2531ad3c092a08ba4d",
+              "sha256": "3927efa1c6d1ea98ce22bcc17d9cf5ab8bced8c55e1bd96b7c44d15f494e50d2",
+              "bytes": 10641,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/patterns/approx.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "3927efa1c6d1ea98ce22bcc17d9cf5ab8bced8c55e1bd96b7c44d15f494e50d2",
+            "git_blob_of_raw_bytes": "e88fc8fdd8746147a41d7e2531ad3c092a08ba4d",
+            "bytes": 10641,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/patterns/approx.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/patterns/index.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "603de28855239a5a28142892a52d2bca70864211",
+              "sha256": "21a38ac6fdcc1b0494f9a0dc28f9499cbbc71728f3338ba019d1bb37bf79553c",
+              "bytes": 1513,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/patterns/index.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "21a38ac6fdcc1b0494f9a0dc28f9499cbbc71728f3338ba019d1bb37bf79553c",
+            "git_blob_of_raw_bytes": "603de28855239a5a28142892a52d2bca70864211",
+            "bytes": 1513,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/patterns/index.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/patterns/proposals.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "693390349e17e187ca7aa9bc92c4251aa6113128",
+              "sha256": "a2aa2b021ee0c0e31de826c660563895668d7eb061df80b57891c8bdbe9f8313",
+              "bytes": 17948,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/patterns/proposals.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "a2aa2b021ee0c0e31de826c660563895668d7eb061df80b57891c8bdbe9f8313",
+            "git_blob_of_raw_bytes": "693390349e17e187ca7aa9bc92c4251aa6113128",
+            "bytes": 17948,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/patterns/proposals.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/patterns/rowWeeding.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "e4cebfefae0bd57c0236fa8f8270cbc44421b1cd",
+              "sha256": "2113f1827069bf94407d8600632113da1f3e80db9812737f5446cb2f7e2c1890",
+              "bytes": 8025,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/patterns/rowWeeding.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "2113f1827069bf94407d8600632113da1f3e80db9812737f5446cb2f7e2c1890",
+            "git_blob_of_raw_bytes": "e4cebfefae0bd57c0236fa8f8270cbc44421b1cd",
+            "bytes": 8025,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/patterns/rowWeeding.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/patterns/runnable.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "423b0f1dfafc2ad15cf73c1ab24c9ac4667d4c99",
+              "sha256": "12f93e144ee81468291b6c6290e8a8404e3ace5cc235c6f5a4f5d301f449f416",
+              "bytes": 47236,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/patterns/runnable.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "12f93e144ee81468291b6c6290e8a8404e3ace5cc235c6f5a4f5d301f449f416",
+            "git_blob_of_raw_bytes": "423b0f1dfafc2ad15cf73c1ab24c9ac4667d4c99",
+            "bytes": 47236,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/patterns/runnable.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/preview.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "18a11d29fc7b1cb31f858f4c2e2b963356fdaa36",
+              "sha256": "ce87382124ee68cd2a0beb6775675803331b6aa6d79916c57fc10738d1dfe375",
+              "bytes": 7164,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/preview.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "ce87382124ee68cd2a0beb6775675803331b6aa6d79916c57fc10738d1dfe375",
+            "git_blob_of_raw_bytes": "18a11d29fc7b1cb31f858f4c2e2b963356fdaa36",
+            "bytes": 7164,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/preview.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/refs.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "5664e685d3e6774dba229b4f71247d105e8116f4",
+              "sha256": "07d2b20b210583d5fc8461a251c822d1a2778bd0ff10a5deb753d1b128e74aa3",
+              "bytes": 9090,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/refs.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "07d2b20b210583d5fc8461a251c822d1a2778bd0ff10a5deb753d1b128e74aa3",
+            "git_blob_of_raw_bytes": "5664e685d3e6774dba229b4f71247d105e8116f4",
+            "bytes": 9090,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/refs.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/research-evidence.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "c35faf4870e9c8854615e29d935e8110ce5b545b",
+              "sha256": "ea0fcc76051db4862d746c348ae8cd7cc0f86141f32a41cde57f96803562a171",
+              "bytes": 5431,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/research-evidence.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "ea0fcc76051db4862d746c348ae8cd7cc0f86141f32a41cde57f96803562a171",
+            "git_blob_of_raw_bytes": "c35faf4870e9c8854615e29d935e8110ce5b545b",
+            "bytes": 5431,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/research-evidence.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/rowWeeding.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "7bb87eca0855d33319604a2b9eab6db78edc6627",
+              "sha256": "9aec491bdb68b063cc15d00a721ebda6a77bfbd5eee0718c3177783fda17b856",
+              "bytes": 1596,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/rowWeeding.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "9aec491bdb68b063cc15d00a721ebda6a77bfbd5eee0718c3177783fda17b856",
+            "git_blob_of_raw_bytes": "7bb87eca0855d33319604a2b9eab6db78edc6627",
+            "bytes": 1596,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/rowWeeding.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/runtime-contract.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "d9e57c88f7913f23fc84220177fe43d0ebc27e2b",
+              "sha256": "2ca88d47777ae75b35b5ca08570494f9bb259364da7bea9102fc8cc0c57f41dd",
+              "bytes": 7251,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/runtime-contract.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "2ca88d47777ae75b35b5ca08570494f9bb259364da7bea9102fc8cc0c57f41dd",
+            "git_blob_of_raw_bytes": "d9e57c88f7913f23fc84220177fe43d0ebc27e2b",
+            "bytes": 7251,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/runtime-contract.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/agri/taxonomy.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "94828bbfc4e2f0afb204ba96bea0c7ef3674b302",
+              "sha256": "ac608d4fad848a535c0fe8c13849c23ab954471c4ef15c886b76a1247bc4a0a5",
+              "bytes": 12763,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/agri/taxonomy.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "ac608d4fad848a535c0fe8c13849c23ab954471c4ef15c886b76a1247bc4a0a5",
+            "git_blob_of_raw_bytes": "94828bbfc4e2f0afb204ba96bea0c7ef3674b302",
+            "bytes": 12763,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/agri/taxonomy.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/api.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "0b94e34950ec51430e831e5827de1c5f2712e038",
+              "sha256": "df912d7aa67ef3d377c4ac84a1369a7f7308a11fb879934ec1828dc84fb52ce1",
+              "bytes": 8831,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/api.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "20292a3c20c025786d7c8e718ca1f7c957a8e301",
+            "sha256": "36ceed2814fb114e150cfc05cd519fe18bc2721c7472ec9669ba6d4461a8f4b4",
+            "bytes": 8717,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/api.ts"
+          },
+          "working_version": {
+            "sha256": "df912d7aa67ef3d377c4ac84a1369a7f7308a11fb879934ec1828dc84fb52ce1",
+            "git_blob_of_raw_bytes": "0b94e34950ec51430e831e5827de1c5f2712e038",
+            "bytes": 8831,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/api.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/assets/AssetInspector.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "b12e0cc95199d087a75e8074eb3520a7f7b78830",
+              "sha256": "4385fa48522b2f51d8f0ffb21cc88f280444352430ebeb2904dcbdb0083f7b76",
+              "bytes": 31166,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/assets/AssetInspector.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "ecd36de0f7f16d769ac6f7449313d7c7efda6ccd",
+            "sha256": "55d003761ba2a27e3f46f4ab23f9f42829aaacb0e01a040024ca7f8f73eba8db",
+            "bytes": 31317,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/assets/AssetInspector.tsx"
+          },
+          "working_version": {
+            "sha256": "4385fa48522b2f51d8f0ffb21cc88f280444352430ebeb2904dcbdb0083f7b76",
+            "git_blob_of_raw_bytes": "b12e0cc95199d087a75e8074eb3520a7f7b78830",
+            "bytes": 31166,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/assets/AssetInspector.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/assets/MapToTaskMap.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "5a5ee88d84db1c077f7ff33d8a188da909080508",
+              "sha256": "da642fca083f828f4992ffa5e0838ec2f977e2869ea7385cb6b81c3fc749f6b5",
+              "bytes": 22543,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/assets/MapToTaskMap.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "fe8cd10e4d8cdec563a5248976a3fb7c5350e831",
+            "sha256": "da6acbe03f7be1c2ef756d14bb4cd332b786d62cc48dfcfa0791854b236df450",
+            "bytes": 22414,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/assets/MapToTaskMap.tsx"
+          },
+          "working_version": {
+            "sha256": "da642fca083f828f4992ffa5e0838ec2f977e2869ea7385cb6b81c3fc749f6b5",
+            "git_blob_of_raw_bytes": "5a5ee88d84db1c077f7ff33d8a188da909080508",
+            "bytes": 22543,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/assets/MapToTaskMap.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/comparison.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "bff9425c87e2188122b8677b032464f83835bb0d",
+              "sha256": "39e9f5340100046cc09613deac1e508f8e5f6596c92f876689f25ba270b1a591",
+              "bytes": 4421,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/comparison.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "ed020c4c9eafad7ab05f7b2b236fce124b14e3d4",
+            "sha256": "27bf3f4ef25db88a3cc46467249d86d324ad21d39bf0f1293b20cd6ca8533538",
+            "bytes": 2062,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/comparison.test.ts"
+          },
+          "working_version": {
+            "sha256": "39e9f5340100046cc09613deac1e508f8e5f6596c92f876689f25ba270b1a591",
+            "git_blob_of_raw_bytes": "bff9425c87e2188122b8677b032464f83835bb0d",
+            "bytes": 4421,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/comparison.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/comparison.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "e700771974816cc21764d90089559b5a5434f443",
+              "sha256": "900b8cf2602fd1d63c61d399c3acde0ddf0f85e99c46e2f663037a08a23ab3be",
+              "bytes": 7827,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/comparison.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "ae949986209a14f00e0a0a43dec092602cd84cb2",
+            "sha256": "b1d3e9072019f6886e52c29f163195317820f153d53b28d53507b9e180927793",
+            "bytes": 3253,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/comparison.ts"
+          },
+          "working_version": {
+            "sha256": "900b8cf2602fd1d63c61d399c3acde0ddf0f85e99c46e2f663037a08a23ab3be",
+            "git_blob_of_raw_bytes": "e700771974816cc21764d90089559b5a5434f443",
+            "bytes": 7827,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/comparison.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/editor/FieldEditor.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "e9543e5e15bb3028821916388f5cea5f1b7a25a3",
+              "sha256": "e73e74d8e209829fca157742b537cbb6f0bbc09ee407e699bff8e08eac566de7",
+              "bytes": 32344,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/FieldEditor.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "65f88494810afd301367a8263f48810350211316",
+            "sha256": "3f271a3a2c75351b66017aafb1552b522cc05f33f8a786da399b29f283ff551f",
+            "bytes": 23688,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/editor/FieldEditor.tsx"
+          },
+          "working_version": {
+            "sha256": "e73e74d8e209829fca157742b537cbb6f0bbc09ee407e699bff8e08eac566de7",
+            "git_blob_of_raw_bytes": "e9543e5e15bb3028821916388f5cea5f1b7a25a3",
+            "bytes": 32344,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/FieldEditor.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/editor/IssuesPanel.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "80677cafd3e75fc17f86ed993f80dbd275986c59",
+              "sha256": "baa2c33ff9badfa495f5d2c32786d313db7bea52843d58be9d8d1a29d0e50f55",
+              "bytes": 1981,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/IssuesPanel.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "baa2c33ff9badfa495f5d2c32786d313db7bea52843d58be9d8d1a29d0e50f55",
+            "git_blob_of_raw_bytes": "80677cafd3e75fc17f86ed993f80dbd275986c59",
+            "bytes": 1981,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/IssuesPanel.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/SelectionPanel.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "50afb2eedfbbe49b78fb61619efbce2bb7969965",
+              "sha256": "d231c5d32cb2a5465883b7e447ae6e3a3fc7674f5b7797fbe94c1795b5b9cf0c",
+              "bytes": 4951,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/SelectionPanel.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "d231c5d32cb2a5465883b7e447ae6e3a3fc7674f5b7797fbe94c1795b5b9cf0c",
+            "git_blob_of_raw_bytes": "50afb2eedfbbe49b78fb61619efbce2bb7969965",
+            "bytes": 4951,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/SelectionPanel.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/decimate.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "b21babe8313ff90f2a07b90d463b154655575352",
+              "sha256": "553fd756f57545ba2d0eff36d16b03ec19b48765af626b9db0991c0ba613484c",
+              "bytes": 3910,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/decimate.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "553fd756f57545ba2d0eff36d16b03ec19b48765af626b9db0991c0ba613484c",
+            "git_blob_of_raw_bytes": "b21babe8313ff90f2a07b90d463b154655575352",
+            "bytes": 3910,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/decimate.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/decimate.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "d7662ed297a433bc7828db64513a4e1fa1051d22",
+              "sha256": "a7c1102c6613729024bfa097f9f1f979a882e88fda124b947de227025523507d",
+              "bytes": 3997,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/decimate.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "a7c1102c6613729024bfa097f9f1f979a882e88fda124b947de227025523507d",
+            "git_blob_of_raw_bytes": "d7662ed297a433bc7828db64513a4e1fa1051d22",
+            "bytes": 3997,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/decimate.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/editor.module.css",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "e750ba85123f75ff3da0e423c5d0cc1d09cebce3",
+              "sha256": "d075afb9963c7fd9d69339539fc9bc990795f13b3c89b99d79f864b6c71767f9",
+              "bytes": 8312,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/editor.module.css",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "8f7404fc99d9769c5d0d15b1a0f6126371cf5a75",
+            "sha256": "f80cb4ba6843979c5e6ff69c20c0966e6909d0bffd531d8a7f952dab13a5689b",
+            "bytes": 3796,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/editor/editor.module.css"
+          },
+          "working_version": {
+            "sha256": "d075afb9963c7fd9d69339539fc9bc990795f13b3c89b99d79f864b6c71767f9",
+            "git_blob_of_raw_bytes": "e750ba85123f75ff3da0e423c5d0cc1d09cebce3",
+            "bytes": 8312,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/editor.module.css"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/editor/fieldFocus.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "4e58fd0e38756bb0908eb9135633c6603497341b",
+              "sha256": "305752a3d556bc71953a336ac01e0f5e89cc5f90132b3b84b19e3c84336cf137",
+              "bytes": 1809,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/fieldFocus.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "305752a3d556bc71953a336ac01e0f5e89cc5f90132b3b84b19e3c84336cf137",
+            "git_blob_of_raw_bytes": "4e58fd0e38756bb0908eb9135633c6603497341b",
+            "bytes": 1809,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/fieldFocus.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/fieldFocus.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "dc0ef62d49fc8fd98adfd225a98d2a3245ea35fc",
+              "sha256": "cf9027639fd62a27660d036edb33f099b3505a4feabfce3ac00316910503edfa",
+              "bytes": 1231,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/fieldFocus.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "cf9027639fd62a27660d036edb33f099b3505a4feabfce3ac00316910503edfa",
+            "git_blob_of_raw_bytes": "dc0ef62d49fc8fd98adfd225a98d2a3245ea35fc",
+            "bytes": 1231,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/fieldFocus.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/geometry.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "5aebd998b1815dc447c98a5a55410ac787025412",
+              "sha256": "df6c288c56438482a914d88b952e6984436b0af0e2d69168d98031f7472b5207",
+              "bytes": 5965,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/geometry.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "04224a807555d12e847d128dfb33036e7b78784e",
+            "sha256": "7d7841cd5e84cee00561d280d1d7637fc1bffc201a1bf18441f1f1327609bc61",
+            "bytes": 6249,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/editor/geometry.ts"
+          },
+          "working_version": {
+            "sha256": "df6c288c56438482a914d88b952e6984436b0af0e2d69168d98031f7472b5207",
+            "git_blob_of_raw_bytes": "5aebd998b1815dc447c98a5a55410ac787025412",
+            "bytes": 5965,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/geometry.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/editor/geometryConsistency.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "7a3d58d64c11300bcd43c6dccfcd0439492d3286",
+              "sha256": "72f0e8d600bb4dc149a9871ea6a3f7dd31262262de3bcc9173d526990c960027",
+              "bytes": 3314,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/geometryConsistency.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "72f0e8d600bb4dc149a9871ea6a3f7dd31262262de3bcc9173d526990c960027",
+            "git_blob_of_raw_bytes": "7a3d58d64c11300bcd43c6dccfcd0439492d3286",
+            "bytes": 3314,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/geometryConsistency.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/legend.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "313a58f150e69490838440b0a0eb745337998ea3",
+              "sha256": "8b72acbd61e6ba409d79fac33e62cc081321257a9ef432730d98688b4f653ae4",
+              "bytes": 1407,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/legend.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "8b72acbd61e6ba409d79fac33e62cc081321257a9ef432730d98688b4f653ae4",
+            "git_blob_of_raw_bytes": "313a58f150e69490838440b0a0eb745337998ea3",
+            "bytes": 1407,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/legend.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/legend.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "b84fb67719f60098bf64abaf46428b0e59134505",
+              "sha256": "d3151fad8af364e134ee1a49ed952e4d927f1f6670e0ec6c7a5ad3bf941f07df",
+              "bytes": 8098,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/legend.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "d3151fad8af364e134ee1a49ed952e4d927f1f6670e0ec6c7a5ad3bf941f07df",
+            "git_blob_of_raw_bytes": "b84fb67719f60098bf64abaf46428b0e59134505",
+            "bytes": 8098,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/legend.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/selection.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "d70fd4b8cf1e4819230fcdc70c17663a5d3b6ff6",
+              "sha256": "14e093089c47cd8b9ebf63d86e3ca8385160d13d71b1bd50462c70912ab06446",
+              "bytes": 2567,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/selection.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "14e093089c47cd8b9ebf63d86e3ca8385160d13d71b1bd50462c70912ab06446",
+            "git_blob_of_raw_bytes": "d70fd4b8cf1e4819230fcdc70c17663a5d3b6ff6",
+            "bytes": 2567,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/selection.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/selection.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "802535994a96af2c46675aa92cdbd7b7a102b5ae",
+              "sha256": "91291a73d80caa96de92dbfc3fdee077acec123cd7b701f6be5777c24896e8e3",
+              "bytes": 6534,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/selection.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "91291a73d80caa96de92dbfc3fdee077acec123cd7b701f6be5777c24896e8e3",
+            "git_blob_of_raw_bytes": "802535994a96af2c46675aa92cdbd7b7a102b5ae",
+            "bytes": 6534,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/selection.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/shortcuts.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "7fb1ec879c0f88d1054641382ef2195c494c500d",
+              "sha256": "45649c224f9a87ddce2d2bd9167791e97943c0fadf21875dd957ae376e6fb61d",
+              "bytes": 1187,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/shortcuts.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "45649c224f9a87ddce2d2bd9167791e97943c0fadf21875dd957ae376e6fb61d",
+            "git_blob_of_raw_bytes": "7fb1ec879c0f88d1054641382ef2195c494c500d",
+            "bytes": 1187,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/shortcuts.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/shortcuts.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "43fc00714369003f6d9c15caa66da6ff9a481943",
+              "sha256": "21b78eb484e68f7701e7b462581b5beea2edc40e4bbb26a7161a7640dbf5aec8",
+              "bytes": 1030,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/shortcuts.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "21b78eb484e68f7701e7b462581b5beea2edc40e4bbb26a7161a7640dbf5aec8",
+            "git_blob_of_raw_bytes": "43fc00714369003f6d9c15caa66da6ff9a481943",
+            "bytes": 1030,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/shortcuts.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/validation.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "5af7d1c4acc05092175202279e98957ca1ddeea7",
+              "sha256": "e31e3457a3f0d55aa417f0cca022d84edc22140b3b0dfa82673bac002e7fbff3",
+              "bytes": 4643,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/validation.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "e31e3457a3f0d55aa417f0cca022d84edc22140b3b0dfa82673bac002e7fbff3",
+            "git_blob_of_raw_bytes": "5af7d1c4acc05092175202279e98957ca1ddeea7",
+            "bytes": 4643,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/validation.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/editor/validation.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "50bbf3efb73803315115e427ff5ed89a6076a742",
+              "sha256": "4043af7cee4ce99d2789e45222ca23baa29de077fff24e7d93d048365926ed93",
+              "bytes": 10342,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/editor/validation.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "4043af7cee4ce99d2789e45222ca23baa29de077fff24e7d93d048365926ed93",
+            "git_blob_of_raw_bytes": "50bbf3efb73803315115e427ff5ed89a6076a742",
+            "bytes": 10342,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/editor/validation.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/experiment/DecisionPanel.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "aadfdd9bd7e01ddbba9aebd6e5ca5593f970d5a9",
+              "sha256": "84d88e1d8765263193fcff591ef79c195aec1e4d15b3681f233f29882f362d20",
+              "bytes": 7780,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/experiment/DecisionPanel.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "17d700104a1e475707b4423334c36121f149e51a",
+            "sha256": "f4b4da4d13268ae75ed21da032ee55ac36f132298970bc15212412726081ac9b",
+            "bytes": 7838,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/experiment/DecisionPanel.tsx"
+          },
+          "working_version": {
+            "sha256": "84d88e1d8765263193fcff591ef79c195aec1e4d15b3681f233f29882f362d20",
+            "git_blob_of_raw_bytes": "aadfdd9bd7e01ddbba9aebd6e5ca5593f970d5a9",
+            "bytes": 7780,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/experiment/DecisionPanel.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/experiment/ExperimentPanel.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "7f324f7f7438eede162017fd2988a81f77b7fa8f",
+              "sha256": "caac44c1049bc15a3a5ee7081992be4be9d8aa2b6f2768f21359bfb2d966e69c",
+              "bytes": 16358,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/experiment/ExperimentPanel.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "f738ebe113406feb04623f069fc55857ae3ff137",
+            "sha256": "6efa1180df92ab38c4905a4ace98fb15ef14271c6fbbe8a6cf57a7a5b540caaa",
+            "bytes": 16562,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/experiment/ExperimentPanel.tsx"
+          },
+          "working_version": {
+            "sha256": "caac44c1049bc15a3a5ee7081992be4be9d8aa2b6f2768f21359bfb2d966e69c",
+            "git_blob_of_raw_bytes": "7f324f7f7438eede162017fd2988a81f77b7fa8f",
+            "bytes": 16358,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/experiment/ExperimentPanel.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/experiment/ReplayPanel.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "b8bad12d2dc8d2e8c49b93191bf64c530d171bd4",
+              "sha256": "6d4c0b51696cd89188fa38dbd732b95b7e0d6fac09082a96e599b0dca68f1d67",
+              "bytes": 17251,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/experiment/ReplayPanel.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "097c6ac79bece30ddf83cd4f8649be4390c9c529",
+            "sha256": "af8279b9668c4e9e2991e26fc9398b7c1f66bcd344bfc63ce4fd1cd010ea2dac",
+            "bytes": 16818,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/experiment/ReplayPanel.tsx"
+          },
+          "working_version": {
+            "sha256": "6d4c0b51696cd89188fa38dbd732b95b7e0d6fac09082a96e599b0dca68f1d67",
+            "git_blob_of_raw_bytes": "b8bad12d2dc8d2e8c49b93191bf64c530d171bd4",
+            "bytes": 17251,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/experiment/ReplayPanel.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/experiment/RunTrace.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "a089fe3334a9c553fa00737996085242e9675702",
+              "sha256": "2d909350f78f2197fa683f9002fa74bbef47fa67bd5b9426e35b2e4811c7821f",
+              "bytes": 2207,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/experiment/RunTrace.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "2d909350f78f2197fa683f9002fa74bbef47fa67bd5b9426e35b2e4811c7821f",
+            "git_blob_of_raw_bytes": "a089fe3334a9c553fa00737996085242e9675702",
+            "bytes": 2207,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/experiment/RunTrace.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/experiment/RunTrace.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "d8b21c8fd4c242f0fa15dcd9719493791299c4fb",
+              "sha256": "bb5d11c53e25b80ca33f643996fa408b55579e37261ffa4025060a2e5a413905",
+              "bytes": 3479,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/experiment/RunTrace.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "bb5d11c53e25b80ca33f643996fa408b55579e37261ffa4025060a2e5a413905",
+            "git_blob_of_raw_bytes": "d8b21c8fd4c242f0fa15dcd9719493791299c4fb",
+            "bytes": 3479,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/experiment/RunTrace.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/experiment/SessionEvidence.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "173124c0d93fcc805bba2b5ab4cf6fd391583f1b",
+              "sha256": "12bd87e895f660db5cf075da5d73288372b76ffa82c9845fd3910f16cb65f8c4",
+              "bytes": 4856,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/experiment/SessionEvidence.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "d921f0e05645aa3e2c519b8b5c99f085c0b5da80",
+            "sha256": "f72733fe8d3d251ce097fe7e5c73dacfc69f2f5e4c5baeb87e17d5a0f847637f",
+            "bytes": 4973,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/experiment/SessionEvidence.tsx"
+          },
+          "working_version": {
+            "sha256": "12bd87e895f660db5cf075da5d73288372b76ffa82c9845fd3910f16cb65f8c4",
+            "git_blob_of_raw_bytes": "173124c0d93fcc805bba2b5ab4cf6fd391583f1b",
+            "bytes": 4856,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/experiment/SessionEvidence.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/panels/FieldSimPanel.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "439b88a003859cac5240384e025c7f0ba75545aa",
+              "sha256": "58a713f028aa027d6bff5c87d4e1c0da405e3735116bf14cad0105cc2e5edca7",
+              "bytes": 22804,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/panels/FieldSimPanel.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "d7813a440cd77bada6dfcf5ba40a2021b7d72cbb",
+            "sha256": "74970f84690f35da5940564be5eebc85426c75c59422472bc1b3024258e5f9fc",
+            "bytes": 23040,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/panels/FieldSimPanel.tsx"
+          },
+          "working_version": {
+            "sha256": "58a713f028aa027d6bff5c87d4e1c0da405e3735116bf14cad0105cc2e5edca7",
+            "git_blob_of_raw_bytes": "439b88a003859cac5240384e025c7f0ba75545aa",
+            "bytes": 22804,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/panels/FieldSimPanel.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/panels/HistoryRuns.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "72bb0695451b2962364e8c019b23a9dea0bdc658",
+              "sha256": "0fc00a02e77e0e7e301773609376a7301128373f16bd4b2b38f6be7543608ca1",
+              "bytes": 3779,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/panels/HistoryRuns.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "0fc00a02e77e0e7e301773609376a7301128373f16bd4b2b38f6be7543608ca1",
+            "git_blob_of_raw_bytes": "72bb0695451b2962364e8c019b23a9dea0bdc658",
+            "bytes": 3779,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/panels/HistoryRuns.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/panels/HistoryRuns.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "0517dcce2f4c42dd9314a72486f04d317d33db91",
+              "sha256": "7e6359dfb3e53dbe2f66a5e14a40aad9fb6bac820a82a6d5771e3bef75995a92",
+              "bytes": 5621,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/panels/HistoryRuns.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "7e6359dfb3e53dbe2f66a5e14a40aad9fb6bac820a82a6d5771e3bef75995a92",
+            "git_blob_of_raw_bytes": "0517dcce2f4c42dd9314a72486f04d317d33db91",
+            "bytes": 5621,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/panels/HistoryRuns.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/panels/LibraryPanels.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "42e6f0b8bba2f524de8b57855ff1c60d7fbc65d6",
+              "sha256": "aef03fb1ca57596086253819e7b49f1c9661884c7d620826ee3d0401249bec3b",
+              "bytes": 18916,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/panels/LibraryPanels.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "c4d264bb13158d70fb751a997dddd0d50c022d69",
+            "sha256": "668879d8cace037c024da97ef055e6dd258fb81f0d3f0e4a9e8597ca52ec8702",
+            "bytes": 16835,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/panels/LibraryPanels.tsx"
+          },
+          "working_version": {
+            "sha256": "aef03fb1ca57596086253819e7b49f1c9661884c7d620826ee3d0401249bec3b",
+            "git_blob_of_raw_bytes": "42e6f0b8bba2f524de8b57855ff1c60d7fbc65d6",
+            "bytes": 18916,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/panels/LibraryPanels.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/panels/MapExclusionNote.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "fce781d9a7f5adfeec80dc384689db95b65a2315",
+              "sha256": "562802b790e76fba85a8dcd4570b23dcdbc6e874871991a66e6be15c5d999933",
+              "bytes": 5142,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/panels/MapExclusionNote.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "562802b790e76fba85a8dcd4570b23dcdbc6e874871991a66e6be15c5d999933",
+            "git_blob_of_raw_bytes": "fce781d9a7f5adfeec80dc384689db95b65a2315",
+            "bytes": 5142,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/panels/MapExclusionNote.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/panels/MapExclusionNote.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "fc955610bf263582bc97cdc2dfc202519e087844",
+              "sha256": "13a3aa719c5c02dd0e87bcec2d64c5d50dc5bd64eec9d345470e7ea4c2c3a1f6",
+              "bytes": 2889,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/panels/MapExclusionNote.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "13a3aa719c5c02dd0e87bcec2d64c5d50dc5bd64eec9d345470e7ea4c2c3a1f6",
+            "git_blob_of_raw_bytes": "fc955610bf263582bc97cdc2dfc202519e087844",
+            "bytes": 2889,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/panels/MapExclusionNote.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/panels/PlanPanels.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "fe78fe1becad37c597a143da485dc214b7bb9158",
+              "sha256": "9d272b4bd751bc83215407be1a4355ce5b1836c6406f101615a265d70c3cdc51",
+              "bytes": 11679,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/panels/PlanPanels.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "10464fa6e47bfc1cae26cbb2a7f74359bb3e8797",
+            "sha256": "cf78a11668f10979eac36cb78cb8fb10357c938a5e4557ccb0302cbe917b91d9",
+            "bytes": 3149,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/panels/PlanPanels.test.ts"
+          },
+          "working_version": {
+            "sha256": "9d272b4bd751bc83215407be1a4355ce5b1836c6406f101615a265d70c3cdc51",
+            "git_blob_of_raw_bytes": "fe78fe1becad37c597a143da485dc214b7bb9158",
+            "bytes": 11679,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/panels/PlanPanels.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/panels/PlanPanels.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "1e6afb3f5c09d2d4f2cfec9cd83fc525f8967200",
+              "sha256": "b5c05ad8b976d5326191fecace76d346e4f40c60b82081b07ac71c27ce5237d3",
+              "bytes": 71857,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/panels/PlanPanels.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "01a1a713194e86dc47f19181b5c18615a451fdee",
+            "sha256": "ba4df63e984a94f094535cd495008081f2d0c78fe451386f4bb400771f1c9bae",
+            "bytes": 68413,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/panels/PlanPanels.tsx"
+          },
+          "working_version": {
+            "sha256": "b5c05ad8b976d5326191fecace76d346e4f40c60b82081b07ac71c27ce5237d3",
+            "git_blob_of_raw_bytes": "1e6afb3f5c09d2d4f2cfec9cd83fc525f8967200",
+            "bytes": 71857,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/panels/PlanPanels.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/panels/ResearchPanels.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "128d1377c4042a388a6bf9eae9f220a0c215ef1f",
+              "sha256": "698a482654bd4b502eaa6d1f76e4f57aa8fae70cade501026b798c458810b9b7",
+              "bytes": 20600,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/panels/ResearchPanels.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "7df14a3bf665b42033b1223fd0301e2b68aa8b65",
+            "sha256": "4e242b930d4ad97cc96e1d420b58c5a48d70a27021a490a72f8277927230fb7e",
+            "bytes": 22443,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/panels/ResearchPanels.tsx"
+          },
+          "working_version": {
+            "sha256": "698a482654bd4b502eaa6d1f76e4f57aa8fae70cade501026b798c458810b9b7",
+            "git_blob_of_raw_bytes": "128d1377c4042a388a6bf9eae9f220a0c215ef1f",
+            "bytes": 20600,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/panels/ResearchPanels.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/panels/panels.module.css",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "aa274a7314725ca764f1445e2c1f8ce47cc30ff2",
+              "sha256": "be2151997cac2a07dcf1f7483e4b57b865993a3b340ac550c04c618498771470",
+              "bytes": 14006,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/panels/panels.module.css",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "9ba4766e7af85f87193becd058e6b8cecb34381b",
+            "sha256": "cf3cdce56dc9646a8b63baf1089f150a5eb4782461ffb4fc82fab4ba54ade5ff",
+            "bytes": 13685,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/panels/panels.module.css"
+          },
+          "working_version": {
+            "sha256": "be2151997cac2a07dcf1f7483e4b57b865993a3b340ac550c04c618498771470",
+            "git_blob_of_raw_bytes": "aa274a7314725ca764f1445e2c1f8ce47cc30ff2",
+            "bytes": 14006,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/panels/panels.module.css"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/pendingWrites.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "f6336e29895ee34520a1f8eb38e7b2b83ce5cdeb",
+              "sha256": "740ffaed45daa4f376d26736dafd67dd0d3a6bd3d1cbe3c862aa341a61a91601",
+              "bytes": 107,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/pendingWrites.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "740ffaed45daa4f376d26736dafd67dd0d3a6bd3d1cbe3c862aa341a61a91601",
+            "git_blob_of_raw_bytes": "f6336e29895ee34520a1f8eb38e7b2b83ce5cdeb",
+            "bytes": 107,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/pendingWrites.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/researchCharts/AnalysisCharts.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "f8a77be0352f9fe53a56895bdc5e83178e5f2520",
+              "sha256": "40b54fbc37b8cce3d08422d9797ab31f22bb387a02546d7f94ff7cc122012c7d",
+              "bytes": 11424,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/researchCharts/AnalysisCharts.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "40b54fbc37b8cce3d08422d9797ab31f22bb387a02546d7f94ff7cc122012c7d",
+            "git_blob_of_raw_bytes": "f8a77be0352f9fe53a56895bdc5e83178e5f2520",
+            "bytes": 11424,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/researchCharts/AnalysisCharts.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/researchCharts/RunCharts.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "c4a080abd43946ca2feb8a4e140e772cab93c549",
+              "sha256": "fc90076aace02ee09d1134ffd2ccdead397f1e1495d1376d32eb8b74d1c3b42a",
+              "bytes": 8398,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/researchCharts/RunCharts.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "fc90076aace02ee09d1134ffd2ccdead397f1e1495d1376d32eb8b74d1c3b42a",
+            "git_blob_of_raw_bytes": "c4a080abd43946ca2feb8a4e140e772cab93c549",
+            "bytes": 8398,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/researchCharts/RunCharts.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/researchCharts/SvgChart.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "7d27f8c9d19ff06c8ee38153e448b9cb5707e182",
+              "sha256": "ab245aae90a15dd77b2a014647e7aeddaf489a40411d28803ede9fe123ed5ef7",
+              "bytes": 7491,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/researchCharts/SvgChart.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "ab245aae90a15dd77b2a014647e7aeddaf489a40411d28803ede9fe123ed5ef7",
+            "git_blob_of_raw_bytes": "7d27f8c9d19ff06c8ee38153e448b9cb5707e182",
+            "bytes": 7491,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/researchCharts/SvgChart.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/researchCharts/chartData.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "b7498a7a64ea769e66773b0267bdb8a685b733a2",
+              "sha256": "862d64608407c271fde4313f0ddd874842ec7e68e4d2d6c7a2a5bf20e3c091f9",
+              "bytes": 5333,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/researchCharts/chartData.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "862d64608407c271fde4313f0ddd874842ec7e68e4d2d6c7a2a5bf20e3c091f9",
+            "git_blob_of_raw_bytes": "b7498a7a64ea769e66773b0267bdb8a685b733a2",
+            "bytes": 5333,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/researchCharts/chartData.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/researchCharts/chartData.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "cf579d694f1253edec4c02d7e080b8f3cf647de3",
+              "sha256": "a11cb7bc02eb36be7a5ba872c04432bec96fe9b61b74336259fb0fe5dc882333",
+              "bytes": 12503,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/researchCharts/chartData.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "a11cb7bc02eb36be7a5ba872c04432bec96fe9b61b74336259fb0fe5dc882333",
+            "git_blob_of_raw_bytes": "cf579d694f1253edec4c02d7e080b8f3cf647de3",
+            "bytes": 12503,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/researchCharts/chartData.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/researchCharts/charts.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "37b64782fe64af0ec8f1d5f329b1c177118d63dc",
+              "sha256": "71bcba97f42c47a1ea4d1545f23e43ffbe1b3c5beea38cdc301c241a53c8a0c3",
+              "bytes": 5626,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/researchCharts/charts.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "71bcba97f42c47a1ea4d1545f23e43ffbe1b3c5beea38cdc301c241a53c8a0c3",
+            "git_blob_of_raw_bytes": "37b64782fe64af0ec8f1d5f329b1c177118d63dc",
+            "bytes": 5626,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/researchCharts/charts.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/researchCharts/runData.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "711d741627322b5ad754900ab6818b3cd4c417ab",
+              "sha256": "8299b12782fb82899bf9848439c0bfc619f27a87e69e0b334b2d59b750aa6558",
+              "bytes": 4765,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/researchCharts/runData.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "8299b12782fb82899bf9848439c0bfc619f27a87e69e0b334b2d59b750aa6558",
+            "git_blob_of_raw_bytes": "711d741627322b5ad754900ab6818b3cd4c417ab",
+            "bytes": 4765,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/researchCharts/runData.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/researchCharts/runData.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "29cf010b064d175d41d90eb7dd93705e5b0e1ca2",
+              "sha256": "519472386b815fbd5784f10990238ea0fef9ed996a3dfe2c8fe3c8e463634108",
+              "bytes": 7189,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/researchCharts/runData.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "519472386b815fbd5784f10990238ea0fef9ed996a3dfe2c8fe3c8e463634108",
+            "git_blob_of_raw_bytes": "29cf010b064d175d41d90eb7dd93705e5b0e1ca2",
+            "bytes": 7189,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/researchCharts/runData.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/researchCharts/testFixtures.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "df306ff582a2feabb56f40fe2ff4f1964f7a7a57",
+              "sha256": "59563b6f25826f3d8b0bd0c4d9e61260ca9f4f7e423c55816684e1aa2941ea2b",
+              "bytes": 1414,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/researchCharts/testFixtures.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "59563b6f25826f3d8b0bd0c4d9e61260ca9f4f7e423c55816684e1aa2941ea2b",
+            "git_blob_of_raw_bytes": "df306ff582a2feabb56f40fe2ff4f1964f7a7a57",
+            "bytes": 1414,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/researchCharts/testFixtures.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/scenarioWrites.test.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "f1ab6477873ed0d0517793c94afbb7f3f7b3b001",
+              "sha256": "e69bef8c559117f3cd1df294179bf6b59f36a699e9e0d971a6dfdf959486bb77",
+              "bytes": 12164,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/scenarioWrites.test.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "e69bef8c559117f3cd1df294179bf6b59f36a699e9e0d971a6dfdf959486bb77",
+            "git_blob_of_raw_bytes": "f1ab6477873ed0d0517793c94afbb7f3f7b3b001",
+            "bytes": 12164,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/scenarioWrites.test.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/scenarioWrites.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "06c8952926033547f17a0ba347cb969a7d8d0f16",
+              "sha256": "96e2255691961fc1d279b5544770e462d63509d37fa17bf64bd0acb8bd3003ad",
+              "bytes": 4059,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/scenarioWrites.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "96e2255691961fc1d279b5544770e462d63509d37fa17bf64bd0acb8bd3003ad",
+            "git_blob_of_raw_bytes": "06c8952926033547f17a0ba347cb969a7d8d0f16",
+            "bytes": 4059,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/scenarioWrites.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/src/studio/store.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "446c1ee9825249928b6d5c1aa83ac39822efec2c",
+              "sha256": "fd92452786f153eece242b3b502c8749c462a4354a4add1f7fe1cfe674115182",
+              "bytes": 19929,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/store.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "2ffc3cff4617640a63bfc62b98dd039faf6e8a01",
+            "sha256": "c0ac8fd7889af16a2f335c9b24706552e9df91fa452c7c7c65311d92d4a27f64",
+            "bytes": 19868,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/store.ts"
+          },
+          "working_version": {
+            "sha256": "fd92452786f153eece242b3b502c8749c462a4354a4add1f7fe1cfe674115182",
+            "git_blob_of_raw_bytes": "446c1ee9825249928b6d5c1aa83ac39822efec2c",
+            "bytes": 19929,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/store.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/studio/types.ts",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "af8738ac97c9ccaefb09a4572c31166f6ac7cdbf",
+              "sha256": "857962c1a222f184fc9e102ac078ae645c30021b742dbe66b3c3dbc3c2f5eb3e",
+              "bytes": 11694,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/studio/types.ts",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "f190dd2c0925feb811dbd4cc442536264ba31064",
+            "sha256": "68bd18593a6078bf4ad21d74a1401217fc8c26f629b0cabfbd482de24081168d",
+            "bytes": 11686,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/studio/types.ts"
+          },
+          "working_version": {
+            "sha256": "857962c1a222f184fc9e102ac078ae645c30021b742dbe66b3c3dbc3c2f5eb3e",
+            "git_blob_of_raw_bytes": "af8738ac97c9ccaefb09a4572c31166f6ac7cdbf",
+            "bytes": 11694,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/studio/types.ts"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/views/EvidenceView.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "04884328ec6ae02a5ec1474750690b892cc7b823",
+              "sha256": "9595332f7e97132ba5cb3ebae4edb9fe5ea0a2ce6aee1a6c21ab1a07adb64144",
+              "bytes": 10557,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/views/EvidenceView.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "4fbb04c8c1bbcacf791422e985b83c677e967357",
+            "sha256": "1cae18aba0d7d50759be8bfe77d7af78ee956f54d489f9d252ca9956b1efb9d5",
+            "bytes": 10695,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/views/EvidenceView.tsx"
+          },
+          "working_version": {
+            "sha256": "9595332f7e97132ba5cb3ebae4edb9fe5ea0a2ce6aee1a6c21ab1a07adb64144",
+            "git_blob_of_raw_bytes": "04884328ec6ae02a5ec1474750690b892cc7b823",
+            "bytes": 10557,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/views/EvidenceView.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/views/JobsView.module.css",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "406a0ed12a3f455ff463cc4f9671e9f7528c80ae",
+              "sha256": "3dd7d9783ae039f5e1f905ecb630bde9b0b5ab08bd7bb9e7f86cac684bbfde8f",
+              "bytes": 5970,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/views/JobsView.module.css",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "3fcecafdcda49b3e5848f9743af326a792528b83",
+            "sha256": "8ab04ad467d875959541323cfc8f8983813e83563ae4b0dc739c00454bcf3cdd",
+            "bytes": 5880,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/views/JobsView.module.css"
+          },
+          "working_version": {
+            "sha256": "3dd7d9783ae039f5e1f905ecb630bde9b0b5ab08bd7bb9e7f86cac684bbfde8f",
+            "git_blob_of_raw_bytes": "406a0ed12a3f455ff463cc4f9671e9f7528c80ae",
+            "bytes": 5970,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/views/JobsView.module.css"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/views/JobsView.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "2347e2a36b2e7ffe626dbf053e8a3b3f7f9f7bf1",
+              "sha256": "e5b10bbbb93013b5861c45fc63588d23b10c8f7e383cfa4eedbf2c70a01aff08",
+              "bytes": 19425,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/views/JobsView.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "b284de4914fb79600399856f5fcbb4ee2a7559c4",
+            "sha256": "5cbca1c86e1af5158e153eecb0311284dc7b8999898d4344181fc488d8a1976c",
+            "bytes": 18809,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/views/JobsView.tsx"
+          },
+          "working_version": {
+            "sha256": "e5b10bbbb93013b5861c45fc63588d23b10c8f7e383cfa4eedbf2c70a01aff08",
+            "git_blob_of_raw_bytes": "2347e2a36b2e7ffe626dbf053e8a3b3f7f9f7bf1",
+            "bytes": 19425,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/views/JobsView.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/views/Overview.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "93777dc59803fc1bca3d367e8c5a476e1b294c03",
+              "sha256": "2af249bba427a636ac17fc2f82f3c4637557c08b94239b05f5a38c63f1e7292a",
+              "bytes": 13903,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/views/Overview.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "745c2487802838e3732a6be3a82b53ebcae71419",
+            "sha256": "a8a55fda0f00d9a9fb3671565c7fd0b929b252bd03c389f98302a29560e2bc4e",
+            "bytes": 14109,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/views/Overview.tsx"
+          },
+          "working_version": {
+            "sha256": "2af249bba427a636ac17fc2f82f3c4637557c08b94239b05f5a38c63f1e7292a",
+            "git_blob_of_raw_bytes": "93777dc59803fc1bca3d367e8c5a476e1b294c03",
+            "bytes": 13903,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/views/Overview.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/src/views/overview/ResultUsage.tsx",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "a2292a1ccd2d36bc7bf93c2d73606626706b4b1d",
+              "sha256": "699fdb86bd4402759af4522732c8c26e08fb3c6dd60444f30641ce0da0c2ccc8",
+              "bytes": 2413,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/src/views/overview/ResultUsage.tsx",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "529f62c717ae1d9a4c6e2acd9bd7d7d657c60ccd",
+            "sha256": "a5a5d5ee6abb9c6252d71f57822d323c409c0a91cf0a86acc8d81a1e5da1a5fc",
+            "bytes": 2497,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/frontend/src/views/overview/ResultUsage.tsx"
+          },
+          "working_version": {
+            "sha256": "699fdb86bd4402759af4522732c8c26e08fb3c6dd60444f30641ce0da0c2ccc8",
+            "git_blob_of_raw_bytes": "a2292a1ccd2d36bc7bf93c2d73606626706b4b1d",
+            "bytes": 2413,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/src/views/overview/ResultUsage.tsx"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/frontend/tools/browser/agriculture-acceptance-contract.mjs",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "2c2b6e1764556ef13be6d34fb5e477669472eb0f",
+              "sha256": "2289a56c08335fc663b450e63c1704fddce7ecaa6f67186a8604d104ae9cf732",
+              "bytes": 3025,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/tools/browser/agriculture-acceptance-contract.mjs",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "2289a56c08335fc663b450e63c1704fddce7ecaa6f67186a8604d104ae9cf732",
+            "git_blob_of_raw_bytes": "2c2b6e1764556ef13be6d34fb5e477669472eb0f",
+            "bytes": 3025,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/tools/browser/agriculture-acceptance-contract.mjs"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/tools/browser/agriculture-acceptance-contract.test.mjs",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "2d98795793f96a95bf87a207443d32f787fb622d",
+              "sha256": "b30c4df6a7e1d2cfb418b92839c6be85eca44728a83d0571579a6c9ebfbff6f7",
+              "bytes": 6882,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/tools/browser/agriculture-acceptance-contract.test.mjs",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "b30c4df6a7e1d2cfb418b92839c6be85eca44728a83d0571579a6c9ebfbff6f7",
+            "git_blob_of_raw_bytes": "2d98795793f96a95bf87a207443d32f787fb622d",
+            "bytes": 6882,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/tools/browser/agriculture-acceptance-contract.test.mjs"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/tools/browser/agriculture-acceptance.mjs",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "063d8880190c1ccdfad9a4f15ea5a63ad9d960d5",
+              "sha256": "dd3660dd678f31ef1b012a1c774ebaf6a01b34d60693b9d53699ca19d9ed5228",
+              "bytes": 6346,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/tools/browser/agriculture-acceptance.mjs",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "dd3660dd678f31ef1b012a1c774ebaf6a01b34d60693b9d53699ca19d9ed5228",
+            "git_blob_of_raw_bytes": "063d8880190c1ccdfad9a4f15ea5a63ad9d960d5",
+            "bytes": 6346,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/tools/browser/agriculture-acceptance.mjs"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/tools/check-agri-contract.mjs",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "315db9d652d63968dc5e9662b67fc8cdeb61b61c",
+              "sha256": "74797c980f35fdb995b06fabdfeeb532c91c77b67b6f45043ad8104f37aef305",
+              "bytes": 7306,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/tools/check-agri-contract.mjs",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "74797c980f35fdb995b06fabdfeeb532c91c77b67b6f45043ad8104f37aef305",
+            "git_blob_of_raw_bytes": "315db9d652d63968dc5e9662b67fc8cdeb61b61c",
+            "bytes": 7306,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/tools/check-agri-contract.mjs"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/frontend/tools/check-agri-http.mjs",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "778b832a00034fcd572af8dad824f8c2d6a4f44b",
+              "sha256": "a9fd340f4c9bcd655078cb839da716f0f64762eb1ab3b724c9ce2db32df11106",
+              "bytes": 3372,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/frontend/tools/check-agri-http.mjs",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "a9fd340f4c9bcd655078cb839da716f0f64762eb1ab3b724c9ce2db32df11106",
+            "git_blob_of_raw_bytes": "778b832a00034fcd572af8dad824f8c2d6a4f44b",
+            "bytes": 3372,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/frontend/tools/check-agri-http.mjs"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/lab/tests/agri_contract_bridge.py",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "1b9310181297b3760e9fb9bef0375b8a5baf9535",
+              "sha256": "abbc8138f7cec28a8e057c2cbfcac2aa1989de8ad7e6e4da9cd57bebffe551f5",
+              "bytes": 3120,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/lab/tests/agri_contract_bridge.py",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "abbc8138f7cec28a8e057c2cbfcac2aa1989de8ad7e6e4da9cd57bebffe551f5",
+            "git_blob_of_raw_bytes": "1b9310181297b3760e9fb9bef0375b8a5baf9535",
+            "bytes": 3120,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/lab/tests/agri_contract_bridge.py"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/lab/tests/test_agri_import_provenance.py",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "2be085daa7aff33076d893d32ac6906b25ef9659",
+              "sha256": "fe3d55516abe173a43c39b5431797c602460bc3c926043bc7ba1b36f9f073c76",
+              "bytes": 5988,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/lab/tests/test_agri_import_provenance.py",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "fe3d55516abe173a43c39b5431797c602460bc3c926043bc7ba1b36f9f073c76",
+            "git_blob_of_raw_bytes": "2be085daa7aff33076d893d32ac6906b25ef9659",
+            "bytes": 5988,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/lab/tests/test_agri_import_provenance.py"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/lab/tests/test_scenario_idempotency.py",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "8c05170b2e8e205d925998b81d79428fbf6e4d69",
+              "sha256": "a067f28dd13b193bc4a9b816cc4a7ba8a29ae35b222f7d7de87e0ac7c9ce804a",
+              "bytes": 5146,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/lab/tests/test_scenario_idempotency.py",
+              "stage": 0
+            }
+          ],
+          "head_version": null,
+          "working_version": {
+            "sha256": "a067f28dd13b193bc4a9b816cc4a7ba8a29ae35b222f7d7de87e0ac7c9ce804a",
+            "git_blob_of_raw_bytes": "8c05170b2e8e205d925998b81d79428fbf6e4d69",
+            "bytes": 5146,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/lab/tests/test_scenario_idempotency.py"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": true
+        },
+        {
+          "path": "src/lab/urp_lab/gateway.py",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "51a66ae762f264a13ffcf5e25d4da0b665cb0266",
+              "sha256": "2c02415a72d6a15eae85434a12270634c7e60b835c76a54bd222d9e46f305dc5",
+              "bytes": 46179,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/lab/urp_lab/gateway.py",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "83751b59d319f8e5df60a842f24dd1f2e2102181",
+            "sha256": "c8a0e78c7a6755a182563247e69abff27899d0aeeca14924e654a9d235524532",
+            "bytes": 43045,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/lab/urp_lab/gateway.py"
+          },
+          "working_version": {
+            "sha256": "2c02415a72d6a15eae85434a12270634c7e60b835c76a54bd222d9e46f305dc5",
+            "git_blob_of_raw_bytes": "51a66ae762f264a13ffcf5e25d4da0b665cb0266",
+            "bytes": 46179,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/lab/urp_lab/gateway.py"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        },
+        {
+          "path": "src/lab/urp_lab/scenarios/__init__.py",
+          "index_versions": [
+            {
+              "mode": "100644",
+              "git_blob": "1cf7b482eb5ff1276b4533dde43c0d652b26328c",
+              "sha256": "283ade59147ce6ba8fa3ec119c12cdc8552da10770222849de22ad830a2125b4",
+              "bytes": 11800,
+              "payload": "preserved/index-evidence/verify-5065046/index-stage-0/src/lab/urp_lab/scenarios/__init__.py",
+              "stage": 0
+            }
+          ],
+          "head_version": {
+            "mode": "100644",
+            "git_blob": "acea63cb8dc665b3fd8496d9dda6e739454c5bfc",
+            "sha256": "202f9c5f734d7b43a22d3f12dc3f9988da7867ac9fe0ed7bab5b7277c81fc55c",
+            "bytes": 10914,
+            "payload": "preserved/index-evidence/verify-5065046/head/src/lab/urp_lab/scenarios/__init__.py"
+          },
+          "working_version": {
+            "sha256": "283ade59147ce6ba8fa3ec119c12cdc8552da10770222849de22ad830a2125b4",
+            "git_blob_of_raw_bytes": "1cf7b482eb5ff1276b4533dde43c0d652b26328c",
+            "bytes": 11800,
+            "mode": "100644",
+            "payload": "preserved/worktrees/verify-5065046/src/lab/urp_lab/scenarios/__init__.py"
+          },
+          "index_equals_working_bytes": true,
+          "head_equals_index_bytes": false,
+          "head_file_absent": false
+        }
+      ]
+    }
+  ],
+  "excluded_for_secret_review": [],
+  "restore": "Use version payloads and file modes in a new recovery directory; do not import the original .git directory or alter original indexes."
+}

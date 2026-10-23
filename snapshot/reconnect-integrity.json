@@ -1,0 +1,72 @@
+{
+  "primary": {
+    "head": "eca5f8c7ec58518e56de0dcc5c3097f40840e6bf",
+    "branch": "evolve/decision-loop-20261023",
+    "head_unchanged": true,
+    "branch_unchanged": true,
+    "index_unchanged": true,
+    "status_unchanged": true,
+    "index_sha256": "4d1ede344eb819d1778ad31ba3e834475823a5f675a048f389595b782154f08c"
+  },
+  "worktrees": [
+    {
+      "source_id": "happy-editor",
+      "head": "b7264dddf3fe7a873d000bed6fbab1afb227f070",
+      "head_unchanged": true,
+      "index_unchanged": true,
+      "status_unchanged": true,
+      "index_sha256": "f2b640962eafac33fd42934871ce027dc13a7531770da1b4a702716b76efa242"
+    },
+    {
+      "source_id": "labpatch-5065046",
+      "head": "5065046d7b7e0b6b682bda46ca3a6c9b42ee8c84",
+      "head_unchanged": true,
+      "index_unchanged": true,
+      "status_unchanged": true,
+      "index_sha256": "e34dc8030d82c4c17530135e218e0300041ee559ca3743b522583b45427cd35c"
+    },
+    {
+      "source_id": "luna-agri",
+      "head": "a57a43fb0f313a043ef46f231c8a9b94e43ff0c2",
+      "head_unchanged": true,
+      "index_unchanged": true,
+      "status_unchanged": true,
+      "index_sha256": "f9c8559149fccad952ee72f74038d5c7f5bde297cff55480aff97be3f8c47f0a"
+    },
+    {
+      "source_id": "mamba-20261022",
+      "head": "4567d161b26a5bf161fb0ea4c49c252a5b7cd3e2",
+      "head_unchanged": true,
+      "index_unchanged": true,
+      "status_unchanged": true,
+      "index_sha256": "57cd0abc7285c9362fc210962c509055dddbeb61a2d5776ec2f964fea7a2a3a6"
+    },
+    {
+      "source_id": "mamba-results",
+      "head": "b3e2028581e51465b97d520041b5298558434b9d",
+      "head_unchanged": true,
+      "index_unchanged": true,
+      "status_unchanged": true,
+      "index_sha256": "5fcc2579d513a13be7ded44d95d6c3a6ba6efb1fcd4a12673388b6ccadd6d2e7"
+    },
+    {
+      "source_id": "verify-5065046",
+      "head": "5065046d7b7e0b6b682bda46ca3a6c9b42ee8c84",
+      "head_unchanged": true,
+      "index_unchanged": true,
+      "status_unchanged": true,
+      "index_sha256": "85474ca8531ab95510301aaa42c4b2cace751fda15dbf1fa0ca7e3903c831e41"
+    },
+    {
+      "source_id": "workbench-20261022",
+      "head": "d6aec3bf018eabedf13a6c1f2b37991dbad6cf35",
+      "head_unchanged": true,
+      "index_unchanged": true,
+      "status_unchanged": true,
+      "index_sha256": "29ab2b40f22afbf9526bb44f96a468a00fead5d682dfc741c1d9e9856b2ffc81"
+    }
+  ],
+  "checked_files": 32425,
+  "changed_source_files": [],
+  "private_artifact_files": 2180
+}
