@@ -426,7 +426,7 @@ class ObserverTests(unittest.TestCase):
                 def poll(self):return None
                 def wait(self,timeout):calls.append(('wait',timeout));self.returncode=0
             raw={'state':initial,'cleanup_pass':True};diagnostic={'harness':{},'lifecycle':{'failure_code':'api_timeout'}}
-            namespace={'process_observer':None,'observer':types.SimpleNamespace(safe=cancel,raw={}), 'raw':raw,'base':'http://127.0.0.1:1',
+            namespace={'lifecycle_only':False,'process_observer':None,'observer':types.SimpleNamespace(safe=cancel,raw={}), 'raw':raw,'base':'http://127.0.0.1:1',
                        'gateway':Gateway(),'api':lambda *args,**kw:calls.append(('api',args)),
                        'diagnostic':diagnostic,'describe_failure':lambda exc:{'exception_kind':'interrupted'},
                        'owned':lambda token:[], 'token':'fixture','forced':False,'subprocess':subprocess,

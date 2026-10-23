@@ -438,6 +438,7 @@ class IntegrationTests(unittest.TestCase):
                          'd86fbf03014b61195263c2d505240611b0c77c17d94abff59fceba06c3adaba6')
 
     def finalizer(self, namespace):
+        namespace.setdefault('lifecycle_only', False)
         tree = ast.parse(Path(acceptance.__file__).read_text())
         execute = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'execute')
         body = [ast.Global(names=['forced', 'diagnostic'])] + next(node for node in execute.body if isinstance(node, ast.Try)).finalbody

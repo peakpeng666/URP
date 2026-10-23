@@ -208,7 +208,7 @@ class Tests(unittest.TestCase):
         module=ast.Module(body=original[:end],type_ignores=[]);ast.fix_missing_locations(module)
         for failure in (ValueError('fixture'),KeyboardInterrupt()):
             def fail():raise failure
-            ns={'process_observer':SimpleNamespace(stop=lambda reason:None,result=fail),
+            ns={'lifecycle_only':False,'process_observer':SimpleNamespace(stop=lambda reason:None,result=fail),
                 'raw':{'state':'PASS'},'is_cancellation':p.is_cancellation}
             exec(compile(module,'finalizer-diagnostic','exec'),ns)
             self.assertEqual(ns['raw']['warehouse_process_observation']['status'],'unavailable')
@@ -328,7 +328,7 @@ class Tests(unittest.TestCase):
                     def wait(self,timeout):calls.append(('wait',timeout));self.returncode=0
                 with tempfile.TemporaryDirectory() as d:
                     diag=SimpleNamespace(stop=fail if failure_site=='stop' else lambda reason:None,result=fail if failure_site=='result' else lambda:{})
-                    ns={'process_observer':diag,'observer':None,'is_cancellation':p.is_cancellation,
+                    ns={'lifecycle_only':False,'process_observer':diag,'observer':None,'is_cancellation':p.is_cancellation,
                         'raw':{'state':'PASS','cleanup_pass':True},'base':'http://127.0.0.1:1','gateway':Gateway(),
                         'api':lambda *args,**kw:calls.append(('api',args)),
                         'diagnostic':{'harness':{},'lifecycle':{'failure_code':'none'}},'describe_failure':lambda exc:{'exception_kind':'interrupted'},

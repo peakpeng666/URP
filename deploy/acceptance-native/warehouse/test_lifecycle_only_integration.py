@@ -88,7 +88,7 @@ class LifecycleOnlyIntegrationTests(unittest.TestCase):
             with self.subTest(error=type(error)),tempfile.TemporaryDirectory() as tmp:
                 calls=[];capture=a.IdentityCapture();capture.original_error=error
                 gateway=Mock();gateway.poll.return_value=None;gateway.returncode=0
-                ns=dict(process_observer=None,observer=None,is_cancellation=a.is_cancellation,
+                ns=dict(lifecycle_only=True,process_observer=None,observer=None,is_cancellation=a.is_cancellation,
                         identity_capture=capture,raw={'stage':'warehouse-lifecycle-only','state':'ERROR','cleanup_pass':False},
                         base='fixed',gateway=gateway,api=Mock(),diagnostic={'harness':{}},
                         describe_failure=lambda e:{'exception_kind':'unknown'},owned=lambda t:[],signal_owned=Mock(),
@@ -108,7 +108,7 @@ class LifecycleOnlyIntegrationTests(unittest.TestCase):
                 capture=a.IdentityCapture();gateway=Mock();gateway.poll.return_value=None;gateway.returncode=0
                 api=Mock(side_effect=error) if error else Mock()
                 raw={'stage':'warehouse-lifecycle-only','state':'PASS','cleanup_pass':True,'task_not_submitted':True}
-                ns=dict(process_observer=None,observer=None,is_cancellation=a.is_cancellation,
+                ns=dict(lifecycle_only=True,process_observer=None,observer=None,is_cancellation=a.is_cancellation,
                         identity_capture=capture,raw=raw,base='fixed',gateway=gateway,api=api,diagnostic={'harness':{}},
                         describe_failure=lambda e:{'exception_kind':'unknown'},owned=lambda t:[],signal_owned=Mock(),
                         token='owned',forced=False,subprocess=subprocess,signal=signal,
@@ -137,7 +137,7 @@ class LifecycleOnlyIntegrationTests(unittest.TestCase):
                 if process is not None:process.stop.side_effect=first
                 if observer is not None:
                     observer.safe.side_effect=first if site=='observer' else second;observer.raw={}
-                ns=dict(process_observer=process,observer=observer,is_cancellation=a.is_cancellation,
+                ns=dict(lifecycle_only=True,process_observer=process,observer=observer,is_cancellation=a.is_cancellation,
                         identity_capture=capture,raw={'stage':'warehouse-lifecycle-only','state':'PASS','cleanup_pass':True},
                         base='fixed',gateway=gateway,api=Mock(side_effect=second),diagnostic={'harness':{}},
                         describe_failure=lambda e:{'exception_kind':'unknown'},owned=lambda t:[],signal_owned=Mock(),

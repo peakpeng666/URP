@@ -277,7 +277,10 @@ def execute(a, *, lifecycle_only=False, lifecycle_driver=None, summary_project=N
         mark('record_build')
         record,plan=build_record(inputs,check,map_check,to_sim_plan,execution_manifest,lambda:maps.fingerprint('warehouse'),adapter_before)
         raw.update(public_receipt(record));raw.update(resources);raw.update(source_sha=SOURCE,harness_sha=a.harness_sha,overall_wall_budget_s=OVERALL_WALL_S,state='ERROR',**map_before)
-        if lifecycle_only:raw['overall_wall_budget_s']=3600
+        if lifecycle_only:
+            # Historical receipt describes the witness, not this execution mode.
+            raw.update(stage='warehouse-lifecycle-only',execution_scope='lifecycle_only',
+                       task_not_submitted=True,route_acceptance='NOT_RUN',overall_wall_budget_s=3600)
         save('new-record.json',record);save('current-plan.json',plan)
         mark('record_store')
         db=Store(runtime/'lab.sqlite3')
@@ -411,16 +414,16 @@ def execute(a, *, lifecycle_only=False, lifecycle_driver=None, summary_project=N
                     raw['warehouse_process_observation']={'status':'unavailable','end_reason':'read_error'}
                     if is_cancellation(exc):
                         observer_cancellation=exc
-                        if raw.get('stage')=='warehouse-lifecycle-only':identity_capture.defer_cancellation(exc)
+                        if lifecycle_only:identity_capture.defer_cancellation(exc)
                         if raw.get('state')=='PASS':raw['state']='ERROR'
             if observer is not None:
                 try:observer.safe('close')
                 except BaseException as exc:
                     observer_cancellation=exc
-                    if raw.get('stage')=='warehouse-lifecycle-only' and is_cancellation(exc):identity_capture.defer_cancellation(exc)
+                    if lifecycle_only and is_cancellation(exc):identity_capture.defer_cancellation(exc)
                     if raw.get('state')=='PASS':raw['state']='ERROR'
                 raw['warehouse_startup_observation']=observer.raw
-            if raw.get('stage')=='warehouse-lifecycle-only':
+            if lifecycle_only:
                 cleaned=cleanup_lifecycle_gateway(base,gateway,token,api,owned,signal_owned,identity_capture)
                 diagnostic['harness'].update(cleaned['diagnostics'])
                 raw['gateway_exit_code']=cleaned['gateway_exit_code']
@@ -449,7 +452,7 @@ def execute(a, *, lifecycle_only=False, lifecycle_driver=None, summary_project=N
             try:raw['startup_diagnostics']=collect(runtime,sid)
             except BaseException as exc:
                 diagnostic['harness']['startup_collection_failed']=True
-                if raw.get('stage')=='warehouse-lifecycle-only' and is_cancellation(exc):identity_capture.defer_cancellation(exc)
+                if lifecycle_only and is_cancellation(exc):identity_capture.defer_cancellation(exc)
                 elif not isinstance(exc,Exception):raise
             raw['warehouse_runtime_identity']=identity_capture.finish()
             identity_capture.apply_pending(raw)
@@ -459,7 +462,7 @@ def execute(a, *, lifecycle_only=False, lifecycle_driver=None, summary_project=N
             if observer_cancellation is not None:raise observer_cancellation
             identity_capture.raise_pending()
         finally:
-            if raw.get('stage')=='warehouse-lifecycle-only':
+            if lifecycle_only:
                 if identity_capture.original_error is not None and is_cancellation(identity_capture.original_error):raise identity_capture.original_error
                 if identity_capture.pending is not None and is_cancellation(identity_capture.pending):raise identity_capture.pending
     return 0 if summary['state']=='PASS' else 1
