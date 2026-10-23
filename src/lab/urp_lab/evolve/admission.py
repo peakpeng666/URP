@@ -111,3 +111,12 @@ def write(main_dir: Path, candidate_dir: Path, library: list[str], candidates: l
     target.mkdir(exist_ok=True)
     (target / 'admission.json').write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding='utf-8')
     return res
+
+
+def write_dirs(dirs: list[Path], library: list[str], candidates: list[str], target: Path) -> dict:
+    """Admission analysis over an arbitrary set of run directories (e.g. baseline + repair v1 + repair v2)."""
+    res = analyse([Path(d) for d in dirs], library, candidates)
+    target = Path(target)
+    target.mkdir(parents=True, exist_ok=True)
+    (target / 'admission.json').write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding='utf-8')
+    return res

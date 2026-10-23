@@ -173,3 +173,21 @@ def write(main_dir: Path, repair_dir: Path, out_dir: Path, workers: int = 4, cor
     (out_dir / 'policy_ext.json').write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding='utf-8')
     return {k: {'solvable': v['solvable'], 'static_first': round(v['cv']['static']['first_try_feasible'], 3),
                 'promoted': [n for n, d in v['decisions'].items() if d['promote']]} for k, v in results.items()}
+
+
+def write_combined(dirs: list[Path], configs: list[str], out_dir: Path, workers: int = 4, cores=None) -> dict:
+    """All verdict combinations for one merged library (e.g. old + repair v1 + repair v2)."""
+    from concurrent.futures import ProcessPoolExecutor
+    jobs = [('combined', configs, list(dirs), v, False, v in ('official', 'fillet'), cores) for v in VERDICTS]
+    for v in VERDICTS:
+        if v != 'official':
+            jobs.append(('combined', configs, list(dirs), v, True, False, cores))
+    results = {}
+    with ProcessPoolExecutor(max_workers=workers) as ex:
+        for lib, v, drop, res in ex.map(_combo, jobs):
+            results[f'{lib}:{v}' + (':drop_unverifiable' if drop else '')] = res
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / 'policy_combined.json').write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding='utf-8')
+    return {k: {'solvable': v['solvable'], 'static_first': round(v['cv']['static']['first_try_feasible'], 3),
+                'promoted': [n for n, d in v['decisions'].items() if d['promote']]} for k, v in results.items()}

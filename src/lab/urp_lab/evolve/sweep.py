@@ -27,6 +27,7 @@ THREAD_ENV = {'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'MKL_NUM_THRE
 COVERAGE_METRICS = ('cost', 'length', 'working_area_fraction', 'coverage_fraction', 'working_area_m2', 'efficiency',
                     'n_swaths', 'n_cells', 'working_length_m', 'turning_length_m', 'headland_length_m',
                     'non_working_length_m', 'reverse_states', 'footprint_outside_m2', 'max_sampled_curvature_per_m',
+                    'repairs', 'repair_attempts', 'unfixable_targets', 'rounded', 'rounding_ok',
                     'planning_s', 'wall_s', 'cpu_s')
 FLEET_METRICS = ('cost', 'length', 'n_routes', 'wall_s', 'cpu_s', 'makespan_s', 'total_distance_m', 'trips')
 
@@ -121,6 +122,14 @@ def solve(scenario, inst, algorithm: str, params: dict) -> dict:
                 'routes': routes, 'check': check, 'metrics': metrics, 'raw_result': raw,
                 'algorithm': {'id': 'evolve.f2c_repair', 'name': '覆盖全流程+局部 Dubins 修补（研究候选）',
                               'version': f"evolve.f2c_repair+{raw.get('binding') or 'local'}"}}
+    if algorithm == 'evolve.f2c_repair2':
+        from . import repair2
+        routes, check, metrics, raw = repair2.solve_full_repaired2(inst, params)
+        return {'status': 'feasible' if routes else 'no_solution',
+                'objective': {'value': sum(r['cost'] for r in routes) if routes else None, 'unit': 'm'},
+                'routes': routes, 'check': check, 'metrics': metrics, 'raw_result': raw,
+                'algorithm': {'id': 'evolve.f2c_repair2', 'name': '覆盖全流程+修补v2（研究候选）',
+                              'version': f"evolve.f2c_repair2+{raw.get('binding') or 'local'}"}}
     from ..solvers import run_algorithm
     return run_algorithm(scenario, inst, algorithm, params)
 

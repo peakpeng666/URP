@@ -28,6 +28,10 @@ REPAIR_DECOMPOSITIONS = ('none', 'boustrophedon')
 REPAIR_PORTFOLIO = {f'repair:{d}/{o}': ('evolve.f2c_repair', {'decomposition': d, 'swath_objective': o, 'turn_model': 'dubins'})
                     for d, o in itertools.product(REPAIR_DECOMPOSITIONS, OBJECTIVES)}
 
+# Repair v2 (round 2, T5): the v1 repair plus the unfilletable corners the fillet verdict exposes, then rounding.
+REPAIR2_PORTFOLIO = {f'repair2:{d}/{o}': ('evolve.f2c_repair2', {'decomposition': d, 'swath_objective': o, 'turn_model': 'dubins'})
+                     for d, o in itertools.product(REPAIR_DECOMPOSITIONS, OBJECTIVES)}
+
 
 # Round-2 admission study (T4): candidates with deliberately different strengths (urp_lab.evolve.candidates).
 _BASE = {'turn_model': 'dubins'}
@@ -43,6 +47,8 @@ CANDIDATE_POOL = {
 }
 
 def config_label(name: str) -> str:
+    if name.startswith('repair2:'):
+        return '修补v2·' + config_label('full:' + name[8:])
     if name.startswith('repair:'):
         return '修补·' + config_label('full:' + name[7:])
     if name.startswith('repairw:'):
@@ -95,6 +101,21 @@ def repair_plan(fields: list[str], profiles=tuple(I.PROFILES), timeout_s: float 
             continue
         for name, (alg, params) in REPAIR_PORTFOLIO.items():
             jobs.append({'job_id': _job_id('rep', fid, prof, name), 'family': 'coverage', 'config': name, 'algorithm': alg,
+                         'params': params, 'instance': {'field': fid, 'profile': prof}, 'timeout_s': timeout_s})
+    return jobs, excluded
+
+
+def repair2_plan(fields: list[str], profiles=tuple(I.PROFILES), timeout_s: float = 300.0) -> tuple[list[dict], list[dict]]:
+    """Repair-v2 jobs on the same admitted coverage instances as ``coverage_plan`` (identical admission rule)."""
+    jobs, excluded = [], []
+    for fid, prof in itertools.product(fields, profiles):
+        _sc, inst = I.coverage_instance(fid, prof)
+        adm = I.coverage_admission(inst)
+        if not adm['admitted']:
+            excluded.append({'field': fid, 'profile': prof, 'reason': adm['reason']})
+            continue
+        for name, (alg, params) in REPAIR2_PORTFOLIO.items():
+            jobs.append({'job_id': _job_id('rep2', fid, prof, name), 'family': 'coverage', 'config': name, 'algorithm': alg,
                          'params': params, 'instance': {'field': fid, 'profile': prof}, 'timeout_s': timeout_s})
     return jobs, excluded
 
