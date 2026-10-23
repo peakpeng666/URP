@@ -54,6 +54,8 @@ def hypotheses(arms: dict[str, np.ndarray]) -> dict[str, tuple[str, str]]:
 
 def simulate(arms: dict[str, np.ndarray], groups: np.ndarray, n_fields: int, B: int = 10000, seed: int = 20261024) -> dict:
     """Power of the three registered tests at ``n_fields`` sealed fields (profiles per field included)."""
+    names = {name for pair in HYPOTHESES.values() for name in pair}
+    arms = {name: np.asarray(arms[name], dtype=float) for name in names}
     rows = {g: np.where(groups == g)[0] for g in sorted(set(groups))}
     fields = np.array(sorted(rows))
     rng = np.random.default_rng(seed)
@@ -96,9 +98,12 @@ def required_fields(arms, groups, grid=(50, 75, 100, 125, 150, 175, 209, 250, 30
 
 
 def arms_from(main_dir: Path, repair_dir: Path, verdict: str = 'fillet', learned: str = 'logit:agri',
-              repeats: int = 5, folds: int = 5) -> dict:
+              repeats: int = 5, folds: int = 5, cache: Path | None = None) -> dict:
     """Cross-validated per-instance first-try success for the four arms (development fields only)."""
     from . import plans, policy, verdicts
+    if cache and Path(cache).exists():
+        z = np.load(cache)
+        return {k: z[k] for k in z.files}
     old = list(plans.COVERAGE_PORTFOLIO)
     ext = old + list(plans.REPAIR_PORTFOLIO)
     out = {}
@@ -107,24 +112,30 @@ def arms_from(main_dir: Path, repair_dir: Path, verdict: str = 'fillet', learned
         old_r, old_f = policy.REPEATS, policy.FOLDS
         policy.REPEATS, policy.FOLDS = repeats, folds
         try:
-            cv = policy.crossval(ds, feature_sets=('agri',))
+            cv = policy.crossval(ds)          # both feature sets: crossval always builds the size control
         finally:
             policy.REPEATS, policy.FOLDS = old_r, old_f
         keep = cv['keep']
-        out[label] = {'ds': ds, 'cv': cv, 'keep': keep, 'groups': ds['groups'][keep]}
-        out[label]['default'] = cv['per_instance']['default']['first'][keep]
-        out[label]['static'] = cv['per_instance']['static']['first'][keep]
-        out[label]['learned'] = cv['per_instance'][learned]['first'][keep]
-    assert np.array_equal(out['old']['groups'], out['ext']['groups']), 'instance sets differ between libraries'
-    return {'groups': out['old']['groups'], 'profiles': out['old']['ds']['profiles'][out['old']['keep']],
-            'default': out['old']['default'], 'static': out['old']['static'], 'learned_ext': out['ext']['learned'],
-            'static_ext': out['ext']['static'], 'coverage': {'old': out['old']['cv']['policies'],
-                                                             'ext': out['ext']['cv']['policies']}}
+        out[label] = {'ds': ds, 'cv': cv, 'keep': keep, 'groups': ds['groups']}
+        # All admitted instances stay in the denominator: a config library that solves none of them
+        # contributes first-try failures for every arm (arrays outside ``keep`` are zero).
+        out[label]['default'] = cv['per_instance']['default']['first']
+        out[label]['static'] = cv['per_instance']['static']['first']
+        out[label]['learned'] = cv['per_instance'][learned]['first']
+    assert out['old']['ds']['m']['keys'] == out['ext']['ds']['m']['keys'], 'instance sets differ between libraries'
+    res = {'groups': out['old']['ds']['groups'], 'profiles': out['old']['ds']['profiles'],
+           'default': out['old']['default'], 'static': out['old']['static'], 'learned_ext': out['ext']['learned'],
+           'static_ext': out['ext']['static'], 'coverage': {'old': out['old']['cv']['policies'],
+                                                            'ext': out['ext']['cv']['policies']}}
+    if cache:
+        keep = ('groups', 'profiles', 'default', 'static', 'learned_ext', 'static_ext')
+        np.savez(cache, **{k: np.asarray(res[k]) for k in keep})
+    return res
 
 
 def write(main_dir: Path, repair_dir: Path, out_dir: Path, verdict: str = 'fillet', learned: str = 'logit:agri',
-          repeats: int = 5) -> dict:
-    arms = arms_from(main_dir, repair_dir, verdict, learned, repeats)
+          repeats: int = 5, arms: dict | None = None) -> dict:
+    arms = arms if arms is not None else arms_from(main_dir, repair_dir, verdict, learned, repeats)
     power = simulate(arms, arms['groups'], n_fields=209, B=10000)
     grid = required_fields(arms, arms['groups'])
     res = {'verdict': verdict, 'learned_arm': learned, 'repeats': repeats,
