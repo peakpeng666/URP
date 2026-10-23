@@ -10,6 +10,10 @@ import argparse
 from copy import deepcopy
 import json
 from pathlib import Path
+import sys
+
+# Direct script execution must not depend on a caller-provided PYTHONPATH.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import cleanup_diagnostics
 import warehouse_public_summary as warehouse
