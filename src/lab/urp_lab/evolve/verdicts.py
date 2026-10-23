@@ -145,17 +145,31 @@ def evaluate(dirs: list[Path], configs: list[str], verdict: str, drop_unverifiab
     return res
 
 
-def write(main_dir: Path, repair_dir: Path, out_dir: Path) -> dict:
+def _combo(args):
+    import os
+    lib, cfgs, dirs, v, drop, preq, cores = args
+    if cores and hasattr(os, 'sched_setaffinity'):
+        os.sched_setaffinity(0, set(cores))
+    return lib, v, drop, evaluate(dirs, cfgs, v, drop_unverifiable=drop, preq=preq)
+
+
+def write(main_dir: Path, repair_dir: Path, out_dir: Path, workers: int = 4, cores=None) -> dict:
+    """All library × verdict combinations; prequential curves only for the official and fillet verdicts."""
+    from concurrent.futures import ProcessPoolExecutor
     old = list(plans.COVERAGE_PORTFOLIO)
     ext = old + list(plans.REPAIR_PORTFOLIO)
-    results = {}
+    jobs = []
     for lib, cfgs, dirs in (('old', old, [main_dir]), ('extended', ext, [main_dir, repair_dir])):
         for v in VERDICTS:
-            results[f'{lib}:{v}'] = evaluate(dirs, cfgs, v)
+            jobs.append((lib, cfgs, dirs, v, False, v in ('official', 'fillet'), cores))
             if v != 'official':
-                results[f'{lib}:{v}:drop_unverifiable'] = evaluate(dirs, cfgs, v, drop_unverifiable=True, preq=False)
+                jobs.append((lib, cfgs, dirs, v, True, False, cores))
+    results = {}
+    with ProcessPoolExecutor(max_workers=workers) as ex:
+        for lib, v, drop, res in ex.map(_combo, jobs):
+            results[f'{lib}:{v}' + (':drop_unverifiable' if drop else '')] = res
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / 'policy_ext.json').write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding='utf-8')
-    return {k: {'solvable': v['solvable'], 'static_first': v['cv']['static']['first_try_feasible'],
+    return {k: {'solvable': v['solvable'], 'static_first': round(v['cv']['static']['first_try_feasible'], 3),
                 'promoted': [n for n, d in v['decisions'].items() if d['promote']]} for k, v in results.items()}
