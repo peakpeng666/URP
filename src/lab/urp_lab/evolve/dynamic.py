@@ -201,6 +201,22 @@ def simulate(stream: Stream, policy, budget_s: float = 0.5, seed: int = 42, labe
             before = plan_cost(D, fleet)
             fleet[k].route.insert(pos, task)
             ins_cost = before + delta
+            if getattr(policy, 'rollout', False) and t > 0:
+                routes, dt = reoptimise(D, fleet, budget_s, seed)
+                cpu += dt
+                re_cost = sum(route_cost(D, v.node, r) for v, r in zip(fleet, routes))
+                released = [j for j in range(1, n + 1) if stream.release[j] <= t]
+                action, est = policy.choose(D, fleet, routes, released, stream.release, t)
+                decisions.append({'t': float(t), 'task': int(task), 'features': state, 'action': action, 'insert_cost': ins_cost,
+                                  'reopt_cost': re_cost, 'reopt_s': dt, 'rollout_estimate': est})
+                if action == 'reopt':
+                    for v, r in zip(fleet, routes):
+                        v.route = r
+                    since_reopt, inserted_since = 0, 0
+                else:
+                    since_reopt += 1
+                    inserted_since += 1
+                continue
             action = policy(state) if t > 0 else 'insert'
             rec = {'t': float(t), 'task': int(task), 'features': state, 'action': action, 'insert_cost': ins_cost}
             if action == 'reopt' or (label and t > 0):
@@ -295,3 +311,116 @@ def pilot(fields: list[str], seeds=(7,), travels=('free', 'rows'), n_tasks: int 
     return {'protocol': {'tasks': n_tasks, 'vehicles': vehicles, 'speed_mps': 1.0, 'service_s': 30.0, 'horizon_s': 3600.0,
                          'base_share': 0.25, 'budget_s': budget_s, 'solver_seed': 42, 'seeds': list(seeds), 'travels': list(travels)},
             'rows': rows, 'failures': failures}
+
+
+
+class Rollout:
+    """Choose insert vs re-optimised plan by sampling futures from the past only (no peeking).
+
+    The future arrival count over the remaining shift is Poisson with the rate observed so far; future task
+    locations are drawn with replacement from tasks already released; each sampled future is inserted into a copy
+    of each candidate plan by cheapest insertion (vehicle motion ignored) and the plan with the lower mean final
+    route cost is kept. The solver is always called, so its CPU equals always-re-optimise; what differs is
+    whether its plan is used.
+    """
+    rollout = True
+
+    def __init__(self, samples: int = 3, seed: int = 0):
+        self.samples = samples
+        self.rng = np.random.default_rng(seed)
+
+    def choose(self, D, fleet, routes_re, released, release, t):
+        horizon_end = float(release.max())
+        dynamic_released = [j for j in released if release[j] > 0]
+        rate = len(dynamic_released) / max(t, 1e-9)
+        remaining = max(0.0, horizon_end - t)
+        plans = {'insert': [list(v.route) for v in fleet], 'reopt': [list(r) for r in routes_re]}
+        totals = {k: 0.0 for k in plans}
+        for _ in range(self.samples):
+            n_future = int(self.rng.poisson(rate * remaining))
+            future = list(self.rng.choice(released, size=n_future, replace=True)) if released and n_future else []
+            for name, routes in plans.items():
+                trial = [Vehicle(node=v.node, t_free=v.t_free, route=list(r)) for v, r in zip(fleet, routes)]
+                for task in future:
+                    k, pos, _d = cheapest_insertion(D, trial, int(task))
+                    trial[k].route.insert(pos, int(task))
+                totals[name] += plan_cost(D, trial) / self.samples
+        action = 'reopt' if totals['reopt'] < totals['insert'] - 1e-9 else 'insert'
+        return action, {k: float(v) for k, v in totals.items()}
+
+
+def study_stream(field: str, rate_label: str, horizon_s: float, vehicles: int, seed: int, budget_s: float = 0.3) -> dict:
+    """All policies on one stream (same stream, same solver seed)."""
+    s = make_stream(field, seed=seed, n_tasks=40, vehicles=vehicles, travel='free', horizon_s=horizon_s)
+    out = {'field': field, 'rate': rate_label, 'horizon_s': horizon_s, 'vehicles': vehicles, 'seed': seed, 'tasks': len(s.release) - 1}
+    for name, pol in (('insert', always('insert')), ('periodic3', periodic(3)), ('reopt', always('reopt')),
+                      ('rollout', Rollout(samples=3, seed=seed))):
+        r = simulate(s, pol, budget_s=budget_s, seed=42)
+        out[name] = {k: r[k] for k in ('distance_m', 'mean_response_s', 'p95_response_s', 'makespan_s', 'reopts', 'solver_s')}
+        if name == 'rollout':
+            out[name]['reopt_chosen'] = sum(1 for d in r['decisions'] if d['action'] == 'reopt')
+    return out
+
+
+RATES = {'sparse': 3600.0, 'medium': 1200.0, 'dense': 400.0}     # 30 dynamic arrivals over the horizon (s)
+
+
+def _study_job(args):
+    import os as _os
+    field, rate, horizon, k, seed, cores = args
+    if cores and hasattr(_os, 'sched_setaffinity'):
+        _os.sched_setaffinity(0, set(cores))
+    try:
+        return study_stream(field, rate, horizon, k, seed)
+    except Exception as exc:  # noqa: BLE001 - recorded, never hidden
+        return {'field': field, 'rate': rate, 'horizon_s': horizon, 'vehicles': k, 'seed': seed, 'error': f'{type(exc).__name__}: {exc}'[:300]}
+
+
+def run_study(out_dir, fields: list[str], vehicles=(2, 4), seed: int = 7, workers: int = 4, cores=None) -> dict:
+    """Resumable study over fields × arrival rates × fleet sizes; one JSON per stream under ``streams/``."""
+    import json as _json
+    from concurrent.futures import ProcessPoolExecutor, as_completed
+    from pathlib import Path as _P
+    out_dir = _P(out_dir)
+    (out_dir / 'streams').mkdir(parents=True, exist_ok=True)
+    todo = []
+    for f in fields:
+        for rate, horizon in RATES.items():
+            for k in vehicles:
+                key = f'{f}__{rate}__k{k}__s{seed}'
+                if not (out_dir / 'streams' / f'{key}.json').exists():
+                    todo.append((key, (f, rate, horizon, k, seed, cores)))
+    with ProcessPoolExecutor(max_workers=workers) as ex:
+        futs = {ex.submit(_study_job, a): key for key, a in todo}
+        for fu in as_completed(futs):
+            res = fu.result()
+            (out_dir / 'streams' / f'{futs[fu]}.json').write_text(_json.dumps(res, ensure_ascii=False, default=float), encoding='utf-8')
+    return summarise_study(out_dir)
+
+
+def summarise_study(out_dir) -> dict:
+    import json as _json
+    from pathlib import Path as _P
+    from scipy import stats as _stats
+    rows = [_json.loads(p.read_text(encoding='utf-8')) for p in sorted((_P(out_dir) / 'streams').glob('*.json'))]
+    ok = [r for r in rows if 'error' not in r]
+    summary = {'streams': len(rows), 'errors': [r for r in rows if 'error' in r], 'cells': {}}
+    rng = np.random.default_rng(20261024)
+    for rate in RATES:
+        for k in sorted({r['vehicles'] for r in ok}):
+            cell = [r for r in ok if r['rate'] == rate and r['vehicles'] == k]
+            if not cell:
+                continue
+            res = {'n': len(cell)}
+            for pol in ('periodic3', 'reopt', 'rollout'):
+                for metric in ('distance_m', 'mean_response_s', 'makespan_s'):
+                    d = np.array([(r[pol][metric] - r['insert'][metric]) / r['insert'][metric] for r in cell])
+                    nz = d[np.abs(d) > 1e-12]
+                    p = float(_stats.wilcoxon(nz).pvalue) if len(nz) >= 10 else None
+                    boots = [rng.choice(d, len(d), replace=True).mean() for _ in range(2000)]
+                    res[f'{pol}_vs_insert_{metric}'] = {'mean_rel': float(d.mean()), 'ci95': [float(x) for x in np.percentile(boots, [2.5, 97.5])],
+                                                        'p_two_sided': p}
+            res['rollout_reopt_share'] = float(np.mean([r['rollout']['reopt_chosen'] / max(1, r['tasks']) for r in cell]))
+            summary['cells'][f'{rate}@k{k}'] = res
+    (_P(out_dir) / 'summary.json').write_text(_json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf-8')
+    return {c: {m: round(v['mean_rel'], 3) for m, v in r.items() if isinstance(v, dict)} for c, r in summary['cells'].items()}
