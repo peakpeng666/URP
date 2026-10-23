@@ -1,0 +1,140 @@
+[
+  {
+    "path": "papers/补充/A Fast and Scalable Heuristic for the Solution of Large-Scale Capacitated Vehicle Routing Problems (Accorsi & Vigo 2021).pdf",
+    "bytes": 864289,
+    "sha256": "7124c6529df51ab06661fb9c6a0d03e7fb65a4fec40a25a302ec016a0e606112",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/A comment on What makes a VRP solution good (Lucas et al 2019, HAL自存稿).pdf",
+    "bytes": 553773,
+    "sha256": "d42c237f2d1839791784e5ffd0a1da377bbe36c7a753428f789608b0cb91fdd8",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/A comparison of acceptance criteria for the adaptive large neighbourhood search metaheuristic (Santini et al 2018).pdf",
+    "bytes": 505882,
+    "sha256": "78d7df1d53d1930be0258b8e002616122963804b1cf4ed5621b1d19d9be35946",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/A hybrid genetic algorithm with adaptive diversity management for a large class of vehicle routing problems with time-windows (Vidal et al 2013, CIRRELT工作稿).pdf",
+    "bytes": 575762,
+    "sha256": "e24abb2512ca61f1d59ffe2da51e5c232626314ef43b1402747327d8a19aa42a",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/A penalty-based edge assembly memetic algorithm for the vehicle routing problem with time windows (Nagata et al 2010).pdf",
+    "bytes": 808073,
+    "sha256": "a14b2e1cc190d609213031ad903d6f8573512aa8698724d378410f30a40085a4",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/A simple deterministic and efficient knowledge-driven heuristic for the vehicle routing problem (Arnold & Sorensen 2017, 工作稿).pdf",
+    "bytes": 927054,
+    "sha256": "cc188952cee463f96d43d604fb2ccf893a9ab35f4d1d1a3d8f1939ec1cca568a",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/A unified solution framework for multi-attribute vehicle routing problems (Vidal et al 2014, CIRRELT工作稿).pdf",
+    "bytes": 1031244,
+    "sha256": "a3261ed76e409678bb80b489d7cd870e01ae16a0820b5dfa9679b3525c825375",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/ALNS - a Python implementation of the adaptive large neighbourhood search metaheuristic (Wouda & Lan 2023).pdf",
+    "bytes": 222905,
+    "sha256": "4f4dd409718bea5e88fa001a069707fc62a73d8f2abb76ad4007657a66d5a35f",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Algorithm Selection for Combinatorial Search Problems - A Survey (Kotthoff 2014).pdf",
+    "bytes": 359668,
+    "sha256": "52f3c449712738f94548942937215de12a97e10cff8dc148faaf86c82f9bb5d2",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/DeepACO - Neural-enhanced Ant Systems for Combinatorial Optimization (Ye et al 2023).pdf",
+    "bytes": 1266324,
+    "sha256": "bd0f965b03a82d46a67491095c7d72aaf3264010578510996bffe6e0bdfb801d",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Efficient heuristics for routing and integrated logistics (Arnold 2018, 博士论文).pdf",
+    "bytes": 4698468,
+    "sha256": "1bed23022cb9b23a9158efe3ed85b731f203dfbffefc04e6cd5470f7f1f2dd9d",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Heuristics for multi-attribute vehicle routing problems (Vidal et al 2012, CIRRELT工作稿).pdf",
+    "bytes": 619530,
+    "sha256": "e8f322c53cd2c838fd80ff88ec9d3f52c6b78658b40f4b010d900dad723cc6b9",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Knowledge-guided local search for the vehicle routing problem (Arnold & Sorensen 2019).pdf",
+    "bytes": 1356881,
+    "sha256": "608500e11c338eba9b4daf6e64bb946ca0c15eca1f13c5a8eb6b9a1098d0808e",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Learning Improvement Heuristics for Solving Routing Problems (Wu et al 2021).pdf",
+    "bytes": 1392604,
+    "sha256": "c3e65b6c280b09570466ca1e992e4e691cb55596e2d93812ceaab47c3ab5e33d",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Learning to Iteratively Solve Routing Problems with Dual-Aspect Collaborative Transformer (Ma et al 2021).pdf",
+    "bytes": 1336946,
+    "sha256": "ced5494e603a3046eceab874d4ab2216efa072d8e35ab05291b4b745aaa03bd3",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Learning to Search Feasible and Infeasible Regions of Routing Problems with Flexible Neural k-Opt (Ma et al 2023).pdf",
+    "bytes": 2691936,
+    "sha256": "2641843a9981283d3c767c1fdbe16937f071ff0476be158d4e5cc9ced1794d2b",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Leveraging TSP Solver Complementarity through Machine Learning (Kerschke et al 2018).pdf",
+    "bytes": 588971,
+    "sha256": "8ba899af6fbe55ed8e37740286e9ac461d92701768fb7d9cee54f9d612f5b039",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Machine Learning for Combinatorial Optimization - a Methodological Tour d'Horizon (Bengio et al 2018, arXiv).pdf",
+    "bytes": 445457,
+    "sha256": "c7839cf585e879fe835da0a4b8c268ff98b5febe334bb9482a7a00014d533411",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Neural Large Neighborhood Search for the Capacitated Vehicle Routing Problem (Hottung & Tierney 2020).pdf",
+    "bytes": 348946,
+    "sha256": "b1a928a15f13a723d46bfb82b5f0e1d2bd429ec1627248bb2b18941fd1fac6bd",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/Random Forests (Breiman 2001).pdf",
+    "bytes": 123819,
+    "sha256": "aaa9bc464d1d63eacc807ac8251331aa93b2aeb1c9411033e58cb7e8423fb920",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "papers/补充/What makes a VRP solution good The generation of problem-specific knowledge for heuristics (Arnold & Sorensen 2019).pdf",
+    "bytes": 918301,
+    "sha256": "e78548c1614a8549a4674a7d921674e14b13ec396afc7ff95cdb1da836d05ed6",
+    "reason": "未跟踪第三方论文PDF；必要性与再分发依据未获核实，保留本机。"
+  },
+  {
+    "path": "停止实验台.bat",
+    "bytes": 194,
+    "sha256": "4fe67b614f0ea16eae59f1aba33cd7e13cad301012245f6887c4dcc0cdace38b",
+    "reason": "仅CRLF/LF差异，无功能改动；保留原工作区。"
+  },
+  {
+    "path": "启动实验台.bat",
+    "bytes": 195,
+    "sha256": "7e07e97b75decb47cd11c0a8d2e20a7d7fce95fdf136a95023e258d7b93ea7da",
+    "reason": "仅CRLF/LF差异，无功能改动；保留原工作区。"
+  }
+]

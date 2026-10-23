@@ -1,0 +1,3276 @@
+{
+  "kind": "increment_preservation_bundle",
+  "source_head": "eca5f8c7ec58518e56de0dcc5c3097f40840e6bf",
+  "common_base": "2ba49b265f7ce04c08c284c4fe1a1fb256e229a1",
+  "compared_cloud_main": "5ddbd22f0e176b9fb6f0ed7f1eeaa8063ea1b4cb",
+  "files": [
+    {
+      "path": ".claude/skills/agri-evolving-decision/SKILL.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": ".claude/skills/agri-evolving-decision/SKILL.md",
+      "source_sha256": "6be5d7df9727b58270975d8094f2cf27f24be056c3f257ddbac6655ca61b6f6f",
+      "published_sha256": "7a9016e873b51bb9df7247611891caea37af35bc38a273f44578d8808211819e",
+      "bytes": 8178
+    },
+    {
+      "path": ".claude/skills/agri-evolving-decision/references/architecture.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": ".claude/skills/agri-evolving-decision/references/architecture.md",
+      "source_sha256": "de24da5298cf772f6a817653acab513446cf3ec2600c34f280c6c8d93cac8fa7",
+      "published_sha256": "de24da5298cf772f6a817653acab513446cf3ec2600c34f280c6c8d93cac8fa7",
+      "bytes": 6380
+    },
+    {
+      "path": ".claude/skills/agri-evolving-decision/references/collaboration.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": ".claude/skills/agri-evolving-decision/references/collaboration.md",
+      "source_sha256": "132d60467b117c8cee3e750152863bf2af64d69fb9eeadb6ca1c8c4dd07f4157",
+      "published_sha256": "132d60467b117c8cee3e750152863bf2af64d69fb9eeadb6ca1c8c4dd07f4157",
+      "bytes": 3890
+    },
+    {
+      "path": ".claude/skills/agri-evolving-decision/references/operations.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": ".claude/skills/agri-evolving-decision/references/operations.md",
+      "source_sha256": "227faf022ecde10c73ae916a6021de148dd09881ea693f6bbde10f06e93072f3",
+      "published_sha256": "227faf022ecde10c73ae916a6021de148dd09881ea693f6bbde10f06e93072f3",
+      "bytes": 7148
+    },
+    {
+      "path": ".claude/skills/agri-evolving-decision/references/protocol.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": ".claude/skills/agri-evolving-decision/references/protocol.md",
+      "source_sha256": "293a7db58c8278503cbdd33a4d2230b0670b63e0bc2e5310cfef0616e46a600b",
+      "published_sha256": "293a7db58c8278503cbdd33a4d2230b0670b63e0bc2e5310cfef0616e46a600b",
+      "bytes": 7375
+    },
+    {
+      "path": ".claude/skills/agri-evolving-decision/references/status-2026-10-23.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": ".claude/skills/agri-evolving-decision/references/status-2026-10-23.md",
+      "source_sha256": "3fcafb445af93356105d7c83cf756d5ad3ffe9c02c50ffd3675b3e848b37ad61",
+      "published_sha256": "3fcafb445af93356105d7c83cf756d5ad3ffe9c02c50ffd3675b3e848b37ad61",
+      "bytes": 7857
+    },
+    {
+      "path": ".claude/skills/agri-evolving-decision/references/visualization.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": ".claude/skills/agri-evolving-decision/references/visualization.md",
+      "source_sha256": "eb9b44be23d7cfc7fdbded5b33f27745f41c25daad8f4fe87150177392ec1ff3",
+      "published_sha256": "29825568115b6d287237d679c84dec9cb3658aa84a89a6dee47f62cfc716630c",
+      "bytes": 6812
+    },
+    {
+      "path": ".claude/skills/agri-evolving-decision/scripts/evolve_status.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": ".claude/skills/agri-evolving-decision/scripts/evolve_status.py",
+      "source_sha256": "1ceb98bcd9dc9f8201ac0fb2b26c40fcd238ccd7e5597f871d213f392012b8f8",
+      "published_sha256": "1ceb98bcd9dc9f8201ac0fb2b26c40fcd238ccd7e5597f871d213f392012b8f8",
+      "bytes": 5576
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "source_id": "primary-worktree",
+      "source_relative_path": ".github/workflows/ci.yml",
+      "source_sha256": "9c4d56dff024a22cf93a5caea10ff9cbeedadcd6a2068cd758db6797868d097c",
+      "published_sha256": "9c4d56dff024a22cf93a5caea10ff9cbeedadcd6a2068cd758db6797868d097c",
+      "bytes": 9619
+    },
+    {
+      "path": ".gitignore",
+      "source_id": "primary-worktree",
+      "source_relative_path": ".gitignore",
+      "source_sha256": "9c83adc33e6c91250e7be586f601a00a4856f3bde4fd9f2da6f9bc39890fc4e7",
+      "published_sha256": "9c83adc33e6c91250e7be586f601a00a4856f3bde4fd9f2da6f9bc39890fc4e7",
+      "bytes": 5751
+    },
+    {
+      "path": "docs/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "docs/README.md",
+      "source_sha256": "f1b396e4ef3d9d166c36966ea5acd3cbda30e316dda2a466aa62c294b7d5964e",
+      "published_sha256": "f1b396e4ef3d9d166c36966ea5acd3cbda30e316dda2a466aa62c294b7d5964e",
+      "bytes": 4221
+    },
+    {
+      "path": "docs/reports/持续进化研究看板.artifact.html",
+      "source_id": "primary-worktree",
+      "source_relative_path": "docs/reports/持续进化研究看板.artifact.html",
+      "source_sha256": "6e59bf8206912856b2d268004c30ab774dcf67fd726ae6f07f97cfa1205cd1a6",
+      "published_sha256": "6e59bf8206912856b2d268004c30ab774dcf67fd726ae6f07f97cfa1205cd1a6",
+      "bytes": 69282
+    },
+    {
+      "path": "docs/reports/持续进化研究看板.html",
+      "source_id": "primary-worktree",
+      "source_relative_path": "docs/reports/持续进化研究看板.html",
+      "source_sha256": "2b851a12e9692c3eb1eb5cab1b56b576dffeecac0f306757ea155a45dab21353",
+      "published_sha256": "2b851a12e9692c3eb1eb5cab1b56b576dffeecac0f306757ea155a45dab21353",
+      "bytes": 69462
+    },
+    {
+      "path": "docs/下一阶段.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "docs/下一阶段.md",
+      "source_sha256": "678330b4aa06bbc0881e797f06e4f289c1a4e9ed412c8b475dc0612b1afe53aa",
+      "published_sha256": "678330b4aa06bbc0881e797f06e4f289c1a4e9ed412c8b475dc0612b1afe53aa",
+      "bytes": 11896
+    },
+    {
+      "path": "docs/导师查看.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "docs/导师查看.md",
+      "source_sha256": "0d5dcfd0fd26eb805737baf59b5ee5e6432183b56fb66f2ddda1f4141dad40dd",
+      "published_sha256": "0d5dcfd0fd26eb805737baf59b5ee5e6432183b56fb66f2ddda1f4141dad40dd",
+      "bytes": 21085
+    },
+    {
+      "path": "docs/持续进化决策与调度.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "docs/持续进化决策与调度.md",
+      "source_sha256": "d8ebf7ca5b20e4f1c0dc9d640d52059b34bee97ce5feb2f59f375a72afcb77be",
+      "published_sha256": "d8ebf7ca5b20e4f1c0dc9d640d52059b34bee97ce5feb2f59f375a72afcb77be",
+      "bytes": 13170
+    },
+    {
+      "path": "experiments/protocols/PRE_REGISTRATION_AMENDMENT_COVERAGE_20261023.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/protocols/PRE_REGISTRATION_AMENDMENT_COVERAGE_20261023.md",
+      "source_sha256": "0f584293f5621ab9f9772eb6ed79b1aad7f9eaffd8afaa5542f4bcc27b974907",
+      "published_sha256": "0f584293f5621ab9f9772eb6ed79b1aad7f9eaffd8afaa5542f4bcc27b974907",
+      "bytes": 4732
+    },
+    {
+      "path": "experiments/protocols/PRE_REGISTRATION_AMENDMENT_COVERAGE_20261024_v2.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/protocols/PRE_REGISTRATION_AMENDMENT_COVERAGE_20261024_v2.md",
+      "source_sha256": "1d7b0acd0a59631b7169af2154278db890aa808a91873f5fbb72c9bd4b66ded1",
+      "published_sha256": "1d7b0acd0a59631b7169af2154278db890aa808a91873f5fbb72c9bd4b66ded1",
+      "bytes": 30786
+    },
+    {
+      "path": "experiments/reports/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/reports/README.md",
+      "source_sha256": "3039194d0925192b1d5b5f2eff7e4ea28cc39658a4bfeaea6845601fef5cd199",
+      "published_sha256": "3039194d0925192b1d5b5f2eff7e4ea28cc39658a4bfeaea6845601fef5cd199",
+      "bytes": 1092
+    },
+    {
+      "path": "experiments/reports/进化决策/农业组合互补性审计与覆盖尝试顺序.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/reports/进化决策/农业组合互补性审计与覆盖尝试顺序.md",
+      "source_sha256": "6fcf2b3b66e4bea7980b1f53ad24b5ce1c0077d6492c0bd75df55f43c43146e2",
+      "published_sha256": "6fcf2b3b66e4bea7980b1f53ad24b5ce1c0077d6492c0bd75df55f43c43146e2",
+      "bytes": 27964
+    },
+    {
+      "path": "experiments/reports/进化决策/算法库进化账本.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/reports/进化决策/算法库进化账本.md",
+      "source_sha256": "9db37c516bc36c52e8f55ab7a46cace0e4b8ca74b7edc42efb88eeccda607045",
+      "published_sha256": "9db37c516bc36c52e8f55ab7a46cace0e4b8ca74b7edc42efb88eeccda607045",
+      "bytes": 5006
+    },
+    {
+      "path": "experiments/results/进化决策/SHA256SUMS.txt",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/SHA256SUMS.txt",
+      "source_sha256": "dafc51558a51f0f181a9e1ce79c5a353f76f2caf30fa0b9c5057c3dcf8d79735",
+      "published_sha256": "dafc51558a51f0f181a9e1ce79c5a353f76f2caf30fa0b9c5057c3dcf8d79735",
+      "bytes": 1020
+    },
+    {
+      "path": "experiments/results/进化决策/evolve-audit-20261023-fillet.zip",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/evolve-audit-20261023-fillet.zip",
+      "source_sha256": "e06752643c0511095384da2e7dec83b5afa05adbd4d94418adf646b0231d125d",
+      "published_sha256": "e06752643c0511095384da2e7dec83b5afa05adbd4d94418adf646b0231d125d",
+      "bytes": 979472
+    },
+    {
+      "path": "experiments/results/进化决策/evolve-audit-20261023-records.zip",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/evolve-audit-20261023-records.zip",
+      "source_sha256": "23f853d50f37338152bf775a308809a9acd43d0dd4b2805843ba58e9caca6688",
+      "published_sha256": "23f853d50f37338152bf775a308809a9acd43d0dd4b2805843ba58e9caca6688",
+      "bytes": 5635640
+    },
+    {
+      "path": "experiments/results/进化决策/evolve-audit-20261023-reverify.zip",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/evolve-audit-20261023-reverify.zip",
+      "source_sha256": "a19bb21fd77ab904ed029beea75bbe247bd4fdbbd614ead46b4a417308ce4d3d",
+      "published_sha256": "a19bb21fd77ab904ed029beea75bbe247bd4fdbbd614ead46b4a417308ce4d3d",
+      "bytes": 890849
+    },
+    {
+      "path": "experiments/results/进化决策/evolve-candidates-20261024-fillet.zip",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/evolve-candidates-20261024-fillet.zip",
+      "source_sha256": "d3d569f445c9029e10b6780162e2a686552129ecee3d1e5e0f9385a3dd2c59aa",
+      "published_sha256": "d3d569f445c9029e10b6780162e2a686552129ecee3d1e5e0f9385a3dd2c59aa",
+      "bytes": 1115826
+    },
+    {
+      "path": "experiments/results/进化决策/evolve-candidates-20261024-records.zip",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/evolve-candidates-20261024-records.zip",
+      "source_sha256": "84b7ff6010fdd22dc4c7d6bacb6302c2be567b1d625b9b9444253afe2a324054",
+      "published_sha256": "84b7ff6010fdd22dc4c7d6bacb6302c2be567b1d625b9b9444253afe2a324054",
+      "bytes": 2827928
+    },
+    {
+      "path": "experiments/results/进化决策/evolve-determinism-20261024-records.zip",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/evolve-determinism-20261024-records.zip",
+      "source_sha256": "af36eec81c69c854a1c61fe20f679c001d345090edc85dc259e6f1caa970120a",
+      "published_sha256": "af36eec81c69c854a1c61fe20f679c001d345090edc85dc259e6f1caa970120a",
+      "bytes": 648150
+    },
+    {
+      "path": "experiments/results/进化决策/evolve-dynamic-20261024-streams.zip",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/evolve-dynamic-20261024-streams.zip",
+      "source_sha256": "9c1b5b7fbaf16a830dcc1a62013d015cca783a457b0385c9f0be4b86137f6f02",
+      "published_sha256": "9c1b5b7fbaf16a830dcc1a62013d015cca783a457b0385c9f0be4b86137f6f02",
+      "bytes": 97219
+    },
+    {
+      "path": "experiments/results/进化决策/evolve-repair-20261023-fillet.zip",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/evolve-repair-20261023-fillet.zip",
+      "source_sha256": "81c6dd8135cab1743838080bc71fc89e352ea273c41cbd794788a3f0dcb8b529",
+      "published_sha256": "81c6dd8135cab1743838080bc71fc89e352ea273c41cbd794788a3f0dcb8b529",
+      "bytes": 1159367
+    },
+    {
+      "path": "experiments/results/进化决策/evolve-repair-20261023-records.zip",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/evolve-repair-20261023-records.zip",
+      "source_sha256": "dc4d08985220a0a62d776a3e62a0052d93d75ae9958bad68fe261c049d229cbd",
+      "published_sha256": "dc4d08985220a0a62d776a3e62a0052d93d75ae9958bad68fe261c049d229cbd",
+      "bytes": 2203406
+    },
+    {
+      "path": "experiments/results/进化决策/evolve-repair-20261023-reverify.zip",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/results/进化决策/evolve-repair-20261023-reverify.zip",
+      "source_sha256": "cb6ff86ed85128f763f343b5f0ba39376333cea635c33ba26f4929fb1dd9f5e9",
+      "published_sha256": "cb6ff86ed85128f763f343b5f0ba39376333cea635c33ba26f4929fb1dd9f5e9",
+      "bytes": 1047547
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/README.md",
+      "source_sha256": "4a4105e656717c80ad8aeef107f6d724d0b54200a7c86deffc5b8538b36ba83b",
+      "published_sha256": "4a4105e656717c80ad8aeef107f6d724d0b54200a7c86deffc5b8538b36ba83b",
+      "bytes": 8273
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/audit/audit.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/audit/audit.json",
+      "source_sha256": "1a83c90102322ee35363767d698c632eba555bd3c49bbe346f7bb85f442635cb",
+      "published_sha256": "ad624d00c23d3e848bf7b5830bf78c1b97afbce66891b6487d283169ce48ebd6",
+      "bytes": 38264
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/audit/coverage_matrix.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/audit/coverage_matrix.csv",
+      "source_sha256": "7f974132c7cb129f8b6d8a6d8e3b004f8f758409a53405884e24c0e9add8055b",
+      "published_sha256": "7f974132c7cb129f8b6d8a6d8e3b004f8f758409a53405884e24c0e9add8055b",
+      "bytes": 464680
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/audit/fleet_makespan_matrix.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/audit/fleet_makespan_matrix.csv",
+      "source_sha256": "521f1bc3ed94acc60cfbad4274f4b640f1a70d1416b5350fe0090baceb4b1328",
+      "published_sha256": "521f1bc3ed94acc60cfbad4274f4b640f1a70d1416b5350fe0090baceb4b1328",
+      "bytes": 74662
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/audit/fleet_total_distance_matrix.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/audit/fleet_total_distance_matrix.csv",
+      "source_sha256": "352ed747ca88006fd0dc46c4b6ee239a650ee2d0954d887e6a787ccb1d9602c3",
+      "published_sha256": "352ed747ca88006fd0dc46c4b6ee239a650ee2d0954d887e6a787ccb1d9602c3",
+      "bytes": 307332
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/core_benchmark.txt",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/core_benchmark.txt",
+      "source_sha256": "aa495d9eaac31ffc4488c4b0b25a3d47fee947a80287fb724565f95a79d14de6",
+      "published_sha256": "aa495d9eaac31ffc4488c4b0b25a3d47fee947a80287fb724565f95a79d14de6",
+      "bytes": 222
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/environment.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/environment.json",
+      "source_sha256": "d87dc9250c0f1b9fb5c3122585e773ae2055802222641d357b9055d068ed9a69",
+      "published_sha256": "d87dc9250c0f1b9fb5c3122585e773ae2055802222641d357b9055d068ed9a69",
+      "bytes": 732
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/experience/episodes.jsonl",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/experience/episodes.jsonl",
+      "source_sha256": "288cb3fae61bfa2b7be836db465665168165504502c9dca751b68766823e2905",
+      "published_sha256": "288cb3fae61bfa2b7be836db465665168165504502c9dca751b68766823e2905",
+      "bytes": 3242557
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/experience/episodes.summary.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/experience/episodes.summary.json",
+      "source_sha256": "46bdd7de6677b066868d958a8b35ad59fe3f2b9fd140211ed176ee978f73a841",
+      "published_sha256": "46bdd7de6677b066868d958a8b35ad59fe3f2b9fd140211ed176ee978f73a841",
+      "bytes": 2388
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value.csv",
+      "source_sha256": "eae2ea908854989dfd62972e6bf4dd85a6e291492ea5919178b55d6fc72d07ca",
+      "published_sha256": "eae2ea908854989dfd62972e6bf4dd85a6e291492ea5919178b55d6fc72d07ca",
+      "bytes": 3472
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_en.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_en.pdf",
+      "source_sha256": "887cae5ca37bf2640e06b81e4b45228b1bef8273ad1ce43a171c33baeb57fa88",
+      "published_sha256": "887cae5ca37bf2640e06b81e4b45228b1bef8273ad1ce43a171c33baeb57fa88",
+      "bytes": 23223
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_en.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_en.png",
+      "source_sha256": "72c5ec681b2df2cd4cefa5d3892c10096fcc4a6d7f7c6393c9770cbe8ffc3125",
+      "published_sha256": "72c5ec681b2df2cd4cefa5d3892c10096fcc4a6d7f7c6393c9770cbe8ffc3125",
+      "bytes": 566998
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_en.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_en.svg",
+      "source_sha256": "f48a971421eea08047683bbf12192492fcd913acd4c1d59c57a0170fdaf7f182",
+      "published_sha256": "f48a971421eea08047683bbf12192492fcd913acd4c1d59c57a0170fdaf7f182",
+      "bytes": 48390
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_zh.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_zh.pdf",
+      "source_sha256": "64450615832b85586ce44bd106f786aea05a5fc06c46bc98455eced5c07ed9df",
+      "published_sha256": "64450615832b85586ce44bd106f786aea05a5fc06c46bc98455eced5c07ed9df",
+      "bytes": 39302
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_zh.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_zh.png",
+      "source_sha256": "1169f23c2d3cf2f0b19b992c56644df9d1caac424af6d3b48c21cf62ae386d00",
+      "published_sha256": "1169f23c2d3cf2f0b19b992c56644df9d1caac424af6d3b48c21cf62ae386d00",
+      "bytes": 575229
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_zh.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig10_dynamic_value_zh.svg",
+      "source_sha256": "0454e7b16b91d2f0ae492705ab1ff3b8a8450d045b26d113ac41cdef5e777e70",
+      "published_sha256": "0454e7b16b91d2f0ae492705ab1ff3b8a8450d045b26d113ac41cdef5e777e70",
+      "bytes": 48828
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom.csv",
+      "source_sha256": "4f2f7bb756b9e036c5921496148cccc299fe648479cfe9672fcdf9bd01d25fc7",
+      "published_sha256": "4f2f7bb756b9e036c5921496148cccc299fe648479cfe9672fcdf9bd01d25fc7",
+      "bytes": 514
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_en.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_en.pdf",
+      "source_sha256": "a36a4987738a4c64d7a69587893868d6ed6643165f7f8bc43aef9244359d3a05",
+      "published_sha256": "a36a4987738a4c64d7a69587893868d6ed6643165f7f8bc43aef9244359d3a05",
+      "bytes": 20848
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_en.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_en.png",
+      "source_sha256": "ac868d736d30bfb35dd542589b2be8a80a6c19711f69d6bc7b38b461789c30b2",
+      "published_sha256": "ac868d736d30bfb35dd542589b2be8a80a6c19711f69d6bc7b38b461789c30b2",
+      "bytes": 219540
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_en.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_en.svg",
+      "source_sha256": "caff5fb76e5151b8de8eaa91d181254c928ac76cd0c72b2465dd3e44d241d8d9",
+      "published_sha256": "caff5fb76e5151b8de8eaa91d181254c928ac76cd0c72b2465dd3e44d241d8d9",
+      "bytes": 34116
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_zh.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_zh.pdf",
+      "source_sha256": "81bcb33818b2684825a44570761352a908bdcc0211f61b65c3ea5bef625599ab",
+      "published_sha256": "81bcb33818b2684825a44570761352a908bdcc0211f61b65c3ea5bef625599ab",
+      "bytes": 30557
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_zh.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_zh.png",
+      "source_sha256": "33b20175519b23093d1d6a9121ecbfe39227acb3aeadcff457fa938cd64be038",
+      "published_sha256": "33b20175519b23093d1d6a9121ecbfe39227acb3aeadcff457fa938cd64be038",
+      "bytes": 216483
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_zh.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig1_headroom_zh.svg",
+      "source_sha256": "159e621a3313915d404660abf5ae796f4b7e0fd900516b8376271b90b172b4a5",
+      "published_sha256": "159e621a3313915d404660abf5ae796f4b7e0fd900516b8376271b90b172b4a5",
+      "bytes": 34553
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility.csv",
+      "source_sha256": "3e45183efbba8e57f135c5f912390ba5778a1a77246b883a2e09f8360d538f5b",
+      "published_sha256": "3e45183efbba8e57f135c5f912390ba5778a1a77246b883a2e09f8360d538f5b",
+      "bytes": 2227
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_en.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_en.pdf",
+      "source_sha256": "2ec2186dbd11424175af48d26736c6a76fa1912f7fa570ace2a0b0817e3a9896",
+      "published_sha256": "2ec2186dbd11424175af48d26736c6a76fa1912f7fa570ace2a0b0817e3a9896",
+      "bytes": 39819
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_en.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_en.png",
+      "source_sha256": "5f6556679c25e4f92163de478edad9a0098c4247639c6878f06b26edee9efb5d",
+      "published_sha256": "5f6556679c25e4f92163de478edad9a0098c4247639c6878f06b26edee9efb5d",
+      "bytes": 590312
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_en.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_en.svg",
+      "source_sha256": "4df61cbfcad29d02544a51a62b979bca2d24f13f78034eaed4837b9b7bcb9c92",
+      "published_sha256": "4df61cbfcad29d02544a51a62b979bca2d24f13f78034eaed4837b9b7bcb9c92",
+      "bytes": 169346
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_zh.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_zh.pdf",
+      "source_sha256": "d3eb5eccd16055d1c535461a52f9a612257ca9c9c3a6929d9088c91a30080bf6",
+      "published_sha256": "d3eb5eccd16055d1c535461a52f9a612257ca9c9c3a6929d9088c91a30080bf6",
+      "bytes": 54391
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_zh.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_zh.png",
+      "source_sha256": "06c1636e4c5303d2bad57d700b5fc6388f518eb05adec8b93228ab66fc36f742",
+      "published_sha256": "06c1636e4c5303d2bad57d700b5fc6388f518eb05adec8b93228ab66fc36f742",
+      "bytes": 557570
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_zh.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig2_coverage_feasibility_zh.svg",
+      "source_sha256": "3ccc18c050c415a2b45bc78fdbaef17ec1877ceb6ff31d4c2409f2bed7431ffb",
+      "published_sha256": "3ccc18c050c415a2b45bc78fdbaef17ec1877ceb6ff31d4c2409f2bed7431ffb",
+      "bytes": 169757
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley.csv",
+      "source_sha256": "8f6c2b1e457b51912e89ae0f918e7df67e85088f9c0bb9843f9aa0c25228fcb0",
+      "published_sha256": "8f6c2b1e457b51912e89ae0f918e7df67e85088f9c0bb9843f9aa0c25228fcb0",
+      "bytes": 722
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_en.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_en.pdf",
+      "source_sha256": "a8ea729fa321b23704d68204f88bfa9ee0ebdb7c0ee36a58cbd3dc16c7cdfdb9",
+      "published_sha256": "a8ea729fa321b23704d68204f88bfa9ee0ebdb7c0ee36a58cbd3dc16c7cdfdb9",
+      "bytes": 14725
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_en.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_en.png",
+      "source_sha256": "4fcd1d38fb37d3ec5486ba68a702edee89f0d06e3ca01a1ffcb7feb69f930713",
+      "published_sha256": "4fcd1d38fb37d3ec5486ba68a702edee89f0d06e3ca01a1ffcb7feb69f930713",
+      "bytes": 212119
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_en.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_en.svg",
+      "source_sha256": "638d5e8003f224c61dd2b8a1c588233ffc780e6a0739c218fafaf226c954cd77",
+      "published_sha256": "638d5e8003f224c61dd2b8a1c588233ffc780e6a0739c218fafaf226c954cd77",
+      "bytes": 16724
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_zh.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_zh.pdf",
+      "source_sha256": "60bd0720bd8eb641288abc4dc1101671028508152867eeb9375eea36d2dee18f",
+      "published_sha256": "60bd0720bd8eb641288abc4dc1101671028508152867eeb9375eea36d2dee18f",
+      "bytes": 30368
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_zh.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_zh.png",
+      "source_sha256": "5e5387ce910c2df9c51e9c45bc3b0ae93e2ce084986fc40a29272dd5ad27dcb3",
+      "published_sha256": "5e5387ce910c2df9c51e9c45bc3b0ae93e2ce084986fc40a29272dd5ad27dcb3",
+      "bytes": 256618
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_zh.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig3_shapley_zh.svg",
+      "source_sha256": "9ac4bd1f244a0b54171b64890fe54dcdbc10454ebf6fd9efb3fbb5094b5ce6f6",
+      "published_sha256": "9ac4bd1f244a0b54171b64890fe54dcdbc10454ebf6fd9efb3fbb5094b5ce6f6",
+      "bytes": 17017
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order.csv",
+      "source_sha256": "8102c170a6758f76a01559589efd80186298e86d45943e662eafc744209b021d",
+      "published_sha256": "8102c170a6758f76a01559589efd80186298e86d45943e662eafc744209b021d",
+      "bytes": 747
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_en.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_en.pdf",
+      "source_sha256": "be0e8cd0a66326093b8138fe2f63cd4bdf98d32a40353dc832a30412bdc50e17",
+      "published_sha256": "be0e8cd0a66326093b8138fe2f63cd4bdf98d32a40353dc832a30412bdc50e17",
+      "bytes": 14780
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_en.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_en.png",
+      "source_sha256": "1b7dbd46c68e26257adbbf48fefb57579f2b4b2a8133b6d7878e1b234820a2d1",
+      "published_sha256": "1b7dbd46c68e26257adbbf48fefb57579f2b4b2a8133b6d7878e1b234820a2d1",
+      "bytes": 167037
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_en.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_en.svg",
+      "source_sha256": "435ff607598a8f67a4aff0907104de9107bfdecdec72aba4641882eddafa2996",
+      "published_sha256": "435ff607598a8f67a4aff0907104de9107bfdecdec72aba4641882eddafa2996",
+      "bytes": 19689
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_zh.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_zh.pdf",
+      "source_sha256": "a9a8508c366f172a71248db0a499c0b5e6650e61ccdb8b8e101a7932461d4b11",
+      "published_sha256": "a9a8508c366f172a71248db0a499c0b5e6650e61ccdb8b8e101a7932461d4b11",
+      "bytes": 28856
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_zh.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_zh.png",
+      "source_sha256": "d296bc2d9f51e892b27b79f14c26bce5cfe6a2567bbc4082d7cf2d29b8ac662e",
+      "published_sha256": "d296bc2d9f51e892b27b79f14c26bce5cfe6a2567bbc4082d7cf2d29b8ac662e",
+      "bytes": 210883
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_zh.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig4_try_order_zh.svg",
+      "source_sha256": "8ed81c21a3210b529056b8b3c6421c4d77ebf6628b99e807e8284bcf78d0694e",
+      "published_sha256": "8ed81c21a3210b529056b8b3c6421c4d77ebf6628b99e807e8284bcf78d0694e",
+      "bytes": 20287
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve.csv",
+      "source_sha256": "303bcae0a7c861ad988d8af4e9293030591ff5342256340a50cfb0b0d6e58ca6",
+      "published_sha256": "303bcae0a7c861ad988d8af4e9293030591ff5342256340a50cfb0b0d6e58ca6",
+      "bytes": 38016
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_en.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_en.pdf",
+      "source_sha256": "970c27c1ac2a5aa1579d6b20ac312f3d7f5668ede38ea87c59523424203c2699",
+      "published_sha256": "970c27c1ac2a5aa1579d6b20ac312f3d7f5668ede38ea87c59523424203c2699",
+      "bytes": 45303
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_en.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_en.png",
+      "source_sha256": "b8d16bca67fe0663223c723223e9e4efb0342a212365483f3e6c6fb7b112dbc0",
+      "published_sha256": "b8d16bca67fe0663223c723223e9e4efb0342a212365483f3e6c6fb7b112dbc0",
+      "bytes": 832120
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_en.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_en.svg",
+      "source_sha256": "9e6236ce76c71a7e9a71d72c0743a145a608e3ac526bc2df1be6b319d435ab5c",
+      "published_sha256": "9e6236ce76c71a7e9a71d72c0743a145a608e3ac526bc2df1be6b319d435ab5c",
+      "bytes": 119405
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_zh.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_zh.pdf",
+      "source_sha256": "68736dc6a065d11f39c45c1ec13faf53ebe68ed4d2382d1c27ce9ca962a85f6c",
+      "published_sha256": "68736dc6a065d11f39c45c1ec13faf53ebe68ed4d2382d1c27ce9ca962a85f6c",
+      "bytes": 59683
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_zh.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_zh.png",
+      "source_sha256": "3871851898a4b83839517f342713db5e7dc9db612e128d31dae7b3ecb7f5be09",
+      "published_sha256": "3871851898a4b83839517f342713db5e7dc9db612e128d31dae7b3ecb7f5be09",
+      "bytes": 865795
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_zh.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig5_learning_curve_zh.svg",
+      "source_sha256": "cf71da0963421ae6b1138068f80a07b602ea283bdef04a13a67c1b6a9a7093d7",
+      "published_sha256": "cf71da0963421ae6b1138068f80a07b602ea283bdef04a13a67c1b6a9a7093d7",
+      "bytes": 120424
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space.csv",
+      "source_sha256": "65d6aa4f693b4c9dd3577e7547bf47fc8613838a0ea42492e4be2c12fcc1fc77",
+      "published_sha256": "65d6aa4f693b4c9dd3577e7547bf47fc8613838a0ea42492e4be2c12fcc1fc77",
+      "bytes": 46215
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_en.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_en.pdf",
+      "source_sha256": "d1387e9ee47861c231776800b7cb42e6972e80b112e3824b29a1f49250cdd0fc",
+      "published_sha256": "d1387e9ee47861c231776800b7cb42e6972e80b112e3824b29a1f49250cdd0fc",
+      "bytes": 22490
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_en.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_en.png",
+      "source_sha256": "643fcc92a378776547adbc16011ca23fd3307a50348d349c8f64c2bbcbd968a6",
+      "published_sha256": "643fcc92a378776547adbc16011ca23fd3307a50348d349c8f64c2bbcbd968a6",
+      "bytes": 285175
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_en.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_en.svg",
+      "source_sha256": "27769919ce2ef08873b06f57272ac509db71d2f3c6a46b9385b145bc1065b9e8",
+      "published_sha256": "27769919ce2ef08873b06f57272ac509db71d2f3c6a46b9385b145bc1065b9e8",
+      "bytes": 70224
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_zh.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_zh.pdf",
+      "source_sha256": "6090c1bd6dbf6ed5f0a07a2eec1d8b8f72d04b766e515d3a2531cc9a5186ad46",
+      "published_sha256": "6090c1bd6dbf6ed5f0a07a2eec1d8b8f72d04b766e515d3a2531cc9a5186ad46",
+      "bytes": 31377
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_zh.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_zh.png",
+      "source_sha256": "c251b136b4bc6c657beeef718e3f3d3487de0a5dab166547eef459ad69a889e7",
+      "published_sha256": "c251b136b4bc6c657beeef718e3f3d3487de0a5dab166547eef459ad69a889e7",
+      "bytes": 309256
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_zh.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig6_instance_space_zh.svg",
+      "source_sha256": "855fde8701f58edfeb84f611dd34db3e6230b388067443b8cd8cb9771316e9c1",
+      "published_sha256": "855fde8701f58edfeb84f611dd34db3e6230b388067443b8cd8cb9771316e9c1",
+      "bytes": 70802
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback.csv",
+      "source_sha256": "9c38f42a92deb7723ec17851fbee0dad1068025a22fbab9d4771bf56d193b460",
+      "published_sha256": "9c38f42a92deb7723ec17851fbee0dad1068025a22fbab9d4771bf56d193b460",
+      "bytes": 6805
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_en.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_en.pdf",
+      "source_sha256": "4bbc889c82b49df4e32f0e0a36e2b643143dc2a257bdf7b6c32003d3b27aa809",
+      "published_sha256": "4bbc889c82b49df4e32f0e0a36e2b643143dc2a257bdf7b6c32003d3b27aa809",
+      "bytes": 13664
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_en.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_en.png",
+      "source_sha256": "4f271324008fb44230583018c8d5d9ddfd6b4e9ab84b8978109a089dccea1ff9",
+      "published_sha256": "4f271324008fb44230583018c8d5d9ddfd6b4e9ab84b8978109a089dccea1ff9",
+      "bytes": 161089
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_en.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_en.svg",
+      "source_sha256": "70463e91ab9011258e24ddce6f90dd859565f812896b02690ec5368656ae0ec5",
+      "published_sha256": "70463e91ab9011258e24ddce6f90dd859565f812896b02690ec5368656ae0ec5",
+      "bytes": 21117
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_zh.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_zh.pdf",
+      "source_sha256": "e082ad4bde8cbec6562310c0fa88ff4aa8d019e6857414eb5bb80662c0bec0bb",
+      "published_sha256": "e082ad4bde8cbec6562310c0fa88ff4aa8d019e6857414eb5bb80662c0bec0bb",
+      "bytes": 23825
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_zh.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_zh.png",
+      "source_sha256": "0fe97b173748248ea7a7e043b63510af44d635def516f0109aad91ebef067855",
+      "published_sha256": "0fe97b173748248ea7a7e043b63510af44d635def516f0109aad91ebef067855",
+      "bytes": 163465
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_zh.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig7_execution_feedback_zh.svg",
+      "source_sha256": "6f122a1e4c4888f306fab68fc5877986da7b3b54f9d97b00f27dbcaedab7db51",
+      "published_sha256": "6f122a1e4c4888f306fab68fc5877986da7b3b54f9d97b00f27dbcaedab7db51",
+      "bytes": 21452
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts.csv",
+      "source_sha256": "2dbcb7a5ed8eacdf48154f5fa1b1440bac0b50302a3d3228bb03e88b18e60005",
+      "published_sha256": "2dbcb7a5ed8eacdf48154f5fa1b1440bac0b50302a3d3228bb03e88b18e60005",
+      "bytes": 281
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_en.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_en.pdf",
+      "source_sha256": "2c881fbd37e25cb0461d80205e47130f73098778ae2f880a9dbf4811173f08f3",
+      "published_sha256": "2c881fbd37e25cb0461d80205e47130f73098778ae2f880a9dbf4811173f08f3",
+      "bytes": 43642
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_en.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_en.png",
+      "source_sha256": "2ab2531432cb96211d57d620bca66b6bd589e854c0f6255b46346d07600a46c7",
+      "published_sha256": "2ab2531432cb96211d57d620bca66b6bd589e854c0f6255b46346d07600a46c7",
+      "bytes": 159534
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_en.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_en.svg",
+      "source_sha256": "940f3dcd0b449d5d3af1abea4f60f545b1dd2f17b5382b88ae54d0d2b23060ea",
+      "published_sha256": "940f3dcd0b449d5d3af1abea4f60f545b1dd2f17b5382b88ae54d0d2b23060ea",
+      "bytes": 162431
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_zh.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_zh.pdf",
+      "source_sha256": "c6fdf2e020d0e88a1dc3258df0d5a9dbdca7201c345c5686beabf84a7dbfcb1e",
+      "published_sha256": "c6fdf2e020d0e88a1dc3258df0d5a9dbdca7201c345c5686beabf84a7dbfcb1e",
+      "bytes": 46477
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_zh.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_zh.png",
+      "source_sha256": "aed6dc868af0b7f627c2328a40e1076cf9360a6f0d4e62474be14a31a2924ab3",
+      "published_sha256": "aed6dc868af0b7f627c2328a40e1076cf9360a6f0d4e62474be14a31a2924ab3",
+      "bytes": 190109
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_zh.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig8_three_verdicts_zh.svg",
+      "source_sha256": "81cd2d50797edecf1c788c4f560c9c74228898837866666550d9bda07d5723b7",
+      "published_sha256": "81cd2d50797edecf1c788c4f560c9c74228898837866666550d9bda07d5723b7",
+      "bytes": 162863
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules.csv",
+      "source_sha256": "1c57082d25522c0123d699124d48414410bb99c3291b35fe2f5fa9febdd0aaa9",
+      "published_sha256": "1c57082d25522c0123d699124d48414410bb99c3291b35fe2f5fa9febdd0aaa9",
+      "bytes": 5260
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_en.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_en.pdf",
+      "source_sha256": "4891bed1747f78e575f3963e7de12051b07e50c405f272ed37e39c86b38bca83",
+      "published_sha256": "4891bed1747f78e575f3963e7de12051b07e50c405f272ed37e39c86b38bca83",
+      "bytes": 27639
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_en.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_en.png",
+      "source_sha256": "d03fc5ae729f85d48fcb3a11c4825a61199cc728ea03dbdc0be4950755169acf",
+      "published_sha256": "d03fc5ae729f85d48fcb3a11c4825a61199cc728ea03dbdc0be4950755169acf",
+      "bytes": 486546
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_en.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_en.svg",
+      "source_sha256": "fb7e31e37e757fd7b9508673525b5581a32296a558174013ab0b241e94eb0ca4",
+      "published_sha256": "fb7e31e37e757fd7b9508673525b5581a32296a558174013ab0b241e94eb0ca4",
+      "bytes": 82501
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_zh.pdf",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_zh.pdf",
+      "source_sha256": "b685c718f3e483d250478ebe59ad57927dd70c5265b1ec1436321567e26fa637",
+      "published_sha256": "b685c718f3e483d250478ebe59ad57927dd70c5265b1ec1436321567e26fa637",
+      "bytes": 41072
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_zh.png",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_zh.png",
+      "source_sha256": "effcf3789326955a1a119cf2d0593465dee1509493fac25886ea8387f29fd551",
+      "published_sha256": "effcf3789326955a1a119cf2d0593465dee1509493fac25886ea8387f29fd551",
+      "bytes": 503223
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_zh.svg",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/fig9_admission_rules_zh.svg",
+      "source_sha256": "dc7f88f4164415e714a4b9fae998266e9555ea111ca1a3c75dc48da2b2b582d4",
+      "published_sha256": "dc7f88f4164415e714a4b9fae998266e9555ea111ca1a3c75dc48da2b2b582d4",
+      "bytes": 83497
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/figures/index.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/figures/index.json",
+      "source_sha256": "bd3282883c547641a5e3b0c7695c363ad4fb380f62813fc508c85f0959704a1f",
+      "published_sha256": "bd3282883c547641a5e3b0c7695c363ad4fb380f62813fc508c85f0959704a1f",
+      "bytes": 13075
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/fillet/summary.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/fillet/summary.json",
+      "source_sha256": "a612e666c379f8d34160f2feabc3407772e5c4f5ff987f66d7eeb8d346ce9d40",
+      "published_sha256": "a612e666c379f8d34160f2feabc3407772e5c4f5ff987f66d7eeb8d346ce9d40",
+      "bytes": 1333
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/fleet_footprint_diagnosis.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/fleet_footprint_diagnosis.json",
+      "source_sha256": "ee7cd72522ad184e0f0989a6e0ea2f93fbf6e94a20cfa057a837b267b65e99c1",
+      "published_sha256": "ee7cd72522ad184e0f0989a6e0ea2f93fbf6e94a20cfa057a837b267b65e99c1",
+      "bytes": 2607
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/fleet_try_order.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/fleet_try_order.json",
+      "source_sha256": "5b1edd8e80541360478cbae5affb30144d86d7d34d701b4f8bc9fe4d6c08e900",
+      "published_sha256": "5b1edd8e80541360478cbae5affb30144d86d7d34d701b4f8bc9fe4d6c08e900",
+      "bytes": 626
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/plan.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/plan.json",
+      "source_sha256": "dddbf574b863179a7c3f4f161eedab72501fdf81732acb9fa885cae546baf2a1",
+      "published_sha256": "dddbf574b863179a7c3f4f161eedab72501fdf81732acb9fa885cae546baf2a1",
+      "bytes": 2174699
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/plan.sha256",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/plan.sha256",
+      "source_sha256": "6050462c000037efddfe29ef47bed827230bd66876744e1a916c69562755ba62",
+      "published_sha256": "6050462c000037efddfe29ef47bed827230bd66876744e1a916c69562755ba62",
+      "bytes": 65
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/policy/policy.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/policy/policy.json",
+      "source_sha256": "55a818a5ca554eeaee0271fcf7b055f83bdf1c9be55919823807313508150ab8",
+      "published_sha256": "55a818a5ca554eeaee0271fcf7b055f83bdf1c9be55919823807313508150ab8",
+      "bytes": 303008
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/progress.log",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/progress.log",
+      "source_sha256": "a19ffab7bfca3075fa06dc64f400899b8e2a8e2a2a9f8b9a211f9265d1ba59df",
+      "published_sha256": "a19ffab7bfca3075fa06dc64f400899b8e2a8e2a2a9f8b9a211f9265d1ba59df",
+      "bytes": 28226
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/reverify/sensitivity.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/reverify/sensitivity.json",
+      "source_sha256": "87d973ea9be9b60a26ba62fd2339b06b28452c11210335277d2a022d394a7d87",
+      "published_sha256": "87d973ea9be9b60a26ba62fd2339b06b28452c11210335277d2a022d394a7d87",
+      "bytes": 113735
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/route_probe.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/route_probe.json",
+      "source_sha256": "eb2105072535411bfd4d5652565481dee4a0b14d406a7366dbf849630266ab88",
+      "published_sha256": "eb2105072535411bfd4d5652565481dee4a0b14d406a7366dbf849630266ab88",
+      "bytes": 9139
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/verdict_comparison.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-audit-20261023/verdict_comparison.json",
+      "source_sha256": "adcef2251c797835970972e7098651ea7d353f8f6b7b12f382de66521fa5186d",
+      "published_sha256": "adcef2251c797835970972e7098651ea7d353f8f6b7b12f382de66521fa5186d",
+      "bytes": 5681
+    },
+    {
+      "path": "experiments/runs/evolve-candidates-20261024/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-candidates-20261024/README.md",
+      "source_sha256": "04f8d079e4864975a579fc38be13b28b89b0c358cf42b59f40b18f95094c83bf",
+      "published_sha256": "04f8d079e4864975a579fc38be13b28b89b0c358cf42b59f40b18f95094c83bf",
+      "bytes": 7179
+    },
+    {
+      "path": "experiments/runs/evolve-candidates-20261024/admission/admission_rules.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-candidates-20261024/admission/admission_rules.json",
+      "source_sha256": "352edabccf4bb38bc5cb005180e2952bcd6d471d01f0099a086f58a2cb2ac3e5",
+      "published_sha256": "352edabccf4bb38bc5cb005180e2952bcd6d471d01f0099a086f58a2cb2ac3e5",
+      "bytes": 726607
+    },
+    {
+      "path": "experiments/runs/evolve-candidates-20261024/environment.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-candidates-20261024/environment.json",
+      "source_sha256": "b79577ad1aada5995c99edb003b98ddc5722abf4f150cf0f7d80e5babcdb78e0",
+      "published_sha256": "b79577ad1aada5995c99edb003b98ddc5722abf4f150cf0f7d80e5babcdb78e0",
+      "bytes": 732
+    },
+    {
+      "path": "experiments/runs/evolve-candidates-20261024/fillet/summary.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-candidates-20261024/fillet/summary.json",
+      "source_sha256": "fffa1e5db122d06cf54b167c9ba9703e23a7a80bb7a5aa9fb3a760170b0a314c",
+      "published_sha256": "fffa1e5db122d06cf54b167c9ba9703e23a7a80bb7a5aa9fb3a760170b0a314c",
+      "bytes": 1047
+    },
+    {
+      "path": "experiments/runs/evolve-candidates-20261024/plan.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-candidates-20261024/plan.json",
+      "source_sha256": "4e6db2fa7ec0a6ab4d4b5993874612ea80bc60ec9e7a07333ffe0393373978fa",
+      "published_sha256": "4e6db2fa7ec0a6ab4d4b5993874612ea80bc60ec9e7a07333ffe0393373978fa",
+      "bytes": 1257317
+    },
+    {
+      "path": "experiments/runs/evolve-candidates-20261024/plan.sha256",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-candidates-20261024/plan.sha256",
+      "source_sha256": "1e5b411e4929315716b926d7a21a6e5a5b4ad40a212d9e29b810efad18d43e5a",
+      "published_sha256": "1e5b411e4929315716b926d7a21a6e5a5b4ad40a212d9e29b810efad18d43e5a",
+      "bytes": 65
+    },
+    {
+      "path": "experiments/runs/evolve-candidates-20261024/progress.log",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-candidates-20261024/progress.log",
+      "source_sha256": "08415ec3bc5fb575baa0dff6d8e181c9a108fbd4a4ab6733bd4ac8c25cda1289",
+      "published_sha256": "08415ec3bc5fb575baa0dff6d8e181c9a108fbd4a4ab6733bd4ac8c25cda1289",
+      "bytes": 4758
+    },
+    {
+      "path": "experiments/runs/evolve-determinism-20261024/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-determinism-20261024/README.md",
+      "source_sha256": "9f65cc0d5ca10b7fbcdf15f4ce27f482bcf09f067740b7b47d0e935ea6d109b1",
+      "published_sha256": "9f65cc0d5ca10b7fbcdf15f4ce27f482bcf09f067740b7b47d0e935ea6d109b1",
+      "bytes": 4715
+    },
+    {
+      "path": "experiments/runs/evolve-determinism-20261024/analysis.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-determinism-20261024/analysis.json",
+      "source_sha256": "600c5092b0e49efc958f73e2db07f14e242548eaf580adb388565460ce6dd6c6",
+      "published_sha256": "600c5092b0e49efc958f73e2db07f14e242548eaf580adb388565460ce6dd6c6",
+      "bytes": 135042
+    },
+    {
+      "path": "experiments/runs/evolve-determinism-20261024/environment.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-determinism-20261024/environment.json",
+      "source_sha256": "bc7ddf02614999a3ba5173ad3eb118906b4343cb73be6ad76146d482a9c7c438",
+      "published_sha256": "bc7ddf02614999a3ba5173ad3eb118906b4343cb73be6ad76146d482a9c7c438",
+      "bytes": 732
+    },
+    {
+      "path": "experiments/runs/evolve-determinism-20261024/plan.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-determinism-20261024/plan.json",
+      "source_sha256": "add6bdd2b0961cd6c6c4b1ab0bed8896e34b0b83334904a2409cb802bda94677",
+      "published_sha256": "add6bdd2b0961cd6c6c4b1ab0bed8896e34b0b83334904a2409cb802bda94677",
+      "bytes": 406153
+    },
+    {
+      "path": "experiments/runs/evolve-determinism-20261024/plan.sha256",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-determinism-20261024/plan.sha256",
+      "source_sha256": "d93f0b77a365a879052ed6bebcad87770fa0efa2a24a4550f4d6d1ba18327b61",
+      "published_sha256": "d93f0b77a365a879052ed6bebcad87770fa0efa2a24a4550f4d6d1ba18327b61",
+      "bytes": 65
+    },
+    {
+      "path": "experiments/runs/evolve-determinism-20261024/progress.log",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-determinism-20261024/progress.log",
+      "source_sha256": "8deabd8da1e0cd032ad4118b8cf64567b52aa2213d16bcbc31a1959448b01a79",
+      "published_sha256": "8deabd8da1e0cd032ad4118b8cf64567b52aa2213d16bcbc31a1959448b01a79",
+      "bytes": 6022
+    },
+    {
+      "path": "experiments/runs/evolve-dynamic-20261024/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-dynamic-20261024/README.md",
+      "source_sha256": "a7ddbc778e221be152e5ab5bb5e1c87875cb041d231a708ff94027952e8f0f63",
+      "published_sha256": "a7ddbc778e221be152e5ab5bb5e1c87875cb041d231a708ff94027952e8f0f63",
+      "bytes": 3804
+    },
+    {
+      "path": "experiments/runs/evolve-dynamic-20261024/solver_cost.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-dynamic-20261024/solver_cost.json",
+      "source_sha256": "6bbd435d89120887644aeac091ed45f85c86bff70bb5639d944eb4ba664ce078",
+      "published_sha256": "6bbd435d89120887644aeac091ed45f85c86bff70bb5639d944eb4ba664ce078",
+      "bytes": 7254
+    },
+    {
+      "path": "experiments/runs/evolve-dynamic-20261024/summary.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-dynamic-20261024/summary.json",
+      "source_sha256": "95d814b6db4827e176c7004d6aa1b36fc86f8e206612e55fa27c25a6642d5263",
+      "published_sha256": "95d814b6db4827e176c7004d6aa1b36fc86f8e206612e55fa27c25a6642d5263",
+      "bytes": 10832
+    },
+    {
+      "path": "experiments/runs/evolve-dynamic-pilot-20261023/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-dynamic-pilot-20261023/README.md",
+      "source_sha256": "5b769c027781513939023b6a2dad767b5b3a68d195f12572b97351a41e82ac47",
+      "published_sha256": "5b769c027781513939023b6a2dad767b5b3a68d195f12572b97351a41e82ac47",
+      "bytes": 3538
+    },
+    {
+      "path": "experiments/runs/evolve-dynamic-pilot-20261023/pilot.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-dynamic-pilot-20261023/pilot.json",
+      "source_sha256": "d2177deb1beed54f255c658e32140f99c9c22e0fbd1b1f3ba9ead37aa6579e68",
+      "published_sha256": "d2177deb1beed54f255c658e32140f99c9c22e0fbd1b1f3ba9ead37aa6579e68",
+      "bytes": 38077
+    },
+    {
+      "path": "experiments/runs/evolve-dynamic-pilot-20261023/pilot.stdout",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-dynamic-pilot-20261023/pilot.stdout",
+      "source_sha256": "04cc63e321e665ceab21041e5ef761b51bbcf08aadaba0e2e1f3968442260f14",
+      "published_sha256": "04cc63e321e665ceab21041e5ef761b51bbcf08aadaba0e2e1f3968442260f14",
+      "bytes": 10
+    },
+    {
+      "path": "experiments/runs/evolve-exec-model-20261024/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-exec-model-20261024/README.md",
+      "source_sha256": "eb2a6fb770952fc9abfadfbbb968f9a83306abf6587d66e63bd90d0c1b72fd52",
+      "published_sha256": "eb2a6fb770952fc9abfadfbbb968f9a83306abf6587d66e63bd90d0c1b72fd52",
+      "bytes": 1806
+    },
+    {
+      "path": "experiments/runs/evolve-exec-model-20261024/exec_model.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-exec-model-20261024/exec_model.json",
+      "source_sha256": "c7fc125f52e0832c09f5003f118ac0cc851be4924c2f3ada189d904ac76c6a35",
+      "published_sha256": "c7fc125f52e0832c09f5003f118ac0cc851be4924c2f3ada189d904ac76c6a35",
+      "bytes": 1929
+    },
+    {
+      "path": "experiments/runs/evolve-policy-ext-20261024/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-policy-ext-20261024/README.md",
+      "source_sha256": "890d56eebb3f8e48772b78c3d0bed2e17bb6c444c7de4076e1652fba65033000",
+      "published_sha256": "890d56eebb3f8e48772b78c3d0bed2e17bb6c444c7de4076e1652fba65033000",
+      "bytes": 6592
+    },
+    {
+      "path": "experiments/runs/evolve-policy-ext-20261024/policy_ext.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-policy-ext-20261024/policy_ext.json",
+      "source_sha256": "b46d4a0c7c924ac8c9b198fe463268ef9da47aa88008654c8ccec3f739b2adf3",
+      "published_sha256": "b46d4a0c7c924ac8c9b198fe463268ef9da47aa88008654c8ccec3f739b2adf3",
+      "bytes": 73221
+    },
+    {
+      "path": "experiments/runs/evolve-policy-ext-20261024/power.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-policy-ext-20261024/power.json",
+      "source_sha256": "47ff00c1b22ec2a505ff1404d645a4bd15a5deefc70fd2acb11ef08cf6dd0bd2",
+      "published_sha256": "47ff00c1b22ec2a505ff1404d645a4bd15a5deefc70fd2acb11ef08cf6dd0bd2",
+      "bytes": 5553
+    },
+    {
+      "path": "experiments/runs/evolve-policy-ext-20261024/power_official.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-policy-ext-20261024/power_official.json",
+      "source_sha256": "33033f2e4d5e5b2719f1f90c7a3d6349ac246216b81f8fa55db3963211d6de4a",
+      "published_sha256": "33033f2e4d5e5b2719f1f90c7a3d6349ac246216b81f8fa55db3963211d6de4a",
+      "bytes": 3423
+    },
+    {
+      "path": "experiments/runs/evolve-repair-20261023/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair-20261023/README.md",
+      "source_sha256": "ca194576346b502f7e1634e6a893f9be355ba006bb24d31cf4ad8bf842e48a0b",
+      "published_sha256": "ca194576346b502f7e1634e6a893f9be355ba006bb24d31cf4ad8bf842e48a0b",
+      "bytes": 4720
+    },
+    {
+      "path": "experiments/runs/evolve-repair-20261023/admission/admission.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair-20261023/admission/admission.json",
+      "source_sha256": "9b75658adf158e052477f2a123dd7a74fee30df951c343b1e7b06602956c809c",
+      "published_sha256": "9b75658adf158e052477f2a123dd7a74fee30df951c343b1e7b06602956c809c",
+      "bytes": 6418
+    },
+    {
+      "path": "experiments/runs/evolve-repair-20261023/environment.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair-20261023/environment.json",
+      "source_sha256": "79593c630a65d8cb91cb68d2068e9d6827ed819e7c50ac347ddbadb328dddf9c",
+      "published_sha256": "79593c630a65d8cb91cb68d2068e9d6827ed819e7c50ac347ddbadb328dddf9c",
+      "bytes": 732
+    },
+    {
+      "path": "experiments/runs/evolve-repair-20261023/fillet/summary.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair-20261023/fillet/summary.json",
+      "source_sha256": "4d25c3f12abd4fa04b8d23e29fbab388c72cb7f698df56636517c0aa70bd1f2c",
+      "published_sha256": "4d25c3f12abd4fa04b8d23e29fbab388c72cb7f698df56636517c0aa70bd1f2c",
+      "bytes": 983
+    },
+    {
+      "path": "experiments/runs/evolve-repair-20261023/plan.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair-20261023/plan.json",
+      "source_sha256": "4db3b7c36e0abefad7061e45cc25235e232b5c05022517abdf7db66f7c07d92a",
+      "published_sha256": "4db3b7c36e0abefad7061e45cc25235e232b5c05022517abdf7db66f7c07d92a",
+      "bytes": 869649
+    },
+    {
+      "path": "experiments/runs/evolve-repair-20261023/plan.sha256",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair-20261023/plan.sha256",
+      "source_sha256": "13e7ad1205c6423d3bd8eb4b8f80206077b5fa5de5676686f4225ad80a3c9601",
+      "published_sha256": "13e7ad1205c6423d3bd8eb4b8f80206077b5fa5de5676686f4225ad80a3c9601",
+      "bytes": 65
+    },
+    {
+      "path": "experiments/runs/evolve-repair-20261023/progress.log",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair-20261023/progress.log",
+      "source_sha256": "354595c4ff7317fe9d3da875c59791bdca61bf3516628560a73fb7b5b6750ab7",
+      "published_sha256": "354595c4ff7317fe9d3da875c59791bdca61bf3516628560a73fb7b5b6750ab7",
+      "bytes": 4864
+    },
+    {
+      "path": "experiments/runs/evolve-repair-20261023/route_probe.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair-20261023/route_probe.json",
+      "source_sha256": "011305a24d59d60f67e9579040a9838cc2fe21c30b00c9ff48a5daae816ba971",
+      "published_sha256": "011305a24d59d60f67e9579040a9838cc2fe21c30b00c9ff48a5daae816ba971",
+      "bytes": 9134
+    },
+    {
+      "path": "experiments/runs/evolve-repair2-20261024/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair2-20261024/README.md",
+      "source_sha256": "6c4ee73ef33fbe3acab543b2d6d7ad7bf6c16a8d016d255482ad588021ad0953",
+      "published_sha256": "6c4ee73ef33fbe3acab543b2d6d7ad7bf6c16a8d016d255482ad588021ad0953",
+      "bytes": 3705
+    },
+    {
+      "path": "experiments/runs/evolve-repair2-20261024/admission/admission.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair2-20261024/admission/admission.json",
+      "source_sha256": "f8661d2e907342c698f565cb1d45a2afc8f53d82c2ab1d5244bcbe3951bdd63d",
+      "published_sha256": "f8661d2e907342c698f565cb1d45a2afc8f53d82c2ab1d5244bcbe3951bdd63d",
+      "bytes": 7902
+    },
+    {
+      "path": "experiments/runs/evolve-repair2-20261024/environment.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair2-20261024/environment.json",
+      "source_sha256": "4387fd9ec851bcb0d60190a701c0652b9dfff6481ff167326b3cc5db6a4c9640",
+      "published_sha256": "4387fd9ec851bcb0d60190a701c0652b9dfff6481ff167326b3cc5db6a4c9640",
+      "bytes": 732
+    },
+    {
+      "path": "experiments/runs/evolve-repair2-20261024/fillet/summary.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair2-20261024/fillet/summary.json",
+      "source_sha256": "efb2c42da7fa6fd374419b6c323e04139aa65daaaa3de29079bb8e4daed763bb",
+      "published_sha256": "efb2c42da7fa6fd374419b6c323e04139aa65daaaa3de29079bb8e4daed763bb",
+      "bytes": 753
+    },
+    {
+      "path": "experiments/runs/evolve-repair2-20261024/plan.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair2-20261024/plan.json",
+      "source_sha256": "12b0dbd8a28031475a2658862bff67705fb7c18eb30d095fddcbd2928404f161",
+      "published_sha256": "12b0dbd8a28031475a2658862bff67705fb7c18eb30d095fddcbd2928404f161",
+      "bytes": 875503
+    },
+    {
+      "path": "experiments/runs/evolve-repair2-20261024/plan.sha256",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair2-20261024/plan.sha256",
+      "source_sha256": "fd802138c70c2870c651da3e091618c4bfd072c3cb9ce69fecf1d1a5029d40de",
+      "published_sha256": "fd802138c70c2870c651da3e091618c4bfd072c3cb9ce69fecf1d1a5029d40de",
+      "bytes": 65
+    },
+    {
+      "path": "experiments/runs/evolve-repair2-20261024/policy_combined_official.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair2-20261024/policy_combined_official.json",
+      "source_sha256": "7f89b033bd1f4012b85d306e5f6fc7d457f00190a616d5b58c286cfcb4716b08",
+      "published_sha256": "7f89b033bd1f4012b85d306e5f6fc7d457f00190a616d5b58c286cfcb4716b08",
+      "bytes": 8049
+    },
+    {
+      "path": "experiments/runs/evolve-repair2-20261024/policy_combined_strict.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair2-20261024/policy_combined_strict.json",
+      "source_sha256": "cff06f3db0023767509f85a752cfb235e7426eb7acb2701ae058fa977bee5d9f",
+      "published_sha256": "cff06f3db0023767509f85a752cfb235e7426eb7acb2701ae058fa977bee5d9f",
+      "bytes": 7417
+    },
+    {
+      "path": "experiments/runs/evolve-repair2-20261024/progress.log",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-repair2-20261024/progress.log",
+      "source_sha256": "e01f366f2a1bbae16cd17edb06d96d4743dfe1f3209f2c9af98dbbed08b8dc7f",
+      "published_sha256": "e01f366f2a1bbae16cd17edb06d96d4743dfe1f3209f2c9af98dbbed08b8dc7f",
+      "bytes": 6956
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/README.md",
+      "source_sha256": "f766f8ca63932f5ad74002ac73be772edc6221e4301f5389481a43c74786261f",
+      "published_sha256": "f766f8ca63932f5ad74002ac73be772edc6221e4301f5389481a43c74786261f",
+      "bytes": 4030
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__dense__k2__s7.json",
+      "source_sha256": "7242cdfd111b3b7b096dae600760a8b894643da236e84541d723b6bebfaeae86",
+      "published_sha256": "7242cdfd111b3b7b096dae600760a8b894643da236e84541d723b6bebfaeae86",
+      "bytes": 10841
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__dense__k4__s7.json",
+      "source_sha256": "4b982efc7a50d56bb559411b0981535d4f70a2b41671e42acfd7aa900da3437b",
+      "published_sha256": "4b982efc7a50d56bb559411b0981535d4f70a2b41671e42acfd7aa900da3437b",
+      "bytes": 10871
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__medium__k2__s7.json",
+      "source_sha256": "c8703a1c37ef5343830b3fc985be8c8e725da652723b72b2a1a072538c3c5cf3",
+      "published_sha256": "c8703a1c37ef5343830b3fc985be8c8e725da652723b72b2a1a072538c3c5cf3",
+      "bytes": 10673
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__medium__k4__s7.json",
+      "source_sha256": "d38d5e07f2b57c1ace306e92a193ea4cef54e3038d4b990783c97b12b09472ec",
+      "published_sha256": "d38d5e07f2b57c1ace306e92a193ea4cef54e3038d4b990783c97b12b09472ec",
+      "bytes": 10687
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__sparse__k2__s7.json",
+      "source_sha256": "e149464d1ee5a42510cb25c188b0c04ef2812534eb09668f5af7812f9ec47a7e",
+      "published_sha256": "e149464d1ee5a42510cb25c188b0c04ef2812534eb09668f5af7812f9ec47a7e",
+      "bytes": 9914
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_105__sparse__k4__s7.json",
+      "source_sha256": "1fd1c92dab493e08bfe1db1aaa018457400f933220f661b4ad6d83e081ed01ab",
+      "published_sha256": "1fd1c92dab493e08bfe1db1aaa018457400f933220f661b4ad6d83e081ed01ab",
+      "bytes": 9919
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__dense__k2__s7.json",
+      "source_sha256": "7a8e513ca6f4bf043a1270502301c31d25ef4b819061a0f8db706d578db4acfb",
+      "published_sha256": "7a8e513ca6f4bf043a1270502301c31d25ef4b819061a0f8db706d578db4acfb",
+      "bytes": 10995
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__dense__k4__s7.json",
+      "source_sha256": "fd0ff0872f725a4b86b72c83a7e9ef05cf25bf66b1de6dd04ffdbab4363d3134",
+      "published_sha256": "fd0ff0872f725a4b86b72c83a7e9ef05cf25bf66b1de6dd04ffdbab4363d3134",
+      "bytes": 11058
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__medium__k2__s7.json",
+      "source_sha256": "523c2db89280f3ad2b0633363528999026986b22744585ff49b27b5a826a2945",
+      "published_sha256": "523c2db89280f3ad2b0633363528999026986b22744585ff49b27b5a826a2945",
+      "bytes": 10592
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__medium__k4__s7.json",
+      "source_sha256": "3494464b08ea8b4fdf30db7fdb0df256b5be9e208d7b1048aeaa61ef79da8843",
+      "published_sha256": "3494464b08ea8b4fdf30db7fdb0df256b5be9e208d7b1048aeaa61ef79da8843",
+      "bytes": 10114
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__sparse__k2__s7.json",
+      "source_sha256": "b6d8f775864f54e0bba6d06fc52b96d874c937b5402afdd95fdb0df2ec0ec6a9",
+      "published_sha256": "b6d8f775864f54e0bba6d06fc52b96d874c937b5402afdd95fdb0df2ec0ec6a9",
+      "bytes": 9903
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_10__sparse__k4__s7.json",
+      "source_sha256": "a1aaf3ecef2d995afbbae06f9c7b5a951103e120f8c62096846df1b7dcba1584",
+      "published_sha256": "a1aaf3ecef2d995afbbae06f9c7b5a951103e120f8c62096846df1b7dcba1584",
+      "bytes": 9893
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__dense__k2__s7.json",
+      "source_sha256": "2c8f68f3b3e6f650f1347eb33f1fbbc46c810991ceba532ae5410f249a13de1f",
+      "published_sha256": "2c8f68f3b3e6f650f1347eb33f1fbbc46c810991ceba532ae5410f249a13de1f",
+      "bytes": 10874
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__dense__k4__s7.json",
+      "source_sha256": "7eec2cd550557b0bf0594ec57305821d929398ff20834b3a4a21b7eb5a36de48",
+      "published_sha256": "7eec2cd550557b0bf0594ec57305821d929398ff20834b3a4a21b7eb5a36de48",
+      "bytes": 10907
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__medium__k2__s7.json",
+      "source_sha256": "7926eb724ba8274591e5126a2a05ad314835bd7f304eacd5eca607a45c3daa7e",
+      "published_sha256": "7926eb724ba8274591e5126a2a05ad314835bd7f304eacd5eca607a45c3daa7e",
+      "bytes": 10621
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__medium__k4__s7.json",
+      "source_sha256": "bbc732d8bf2efbd2a2451379f9e1ae8e3d14c98d480d4a72c96e1aae50c82c9e",
+      "published_sha256": "bbc732d8bf2efbd2a2451379f9e1ae8e3d14c98d480d4a72c96e1aae50c82c9e",
+      "bytes": 10636
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__sparse__k2__s7.json",
+      "source_sha256": "cc3169f620e1cd52c00f58abe882277961c7d417a018ae01d9704afa648c41c3",
+      "published_sha256": "cc3169f620e1cd52c00f58abe882277961c7d417a018ae01d9704afa648c41c3",
+      "bytes": 9895
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_110__sparse__k4__s7.json",
+      "source_sha256": "e0244ff70ef90fa828490fd7ff68eea3c8a27e232822154ea8aa62b3066b3034",
+      "published_sha256": "e0244ff70ef90fa828490fd7ff68eea3c8a27e232822154ea8aa62b3066b3034",
+      "bytes": 9899
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__dense__k2__s7.json",
+      "source_sha256": "61eb6d143f3316183c561222dda887d44f9ae917451efce0564e2a0c88e5e5e5",
+      "published_sha256": "61eb6d143f3316183c561222dda887d44f9ae917451efce0564e2a0c88e5e5e5",
+      "bytes": 10761
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__dense__k4__s7.json",
+      "source_sha256": "7a67af6aae94aa53a71e7b4d399a1d1fa1778b0bc89e0b54ae45958e40bc7c5e",
+      "published_sha256": "7a67af6aae94aa53a71e7b4d399a1d1fa1778b0bc89e0b54ae45958e40bc7c5e",
+      "bytes": 10759
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__medium__k2__s7.json",
+      "source_sha256": "46877438078996c9410045920743c0c3fbbc20b8247c4c8fe2a02e0166354a2d",
+      "published_sha256": "46877438078996c9410045920743c0c3fbbc20b8247c4c8fe2a02e0166354a2d",
+      "bytes": 10594
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__medium__k4__s7.json",
+      "source_sha256": "426ac2d2d170a44148b22c5b7b9e1f7cc3bc23526454246d01b1a3bede09e34b",
+      "published_sha256": "426ac2d2d170a44148b22c5b7b9e1f7cc3bc23526454246d01b1a3bede09e34b",
+      "bytes": 10607
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__sparse__k2__s7.json",
+      "source_sha256": "239c0ee3a9b9602cf241860a4984e36385115b02b400e983ee0a3d8f97985710",
+      "published_sha256": "239c0ee3a9b9602cf241860a4984e36385115b02b400e983ee0a3d8f97985710",
+      "bytes": 9882
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_117__sparse__k4__s7.json",
+      "source_sha256": "da6728d8fb299f763dcce890b9a74fdc1e7498525b47d3516ff069c2ace8baa1",
+      "published_sha256": "da6728d8fb299f763dcce890b9a74fdc1e7498525b47d3516ff069c2ace8baa1",
+      "bytes": 9884
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__dense__k2__s7.json",
+      "source_sha256": "bd2b93be207af5b2f28a1b0d91bff3a880cf665469f2e87ac513fce866c32dc9",
+      "published_sha256": "bd2b93be207af5b2f28a1b0d91bff3a880cf665469f2e87ac513fce866c32dc9",
+      "bytes": 10899
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__dense__k4__s7.json",
+      "source_sha256": "092f7f0b253386a97fb887477b78a1bd5996665705cde0c35707e11022b97465",
+      "published_sha256": "092f7f0b253386a97fb887477b78a1bd5996665705cde0c35707e11022b97465",
+      "bytes": 10765
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__medium__k2__s7.json",
+      "source_sha256": "947fd7083444eac7ae2b21a0f862199fe8ffdef77af85ad43a07de1f1d1d4730",
+      "published_sha256": "947fd7083444eac7ae2b21a0f862199fe8ffdef77af85ad43a07de1f1d1d4730",
+      "bytes": 10035
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__medium__k4__s7.json",
+      "source_sha256": "038ed74e9280d7dec0499b71b247ee9fd34e1ecb4448807e350bef43561b28c0",
+      "published_sha256": "038ed74e9280d7dec0499b71b247ee9fd34e1ecb4448807e350bef43561b28c0",
+      "bytes": 10023
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__sparse__k2__s7.json",
+      "source_sha256": "ffe91f1f6d907c0665bae785005d31334bbb8163d9fbb0850485cc5a78ababd0",
+      "published_sha256": "ffe91f1f6d907c0665bae785005d31334bbb8163d9fbb0850485cc5a78ababd0",
+      "bytes": 9886
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_127__sparse__k4__s7.json",
+      "source_sha256": "c8addfdf99fe52ef56d94685b3e6c38ed1b9a76fc8149f1c98b6e26ba1d6dd32",
+      "published_sha256": "c8addfdf99fe52ef56d94685b3e6c38ed1b9a76fc8149f1c98b6e26ba1d6dd32",
+      "bytes": 9866
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__dense__k2__s7.json",
+      "source_sha256": "f1fbc79ee6bf5d3f6d621353c31b928b942e2fe71d11a531df6b0f7790a823d3",
+      "published_sha256": "f1fbc79ee6bf5d3f6d621353c31b928b942e2fe71d11a531df6b0f7790a823d3",
+      "bytes": 10715
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__dense__k4__s7.json",
+      "source_sha256": "3a197d865c8aab2e9e9f3a7630a4fb36824ae027d524e06cfe9a213c025260aa",
+      "published_sha256": "3a197d865c8aab2e9e9f3a7630a4fb36824ae027d524e06cfe9a213c025260aa",
+      "bytes": 10714
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__medium__k2__s7.json",
+      "source_sha256": "45fe0dfdf9181f18b9c9af764e00134cc64294f75014a2deb28a21342066ff4a",
+      "published_sha256": "45fe0dfdf9181f18b9c9af764e00134cc64294f75014a2deb28a21342066ff4a",
+      "bytes": 10681
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__medium__k4__s7.json",
+      "source_sha256": "6fc85fba3c9b8926c227a8d341fd11579df37f6797d4a3fe38da977a2f2e3e77",
+      "published_sha256": "6fc85fba3c9b8926c227a8d341fd11579df37f6797d4a3fe38da977a2f2e3e77",
+      "bytes": 10696
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__sparse__k2__s7.json",
+      "source_sha256": "e609ba56f0874fda42e273453c0197f3295d0d63920b9a7288826ac6950fe4a3",
+      "published_sha256": "e609ba56f0874fda42e273453c0197f3295d0d63920b9a7288826ac6950fe4a3",
+      "bytes": 9880
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_138__sparse__k4__s7.json",
+      "source_sha256": "4e863303d467ea88fb6aeb2890cf93680cc2037944d076eac201134419ea8c30",
+      "published_sha256": "4e863303d467ea88fb6aeb2890cf93680cc2037944d076eac201134419ea8c30",
+      "bytes": 9884
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__dense__k2__s7.json",
+      "source_sha256": "f04e9ea44ba832261fbfda676e4ba67c6a918220a2c9fb20f9a77e531b6a3138",
+      "published_sha256": "f04e9ea44ba832261fbfda676e4ba67c6a918220a2c9fb20f9a77e531b6a3138",
+      "bytes": 10949
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__dense__k4__s7.json",
+      "source_sha256": "db3671470f41c503a75f443ec0f6c65fb457ead39bad1ae1e4999a5c99e90199",
+      "published_sha256": "db3671470f41c503a75f443ec0f6c65fb457ead39bad1ae1e4999a5c99e90199",
+      "bytes": 10940
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__medium__k2__s7.json",
+      "source_sha256": "d29f69d1a0057c5d342d87601ae72183ae182f672ea4e09b871a0ee57243d567",
+      "published_sha256": "d29f69d1a0057c5d342d87601ae72183ae182f672ea4e09b871a0ee57243d567",
+      "bytes": 10749
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__medium__k4__s7.json",
+      "source_sha256": "db33c2f2d89b4e0ca3b7c752808fb0392c18ebdb53ce5d8d2684f0f8b245aedd",
+      "published_sha256": "db33c2f2d89b4e0ca3b7c752808fb0392c18ebdb53ce5d8d2684f0f8b245aedd",
+      "bytes": 10767
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__sparse__k2__s7.json",
+      "source_sha256": "b753a0e017c40a69c69cc2143e5e1de90e6ed1dd0463b4252182117cb3c5781d",
+      "published_sha256": "b753a0e017c40a69c69cc2143e5e1de90e6ed1dd0463b4252182117cb3c5781d",
+      "bytes": 10009
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_149__sparse__k4__s7.json",
+      "source_sha256": "14964f7e44c3b223581d66545c364b847a380e8848fd49cf901deda545befc51",
+      "published_sha256": "14964f7e44c3b223581d66545c364b847a380e8848fd49cf901deda545befc51",
+      "bytes": 10018
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__dense__k2__s7.json",
+      "source_sha256": "09bf5241b35dc7445ba817ec811156e31e4e8c9634bbbd72e96978209727ce91",
+      "published_sha256": "09bf5241b35dc7445ba817ec811156e31e4e8c9634bbbd72e96978209727ce91",
+      "bytes": 10943
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__dense__k4__s7.json",
+      "source_sha256": "1360e564f0e7c99e1f29ccd1426c1935a2cc339f55bbe8040cdad580dca02406",
+      "published_sha256": "1360e564f0e7c99e1f29ccd1426c1935a2cc339f55bbe8040cdad580dca02406",
+      "bytes": 10944
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__medium__k2__s7.json",
+      "source_sha256": "26e7c5c4d8023ce2c3697b1127bc064002d85aff223b8eff1efe6a5e648262ac",
+      "published_sha256": "26e7c5c4d8023ce2c3697b1127bc064002d85aff223b8eff1efe6a5e648262ac",
+      "bytes": 10504
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__medium__k4__s7.json",
+      "source_sha256": "150efb869757776fdb49cf22762121217c807b2a51553dbd45142d0d5752636f",
+      "published_sha256": "150efb869757776fdb49cf22762121217c807b2a51553dbd45142d0d5752636f",
+      "bytes": 10492
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__sparse__k2__s7.json",
+      "source_sha256": "d35e05d523473ef3e6f2cd80246bcea4825f8d2674a8266cd568c18a4bad9d15",
+      "published_sha256": "d35e05d523473ef3e6f2cd80246bcea4825f8d2674a8266cd568c18a4bad9d15",
+      "bytes": 9916
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_14__sparse__k4__s7.json",
+      "source_sha256": "caf231afe4dae66df7c7b1160babf25a1792c2dfbb51e3d8cfb75c0f58a25e72",
+      "published_sha256": "caf231afe4dae66df7c7b1160babf25a1792c2dfbb51e3d8cfb75c0f58a25e72",
+      "bytes": 9920
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__dense__k2__s7.json",
+      "source_sha256": "aebc330224bdbaf175da1465edeed99fc3c2e7704b439f737ad867d60a64edee",
+      "published_sha256": "aebc330224bdbaf175da1465edeed99fc3c2e7704b439f737ad867d60a64edee",
+      "bytes": 10988
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__dense__k4__s7.json",
+      "source_sha256": "62ea3dbd4a88148c02a60edf0d29c1ac4ee4daa51b39e97ef52ebdef3edbf624",
+      "published_sha256": "62ea3dbd4a88148c02a60edf0d29c1ac4ee4daa51b39e97ef52ebdef3edbf624",
+      "bytes": 10814
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__medium__k2__s7.json",
+      "source_sha256": "fdb5d1de5ce803cad764eaabe65daec02be9ba237725960fd7c0d991d3858433",
+      "published_sha256": "fdb5d1de5ce803cad764eaabe65daec02be9ba237725960fd7c0d991d3858433",
+      "bytes": 10823
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__medium__k4__s7.json",
+      "source_sha256": "91dca05e8a776ad2be91b032ad4ad9a9eea12dd8c3b23c81eb75785a90fe9024",
+      "published_sha256": "91dca05e8a776ad2be91b032ad4ad9a9eea12dd8c3b23c81eb75785a90fe9024",
+      "bytes": 10654
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__sparse__k2__s7.json",
+      "source_sha256": "0c0a3a39c3388d31789105ed642f1749f02b07a17a56e4698c9925df95a177b5",
+      "published_sha256": "0c0a3a39c3388d31789105ed642f1749f02b07a17a56e4698c9925df95a177b5",
+      "bytes": 9988
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_160__sparse__k4__s7.json",
+      "source_sha256": "6fb3315d13a078d8ceae7cc105e3da5e8a5a1a36a63bb9e64da24421b0f8cbee",
+      "published_sha256": "6fb3315d13a078d8ceae7cc105e3da5e8a5a1a36a63bb9e64da24421b0f8cbee",
+      "bytes": 9966
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__dense__k2__s7.json",
+      "source_sha256": "eb5882772d4758e6d1178e0e2e73cf2d72760ed3619cfd448e48c1abdf2e3037",
+      "published_sha256": "eb5882772d4758e6d1178e0e2e73cf2d72760ed3619cfd448e48c1abdf2e3037",
+      "bytes": 10848
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__dense__k4__s7.json",
+      "source_sha256": "417947c047db350a23b7936bf8d3c5cd326537289a15ea61add6cba85e902aba",
+      "published_sha256": "417947c047db350a23b7936bf8d3c5cd326537289a15ea61add6cba85e902aba",
+      "bytes": 10985
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__medium__k2__s7.json",
+      "source_sha256": "c1155060bd4a19011ce6308bd95f9746eec85714ef757ff61fcffa8be6d4db7b",
+      "published_sha256": "c1155060bd4a19011ce6308bd95f9746eec85714ef757ff61fcffa8be6d4db7b",
+      "bytes": 10711
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__medium__k4__s7.json",
+      "source_sha256": "9db4416a67980386c68e6cd3090851aec2adb9954d0fe78c95f0a5840af534c4",
+      "published_sha256": "9db4416a67980386c68e6cd3090851aec2adb9954d0fe78c95f0a5840af534c4",
+      "bytes": 10414
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__sparse__k2__s7.json",
+      "source_sha256": "8b628eb95e27939e330c8dda384c4d923939c2d96d11dacb05584bdd85d9aa1d",
+      "published_sha256": "8b628eb95e27939e330c8dda384c4d923939c2d96d11dacb05584bdd85d9aa1d",
+      "bytes": 9924
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_166__sparse__k4__s7.json",
+      "source_sha256": "389367d38fcc1308a95fc128082aab01756e623d119515968bab2cfba7cc7326",
+      "published_sha256": "389367d38fcc1308a95fc128082aab01756e623d119515968bab2cfba7cc7326",
+      "bytes": 9935
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__dense__k2__s7.json",
+      "source_sha256": "146dad6d96d12ca7e2579c496b78891037f8a08fdfc104503b13799460d8cace",
+      "published_sha256": "146dad6d96d12ca7e2579c496b78891037f8a08fdfc104503b13799460d8cace",
+      "bytes": 10675
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__dense__k4__s7.json",
+      "source_sha256": "a4e3541cee0ecfad9d767976c5b31b41035394b7e9f15497e79a4bd9eae15ecd",
+      "published_sha256": "a4e3541cee0ecfad9d767976c5b31b41035394b7e9f15497e79a4bd9eae15ecd",
+      "bytes": 10673
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__medium__k2__s7.json",
+      "source_sha256": "ff48f1e57054ba1e522cb65de9ee0cec7373fb2057eaa70f038fa07f93f5216f",
+      "published_sha256": "ff48f1e57054ba1e522cb65de9ee0cec7373fb2057eaa70f038fa07f93f5216f",
+      "bytes": 10799
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__medium__k4__s7.json",
+      "source_sha256": "91811721bd68b7ace5ea261f6f5ae2d55988c46033ef01ef06af7cec1114d483",
+      "published_sha256": "91811721bd68b7ace5ea261f6f5ae2d55988c46033ef01ef06af7cec1114d483",
+      "bytes": 10811
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__sparse__k2__s7.json",
+      "source_sha256": "6bd64b4dd40da9d977b9e2f61f7b514dafba8abc586a310d9a2b9314ff084da2",
+      "published_sha256": "6bd64b4dd40da9d977b9e2f61f7b514dafba8abc586a310d9a2b9314ff084da2",
+      "bytes": 10015
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_178__sparse__k4__s7.json",
+      "source_sha256": "35f4ca152795a403f62f723089bc686062471ab603fae70bd0bf4ab28e905057",
+      "published_sha256": "35f4ca152795a403f62f723089bc686062471ab603fae70bd0bf4ab28e905057",
+      "bytes": 10026
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__dense__k2__s7.json",
+      "source_sha256": "7a2d91a360278e390222a60d0c35a305ac0e288d31789418aa7186af353d9a7a",
+      "published_sha256": "7a2d91a360278e390222a60d0c35a305ac0e288d31789418aa7186af353d9a7a",
+      "bytes": 10734
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__dense__k4__s7.json",
+      "source_sha256": "da0e39101b599452e2611a87bc5c337694ed3de8903a2f8e6599cc38457b51e2",
+      "published_sha256": "da0e39101b599452e2611a87bc5c337694ed3de8903a2f8e6599cc38457b51e2",
+      "bytes": 10735
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__medium__k2__s7.json",
+      "source_sha256": "e0afbec5816de56a4cd09388cad4632a845a3c9385f0d52f908faef22acdab0f",
+      "published_sha256": "e0afbec5816de56a4cd09388cad4632a845a3c9385f0d52f908faef22acdab0f",
+      "bytes": 10383
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__medium__k4__s7.json",
+      "source_sha256": "485310e953638a4cc19b66f45b565ecf7c6c617d283707a6e311df0b8392511a",
+      "published_sha256": "485310e953638a4cc19b66f45b565ecf7c6c617d283707a6e311df0b8392511a",
+      "bytes": 10319
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__sparse__k2__s7.json",
+      "source_sha256": "8706088a2adef8bfed1a7500148e0e246fb0933c4426052e078b2f7da9458347",
+      "published_sha256": "8706088a2adef8bfed1a7500148e0e246fb0933c4426052e078b2f7da9458347",
+      "bytes": 9864
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_19__sparse__k4__s7.json",
+      "source_sha256": "ace723e198610b83eb154d92c7bfa451ba5123938095be6ad64153b36c8a5d04",
+      "published_sha256": "ace723e198610b83eb154d92c7bfa451ba5123938095be6ad64153b36c8a5d04",
+      "bytes": 9864
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__dense__k2__s7.json",
+      "source_sha256": "9ced6646a8c9eb7118690fb89b4e3849ff9d9a081df878ee0a6c17e14a87a974",
+      "published_sha256": "9ced6646a8c9eb7118690fb89b4e3849ff9d9a081df878ee0a6c17e14a87a974",
+      "bytes": 10868
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__dense__k4__s7.json",
+      "source_sha256": "319213c38b56ff3b69c5329b9a7dd4a897bdf1d36a76f16cd370e2bf736ab354",
+      "published_sha256": "319213c38b56ff3b69c5329b9a7dd4a897bdf1d36a76f16cd370e2bf736ab354",
+      "bytes": 10790
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__medium__k2__s7.json",
+      "source_sha256": "8a88d1b4d11786656cb209fcd16058cfe1aa479f36f2dbf454f255e6d37e18c9",
+      "published_sha256": "8a88d1b4d11786656cb209fcd16058cfe1aa479f36f2dbf454f255e6d37e18c9",
+      "bytes": 10795
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__medium__k4__s7.json",
+      "source_sha256": "8071662217507bbfcf0642aeeb0fdc148e62c92e7445ba62b1d6e462b5de5e54",
+      "published_sha256": "8071662217507bbfcf0642aeeb0fdc148e62c92e7445ba62b1d6e462b5de5e54",
+      "bytes": 10718
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__sparse__k2__s7.json",
+      "source_sha256": "cf006ac288641b54e508e46974cef2801a106a2791eb71f7a3919c3636c61594",
+      "published_sha256": "cf006ac288641b54e508e46974cef2801a106a2791eb71f7a3919c3636c61594",
+      "bytes": 9912
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_1__sparse__k4__s7.json",
+      "source_sha256": "1b2ec56586a47d97d5eb0563a34be4086f5e8aaa4be48c3a39c1b5f6061cb4b0",
+      "published_sha256": "1b2ec56586a47d97d5eb0563a34be4086f5e8aaa4be48c3a39c1b5f6061cb4b0",
+      "bytes": 9921
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__dense__k2__s7.json",
+      "source_sha256": "6301c5923a183762aa6652f3cc78c1e7ff26c9ad1bcc82a4d0d73dbeb070c5fd",
+      "published_sha256": "6301c5923a183762aa6652f3cc78c1e7ff26c9ad1bcc82a4d0d73dbeb070c5fd",
+      "bytes": 10880
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__dense__k4__s7.json",
+      "source_sha256": "a4613d6d8daae18973cb5a347a639f66726d2aa65e29d01806581acfe70e0724",
+      "published_sha256": "a4613d6d8daae18973cb5a347a639f66726d2aa65e29d01806581acfe70e0724",
+      "bytes": 10892
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__medium__k2__s7.json",
+      "source_sha256": "f1cee535ede41a9b8bf89d1fdb50a076f92a4729d4fbf26dc0ec6c590eeec36c",
+      "published_sha256": "f1cee535ede41a9b8bf89d1fdb50a076f92a4729d4fbf26dc0ec6c590eeec36c",
+      "bytes": 10638
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__medium__k4__s7.json",
+      "source_sha256": "107e70d798cfd5b20752b7220d52185f10e687dfb27cf98e026f5d2e35ae9169",
+      "published_sha256": "107e70d798cfd5b20752b7220d52185f10e687dfb27cf98e026f5d2e35ae9169",
+      "bytes": 10559
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__sparse__k2__s7.json",
+      "source_sha256": "e59e469c71c3b02255bb19817dd3f894773cada30575e0fa415c3e33ce1a4152",
+      "published_sha256": "e59e469c71c3b02255bb19817dd3f894773cada30575e0fa415c3e33ce1a4152",
+      "bytes": 9924
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_23__sparse__k4__s7.json",
+      "source_sha256": "44547326604a09cd3923ccfefdb35c264ab217316dc4fa2ee2c0774e3e4bdcba",
+      "published_sha256": "44547326604a09cd3923ccfefdb35c264ab217316dc4fa2ee2c0774e3e4bdcba",
+      "bytes": 9927
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__dense__k2__s7.json",
+      "source_sha256": "dec7cf4f0b63c2c0396ae17e3c2c7ff25593388377b6afcfa5092aae7528b5af",
+      "published_sha256": "dec7cf4f0b63c2c0396ae17e3c2c7ff25593388377b6afcfa5092aae7528b5af",
+      "bytes": 11027
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__dense__k4__s7.json",
+      "source_sha256": "4561d443b611681b3be5497c9ec2dc26d27b68017d4d9b013c9262dc6efecd2b",
+      "published_sha256": "4561d443b611681b3be5497c9ec2dc26d27b68017d4d9b013c9262dc6efecd2b",
+      "bytes": 11049
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__medium__k2__s7.json",
+      "source_sha256": "657a195a0588e5b600e42d0dc5d496454d5857c9344e7ef2fe27d2c23f3ac2d6",
+      "published_sha256": "657a195a0588e5b600e42d0dc5d496454d5857c9344e7ef2fe27d2c23f3ac2d6",
+      "bytes": 10724
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__medium__k4__s7.json",
+      "source_sha256": "8c961b42b553d27ad4579b363102d45c8053ee52bf475238bb9e78d5bfcebefe",
+      "published_sha256": "8c961b42b553d27ad4579b363102d45c8053ee52bf475238bb9e78d5bfcebefe",
+      "bytes": 10793
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__sparse__k2__s7.json",
+      "source_sha256": "cd04bca92359eaaa761fc56c46772277d51d461932ec1f7e782477b306c32ca6",
+      "published_sha256": "cd04bca92359eaaa761fc56c46772277d51d461932ec1f7e782477b306c32ca6",
+      "bytes": 9937
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_28__sparse__k4__s7.json",
+      "source_sha256": "f8d08a5fb766020481ff3317b4b58bf20d2a6399f135d9185644e4c063774b94",
+      "published_sha256": "f8d08a5fb766020481ff3317b4b58bf20d2a6399f135d9185644e4c063774b94",
+      "bytes": 9964
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__dense__k2__s7.json",
+      "source_sha256": "39930120ab81999db4cef04f93fa8981684b9b64e764c1c870b696f5879fd715",
+      "published_sha256": "39930120ab81999db4cef04f93fa8981684b9b64e764c1c870b696f5879fd715",
+      "bytes": 11149
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__dense__k4__s7.json",
+      "source_sha256": "b1bc2f428716bee9c31d193443140b7c3a3d36e6f5f205081d5df7b336284e51",
+      "published_sha256": "b1bc2f428716bee9c31d193443140b7c3a3d36e6f5f205081d5df7b336284e51",
+      "bytes": 11133
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__medium__k2__s7.json",
+      "source_sha256": "9800495a7f45cf085030a82c8ef91d8371819605a15972e32e333646025f304f",
+      "published_sha256": "9800495a7f45cf085030a82c8ef91d8371819605a15972e32e333646025f304f",
+      "bytes": 10497
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__medium__k4__s7.json",
+      "source_sha256": "e9cb744d0516b773104e8e85b479ade2d6091a25a8282304326139a792e02f71",
+      "published_sha256": "e9cb744d0516b773104e8e85b479ade2d6091a25a8282304326139a792e02f71",
+      "bytes": 10118
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__sparse__k2__s7.json",
+      "source_sha256": "56f514732c93b6d6efe87e7e4b2fb3865c3f636d7d88c0b370e411cd65b53665",
+      "published_sha256": "56f514732c93b6d6efe87e7e4b2fb3865c3f636d7d88c0b370e411cd65b53665",
+      "bytes": 9917
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_32__sparse__k4__s7.json",
+      "source_sha256": "be53b37953fd1b956539673c608d5d18a3f0261a407bfa620f9d44d5edd2cbac",
+      "published_sha256": "be53b37953fd1b956539673c608d5d18a3f0261a407bfa620f9d44d5edd2cbac",
+      "bytes": 9931
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__dense__k2__s7.json",
+      "source_sha256": "e3f5ab206f2f7c1c664cd8f576fe38759d61d2501d64f38e967a5da039e398be",
+      "published_sha256": "e3f5ab206f2f7c1c664cd8f576fe38759d61d2501d64f38e967a5da039e398be",
+      "bytes": 10875
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__dense__k4__s7.json",
+      "source_sha256": "58ad440cd45abb38dda7f24580c89e7adc8020342ca86db3aaf84fefc1469af4",
+      "published_sha256": "58ad440cd45abb38dda7f24580c89e7adc8020342ca86db3aaf84fefc1469af4",
+      "bytes": 10931
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__medium__k2__s7.json",
+      "source_sha256": "18114fe575888ac52ed3133271ffc75be68ad19e6a25dd92accf8825c719a187",
+      "published_sha256": "18114fe575888ac52ed3133271ffc75be68ad19e6a25dd92accf8825c719a187",
+      "bytes": 10643
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__medium__k4__s7.json",
+      "source_sha256": "d4bd855c85f8badd7a8a3ab67cf525c6ad41e912689bc892ea878b81d186bba1",
+      "published_sha256": "d4bd855c85f8badd7a8a3ab67cf525c6ad41e912689bc892ea878b81d186bba1",
+      "bytes": 10233
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__sparse__k2__s7.json",
+      "source_sha256": "ba7482dc375450bf14cb7cb627009a2c6fc0d2ad8ea541d100695797b7d5f1d5",
+      "published_sha256": "ba7482dc375450bf14cb7cb627009a2c6fc0d2ad8ea541d100695797b7d5f1d5",
+      "bytes": 9896
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_37__sparse__k4__s7.json",
+      "source_sha256": "c439248666c1bd5ef039cd4a4ca96590535ceb1be6d057276b5231087016c7b4",
+      "published_sha256": "c439248666c1bd5ef039cd4a4ca96590535ceb1be6d057276b5231087016c7b4",
+      "bytes": 9875
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__dense__k2__s7.json",
+      "source_sha256": "92b15921957a384c3fcd12b2cbe1ee84255afd78cbaee3d84a053832b75f09d0",
+      "published_sha256": "92b15921957a384c3fcd12b2cbe1ee84255afd78cbaee3d84a053832b75f09d0",
+      "bytes": 10724
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__dense__k4__s7.json",
+      "source_sha256": "148cc4a158e3558f91dac837332e56d7b42cf5ed95871a1284c1237880cb3b61",
+      "published_sha256": "148cc4a158e3558f91dac837332e56d7b42cf5ed95871a1284c1237880cb3b61",
+      "bytes": 10724
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__medium__k2__s7.json",
+      "source_sha256": "8ce0fd89b1253c89e6b764fa7ba0fb1e6c959c933c5761b7f692f2a761a5e152",
+      "published_sha256": "8ce0fd89b1253c89e6b764fa7ba0fb1e6c959c933c5761b7f692f2a761a5e152",
+      "bytes": 10759
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__medium__k4__s7.json",
+      "source_sha256": "55d698f29487b00aa1a702da1830c61a522dde0a9f4387cec634884d66419a2d",
+      "published_sha256": "55d698f29487b00aa1a702da1830c61a522dde0a9f4387cec634884d66419a2d",
+      "bytes": 10761
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__sparse__k2__s7.json",
+      "source_sha256": "a1d6998246522a0c6866b63613633f945d55e49e50a54b855d69b5fa29dbe198",
+      "published_sha256": "a1d6998246522a0c6866b63613633f945d55e49e50a54b855d69b5fa29dbe198",
+      "bytes": 9914
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_43__sparse__k4__s7.json",
+      "source_sha256": "9988b82e523f62ff03c0177c1252362dbf2fd5deb9f4f1de95fc97c51b6f905a",
+      "published_sha256": "9988b82e523f62ff03c0177c1252362dbf2fd5deb9f4f1de95fc97c51b6f905a",
+      "bytes": 9916
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__dense__k2__s7.json",
+      "source_sha256": "ca74e12607ea38e63281c2acd5f72efce1fae1a9bb8fdbcd8b461a6447838e33",
+      "published_sha256": "ca74e12607ea38e63281c2acd5f72efce1fae1a9bb8fdbcd8b461a6447838e33",
+      "bytes": 11018
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__dense__k4__s7.json",
+      "source_sha256": "8fda287b2cb2d29b92b1adb9092843f0c6055d977cc934ab5891473bf7df0983",
+      "published_sha256": "8fda287b2cb2d29b92b1adb9092843f0c6055d977cc934ab5891473bf7df0983",
+      "bytes": 10987
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__medium__k2__s7.json",
+      "source_sha256": "cb69e022d8a06863eb2b684a949a79cb0f47c96a18371b5673aa4b877cfd9878",
+      "published_sha256": "cb69e022d8a06863eb2b684a949a79cb0f47c96a18371b5673aa4b877cfd9878",
+      "bytes": 10694
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__medium__k4__s7.json",
+      "source_sha256": "41e3456bcca644ef00f4d85c79e2eb509322e4c9717f5adc374a7f4939826ca6",
+      "published_sha256": "41e3456bcca644ef00f4d85c79e2eb509322e4c9717f5adc374a7f4939826ca6",
+      "bytes": 10550
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__sparse__k2__s7.json",
+      "source_sha256": "63021e75e921e49a8af8474639ba44371f634ad1122f23e79dfa31bd5395ab4a",
+      "published_sha256": "63021e75e921e49a8af8474639ba44371f634ad1122f23e79dfa31bd5395ab4a",
+      "bytes": 9903
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_44533__sparse__k4__s7.json",
+      "source_sha256": "706d03110ab94b5e625a2232f363d69fb3775266c3b4b4df46382de78d1c3a57",
+      "published_sha256": "706d03110ab94b5e625a2232f363d69fb3775266c3b4b4df46382de78d1c3a57",
+      "bytes": 9924
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__dense__k2__s7.json",
+      "source_sha256": "ae3e09d5169f5618c22841270c006f59d3a6a8de7612ca82fa1d9364b2fa8e83",
+      "published_sha256": "ae3e09d5169f5618c22841270c006f59d3a6a8de7612ca82fa1d9364b2fa8e83",
+      "bytes": 11016
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__dense__k4__s7.json",
+      "source_sha256": "9824285e3fa2fe41ee532d12d71903b549c9b5e3a71283d92cfaed253c550fa8",
+      "published_sha256": "9824285e3fa2fe41ee532d12d71903b549c9b5e3a71283d92cfaed253c550fa8",
+      "bytes": 10948
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__medium__k2__s7.json",
+      "source_sha256": "e612af3782372180ff7684af483a08d03e32c2b39995696f86dedfaed8352656",
+      "published_sha256": "e612af3782372180ff7684af483a08d03e32c2b39995696f86dedfaed8352656",
+      "bytes": 10678
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__medium__k4__s7.json",
+      "source_sha256": "9d35b5ee18b4301269dff9e82f02535859773c1cb6ac0e84bc571a4d915dac2d",
+      "published_sha256": "9d35b5ee18b4301269dff9e82f02535859773c1cb6ac0e84bc571a4d915dac2d",
+      "bytes": 10326
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__sparse__k2__s7.json",
+      "source_sha256": "fa9614f9be6461a40cc955fc6da00a38a40e89396c8c66272665393d6b849dab",
+      "published_sha256": "fa9614f9be6461a40cc955fc6da00a38a40e89396c8c66272665393d6b849dab",
+      "bytes": 9961
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_48__sparse__k4__s7.json",
+      "source_sha256": "e178ddf01099c5b9379ccce0b48d07be4a3d5675ce4618841bb8a1e79e7f10f6",
+      "published_sha256": "e178ddf01099c5b9379ccce0b48d07be4a3d5675ce4618841bb8a1e79e7f10f6",
+      "bytes": 9933
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__dense__k2__s7.json",
+      "source_sha256": "cbf12ac61b9e3c59b8078243bfc31d17b0f86460285c2e55d33dac431de7d04c",
+      "published_sha256": "cbf12ac61b9e3c59b8078243bfc31d17b0f86460285c2e55d33dac431de7d04c",
+      "bytes": 10775
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__dense__k4__s7.json",
+      "source_sha256": "0ee6bdbd8f20943e7d78f1006688252a7b18f4216aa8df552b9ccdc61e8a08c1",
+      "published_sha256": "0ee6bdbd8f20943e7d78f1006688252a7b18f4216aa8df552b9ccdc61e8a08c1",
+      "bytes": 10861
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__medium__k2__s7.json",
+      "source_sha256": "6c54339d10ffbd457b1b3ed9037758b10875813c4f86319923680df652ddcae0",
+      "published_sha256": "6c54339d10ffbd457b1b3ed9037758b10875813c4f86319923680df652ddcae0",
+      "bytes": 10653
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__medium__k4__s7.json",
+      "source_sha256": "a2b4c4d923e085ba8c49d8ef73f11a3cce0412bf7f7acead517d3b65ee8b92ab",
+      "published_sha256": "a2b4c4d923e085ba8c49d8ef73f11a3cce0412bf7f7acead517d3b65ee8b92ab",
+      "bytes": 10324
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__sparse__k2__s7.json",
+      "source_sha256": "3dcadbeec0f0d2100029080d3628e7f7aa491089906bfd7fc62b7f50eef2d4c3",
+      "published_sha256": "3dcadbeec0f0d2100029080d3628e7f7aa491089906bfd7fc62b7f50eef2d4c3",
+      "bytes": 9879
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_53__sparse__k4__s7.json",
+      "source_sha256": "e6dff5cd1289662d6cc7062ff125aee05de645e0d28edc459a1e9e3b36069c94",
+      "published_sha256": "e6dff5cd1289662d6cc7062ff125aee05de645e0d28edc459a1e9e3b36069c94",
+      "bytes": 9891
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__dense__k2__s7.json",
+      "source_sha256": "008894984c4709bacfb81c9d91eadde59aced595f2ea6a59534ae9aea0ab742d",
+      "published_sha256": "008894984c4709bacfb81c9d91eadde59aced595f2ea6a59534ae9aea0ab742d",
+      "bytes": 10830
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__dense__k4__s7.json",
+      "source_sha256": "c1d38a68ce5fa75a3e740578cfde931ff1f9c249c5c91c1a1a1bc1030fd80c72",
+      "published_sha256": "c1d38a68ce5fa75a3e740578cfde931ff1f9c249c5c91c1a1a1bc1030fd80c72",
+      "bytes": 10833
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__medium__k2__s7.json",
+      "source_sha256": "59a586a6c93bfc8a7fd54413b6569a5f055ca2d5489b819d3d479313fac158e5",
+      "published_sha256": "59a586a6c93bfc8a7fd54413b6569a5f055ca2d5489b819d3d479313fac158e5",
+      "bytes": 10588
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__medium__k4__s7.json",
+      "source_sha256": "6ad713a6f6edc4e393b2ff0fcaaef3497fedbc91f925f5dd5674b5d735890a7d",
+      "published_sha256": "6ad713a6f6edc4e393b2ff0fcaaef3497fedbc91f925f5dd5674b5d735890a7d",
+      "bytes": 10459
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__sparse__k2__s7.json",
+      "source_sha256": "c37fe49e764e2d28f8a08b902af342b575b145f1870c41dde82aba00200f6fd5",
+      "published_sha256": "c37fe49e764e2d28f8a08b902af342b575b145f1870c41dde82aba00200f6fd5",
+      "bytes": 9924
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_58__sparse__k4__s7.json",
+      "source_sha256": "3ce1fea99aaf3243c2fa9caf39f75acfde2f5133120857f930a269ee09d07132",
+      "published_sha256": "3ce1fea99aaf3243c2fa9caf39f75acfde2f5133120857f930a269ee09d07132",
+      "bytes": 9919
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__dense__k2__s7.json",
+      "source_sha256": "4c7f4899b8ff02c587f6ba77697021c68f886d95316cf5bc7e1f6c8d5f6feac8",
+      "published_sha256": "4c7f4899b8ff02c587f6ba77697021c68f886d95316cf5bc7e1f6c8d5f6feac8",
+      "bytes": 10813
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__dense__k4__s7.json",
+      "source_sha256": "d6ca2ce3ae09fbd5815336dd35399b80cc9a4debf867fbc0f5eeb9a9fef56260",
+      "published_sha256": "d6ca2ce3ae09fbd5815336dd35399b80cc9a4debf867fbc0f5eeb9a9fef56260",
+      "bytes": 10808
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__medium__k2__s7.json",
+      "source_sha256": "6d986a274bda98068d478dc8c7cca0a9e4920067407ebca8bf40e34a210da67b",
+      "published_sha256": "6d986a274bda98068d478dc8c7cca0a9e4920067407ebca8bf40e34a210da67b",
+      "bytes": 10636
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__medium__k4__s7.json",
+      "source_sha256": "4f126d7119d1cfe852394bff53e62e8d5f8e0e23046d5a760ffdcd602e5f78c6",
+      "published_sha256": "4f126d7119d1cfe852394bff53e62e8d5f8e0e23046d5a760ffdcd602e5f78c6",
+      "bytes": 10651
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__sparse__k2__s7.json",
+      "source_sha256": "d81fb3cda5588597ab657fe9d290885bdb8928650234847f161d09f10c01c735",
+      "published_sha256": "d81fb3cda5588597ab657fe9d290885bdb8928650234847f161d09f10c01c735",
+      "bytes": 9877
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_62__sparse__k4__s7.json",
+      "source_sha256": "1c4f8b43eb4982a4bbfbcb52004ad79905b9e34c9f5e2be531f4bb34dbb1cfc1",
+      "published_sha256": "1c4f8b43eb4982a4bbfbcb52004ad79905b9e34c9f5e2be531f4bb34dbb1cfc1",
+      "bytes": 9882
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__dense__k2__s7.json",
+      "source_sha256": "e5fdeef06a5d723a63214dd884db417499a3566af64360e252ee71fe50505488",
+      "published_sha256": "e5fdeef06a5d723a63214dd884db417499a3566af64360e252ee71fe50505488",
+      "bytes": 10887
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__dense__k4__s7.json",
+      "source_sha256": "51f8e21ed91dec53d1ccef9d242f76d6c60a29780fcb1baa1937b3afe453f704",
+      "published_sha256": "51f8e21ed91dec53d1ccef9d242f76d6c60a29780fcb1baa1937b3afe453f704",
+      "bytes": 10890
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__medium__k2__s7.json",
+      "source_sha256": "452e39ab1bd1c47dcc41319ef60adb9c3cda019679caf42fccb1be05b6bf95c4",
+      "published_sha256": "452e39ab1bd1c47dcc41319ef60adb9c3cda019679caf42fccb1be05b6bf95c4",
+      "bytes": 10385
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__medium__k4__s7.json",
+      "source_sha256": "cb253dd3023afd72026d7bd873993a3d7e87ef0b94978a8aceb9d96669524d55",
+      "published_sha256": "cb253dd3023afd72026d7bd873993a3d7e87ef0b94978a8aceb9d96669524d55",
+      "bytes": 10335
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__sparse__k2__s7.json",
+      "source_sha256": "c1bb0bc6118d1b2b49decfdddb641d5b3ac011f3e3778ef81c6096d8800ab64a",
+      "published_sha256": "c1bb0bc6118d1b2b49decfdddb641d5b3ac011f3e3778ef81c6096d8800ab64a",
+      "bytes": 9871
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_66__sparse__k4__s7.json",
+      "source_sha256": "b5453743cbf91d3242be45e5aea7cafef5d4734d68a6e37a1b7fe0cfa09e6b1e",
+      "published_sha256": "b5453743cbf91d3242be45e5aea7cafef5d4734d68a6e37a1b7fe0cfa09e6b1e",
+      "bytes": 9878
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__dense__k2__s7.json",
+      "source_sha256": "18bc5e7383bb01d0ede1e806ea2cf929f0672256a9b82d521fec41410ed4ba9c",
+      "published_sha256": "18bc5e7383bb01d0ede1e806ea2cf929f0672256a9b82d521fec41410ed4ba9c",
+      "bytes": 11042
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__dense__k4__s7.json",
+      "source_sha256": "a57dc0050f0bbb0f9aa6f60d6ad709e9a0f2dcb8d7768f8af263aab18b0c7a0f",
+      "published_sha256": "a57dc0050f0bbb0f9aa6f60d6ad709e9a0f2dcb8d7768f8af263aab18b0c7a0f",
+      "bytes": 11088
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__medium__k2__s7.json",
+      "source_sha256": "0689c9189fc428047142ff6195408f4fb5b9b13a19b52672474b54cbc7f0ca77",
+      "published_sha256": "0689c9189fc428047142ff6195408f4fb5b9b13a19b52672474b54cbc7f0ca77",
+      "bytes": 10455
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__medium__k4__s7.json",
+      "source_sha256": "ebca1075191e6529aee0c0453cfa98e55ee15b7db4ea33dadca6f2fc477f56f4",
+      "published_sha256": "ebca1075191e6529aee0c0453cfa98e55ee15b7db4ea33dadca6f2fc477f56f4",
+      "bytes": 10137
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__sparse__k2__s7.json",
+      "source_sha256": "8459ed28a45a4e10babc7a2615d27c7a53959bc3569424b90d1fca2e76a16e16",
+      "published_sha256": "8459ed28a45a4e10babc7a2615d27c7a53959bc3569424b90d1fca2e76a16e16",
+      "bytes": 9912
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_71__sparse__k4__s7.json",
+      "source_sha256": "604d66de87c813f2c0cb39d9fda44df5d8d866d19002b2af04a4cb1c60153235",
+      "published_sha256": "604d66de87c813f2c0cb39d9fda44df5d8d866d19002b2af04a4cb1c60153235",
+      "bytes": 9920
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__dense__k2__s7.json",
+      "source_sha256": "ac180d8785c64cd44659a2dd677148e967f1eb0660ef6ddd8150046338ec496f",
+      "published_sha256": "ac180d8785c64cd44659a2dd677148e967f1eb0660ef6ddd8150046338ec496f",
+      "bytes": 10797
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__dense__k4__s7.json",
+      "source_sha256": "c10545c943d4703e9ce8efd72f8d6d304fdb18ea998a0361276393a401319f8c",
+      "published_sha256": "c10545c943d4703e9ce8efd72f8d6d304fdb18ea998a0361276393a401319f8c",
+      "bytes": 10793
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__medium__k2__s7.json",
+      "source_sha256": "c99275c9cc9c39324053e3f8f550abb469be94c01b76a1a7abe205b08df14145",
+      "published_sha256": "c99275c9cc9c39324053e3f8f550abb469be94c01b76a1a7abe205b08df14145",
+      "bytes": 10670
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__medium__k4__s7.json",
+      "source_sha256": "25c2030dd742608ff6f925b56978fac10bf87b1ac28e4dac6d925c5d7a3f22a8",
+      "published_sha256": "25c2030dd742608ff6f925b56978fac10bf87b1ac28e4dac6d925c5d7a3f22a8",
+      "bytes": 10602
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__sparse__k2__s7.json",
+      "source_sha256": "b1ae329fb58b505c41fca1e234ba63f2252ee200073e9fbc79bb589aeee12b48",
+      "published_sha256": "b1ae329fb58b505c41fca1e234ba63f2252ee200073e9fbc79bb589aeee12b48",
+      "bytes": 9953
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_78__sparse__k4__s7.json",
+      "source_sha256": "d6fcd3bba2ec88d08c472f0459641588a7a027afb837853e7d0b89f7fcd2e94a",
+      "published_sha256": "d6fcd3bba2ec88d08c472f0459641588a7a027afb837853e7d0b89f7fcd2e94a",
+      "bytes": 9956
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__dense__k2__s7.json",
+      "source_sha256": "b5582f3ed70c68f4e42e76e935b2fcf9ed2b6a12aa5470ba8e51e6c86544eab6",
+      "published_sha256": "b5582f3ed70c68f4e42e76e935b2fcf9ed2b6a12aa5470ba8e51e6c86544eab6",
+      "bytes": 11121
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__dense__k4__s7.json",
+      "source_sha256": "0e6a1b16388a0f5875b228f8ae397d1dd0aeaf83ea972d25dfabff7d0bb26b49",
+      "published_sha256": "0e6a1b16388a0f5875b228f8ae397d1dd0aeaf83ea972d25dfabff7d0bb26b49",
+      "bytes": 11045
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__medium__k2__s7.json",
+      "source_sha256": "6a91bb3e8c3c6610ae7f5048e0082ca2aa9f8c39024a9639ae365301f7a9d5b3",
+      "published_sha256": "6a91bb3e8c3c6610ae7f5048e0082ca2aa9f8c39024a9639ae365301f7a9d5b3",
+      "bytes": 10589
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__medium__k4__s7.json",
+      "source_sha256": "f3c9cd576c9b8d5e61ef0bbeefbaacba60d10cfb3cf7ce33f9a11413a7204044",
+      "published_sha256": "f3c9cd576c9b8d5e61ef0bbeefbaacba60d10cfb3cf7ce33f9a11413a7204044",
+      "bytes": 10453
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__sparse__k2__s7.json",
+      "source_sha256": "aeff76fdb7ae351e11818c2be282ab9cd19a800681311b98d3cc977cc070ef41",
+      "published_sha256": "aeff76fdb7ae351e11818c2be282ab9cd19a800681311b98d3cc977cc070ef41",
+      "bytes": 9903
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_83__sparse__k4__s7.json",
+      "source_sha256": "3fe87bd0c198eb0323abfbc7a9743d56acbe9f61792be1cd5ee1a33130441e9f",
+      "published_sha256": "3fe87bd0c198eb0323abfbc7a9743d56acbe9f61792be1cd5ee1a33130441e9f",
+      "bytes": 9911
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__dense__k2__s7.json",
+      "source_sha256": "55b96a343a9ed53e48ab6bcdbbd745f9697c323c92d7d358586d884520bbe3ce",
+      "published_sha256": "55b96a343a9ed53e48ab6bcdbbd745f9697c323c92d7d358586d884520bbe3ce",
+      "bytes": 10757
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__dense__k4__s7.json",
+      "source_sha256": "d201c31a9211260810ab81b47e957f7813651ba62fed8d6dd91b24bc00182809",
+      "published_sha256": "d201c31a9211260810ab81b47e957f7813651ba62fed8d6dd91b24bc00182809",
+      "bytes": 10709
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__medium__k2__s7.json",
+      "source_sha256": "aa2ed530a005ea0ab11e1ad2c7e68b8c6b39ffaad7848d24491540c8d2abfb67",
+      "published_sha256": "aa2ed530a005ea0ab11e1ad2c7e68b8c6b39ffaad7848d24491540c8d2abfb67",
+      "bytes": 10656
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__medium__k4__s7.json",
+      "source_sha256": "c45c44bc732a6f61fd01fbf2ce14a279133a7adf49eebf59cf6c08b5b251d0cd",
+      "published_sha256": "c45c44bc732a6f61fd01fbf2ce14a279133a7adf49eebf59cf6c08b5b251d0cd",
+      "bytes": 10671
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__sparse__k2__s7.json",
+      "source_sha256": "de28c950451bd1929cda0d9cf351c800451c53b5be3db05f8c16b89896f91ab3",
+      "published_sha256": "de28c950451bd1929cda0d9cf351c800451c53b5be3db05f8c16b89896f91ab3",
+      "bytes": 9890
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_88__sparse__k4__s7.json",
+      "source_sha256": "dab68cfd4fdbba678f69b1f2a79badc2b42e7876ba47a2933a65a0995e6c11ea",
+      "published_sha256": "dab68cfd4fdbba678f69b1f2a79badc2b42e7876ba47a2933a65a0995e6c11ea",
+      "bytes": 9893
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__dense__k2__s7.json",
+      "source_sha256": "83eb01b8092325742d56dc73a2a652b663736223782d681e2432147a2ada8961",
+      "published_sha256": "83eb01b8092325742d56dc73a2a652b663736223782d681e2432147a2ada8961",
+      "bytes": 11065
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__dense__k4__s7.json",
+      "source_sha256": "cd36e32cb768caa3c49f01665d6d4375b10974024e9779bdb2fb2329dc10340a",
+      "published_sha256": "cd36e32cb768caa3c49f01665d6d4375b10974024e9779bdb2fb2329dc10340a",
+      "bytes": 10981
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__medium__k2__s7.json",
+      "source_sha256": "6e3c147e7f0ffcf949283f8234ea048415aa45f7d6630c22ce973de0ffcd6e76",
+      "published_sha256": "6e3c147e7f0ffcf949283f8234ea048415aa45f7d6630c22ce973de0ffcd6e76",
+      "bytes": 10645
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__medium__k4__s7.json",
+      "source_sha256": "c9e1f910cb64ebf920f34e4aa9c23d2515d7ac095ab50ebb36c55a1ed440c8c8",
+      "published_sha256": "c9e1f910cb64ebf920f34e4aa9c23d2515d7ac095ab50ebb36c55a1ed440c8c8",
+      "bytes": 10595
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__sparse__k2__s7.json",
+      "source_sha256": "c0fca2dc6709423ee298d0c17c5e1b29740daf7e4a33397618d88773381e60c2",
+      "published_sha256": "c0fca2dc6709423ee298d0c17c5e1b29740daf7e4a33397618d88773381e60c2",
+      "bytes": 9877
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_94__sparse__k4__s7.json",
+      "source_sha256": "268a727a8732dac891a7dd1c11440f59f2a9303ed3242aa0cc46e97b2402581d",
+      "published_sha256": "268a727a8732dac891a7dd1c11440f59f2a9303ed3242aa0cc46e97b2402581d",
+      "bytes": 9874
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__dense__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__dense__k2__s7.json",
+      "source_sha256": "e02621a65d104496a89d4b68531a3bf6cdda0159e482aae69fba03fa90356996",
+      "published_sha256": "e02621a65d104496a89d4b68531a3bf6cdda0159e482aae69fba03fa90356996",
+      "bytes": 11030
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__dense__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__dense__k4__s7.json",
+      "source_sha256": "18053cd5a5b749ea9d4c279bcfe736c980e6daf30e7417fe5a3b821855fd2aa0",
+      "published_sha256": "18053cd5a5b749ea9d4c279bcfe736c980e6daf30e7417fe5a3b821855fd2aa0",
+      "bytes": 10917
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__medium__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__medium__k2__s7.json",
+      "source_sha256": "79a12b2f002a600c9af4dcb321328dbb058474d9cd91b56b17c035e4795beed7",
+      "published_sha256": "79a12b2f002a600c9af4dcb321328dbb058474d9cd91b56b17c035e4795beed7",
+      "bytes": 10646
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__medium__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__medium__k4__s7.json",
+      "source_sha256": "1f0220aeed94b9b921c83edd50535e7004bbae0d0aa6bcf86ec272738ee34fdd",
+      "published_sha256": "1f0220aeed94b9b921c83edd50535e7004bbae0d0aa6bcf86ec272738ee34fdd",
+      "bytes": 10605
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__sparse__k2__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__sparse__k2__s7.json",
+      "source_sha256": "52f4efce7d8db41f0dc11405213db9c8058269f69e2e21308d89dd08c4940542",
+      "published_sha256": "52f4efce7d8db41f0dc11405213db9c8058269f69e2e21308d89dd08c4940542",
+      "bytes": 9880
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__sparse__k4__s7.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/decisions/nl_field_99__sparse__k4__s7.json",
+      "source_sha256": "0cbcdf7be2151b5c55e195b0f602ed04fd6305ef258aaad79875488d9f149c31",
+      "published_sha256": "0cbcdf7be2151b5c55e195b0f602ed04fd6305ef258aaad79875488d9f149c31",
+      "bytes": 9880
+    },
+    {
+      "path": "experiments/runs/evolve-replan-gate-20261024/summary.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/runs/evolve-replan-gate-20261024/summary.json",
+      "source_sha256": "c384075062d25ebf6706db6b76fb8c6669064a7a342fe1660f4ebaf04a258da1",
+      "published_sha256": "c384075062d25ebf6706db6b76fb8c6669064a7a342fe1660f4ebaf04a258da1",
+      "bytes": 8589
+    },
+    {
+      "path": "experiments/状态.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "experiments/状态.md",
+      "source_sha256": "92590f4fe6b0f6975299a6a66ff02b7df3b7d7ea496a8163b23a8d53fb992d86",
+      "published_sha256": "92590f4fe6b0f6975299a6a66ff02b7df3b7d7ea496a8163b23a8d53fb992d86",
+      "bytes": 8607
+    },
+    {
+      "path": "literature/待补文献.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "literature/待补文献.md",
+      "source_sha256": "640c262e70adcdfe0eafb400aa0320bc95c272caf9d605a479b4cdecb9dd6886",
+      "published_sha256": "640c262e70adcdfe0eafb400aa0320bc95c272caf9d605a479b4cdecb9dd6886",
+      "bytes": 20549
+    },
+    {
+      "path": "literature/教材/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "literature/教材/README.md",
+      "source_sha256": "2490b862de67e9ad05f7590a3af1e8b76a9b2fc2bd43cc97dbe4e1dae1a2788b",
+      "published_sha256": "2490b862de67e9ad05f7590a3af1e8b76a9b2fc2bd43cc97dbe4e1dae1a2788b",
+      "bytes": 4494
+    },
+    {
+      "path": "literature/资料/待补文献.csv",
+      "source_id": "primary-worktree",
+      "source_relative_path": "literature/资料/待补文献.csv",
+      "source_sha256": "a42bea4aa94b73726520be316cf2ab1c7d39844ea7313e169f6ce8c899623ab8",
+      "published_sha256": "a42bea4aa94b73726520be316cf2ab1c7d39844ea7313e169f6ce8c899623ab8",
+      "bytes": 23436
+    },
+    {
+      "path": "literature/阅读目录.html",
+      "source_id": "primary-worktree",
+      "source_relative_path": "literature/阅读目录.html",
+      "source_sha256": "dbddd79f1541038de7f878b855ea698c5f70c0c9b9a267932cd562a158cb04b1",
+      "published_sha256": "dbddd79f1541038de7f878b855ea698c5f70c0c9b9a267932cd562a158cb04b1",
+      "bytes": 17068782
+    },
+    {
+      "path": "papers/补充/README.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "papers/补充/README.md",
+      "source_sha256": "66242387967467ed0f7011c8047ea20fa01d8ee8fbb134b6592b7596639d54ee",
+      "published_sha256": "66242387967467ed0f7011c8047ea20fa01d8ee8fbb134b6592b7596639d54ee",
+      "bytes": 5624
+    },
+    {
+      "path": "papers/补充/来源.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "papers/补充/来源.json",
+      "source_sha256": "b083a738ece81a9a99211f0261d48ad760c7c56e571512fc0d86821f5a5273cd",
+      "published_sha256": "b083a738ece81a9a99211f0261d48ad760c7c56e571512fc0d86821f5a5273cd",
+      "bytes": 23574
+    },
+    {
+      "path": "setup/2026-10-16/后端对接需求.md",
+      "source_id": "primary-worktree",
+      "source_relative_path": "setup/2026-10-16/后端对接需求.md",
+      "source_sha256": "c9910525c360aef43a2bbf5f8dd461976b6d93d7482a0a7457c2fce999e4392b",
+      "published_sha256": "c9910525c360aef43a2bbf5f8dd461976b6d93d7482a0a7457c2fce999e4392b",
+      "bytes": 20693
+    },
+    {
+      "path": "src/frontend/src/lab/types.ts",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/frontend/src/lab/types.ts",
+      "source_sha256": "cc95ebefa1506a61c2e317314abbd19d4dbb760e566919c6c74f0e20b309b73d",
+      "published_sha256": "cc95ebefa1506a61c2e317314abbd19d4dbb760e566919c6c74f0e20b309b73d",
+      "bytes": 11364
+    },
+    {
+      "path": "src/frontend/src/lab/views/plan/PlanView.tsx",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/frontend/src/lab/views/plan/PlanView.tsx",
+      "source_sha256": "32a50e1abb75286ef7b6b3e8b3690ca161ac5c4696097b9c1937386bedb755b2",
+      "published_sha256": "32a50e1abb75286ef7b6b3e8b3690ca161ac5c4696097b9c1937386bedb755b2",
+      "bytes": 11929
+    },
+    {
+      "path": "src/frontend/src/studio/experiment/DecisionPanel.tsx",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/frontend/src/studio/experiment/DecisionPanel.tsx",
+      "source_sha256": "936adacc91af4c650a57e9428dc4558e25e25a3eaa52cfcdd448eb3218625a9b",
+      "published_sha256": "936adacc91af4c650a57e9428dc4558e25e25a3eaa52cfcdd448eb3218625a9b",
+      "bytes": 8247
+    },
+    {
+      "path": "src/lab/.gitignore",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/.gitignore",
+      "source_sha256": "7282d47a2f6a4953ca740269dcd607e4a22f4ad66ce4f66726ad24478d4d5891",
+      "published_sha256": "7282d47a2f6a4953ca740269dcd607e4a22f4ad66ce4f66726ad24478d4d5891",
+      "bytes": 206
+    },
+    {
+      "path": "src/lab/models/coverage-order-v1.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/models/coverage-order-v1.json",
+      "source_sha256": "990e0110abebecdb631e910c186f8d31b4a1b543605b0ccacab6341b739cd9e1",
+      "published_sha256": "990e0110abebecdb631e910c186f8d31b4a1b543605b0ccacab6341b739cd9e1",
+      "bytes": 266940
+    },
+    {
+      "path": "src/lab/models/library-ledger.json",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/models/library-ledger.json",
+      "source_sha256": "0242c2a49fd578d4c75428bb5c50078f7bcfcd424a7a1bf37601b3d720c50bca",
+      "published_sha256": "0242c2a49fd578d4c75428bb5c50078f7bcfcd424a7a1bf37601b3d720c50bca",
+      "bytes": 16844
+    },
+    {
+      "path": "src/lab/tests/test_evolve_admission_rules.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_admission_rules.py",
+      "source_sha256": "4d879c9fa6bdb0d8fa447a8d02d4404df05038259a541535b6e2594e801ae9e7",
+      "published_sha256": "4d879c9fa6bdb0d8fa447a8d02d4404df05038259a541535b6e2594e801ae9e7",
+      "bytes": 1602
+    },
+    {
+      "path": "src/lab/tests/test_evolve_audit_policy.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_audit_policy.py",
+      "source_sha256": "3a9a39ea7a1b6e149bb579a8e24d5417e95ed9e6bd96f33682ef11be89b313ef",
+      "published_sha256": "3a9a39ea7a1b6e149bb579a8e24d5417e95ed9e6bd96f33682ef11be89b313ef",
+      "bytes": 6680
+    },
+    {
+      "path": "src/lab/tests/test_evolve_dashboard.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_dashboard.py",
+      "source_sha256": "ffdb679d6ba67342c9b33b09aef11f9bc8cc1e018561fedb49a5687405d4dcf9",
+      "published_sha256": "ffdb679d6ba67342c9b33b09aef11f9bc8cc1e018561fedb49a5687405d4dcf9",
+      "bytes": 3636
+    },
+    {
+      "path": "src/lab/tests/test_evolve_determinism.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_determinism.py",
+      "source_sha256": "086b84a9faeee507347e49d36ad57fd50b5100c0f15b4c7cde3be342e11bbadd",
+      "published_sha256": "086b84a9faeee507347e49d36ad57fd50b5100c0f15b4c7cde3be342e11bbadd",
+      "bytes": 3966
+    },
+    {
+      "path": "src/lab/tests/test_evolve_dynamic.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_dynamic.py",
+      "source_sha256": "9178bbce737aab8037322610adc9c932057760e12b5a1ee8e3b55784610ecce0",
+      "published_sha256": "9178bbce737aab8037322610adc9c932057760e12b5a1ee8e3b55784610ecce0",
+      "bytes": 2753
+    },
+    {
+      "path": "src/lab/tests/test_evolve_features.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_features.py",
+      "source_sha256": "5d750b02db9c350739230931eeadb762e31a7034ee6e474c3a58d1bfb8b32d99",
+      "published_sha256": "5d750b02db9c350739230931eeadb762e31a7034ee6e474c3a58d1bfb8b32d99",
+      "bytes": 5682
+    },
+    {
+      "path": "src/lab/tests/test_evolve_figures2.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_figures2.py",
+      "source_sha256": "d756c45e55a15ad990c20951a9db82eef726ad012c306fa30751e455af7a7abc",
+      "published_sha256": "d756c45e55a15ad990c20951a9db82eef726ad012c306fa30751e455af7a7abc",
+      "bytes": 2815
+    },
+    {
+      "path": "src/lab/tests/test_evolve_fillet.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_fillet.py",
+      "source_sha256": "813514ece57c7690ce6aa102e341b5e4f6234e87c930056e78e4ee71f598064f",
+      "published_sha256": "813514ece57c7690ce6aa102e341b5e4f6234e87c930056e78e4ee71f598064f",
+      "bytes": 3985
+    },
+    {
+      "path": "src/lab/tests/test_evolve_ledger.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_ledger.py",
+      "source_sha256": "38df8b56adec36504377d8e58996e481e85d5b8efb2cb733c4cb2b1fa47e7208",
+      "published_sha256": "38df8b56adec36504377d8e58996e481e85d5b8efb2cb733c4cb2b1fa47e7208",
+      "bytes": 1628
+    },
+    {
+      "path": "src/lab/tests/test_evolve_power.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_power.py",
+      "source_sha256": "e61e2fd519d79a54183ec6b84afb39a40adbc96015a19c61ebc748d518339735",
+      "published_sha256": "e61e2fd519d79a54183ec6b84afb39a40adbc96015a19c61ebc748d518339735",
+      "bytes": 1523
+    },
+    {
+      "path": "src/lab/tests/test_evolve_repair.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_repair.py",
+      "source_sha256": "48e8b4d2236a65cf84bc483c716864cfa7f6c693de2337f22d4564742bcfe2d9",
+      "published_sha256": "48e8b4d2236a65cf84bc483c716864cfa7f6c693de2337f22d4564742bcfe2d9",
+      "bytes": 1823
+    },
+    {
+      "path": "src/lab/tests/test_evolve_repair2.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_repair2.py",
+      "source_sha256": "bf716103012b60041aec2f13b3fc5c7805c0ecadfe20173306ae9cccf2ccddff",
+      "published_sha256": "bf716103012b60041aec2f13b3fc5c7805c0ecadfe20173306ae9cccf2ccddff",
+      "bytes": 1027
+    },
+    {
+      "path": "src/lab/tests/test_evolve_reverify.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_reverify.py",
+      "source_sha256": "e180889385386b1664c982fe718d153a0ecf1574575658dffa992f9af4db9002",
+      "published_sha256": "e180889385386b1664c982fe718d153a0ecf1574575658dffa992f9af4db9002",
+      "bytes": 1215
+    },
+    {
+      "path": "src/lab/tests/test_evolve_serve.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_serve.py",
+      "source_sha256": "77843303f93b4478fc871181d01e539d173c7221d835b4c91b782fbb5c5c5b0e",
+      "published_sha256": "77843303f93b4478fc871181d01e539d173c7221d835b4c91b782fbb5c5c5b0e",
+      "bytes": 7100
+    },
+    {
+      "path": "src/lab/tests/test_evolve_verdicts.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/tests/test_evolve_verdicts.py",
+      "source_sha256": "5b1a220785f939ad938aa951a95016c3c2a25569c0d618d2a8d5337d42848173",
+      "published_sha256": "5b1a220785f939ad938aa951a95016c3c2a25569c0d618d2a8d5337d42848173",
+      "bytes": 1492
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/__init__.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/__init__.py",
+      "source_sha256": "82dbe5ece6fdeb4ecb15c7c962debd6422053ed509c3d101834745b999f3f3a5",
+      "published_sha256": "82dbe5ece6fdeb4ecb15c7c962debd6422053ed509c3d101834745b999f3f3a5",
+      "bytes": 900
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/__main__.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/__main__.py",
+      "source_sha256": "400eae386a63d333dd5639243581e7372f2b9bd3238b1b1530a56bfc356932ca",
+      "published_sha256": "400eae386a63d333dd5639243581e7372f2b9bd3238b1b1530a56bfc356932ca",
+      "bytes": 6890
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/admission.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/admission.py",
+      "source_sha256": "8bd13ff0c4d59e722ed77d532fe601b577a24caff32023381ae1038912c0405a",
+      "published_sha256": "8bd13ff0c4d59e722ed77d532fe601b577a24caff32023381ae1038912c0405a",
+      "bytes": 7540
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/admission_rules.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/admission_rules.py",
+      "source_sha256": "1ba56414d6ad2a12ab3083598585771e5d551e506618a3c81baa1d5100ced311",
+      "published_sha256": "1ba56414d6ad2a12ab3083598585771e5d551e506618a3c81baa1d5100ced311",
+      "bytes": 12172
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/audit.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/audit.py",
+      "source_sha256": "19d9b50bb5f60511cc9822e2e294f1de11da5c79ad96a49cce4cdaf4c469d0d6",
+      "published_sha256": "19d9b50bb5f60511cc9822e2e294f1de11da5c79ad96a49cce4cdaf4c469d0d6",
+      "bytes": 15645
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/candidates.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/candidates.py",
+      "source_sha256": "06cfe350ccc1b5414051dbcbd84a45a739d48e9abf1b13b7225c0a6f39748cbd",
+      "published_sha256": "06cfe350ccc1b5414051dbcbd84a45a739d48e9abf1b13b7225c0a6f39748cbd",
+      "bytes": 8030
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/dashboard.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/dashboard.py",
+      "source_sha256": "db75eb9041308abfb94b54263eedf3876405b6f7b1a30a760ee2b8b5d99629a5",
+      "published_sha256": "db75eb9041308abfb94b54263eedf3876405b6f7b1a30a760ee2b8b5d99629a5",
+      "bytes": 44496
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/determinism.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/determinism.py",
+      "source_sha256": "f93385ad2dcf448d9d63d7b20ecb11fa217d229570e86dcdb987fea11010206d",
+      "published_sha256": "f93385ad2dcf448d9d63d7b20ecb11fa217d229570e86dcdb987fea11010206d",
+      "bytes": 8296
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/dynamic.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/dynamic.py",
+      "source_sha256": "a4f44a4a7f2681c88ae8aab06b02b6f96d8a02b95f12dc180bc86294db0cb2e5",
+      "published_sha256": "a4f44a4a7f2681c88ae8aab06b02b6f96d8a02b95f12dc180bc86294db0cb2e5",
+      "bytes": 21892
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/exec_model.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/exec_model.py",
+      "source_sha256": "d7a906055b6574224a77b64e1a1184c6b9d173910bff215440a069ac23799f01",
+      "published_sha256": "d7a906055b6574224a77b64e1a1184c6b9d173910bff215440a069ac23799f01",
+      "bytes": 6710
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/experience.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/experience.py",
+      "source_sha256": "a22a7e011ad61e440d1e59f2767f4163c4d17b595ab92c73c709822aca0d029f",
+      "published_sha256": "a22a7e011ad61e440d1e59f2767f4163c4d17b595ab92c73c709822aca0d029f",
+      "bytes": 9705
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/features.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/features.py",
+      "source_sha256": "38be648c99ebaf37c754f76cfbcaa51bb0bded15a15484d9de07db6ff6cd059a",
+      "published_sha256": "38be648c99ebaf37c754f76cfbcaa51bb0bded15a15484d9de07db6ff6cd059a",
+      "bytes": 8704
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/figures.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/figures.py",
+      "source_sha256": "3ce0208dd6b5ebadef81c7d9780974de0c611d8d84d5771fe496a2aaa7283659",
+      "published_sha256": "3ce0208dd6b5ebadef81c7d9780974de0c611d8d84d5771fe496a2aaa7283659",
+      "bytes": 21956
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/figures2.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/figures2.py",
+      "source_sha256": "e3bf969ccc7b90a2571b80f6f984195bf7a1d4469b2be0ffd1fe7914cd37b788",
+      "published_sha256": "e3bf969ccc7b90a2571b80f6f984195bf7a1d4469b2be0ffd1fe7914cd37b788",
+      "bytes": 17832
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/fillet.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/fillet.py",
+      "source_sha256": "d4f0d6918ccb09137d051c3f523939c1f5054aa9e12e4ab8702c6730ec883e30",
+      "published_sha256": "d4f0d6918ccb09137d051c3f523939c1f5054aa9e12e4ab8702c6730ec883e30",
+      "bytes": 16056
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/geometry.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/geometry.py",
+      "source_sha256": "8fde7aa4dca43c333d0e771b2a5961940a26d7f9c134341c5b5f88b93b5f43cd",
+      "published_sha256": "8fde7aa4dca43c333d0e771b2a5961940a26d7f9c134341c5b5f88b93b5f43cd",
+      "bytes": 5369
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/instances.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/instances.py",
+      "source_sha256": "30a042dc35789838cf0682274108cf524bee2237d7595ceb6f62e42735c27986",
+      "published_sha256": "30a042dc35789838cf0682274108cf524bee2237d7595ceb6f62e42735c27986",
+      "bytes": 6463
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/ledger.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/ledger.py",
+      "source_sha256": "a3464c27ced6471d1ba075451328c8ffa376779f7e970a0c0887f81befbabab3",
+      "published_sha256": "a3464c27ced6471d1ba075451328c8ffa376779f7e970a0c0887f81befbabab3",
+      "bytes": 10441
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/plans.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/plans.py",
+      "source_sha256": "c0cf81706ef8e825124fa121f292ba58ac4aefe4bf03891b4f7af0781676208b",
+      "published_sha256": "c0cf81706ef8e825124fa121f292ba58ac4aefe4bf03891b4f7af0781676208b",
+      "bytes": 11990
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/policy.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/policy.py",
+      "source_sha256": "2b255c24bcda7413caaa58194ecb60977563834aabf9d358c4d0166a41e87150",
+      "published_sha256": "2b255c24bcda7413caaa58194ecb60977563834aabf9d358c4d0166a41e87150",
+      "bytes": 18971
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/power.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/power.py",
+      "source_sha256": "ebd4eed4d784030fdad822fdcc577da2c5047d72242453897d1a24537d0c08c7",
+      "published_sha256": "ebd4eed4d784030fdad822fdcc577da2c5047d72242453897d1a24537d0c08c7",
+      "bytes": 7799
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/repair.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/repair.py",
+      "source_sha256": "4d7d8af984e935700ac21d4e7a4433654555de975f783d998b8e756ec58b615f",
+      "published_sha256": "4d7d8af984e935700ac21d4e7a4433654555de975f783d998b8e756ec58b615f",
+      "bytes": 6558
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/repair2.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/repair2.py",
+      "source_sha256": "ab30337a5729389e6dff22ffb4d136bb8c9fc0c2689372fbc2d92a81776dcdd6",
+      "published_sha256": "ab30337a5729389e6dff22ffb4d136bb8c9fc0c2689372fbc2d92a81776dcdd6",
+      "bytes": 4003
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/replan_gate.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/replan_gate.py",
+      "source_sha256": "2553255e4a984c7286ea85517ae9c998e93f6875b7fd5a6080549ea427247e8d",
+      "published_sha256": "2553255e4a984c7286ea85517ae9c998e93f6875b7fd5a6080549ea427247e8d",
+      "bytes": 7969
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/reverify.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/reverify.py",
+      "source_sha256": "4019b6ae4bcb3a2c99d8363f76cc276ff96c1b6e797db536f9566419567a5be8",
+      "published_sha256": "4019b6ae4bcb3a2c99d8363f76cc276ff96c1b6e797db536f9566419567a5be8",
+      "bytes": 7047
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/route_determinism.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/route_determinism.py",
+      "source_sha256": "b62989134526edd66aa9759c27c9c96bd77665fc5da58b20bac9298867f153b6",
+      "published_sha256": "b62989134526edd66aa9759c27c9c96bd77665fc5da58b20bac9298867f153b6",
+      "bytes": 5841
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/serve.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/serve.py",
+      "source_sha256": "913193b643da181d8836ce7487d94a490211a043e5d67d8eaf0e2d0b2e4df3a2",
+      "published_sha256": "913193b643da181d8836ce7487d94a490211a043e5d67d8eaf0e2d0b2e4df3a2",
+      "bytes": 6725
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/sweep.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/sweep.py",
+      "source_sha256": "f55616a328397cde79d4f8b6f98c70966dfb9faba9e77f73ae755a4c77497d9a",
+      "published_sha256": "f55616a328397cde79d4f8b6f98c70966dfb9faba9e77f73ae755a4c77497d9a",
+      "bytes": 13802
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/terms.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/terms.py",
+      "source_sha256": "256782dcf3a0eb6ef84ea714772f5954db7612fe3cc325dd34fdc2d49f7c5238",
+      "published_sha256": "256782dcf3a0eb6ef84ea714772f5954db7612fe3cc325dd34fdc2d49f7c5238",
+      "bytes": 5162
+    },
+    {
+      "path": "src/lab/urp_lab/evolve/verdicts.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/evolve/verdicts.py",
+      "source_sha256": "c01e9ff1180ebefcf7c8854d6f305fc423c49c509e9308bae86e21cffb14b2f7",
+      "published_sha256": "c01e9ff1180ebefcf7c8854d6f305fc423c49c509e9308bae86e21cffb14b2f7",
+      "bytes": 11129
+    },
+    {
+      "path": "src/lab/urp_lab/recommend.py",
+      "source_id": "primary-worktree",
+      "source_relative_path": "src/lab/urp_lab/recommend.py",
+      "source_sha256": "71f72ce4a6a29cdf06cfd6a563694c1c5dcb8bf3b76f324af3b83c6d3ec31bb7",
+      "published_sha256": "71f72ce4a6a29cdf06cfd6a563694c1c5dcb8bf3b76f324af3b83c6d3ec31bb7",
+      "bytes": 16045
+    }
+  ],
+  "publication_transforms": [
+    {
+      "path": ".claude/skills/agri-evolving-decision/SKILL.md",
+      "reason": "Published copy substitutes machine-local path prefixes and private artifact URLs; original remains byte-identical locally.",
+      "source_sha256": "6be5d7df9727b58270975d8094f2cf27f24be056c3f257ddbac6655ca61b6f6f",
+      "published_sha256": "7a9016e873b51bb9df7247611891caea37af35bc38a273f44578d8808211819e"
+    },
+    {
+      "path": ".claude/skills/agri-evolving-decision/references/visualization.md",
+      "reason": "Published copy substitutes machine-local path prefixes and private artifact URLs; original remains byte-identical locally.",
+      "source_sha256": "eb9b44be23d7cfc7fdbded5b33f27745f41c25daad8f4fe87150177392ec1ff3",
+      "published_sha256": "29825568115b6d287237d679c84dec9cb3658aa84a89a6dee47f62cfc716630c"
+    },
+    {
+      "path": "experiments/runs/evolve-audit-20261023/audit/audit.json",
+      "reason": "Published copy substitutes machine-local path prefixes and private artifact URLs; original remains byte-identical locally.",
+      "source_sha256": "1a83c90102322ee35363767d698c632eba555bd3c49bbe346f7bb85f442635cb",
+      "published_sha256": "ad624d00c23d3e848bf7b5830bf78c1b97afbce66891b6487d283169ce48ebd6"
+    }
+  ]
+}
