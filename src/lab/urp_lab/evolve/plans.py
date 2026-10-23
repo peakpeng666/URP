@@ -131,3 +131,44 @@ def fleet_plan(fields: list[str], timeout_s: float = 60.0) -> list[dict]:
             jobs.append({'job_id': _job_id('fleet', *sorted(spec.items()), name), 'family': 'fleet', 'config': name,
                          'algorithm': alg, 'params': params, 'instance': spec, 'timeout_s': timeout_s})
     return jobs
+
+
+def determinism_plan(run_dirs: list, repeats: int = 5, per_cell: int = 10, infeasible: int = 30, seed: int = 20261024,
+                     timeout_s: float = 300.0) -> list[dict]:
+    """Repeated runs for the run-to-run determinism study (round 2, T2): every recorded hash mismatch, a
+    decomposition × machine stratified sample of officially feasible jobs, and a sample of no-solution jobs."""
+    import json
+    import random
+    from pathlib import Path
+    from .sweep import load_records
+    recs, mismatched = [], set()
+    for d in run_dirs:
+        d = Path(d)
+        recs += [r for r in load_records(d) if r['family'] == 'coverage']
+        for p in (d / 'reverify').glob('*.json'):
+            if p.name != 'sensitivity.json':
+                rv = json.loads(p.read_text(encoding='utf-8'))
+                if not rv.get('identical'):
+                    mismatched.add(rv['job_id'])
+    rng = random.Random(seed)
+    by_id = {r['job_id']: r for r in recs}
+    chosen = [by_id[j] for j in sorted(mismatched) if j in by_id]
+    feas = [r for r in recs if r['status'] == 'feasible' and r.get('valid') and r['job_id'] not in mismatched
+            and r['algorithm'] in ('f2c.full', 'evolve.f2c_repair')]
+    for dec in DECOMPOSITIONS:
+        for prof in I.PROFILES:
+            cell = [r for r in feas if r['params'].get('decomposition') == dec and r['instance']['profile'] == prof]
+            rng.shuffle(cell)
+            chosen += cell[:per_cell]
+    nosol = [r for r in recs if r['status'] == 'no_solution' and r['algorithm'] in ('f2c.full', 'evolve.f2c_repair')]
+    rng.shuffle(nosol)
+    chosen += nosol[:infeasible]
+    jobs = []
+    for r in chosen:
+        group = 'mismatch' if r['job_id'] in mismatched else 'infeasible' if r['status'] == 'no_solution' else 'feasible'
+        for k in range(repeats):
+            jobs.append({'job_id': _job_id('det', r['job_id'], k), 'family': 'coverage', 'config': r['config'], 'algorithm': r['algorithm'],
+                         'params': r['params'], 'instance': {**r['instance'], 'repeat': k}, 'timeout_s': timeout_s,
+                         'source_job': r['job_id'], 'source_status': r['status'], 'source_sha256': r.get('routes_sha256'),
+                         'sample_group': group})
+    return jobs

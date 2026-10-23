@@ -77,13 +77,17 @@ def main(argv=None):
             jobs += cj
         if 'fleet' in families:
             jobs += plans.fleet_plan(fields)
+        if 'determinism' in families:
+            runs = Path(__file__).resolve().parents[4] / 'experiments' / 'runs'
+            jobs += plans.determinism_plan([runs / 'evolve-audit-20261023', runs / 'evolve-repair-20261023'])
         if 'candidates' in families:
             cj, cex = plans.candidate_plan(fields)
             jobs += cj
             excluded = excluded or cex
         out = Path(args.out)
         plan = {'run_id': args.run_id or out.name, 'created_utc': sweep.utc(), 'note': args.note,
-                'purpose': ('准入依据研究候选池（修补窗口、分割角、倒圆输出；开发侧）；封存测试田块不在计划内' if 'candidates' in families else
+                'purpose': ('运行间确定性研究（同一任务重复 5 次；开发侧）；封存测试田块不在计划内' if 'determinism' in families else
+                            '准入依据研究候选池（修补窗口、分割角、倒圆输出；开发侧）；封存测试田块不在计划内' if 'candidates' in families else
                             '回路②候选成员（局部 Dubins 修补）准入实验（开发侧）；封存测试田块不在计划内' if 'repair' in families else
                             '互补性审计（开发侧）：真实田块覆盖配置与多车算法组合；封存测试田块不在计划内'),
                 'fields': fields, 'families': sorted(families), 'excluded': excluded, 'timeout_s': 300.0,
