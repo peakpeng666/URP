@@ -80,7 +80,12 @@ def analyse(dirs: list[Path], library: list[str], candidates: list[str], repeats
     out['vbs'] = {'old_library_mean_rho': vbs_old, 'new_library_mean_rho': float(rs.min(axis=1).mean()),
                   'old_library_feasible': int(feas[:, lib_j].any(axis=1).sum()), 'new_library_feasible': int(feas.any(axis=1).sum()),
                   'vbs_increment_rho': vbs_old - float(rs.min(axis=1).mean())}
-    phi = audit.shapley(rs, audit.PENALTY)
+    if len(allc) <= 20:
+        phi, shapley_method = audit.shapley(rs, audit.PENALTY), 'exact'
+    else:
+        from .ledger import _shapley
+        phi, shapley_method = _shapley(rs, audit.PENALTY)
+    out['shapley_method'] = shapley_method
     out['shapley'] = [{'config': c, 'shapley': float(p)} for c, p in zip(allc, phi)]
     # Controls and actual policy gain (held-out), each on its own portfolio's ratio matrix.
     keep = np.where(solv_new)[0]
