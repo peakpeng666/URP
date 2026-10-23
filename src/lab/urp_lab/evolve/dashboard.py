@@ -230,26 +230,38 @@ def sec_policy(p, ext):
     text = (f'<p>田块分组 {p["cv"]["folds"]} 折 × {p["cv"]["repeats"]} 次重复交叉验证。静态尝试顺序把首次尝试可行率由 {_pct(cv["default"]["first_try_feasible"])} '
             f'提高到 {_pct(cv["static"]["first_try_feasible"])}，已部署于工作台推荐器；六种实例感知排序中{"无一" if n_better == 0 else f"有 {n_better} 种"}显著优于静态顺序。</p>')
     if ext:
+        lifts = [(v, ext[f'old:{v}']['cv']['static']['first_try_feasible'], ext[f'extended:{v}']['cv']['static']['first_try_feasible'])
+                 for v in ('official', 'fillet', 'strict') if f'old:{v}' in ext and f'extended:{v}' in ext]
+        promoted = sum(1 for r in ext.values() for d in r['decisions'].values() if d['promote'])
+        text += (f'<p>加入 6 个局部 Dubins 修复配置后，静态顺序的首次尝试可行率在' +
+                 '，'.join(f'{T.t(T.VERDICT[v])}下由 {_pct(a)} 提高到 {_pct(b)}' for v, a, b in lifts) +
+                 f'；{len(ext)} 个「算法库 × 检验」组合中{"没有" if promoted == 0 else f"有 {promoted} 个"}实例感知排序满足晋升准则。'
+                 '算法库演化带来的提升大于排序学习。</p>')
         text += sec_policy_ext(ext)
     return body + text
 
 
 def sec_policy_ext(ext):
-    rows = []
-    for key in ('old:official', 'extended:official', 'old:fillet', 'extended:fillet', 'old:strict', 'extended:strict'):
-        r = ext.get(key)
-        if not r:
+    body = []
+    for ver in ('official', 'fillet', 'strict'):
+        keys = [k for k in (f'old:{ver}', f'extended:{ver}') if k in ext]
+        if not keys:
             continue
-        lib, ver = key.split(':')
-        name, d = max(r['decisions'].items(), key=lambda kv: kv[1]['first_try_diff_mean'])
-        rows.append([('原算法库' if lib == 'old' else '扩展算法库') + ' · ' + T.t(T.VERDICT[ver]), _pct(r['cv']['static']['first_try_feasible']),
-                     T.policy_label(name), f'{_num(100 * d["first_try_diff_mean"], 1, True)}（{_ci(*d["first_try_ci95"])}）',
-                     f'{_num(100 * d["stop_rho_diff_mean"], 1, True)}（{_ci(*d["stop_rho_ci95"])}）', '晋升' if d['promote'] else '不晋升'])
-    head = ['算法库 · 检验', '静态顺序首次可行率', '最优实例感知排序', '首次可行率差 / 百分点', '终止成本比差 / %', '判定']
-    th = ''.join(f'<th>{_e(h)}</th>' for h in head)
-    body = ''.join('<tr>' + ''.join(f'<td>{_e(c)}</td>' for c in r) + '</tr>' for r in rows)
-    return (f'<figure><div class="tablewrap"><table><thead><tr>{th}</tr></thead><tbody>{body}</tbody></table></div>'
-            '<figcaption><b>表 1</b> 扩展算法库（增加 6 个局部 Dubins 修复配置）上的尝试顺序评估。晋升准则：首次尝试可行率差的 95% 置信下界 > 0 且 Holm 校正单侧 p < 0.05，'
+        body.append(f'<tr class="grp"><th colspan="6">{_e(T.t(T.VERDICT[ver]))}</th></tr>')
+        for key in keys:
+            r = ext[key]
+            name, d = max(r['decisions'].items(), key=lambda kv: kv[1]['first_try_diff_mean'])
+            chip = '<span class="chip chip-good">晋升</span>' if d['promote'] else '<span class="chip chip-line">不晋升</span>'
+            body.append(f'<tr><td>{"原算法库" if key.startswith("old") else "扩展算法库"}</td><td class="num">{_pct(r["cv"]["static"]["first_try_feasible"])}</td>'
+                        f'<td>{_e(T.policy_label(name))}</td>'
+                        f'<td class="num">{_num(100 * d["first_try_diff_mean"], 1, True)} [{_num(100 * d["first_try_ci95"][0], 1)}, {_num(100 * d["first_try_ci95"][1], 1)}]</td>'
+                        f'<td class="num">{_num(100 * d["stop_rho_diff_mean"], 1, True)} [{_num(100 * d["stop_rho_ci95"][0], 1)}, {_num(100 * d["stop_rho_ci95"][1], 1)}]</td>'
+                        f'<td>{chip}</td></tr>')
+    head = ('<tr><th>算法库</th><th class="num">静态顺序</th><th>最优实例感知排序</th><th class="num">Δ首次可行率 / 百分点</th>'
+            '<th class="num">Δ终止成本比 / %</th><th>判定</th></tr>')
+    return (f'<figure><div class="tablewrap"><table class="ext"><thead>{head}</thead><tbody>{"".join(body)}</tbody></table></div>'
+            '<figcaption><b>表 1</b> 原算法库与扩展算法库（增加 6 个局部 Dubins 修复配置）上的尝试顺序评估：静态顺序的首次尝试可行率，'
+            '以及首次尝试可行率差最大的实例感知排序相对静态顺序的差值与 95% 置信区间。晋升准则：首次尝试可行率差的 95% 置信下界 &gt; 0 且 Holm 校正单侧 p &lt; 0.05，'
             '终止成本比差的 95% 置信上界 ≤ +1%。</figcaption></figure>')
 
 
@@ -476,6 +488,8 @@ th{font-weight:600;font-size:.78rem;color:var(--muted)}
 th.num{font-family:inherit}
 .row.grp{margin-top:10px}
 td.muted{color:var(--muted)}
+tr.grp th{padding-top:12px;color:var(--ink-2);font-size:.8rem;border-bottom:1px solid var(--base)}
+table.ext td{white-space:nowrap}
 .chip{display:inline-block;font-size:.74rem;padding:1px 8px;border-radius:999px;white-space:nowrap}
 .chip-good{background:var(--accent-soft);color:var(--accent-ink)}
 .chip-warm{background:var(--warm-soft);color:var(--warm-ink)}
@@ -567,8 +581,13 @@ def page() -> str:
             bd = max(m['evidence']['official']['feasible'] for m in der)
             br = max(m['evidence']['official']['feasible'] for m in reg)
             top = max(der + reg, key=lambda m: m['evidence']['official']['shapley'])
-            cards.append(('s4', '算法库演化', f'局部 Dubins 修复把单一配置的可行实例由 {br} 个提高到 {bd} 个' +
-                          ('，修复配置的 Shapley 贡献居各成员之首。' if top['parent'] else '。')))
+            txt = f'局部 Dubins 修复把单一配置的可行实例由 {br} 个提高到 {bd} 个'
+            if ext and 'old:fillet' in ext and 'extended:fillet' in ext:
+                a_, b_ = (ext[k]['cv']['static']['first_try_feasible'] for k in ('old:fillet', 'extended:fillet'))
+                txt += f'；纳入修复配置后，静态顺序的首次尝试可行率（圆角检验）由 {_pct(a_)} 提高到 {_pct(b_)}，大于任何排序学习的收益。'
+            else:
+                txt += '，修复配置的 Shapley 贡献居各成员之首。' if top['parent'] else '。'
+            cards.append(('s4', '算法库演化', txt))
     if ex and dyn:
         w = ex['results']['with_reference']
         shares = [c['rollout_reopt_share'] for c in dyn['cells'].values()]
