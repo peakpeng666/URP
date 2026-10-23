@@ -17,6 +17,7 @@ import matplotlib
 import numpy as np
 import scipy
 
+from ..analysis import cd_unavailable_reason
 from . import charts, maps, study
 from . import data as D
 from .style import PRESETS, Style, apply, fit_height
@@ -122,7 +123,7 @@ SPECS: list[Spec] = [
     Spec('gap_distribution', 'study', '差距分布', 'Gap distribution', study.gap_distribution,
          lambda c: _need_study(c, lambda an: None if any(an['ecdf'].values()) else '还没有可计算差距的有效运行')),
     Spec('cd_diagram', 'study', '临界差图', 'Critical-difference diagram', study.cd_diagram,
-         lambda c: _need_study(c, lambda an: None if (an.get('tests') or {}).get('nemenyi') else 'Friedman / Nemenyi 检验需要 ≥3 个算法和 ≥2 个齐全实例')),
+         lambda c: _need_study(c, lambda an: cd_unavailable_reason(an.get('tests') or {}))),
     Spec('pairwise', 'study', '两两检验', 'Pairwise tests', study.pairwise,
          lambda c: _need_study(c, lambda an: None if len(an['algorithms']) >= 2 and any(r['n'] for r in an['tests']['wilcoxon_holm']) else '需要 ≥2 个算法的齐全实例')),
     Spec('anytime_median', 'study', '差距随时间（中位数）', 'Median anytime gap', study.anytime_median,

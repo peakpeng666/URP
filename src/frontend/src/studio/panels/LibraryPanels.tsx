@@ -8,6 +8,7 @@ import { useStudio } from '../store';
 import type { CvrplibInstance, FieldEntry, Reference } from '../types';
 import { LibraryBadge } from './PlanPanels';
 import s from './panels.module.css';
+import { AgriCatalog } from '../agri/AgriCatalog';
 
 const CodeMirror = lazy(() => import('@uiw/react-codemirror'));
 
@@ -19,6 +20,7 @@ const FRAME_LABEL = (sc: ScenarioSummary) =>
 
 /* ------------------------------------------------------------ scenarios -- */
 export function ScenarioNavigator() {
+  const [catalog, setCatalog] = useState(false);
   const res = useLabResource('studio-scenarios', () => lab.scenarios(), { pollMs: 8000 });
   const current = useStudio((st) => st.scenarioId);
   const notify = useStudio((st) => st.notify);
@@ -46,6 +48,9 @@ export function ScenarioNavigator() {
   }
   return (
     <div className={s.scroll}>
+      <div className={s.pad}><Button size="sm" onClick={() => setCatalog(!catalog)} aria-expanded={catalog}>{catalog ? '返回已有场景' : '打开农业任务目录'}</Button></div>
+      <div hidden={!catalog}><AgriCatalog visible={catalog} /></div>
+      <div hidden={catalog}>
       <div className={s.search}>
         <Input placeholder="搜索场景" value={q} onChange={(e) => setQ(e.target.value)} aria-label="搜索场景" />
       </div>
@@ -72,6 +77,7 @@ export function ScenarioNavigator() {
           </ul>
         </div>
       ))}
+      </div>
     </div>
   );
 }

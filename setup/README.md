@@ -14,6 +14,12 @@
 
 云端测试结果见 [2026-10-19 测试报告](2026-10-19/delivery-review/REPORT.md)。容器和本机测试的对应版本见各自记录。
 
+## TB4 执行时钟（可选实验协议）
+
+默认执行预算仍按墙钟。慢速云端 ROS 仿真可显式选择模拟时钟，并且必须同时指定有限墙钟看门狗：`src/lab/.venv/bin/python src/lab/e2e/full_loop.py --scenario maze-inspection --modes follow_path --execution-time-basis simulation --execution-wall-watchdog 900 --budget 1800`。不指定 `--execution-budget` 时仍用原路径长度公式的预算值，只改变明确选择的计时口径。接驳和全部分段共用一个总预算，不逐段重置。显式 simulation 的 `execution_budget_v2` 按 3 模拟秒检查传感器源/接收年龄，并保留 30 墙钟秒的接收与源进展后备及总墙钟看门狗；默认 wall 的 3 墙钟秒规则不变。重复旧 header 不算新数据，零时间戳真值桥接只验证接收新鲜度，不声称源时间同步；几何和到达检查不变。完整字段与限制见 `src/lab/CONTRACT.md`。
+
+外层在会话就绪后核查剩余墙钟是否覆盖提交、看门狗与终态处理；不足就拒绝排队。默认两种 modes 不会自动减为一种，示例明确只跑 follow_path。warehouse 长实验须另选有界协议及 CI 总时限，不把慢 RTF 当作无限等待许可。参数、元数据、上限和验收边界见 [仿真契约](../src/lab/CONTRACT.md)。这些选项只提供可复现实验条件，不能替代原生验收。
+
 ## 打开
 
 安装器部署后使用 `urp up`、`urp status`、`urp down`。Windows PowerShell 的对应命令见 [DEPLOY.md](../DEPLOY.md)。
@@ -75,6 +81,16 @@ bash setup/run.sh lab --open
 - **科研图表**：按 Elsevier / IEEE / Springer / 学位论文版式输出 21 种图（矢量 PDF / EPS / SVG，600 dpi PNG / TIFF），中英文可切换，「论文图包」附源数据 CSV、图注和来源清单。图表使用对应实验的记录数据。
 
 验收记录见 [2026-10-16/资产库与科研图表验收.md](2026-10-16/资产库与科研图表验收.md)，需要后端配合的接口见 [2026-10-16/后端对接需求.md](2026-10-16/后端对接需求.md)。
+
+### 科研统计口径
+
+- 性能剖面比较每个实例的**可行运行平均成本**，不是 BKS 差距或运行时间。分母是所有算法均有终态记录的齐全实例；某算法在该实例全部失败时，该单元仍保留在分母中，但不贡献有限 τ 下的成功。最优成本为零时，只有零成本算法计为并列最优。成功率另按各算法全部终态运行计算。
+- 对可表示的大数，均值与偶数中位数使用精确求和，差距计算避免中间乘法溢出，收敛曲线与摘要使用同一差距公式。标准差仍使用全部观察值；仅当真实标准差超出浮点范围时返回空值并标记 out_of_range，不删除有效观测。
+- 平均秩以齐全实例为统计块，失败排末位、并列取平均秩；全失败实例不计最优次数。重复 seed 不增加 N，分组本身也不证明不同实例相互独立。
+- 本实现采用经平局校正的 Friedman 卡方近似，支持范围为 N≥11 且 k≥7；范围外或全部平局时保留描述性平均秩，不报告推断结论。默认 α=0.05，仅有效且 p<α 时计算并展示 Nemenyi 临界差；不显著时不画 CD。这是当前近似方法的支持范围，不表示小样本不能采用其他统计方法。依据：[SciPy Friedman 说明](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.friedmanchisquare.html)、[Demšar 2006](https://www.jmlr.org/papers/v7/demsar06a.html)。
+- Wilcoxon 两两比较只纳入双方成本和差值均有限的齐全实例，分别记录无效成本与差值溢出的排除数。有效配对不足 5 个或全为零差时不检验；其余沿用 SciPy 的 auto / zsplit 方法。Holm 仅校正成功得到有限 p 值的检验，holm_family_size 给出实际校正数量。
+- 现有差距图为箱线图，JSON 的 ecdf 字段仍是有限差距数组，并非已归一化曲线。新增 ecdf_metadata 为未来累计比例明确分母：**每个算法具有有限正参照的全部已观察终态运行**，包括失败，每次运行等权，不对实例或重复次数再加权。缺失或非正参照单独计数，不视为失败；算法缺测和未结束运行不补入。分母为零时不定义曲线。
+- ecdf_metadata.counts 按算法记录 terminal_runs、eligible_terminal_runs、finite_gap_runs、eligible_failed_runs、eligible_nonfinite_gap_runs、missing_reference_runs；后三类与有限差距互斥。failed_runs 独立统计全部失败，其中 failed_missing_reference_runs 与缺参照重叠。totals 只用于核对总数，不作为单个算法曲线分母。有效参照沿用有效 BKS，否则取同组最好可行值；零参照不能计算相对百分比。
 
 ## 算法库一览
 

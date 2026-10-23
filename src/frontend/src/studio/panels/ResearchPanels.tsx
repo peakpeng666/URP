@@ -7,6 +7,7 @@ import { studio, urls } from '../api';
 import { useStudio } from '../store';
 import type { Analysis, InstanceSpace, Study } from '../types';
 import { logTimeAxis } from '../chart';
+import { canShowCd, hasValidFriedman } from '../analysisStats';
 import s from './panels.module.css';
 
 type ArchiveExperiment = {
@@ -293,7 +294,7 @@ export function AnalysisPanel() {
               <tr key={r.algorithm}>
                 <td><strong>{r.name ?? r.algorithm}</strong></td>
                 <td className={s.num}>{r.successes}/{r.runs}</td>
-                <td className={s.num}>{r.gap_mean == null ? '—' : `${fmt.num(r.gap_mean, 2)}%`}{r.gap_sd != null ? ` ± ${fmt.num(r.gap_sd, 2)}` : ''}</td>
+                <td className={s.num}>{r.gap_mean == null ? '—' : `${fmt.num(r.gap_mean, 2)}%`}{r.gap_sd != null ? ` ± ${fmt.num(r.gap_sd, 2)}` : r.gap_sd_status === 'out_of_range' ? '（标准差超出数值范围）' : ''}</td>
                 <td className={s.num}>{r.gap_median == null ? '—' : `${fmt.num(r.gap_median, 2)}%`}</td>
                 <td className={s.num}>{fmt.num(r.mean_rank, 2)}</td>
                 <td className={s.num}>{r.wins}</td>
@@ -303,20 +304,16 @@ export function AnalysisPanel() {
           </tbody>
         </table>
         <p className={s.meta}>{data.reference_note}</p>
-        {t.friedman?.statistic != null && (
-          <p className={s.hint}>
-            Friedman χ² = {fmt.num(t.friedman.statistic, 2)}，p = {t.friedman.p_value?.toExponential(2)}（{t.friedman.significant ? '算法间差异显著' : '差异不显著'}）；
-            Nemenyi 临界差 CD = {fmt.num(t.nemenyi?.critical_difference, 2)}（α = {t.alpha}，k = {t.k}，N = {t.n}）。
-          </p>
-        )}
-        {t.nemenyi && <CdDiagram ranks={t.nemenyi.mean_ranks} cd={t.nemenyi.critical_difference} names={names} />}
+        <AnalysisInference tests={t} names={names} />
         <div className={s.chart}>
-          <h4>性能剖面（Dolan–Moré）：ρ(τ) = 成本不超过最好值 τ 倍的实例比例</h4>
+          <h4>性能剖面：可行运行平均成本相对本实例最好均值</h4>
+          <p className={s.hint}>分母为 {data.n_complete_instances} 个齐全实例；各算法取可行运行均值，全失败单元不计为有限 τ 下的成功。</p>
           <PlotBox deps={[profile]} make={(w) => profile.length ? Plot.plot({ width: w, height: 230, style: FONT, x: { label: 'τ', grid: true }, y: { label: 'ρ(τ)', domain: [0, 1], grid: true }, color,
             marks: [Plot.line(profile, { x: 'tau', y: 'rho', stroke: 'a', curve: 'step-after', strokeWidth: 1.8 })] }) : null} />
         </div>
         <div className={s.chart}>
-          <h4>相对参照的差距分布（每次运行）</h4>
+          <h4>相对参照的差距分布（有效运行）</h4>
+          {data.ecdf_metadata && <p className={s.hint}>绘制 {data.ecdf_metadata.totals.finite_gap_runs} 次有限差距；有正参照但失败 {data.ecdf_metadata.totals.eligible_failed_runs} 次，缺少正参照 {data.ecdf_metadata.totals.missing_reference_runs} 次，均不画点。{data.ecdf_metadata.totals.eligible_nonfinite_gap_runs > 0 && ` 另有 ${data.ecdf_metadata.totals.eligible_nonfinite_gap_runs} 次差距超出数值范围。`}</p>}
           <PlotBox deps={[data]} make={(w) => {
             const pts = data.scatter.filter((p) => p.gap != null).map((p) => ({ ...p, algorithm: nm(p.algorithm) }));
             return pts.length ? Plot.plot({ width: w, height: 40 + 34 * algs.length, marginLeft: 170, style: FONT, x: { label: '差距 (%)', grid: true }, y: { label: null },
@@ -333,6 +330,7 @@ export function AnalysisPanel() {
             }} />
           </div>
         )}
+        {!!data.anytime.excluded && <p className={s.hint}>另有 {data.anytime.excluded} 次运行的搜索轨迹与报告目标不一致，未纳入收敛曲线。</p>}
         <div className={s.chart}>
           <h4>运行时间 vs 差距</h4>
           <PlotBox deps={[data]} make={(w) => {
@@ -355,12 +353,12 @@ export function AnalysisPanel() {
         )}
         <h3>两两比较（Wilcoxon 符号秩 + Holm 校正）</h3>
         <table className={s.table}>
-          <thead><tr><th>A</th><th>B</th><th className={s.num}>A 更好</th><th className={s.num}>B 更好</th><th className={s.num}>平</th><th className={s.num}>p（Holm）</th><th /></tr></thead>
+          <thead><tr><th>A</th><th>B</th><th className={s.num}>有效配对</th><th className={s.num}>A 更好</th><th className={s.num}>B 更好</th><th className={s.num}>平</th><th className={s.num}>p（Holm）</th><th /></tr></thead>
           <tbody>
             {t.wilcoxon_holm.map((r) => (
               <tr key={`${r.a}-${r.b}`}>
-                <td>{r.a}</td><td>{r.b}</td><td className={s.num}>{r.a_better}</td><td className={s.num}>{r.b_better}</td><td className={s.num}>{r.ties}</td>
-                <td className={s.num}>{r.p_holm == null ? '样本不足' : r.p_holm.toExponential(2)}</td>
+                <td>{r.a}</td><td>{r.b}</td><td className={s.num}>{r.n}/{r.n_complete_blocks ?? t.n}</td><td className={s.num}>{r.a_better}</td><td className={s.num}>{r.b_better}</td><td className={s.num}>{r.ties}</td>
+                <td className={s.num}>{r.p_holm == null ? (r.reason ?? '未检验') : r.p_holm.toExponential(2)}</td>
                 <td>{r.significant ? <Badge tone="green">显著</Badge> : null}</td>
               </tr>
             ))}
@@ -369,6 +367,20 @@ export function AnalysisPanel() {
       </div>
     </div>
   );
+}
+
+/** Kept separate so inference claims can be regression-tested without loading a study. */
+export function AnalysisInference({ tests: t, names }: { tests: Analysis['tests']; names: Record<string, string> }) {
+  const showCd = canShowCd(t);
+  return <>
+    {hasValidFriedman(t) && t.friedman && t.friedman.p_value != null ? (
+      <p className={s.hint}>
+        Friedman χ² = {fmt.num(t.friedman.statistic, 2)}，p = {t.friedman.p_value.toExponential(2)}（{t.friedman.significant ? '算法间差异显著' : '未发现显著差异'}；α = {t.alpha}，k = {t.k}，N = {t.n} 个齐全实例）。
+        {showCd ? ` Nemenyi 临界差 CD = ${fmt.num(t.nemenyi?.critical_difference, 2)}。` : ' 仅展示描述性平均秩，不作事后比较。'}
+      </p>
+    ) : <p className={s.hint}>{t.friedman?.reason ?? '当前仅展示描述性平均秩。'}（k = {t.k}，N = {t.n} 个齐全实例）</p>}
+    {showCd && t.nemenyi && <CdDiagram ranks={t.nemenyi.mean_ranks} cd={t.nemenyi.critical_difference} names={names} />}
+  </>;
 }
 
 function CdDiagram({ ranks, cd, names }: { ranks: Record<string, number>; cd: number; names: Record<string, string> }) {
