@@ -24,6 +24,7 @@ from warehouse_public_summary import project, digest
 from startup_observer import Observer, is_cancellation
 from process_observer import ProcessObserver
 import runtime_identity
+import cleanup_diagnostics
 
 FUEL_MODELS=('Warehouse','shelf_big','shelf','Chair','foldable_chair','MaleVisitorOnPhone','Table','Jersey Barrier','Casual female')
 
@@ -97,6 +98,16 @@ class IdentityCapture:
         error=self.pending if self.pending is not None else self.containment_error
         if error is not None and (self.original_error is None or self.original_error is error):
             raise error
+
+
+def capture_cleanup_diagnostics(session, lifecycle, identity_capture):
+    # Optional projection only, after the existing session identity check.
+    # A diagnostic cancellation is deferred until existing cleanup completes;
+    # an original application/API failure retains precedence in IdentityCapture.
+    try:return cleanup_diagnostics.collect(session, lifecycle)
+    except BaseException as exc:
+        if is_cancellation(exc):identity_capture.defer_cancellation(exc)
+        return dict(cleanup_diagnostics.UNAVAILABLE)
 
 
 def adapter_identity():
@@ -285,6 +296,7 @@ def execute(a):
             if report_path.is_file():diagnostic['session_report']='identity_mismatch'
             raise ValueError('session_report_identity_mismatch')
         diagnostic['session_report']='available'
+        raw['warehouse_cleanup_diagnostics']=capture_cleanup_diagnostics(session,lifecycle,identity_capture)
         mark('physical_check')
         raw.update(physical_evidence(lifecycle['result'],session,lifecycle,plan))
         guard();raw.update(source_identity_verified=True,map_identity_verified=True)

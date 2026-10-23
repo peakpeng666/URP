@@ -14,6 +14,7 @@ from execution_diagnostics import sanitize as sanitize_execution
 from execution_protocol import sanitize as sanitize_protocol, protocol_ok
 from startup_observation_schema import sanitize as sanitize_observation
 import runtime_identity
+import cleanup_diagnostics
 from historical_input import SOURCE, HISTORICAL_SOURCE
 from process_observer import sanitize as sanitize_process_observation, UNAVAILABLE_OBSERVATION, is_cancellation
 
@@ -112,6 +113,20 @@ def project(raw, runner=None, *, require_runner=True, runtime_identity_cancellat
         and result['physical_budget_s'] is not None and abs(result['physical_budget_s']-649.6)<1e-7):
         result['state']='FAIL'
     result['warehouse_state']=result['state']
+    # Pure projection of matched report plus already-existing final constraints.
+    # This diagnostic never participates in the acceptance predicates above.
+    try:
+        result['warehouse_cleanup_diagnostics']=cleanup_diagnostics.finish(
+            raw.get('warehouse_cleanup_diagnostics'),
+            availability=result['warehouse_diagnostics']['session_report'],
+            forced_cleanup=result['warehouse_diagnostics']['harness']['forced_cleanup'],
+            remaining_owned_count=result['remaining_owned_process_count'],
+            runner_remaining_count=result['runner_cleanup_remaining'])
+    except BaseException as exc:
+        if is_cancellation(exc):
+            if runtime_identity_cancellation is None:raise
+            runtime_identity_cancellation(exc)
+        result['warehouse_cleanup_diagnostics']=dict(cleanup_diagnostics.UNAVAILABLE)
     return result
 
 def main():
