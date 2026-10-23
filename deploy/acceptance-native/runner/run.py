@@ -254,6 +254,14 @@ def select_runtime_profile(root, env):
     if (pathlib.Path(root)/'src/lab/runtime/native/bridge/profile.json').is_file():
         env['URP_SIM_PROFILE']='image'
 
+def simulation_entry(stage):
+    """Explicit stage routing; ordinary acceptance budgets are unchanged."""
+    if stage=='warehouse-lifecycle-only':return 'warehouse/warehouse_lifecycle_only_entry.py',3600
+    if stage=='warehouse':return 'warehouse/warehouse_acceptance.py',9000
+    if stage=='maze':return 'acceptance.py',3600
+    raise ValueError('unknown_stage')
+
+
 def run(args):
     # Adopt only descendants that would otherwise be orphaned during shutdown.
     if ctypes.CDLL(None, use_errno=True).prctl(36, 1, 0, 0, 0) != 0:
@@ -264,6 +272,8 @@ def run(args):
     root = pathlib.Path(args.source).resolve()
     harness = pathlib.Path(args.harness).resolve()
     status = {'stage': 'installation', 'exit_code': 1, 'cleanup_remaining': 0, 'forced_kill_count': 0, 'termination_reason': 'unknown'}
+    if args.stage == 'warehouse-lifecycle-only':
+        status['requested_stage']='warehouse-lifecycle-only'
     owned = {}
     current = None
     env = os.environ.copy()
@@ -356,8 +366,13 @@ def run(args):
         number = display.read_text().strip()
         if not number.isdigit(): raise RuntimeError('display_not_ready')
         env['DISPLAY'] = ':'+number
-        entry = harness / ('warehouse/warehouse_acceptance.py' if args.stage == 'warehouse' else 'acceptance.py')
-        rc = child([str(root/'src/lab/.venv/bin/python'), str(entry), '--source',str(root),'--private-dir',str(private/'harness-private'),'--harness-sha',args.harness_sha,'--summary',str(private/'summary.json'),'--stage',args.stage], 'acceptance.log', time.monotonic()+(9000 if args.stage == 'warehouse' else 3600))
+        entry_name, simulation_budget = simulation_entry(args.stage)
+        entry = harness / entry_name
+        if args.stage != 'warehouse-lifecycle-only':
+            rc = child([str(root/'src/lab/.venv/bin/python'), str(entry), '--source',str(root),'--private-dir',str(private/'harness-private'),'--harness-sha',args.harness_sha,'--summary',str(private/'summary.json'),'--stage',args.stage], 'acceptance.log', time.monotonic()+(9000 if args.stage == 'warehouse' else 3600))
+        else:
+            diagnostic_deadline=time.monotonic()+3600
+            rc = child([str(root/'src/lab/.venv/bin/python'), str(entry), '--source',str(root),'--private-dir',str(private/'harness-private'),'--harness-sha',args.harness_sha,'--summary',str(private/'summary.json'),'--stage',args.stage,'--diagnostic-deadline',str(diagnostic_deadline)], 'acceptance.log', diagnostic_deadline)
         status['exit_code'] = rc
     except StageDeadlineExceeded:
         status['termination_reason']='stage_timeout'
@@ -452,7 +467,7 @@ def run(args):
     return status
 
 if __name__ == '__main__':
-    p=argparse.ArgumentParser();p.add_argument('--source',required=True);p.add_argument('--harness',required=True);p.add_argument('--private-dir',required=True);p.add_argument('--stage',choices=['maze','warehouse'],default='maze');p.add_argument('--harness-sha',required=True)
+    p=argparse.ArgumentParser();p.add_argument('--source',required=True);p.add_argument('--harness',required=True);p.add_argument('--private-dir',required=True);p.add_argument('--stage',choices=['maze','warehouse','warehouse-lifecycle-only'],default='maze');p.add_argument('--harness-sha',required=True)
     p.add_argument('--allow-host-apt-repair',action='store_true')
     try: result=run(p.parse_args());sys.exit(0 if result['exit_code']==0 else 1)
     except Exception: sys.exit(1)

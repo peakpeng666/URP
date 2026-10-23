@@ -202,6 +202,8 @@ class Tests(unittest.TestCase):
         execute=next(n for n in ast.parse(path.read_text()).body if isinstance(n,ast.FunctionDef) and n.name=='execute')
         original=next(n for n in execute.body if isinstance(n,ast.Try)).finalbody
         # Exercise exactly the diagnostic prelude, before the existing observer cleanup.
+        # New lifecycle-only cancellation precedence wraps the shared finalizer.
+        if len(original)==1 and isinstance(original[0],ast.Try):original=original[0].body
         end=next(i for i,n in enumerate(original) if isinstance(n,ast.If) and ast.unparse(n.test)=='observer is not None')
         module=ast.Module(body=original[:end],type_ignores=[]);ast.fix_missing_locations(module)
         for failure in (ValueError('fixture'),KeyboardInterrupt()):

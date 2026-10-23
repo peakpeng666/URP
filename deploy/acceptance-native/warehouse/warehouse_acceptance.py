@@ -4,6 +4,7 @@ from warehouse_diagnostics import failure as describe_failure
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import secrets
@@ -110,6 +111,65 @@ def capture_cleanup_diagnostics(session, lifecycle, identity_capture):
         return dict(cleanup_diagnostics.UNAVAILABLE)
 
 
+def validate_lifecycle_deadline(value, clock=time.monotonic):
+    now=clock()
+    if type(value) not in (int,float) or not math.isfinite(value) or not now<value<=now+3600:
+        raise ValueError('lifecycle_deadline_invalid')
+    return value
+
+
+def bounded_lifecycle_transport(transport, deadline, clock=time.monotonic):
+    """Cap every new-mode HTTP operation by the diagnostic child's envelope."""
+    def request(base, method, path, data=None, timeout=5):
+        remaining=deadline-clock()
+        if (type(timeout) not in (int,float) or not math.isfinite(timeout) or timeout<=0
+                or not math.isfinite(remaining) or remaining<=0):
+            raise TimeoutError('lifecycle_transport_budget_expired')
+        return transport(base,method,path,data,timeout=min(timeout,remaining))
+    return request
+
+
+def cleanup_lifecycle_gateway(base, gateway, token, api, owned, signal_owned, capture,
+                              clock=time.monotonic, sleep=time.sleep):
+    """New diagnostic only: defer cancellation while attempting bounded cleanup."""
+    info={'gateway_wait_timed_out':False}; forced=False; uncertain=False
+    def attempt(call, default=None):
+        nonlocal uncertain
+        try:return call()
+        except BaseException as exc:
+            uncertain=True
+            if is_cancellation(exc):capture.defer_cancellation(exc)
+            return default
+    if base and gateway and attempt(gateway.poll) is None:
+        attempt(lambda:api(base,'POST','/shutdown',{},timeout=10))
+        try:gateway.wait(timeout=240)
+        except subprocess.TimeoutExpired:
+            forced=True;info['gateway_wait_timed_out']=True
+        except BaseException as exc:
+            uncertain=True
+            if is_cancellation(exc):capture.defer_cancellation(exc)
+    remaining=attempt(lambda:owned(token))
+    if remaining:
+        forced=True
+        attempt(lambda:signal_owned(token,signal.SIGTERM))
+        end=clock()+15
+        while clock()<end:
+            remaining=attempt(lambda:owned(token))
+            if not remaining:break
+            attempt(lambda:sleep(min(.5,max(0,end-clock()))))
+    remaining=attempt(lambda:owned(token))
+    if remaining:
+        forced=True
+        attempt(lambda:signal_owned(token,signal.SIGKILL))
+        attempt(lambda:sleep(1))
+    if gateway:attempt(lambda:gateway.wait(timeout=5))
+    remaining=attempt(lambda:owned(token))
+    info['forced_cleanup']=forced or uncertain
+    return {'gateway_exit_code':attempt(lambda:gateway.returncode) if gateway else None,
+            'remaining_owned_process_count':len(remaining) if isinstance(remaining,(list,tuple,set,dict)) else None,
+            'forced':forced or uncertain, 'diagnostics':info}
+
+
 def adapter_identity():
     return canonical_sha({p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(Path(__file__).parent.glob('*.py'))})
 
@@ -150,7 +210,7 @@ def preload_fuel(source,private,env):
     return materialize(download_fuel_archive(private),cache)
 
 
-def execute(a):
+def execute(a, *, lifecycle_only=False, lifecycle_driver=None, summary_project=None):
     private=a.private_dir.resolve();private.mkdir(parents=True,exist_ok=False,mode=0o700)
     runtime=private/'runtime';runtime.mkdir(mode=0o700)
     frozen=a.frozen_harness.resolve()
@@ -158,9 +218,18 @@ def execute(a):
     from acceptance import api, owned, signal_owned, verify_source, read
     from startup_diagnostics import collect
     from execution_diagnostics import collect as collect_execution
+    if lifecycle_only:
+        deadline=validate_lifecycle_deadline(getattr(a,'diagnostic_deadline',None))
+        api=bounded_lifecycle_transport(api,deadline)
     source=a.source.resolve();token=secrets.token_hex(24);gateway=None;base=None;forced=False;sid=None;observer=None;process_observer=None
     identity_capture=IdentityCapture()
     raw={'state':'ERROR','source_sha':SOURCE,'harness_sha':a.harness_sha,'overall_wall_budget_s':OVERALL_WALL_S}
+    if lifecycle_only:
+        raw.update(stage='warehouse-lifecycle-only', execution_scope='lifecycle_only',
+                   task_not_submitted=True, route_acceptance='NOT_RUN', session_ready_observed=False,
+                   overall_wall_budget_s=3600)
+    # Explicit entry-point dependency selection, never environment-driven.
+    project=summary_project or globals()['project']
     diagnostic={'harness':{'phase':'preflight'},'session_report':'unavailable'}
     raw['warehouse_diagnostics']=diagnostic
     def mark(phase):diagnostic['harness']['phase']=phase
@@ -171,7 +240,7 @@ def execute(a):
         if process_observer is not None:process_observer.safe('bind',value)
     def save(name,obj):(private/name).write_text(json.dumps(obj,ensure_ascii=False,indent=2,allow_nan=False))
     try:
-        if a.stage!='warehouse' or not digest(a.harness_sha,40):raise ValueError('warehouse_arguments_invalid')
+        if a.stage!=('warehouse-lifecycle-only' if lifecycle_only else 'warehouse') or not digest(a.harness_sha,40):raise ValueError('warehouse_arguments_invalid')
         mark('source_verification')
         verify_source(source)
         if Path(sys.prefix).resolve()!=(source/'src/lab/.venv').resolve():raise ValueError('wrong_checker_interpreter')
@@ -208,6 +277,7 @@ def execute(a):
         mark('record_build')
         record,plan=build_record(inputs,check,map_check,to_sim_plan,execution_manifest,lambda:maps.fingerprint('warehouse'),adapter_before)
         raw.update(public_receipt(record));raw.update(resources);raw.update(source_sha=SOURCE,harness_sha=a.harness_sha,overall_wall_budget_s=OVERALL_WALL_S,state='ERROR',**map_before)
+        if lifecycle_only:raw['overall_wall_budget_s']=3600
         save('new-record.json',record);save('current-plan.json',plan)
         mark('record_store')
         db=Store(runtime/'lab.sqlite3')
@@ -260,9 +330,9 @@ def execute(a):
         mark('gateway_health')
         end=time.monotonic()+120
         while True:
-            if gateway.poll() is not None or time.monotonic()>end:raise ValueError('gateway_failed')
+            if gateway.poll() is not None or (time.monotonic()>=end if lifecycle_only else time.monotonic()>end):raise ValueError('gateway_failed')
             try:
-                if api(base,'GET','/health').get('status')=='ok':break
+                if (api(base,'GET','/health',timeout=min(5,max(0,end-time.monotonic()))) if lifecycle_only else api(base,'GET','/health')).get('status')=='ok':break
             except (OSError,ValueError):pass
             time.sleep(.5)
         diagnostic['harness']['gateway_health_verified']=True
@@ -280,9 +350,16 @@ def execute(a):
                 if is_cancellation(exc):raise
                 observer=None;raw['warehouse_startup_observation']={'status':'unavailable'}
         if process_observer is not None:api_call=process_observer.wrap(api_call)
-        lifecycle=drive(api_call,record['run_id'],plan,guard,save,on_session=observed_session)
+        if lifecycle_only:
+            if lifecycle_driver is None:raise ValueError('lifecycle_driver_missing')
+            lifecycle=lifecycle_driver(api_call,record['run_id'],plan,guard,save,on_session=observed_session,absolute_deadline=deadline)
+        else:
+            lifecycle=drive(api_call,record['run_id'],plan,guard,save,on_session=observed_session)
+        if lifecycle_only:
+            raw['session_ready_observed']=lifecycle.get('ready_observed') is True
+            raw['task_not_submitted']=lifecycle.get('task_not_submitted') is True
         diagnostic['lifecycle']=lifecycle['diagnostics']
-        raw['execution_protocol']=lifecycle['execution_protocol']
+        raw['execution_protocol']=lifecycle.get('execution_protocol') if lifecycle_only else lifecycle['execution_protocol']
         raw['execution_diagnostics']=collect_execution(lifecycle['result'],[record],source)
         sid=lifecycle['session_id']
         import re
@@ -299,6 +376,9 @@ def execute(a):
         raw['warehouse_cleanup_diagnostics']=capture_cleanup_diagnostics(session,lifecycle,identity_capture)
         mark('physical_check')
         raw.update(physical_evidence(lifecycle['result'],session,lifecycle,plan))
+        if lifecycle_only:
+            raw['state']='PASS' if lifecycle['passed'] else 'FAIL'
+            raw['overall_wall_budget_s']=3600
         guard();raw.update(source_identity_verified=True,map_identity_verified=True)
         # Assert real session settings, not just requested API settings.
         if (session.get('spawn')!=record['replay']['expected_session_spawn'] or
@@ -321,62 +401,88 @@ def execute(a):
         diagnostic['harness'].update(failure_phase=diagnostic['harness']['phase'],**describe_failure(exc))
         raw['state']='ERROR';(private/'harness-error.txt').write_text(type(exc).__name__+': '+str(exc))
     finally:
-        observer_cancellation=None
-        if process_observer is not None:
-            try:
-                process_observer.stop('cleanup_started')
-                raw['warehouse_process_observation']=process_observer.result()
-            except BaseException as exc:
-                raw['warehouse_process_observation']={'status':'unavailable','end_reason':'read_error'}
-                if is_cancellation(exc):
+        try:
+            observer_cancellation=None
+            if process_observer is not None:
+                try:
+                    process_observer.stop('cleanup_started')
+                    raw['warehouse_process_observation']=process_observer.result()
+                except BaseException as exc:
+                    raw['warehouse_process_observation']={'status':'unavailable','end_reason':'read_error'}
+                    if is_cancellation(exc):
+                        observer_cancellation=exc
+                        if raw.get('stage')=='warehouse-lifecycle-only':identity_capture.defer_cancellation(exc)
+                        if raw.get('state')=='PASS':raw['state']='ERROR'
+            if observer is not None:
+                try:observer.safe('close')
+                except BaseException as exc:
                     observer_cancellation=exc
+                    if raw.get('stage')=='warehouse-lifecycle-only' and is_cancellation(exc):identity_capture.defer_cancellation(exc)
                     if raw.get('state')=='PASS':raw['state']='ERROR'
-        if observer is not None:
-            try:observer.safe('close')
+                raw['warehouse_startup_observation']=observer.raw
+            if raw.get('stage')=='warehouse-lifecycle-only':
+                cleaned=cleanup_lifecycle_gateway(base,gateway,token,api,owned,signal_owned,identity_capture)
+                diagnostic['harness'].update(cleaned['diagnostics'])
+                raw['gateway_exit_code']=cleaned['gateway_exit_code']
+                raw['remaining_owned_process_count']=cleaned['remaining_owned_process_count']
+                raw['cleanup_pass']=bool(raw.get('cleanup_pass') and not cleaned['forced'] and cleaned['remaining_owned_process_count']==0)
+            else:
+                if base and gateway and gateway.poll() is None:
+                    try:api(base,'POST','/shutdown',{},timeout=10)
+                    except Exception as exc:diagnostic['harness']['gateway_shutdown_exception_kind']=describe_failure(exc)['exception_kind']
+                    diagnostic['harness']['gateway_wait_timed_out']=False
+                    try:gateway.wait(timeout=240)
+                    except subprocess.TimeoutExpired:
+                        forced=True;diagnostic['harness']['gateway_wait_timed_out']=True
+                if owned(token):
+                    forced=True;signal_owned(token,signal.SIGTERM);end=time.monotonic()+15
+                    while owned(token) and time.monotonic()<end:time.sleep(.5)
+                if owned(token):signal_owned(token,signal.SIGKILL);time.sleep(1)
+                if gateway:
+                    try:gateway.wait(timeout=5)
+                    except subprocess.TimeoutExpired:pass
+                diagnostic['harness']['forced_cleanup']=forced
+                raw['gateway_exit_code']=gateway.returncode if gateway else None
+                raw['remaining_owned_process_count']=len(owned(token))
+                raw['cleanup_pass']=bool(raw.get('cleanup_pass') and not forced and raw['remaining_owned_process_count']==0)
+            diagnostic['harness']['startup_collection_failed']=False
+            try:raw['startup_diagnostics']=collect(runtime,sid)
             except BaseException as exc:
-                observer_cancellation=exc
-                if raw.get('state')=='PASS':raw['state']='ERROR'
-            raw['warehouse_startup_observation']=observer.raw
-        if base and gateway and gateway.poll() is None:
-            try:api(base,'POST','/shutdown',{},timeout=10)
-            except Exception as exc:diagnostic['harness']['gateway_shutdown_exception_kind']=describe_failure(exc)['exception_kind']
-            diagnostic['harness']['gateway_wait_timed_out']=False
-            try:gateway.wait(timeout=240)
-            except subprocess.TimeoutExpired:
-                forced=True;diagnostic['harness']['gateway_wait_timed_out']=True
-        if owned(token):
-            forced=True;signal_owned(token,signal.SIGTERM);end=time.monotonic()+15
-            while owned(token) and time.monotonic()<end:time.sleep(.5)
-        if owned(token):signal_owned(token,signal.SIGKILL);time.sleep(1)
-        if gateway:
-            try:gateway.wait(timeout=5)
-            except subprocess.TimeoutExpired:pass
-        diagnostic['harness']['forced_cleanup']=forced
-        raw['gateway_exit_code']=gateway.returncode if gateway else None
-        raw['remaining_owned_process_count']=len(owned(token))
-        raw['cleanup_pass']=bool(raw.get('cleanup_pass') and not forced and raw['remaining_owned_process_count']==0)
-        diagnostic['harness']['startup_collection_failed']=False
-        try:raw['startup_diagnostics']=collect(runtime,sid)
-        except Exception:diagnostic['harness']['startup_collection_failed']=True
-        raw['warehouse_runtime_identity']=identity_capture.finish()
-        identity_capture.apply_pending(raw)
-        summary=project(raw,require_runner=False,runtime_identity_cancellation=identity_capture.defer_cancellation)
-        identity_capture.apply_pending(summary)
-        a.summary.parent.mkdir(parents=True,exist_ok=True);a.summary.write_text(json.dumps(summary,indent=2,allow_nan=False))
-        if observer_cancellation is not None:raise observer_cancellation
-        identity_capture.raise_pending()
+                diagnostic['harness']['startup_collection_failed']=True
+                if raw.get('stage')=='warehouse-lifecycle-only' and is_cancellation(exc):identity_capture.defer_cancellation(exc)
+                elif not isinstance(exc,Exception):raise
+            raw['warehouse_runtime_identity']=identity_capture.finish()
+            identity_capture.apply_pending(raw)
+            summary=project(raw,require_runner=False,runtime_identity_cancellation=identity_capture.defer_cancellation)
+            identity_capture.apply_pending(summary)
+            a.summary.parent.mkdir(parents=True,exist_ok=True);a.summary.write_text(json.dumps(summary,indent=2,allow_nan=False))
+            if observer_cancellation is not None:raise observer_cancellation
+            identity_capture.raise_pending()
+        finally:
+            if raw.get('stage')=='warehouse-lifecycle-only':
+                if identity_capture.original_error is not None and is_cancellation(identity_capture.original_error):raise identity_capture.original_error
+                if identity_capture.pending is not None and is_cancellation(identity_capture.pending):raise identity_capture.pending
     return 0 if summary['state']=='PASS' else 1
 
 
-def main():
+def main(*, lifecycle_only=False):
     p=argparse.ArgumentParser();p.add_argument('--source',type=Path,required=True);p.add_argument('--private-dir',type=Path,required=True)
     p.add_argument('--summary',type=Path,required=True);p.add_argument('--harness-sha',required=True)
-    p.add_argument('--stage',choices=['warehouse'],default='warehouse');p.add_argument('--archive',type=Path)
+    stage='warehouse-lifecycle-only' if lifecycle_only else 'warehouse'
+    p.add_argument('--stage',choices=[stage],default=stage);p.add_argument('--archive',type=Path)
+    if lifecycle_only:p.add_argument('--diagnostic-deadline',type=float,required=True)
     p.add_argument('--frozen-harness',type=Path,default=Path(__file__).resolve().parent.parent)
     a=p.parse_args()
     def stop(signum,frame):raise RuntimeError('interrupted')
     signal.signal(signal.SIGTERM,stop)
-    try:return execute(a)
-    except BaseException:return 1
+    try:
+        if lifecycle_only:
+            from warehouse_lifecycle_only import drive as lifecycle_drive
+            from lifecycle_only_public_summary import project as lifecycle_project
+            return execute(a,lifecycle_only=True,lifecycle_driver=lifecycle_drive,summary_project=lifecycle_project)
+        return execute(a)
+    except BaseException as exc:
+        if lifecycle_only and is_cancellation(exc):raise
+        return 1
 
 if __name__=='__main__':raise SystemExit(main())
