@@ -84,12 +84,16 @@ def recommend(scenario: dict, instance: dict) -> dict:
         z = (x - np.array(art['scaler']['mu'])) / np.array(art['scaler']['sd'])
         Z = np.array(art.get('train_Z') or [])
         nn = float(np.sqrt(((Z - z) ** 2).sum(axis=1)).min()) if len(Z) else None
-        if nn is None or nn > art['scope']['nn_distance_q99']:
-            return dict(base, status='out_of_scope', reason=f'田块特征离训练样本过远（最近距离 {nn:.2f} > {art["scope"]["nn_distance_q99"]:.2f}）；当前使用规则')
         lo, hi = np.array(art['scope']['feature_min']), np.array(art['scope']['feature_max'])
         outside = [art['features'][j] for j in range(len(x)) if x[j] < lo[j] - 1e-9 or x[j] > hi[j] + 1e-9]
-        if len(outside) > 2:
-            return dict(base, status='out_of_scope', reason='多个田块特征超出训练范围：' + '、'.join(outside[:4]) + '；当前使用规则')
+        # A static order does not read field features, so feature-space gates would only swap it for the rules'
+        # default, which the audit found least feasible. Static artifacts keep the machine-profile gate above;
+        # feature distances are still reported as information.
+        if art['kind'] != 'static':
+            if nn is None or nn > art['scope']['nn_distance_q99']:
+                return dict(base, status='out_of_scope', reason=f'田块特征离训练样本过远（最近距离 {nn:.2f} > {art["scope"]["nn_distance_q99"]:.2f}）；当前使用规则')
+            if len(outside) > 2:
+                return dict(base, status='out_of_scope', reason='多个田块特征超出训练范围：' + '、'.join(outside[:4]) + '；当前使用规则')
         if art['kind'] == 'static':
             scores = np.array(art['train_rho_mean'])
             order = list(art['static_order'])
@@ -108,6 +112,7 @@ def recommend(scenario: dict, instance: dict) -> dict:
                 else '开发侧分组交叉验证（留出田块）评估的实验策略')
         return dict(base, status='available', reason=what + '；封存测试未运行。先按顺序尝试，独立验算失败再试下一项。',
                     prediction={'order': steps, 'kind': art['kind'], 'profile': prof, 'nearest_distance': nn, 'features': feats},
-                    features_outside_range=outside)
+                    features_outside_range=outside,
+                    gate=('仅机具配置门控（静态顺序不依赖田块特征）' if art['kind'] == 'static' else '机具配置 + 特征范围门控'))
     except Exception as exc:  # noqa: BLE001 - a broken model must never break the recommender
         return dict(base, status='unavailable', reason='覆盖尝试顺序模型不可用：' + str(exc)[:200])

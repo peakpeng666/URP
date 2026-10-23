@@ -130,3 +130,23 @@ def test_static_kind_serves_experience_order(model_at, tmp_path):
     assert [s['config'] for s in sel['prediction']['order']] == [art['configs'][j] for j in art['static_order']]
     assert '经验' in sel['reason'] and '封存测试未运行' in sel['reason']
     assert r['policy'] == 'coverage-order-v1'
+
+
+def test_static_kind_ignores_feature_scope_but_keeps_machine_gate(model_at, tmp_path):
+    """A static order does not read field features: far fields keep it; unknown machines still fall back."""
+    path = _model(tmp_path)
+    doc = json.loads(path.read_text())
+    art = doc['artifact']
+    art.update(kind='static', static_order=[3, 1, 0, 2], train_rho_mean=[2.0] * len(art['configs']))
+    art['scope']['nn_distance_q99'] = 1e-6                       # every field is "far" in feature space
+    for key in ('train_rho', 'k'):
+        art.pop(key, None)
+    doc['artifact_sha256'] = hashlib.sha256(json.dumps(art, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    path.write_text(json.dumps(doc))
+    model_at(path)
+    sc, inst = _scenario(field=[[0, 0], [900, 0], [900, 60], [0, 60]])
+    sel = recommend.recommend(sc, inst)['learned_selector']
+    assert sel['status'] == 'available' and '仅机具配置门控' in sel['gate']
+    sc2, inst2 = _scenario()
+    inst2['turn_radius'] = 3.3
+    assert recommend.recommend(sc2, inst2)['learned_selector']['status'] == 'out_of_scope'
