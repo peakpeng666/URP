@@ -539,7 +539,13 @@ class IntegrationTests(unittest.TestCase):
 
     def test_diagnostic_module_has_no_io_or_process_imports(self):
         tree = ast.parse(Path(cd.__file__).read_text())
-        self.assertEqual([n for n in ast.walk(tree) if isinstance(n, (ast.Import, ast.ImportFrom))], [])
+        imports = [n for n in ast.walk(tree) if isinstance(n, (ast.Import, ast.ImportFrom))]
+        # Reuse only the existing module's pure in-memory adapter, never capture/read_file.
+        self.assertEqual(len(imports), 1)
+        self.assertIsInstance(imports[0], ast.ImportFrom)
+        self.assertEqual(imports[0].module, 'shutdown_diagnostics')
+        self.assertEqual([(n.name, n.asname) for n in imports[0].names],
+                         [('session_detail', None), ('sanitize_session_detail', None)])
         self.assertFalse(any(isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in ('open', 'exec', 'eval', '__import__') for n in ast.walk(tree)))
 
 

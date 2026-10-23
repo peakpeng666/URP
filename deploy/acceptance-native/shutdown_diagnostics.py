@@ -128,3 +128,113 @@ def snapshot(value):
 def sanitize(value):
     v=obj(value)
     return {'schema':1,'scope':'shutdown_observation_only','at_full_loop_return':snapshot(v.get('at_full_loop_return')),'after_gateway_shutdown':snapshot(v.get('after_gateway_shutdown'))}
+
+# Pure adaptation of the existing session-report fields for identity-verified
+# in-memory consumers. Unlike capture(), these functions perform no I/O.
+DETAIL_GROUP_LIMIT = 8
+DETAIL_REAPED_LIMIT = 256
+DETAIL_STATUSES = frozenset(('available', 'missing', 'invalid', 'truncated', 'unavailable'))
+DETAIL_RETURN_CLASSES = ('normal', 'sigint', 'sigterm', 'sigkill', 'other')
+_DETAIL_MISSING = object()
+
+
+def _detail_status(v):
+    return v if type(v) is str and len(v) <= 16 and v in DETAIL_STATUSES else 'unavailable'
+
+
+def _detail_count(v):
+    return v if type(v) is int and 0 <= v <= DETAIL_REAPED_LIMIT else None
+
+
+def _detail_list_count(v):
+    if v is _DETAIL_MISSING:return {'status': 'missing', 'count': None}
+    if type(v) is not list:return {'status': 'invalid', 'count': None}
+    return {'status': 'truncated' if len(v) > DETAIL_REAPED_LIMIT else 'available',
+            'count': min(len(v), DETAIL_REAPED_LIMIT)}
+
+
+def _detail_signals(v):
+    if v is _DETAIL_MISSING:return 'missing', None
+    if type(v) is not list:return 'invalid', None
+    if any(type(x) is not str or len(x) > 16 or x not in SIGNALS for x in v[:3]):return 'invalid', None
+    return ('truncated' if len(v) > 3 else 'available'), v[:3]
+
+
+def _detail_returncodes(v):
+    if v is _DETAIL_MISSING:return 'missing', None
+    if type(v) is not list:return 'invalid', None
+    counts = dict.fromkeys(DETAIL_RETURN_CLASSES, 0)
+    for row in v[:DETAIL_REAPED_LIMIT]:
+        rc = row.get('returncode') if type(row) is dict else None
+        if type(rc) is not int or not -255 <= rc <= 255:return 'invalid', None
+        category = 'normal' if rc == 0 else 'sigint' if rc in (-2, 130) else 'sigterm' if rc == -15 else 'sigkill' if rc == -9 else 'other'
+        counts[category] += 1
+    return ('truncated' if len(v) > DETAIL_REAPED_LIMIT else 'available'), counts
+
+
+def session_detail(session):
+    """Project only existing memory; caller must establish session identity."""
+    if type(session) is not dict:return sanitize_session_detail({'status': 'invalid'})
+    groups = session.get('cleanup', _DETAIL_MISSING)
+    status = 'missing' if groups is _DETAIL_MISSING else 'invalid' if type(groups) is not list else 'truncated' if len(groups) > DETAIL_GROUP_LIMIT else 'available'
+    out = {'status': status, 'groups': [], 'leaves': {}}
+    if type(groups) is list:
+        for child in groups[:DETAIL_GROUP_LIMIT]:
+            child = child if type(child) is dict else {}
+            signal_status, signals = _detail_signals(child.get('signals', _DETAIL_MISSING))
+            reaped_status, classes = _detail_returncodes(child.get('reaped', _DETAIL_MISSING))
+            out['groups'].append({'component': child.get('name'), 'complete': child.get('complete'),
+                'signals_status': signal_status, 'signals': signals,
+                'reaped_status': reaped_status, 'returncode_counts': classes})
+    for name in ('robot_node_shutdown', 'bridge_shutdown'):
+        leaf = session.get(name, _DETAIL_MISSING)
+        value = leaf.get('still_running', _DETAIL_MISSING) if type(leaf) is dict else _DETAIL_MISSING
+        out['leaves'][name] = _detail_list_count(value) if leaf is _DETAIL_MISSING or type(leaf) is dict else {'status': 'invalid', 'count': None}
+    return sanitize_session_detail(out)
+
+
+def sanitize_session_detail(value):
+    """Closed, bounded, idempotent projection; unknown never means zero."""
+    v = value if type(value) is dict else {}
+    status = _detail_status(v.get('status'))
+    rows_value = v.get('groups')
+    groups = []
+    if status in ('available', 'truncated'):
+        if type(rows_value) is not list:status = 'invalid'
+        else:
+            if len(rows_value) > DETAIL_GROUP_LIMIT:status = 'truncated'
+            for row in rows_value[:DETAIL_GROUP_LIMIT]:
+                row = row if type(row) is dict else {}
+                component = row.get('component')
+                component = component if type(component) is str and len(component) <= 16 and component in GROUPS else 'unknown'
+                complete = row.get('complete') if type(row.get('complete')) is bool else None
+                ss = _detail_status(row.get('signals_status'))
+                checked_ss, signals = _detail_signals(row.get('signals', _DETAIL_MISSING))
+                if ss not in ('available', 'truncated'):signals = None
+                elif checked_ss not in ('available', 'truncated'):ss, signals = 'invalid', None
+                elif checked_ss == 'truncated':ss = 'truncated'
+                if ss == 'truncated' and (signals is None or len(signals) != 3):ss, signals = 'invalid', None
+                rs = _detail_status(row.get('reaped_status'))
+                raw_counts = row.get('returncode_counts')
+                counts = None
+                if rs in ('available', 'truncated'):
+                    if type(raw_counts) is dict:
+                        candidate = {k: _detail_count(raw_counts.get(k)) for k in DETAIL_RETURN_CLASSES}
+                        if all(x is not None for x in candidate.values()) and sum(candidate.values()) <= DETAIL_REAPED_LIMIT:counts = candidate
+                    if counts is None:rs = 'invalid'
+                    elif rs == 'truncated' and sum(counts.values()) != DETAIL_REAPED_LIMIT:rs, counts = 'invalid', None
+                groups.append({'component': component, 'complete': complete,
+                    'signals_status': ss, 'signals': signals,
+                    'reaped_status': rs, 'returncode_counts': counts})
+    leaves_value = v.get('leaves')
+    leaves_value = leaves_value if type(leaves_value) is dict else {}
+    leaves = {}
+    for name in ('robot_node_shutdown', 'bridge_shutdown'):
+        row = leaves_value.get(name)
+        row = row if type(row) is dict else {}
+        ls = _detail_status(row.get('status')); count = _detail_count(row.get('count'))
+        if ls not in ('available', 'truncated'):count = None
+        elif count is None:ls = 'invalid'
+        elif ls == 'truncated' and count != DETAIL_REAPED_LIMIT:ls, count = 'invalid', None
+        leaves[name] = {'status': ls, 'count': count}
+    return {'status': status, 'groups': groups, 'leaves': leaves}

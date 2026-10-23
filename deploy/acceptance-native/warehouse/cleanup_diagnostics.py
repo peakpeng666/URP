@@ -10,6 +10,8 @@ Missing/falsy errors can pass a predicate while their list count is unavailable.
 final_state is a snapshot taken while stopping, NOT lifecycle['stop'].
 """
 
+from shutdown_diagnostics import session_detail, sanitize_session_detail
+
 MAX_COUNT = 256
 MAX_GROUPS = 64
 MAX_REAPED = 256
@@ -185,6 +187,7 @@ def sanitize(raw):
             'gazebo_accepted': _bool(shutdown.get('gazebo_accepted')),
             'gazebo_returncode_class': _enum(shutdown.get('gazebo_returncode_class'), {'normal', 'nonzero'}, 'unavailable'),
         },
+        'process_group_details': sanitize_session_detail(raw.get('process_group_details') if trusted else None),
         'process_groups': {
             'status': group_status, 'group_count': group_count, 'group_count_overflow': group_overflow,
             'any_forced_or_incomplete': group_forced,
@@ -241,6 +244,7 @@ def collect(session, lifecycle):
             'gazebo_returncode_class': ('normal' if rc == 0 else 'nonzero') if type(rc) is int and -255 <= rc <= 255 else 'unavailable',
         },
         'process_groups': _group_summary(session.get('cleanup', _MISSING)),
+        'process_group_details': session_detail(session),
     }
     return sanitize(raw)
 
