@@ -18,6 +18,7 @@ import runtime_identity as ri
 LOG = (b'12:34:56: GL_VERSION = 4.5.0 (Core Profile) Mesa 23.2.1\n'
        b'12:34:56: GL_VENDOR = Mesa\n'
        b'12:34:56: GL_RENDERER = llvmpipe (LLVM 15.0.7, 256 bits)\n')
+SOFTPIPE_LOG = LOG.replace(b'llvmpipe (LLVM 15.0.7, 256 bits)', b'softpipe')
 
 
 def packages():
@@ -75,6 +76,51 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(out['loaded_library_identity']['status'], 'unavailable')
         self.assertEqual(self.runner.call_args.args, (ri.QUERY_ARGV,))
         self.assertEqual(self.runner.call_args.kwargs, {'timeout': 3.0, 'max_bytes': 65536})
+
+    def test_exact_softpipe_fresh_owned_log_reaches_public_projection(self):
+        self.assertEqual(ri._parse_log(SOFTPIPE_LOG), {
+            'status': 'available', 'gl_api_version': '4.5.0',
+            'vendor_family': 'mesa', 'renderer_family': 'softpipe'})
+        out = self.finish(SOFTPIPE_LOG)
+        self.assertEqual(out['status'], 'complete')
+        self.assertEqual(out['package_database']['status'], 'complete')
+        self.assertEqual(out['installed_file_bytes']['status'], 'complete')
+        self.assertEqual(out['renderer_log_claim'], {
+            'status': 'available', 'attribution': 'invocation_associated_not_pid_bound',
+            'truncated': False, 'gl_api_version': '4.5.0',
+            'vendor_family': 'mesa', 'renderer_family': 'softpipe',
+            'mesa_version': 'unavailable', 'ogre_version': 'unavailable'})
+        self.assertEqual(out['loaded_library_identity'], {
+            'status': 'unavailable', 'reason': 'not_observed'})
+        self.assertEqual(ri.sanitize(out), out)
+        for hidden in (str(self.root), 'private-file', 'GL_RENDERER', 'Mesa 23.2.1'):
+            self.assertNotIn(hidden, json.dumps(out))
+
+    def test_softpipe_preexisting_log_is_never_claimed_even_after_replacement(self):
+        self.write_log(SOFTPIPE_LOG)
+        self.identity.before_gateway()
+        self.log.unlink()
+        self.write_log(SOFTPIPE_LOG)
+        self.identity.after_cleanup()
+        out = self.identity.result()
+        claim = out['renderer_log_claim']
+        self.assertEqual(claim['status'], 'preexisting')
+        self.assertEqual(claim['attribution'], 'unavailable')
+        self.assertIsNone(claim['gl_api_version'])
+        self.assertEqual(claim['vendor_family'], 'unavailable')
+        self.assertEqual(claim['renderer_family'], 'unavailable')
+        self.assertEqual(ri.sanitize(out), out)
+
+    def test_softpipe_truncated_log_is_never_claimed(self):
+        out = self.finish(SOFTPIPE_LOG + b'x' * ri.LOG_BYTES)
+        claim = out['renderer_log_claim']
+        self.assertEqual(claim['status'], 'truncated')
+        self.assertTrue(claim['truncated'])
+        self.assertEqual(claim['attribution'], 'invocation_associated_not_pid_bound')
+        self.assertIsNone(claim['gl_api_version'])
+        self.assertEqual(claim['vendor_family'], 'unavailable')
+        self.assertEqual(claim['renderer_family'], 'unavailable')
+        self.assertEqual(ri.sanitize(out), out)
 
     def test_exact_home_path_not_ign_homedir_environment(self):
         with patch.dict(os.environ, {'HOME': '/secret', 'IGN_HOMEDIR': '/wrong-secret'}):
@@ -444,10 +490,119 @@ class RuntimeTests(unittest.TestCase):
 
     def test_only_source_grounded_renderer_format_is_recognized(self):
         for value in ('llvmpipe secret', 'llvmpipe', 'llvmpipe (secret)',
-                      'softpipe', 'zink', 'NVIDIA Corporation', 'llvmpipe (LLVM 15.0.7, secret bits)'):
+                      'zink', 'NVIDIA Corporation', 'llvmpipe (LLVM 15.0.7, secret bits)'):
             result = ri._parse_log(('GL_RENDERER = ' + value + '\n').encode())
             self.assertEqual(result['renderer_family'], 'unknown')
         self.assertEqual(ri._parse_log(b'GL_RENDERER = llvmpipe (LLVM 15.0.7, 256 bits)\n')['renderer_family'], 'llvmpipe')
+
+    def test_softpipe_renderer_requires_exact_name(self):
+        for value in (b'prefix-softpipe', b'softpipe-suffix', b' softpipe', b'softpipe ',
+                      b'Softpipe', b'SOFTPIPE', b'softPipe',
+                      b'softpipe (LLVM 15.0.7, 256 bits)',
+                      b'softpipe /private/host?token=private-token',
+                      b'/private/host/softpipe', b'softpipeprivate-token'):
+            with self.subTest(value=value):
+                result = ri._parse_log(SOFTPIPE_LOG.replace(b'softpipe', value))
+                self.assertEqual(result, {
+                    'status': 'available', 'gl_api_version': '4.5.0',
+                    'vendor_family': 'mesa', 'renderer_family': 'unknown'})
+                out = ri.sanitize({'renderer_log_claim': dict(result,
+                    attribution='invocation_associated_not_pid_bound', truncated=False)})
+                self.assertEqual(out['renderer_log_claim']['renderer_family'], 'unknown')
+                self.assertNotIn('private-token', json.dumps(out))
+                self.assertNotIn('/private/host', json.dumps(out))
+                self.assertEqual(ri.sanitize(out), out)
+
+    def test_softpipe_control_or_non_ascii_name_is_invalid(self):
+        for value in (b'\x00softpipe', b'softpipe\x00', b'soft\tpipe',
+                      b'softpipe\x1b[0m', b'softpipe\x7f', 'softpipe秘密'.encode()):
+            with self.subTest(value=value):
+                parsed = ri._parse_log(SOFTPIPE_LOG.replace(b'softpipe', value))
+                self.assertEqual(parsed, {'status': 'invalid'})
+                out = ri.sanitize({'renderer_log_claim': dict(parsed,
+                    attribution='invocation_associated_not_pid_bound', truncated=False)})
+                self.assertEqual(out['renderer_log_claim']['status'], 'invalid')
+                self.assertIsNone(out['renderer_log_claim']['gl_api_version'])
+                self.assertEqual(out['renderer_log_claim']['vendor_family'], 'unavailable')
+                self.assertEqual(out['renderer_log_claim']['renderer_family'], 'unavailable')
+                self.assertEqual(ri.sanitize(out), out)
+
+    def test_renderer_markers_accept_lf_crlf_or_unterminated_final_line(self):
+        for log, family in ((LOG, 'llvmpipe'), (SOFTPIPE_LOG, 'softpipe')):
+            for ending in (b'\n', b'\r\n', None):
+                with self.subTest(family=family, ending=ending):
+                    data = log[:-1] if ending is None else log.replace(b'\n', ending)
+                    parsed = ri._parse_log(data)
+                    self.assertEqual(parsed, {
+                        'status': 'available', 'gl_api_version': '4.5.0',
+                        'vendor_family': 'mesa', 'renderer_family': family})
+                    out = ri.sanitize({'renderer_log_claim': dict(parsed,
+                        attribution='invocation_associated_not_pid_bound', truncated=False)})
+                    self.assertEqual(out['renderer_log_claim']['status'], 'available')
+                    self.assertEqual(out['renderer_log_claim']['renderer_family'], family)
+                    self.assertEqual(out['renderer_log_claim']['vendor_family'], 'mesa')
+                    self.assertEqual(out['renderer_log_claim']['gl_api_version'], '4.5.0')
+                    self.assertEqual(ri.sanitize(out), out)
+
+    def test_embedded_line_separators_cannot_hide_private_renderer_suffix(self):
+        secret = b'/private/host?token=private-token'
+        separators = (b'\x0b', b'\x0c', b'\x1c', b'\x1d', b'\x1e', b'\r',
+                      '\u0085'.encode(), '\u2028'.encode(), '\u2029'.encode())
+        for log, family in ((LOG, 'llvmpipe'), (SOFTPIPE_LOG, 'softpipe')):
+            for separator in separators:
+                with self.subTest(family=family, separator=separator):
+                    data = log[:-1] + separator + secret + b'\n'
+                    parsed = ri._parse_log(data)
+                    self.assertEqual(parsed, {'status': 'invalid'})
+                    out = ri.sanitize({'renderer_log_claim': dict(parsed,
+                        attribution='invocation_associated_not_pid_bound',
+                        truncated=False, raw_log=data, path=secret.decode())})
+                    claim = out['renderer_log_claim']
+                    self.assertEqual(claim['status'], 'invalid')
+                    self.assertIsNone(claim['gl_api_version'])
+                    self.assertEqual(claim['vendor_family'], 'unavailable')
+                    self.assertEqual(claim['renderer_family'], 'unavailable')
+                    self.assertNotIn(secret.decode(), json.dumps(out))
+                    self.assertNotIn('raw_log', json.dumps(out))
+                    self.assertEqual(ri.sanitize(out), out)
+
+    def test_renderer_crlf_normalization_strips_only_one_terminal_cr(self):
+        for log, family in ((LOG, 'llvmpipe'), (SOFTPIPE_LOG, 'softpipe')):
+            for ending in (b'\r', b'\r\r\n'):
+                with self.subTest(family=family, ending=ending):
+                    self.assertEqual(ri._parse_log(log[:-1] + ending), {'status': 'invalid'})
+
+    def test_softpipe_mixed_renderer_markers_conflict_in_either_order(self):
+        for data in (LOG + SOFTPIPE_LOG, SOFTPIPE_LOG + LOG):
+            with self.subTest(data=data):
+                parsed = ri._parse_log(data)
+                self.assertEqual(parsed, {'status': 'conflicting'})
+                out = ri.sanitize({'renderer_log_claim': dict(parsed,
+                    attribution='invocation_associated_not_pid_bound', truncated=False)})
+                self.assertEqual(out['renderer_log_claim']['status'], 'conflicting')
+                self.assertIsNone(out['renderer_log_claim']['gl_api_version'])
+                self.assertEqual(out['renderer_log_claim']['vendor_family'], 'unavailable')
+                self.assertEqual(out['renderer_log_claim']['renderer_family'], 'unavailable')
+                self.assertEqual(ri.sanitize(out), out)
+
+    def test_duplicate_exact_softpipe_markers_remain_available(self):
+        expected = ri._parse_log(SOFTPIPE_LOG)
+        self.assertEqual(expected['renderer_family'], 'softpipe')
+        self.assertEqual(ri._parse_log(SOFTPIPE_LOG + SOFTPIPE_LOG), expected)
+        self.assertEqual(ri._parse_log(SOFTPIPE_LOG + b'GL_RENDERER = softpipe\n'), expected)
+        out = self.finish(SOFTPIPE_LOG + SOFTPIPE_LOG)
+        self.assertEqual(out['renderer_log_claim']['status'], 'available')
+        self.assertEqual(out['renderer_log_claim']['renderer_family'], 'softpipe')
+        self.assertEqual(ri.sanitize(out), out)
+
+    def test_softpipe_marker_alone_remains_partial_without_inferred_vendor_or_api(self):
+        out = self.finish(b'GL_RENDERER = softpipe\n')['renderer_log_claim']
+        self.assertEqual(out['status'], 'partial')
+        self.assertEqual(out['renderer_family'], 'softpipe')
+        self.assertIsNone(out['gl_api_version'])
+        self.assertEqual(out['vendor_family'], 'unavailable')
+        self.assertEqual(out['mesa_version'], 'unavailable')
+        self.assertEqual(out['ogre_version'], 'unavailable')
 
 
 class ProjectionTests(unittest.TestCase):
@@ -523,6 +678,50 @@ class ProjectionTests(unittest.TestCase):
             self.assertIsNone(out['renderer_log_claim']['gl_api_version'])
             self.assertEqual(out['renderer_log_claim']['renderer_family'], 'unavailable')
             self.assertEqual(ri.sanitize(out), out)
+
+    def test_softpipe_projection_preserves_finite_identity_and_drops_private_junk(self):
+        secret = '/private/host?token=private-token'
+        raw = {'secret': secret, 'renderer_log_claim': {
+            'status': 'available', 'attribution': 'invocation_associated_not_pid_bound',
+            'truncated': False, 'gl_api_version': '4.5.0', 'vendor_family': 'mesa',
+            'renderer_family': 'softpipe', 'raw_log': secret, 'path': secret,
+            'mesa_version': '23.2.1', 'ogre_version': '1.9.0'},
+            'loaded_library_identity': {'status': 'available', 'path': secret}}
+        original = copy.deepcopy(raw)
+        out = ri.sanitize(raw)
+        self.assertEqual(raw, original)
+        self.assertEqual(out['renderer_log_claim'], {
+            'status': 'available', 'attribution': 'invocation_associated_not_pid_bound',
+            'truncated': False, 'gl_api_version': '4.5.0', 'vendor_family': 'mesa',
+            'renderer_family': 'softpipe', 'mesa_version': 'unavailable',
+            'ogre_version': 'unavailable'})
+        self.assertEqual(out['loaded_library_identity'], {
+            'status': 'unavailable', 'reason': 'not_observed'})
+        for hidden in (secret, 'raw_log', '"23.2.1"', '"1.9.0"'):
+            self.assertNotIn(hidden, json.dumps(out))
+        self.assertEqual(ri.sanitize(out), out)
+
+    def test_softpipe_projection_cannot_bypass_unavailable_or_untrusted_status(self):
+        raw = {'status': 'available', 'attribution': 'invocation_associated_not_pid_bound',
+            'truncated': False, 'gl_api_version': '4.5.0',
+            'vendor_family': 'mesa', 'renderer_family': 'softpipe'}
+        changes = [{'status': status} for status in (
+            'unavailable', 'missing', 'not_collected', 'preflight_failed',
+            'preexisting', 'truncated', 'invalid', 'conflicting', 'changed',
+            'owner_mismatch', 'symlink', 'permission_denied', 'markers_missing')]
+        changes += [{'truncated': True}, {'truncated': None},
+                    {'attribution': 'unavailable'}, {'attribution': 'pid_bound'}]
+        for change in changes:
+            with self.subTest(change=change):
+                out = ri.sanitize({'renderer_log_claim': dict(raw, **change)})
+                claim = out['renderer_log_claim']
+                self.assertIsNone(claim['gl_api_version'])
+                self.assertEqual(claim['vendor_family'], 'unavailable')
+                self.assertEqual(claim['renderer_family'], 'unavailable')
+                self.assertEqual(claim['mesa_version'], 'unavailable')
+                self.assertEqual(claim['ogre_version'], 'unavailable')
+                self.assertEqual(out['loaded_library_identity']['status'], 'unavailable')
+                self.assertEqual(ri.sanitize(out), out)
 
     def test_nested_weird_types_are_safe(self):
         for raw in (None, 3, 'x', [], {'package_database': []}, {'installed_file_bytes': 'x'},

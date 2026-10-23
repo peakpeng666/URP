@@ -21,6 +21,7 @@ https://raw.githubusercontent.com/gazebosim/gz-rendering/ignition-rendering6_6.6
 https://gazebosim.org/api/common/4/include_2gz_2common_2Util_8hh.html
 https://github.com/OGRECave/ogre/blob/v1.12.10/RenderSystems/GL/src/OgreGLRenderSystem.cpp
 https://gitlab.freedesktop.org/mesa/mesa/-/blob/mesa-23.2.1/src/gallium/drivers/llvmpipe/lp_screen.c
+https://gitlab.freedesktop.org/mesa/mesa/-/blob/mesa-23.2.1/src/gallium/drivers/softpipe/sp_screen.c
 """
 import errno
 import hashlib
@@ -84,7 +85,7 @@ _QUERY_STATUS = frozenset(('complete', 'partial', 'invalid', 'unavailable', 'tim
 _LOG_STATUS = _READ_STATUS | frozenset(('not_collected', 'preexisting', 'preflight_failed',
     'markers_missing', 'partial', 'invalid', 'conflicting', 'truncated'))
 _VENDORS = frozenset(('mesa', 'unknown', 'unavailable'))
-_RENDERERS = frozenset(('llvmpipe', 'unknown', 'unavailable'))
+_RENDERERS = frozenset(('llvmpipe', 'softpipe', 'unknown', 'unavailable'))
 
 
 def _enum(value, allowed, default):
@@ -545,7 +546,11 @@ def _parse_log(data):
         return {'status': 'invalid'}
     markers = {name: set() for name in ('VERSION', 'VENDOR', 'RENDERER')}
     invalid = False
-    for line in text.splitlines():
+    # Ogre records use LF or CRLF, not arbitrary Unicode/control separators.
+    lines = text.split('\n')
+    for index, line in enumerate(lines):
+        if index < len(lines) - 1 and line.endswith('\r'):
+            line = line[:-1]
         line = re.sub(r'^[0-9]{2}:[0-9]{2}:[0-9]{2}: ', '', line, count=1)
         for name in markers:
             prefix = 'GL_' + name + ' = '
@@ -573,7 +578,8 @@ def _parse_log(data):
     if values['RENDERER'] is not None:
         # Mesa lp_screen.c (retained exact source) defines this precise format.
         # Do not guess other GPU families or accept arbitrary llvmpipe prefixes.
-        renderer = 'llvmpipe' if re.fullmatch(
+        # Mesa23.2.1 sp_screen.c:72–74 returns this exact literal.
+        renderer = 'softpipe' if values['RENDERER'] == 'softpipe' else 'llvmpipe' if re.fullmatch(
             r'llvmpipe \(LLVM [0-9]{1,3}(?:\.[0-9]{1,3}){1,3}, [0-9]{1,4} bits\)',
             values['RENDERER'], re.ASCII) else 'unknown'
     return dict(status='available' if all(values.values()) else 'partial',
