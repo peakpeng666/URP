@@ -1,5 +1,5 @@
 # Diagnostic-only evidence. This workflow is not native-suite acceptance or merge authorization.
-name: Isolated warehouse diagnostic (not suite acceptance)
+name: Warehouse lifecycle-only diagnostic (no route acceptance)
 on:
   push:
     branches: [fix/agriculture-compatibility-20261022]
@@ -21,20 +21,20 @@ jobs:
     timeout-minutes: 220
     env:
       TARGET_SHA: 3acf840d1a0c16ab1cfcca15744e4ea6609ddb35
-      HARNESS_SHA: 'c7100c41071614a0bb62ff8ef69d229df7dcbbcc'
+      HARNESS_SHA: 'b08ce22d3dc184359023f11b55986b61ddb4bc29'
       URP_WAREHOUSE_STARTUP_OBSERVER: '1'
       URP_WAREHOUSE_STARTUP_OBSERVER_DELAY_S: '30'
-      GALLIVM_PERF: nopt
+      GALLIUM_DRIVER: softpipe
     steps:
-      - name: Run isolated historical warehouse replay and emit allowlisted result
+      - name: Run startup and shutdown only, without submitting a route
         shell: bash
         run: |
           set +e
           set -uo pipefail
           umask 077
           # No checkout action: its progress logs expose paths. Public fetch only.
-          base="$(mktemp -d "$RUNNER_TEMP/urp-acceptance.XXXXXX" 2>/dev/null)" || { printf '%s\n' '{"state":"bootstrap_failed"}'; exit 1; }
-          mkdir "$base/source" "$base/harness" 2>/dev/null || { printf '%s\n' '{"state":"bootstrap_failed"}'; exit 1; }
+          base="$(mktemp -d "$RUNNER_TEMP/urp-acceptance.XXXXXX" 2>/dev/null)" || { printf '%s\n' '{"state":"bootstrap_failed","stage":"warehouse-lifecycle-only","task_not_submitted":true,"route_acceptance":"NOT_RUN"}'; exit 1; }
+          mkdir "$base/source" "$base/harness" 2>/dev/null || { printf '%s\n' '{"state":"bootstrap_failed","stage":"warehouse-lifecycle-only","task_not_submitted":true,"route_acceptance":"NOT_RUN"}'; exit 1; }
           bootstrap_rc=0
           (
             set -e
@@ -60,18 +60,18 @@ jobs:
           ) > "$base/bootstrap.log" 2>&1
           bootstrap_rc=$?
           if [[ "$bootstrap_rc" != 0 ]]; then
-            printf '%s\n' '{"state":"bootstrap_failed"}'
+            printf '%s\n' '{"state":"bootstrap_failed","stage":"warehouse-lifecycle-only","task_not_submitted":true,"route_acceptance":"NOT_RUN"}'
             exit 1
           fi
           rc=0
           python3 "$base/harness/deploy/acceptance-native/runner/run.py" \
             --source "$base/source" \
             --harness "$base/harness/deploy/acceptance-native" \
-            --private-dir "$base/private" --stage warehouse --harness-sha "$HARNESS_SHA" --allow-host-apt-repair \
+            --private-dir "$base/private" --stage warehouse-lifecycle-only --harness-sha "$HARNESS_SHA" --allow-host-apt-repair \
             2> "$base/supervisor.log" || rc=$?
           # Reducer has no passthrough of arbitrary strings, errors, paths or JSON.
-          # It must check runner-status cleanup before saying simulation passed.
-          if ! python3 "$base/harness/deploy/acceptance-native/warehouse/warehouse_public_summary.py" \
+          # It must check runner-status cleanup before saying this lifecycle-only control passed.
+          if ! python3 "$base/harness/deploy/acceptance-native/warehouse/lifecycle_only_public_summary.py" \
             --input "$base/private/summary.json" \
             --runner-status "$base/private/runner-status.json" 2> "$base/reducer.log"; then
             exit 1
