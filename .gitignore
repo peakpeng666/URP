@@ -132,3 +132,7 @@ experiments/runs/evolve-*/reverify/*.json
 experiments/runs/evolve-*/fillet/*.json
 !experiments/runs/evolve-*/fillet/summary.json
 experiments/runs/evolve-*/run.stdout
+experiments/runs/evolve-*/fillet.stdout
+experiments/runs/evolve-*/admission.stdout
+experiments/runs/evolve-*/*.done
+experiments/runs/evolve-*/streams/
