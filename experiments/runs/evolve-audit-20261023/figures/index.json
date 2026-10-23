@@ -218,7 +218,7 @@
    "fig8_three_verdicts_zh.png"
   ],
   "source_csv": "fig8_three_verdicts.csv",
-  "caption": "三种可执行性判定下的可行路径数（开发侧，荷兰 140 块田 × 3 机具，1728 条官方可行路径为分母）。官方判定只在原始采样点检查曲率；倒圆判定要求拐角能用最小转弯半径圆弧在相邻直段内倒圆、且倒圆后通过未修改的官方检查（偏离容差 1 cm，0.5/2 cm 结果相同）；严格判定把每条弦加密到 2 cm。柱顶为条数与占该机具官方可行数的比例；倒圆判定另有 14 条因重跑无法再现记录路径而标为无法核验，按不可行计入。",
+  "caption": "三种可执行性检验下的可行路径数（开发集：荷兰 140 块田 × 3 机型；1728 条原生可行路径为分母）。原生曲率检验只在原始采样点检查曲率；圆角可执行性检验要求拐角能用最小转弯半径圆弧在相邻直段内倒圆、且倒圆后通过未修改的原生检验（偏离容差 1 cm，0.5/2 cm 结果相同）；加密曲率检验把每条弦加密到 2 cm。柱顶为条数与占该机型原生可行数的比例；圆角检验另有 14 条因重跑无法再现记录路径而无法核验，按不可行计入。",
   "size_mm": [
    90.0,
    46.8
@@ -233,7 +233,7 @@
    "fig9_admission_rules_zh.png"
   ],
   "source_csv": "fig9_admission_rules.csv",
-  "caption": "准入规则 × 库容量（开发侧，留出田块）。上排为首选可行率，下排为停止时的惩罚成本比减 1；左列为官方判定，右列为倒圆判定。每条规则只用外层训练田块选择成员，评价在外层测试田块；误差线为按田块自助法 95% 区间，灰色点线为旧库（L0）单独使用时的同一指标及其区间。容量 m 为在 L0 之上新增的成员数；随机规则每个划分抽 20 次。",
+  "caption": "准入规则 × 库容量（开发集，留出田块）。上排为首次尝试可行率，下排为终止成本比减 1；左列为原生曲率检验，右列为圆角可执行性检验。每条规则只用外层训练田块选择成员，评价在外层测试田块；误差线为按田块自助法 95% 区间，灰色点线为旧库（L0）单独使用时的同一指标及其区间。容量 m 为在 L0 之上新增的成员数；随机规则每个划分抽 20 次。",
   "size_mm": [
    190.0,
    117.8
@@ -248,7 +248,7 @@
    "fig10_dynamic_value_zh.png"
   ],
   "source_csv": "fig10_dynamic_value.csv",
-  "caption": "动态任务流中重排策略相对「只插入」的里程与平均响应变化（开发侧，规划层仿真；180 条流，30 块田 × 3 到达密度 × 2 车队规模）。负值更好；误差线为按流自助法 95% 区间。实心标记为 2 车、空心为 4 车；每流 40 个任务、其中 30 个在班次内到达，重排为 PyVRP 0.3 s 开放路线优化。计时为匀速代理，不是 Gazebo 执行。",
+  "caption": "动态任务流中重优化策略相对增量插入的总行驶里程与平均响应时间变化（开发集，规划层仿真；180 条流，30 块田 × 3 到达密度 × 2 车队规模）。负值更好；误差线为按流自助法 95% 区间。实心标记为 2 台、空心为 4 台；每流 40 个任务、其中 30 个在班次内到达，重优化为 PyVRP 0.3 s 开放路线优化。计时使用恒速模型。",
   "size_mm": [
    190.0,
    104.5
@@ -263,7 +263,7 @@
    "fig8_three_verdicts_en.png"
   ],
   "source_csv": "fig8_three_verdicts.csv",
-  "caption": "Feasible paths under three executability verdicts (development side; 140 Dutch fields × 3 machine profiles, 1728 officially feasible paths as denominator). Official: sampled-point curvature only; fillet: every corner must be roundable by a minimum-radius arc inside its adjacent long chords and the rounded path must pass the unchanged official checker (1 cm deviation tolerance; 0.5/2 cm identical); strict: every chord densified to 2 cm. Labels give counts and share of the profile's officially feasible paths; 14 fillet-unverifiable paths (hash not reproduced) count as infeasible.",
+  "caption": "Feasible paths under three executability checks (development set: 140 Dutch fields × 3 machine profiles; 1728 natively feasible paths as denominator). Native: sampled-point curvature only; fillet: every corner must be roundable by a minimum-radius arc inside its adjacent long chords and the rounded path must pass the unchanged native check (1 cm deviation tolerance; 0.5/2 cm identical); densified: every chord densified to 2 cm. Labels give counts and share of the profile's natively feasible paths; 14 fillet-unverifiable paths (hash not reproduced) count as infeasible.",
   "size_mm": [
    90.0,
    46.8
@@ -278,7 +278,7 @@
    "fig9_admission_rules_en.png"
   ],
   "source_csv": "fig9_admission_rules.csv",
-  "caption": "Admission rule × library capacity (development side, held-out fields). Top: first-try feasibility; bottom: stop penalised cost ratio minus 1. Left: official verdict; right: fillet verdict. Each rule selects members using outer-training fields only and is evaluated on outer-test fields; error bars are field-bootstrap 95 % intervals; grey dotted lines are the old library (L0) alone with its interval. Capacity m counts members added to L0; the random rule draws 20 candidate sets per split.",
+  "caption": "Admission rule × library capacity (development set, held-out fields). Top: first-try feasibility; bottom: penalised cost ratio at stop minus 1. Left: native curvature check; right: fillet executability check. Each rule selects members using outer-training fields only and is evaluated on outer-test fields; error bars are field-bootstrap 95 % intervals; grey dotted lines are the old library (L0) alone with its interval. Capacity m counts members added to L0; the random rule draws 20 candidate sets per split.",
   "size_mm": [
    190.0,
    117.8
@@ -293,7 +293,7 @@
    "fig10_dynamic_value_en.png"
   ],
   "source_csv": "fig10_dynamic_value.csv",
-  "caption": "Change in total distance and mean response of re-planning policies versus insertion-only in dynamic task streams (development side, planning-level simulation; 180 streams, 30 fields × 3 arrival densities × 2 fleet sizes). Lower is better; error bars are stream bootstrap 95 % intervals. Filled markers: 2 vehicles; open: 4. Each stream has 40 tasks, 30 released during the shift; re-optimisation is a 0.3 s open-route PyVRP solve. Timing uses the constant-speed proxy, not a Gazebo execution.",
+  "caption": "Change in total travel distance and mean response time of re-optimisation policies versus incremental insertion in dynamic task streams (development set, planning-level simulation; 180 streams, 30 fields × 3 arrival densities × 2 fleet sizes). Lower is better; error bars are stream bootstrap 95 % intervals. Filled markers: 2 vehicles; open: 4. Each stream has 40 tasks, 30 released during the shift; re-optimisation is a 0.3 s open-route PyVRP solve. Timing uses the constant-speed model.",
   "size_mm": [
    190.0,
    104.5

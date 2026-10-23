@@ -13,14 +13,14 @@ from pathlib import Path
 import numpy as np
 
 from ..figures.style import Style, apply, color, dash, figure, fit_height, marker, panel_label, qlabel
-from .figures import PROFILE_LABEL, _save
+from . import terms
+from .figures import _save
 
-RULE_LABEL = {'R1_single': ('R1 单成员', 'R1 single member'), 'R2_vbs': ('R2 VBS 增量', 'R2 VBS increment'),
+RULE_LABEL = {'R1_single': ('R1 单一成员', 'R1 single member'), 'R2_vbs': ('R2 虚拟最优配置增量', 'R2 VBS increment'),
               'R3_policy': ('R3 策略收益', 'R3 policy gain'), 'R4_residual': ('R4 策略残差', 'R4 policy residual'),
               'random': ('随机', 'Random')}
-DENSITY_LABEL = {'sparse': ('稀疏', 'Sparse'), 'medium': ('中等', 'Medium'), 'dense': ('密集', 'Dense')}
-POLICY_LABEL = {'periodic3': ('每 3 次重排', 'Re-optimise every 3'), 'reopt': ('每次重排', 'Re-optimise always'),
-                'rollout': ('rollout 选择', 'Rollout gate')}
+DENSITY_LABEL = terms.RATE
+POLICY_LABEL = terms.STRATEGY
 
 
 def three_verdicts(vc: dict, st: Style):
@@ -36,28 +36,27 @@ def three_verdicts(vc: dict, st: Style):
         vals = [vc['by_profile'][p][key] for p in profs]
         official = [vc['by_profile'][p]['official'] for p in profs]
         ax.bar(x + (k - 1) * width, vals, width * 0.92, color=color(ci), hatch=hatch, edgecolor='white', lw=0,
-               label=st.t({'official': '官方判定', 'fillet': '倒圆判定', 'strict': '严格判定'}[key],
-                          {'official': 'Official', 'fillet': 'Fillet', 'strict': 'Strict'}[key]))
+               label=st.t(*terms.VERDICT[key]))
         for xi, v, o in zip(x, vals, official):
             ax.text(xi + (k - 1) * width, v + 6, f'{v}\n({100 * v / o:.0f}%)', ha='center', va='bottom', fontsize=st.fs - 2,
                     linespacing=0.9)
         rows += [{'profile': p, 'verdict': key, 'feasible': v, 'official_denominator': o}
                  for p, v, o in zip(profs, vals, official)]
-    ax.set_xticks(x, [st.t(*PROFILE_LABEL[p]) for p in profs])
-    ax.set_ylabel(qlabel(st, '通过判定的官方可行路径', 'Officially feasible paths passing the verdict', '条'))
+    ax.set_xticks(x, [st.t(*terms.PROFILE[p]) for p in profs])
+    ax.set_ylabel(qlabel(st, '通过检验的原生可行路径', 'Natively feasible paths passing the check', '条'))
     ax.set_ylim(0, max(vc['by_profile'][p]['official'] for p in profs) * 1.22)
     ax.grid(axis='y')
     ax.legend(loc='upper right', ncols=3)
     tot = vc['total']
-    cap = {'zh': f"三种可执行性判定下的可行路径数（开发侧，荷兰 140 块田 × 3 机具，{tot['official']} 条官方可行路径为分母）。"
-                 f"官方判定只在原始采样点检查曲率；倒圆判定要求拐角能用最小转弯半径圆弧在相邻直段内倒圆、且倒圆后通过未修改的官方检查"
-                 f"（偏离容差 1 cm，0.5/2 cm 结果相同）；严格判定把每条弦加密到 2 cm。柱顶为条数与占该机具官方可行数的比例；"
-                 f"倒圆判定另有 {tot['fillet_unverifiable']} 条因重跑无法再现记录路径而标为无法核验，按不可行计入。",
-           'en': f"Feasible paths under three executability verdicts (development side; 140 Dutch fields × 3 machine profiles, "
-                 f"{tot['official']} officially feasible paths as denominator). Official: sampled-point curvature only; fillet: every corner must be "
-                 f"roundable by a minimum-radius arc inside its adjacent long chords and the rounded path must pass the unchanged official checker "
-                 f"(1 cm deviation tolerance; 0.5/2 cm identical); strict: every chord densified to 2 cm. Labels give counts and share of the "
-                 f"profile's officially feasible paths; {tot['fillet_unverifiable']} fillet-unverifiable paths (hash not reproduced) count as infeasible."}
+    cap = {'zh': f"三种可执行性检验下的可行路径数（开发集：荷兰 140 块田 × 3 机型；{tot['official']} 条原生可行路径为分母）。"
+                 f"原生曲率检验只在原始采样点检查曲率；圆角可执行性检验要求拐角能用最小转弯半径圆弧在相邻直段内倒圆、且倒圆后通过未修改的原生检验"
+                 f"（偏离容差 1 cm，0.5/2 cm 结果相同）；加密曲率检验把每条弦加密到 2 cm。柱顶为条数与占该机型原生可行数的比例；"
+                 f"圆角检验另有 {tot['fillet_unverifiable']} 条因重跑无法再现记录路径而无法核验，按不可行计入。",
+           'en': f"Feasible paths under three executability checks (development set: 140 Dutch fields × 3 machine profiles; "
+                 f"{tot['official']} natively feasible paths as denominator). Native: sampled-point curvature only; fillet: every corner must be "
+                 f"roundable by a minimum-radius arc inside its adjacent long chords and the rounded path must pass the unchanged native check "
+                 f"(1 cm deviation tolerance; 0.5/2 cm identical); densified: every chord densified to 2 cm. Labels give counts and share of the "
+                 f"profile's natively feasible paths; {tot['fillet_unverifiable']} fillet-unverifiable paths (hash not reproduced) count as infeasible."}
     return fig, cap, rows
 
 
@@ -101,8 +100,8 @@ def admission_rules(adm: dict, st: Style):
         m0, c0 = ctrl['stop_rho']
         b.axhline(100 * (m0 - 1), color='#555555', ls=':', lw=0.8)
         b.fill_between([0.8, 4.2], 100 * (c0[0] - 1), 100 * (c0[1] - 1), color='#999999', alpha=0.12, lw=0)
-        a.set_ylabel(qlabel(st, '首选可行率（旧库为虚线对照）', 'First-try feasibility (dotted: L0)', '%'))
-        b.set_ylabel(st.t('停止成本比 − 1（旧库为虚线对照）', 'Stop cost ratio − 1 (dotted: L0)'))
+        a.set_ylabel(qlabel(st, terms.METRIC['first_try'][0], terms.METRIC['first_try'][1], '%'))
+        b.set_ylabel(st.t(f"{terms.METRIC['stop_rho'][0]} − 1", f"{terms.METRIC['stop_rho'][1]} − 1"))
         for ax in (a, b):
             ax.set_xticks(caps)
             ax.set_xlim(0.7, 4.3)
@@ -112,11 +111,11 @@ def admission_rules(adm: dict, st: Style):
         panel_label(a, 'ac'[r], st)
         panel_label(b, 'bd'[r], st)
     axs[0][0].legend(loc='lower right', ncols=2, fontsize=st.fs - 1.5)
-    cap = {'zh': '准入规则 × 库容量（开发侧，留出田块）。上排为首选可行率，下排为停止时的惩罚成本比减 1；左列为官方判定，右列为倒圆判定。'
+    cap = {'zh': '准入规则 × 库容量（开发集，留出田块）。上排为首次尝试可行率，下排为终止成本比减 1；左列为原生曲率检验，右列为圆角可执行性检验。'
                  '每条规则只用外层训练田块选择成员，评价在外层测试田块；误差线为按田块自助法 95% 区间，灰色点线为旧库（L0）单独使用时的同一指标及其区间。'
                  '容量 m 为在 L0 之上新增的成员数；随机规则每个划分抽 20 次。',
-           'en': 'Admission rule × library capacity (development side, held-out fields). Top: first-try feasibility; bottom: stop penalised cost ratio minus 1. '
-                 'Left: official verdict; right: fillet verdict. Each rule selects members using outer-training fields only and is evaluated on outer-test fields; '
+           'en': 'Admission rule × library capacity (development set, held-out fields). Top: first-try feasibility; bottom: penalised cost ratio at stop minus 1. '
+                 'Left: native curvature check; right: fillet executability check. Each rule selects members using outer-training fields only and is evaluated on outer-test fields; '
                  'error bars are field-bootstrap 95 % intervals; grey dotted lines are the old library (L0) alone with its interval. Capacity m counts members added '
                  'to L0; the random rule draws 20 candidate sets per split.'}
     return fig, cap, rows
@@ -142,7 +141,7 @@ def dynamic_value(summary: dict, st: Style):
                 xs.append(di), ys.append(100 * v['mean_rel']), lo.append(100 * (v['mean_rel'] - v['ci95'][0])), hi.append(100 * (v['ci95'][1] - v['mean_rel']))
             a.errorbar(xs, ys, yerr=[lo, hi], color=color(pi), marker=marker(pi), ls=dash(fi), lw=0.9, capsize=1.5,
                        markerfacecolor=color(pi) if fi == 0 else 'white',
-                       label=st.t(f"{POLICY_LABEL[pol][0]}·{k} 车", f"{POLICY_LABEL[pol][1]}, {k} vehicles") if xs else None)
+                       label=st.t(f"{POLICY_LABEL[pol][0]} · {k} 台", f"{POLICY_LABEL[pol][1]}, {k} vehicles") if xs else None)
             rows += [{'density': d, 'fleet': k, 'policy': pol, 'metric': 'distance_m', 'mean_rel': y / 100,
                       'lo': (y - l) / 100, 'hi': (y + h) / 100} for d, y, l, h in zip(densities, ys, lo, hi)]
             xs, ys, lo, hi = [], [], [], []
@@ -161,19 +160,19 @@ def dynamic_value(summary: dict, st: Style):
         ax.set_xticks(range(len(densities)), [st.t(*DENSITY_LABEL[d]) for d in densities])
         ax.set_xlabel(st.t('到达密度（班次 3600/1200/400 s）', 'Arrival density (shift 3600/1200/400 s)'))
         ax.grid()
-    a.set_ylabel(qlabel(st, '总里程相对只插入', 'Total distance vs insertion', '%'))
-    b.set_ylabel(qlabel(st, '平均响应相对只插入', 'Mean response vs insertion', '%'))
+    a.set_ylabel(qlabel(st, f"{terms.METRIC['distance'][0]}相对增量插入", f"{terms.METRIC['distance'][1]} vs insertion", '%'))
+    b.set_ylabel(qlabel(st, f"{terms.METRIC['response'][0]}相对增量插入", f"{terms.METRIC['response'][1]} vs insertion", '%'))
     panel_label(a, 'a', st)
     panel_label(b, 'b', st)
     a.legend(loc='lower left', ncols=2, fontsize=st.fs - 1.5)
     n = sum(c['n'] for c in cells.values())
-    cap = {'zh': f"动态任务流中重排策略相对「只插入」的里程与平均响应变化（开发侧，规划层仿真；{n} 条流，30 块田 × 3 到达密度 × 2 车队规模）。"
-                 f"负值更好；误差线为按流自助法 95% 区间。实心标记为 2 车、空心为 4 车；每流 40 个任务、其中 30 个在班次内到达，"
-                 f"重排为 PyVRP 0.3 s 开放路线优化。计时为匀速代理，不是 Gazebo 执行。",
-           'en': f"Change in total distance and mean response of re-planning policies versus insertion-only in dynamic task streams "
-                 f"(development side, planning-level simulation; {n} streams, 30 fields × 3 arrival densities × 2 fleet sizes). Lower is better; "
+    cap = {'zh': f"动态任务流中重优化策略相对增量插入的总行驶里程与平均响应时间变化（开发集，规划层仿真；{n} 条流，30 块田 × 3 到达密度 × 2 车队规模）。"
+                 f"负值更好；误差线为按流自助法 95% 区间。实心标记为 2 台、空心为 4 台；每流 40 个任务、其中 30 个在班次内到达，"
+                 f"重优化为 PyVRP 0.3 s 开放路线优化。计时使用恒速模型。",
+           'en': f"Change in total travel distance and mean response time of re-optimisation policies versus incremental insertion in dynamic task streams "
+                 f"(development set, planning-level simulation; {n} streams, 30 fields × 3 arrival densities × 2 fleet sizes). Lower is better; "
                  f"error bars are stream bootstrap 95 % intervals. Filled markers: 2 vehicles; open: 4. Each stream has 40 tasks, 30 released during the shift; "
-                 f"re-optimisation is a 0.3 s open-route PyVRP solve. Timing uses the constant-speed proxy, not a Gazebo execution."}
+                 f"re-optimisation is a 0.3 s open-route PyVRP solve. Timing uses the constant-speed model."}
     return fig, cap, rows
 
 
