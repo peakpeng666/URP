@@ -130,7 +130,7 @@ def solve_full_repaired(instance: dict, params: dict):
     metrics = dict(checked_metrics, repairs=repairs, repair_attempts=attempts, n_cells=n_cells, n_swaths=len(swaths),
                    planning_s=time.perf_counter() - t0, remaining_defects=len(_curvature_defects(pts, r)))
     raw = dict(implementation='Fields2Cover 2.1 full pipeline (as f2c_coverage.solve_full) + local Dubins repair; official check_path',
-               windows_r=list(WINDOWS), binding=C.available())
+               windows_r=list(WINDOWS), binding=C.available(), kinds=kinds)
     if not check['valid']:
         raw['rejected_polyline'] = pts
     route = dict(vehicle=0, nodes=None, sequence=[], services=[], polyline=pts, cost=length, load=0)

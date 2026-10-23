@@ -5,6 +5,7 @@
     .venv/bin/python -m urp_lab.evolve run --out DIR --workers 16 --cores 8-23
     .venv/bin/python -m urp_lab.evolve audit --out DIR
     .venv/bin/python -m urp_lab.evolve reverify --out DIR --workers 16 --cores 8-23
+    .venv/bin/python -m urp_lab.evolve fillet --out DIR --workers 16 --cores 8-23
     .venv/bin/python -m urp_lab.evolve policy --out DIR
     .venv/bin/python -m urp_lab.evolve experience --out FILE
 """
@@ -45,6 +46,10 @@ def main(argv=None):
         p = sub.add_parser(name)
         p.add_argument('--out', required=True)
     p = sub.add_parser('reverify')
+    p.add_argument('--out', required=True)
+    p.add_argument('--workers', type=int, default=16)
+    p.add_argument('--cores', default='8-23')
+    p = sub.add_parser('fillet')
     p.add_argument('--out', required=True)
     p.add_argument('--workers', type=int, default=16)
     p.add_argument('--cores', default='8-23')
@@ -106,6 +111,9 @@ def main(argv=None):
     elif args.cmd == 'reverify':
         from . import reverify
         print(json.dumps(reverify.run(Path(args.out), args.workers, _cores(args.cores)), ensure_ascii=False, indent=1))
+    elif args.cmd == 'fillet':
+        from . import fillet
+        print(json.dumps(fillet.run(Path(args.out), args.workers, _cores(args.cores)), ensure_ascii=False, indent=1))
     elif args.cmd == 'experience':
         from . import experience
         print(json.dumps(experience.write(Path(args.out)), ensure_ascii=False, indent=1)[:4000])
