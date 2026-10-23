@@ -43,4 +43,4 @@ def test_admission_and_dynamic_rows():
     assert len(fig.axes) == 4 and len(rows) == 2 * 5 * 3 * 2
     fig2, cap2, rows2 = F.dynamic_value(_dyn(), Style('elsevier', 'double', 'zh'))
     assert len(fig2.axes) == 2 and len(rows2) == 3 * 2 * 3 * 2
-    assert '只插入' in cap2['zh'] and 'insertion' in cap2['en']
+    assert '增量插入' in cap2['zh'] and 'incremental insertion' in cap2['en']

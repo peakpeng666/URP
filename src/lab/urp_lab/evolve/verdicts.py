@@ -50,6 +50,33 @@ def verdict_map(run_dir: Path, verdict: str) -> dict:
     raise ValueError(verdict)
 
 
+def strict_from_fillet(run_dir: Path) -> dict:
+    """Derive strict verdicts from the fillet batch for solvers that return the rounded path (repair v2).
+
+    Repair v2 applies rounding before returning, so the recorded path and the rounded path coincide; its fillet
+    record's ``strict_violations_after`` is therefore the strict verdict on the recorded path. The fillet batch also
+    verifies that the recorded hash is reproduced. Writes ``reverify/<job>.json`` in the format consumed by
+    ``verdict_map``. For runs whose solver does not round before returning (repair v1), use ``reverify`` instead.
+    """
+    run_dir = Path(run_dir)
+    target = run_dir / 'reverify'
+    target.mkdir(exist_ok=True)
+    n = valid = 0
+    for p in (run_dir / 'fillet').glob('*.json'):
+        if p.name == 'summary.json':
+            continue
+        r = json.loads(p.read_text(encoding='utf-8'))
+        ok = bool(r.get('identical')) and r.get('verdict') == 'evaluated'
+        rv = {'job_id': r['job_id'], 'config': r.get('config'), 'identical': ok,
+              'strict_valid_curvature': bool(ok and int(r.get('strict_violations_after', 1)) == 0),
+              'strict_violations': r.get('strict_violations_after'),
+              'source': 'fillet batch (returned rounded path)'}
+        (target / f"{r['job_id']}.json").write_text(json.dumps(rv, ensure_ascii=False), encoding='utf-8')
+        n += 1
+        valid += int(rv['strict_valid_curvature'])
+    return {'jobs': n, 'strict_valid': valid}
+
+
 def dataset_from(dirs: list[Path], configs: list[str], verdict: str = 'official', drop_unverifiable: bool = False) -> dict:
     records, vmap = [], {}
     for d in dirs:
