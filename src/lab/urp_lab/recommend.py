@@ -77,6 +77,22 @@ def _fleet(inst):
     return feats, score, why, {'time_limit_s': budget}
 
 
+def _coverage_order(scenario, instance, score, why, params_hint):
+    """Learned coverage try-order (urp_lab.evolve.serve) behind fingerprint/profile/scope gates; rules otherwise."""
+    from .evolve import serve
+    from .evolve.plans import config_label
+    model = serve.recommend(scenario, instance)
+    if model['status'] == 'available':
+        order = model['prediction']['order']
+        first = order[0]
+        if first['algorithm_id'] in score:
+            score[first['algorithm_id']] += 5
+            why[first['algorithm_id']].insert(0, '学习型尝试顺序（开发侧留出田块评估，封存测试未运行）：先试 ' +
+                                              '，失败再试 '.join(config_label(s['config']) for s in order[:3]))
+            params_hint = dict(params_hint, **first['params'])
+    return model, params_hint
+
+
 def _depot_central(inst):
     xs, ys = [t['xy'][0] for t in inst['tasks']], [t['xy'][1] for t in inst['tasks']]
     dx, dy = inst['depot']
@@ -174,6 +190,8 @@ def recommend(scenario, instance, budget_s=None):
                     score[gid] -= 5
                     why[gid].append('栅格搜索不考虑最小转弯半径，仅作几何参照')
             why['ompl.rrt_connect'].append('优先搜索可行路径，不优化路径长度；耗时以实测为准')
+    if pc == 'coverage':
+        model, params_hint = _coverage_order(scenario, instance, score, why, params_hint)
     by_id = {a['id']: a for a in algs}
     rows = []
     for aid in sorted(score, key=lambda k: (-score[k], k)):
@@ -205,6 +223,7 @@ def recommend(scenario, instance, budget_s=None):
                                      reason=None if pc != 'euclidean_cvrp' else '历史训练数据未恢复',
                                      required=[str(paths.CVRP_SELECTION_DATA / 'data/raw.jsonl')], prediction=None)
     first = rows[0]['reasons'][0] if rows else ''
-    return dict(problem_class=pc, policy='knn-crc-local-v1' if model and model.get('status') == 'available' else 'rules-v2',
+    learned_policy = {'lab.coverage.order.v1': 'coverage-order-v1'}.get((model or {}).get('id'), 'knn-crc-local-v1')
+    return dict(problem_class=pc, policy=learned_policy if model and model.get('status') == 'available' else 'rules-v2',
                 features=feats, learned_selector=learned_selector, ranking=rows, recommended=recommended, compare=compare,
                 explanation=(f"推荐 {by_id[recommended]['name']}：{first}" if recommended else '没有适用的算法'))
