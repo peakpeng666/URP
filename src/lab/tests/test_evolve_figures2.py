@@ -44,3 +44,12 @@ def test_admission_and_dynamic_rows():
     fig2, cap2, rows2 = F.dynamic_value(_dyn(), Style('elsevier', 'double', 'zh'))
     assert len(fig2.axes) == 2 and len(rows2) == 3 * 2 * 3 * 2
     assert '增量插入' in cap2['zh'] and 'incremental insertion' in cap2['en']
+
+
+def test_repair_versions_rows():
+    counts = {'v1': {'official': 1999, 'fillet': 1607, 'strict': 1023},
+              'v2': {'official': 2057, 'fillet': 1800, 'strict': 1200}}
+    fig, cap, rows = F.repair_versions(counts, Style('elsevier', 'single', 'zh'))
+    assert len(rows) == 6 and len(fig.axes) == 1
+    assert {r['check'] for r in rows} == {'official', 'fillet', 'strict'}
+    assert '修补 v1' in cap['zh']

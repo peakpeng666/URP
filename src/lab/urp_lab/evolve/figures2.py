@@ -176,13 +176,57 @@ def dynamic_value(summary: dict, st: Style):
     return fig, cap, rows
 
 
+def repair_versions(counts: dict, st: Style):
+    """Figure 11: feasible paths of repair v1 and v2 under the three executability checks."""
+    versions = list(counts)
+    checks = ('official', 'fillet', 'strict')
+    fig, axs = figure(st, 0.5)
+    ax = axs[0][0]
+    x = np.arange(len(versions))
+    width = 0.26
+    rows = []
+    for k, key in enumerate(checks):
+        vals = [counts[v][key] for v in versions]
+        ax.bar(x + (k - 1) * width, vals, width * 0.92, color=color([0, 2, 1][k]), hatch=['', '///', '...'][k],
+               edgecolor='white', lw=0, label=st.t(*terms.VERDICT[key]))
+        for xi, val in zip(x, vals):
+            ax.text(xi + (k - 1) * width, val + 15, f'{val}', ha='center', va='bottom', fontsize=st.fs - 1)
+        rows += [{'version': v, 'check': key, 'feasible': val} for v, val in zip(versions, vals)]
+    ax.set_xticks(x, [st.t('修补 v1', 'Repair v1') if 'v1' in v else st.t('修补 v2', 'Repair v2') for v in versions])
+    ax.set_ylabel(qlabel(st, '通过检验的可行路径', 'Feasible paths passing the check', '条'))
+    ax.set_ylim(0, max(max(counts[v].values()) for v in versions) * 1.2)
+    ax.grid(axis='y')
+    ax.legend(loc='upper right', ncols=3)
+    cap = {'zh': '修补 v1 与 v2 的可行路径数（开发集：388 实例；每根柱的分母为该版本在原生曲率检验下的可行路径数）。'
+                 '原生曲率检验为未修改的检查器；圆角可执行性检验要求拐角可用最小转弯半径倒圆并通过原生检验；加密曲率检验把每条弦加密到 2 cm。'
+                 'v1 的加密值来自独立重验证（记录路径）；v2 返回的已是圆角后路径，其加密值由圆角判定批次导出。',
+           'en': 'Feasible paths of repair v1 and v2 (development set: 388 instances; each bar is relative to that version\'s native-check feasible paths). '
+                 'Native: unchanged checker; fillet: corners rounded by the minimum turning radius and the rounded path passing the native check; densified: every chord densified to 2 cm. '
+                 'The v1 densified value comes from the independent reverify batch (recorded path); v2 returns the rounded path, so its densified value is derived from the fillet batch.'}
+    return fig, cap, rows
+
+
+def _run_counts(run_dir: Path) -> dict:
+    """official / fillet / strict feasible paths of one repair run."""
+    summary = json.loads((run_dir / 'fillet' / 'summary.json').read_text(encoding='utf-8'))
+    official = int(summary['jobs'])
+    fillet = sum(int(v.get('valid', 0)) for v in summary['by_config'].values())
+    strict = 0
+    for p in (run_dir / 'reverify').glob('*.json'):
+        if p.name == 'sensitivity.json':
+            continue
+        r = json.loads(p.read_text(encoding='utf-8'))
+        strict += int(bool(r.get('identical') and r.get('strict_valid_curvature')))
+    return {'official': official, 'fillet': fillet, 'strict': strict}
+
+
 def write(out: Path) -> list[str]:
     out = Path(out)
     target = out / 'figures'
     target.mkdir(exist_ok=True)
     index_path = target / 'index.json'
     index = json.loads(index_path.read_text(encoding='utf-8')) if index_path.exists() else []
-    keys = ('fig8_three_verdicts', 'fig9_admission_rules', 'fig10_dynamic_value')
+    keys = ('fig8_three_verdicts', 'fig9_admission_rules', 'fig10_dynamic_value', 'fig11_repair_versions')
     index = [e for e in index if e.get('key') not in keys]
     produced = []
     vc_path = out / 'verdict_comparison.json'
@@ -191,6 +235,11 @@ def write(out: Path) -> list[str]:
     vc = json.loads(vc_path.read_text(encoding='utf-8')) if vc_path.exists() else None
     adm = json.loads(adm_path.read_text(encoding='utf-8')) if adm_path.exists() else None
     dyn = json.loads(dyn_path.read_text(encoding='utf-8')) if dyn_path.exists() else None
+    rep_dirs = {'v1': out.parent / 'evolve-repair-20261023', 'v2': out.parent / 'evolve-repair2-20261024'}
+    counts = {}
+    for version, path in rep_dirs.items():
+        if (path / 'fillet' / 'summary.json').exists() and any((path / 'reverify').glob('*.json')):
+            counts[version] = _run_counts(path)
     for lang in ('zh', 'en'):
         if vc:
             st = Style('elsevier', 'single', lang)
@@ -210,5 +259,11 @@ def write(out: Path) -> list[str]:
                 fig, cap, rows = dynamic_value(dyn, st)
                 _save(fig, target, 'fig10_dynamic_value', st, cap, rows, index)
                 produced.append(f'fig10 [{lang}]')
+        if len(counts) == 2:
+            st = Style('elsevier', 'single', lang)
+            with apply(st):
+                fig, cap, rows = repair_versions(counts, st)
+                _save(fig, target, 'fig11_repair_versions', st, cap, rows, index)
+                produced.append(f'fig11 [{lang}]')
     index_path.write_text(json.dumps(index, ensure_ascii=False, indent=1), encoding='utf-8')
     return produced

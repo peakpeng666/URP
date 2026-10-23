@@ -202,6 +202,12 @@ def _path(rec: dict, inst: dict):
         if not routes:
             return None, None, None
         poly, kinds = routes[0]['polyline'], raw['kinds']
+    elif rec['algorithm'] == 'evolve.f2c_repair2':
+        from . import repair2
+        routes, _check, _m, raw = repair2.solve_full_repaired2(inst, dict(rec['params']))
+        if not routes:
+            return None, None, None
+        poly, kinds = routes[0]['polyline'], raw['kinds']
     else:                                                     # single-cell adapters: densified everywhere
         from .sweep import solve
         from . import instances as I
