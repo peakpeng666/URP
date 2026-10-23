@@ -1,0 +1,235 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/node_modules/.bin/playwright",
+      "test",
+      "tests/smoke.spec.mjs",
+      "-g",
+      "agri catalog"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/playwright.config.mjs",
+    "rootDir": "${USER_HOME}/urp-e2e/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/artifacts/head-942b376a-agri/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/head-942b376a-agri/report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/head-942b376a-agri/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "smoke.spec.mjs",
+      "file": "smoke.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "agri catalog + flow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "preview",
+                  "description": "1"
+                },
+                {
+                  "type": "draft-restored",
+                  "description": "7/123"
+                },
+                {
+                  "type": "after-reset",
+                  "description": "36/42"
+                },
+                {
+                  "type": "scenario",
+                  "description": "agri-orchard-harvest-tran-7c68e0c2-4349-45fa-8172-baf5e059d7a8"
+                },
+                {
+                  "type": "last-import-notice",
+                  "description": "1"
+                },
+                {
+                  "type": "last-import-link-matches",
+                  "description": "1"
+                },
+                {
+                  "type": "manual-edit-diff",
+                  "description": "此模式上次导入为 果园采收集运（种子 42）。再次导入会新建一个场景，不会覆盖你在地图上对那份做的手工编辑；要保留手工成果请继续编辑原场景。 | 那份场景相对生成结果有手工编辑：通道已改动；车队配置已改动。重新生成不会带上这些编辑。 用该场景的参数和种子填回表单"
+                },
+                {
+                  "type": "refill-button",
+                  "description": "1"
+                },
+                {
+                  "type": "after-refill",
+                  "description": "36/42"
+                },
+                {
+                  "type": "coverage-issues",
+                  "description": "提醒：地头宽 1 m 小于作业幅宽 3 m，地头转弯可能不足一个幅宽"
+                },
+                {
+                  "type": "obstacle-issues",
+                  "description": ""
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26187,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T14:58:48.300Z",
+                  "annotations": [
+                    {
+                      "type": "preview",
+                      "description": "1"
+                    },
+                    {
+                      "type": "draft-restored",
+                      "description": "7/123"
+                    },
+                    {
+                      "type": "after-reset",
+                      "description": "36/42"
+                    },
+                    {
+                      "type": "scenario",
+                      "description": "agri-orchard-harvest-tran-7c68e0c2-4349-45fa-8172-baf5e059d7a8"
+                    },
+                    {
+                      "type": "last-import-notice",
+                      "description": "1"
+                    },
+                    {
+                      "type": "last-import-link-matches",
+                      "description": "1"
+                    },
+                    {
+                      "type": "manual-edit-diff",
+                      "description": "此模式上次导入为 果园采收集运（种子 42）。再次导入会新建一个场景，不会覆盖你在地图上对那份做的手工编辑；要保留手工成果请继续编辑原场景。 | 那份场景相对生成结果有手工编辑：通道已改动；车队配置已改动。重新生成不会带上这些编辑。 用该场景的参数和种子填回表单"
+                    },
+                    {
+                      "type": "refill-button",
+                      "description": "1"
+                    },
+                    {
+                      "type": "after-refill",
+                      "description": "36/42"
+                    },
+                    {
+                      "type": "coverage-issues",
+                      "description": "提醒：地头宽 1 m 小于作业幅宽 3 m，地头转弯可能不足一个幅宽"
+                    },
+                    {
+                      "type": "obstacle-issues",
+                      "description": ""
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-942b376a-agri/test-results/smoke-agri-catalog-flow/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-942b376a-agri/test-results/smoke-agri-catalog-flow/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-942b376a-agri/test-results/smoke-agri-catalog-flow/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-494b69547fdfcf4e8961",
+          "file": "smoke.spec.mjs",
+          "line": 29,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T14:58:48.054Z",
+    "duration": 27226.501,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

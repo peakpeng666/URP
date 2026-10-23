@@ -1,0 +1,89 @@
+
+Running 3 tests using 1 worker
+
+(node:82169) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/a-agri-catalog.spec.ts:2:1 › A 农业目录：筛选环境/作业/状态、打开模式、改参数与种子、预览几何 (1ms)
+(node:82181) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/b-draft-persistence.spec.ts:4:1 › B 草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败） (2ms)
+(node:82196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入 (1ms)
+
+
+  1) tests/a-agri-catalog.spec.ts:2:1 › A 农业目录：筛选环境/作业/状态、打开模式、改参数与种子、预览几何 ─────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at ${USER_HOME}/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ../video-evidence/run1/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run1/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run1/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/b-draft-persistence.spec.ts:4:1 › B 草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败） ───────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at ${USER_HOME}/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ../video-evidence/run1/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run1/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run1/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入 ───────────────────────────────────
+
+    Error: browserType.launch: Executable doesn't exist at ${USER_HOME}/.cache/ms-playwright/chromium_headless_shell-1243/chrome-headless-shell-linux64/chrome-headless-shell
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ../video-evidence/run1/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run1/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run1/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    tests/a-agri-catalog.spec.ts:2:1 › A 农业目录：筛选环境/作业/状态、打开模式、改参数与种子、预览几何 ──────────────────────────
+    tests/b-draft-persistence.spec.ts:4:1 › B 草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败） ────────────────────────
+    tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入 ────────────────────────────────────
+
+Enter command: <target>|all <time>|-1 <command>[ <argument>]
+
+Parse error, at least 3 arguments were expected, only 0 given in string ' 地图编辑器：选择对象、拖拽、撤销/重做、数值输入	failed		'
+Evidence: ${USER_HOME}/urp-e2e/video-evidence/run1 (INDEX.md, acceptance.mp4)

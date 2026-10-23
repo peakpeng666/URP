@@ -1,0 +1,209 @@
+
+Running 7 tests using 1 worker
+
+(node:82575) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/smoke.spec.mjs:16:3 › route home (181ms)
+(node:82715) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 tests/smoke.spec.mjs:16:3 › route plan (170ms)
+(node:82870) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 tests/smoke.spec.mjs:16:3 › route assets (140ms)
+(node:83010) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 tests/smoke.spec.mjs:16:3 › route sim (149ms)
+(node:83173) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  5 tests/smoke.spec.mjs:16:3 › route jobs (147ms)
+(node:83351) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  6 tests/smoke.spec.mjs:16:3 › route bpp (117ms)
+(node:83513) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  7 tests/smoke.spec.mjs:29:1 › agri catalog + flow (121ms)
+
+
+  1) tests/smoke.spec.mjs:16:3 › route home ────────────────────────────────────────────────────────
+
+    Error: browserContext.newPage: Executable doesn't exist at ${USER_HOME}/.cache/ms-playwright/ffmpeg-1011/ffmpeg-linux
+    ╔═════════════════════════════════════════════════════════════════╗
+    ║ Video rendering requires ffmpeg binary.                         ║
+    ║ Downloading it will not affect any of the system-wide settings. ║
+    ║ Please run the following command:                               ║
+    ║                                                                 ║
+    ║     npx playwright install ffmpeg                               ║
+    ║                                                                 ║
+    ║ <3 Playwright Team                                              ║
+    ╚═════════════════════════════════════════════════════════════════╝
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-home/error-context.md
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-home/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/head-4d2f7a04/test-results/smoke-route-home/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/head-4d2f7a04/test-results/smoke-route-home/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/smoke.spec.mjs:16:3 › route plan ────────────────────────────────────────────────────────
+
+    Error: browserContext.newPage: Executable doesn't exist at ${USER_HOME}/.cache/ms-playwright/ffmpeg-1011/ffmpeg-linux
+    ╔═════════════════════════════════════════════════════════════════╗
+    ║ Video rendering requires ffmpeg binary.                         ║
+    ║ Downloading it will not affect any of the system-wide settings. ║
+    ║ Please run the following command:                               ║
+    ║                                                                 ║
+    ║     npx playwright install ffmpeg                               ║
+    ║                                                                 ║
+    ║ <3 Playwright Team                                              ║
+    ╚═════════════════════════════════════════════════════════════════╝
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-plan/error-context.md
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-plan/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/head-4d2f7a04/test-results/smoke-route-plan/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/head-4d2f7a04/test-results/smoke-route-plan/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) tests/smoke.spec.mjs:16:3 › route assets ──────────────────────────────────────────────────────
+
+    Error: browserContext.newPage: Executable doesn't exist at ${USER_HOME}/.cache/ms-playwright/ffmpeg-1011/ffmpeg-linux
+    ╔═════════════════════════════════════════════════════════════════╗
+    ║ Video rendering requires ffmpeg binary.                         ║
+    ║ Downloading it will not affect any of the system-wide settings. ║
+    ║ Please run the following command:                               ║
+    ║                                                                 ║
+    ║     npx playwright install ffmpeg                               ║
+    ║                                                                 ║
+    ║ <3 Playwright Team                                              ║
+    ╚═════════════════════════════════════════════════════════════════╝
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-assets/error-context.md
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-assets/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/head-4d2f7a04/test-results/smoke-route-assets/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/head-4d2f7a04/test-results/smoke-route-assets/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) tests/smoke.spec.mjs:16:3 › route sim ─────────────────────────────────────────────────────────
+
+    Error: browserContext.newPage: Executable doesn't exist at ${USER_HOME}/.cache/ms-playwright/ffmpeg-1011/ffmpeg-linux
+    ╔═════════════════════════════════════════════════════════════════╗
+    ║ Video rendering requires ffmpeg binary.                         ║
+    ║ Downloading it will not affect any of the system-wide settings. ║
+    ║ Please run the following command:                               ║
+    ║                                                                 ║
+    ║     npx playwright install ffmpeg                               ║
+    ║                                                                 ║
+    ║ <3 Playwright Team                                              ║
+    ╚═════════════════════════════════════════════════════════════════╝
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-sim/error-context.md
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-sim/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/head-4d2f7a04/test-results/smoke-route-sim/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/head-4d2f7a04/test-results/smoke-route-sim/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) tests/smoke.spec.mjs:16:3 › route jobs ────────────────────────────────────────────────────────
+
+    Error: browserContext.newPage: Executable doesn't exist at ${USER_HOME}/.cache/ms-playwright/ffmpeg-1011/ffmpeg-linux
+    ╔═════════════════════════════════════════════════════════════════╗
+    ║ Video rendering requires ffmpeg binary.                         ║
+    ║ Downloading it will not affect any of the system-wide settings. ║
+    ║ Please run the following command:                               ║
+    ║                                                                 ║
+    ║     npx playwright install ffmpeg                               ║
+    ║                                                                 ║
+    ║ <3 Playwright Team                                              ║
+    ╚═════════════════════════════════════════════════════════════════╝
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-jobs/error-context.md
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-jobs/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/head-4d2f7a04/test-results/smoke-route-jobs/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/head-4d2f7a04/test-results/smoke-route-jobs/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) tests/smoke.spec.mjs:16:3 › route bpp ─────────────────────────────────────────────────────────
+
+    Error: browserContext.newPage: Executable doesn't exist at ${USER_HOME}/.cache/ms-playwright/ffmpeg-1011/ffmpeg-linux
+    ╔═════════════════════════════════════════════════════════════════╗
+    ║ Video rendering requires ffmpeg binary.                         ║
+    ║ Downloading it will not affect any of the system-wide settings. ║
+    ║ Please run the following command:                               ║
+    ║                                                                 ║
+    ║     npx playwright install ffmpeg                               ║
+    ║                                                                 ║
+    ║ <3 Playwright Team                                              ║
+    ╚═════════════════════════════════════════════════════════════════╝
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-bpp/error-context.md
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-route-bpp/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/head-4d2f7a04/test-results/smoke-route-bpp/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/head-4d2f7a04/test-results/smoke-route-bpp/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) tests/smoke.spec.mjs:29:1 › agri catalog + flow ───────────────────────────────────────────────
+
+    Error: browserContext.newPage: Executable doesn't exist at ${USER_HOME}/.cache/ms-playwright/ffmpeg-1011/ffmpeg-linux
+    ╔═════════════════════════════════════════════════════════════════╗
+    ║ Video rendering requires ffmpeg binary.                         ║
+    ║ Downloading it will not affect any of the system-wide settings. ║
+    ║ Please run the following command:                               ║
+    ║                                                                 ║
+    ║     npx playwright install ffmpeg                               ║
+    ║                                                                 ║
+    ║ <3 Playwright Team                                              ║
+    ╚═════════════════════════════════════════════════════════════════╝
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-agri-catalog-flow/error-context.md
+
+    Error Context: artifacts/head-4d2f7a04/test-results/smoke-agri-catalog-flow/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/head-4d2f7a04/test-results/smoke-agri-catalog-flow/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/head-4d2f7a04/test-results/smoke-agri-catalog-flow/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7 failed
+    tests/smoke.spec.mjs:16:3 › route home ─────────────────────────────────────────────────────────
+    tests/smoke.spec.mjs:16:3 › route plan ─────────────────────────────────────────────────────────
+    tests/smoke.spec.mjs:16:3 › route assets ───────────────────────────────────────────────────────
+    tests/smoke.spec.mjs:16:3 › route sim ──────────────────────────────────────────────────────────
+    tests/smoke.spec.mjs:16:3 › route jobs ─────────────────────────────────────────────────────────
+    tests/smoke.spec.mjs:16:3 › route bpp ──────────────────────────────────────────────────────────
+    tests/smoke.spec.mjs:29:1 › agri catalog + flow ────────────────────────────────────────────────

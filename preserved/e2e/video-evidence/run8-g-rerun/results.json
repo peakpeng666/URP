@@ -1,0 +1,169 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/video-suite/node_modules/.bin/playwright",
+      "test",
+      "tests/g-"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/video-suite/playwright.config.ts",
+    "rootDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/video-evidence/run8-g-rerun/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "${USER_HOME}/urp-e2e/video-evidence/run8-g-rerun/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "${USER_HOME}/urp-e2e/video-evidence/run8-g-rerun/html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "g-solve-compare.spec.ts",
+      "file": "g-solve-compare.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "G 真实小规模求解并打开比较",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "solve-summary",
+                  "description": "本批 3 次运行 · 1 个已验算可行解; table rows with 通过=1; scenario=bench-cvrp-uniform-n20"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1804,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "求解",
+                      "duration": 1378
+                    }
+                  ],
+                  "startTime": "2026-10-22T15:23:27.320Z",
+                  "annotations": [
+                    {
+                      "type": "solve-summary",
+                      "description": "本批 3 次运行 · 1 个已验算可行解; table rows with 通过=1; scenario=bench-cvrp-uniform-n20"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "before-solve",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run8-g-rerun/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/before-solve-59a791dbbcef402b388201f6ed7c2522810f0999.png"
+                    },
+                    {
+                      "name": "solved",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run8-g-rerun/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/solved-21dd90b067a427c0acb9f36eea8051686922a031.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run8-g-rerun/artifacts/g-solve-compare-G-真实小规模求解并打开比较/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run8-g-rerun/artifacts/g-solve-compare-G-真实小规模求解并打开比较/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run8-g-rerun/artifacts/g-solve-compare-G-真实小规模求解并打开比较/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e8cd68996e8cc36ce593-ef819bc8aa4f484c0325",
+          "file": "g-solve-compare.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T15:23:27.069Z",
+    "duration": 2288.263,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

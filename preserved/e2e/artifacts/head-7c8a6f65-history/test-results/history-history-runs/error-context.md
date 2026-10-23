@@ -1,0 +1,1067 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: history.spec.mjs >> history runs
+- Location: tests/history.spec.mjs:5:1
+
+# Error details
+
+```
+Test timeout of 120000ms exceeded.
+```
+
+```
+Error: locator.click: Target page, context or browser has been closed
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]: 农业机器人路径规划
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - textbox "任务描述" [ref=e15]:
+          - /placeholder: 用一句话描述任务，例如：在 200×120 米的果园里，3 台机器人从西南角出发采样 40 个点，避开两个池塘
+        - button "示例" [ref=e16] [cursor=pointer]
+      - button "生成地图" [disabled] [ref=e19]
+      - button "导入" [ref=e23] [cursor=pointer]
+    - generic [ref=e27]:
+      - group "工作区" [ref=e28]:
+        - button "任务规划" [pressed] [ref=e29] [cursor=pointer]
+        - button "资产库" [ref=e32] [cursor=pointer]
+        - button "算法实验" [ref=e43] [cursor=pointer]
+        - button "仿真" [ref=e46] [cursor=pointer]
+        - button "资料" [ref=e50] [cursor=pointer]
+        - button "系统" [ref=e53] [cursor=pointer]
+      - button "恢复当前工作区的默认布局" [ref=e57] [cursor=pointer]
+      - button "⌘K" [ref=e61] [cursor=pointer]
+  - generic [ref=e66]:
+    - generic [ref=e76]:
+      - generic [ref=e83]:
+        - region "场景库" [ref=e85]:
+          - tablist [ref=e88]:
+            - tab "场景库" [selected] [ref=e89] [cursor=pointer]:
+              - generic [ref=e90]:
+                - generic [ref=e91]: 场景库
+                - button "Close 场景库" [ref=e92]
+          - tabpanel "场景库" [ref=e96]:
+            - generic [ref=e98]:
+              - button "打开农业任务目录" [ref=e100] [cursor=pointer]
+              - generic [ref=e101]:
+                - textbox "搜索场景" [ref=e103]
+                - generic [ref=e104]: 导入 GeoJSON / 场景 JSON
+                - generic [ref=e110]:
+                  - generic [ref=e111]: 我的任务地图 · 52
+                  - list [ref=e112]:
+                    - listitem [ref=e113]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e114] [cursor=pointer]:
+                        - generic [ref=e115]: 果园采收集运
+                        - generic [ref=e116]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e117]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e118] [cursor=pointer]:
+                        - generic [ref=e119]: 果园采收集运
+                        - generic [ref=e120]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e121]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e122] [cursor=pointer]:
+                        - generic [ref=e123]: 果园采收集运
+                        - generic [ref=e124]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e125]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e126] [cursor=pointer]:
+                        - generic [ref=e127]: 果园采收集运
+                        - generic [ref=e128]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e129]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e130] [cursor=pointer]:
+                        - generic [ref=e131]: 果园采收集运
+                        - generic [ref=e132]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e133]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e134] [cursor=pointer]:
+                        - generic [ref=e135]: 果园采收集运
+                        - generic [ref=e136]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e137]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e138] [cursor=pointer]:
+                        - generic [ref=e139]: 果园采收集运
+                        - generic [ref=e140]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e141]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e142] [cursor=pointer]:
+                        - generic [ref=e143]: 果园采收集运
+                        - generic [ref=e144]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e145]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e146] [cursor=pointer]:
+                        - generic [ref=e147]: 果园采收集运
+                        - generic [ref=e148]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e149]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e150] [cursor=pointer]:
+                        - generic [ref=e151]: 果园采收集运
+                        - generic [ref=e152]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e153]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e154] [cursor=pointer]:
+                        - generic [ref=e155]: 果园采收集运
+                        - generic [ref=e156]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e157]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e158] [cursor=pointer]:
+                        - generic [ref=e159]: 果园采收集运
+                        - generic [ref=e160]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e161]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e162] [cursor=pointer]:
+                        - generic [ref=e163]: 果园采收集运
+                        - generic [ref=e164]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e165]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e166] [cursor=pointer]:
+                        - generic [ref=e167]: 果园采收集运
+                        - generic [ref=e168]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e169]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e170] [cursor=pointer]:
+                        - generic [ref=e171]: 果园采收集运
+                        - generic [ref=e172]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e173]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e174] [cursor=pointer]:
+                        - generic [ref=e175]: 果园采收集运
+                        - generic [ref=e176]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e177]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e178] [cursor=pointer]:
+                        - generic [ref=e179]: 果园采收集运
+                        - generic [ref=e180]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e181]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e182] [cursor=pointer]:
+                        - generic [ref=e183]: 果园采收集运
+                        - generic [ref=e184]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e185]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e186] [cursor=pointer]:
+                        - generic [ref=e187]: 果园采收集运
+                        - generic [ref=e188]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e189]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e190] [cursor=pointer]:
+                        - generic [ref=e191]: 果园采收集运
+                        - generic [ref=e192]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e193]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e194] [cursor=pointer]:
+                        - generic [ref=e195]: 果园采收集运
+                        - generic [ref=e196]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e197]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e198] [cursor=pointer]:
+                        - generic [ref=e199]: 果园采收集运
+                        - generic [ref=e200]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e201]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e202] [cursor=pointer]:
+                        - generic [ref=e203]: 果园采收集运
+                        - generic [ref=e204]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e205]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e206] [cursor=pointer]:
+                        - generic [ref=e207]: 果园采收集运
+                        - generic [ref=e208]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e209]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e210] [cursor=pointer]:
+                        - generic [ref=e211]: 果园采收集运
+                        - generic [ref=e212]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e213]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e214] [cursor=pointer]:
+                        - generic [ref=e215]: 果园采收集运
+                        - generic [ref=e216]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e217]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e218] [cursor=pointer]:
+                        - generic [ref=e219]: 果园采收集运
+                        - generic [ref=e220]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e221]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e222] [cursor=pointer]:
+                        - generic [ref=e223]: 果园采收集运
+                        - generic [ref=e224]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e225]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e226] [cursor=pointer]:
+                        - generic [ref=e227]: 果园采收集运
+                        - generic [ref=e228]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e229]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e230] [cursor=pointer]:
+                        - generic [ref=e231]: 果园采收集运
+                        - generic [ref=e232]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e233]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e234] [cursor=pointer]:
+                        - generic [ref=e235]: 果园采收集运
+                        - generic [ref=e236]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e237]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e238] [cursor=pointer]:
+                        - generic [ref=e239]: 果园采收集运
+                        - generic [ref=e240]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e241]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e242] [cursor=pointer]:
+                        - generic [ref=e243]: 果园采收集运
+                        - generic [ref=e244]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e245]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e246] [cursor=pointer]:
+                        - generic [ref=e247]: 果园采收集运
+                        - generic [ref=e248]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e249]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e250] [cursor=pointer]:
+                        - generic [ref=e251]: 果园采收集运
+                        - generic [ref=e252]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e253]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e254] [cursor=pointer]:
+                        - generic [ref=e255]: 果园采收集运
+                        - generic [ref=e256]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e257]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e258] [cursor=pointer]:
+                        - generic [ref=e259]: 果园采收集运
+                        - generic [ref=e260]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e261]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e262] [cursor=pointer]:
+                        - generic [ref=e263]: 果园采收集运
+                        - generic [ref=e264]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e265]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e266] [cursor=pointer]:
+                        - generic [ref=e267]: 果园采收集运
+                        - generic [ref=e268]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e269]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e270] [cursor=pointer]:
+                        - generic [ref=e271]: 果园采收集运
+                        - generic [ref=e272]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e273]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e274] [cursor=pointer]:
+                        - generic [ref=e275]: 果园采收集运
+                        - generic [ref=e276]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e277]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e278] [cursor=pointer]:
+                        - generic [ref=e279]: 果园采收集运
+                        - generic [ref=e280]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e281]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e282] [cursor=pointer]:
+                        - generic [ref=e283]: 果园采收集运
+                        - generic [ref=e284]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e285]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e286] [cursor=pointer]:
+                        - generic [ref=e287]: 果园采收集运
+                        - generic [ref=e288]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e289]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e290] [cursor=pointer]:
+                        - generic [ref=e291]: 果园采收集运
+                        - generic [ref=e292]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e293]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e294] [cursor=pointer]:
+                        - generic [ref=e295]: 果园采收集运
+                        - generic [ref=e296]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e297]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e298] [cursor=pointer]:
+                        - generic [ref=e299]: 果园采收集运
+                        - generic [ref=e300]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e301]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e302] [cursor=pointer]:
+                        - generic [ref=e303]: 果园采收集运
+                        - generic [ref=e304]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e305]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e306] [cursor=pointer]:
+                        - generic [ref=e307]: 果园采收集运
+                        - generic [ref=e308]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e309]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e310] [cursor=pointer]:
+                        - generic [ref=e311]: 果园采收集运
+                        - generic [ref=e312]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e313]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e314] [cursor=pointer]:
+                        - generic [ref=e315]: 果园采收集运
+                        - generic [ref=e316]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                    - listitem [ref=e317]:
+                      - button "果园采收集运 多车任务 · 实地坐标 · 米 · 36 个任务" [ref=e318] [cursor=pointer]:
+                        - generic [ref=e319]: 果园采收集运
+                        - generic [ref=e320]: 多车任务 · 实地坐标 · 米 · 36 个任务
+                - generic [ref=e321]:
+                  - generic [ref=e322]: 我的其他场景 · 8
+                  - list [ref=e323]:
+                    - listitem [ref=e324]:
+                      - button "车间空地 · 欧氏 CVRP（我的） 车辆路径 CVRP · 仿真地图 · depot · 10 个任务" [ref=e325] [cursor=pointer]:
+                        - generic [ref=e326]: 车间空地 · 欧氏 CVRP（我的）
+                        - generic [ref=e327]: 车辆路径 CVRP · 仿真地图 · depot · 10 个任务
+                    - listitem [ref=e328]:
+                      - button "车间空地 · 欧氏 CVRP（我的） 车辆路径 CVRP · 仿真地图 · depot · 10 个任务" [ref=e329] [cursor=pointer]:
+                        - generic [ref=e330]: 车间空地 · 欧氏 CVRP（我的）
+                        - generic [ref=e331]: 车辆路径 CVRP · 仿真地图 · depot · 10 个任务
+                    - listitem [ref=e332]:
+                      - button "车间空地 · 欧氏 CVRP（我的） 车辆路径 CVRP · 仿真地图 · depot · 10 个任务" [ref=e333] [cursor=pointer]:
+                        - generic [ref=e334]: 车间空地 · 欧氏 CVRP（我的）
+                        - generic [ref=e335]: 车辆路径 CVRP · 仿真地图 · depot · 10 个任务
+                    - listitem [ref=e336]:
+                      - button "车间空地 · 欧氏 CVRP（我的） 车辆路径 CVRP · 仿真地图 · depot · 10 个任务" [ref=e337] [cursor=pointer]:
+                        - generic [ref=e338]: 车间空地 · 欧氏 CVRP（我的）
+                        - generic [ref=e339]: 车辆路径 CVRP · 仿真地图 · depot · 10 个任务
+                    - listitem [ref=e340]:
+                      - button "车间空地 · 欧氏 CVRP（我的） 车辆路径 CVRP · 仿真地图 · depot · 10 个任务" [ref=e341] [cursor=pointer]:
+                        - generic [ref=e342]: 车间空地 · 欧氏 CVRP（我的）
+                        - generic [ref=e343]: 车辆路径 CVRP · 仿真地图 · depot · 10 个任务
+                    - listitem [ref=e344]:
+                      - button "车间空地 · 欧氏 CVRP（我的） 车辆路径 CVRP · 仿真地图 · depot · 10 个任务" [ref=e345] [cursor=pointer]:
+                        - generic [ref=e346]: 车间空地 · 欧氏 CVRP（我的）
+                        - generic [ref=e347]: 车辆路径 CVRP · 仿真地图 · depot · 10 个任务
+                    - listitem [ref=e348]:
+                      - button "车间空地 · 欧氏 CVRP（我的） 车辆路径 CVRP · 仿真地图 · depot · 10 个任务" [ref=e349] [cursor=pointer]:
+                        - generic [ref=e350]: 车间空地 · 欧氏 CVRP（我的）
+                        - generic [ref=e351]: 车辆路径 CVRP · 仿真地图 · depot · 10 个任务
+                    - listitem [ref=e352]:
+                      - button "车间空地 · 欧氏 CVRP（我的） 车辆路径 CVRP · 仿真地图 · depot · 10 个任务" [ref=e353] [cursor=pointer]:
+                        - generic [ref=e354]: 车间空地 · 欧氏 CVRP（我的）
+                        - generic [ref=e355]: 车辆路径 CVRP · 仿真地图 · depot · 10 个任务
+                - generic [ref=e356]:
+                  - generic [ref=e357]: 仿真地图 · 8
+                  - list [ref=e358]:
+                    - listitem [ref=e359]:
+                      - button "官方迷宫 · 双点巡检闭环 转弯约束路网 · 仿真地图 · maze · 2 个任务" [ref=e360] [cursor=pointer]:
+                        - generic [ref=e361]: 官方迷宫 · 双点巡检闭环
+                        - generic [ref=e362]: 转弯约束路网 · 仿真地图 · maze · 2 个任务
+                    - listitem [ref=e363]:
+                      - button "仓储货架通道 · 作物行代理 转弯约束路网 · 仿真地图 · warehouse · 5 个任务" [ref=e364] [cursor=pointer]:
+                        - generic [ref=e365]: 仓储货架通道 · 作物行代理
+                        - generic [ref=e366]: 转弯约束路网 · 仿真地图 · warehouse · 5 个任务
+                    - listitem [ref=e367]:
+                      - button "车间空地 · 欧氏 CVRP 车辆路径 CVRP · 仿真地图 · depot · 10 个任务" [ref=e368] [cursor=pointer]:
+                        - generic [ref=e369]: 车间空地 · 欧氏 CVRP
+                        - generic [ref=e370]: 车辆路径 CVRP · 仿真地图 · depot · 10 个任务
+                    - listitem [ref=e371]:
+                      - button "车间空地 · 内缩作业区覆盖 覆盖作业 · 仿真地图 · depot" [ref=e372] [cursor=pointer]:
+                        - generic [ref=e373]: 车间空地 · 内缩作业区覆盖
+                        - generic [ref=e374]: 覆盖作业 · 仿真地图 · depot
+                    - listitem [ref=e375]:
+                      - button "仓库 · 跨通道到达 点到点规划 · 仿真地图 · warehouse" [ref=e376] [cursor=pointer]:
+                        - generic [ref=e377]: 仓库 · 跨通道到达
+                        - generic [ref=e378]: 点到点规划 · 仿真地图 · warehouse
+                    - listitem [ref=e379]:
+                      - button "仓库 · 农机转弯半径 点到点规划 · 仿真地图 · warehouse" [ref=e380] [cursor=pointer]:
+                        - generic [ref=e381]: 仓库 · 农机转弯半径
+                        - generic [ref=e382]: 点到点规划 · 仿真地图 · warehouse
+                    - listitem [ref=e383]:
+                      - button "迷宫 · 对角穿越 点到点规划 · 仿真地图 · maze" [ref=e384] [cursor=pointer]:
+                        - generic [ref=e385]: 迷宫 · 对角穿越
+                        - generic [ref=e386]: 点到点规划 · 仿真地图 · maze
+                    - listitem [ref=e387]:
+                      - button "车间 · 可倒车泊位 点到点规划 · 仿真地图 · depot" [ref=e388] [cursor=pointer]:
+                        - generic [ref=e389]: 车间 · 可倒车泊位
+                        - generic [ref=e390]: 点到点规划 · 仿真地图 · depot
+                - generic [ref=e391]:
+                  - generic [ref=e392]: 基准算例 · 26
+                  - list [ref=e393]:
+                    - listitem [ref=e394]:
+                      - button "转弯路网 g3x3_s8000_uturn 转弯约束路网 · 基准算例 · 5 个任务" [ref=e395] [cursor=pointer]:
+                        - generic [ref=e396]: 转弯路网 g3x3_s8000_uturn
+                        - generic [ref=e397]: 转弯约束路网 · 基准算例 · 5 个任务
+                    - listitem [ref=e398]:
+                      - button "转弯路网 g3x3_s8001_left_cost 转弯约束路网 · 基准算例 · 5 个任务" [ref=e399] [cursor=pointer]:
+                        - generic [ref=e400]: 转弯路网 g3x3_s8001_left_cost
+                        - generic [ref=e401]: 转弯约束路网 · 基准算例 · 5 个任务
+                    - listitem [ref=e402]:
+                      - button "转弯路网 g3x3_s8002_left_ban 转弯约束路网 · 基准算例 · 5 个任务" [ref=e403] [cursor=pointer]:
+                        - generic [ref=e404]: 转弯路网 g3x3_s8002_left_ban
+                        - generic [ref=e405]: 转弯约束路网 · 基准算例 · 5 个任务
+                    - listitem [ref=e406]:
+                      - button "转弯路网 g3x3_s8003_uturn 转弯约束路网 · 基准算例 · 5 个任务" [ref=e407] [cursor=pointer]:
+                        - generic [ref=e408]: 转弯路网 g3x3_s8003_uturn
+                        - generic [ref=e409]: 转弯约束路网 · 基准算例 · 5 个任务
+                    - listitem [ref=e410]:
+                      - button "转弯路网 g3x3_s8004_left_cost 转弯约束路网 · 基准算例 · 5 个任务" [ref=e411] [cursor=pointer]:
+                        - generic [ref=e412]: 转弯路网 g3x3_s8004_left_cost
+                        - generic [ref=e413]: 转弯约束路网 · 基准算例 · 5 个任务
+                    - listitem [ref=e414]:
+                      - button "转弯路网 g3x3_s8005_left_ban 转弯约束路网 · 基准算例 · 5 个任务" [ref=e415] [cursor=pointer]:
+                        - generic [ref=e416]: 转弯路网 g3x3_s8005_left_ban
+                        - generic [ref=e417]: 转弯约束路网 · 基准算例 · 5 个任务
+                    - listitem [ref=e418]:
+                      - button "转弯路网 g3x3_s10000_uturn 转弯约束路网 · 基准算例 · 5 个任务" [ref=e419] [cursor=pointer]:
+                        - generic [ref=e420]: 转弯路网 g3x3_s10000_uturn
+                        - generic [ref=e421]: 转弯约束路网 · 基准算例 · 5 个任务
+                    - listitem [ref=e422]:
+                      - button "转弯路网 g3x3_s10000_left_cost 转弯约束路网 · 基准算例 · 5 个任务" [ref=e423] [cursor=pointer]:
+                        - generic [ref=e424]: 转弯路网 g3x3_s10000_left_cost
+                        - generic [ref=e425]: 转弯约束路网 · 基准算例 · 5 个任务
+                    - listitem [ref=e426]:
+                      - button "转弯路网 g3x3_s10000_left_ban 转弯约束路网 · 基准算例 · 5 个任务" [ref=e427] [cursor=pointer]:
+                        - generic [ref=e428]: 转弯路网 g3x3_s10000_left_ban
+                        - generic [ref=e429]: 转弯约束路网 · 基准算例 · 5 个任务
+                    - listitem [ref=e430]:
+                      - button "转弯路网 g3x4_s10000_uturn 转弯约束路网 · 基准算例 · 6 个任务" [ref=e431] [cursor=pointer]:
+                        - generic [ref=e432]: 转弯路网 g3x4_s10000_uturn
+                        - generic [ref=e433]: 转弯约束路网 · 基准算例 · 6 个任务
+                    - listitem [ref=e434]:
+                      - button "转弯路网 g3x4_s10000_left_cost 转弯约束路网 · 基准算例 · 6 个任务" [ref=e435] [cursor=pointer]:
+                        - generic [ref=e436]: 转弯路网 g3x4_s10000_left_cost
+                        - generic [ref=e437]: 转弯约束路网 · 基准算例 · 6 个任务
+                    - listitem [ref=e438]:
+                      - button "转弯路网 g3x4_s10000_left_ban 转弯约束路网 · 基准算例 · 6 个任务" [ref=e439] [cursor=pointer]:
+                        - generic [ref=e440]: 转弯路网 g3x4_s10000_left_ban
+                        - generic [ref=e441]: 转弯约束路网 · 基准算例 · 6 个任务
+                    - listitem [ref=e442]:
+                      - button "转弯路网 g4x4_s10000_uturn 转弯约束路网 · 基准算例 · 7 个任务" [ref=e443] [cursor=pointer]:
+                        - generic [ref=e444]: 转弯路网 g4x4_s10000_uturn
+                        - generic [ref=e445]: 转弯约束路网 · 基准算例 · 7 个任务
+                    - listitem [ref=e446]:
+                      - button "转弯路网 g4x4_s10000_left_cost 转弯约束路网 · 基准算例 · 7 个任务" [ref=e447] [cursor=pointer]:
+                        - generic [ref=e448]: 转弯路网 g4x4_s10000_left_cost
+                        - generic [ref=e449]: 转弯约束路网 · 基准算例 · 7 个任务
+                    - listitem [ref=e450]:
+                      - button "转弯路网 g4x4_s10000_left_ban 转弯约束路网 · 基准算例 · 7 个任务" [ref=e451] [cursor=pointer]:
+                        - generic [ref=e452]: 转弯路网 g4x4_s10000_left_ban
+                        - generic [ref=e453]: 转弯约束路网 · 基准算例 · 7 个任务
+                    - listitem [ref=e454]:
+                      - button "夹具 dead_end_infeasible 转弯约束路网 · 基准算例 · 1 个任务" [ref=e455] [cursor=pointer]:
+                        - generic [ref=e456]: 夹具 dead_end_infeasible
+                        - generic [ref=e457]: 转弯约束路网 · 基准算例 · 1 个任务
+                    - listitem [ref=e458]:
+                      - button "夹具 single_customer_cycle 转弯约束路网 · 基准算例 · 1 个任务" [ref=e459] [cursor=pointer]:
+                        - generic [ref=e460]: 夹具 single_customer_cycle
+                        - generic [ref=e461]: 转弯约束路网 · 基准算例 · 1 个任务
+                    - listitem [ref=e462]:
+                      - button "夹具 g3x3_s7000_none 转弯约束路网 · 基准算例 · 4 个任务" [ref=e463] [cursor=pointer]:
+                        - generic [ref=e464]: 夹具 g3x3_s7000_none
+                        - generic [ref=e465]: 转弯约束路网 · 基准算例 · 4 个任务
+                    - listitem [ref=e466]:
+                      - button "欧氏 CVRP · 均匀分布 n=20 车辆路径 CVRP · 基准算例 · 20 个任务" [ref=e467] [cursor=pointer]:
+                        - generic [ref=e468]: 欧氏 CVRP · 均匀分布 n=20
+                        - generic [ref=e469]: 车辆路径 CVRP · 基准算例 · 20 个任务
+                    - listitem [ref=e470]:
+                      - button "欧氏 CVRP · 均匀分布 n=50 车辆路径 CVRP · 基准算例 · 50 个任务" [ref=e471] [cursor=pointer]:
+                        - generic [ref=e472]: 欧氏 CVRP · 均匀分布 n=50
+                        - generic [ref=e473]: 车辆路径 CVRP · 基准算例 · 50 个任务
+                    - listitem [ref=e474]:
+                      - button "欧氏 CVRP · 均匀分布 n=100 车辆路径 CVRP · 基准算例 · 100 个任务" [ref=e475] [cursor=pointer]:
+                        - generic [ref=e476]: 欧氏 CVRP · 均匀分布 n=100
+                        - generic [ref=e477]: 车辆路径 CVRP · 基准算例 · 100 个任务
+                    - listitem [ref=e478]:
+                      - button "欧氏 CVRP · 均匀分布 n=200 车辆路径 CVRP · 基准算例 · 200 个任务" [ref=e479] [cursor=pointer]:
+                        - generic [ref=e480]: 欧氏 CVRP · 均匀分布 n=200
+                        - generic [ref=e481]: 车辆路径 CVRP · 基准算例 · 200 个任务
+                    - listitem [ref=e482]:
+                      - button "欧氏 CVRP · 聚簇分布 n=20 车辆路径 CVRP · 基准算例 · 20 个任务" [ref=e483] [cursor=pointer]:
+                        - generic [ref=e484]: 欧氏 CVRP · 聚簇分布 n=20
+                        - generic [ref=e485]: 车辆路径 CVRP · 基准算例 · 20 个任务
+                    - listitem [ref=e486]:
+                      - button "欧氏 CVRP · 聚簇分布 n=50 车辆路径 CVRP · 基准算例 · 50 个任务" [ref=e487] [cursor=pointer]:
+                        - generic [ref=e488]: 欧氏 CVRP · 聚簇分布 n=50
+                        - generic [ref=e489]: 车辆路径 CVRP · 基准算例 · 50 个任务
+                    - listitem [ref=e490]:
+                      - button "欧氏 CVRP · 聚簇分布 n=100 车辆路径 CVRP · 基准算例 · 100 个任务" [ref=e491] [cursor=pointer]:
+                        - generic [ref=e492]: 欧氏 CVRP · 聚簇分布 n=100
+                        - generic [ref=e493]: 车辆路径 CVRP · 基准算例 · 100 个任务
+                    - listitem [ref=e494]:
+                      - button "欧氏 CVRP · 聚簇分布 n=200 车辆路径 CVRP · 基准算例 · 200 个任务" [ref=e495] [cursor=pointer]:
+                        - generic [ref=e496]: 欧氏 CVRP · 聚簇分布 n=200
+                        - generic [ref=e497]: 车辆路径 CVRP · 基准算例 · 200 个任务
+        - generic [ref=e503]:
+          - region "地图" [ref=e505]:
+            - tablist [ref=e508]:
+              - tab "地图" [selected] [ref=e509] [cursor=pointer]:
+                - generic [ref=e510]:
+                  - generic [ref=e511]: 地图
+                  - button "Close 地图" [ref=e512]
+            - tabpanel "地图" [ref=e516]
+          - region "方案对比" [ref=e518]:
+            - tablist [ref=e521]:
+              - tab "方案对比" [selected] [ref=e522] [cursor=pointer]:
+                - generic [ref=e523]:
+                  - generic [ref=e524]: 方案对比
+                  - button "Close 方案对比" [ref=e525]
+              - tab "验算" [ref=e528] [cursor=pointer]
+              - tab "实验结果" [ref=e531] [cursor=pointer]
+              - tab "仿真回放" [ref=e534] [cursor=pointer]
+              - tab "科研图表" [ref=e537] [cursor=pointer]
+              - tab "日志" [ref=e540] [cursor=pointer]
+            - tabpanel "方案对比" [ref=e544]:
+              - generic [ref=e546]:
+                - generic [ref=e547]:
+                  - paragraph [ref=e548]: 本批 3 次运行 · 2 个已验算可行解。最佳值仅在相同输入、目标、单位和时间预算内标记。
+                  - paragraph [ref=e549]: 最大单车规划工期（匀速与服务时间代理） · s · 输入 f9c91d383739
+                  - generic "历史运行" [ref=e550]:
+                    - button "收起历史运行" [expanded] [ref=e551] [cursor=pointer]
+                    - paragraph [ref=e556]: 最近 4 次（上限 200）；加入后按同一比较口径分组，只有已验算可行且身份一致的同口径方案参与排名；已隔离运行不显示数值。
+                    - table [ref=e557]:
+                      - rowgroup [ref=e558]:
+                        - row [ref=e559]:
+                          - columnheader "时间" [ref=e560]
+                          - columnheader "算法 · 运行" [ref=e561]
+                          - columnheader "状态" [ref=e562]
+                          - columnheader "源码身份" [ref=e563]
+                          - columnheader "比较资格" [ref=e564]
+                          - columnheader [ref=e565]
+                      - rowgroup [ref=e566]:
+                        - row [ref=e567] [cursor=pointer]:
+                          - cell "2026/10/22 22:34:30" [ref=e568]
+                          - cell "先聚类后排程 run_20261022T133430_60ac15" [ref=e569]:
+                            - text: 先聚类后排程
+                            - generic [ref=e570]: run_20261022T133430_60ac15
+                          - cell "可行 · 已验算" [ref=e571]
+                          - cell "身份已核验" [ref=e572]
+                          - cell "可参与排名" [ref=e573]
+                          - cell "已在比较中" [ref=e574]
+                        - row [ref=e575] [cursor=pointer]:
+                          - cell "2026/10/22 22:34:30" [ref=e576]
+                          - cell "先聚类后排程 run_e2e_quarantined_unverified" [ref=e577]:
+                            - text: 先聚类后排程
+                            - generic [ref=e578]: run_e2e_quarantined_unverified
+                          - cell "出错" [ref=e579]
+                          - cell "已隔离 · 源码身份不符" [ref=e580]
+                          - cell "不参与排名：源码身份不符 · 已隔离" [ref=e582]
+                          - cell "已在比较中" [ref=e583]
+                        - row [ref=e584] [cursor=pointer]:
+                          - cell "2026/10/22 22:34:30" [ref=e585]
+                          - cell "先聚类后排程 run_e2e_legacy_noidentity" [ref=e586]:
+                            - text: 先聚类后排程
+                            - generic [ref=e587]: run_e2e_legacy_noidentity
+                          - cell "可行 · 已验算" [ref=e588]
+                          - cell "身份未核验" [ref=e589]
+                          - cell "可排名 · 与选中方案口径不同" [ref=e591]
+                          - cell "已在比较中" [ref=e592]
+                        - row [ref=e593] [cursor=pointer]:
+                          - cell "2026/10/22 22:34:30" [ref=e594]
+                          - cell "先聚类后排程 run_20261022T133430_8c8f89" [ref=e595]:
+                            - text: 先聚类后排程
+                            - generic [ref=e596]: run_20261022T133430_8c8f89
+                          - cell "可行 · 已验算" [ref=e597]
+                          - cell "身份已核验" [ref=e598]
+                          - cell "可参与排名" [ref=e599]
+                          - cell [ref=e600]:
+                            - button "加入比较" [ref=e601]
+                  - note [ref=e602]:
+                    - generic [ref=e605]: 存在 2 种比较口径（含身份未核验组）；当前最佳值只针对选中方案所在组，不跨组排名。
+                - generic [ref=e606]:
+                  - table [ref=e607]:
+                    - rowgroup [ref=e608]:
+                      - row [ref=e609]:
+                        - columnheader "算法" [ref=e610]
+                        - columnheader "状态" [ref=e611]
+                        - columnheader "总里程" [ref=e612]
+                        - columnheader "最晚完成" [ref=e613]
+                        - columnheader "车辆" [ref=e614]
+                        - columnheader "趟数" [ref=e615]
+                        - columnheader "均衡度" [ref=e616]
+                        - columnheader "计算" [ref=e617]
+                        - columnheader "验算" [ref=e618]
+                        - columnheader [ref=e619]
+                    - rowgroup [ref=e620]:
+                      - row [selected] [ref=e621] [cursor=pointer]:
+                        - cell "先聚类后排程 run_2026 · 预算 5 s · 种子 42 · ground_policy=ignore · ground_risk_weight=1" [ref=e622]:
+                          - text: 先聚类后排程
+                          - generic "冻结 run_id：run_20261022T133430_60ac15；预算 5 s · 种子 42 · ground_policy=ignore · ground_risk_weight=1" [ref=e623]: run_2026 · 预算 5 s · 种子 42 · ground_policy=ignore · ground_risk_weight=1
+                        - cell "可行 · 已验算" [ref=e624]
+                        - cell "4,610.8 m" [ref=e625]
+                        - cell "2,269 s" [ref=e626]
+                        - cell "3" [ref=e627]
+                        - cell "8" [ref=e628]
+                        - cell "0.15" [ref=e629]
+                        - cell "69 ms" [ref=e630]
+                        - cell "通过" [ref=e631]
+                        - cell [ref=e635]:
+                          - link "JSON" [ref=e636]:
+                            - /url: /lab/api/runs/run_20261022T133430_60ac15/export?format=json
+                          - link "CSV" [ref=e637]:
+                            - /url: /lab/api/runs/run_20261022T133430_60ac15/export?format=csv
+                          - link "GeoJSON" [ref=e638]:
+                            - /url: /lab/api/runs/run_20261022T133430_60ac15/export?format=geojson
+                          - button "Gazebo" [ref=e639]
+                      - row [ref=e646] [cursor=pointer]:
+                        - cell "先聚类后排程 run_e2e_ · 预算 5 s · 种子 42 · ground_policy=ignore · ground_risk_weight=1 独立口径 不参与排名 已隔离" [ref=e647]:
+                          - text: 先聚类后排程
+                          - generic "冻结 run_id：run_e2e_quarantined_unverified；预算 5 s · 种子 42 · ground_policy=ignore · ground_risk_weight=1" [ref=e648]: run_e2e_ · 预算 5 s · 种子 42 · ground_policy=ignore · ground_risk_weight=1
+                          - generic [ref=e649]:
+                            - generic [ref=e650]: 独立口径
+                            - generic [ref=e651]: 不参与排名
+                            - generic [ref=e652]: 已隔离
+                        - cell "出错 ⓘ" [ref=e653]
+                        - cell "—" [ref=e654]
+                        - cell "—" [ref=e655]
+                        - cell "—" [ref=e656]
+                        - cell "—" [ref=e657]
+                        - cell "—" [ref=e658]
+                        - cell "62 ms" [ref=e659]
+                        - cell "已隔离 · 不适用" [ref=e660]
+                        - cell [ref=e661]:
+                          - link "JSON" [ref=e662]:
+                            - /url: /lab/api/runs/run_e2e_quarantined_unverified/export?format=json
+                          - link "CSV" [ref=e663]:
+                            - /url: /lab/api/runs/run_e2e_quarantined_unverified/export?format=csv
+                          - link "GeoJSON" [ref=e664]:
+                            - /url: /lab/api/runs/run_e2e_quarantined_unverified/export?format=geojson
+                      - row [ref=e665] [cursor=pointer]:
+                        - cell "先聚类后排程 run_e2e_ · 预算 5 s · 种子 42 · ground_policy=ignore · ground_risk_weight=1 独立口径 身份未核验" [ref=e666]:
+                          - text: 先聚类后排程
+                          - generic "冻结 run_id：run_e2e_legacy_noidentity；预算 5 s · 种子 42 · ground_policy=ignore · ground_risk_weight=1" [ref=e667]: run_e2e_ · 预算 5 s · 种子 42 · ground_policy=ignore · ground_risk_weight=1
+                          - generic [ref=e668]:
+                            - generic [ref=e669]: 独立口径
+                            - generic [ref=e670]: 身份未核验
+                        - cell "可行 · 已验算" [ref=e671]
+                        - cell "4,610.8 m" [ref=e672]
+                        - cell "2,269 s" [ref=e673]
+                        - cell "3" [ref=e674]
+                        - cell "8" [ref=e675]
+                        - cell "0.15" [ref=e676]
+                        - cell "62 ms" [ref=e677]
+                        - cell "通过" [ref=e678]
+                        - cell [ref=e682]:
+                          - link "JSON" [ref=e683]:
+                            - /url: /lab/api/runs/run_e2e_legacy_noidentity/export?format=json
+                          - link "CSV" [ref=e684]:
+                            - /url: /lab/api/runs/run_e2e_legacy_noidentity/export?format=csv
+                          - link "GeoJSON" [ref=e685]:
+                            - /url: /lab/api/runs/run_e2e_legacy_noidentity/export?format=geojson
+                          - button "Gazebo" [ref=e686]
+                  - generic [ref=e693]:
+                    - heading "选中方案追溯" [level=3] [ref=e694]
+                    - generic "运行追溯" [ref=e695]:
+                      - generic [ref=e696]: 运行
+                      - generic [ref=e697]: run_20261022T133430_60ac15
+                      - generic [ref=e698]: 输入场景
+                      - link "agri-orchard-harvest-tran-5b1b69a6-8206-4f72-b6ae-89b5a0c6e4bd" [ref=e700] [cursor=pointer]:
+                        - /url: "#/plan/agri-orchard-harvest-tran-5b1b69a6-8206-4f72-b6ae-89b5a0c6e4bd"
+                      - generic [ref=e701]: 实例哈希
+                      - generic "f9c91d3837394fe8110e16797736f3ed9ddd43c2bc126518df425ac216d81b7e" [ref=e702]:
+                        - text: f9c91d383739
+                        - button "复制实例哈希" [ref=e703] [cursor=pointer]
+                      - generic [ref=e707]: 算法
+                      - generic [ref=e708]: panel.cluster_first · 版本 c93b20b121ae0032bfe4033f48ce67f21c9ea7717e4621a97350b235a234fdbe
+                      - generic [ref=e709]: 种子
+                      - generic [ref=e710]: "42"
+                      - generic [ref=e711]: 预算
+                      - generic [ref=e712]: 5 s
+                      - generic [ref=e713]: 参数
+                      - generic [ref=e714]: ground_policy=ignore · ground_risk_weight=1
+                      - generic [ref=e715]: 源码身份
+                      - generic [ref=e716]: 身份已核验
+                  - generic [ref=e717]:
+                    - heading "未参与比较与排名（1）" [level=3] [ref=e718]
+                    - list "未参与比较的运行" [ref=e719]:
+                      - listitem [ref=e720]: 先聚类后排程 · run_e2e_ · 出错 · 源码身份不符 · 已隔离
+                  - alert [ref=e721]:
+                    - generic [ref=e724]: 先聚类后排程：执行期间来源身份核对失败：e2e 注入样本
+                - figure [ref=e725]:
+                  - heading "收敛：跨种子中位数与四分位区间（当前比较组）" [level=4] [ref=e726]
+                  - paragraph [ref=e727]: 数据未提供：没有可用轨迹：须为已验算可行解且 trace_contract 为 reported_objective、轨迹终值等于目标值（已隔离 0，未成功 0，无一致轨迹 1）
+                - figure "样本：n = 2/3；未计入：已隔离 1，未完成 0，无独立验算值 0，无报告值 0，单位不同 0 最大相对偏差 50.8%；空心标记 = 验算未通过；检查器：urp_lab.solvers.fleet.check · 顺序/分趟/指标及连续圆足迹独立复算（Shapely） 参照：对角线 y = x（完全一致）；数据为 objective.value 与 check.computed_cost 原值 单位：s；方向：越贴近对角线越一致" [ref=e728]:
+                  - heading "独立验算一致性：求解器报告目标 vs 独立重算" [level=4] [ref=e729]
+                  - img "验算一致性散点，2 次运行" [ref=e730]:
+                    - generic [ref=e731]:
+                      - generic [ref=e732]: "2500"
+                      - generic [ref=e734]: "3000"
+                      - generic [ref=e736]: "3500"
+                      - generic [ref=e738]: "4000"
+                      - generic [ref=e740]: "4500"
+                      - generic [ref=e742]: "2500"
+                      - generic [ref=e744]: "3000"
+                      - generic [ref=e746]: "3500"
+                      - generic [ref=e748]: "4000"
+                      - generic [ref=e750]: "4500"
+                      - generic [ref=e753]: 求解器报告目标 (s)
+                      - generic [ref=e754]: 独立重算 (s)
+                    - generic "先聚类后排程 · run_20261022T133430_60ac15 · 报告 2269.351072421642 · 重算 4610.83941757494" [ref=e756]
+                    - generic "先聚类后排程 · run_e2e_legacy_noidentity · 报告 2269.351072421642 · 重算 4610.83941757494" [ref=e758]
+                  - list "图例" [ref=e760]:
+                    - listitem [ref=e761]:
+                      - generic [ref=e764]: 先聚类后排程（验算通过）
+                  - generic [ref=e765]:
+                    - generic [ref=e766]: 样本：n = 2/3；未计入：已隔离 1，未完成 0，无独立验算值 0，无报告值 0，单位不同 0
+                    - generic [ref=e767]: 最大相对偏差 50.8%；空心标记 = 验算未通过；检查器：urp_lab.solvers.fleet.check · 顺序/分趟/指标及连续圆足迹独立复算（Shapely）
+                    - generic [ref=e768]: 参照：对角线 y = x（完全一致）；数据为 objective.value 与 check.computed_cost 原值
+                    - generic [ref=e769]: 单位：s；方向：越贴近对角线越一致
+                - figure "样本：n = 3 次运行；身份字段缺失（source_identity_verified 未记录）共 1 次，其中有解的单列为“有解 · 身份未核验” 只有“成功”类进入排名与比较；已隔离运行不提供任何数值 参照：状态取自运行记录 state/status/check 与源码身份核对；每类有独立纹理与文字标签" [ref=e770]:
+                  - heading "运行状态流向" [level=4] [ref=e771]
+                  - img "3 次运行的状态分布：成功（已验算 · 身份已核验） 1，有解 · 身份未核验 1，已隔离（源码身份不符） 1" [ref=e772]:
+                    - generic [ref=e774]: 全部 3
+                    - generic [ref=e775]: 成功（已验算 · 身份已核验） · 1（33%）
+                    - generic [ref=e779]: 有解 · 身份未核验 · 1（33%）
+                    - generic [ref=e783]: 已隔离（源码身份不符） · 1（33%）
+                  - generic [ref=e787]:
+                    - generic [ref=e788]: 样本：n = 3 次运行；身份字段缺失（source_identity_verified 未记录）共 1 次，其中有解的单列为“有解 · 身份未核验”
+                    - generic [ref=e789]: 只有“成功”类进入排名与比较；已隔离运行不提供任何数值
+                    - generic [ref=e790]: 参照：状态取自运行记录 state/status/check 与源码身份核对；每类有独立纹理与文字标签
+        - region "推荐与求解" [ref=e792]:
+          - tablist [ref=e795]:
+            - tab "推荐与求解" [selected] [ref=e796] [cursor=pointer]:
+              - generic [ref=e797]:
+                - generic [ref=e798]: 推荐与求解
+                - button "Close 推荐与求解" [ref=e799]
+            - tab "检查器" [ref=e802] [cursor=pointer]
+            - tab "决策记录" [ref=e805] [cursor=pointer]
+          - tabpanel "推荐与求解" [ref=e809]:
+            - generic [ref=e812]:
+              - generic [ref=e813]:
+                - heading "推荐算法" [level=3] [ref=e814]
+                - button "重新分析" [ref=e815] [cursor=pointer]
+              - paragraph [ref=e821]: 推荐 OR-Tools 车队调度：规则建议：OR-Tools 使用路线跨度与里程的加权目标；时间为匀速代理，不含转向或交通排队
+              - generic [ref=e822]:
+                - generic [ref=e823]:
+                  - generic [ref=e824]: 任务点
+                  - strong [ref=e825]: "36"
+                - generic [ref=e826]:
+                  - generic [ref=e827]: 车辆
+                  - strong [ref=e828]: "3"
+                - generic [ref=e829]:
+                  - generic [ref=e830]: 至少需要的趟数
+                  - strong [ref=e831]: "6"
+                - generic "同构=1；异构车队按类别容量/车速/足迹求解" [ref=e832]:
+                  - generic [ref=e833]: 车型类别
+                  - strong [ref=e834]: "1"
+                - generic [ref=e835]:
+                  - generic [ref=e836]: 障碍占地
+                  - strong [ref=e837]: 2.02 %
+                - generic "<1 成片聚集，≈1 随机，>1 均匀散开" [ref=e838]:
+                  - generic [ref=e839]: 聚集度 R
+                  - strong [ref=e840]: "0.85"
+                - generic [ref=e841]:
+                  - generic [ref=e842]: 目标
+                  - strong [ref=e843]: 均衡完成时间
+              - list [ref=e844]:
+                - listitem [ref=e845]:
+                  - generic [ref=e846] [cursor=pointer]:
+                    - checkbox "1 OR-Tools 车队调度 OR-Tools 推荐" [checked] [ref=e847]
+                    - generic [ref=e848]: "1"
+                    - generic [ref=e849]: OR-Tools 车队调度
+                    - generic [ref=e850]: OR-Tools
+                    - generic [ref=e851]: 推荐
+                  - paragraph [ref=e852]: 规则建议：OR-Tools 使用路线跨度与里程的加权目标；时间为匀速代理，不含转向或交通排队
+                  - paragraph [ref=e853]: 总量需要至少 6 趟，多趟往返会分配到 3 台车上
+                  - generic [ref=e854]:
+                    - generic "默认 ignore · 推荐 ignore" [ref=e855]:
+                      - generic [ref=e856]: 地面风险策略
+                      - combobox "OR-Tools 车队调度 地面风险策略" [ref=e857]:
+                        - option "忽略地面风险" [selected]
+                        - option "风险加权与限速"
+                    - generic "默认 1 · 推荐 1 · 范围 0–10" [ref=e859]:
+                      - generic [ref=e860]: 地面风险权重（当量米/米）
+                      - spinbutton "OR-Tools 车队调度 地面风险权重（当量米/米）" [ref=e861]: "1"
+                - listitem [ref=e863]:
+                  - generic [ref=e864] [cursor=pointer]:
+                    - checkbox "2 PyVRP 固定车队 PyVRP" [checked] [ref=e865]
+                    - generic [ref=e866]: "2"
+                    - generic [ref=e867]: PyVRP 固定车队
+                    - generic [ref=e868]: PyVRP
+                  - paragraph [ref=e869]: 以总里程为搜索目标，不直接均衡各车工作量；是否更优需同实例比较
+                  - paragraph [ref=e870]: 总量需要至少 6 趟，多趟往返会分配到 3 台车上
+                  - generic [ref=e871]:
+                    - generic "默认 ignore · 推荐 ignore" [ref=e872]:
+                      - generic [ref=e873]: 地面风险策略
+                      - combobox "PyVRP 固定车队 地面风险策略" [ref=e874]:
+                        - option "忽略地面风险" [selected]
+                        - option "风险加权与限速"
+                    - generic "默认 1 · 推荐 1 · 范围 0–10" [ref=e876]:
+                      - generic [ref=e877]: 地面风险权重（当量米/米）
+                      - spinbutton "PyVRP 固定车队 地面风险权重（当量米/米）" [ref=e878]: "1"
+                - listitem [ref=e880]:
+                  - generic [ref=e881] [cursor=pointer]:
+                    - checkbox "3 节约算法 + 2-opt 基线" [checked] [ref=e882]
+                    - generic [ref=e883]: "3"
+                    - generic [ref=e884]: 节约算法 + 2-opt
+                    - generic [ref=e885]: 基线
+                  - paragraph [ref=e886]: 确定性构造基线，可作为改进幅度的参照；耗时以实测为准
+                  - generic [ref=e887]:
+                    - generic "默认 ignore · 推荐 ignore" [ref=e888]:
+                      - generic [ref=e889]: 地面风险策略
+                      - combobox "节约算法 + 2-opt 地面风险策略" [ref=e890]:
+                        - option "忽略地面风险" [selected]
+                        - option "风险加权与限速"
+                    - generic "默认 1 · 推荐 1 · 范围 0–10" [ref=e892]:
+                      - generic [ref=e893]: 地面风险权重（当量米/米）
+                      - spinbutton "节约算法 + 2-opt 地面风险权重（当量米/米）" [ref=e894]: "1"
+                - listitem [ref=e896]:
+                  - generic [ref=e897] [cursor=pointer]:
+                    - checkbox "4 先聚类后排程 基线" [ref=e898]
+                    - generic [ref=e899]: "4"
+                    - generic [ref=e900]: 先聚类后排程
+                    - generic [ref=e901]: 基线
+                  - paragraph [ref=e902]: 按区域划分各车负责范围，便于现场分工
+                - listitem [ref=e903]:
+                  - generic [ref=e904] [cursor=pointer]:
+                    - checkbox "5 扫描算法 基线" [ref=e905]
+                    - generic [ref=e906]: "5"
+                    - generic [ref=e907]: 扫描算法
+                    - generic [ref=e908]: 基线
+                  - paragraph [ref=e909]: 按车库方位进行扫描切分的构造基线
+              - generic [ref=e910]:
+                - generic "允许范围 0.05–600 s" [ref=e911]:
+                  - generic [ref=e912]: 时间预算
+                  - generic [ref=e913]:
+                    - spinbutton "时间预算 秒/算法" [ref=e914]: "5"
+                    - emphasis [ref=e915]: 秒/算法
+                - generic "允许范围 0–2147483647" [ref=e916]:
+                  - generic [ref=e917]: 随机种子
+                  - generic [ref=e918]:
+                    - spinbutton "随机种子 提交时冻结" [ref=e919]: "42"
+                    - emphasis [ref=e920]: 提交时冻结
+                - button "对比 3 个算法" [ref=e921] [cursor=pointer]
+      - status [ref=e924]: 日志 opened
+      - alert [ref=e925]
+    - generic [ref=e928]:
+      - generic [ref=e929]:
+        - group "编辑工具" [ref=e930]:
+          - button "选择" [pressed] [ref=e931] [cursor=pointer]
+          - button "框选" [ref=e934] [cursor=pointer]
+          - button "平移" [ref=e940] [cursor=pointer]
+          - button "任务点" [ref=e946] [cursor=pointer]
+          - button "障碍" [ref=e948] [cursor=pointer]
+          - button "地块" [ref=e953] [cursor=pointer]
+          - button "车库" [ref=e957] [cursor=pointer]
+          - button "补给点" [ref=e961] [cursor=pointer]
+          - button "机耕道" [ref=e963] [cursor=pointer]
+        - button "撤销 (⌘Z)" [disabled] [ref=e968]
+        - button "重做 (⇧⌘Z)" [disabled] [ref=e972]
+        - button "适配全图 (F)" [ref=e976] [cursor=pointer]
+      - generic [ref=e982]:
+        - generic [ref=e983]:
+          - generic [ref=e984]:
+            - button "◂ 收起面板" [expanded] [ref=e985] [cursor=pointer]
+            - application "任务地图编辑器" [ref=e986]:
+              - generic "池塘 · 池塘 · O1" [ref=e995]
+              - generic: 地块1 · 苹果
+              - generic "采摘点1 · 需求 200 · 车2 第 1 趟第 5 站" [ref=e999] [cursor=pointer]:
+                - generic: "5"
+                - generic: 采摘点1
+              - generic "采摘点2 · 需求 200 · 车1 第 1 趟第 2 站" [ref=e1001] [cursor=pointer]:
+                - generic: "2"
+                - generic: 采摘点2
+              - generic "采摘点3 · 需求 200 · 车1 第 1 趟第 4 站" [ref=e1003] [cursor=pointer]:
+                - generic: "4"
+                - generic: 采摘点3
+              - generic "采摘点4 · 需求 200 · 车2 第 1 趟第 6 站" [ref=e1005] [cursor=pointer]:
+                - generic: "6"
+                - generic: 采摘点4
+              - generic "采摘点5 · 需求 200 · 车1 第 1 趟第 3 站" [ref=e1007] [cursor=pointer]:
+                - generic: "3"
+                - generic: 采摘点5
+              - generic "采摘点6 · 需求 200 · 车3 第 1 趟第 5 站" [ref=e1009] [cursor=pointer]:
+                - generic: "5"
+                - generic: 采摘点6
+              - generic "采摘点7 · 需求 200 · 车1 第 1 趟第 6 站" [ref=e1011] [cursor=pointer]:
+                - generic: "6"
+                - generic: 采摘点7
+              - generic "采摘点8 · 需求 200 · 车2 第 1 趟第 1 站" [ref=e1013] [cursor=pointer]:
+                - generic: "1"
+                - generic: 采摘点8
+              - generic "采摘点9 · 需求 200 · 车1 第 1 趟第 1 站" [ref=e1015] [cursor=pointer]:
+                - generic: "1"
+                - generic: 采摘点9
+              - generic "采摘点10 · 需求 200 · 车3 第 1 趟第 6 站" [ref=e1017] [cursor=pointer]:
+                - generic: "6"
+                - generic: 采摘点10
+              - generic "采摘点11 · 需求 200 · 车3 第 1 趟第 4 站" [ref=e1019] [cursor=pointer]:
+                - generic: "4"
+                - generic: 采摘点11
+              - generic "采摘点12 · 需求 200 · 车3 第 1 趟第 2 站" [ref=e1021] [cursor=pointer]:
+                - generic: "2"
+                - generic: 采摘点12
+              - generic "采摘点13 · 需求 200 · 车1 第 1 趟第 5 站" [ref=e1023] [cursor=pointer]:
+                - generic: "5"
+                - generic: 采摘点13
+              - generic "采摘点14 · 需求 200 · 车3 第 1 趟第 3 站" [ref=e1025] [cursor=pointer]:
+                - generic: "3"
+                - generic: 采摘点14
+              - generic "采摘点15 · 需求 200 · 车1 第 2 趟第 8 站" [ref=e1027] [cursor=pointer]:
+                - generic: "8"
+                - generic: 采摘点15
+              - generic "采摘点16 · 需求 200 · 车2 第 1 趟第 3 站" [ref=e1029] [cursor=pointer]:
+                - generic: "3"
+                - generic: 采摘点16
+              - generic "采摘点17 · 需求 200 · 车1 第 2 趟第 7 站" [ref=e1031] [cursor=pointer]:
+                - generic: "7"
+                - generic: 采摘点17
+              - generic "采摘点18 · 需求 200 · 车3 第 1 趟第 1 站" [ref=e1033] [cursor=pointer]:
+                - generic: "1"
+                - generic: 采摘点18
+              - generic "采摘点19 · 需求 200 · 车1 第 2 趟第 11 站" [ref=e1035] [cursor=pointer]:
+                - generic: "11"
+                - generic: 采摘点19
+              - generic "采摘点20 · 需求 200 · 车3 第 2 趟第 8 站" [ref=e1037] [cursor=pointer]:
+                - generic: "8"
+                - generic: 采摘点20
+              - generic "采摘点21 · 需求 200 · 车2 第 1 趟第 4 站" [ref=e1039] [cursor=pointer]:
+                - generic: "4"
+                - generic: 采摘点21
+              - generic "采摘点22 · 需求 200 · 车3 第 2 趟第 10 站" [ref=e1041] [cursor=pointer]:
+                - generic: "10"
+                - generic: 采摘点22
+              - generic "采摘点23 · 需求 200 · 车3 第 2 趟第 9 站" [ref=e1043] [cursor=pointer]:
+                - generic: "9"
+                - generic: 采摘点23
+              - generic "采摘点24 · 需求 200 · 车1 第 2 趟第 10 站" [ref=e1045] [cursor=pointer]:
+                - generic: "10"
+                - generic: 采摘点24
+              - generic "采摘点25 · 需求 200 · 车2 第 1 趟第 2 站" [ref=e1047] [cursor=pointer]:
+                - generic: "2"
+                - generic: 采摘点25
+              - generic "采摘点26 · 需求 200 · 车3 第 2 趟第 11 站" [ref=e1049] [cursor=pointer]:
+                - generic: "11"
+                - generic: 采摘点26
+              - generic "采摘点27 · 需求 200 · 车2 第 2 趟第 7 站" [ref=e1051] [cursor=pointer]:
+                - generic: "7"
+                - generic: 采摘点27
+              - generic "采摘点28 · 需求 200 · 车3 第 2 趟第 12 站" [ref=e1053] [cursor=pointer]:
+                - generic: "12"
+                - generic: 采摘点28
+              - generic "采摘点29 · 需求 200 · 车3 第 2 趟第 7 站" [ref=e1055] [cursor=pointer]:
+                - generic: "7"
+                - generic: 采摘点29
+              - generic "采摘点30 · 需求 200 · 车1 第 2 趟第 12 站" [ref=e1057] [cursor=pointer]:
+                - generic: "12"
+                - generic: 采摘点30
+              - generic "采摘点31 · 需求 200 · 车2 第 2 趟第 8 站" [ref=e1059] [cursor=pointer]:
+                - generic: "8"
+                - generic: 采摘点31
+              - generic "采摘点32 · 需求 200 · 车1 第 2 趟第 9 站" [ref=e1061] [cursor=pointer]:
+                - generic: "9"
+                - generic: 采摘点32
+              - generic "采摘点33 · 需求 200 · 车3 第 3 趟第 14 站" [ref=e1063] [cursor=pointer]:
+                - generic: "14"
+                - generic: 采摘点33
+              - generic "采摘点34 · 需求 200 · 车3 第 3 趟第 13 站" [ref=e1065] [cursor=pointer]:
+                - generic: "13"
+                - generic: 采摘点34
+              - generic "采摘点35 · 需求 200 · 车2 第 2 趟第 9 站" [ref=e1067] [cursor=pointer]:
+                - generic: "9"
+                - generic: 采摘点35
+              - generic "采摘点36 · 需求 200 · 车1 第 3 趟第 13 站" [ref=e1069] [cursor=pointer]:
+                - generic: "13"
+                - generic: 采摘点36
+              - generic "补给 / 卸载点 U1" [ref=e1071]: U1
+              - generic "车库 D1（车辆按类别展开后的表序轮询分配家库）" [ref=e1073]: D1
+              - generic: 原点 (0, 0)
+              - generic "坐标轴方向":
+                - generic: +X (m)
+                - generic: +Y (m)
+              - generic [ref=e1076]: 20 m
+              - generic [ref=e1078]: 180 × 120 m
+          - generic [ref=e1079]:
+            - group "选择与精确输入" [ref=e1080]:
+              - generic [ref=e1082]: 按类型选择
+              - generic [ref=e1083]:
+                - button "任务点 (36)" [ref=e1084] [cursor=pointer]
+                - button "障碍 (1)" [ref=e1085] [cursor=pointer]
+                - button "田块 (1)" [ref=e1086] [cursor=pointer]
+                - button "车库 (1)" [ref=e1087] [cursor=pointer]
+                - button "补给点 (1)" [ref=e1088] [cursor=pointer]
+              - generic [ref=e1089]: 框选工具或 Alt/⌘ + 拖动框选，⌘/Ctrl + 点击加减选
+            - group "几何校验" [ref=e1090]:
+              - generic "几何校验 · 未发现问题" [ref=e1091] [cursor=pointer]
+              - list
+            - group "图层" [ref=e1092]:
+              - generic [ref=e1094]:
+                - generic [ref=e1095]:
+                  - checkbox "网格" [checked] [ref=e1096]
+                  - text: 网格
+                - generic [ref=e1097]:
+                  - checkbox "底图" [checked] [ref=e1098]
+                  - text: 底图
+                - generic [ref=e1099]:
+                  - checkbox "田块" [checked] [ref=e1100]
+                  - text: 田块
+                - generic [ref=e1101]:
+                  - checkbox "行间通道" [checked] [ref=e1102]
+                  - text: 行间通道
+                - generic [ref=e1103]:
+                  - checkbox "机耕道" [checked] [ref=e1104]
+                  - text: 机耕道
+                - generic [ref=e1105]:
+                  - checkbox "障碍" [checked] [ref=e1106]
+                  - text: 障碍
+                - generic [ref=e1107]:
+                  - checkbox "路线" [checked] [ref=e1108]
+                  - text: 路线
+                - generic [ref=e1109]:
+                  - checkbox "任务点" [checked] [ref=e1110]
+                  - text: 任务点
+                - generic [ref=e1111]:
+                  - checkbox "车库/补给点" [checked] [ref=e1112]
+                  - text: 车库/补给点
+                - generic [ref=e1113]:
+                  - checkbox "标注" [checked] [ref=e1114]
+                  - text: 标注
+                - generic [ref=e1115]:
+                  - checkbox "几何问题" [checked] [ref=e1116]
+                  - text: 几何问题
+            - group "图例" [ref=e1117]:
+              - list [ref=e1119]:
+                - listitem [ref=e1120]:
+                  - generic [ref=e1123]: 场地边界
+                - listitem [ref=e1124]:
+                  - generic [ref=e1128]: 田块（斜线为作物行向）×1
+                - listitem [ref=e1129]:
+                  - generic [ref=e1131]: 行间通道（虚线）
+                - listitem [ref=e1132]:
+                  - generic [ref=e1135]: 池塘 ×1
+                - listitem [ref=e1136]:
+                  - generic [ref=e1139]: 路线 车1（箭头=方向）
+                - listitem [ref=e1140]:
+                  - generic [ref=e1143]: 路线 车2（箭头=方向）
+                - listitem [ref=e1144]:
+                  - generic [ref=e1147]: 路线 车3（箭头=方向）
+                - listitem [ref=e1148]:
+                  - generic [ref=e1151]: 任务点（数字=服务顺序）×36
+                - listitem [ref=e1152]:
+                  - generic [ref=e1155]: 车库（方块）×1
+                - listitem [ref=e1156]:
+                  - generic [ref=e1159]: 补给/卸载点（菱形）×1
+        - generic [ref=e1160]:
+          - button "先聚类后排程" [ref=e1161]
+          - button "车1 统一车型 · 家库 D1 13 点 · 3 趟 1,815 m 37 min 49 s" [ref=e1165] [cursor=pointer]:
+            - generic [ref=e1167]:
+              - text: 车1
+              - generic [ref=e1168]: 统一车型 · 家库 D1
+            - generic [ref=e1169]: 13 点 · 3 趟
+            - generic [ref=e1170]: 1,815 m
+            - generic [ref=e1171]: 37 min 49 s
+          - button "车2 统一车型 · 家库 D1 9 点 · 2 趟 1,256 m 26 min 9 s" [ref=e1175] [cursor=pointer]:
+            - generic [ref=e1177]:
+              - text: 车2
+              - generic [ref=e1178]: 统一车型 · 家库 D1
+            - generic [ref=e1179]: 9 点 · 2 趟
+            - generic [ref=e1180]: 1,256 m
+            - generic [ref=e1181]: 26 min 9 s
+          - button "车3 统一车型 · 家库 D1 14 点 · 3 趟 1,540 m 32 min 5 s" [ref=e1185] [cursor=pointer]:
+            - generic [ref=e1187]:
+              - text: 车3
+              - generic [ref=e1188]: 统一车型 · 家库 D1
+            - generic [ref=e1189]: 14 点 · 3 趟
+            - generic [ref=e1190]: 1,540 m
+            - generic [ref=e1191]: 32 min 5 s
+        - generic [ref=e1195]:
+          - generic [ref=e1196]: 规划预览 · 匀速代理，非仿真
+          - button "播放规划预览（含逐车速度与任务停留，非仿真）" [ref=e1197] [cursor=pointer]
+          - slider "规划预览时间" [ref=e1200]: "0"
+          - generic [ref=e1201]: 0:00 / 37:49
+  - contentinfo [ref=e1202]:
+    - generic [ref=e1203]: 已连接
+    - generic [ref=e1205]: 求解空闲
+    - generic [ref=e1206]: 田间：未运行 · TB4：未运行
+    - generic [ref=e1210]: 果园采收集运
+    - link "CVRP 数值任务" [ref=e1211] [cursor=pointer]:
+      - /url: "#/jobs"
+    - link "BPP 历史" [ref=e1212] [cursor=pointer]:
+      - /url: "#/bpp"
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from '@playwright/test';
+  2  | import fs from 'fs';
+  3  | const ART = process.env.ART || 'artifacts/run'; fs.mkdirSync(ART + '/shots', { recursive: true });
+  4  | const SC = 'agri-orchard-harvest-tran-5b1b69a6-8206-4f72-b6ae-89b5a0c6e4bd';
+  5  | test('history runs', async ({ page }) => { test.setTimeout(120000);
+  6  |   await page.goto('/#/plan/' + SC); await page.waitForTimeout(2500);
+  7  |   await page.getByRole('tab', { name: /方案对比/ }).first().click().catch(async () => page.getByText('方案对比').first().click());
+  8  |   await page.waitForTimeout(800);
+  9  |   await page.getByText(/历史运行（本场景/).first().click(); await page.waitForTimeout(1500);
+  10 |   await page.screenshot({ path: ART + '/shots/history-list.png', fullPage: true });
+  11 |   const body = await page.locator('body').innerText();
+  12 |   for (const id of ['run_e2e_quarantined_unverified', 'run_e2e_legacy_noidentity']) test.info().annotations.push({ type: 'listed ' + id, description: String(body.includes(id)) });
+  13 |   for (const id of ['run_e2e_quarantined_unverified', 'run_e2e_legacy_noidentity']) {
+  14 |     const row = page.locator('tr, li').filter({ hasText: id }).first();
+  15 |     await row.getByRole('button', { name: /加入比较/ }).click(); await page.waitForTimeout(800);
+  16 |   }
+  17 |   await page.screenshot({ path: ART + '/shots/history-added.png', fullPage: true });
+  18 |   const b2 = await page.locator('body').innerText();
+  19 |   for (const t of ['已隔离 · 不适用', '未参与比较与排名', '身份未核验']) test.info().annotations.push({ type: t, description: String(b2.includes(t)) });
+> 20 |   await page.getByRole('tab', { name: /^结果/ }).first().click().catch(async () => page.getByText('结果', { exact: true }).first().click());
+     |                                                                                                                                ^ Error: locator.click: Target page, context or browser has been closed
+  21 |   await page.waitForTimeout(1200);
+  22 |   await page.screenshot({ path: ART + '/shots/history-result.png', fullPage: true });
+  23 |   const b3 = await page.locator('body').innerText();
+  24 |   test.info().annotations.push({ type: 'result tab has 隔离', description: String(/隔离/.test(b3)) });
+  25 |   console.log(JSON.stringify(test.info().annotations));
+  26 | });
+  27 | 
+```

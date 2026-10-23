@@ -1,0 +1,16 @@
+
+Running 8 tests using 1 worker
+
+(node:126347) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/8] tests/mamba.spec.mjs:5:1 › mamba features
+[2/8] tests/smoke.spec.mjs:16:3 › route home
+[3/8] tests/smoke.spec.mjs:16:3 › route plan
+[4/8] tests/smoke.spec.mjs:16:3 › route assets
+[5/8] tests/smoke.spec.mjs:16:3 › route sim
+[6/8] tests/smoke.spec.mjs:16:3 › route jobs
+[7/8] tests/smoke.spec.mjs:16:3 › route bpp
+[8/8] tests/smoke.spec.mjs:29:1 › agri catalog + flow
+  8 passed (1.2m)

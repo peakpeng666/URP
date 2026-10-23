@@ -1,0 +1,34 @@
+{
+  "allowlisted_nonsecret_fixture_matches": [
+    {
+      "path": "preserved/worktrees/happy-editor/deploy/tests/test_agriculture_smoke.py",
+      "kind": "credential_url",
+      "classification": "Malformed URL / reserved or loopback host in negative URL validation fixture",
+      "git_blob": "0a31055e9a714fffdfb09ee28810819c7753b75e"
+    },
+    {
+      "path": "preserved/worktrees/luna-agri/deploy/tests/test_agriculture_smoke.py",
+      "kind": "credential_url",
+      "classification": "Malformed URL / reserved or loopback host in negative URL validation fixture",
+      "git_blob": "0a31055e9a714fffdfb09ee28810819c7753b75e"
+    },
+    {
+      "path": "preserved/worktrees/mamba-20261022/deploy/tests/test_agriculture_smoke.py",
+      "kind": "credential_url",
+      "classification": "Malformed URL / reserved or loopback host in negative URL validation fixture",
+      "git_blob": "0a31055e9a714fffdfb09ee28810819c7753b75e"
+    },
+    {
+      "path": "preserved/worktrees/mamba-results/deploy/tests/test_agriculture_smoke.py",
+      "kind": "credential_url",
+      "classification": "Malformed URL / reserved or loopback host in negative URL validation fixture",
+      "git_blob": "0a31055e9a714fffdfb09ee28810819c7753b75e"
+    },
+    {
+      "path": "preserved/worktrees/workbench-20261022/deploy/tests/test_agriculture_smoke.py",
+      "kind": "credential_url",
+      "classification": "Malformed URL / reserved or loopback host in negative URL validation fixture",
+      "git_blob": "0a31055e9a714fffdfb09ee28810819c7753b75e"
+    }
+  ]
+}

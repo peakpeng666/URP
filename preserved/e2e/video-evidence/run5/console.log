@@ -1,0 +1,59 @@
+
+Running 8 tests using 1 worker
+
+(node:138166) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/8] tests/a-agri-catalog.spec.ts:2:1 › A 农业目录：筛选环境/作业/状态、打开模式、改参数与种子、预览几何
+[2/8] tests/b-draft-persistence.spec.ts:4:1 › B 草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）
+[3/8] tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入
+  1) tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入 › 选择对象（点击地图中心附近的对象） ───────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/选中: 任务/)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/选中: 任务/) with timeout 5000ms
+      - waiting for getByText(/选中: 任务/)
+
+
+      16 |     const sb = (await shape.boundingBox())!;
+      17 |     await page.mouse.click(sb.x + sb.width / 2, sb.y + sb.height / 2);
+    > 18 |     await expect(page.getByText(/选中: 任务/)).toBeVisible();
+         |                                            ^
+      19 |     // SelectionForm lives in the 检查器 dock tab (right dock, inactive behind 推荐与求解).
+      20 |     await openInspectorTab(page);
+      21 |     await expect(xInput).toBeVisible({ timeout: 10_000 });
+        at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:18:44
+        at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:13:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../video-evidence/run5/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run5/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../video-evidence/run5/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run5/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run5/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:139096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/8] tests/d-import-idempotency.spec.ts:3:1 › D 导入幂等：丢失响应后重新导入，场景列表无重复
+[5/8] tests/e-fork-timeout.spec.ts:4:1 › E Fork 超时重试：只生成一份“我的场景”

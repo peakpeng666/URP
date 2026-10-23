@@ -1,0 +1,502 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/node_modules/.bin/playwright",
+      "test"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/playwright.config.mjs",
+    "rootDir": "${USER_HOME}/urp-e2e/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/head-4d2f7a04-run2/report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/head-4d2f7a04-run2/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "smoke.spec.mjs",
+      "file": "smoke.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "route home",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3457,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:23:17.548Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-home/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-home/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-home/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-f785aeeee5ab24753167",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "route plan",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2710,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:23:21.131Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-plan/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-plan/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-plan/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-199105d480e2fc247659",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "route assets",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2677,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:23:23.885Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-assets/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-assets/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-assets/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-71c0023177a9ed71c855",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "route sim",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2697,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:23:26.592Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-sim/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-sim/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-sim/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-22db566ebd2787bfa638",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "route jobs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2731,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:23:29.322Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-jobs/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-jobs/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-jobs/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-a208bac17da3337e93af",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "route bpp",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2966,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:23:32.092Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-bpp/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-bpp/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-route-bpp/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-4d24671edff8b7e5054b",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "agri catalog + flow",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "preview",
+                  "description": "1"
+                },
+                {
+                  "type": "draft-restored",
+                  "description": "7/123"
+                },
+                {
+                  "type": "after-reset",
+                  "description": "36/42"
+                },
+                {
+                  "type": "scenario",
+                  "description": "agri-orchard-harvest-tran-20c8c7a3-c299-45d3-a58a-c43df09c6c0d"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 122097,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "${USER_HOME}/urp-e2e/tests/smoke.spec.mjs",
+                        "column": 80,
+                        "line": 25
+                      },
+                      "message": "Error: locator.click: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: '打开农业任务目录' })\u001b[22m\n\n\n  23 | }\n  24 | async function openCatalog(page) {\n> 25 |   await page.goto('/#/'); await page.getByRole('button', { name: '打开农业任务目录' }).click();\n     |                                                                                ^\n  26 |   await page.locator('details').first().waitFor();\n  27 | }\n  28 | const cardWith = (page, suffix) => page.locator('details').filter({ has: page.locator(`input[aria-label$=\" ${suffix}\"]`) }).first();\n    at openCatalog (${USER_HOME}/urp-e2e/tests/smoke.spec.mjs:25:80)\n    at ${USER_HOME}/urp-e2e/tests/smoke.spec.mjs:76:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:23:35.118Z",
+                  "annotations": [
+                    {
+                      "type": "preview",
+                      "description": "1"
+                    },
+                    {
+                      "type": "draft-restored",
+                      "description": "7/123"
+                    },
+                    {
+                      "type": "after-reset",
+                      "description": "36/42"
+                    },
+                    {
+                      "type": "scenario",
+                      "description": "agri-orchard-harvest-tran-20c8c7a3-c299-45d3-a58a-c43df09c6c0d"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-494b69547fdfcf4e8961",
+          "file": "smoke.spec.mjs",
+          "line": 29,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T13:23:17.333Z",
+    "duration": 140334.686,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

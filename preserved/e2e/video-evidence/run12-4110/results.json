@@ -1,0 +1,305 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/video-suite/node_modules/.bin/playwright",
+      "test",
+      "tests/h-precheck-locate.spec.ts",
+      "tests/k-generated-from.spec.ts"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/video-suite/playwright.config.ts",
+    "rootDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "h-precheck-locate.spec.ts",
+      "file": "h-precheck-locate.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "H 预检定位：点击预检问题高亮对象并聚焦表单字段",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1107,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "地头宽度设为小于幅宽",
+                      "duration": 167
+                    },
+                    {
+                      "title": "预检问题出现",
+                      "duration": 17
+                    },
+                    {
+                      "title": "点击问题 → 高亮对象 + 聚焦地头宽度",
+                      "duration": 223
+                    },
+                    {
+                      "title": "点击地图形状只高亮不定位",
+                      "duration": 141
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:04:53.614Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "headland-6m-swath-7.2m",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/attachments/headland-6m-swath-7-2m-c8c45fdc47e3fd984e222b399457366c3e2384ae.png"
+                    },
+                    {
+                      "name": "located",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/attachments/located-ffa09513c1250f10fd4f8604f793a25324aac1b3.png"
+                    },
+                    {
+                      "name": "shape-highlight",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/attachments/shape-highlight-9c2109f3c8b1c8a2c12d87831a6a47d293446b37.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f474b8bedf4ce4dacef3-090eefa360918da24480",
+          "file": "h-precheck-locate.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "k-generated-from.spec.ts",
+      "file": "k-generated-from.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "K 生成来源：参数化 → 手工编辑 → 回到目录改参数",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 18264,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '农业任务目录' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '农业任务目录' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' })\u001b[22m\n\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:56:27\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:52:3",
+                    "location": {
+                      "file": "${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts",
+                      "column": 27,
+                      "line": 56
+                    },
+                    "snippet": "  54 |     await expect(page).toHaveURL(/#\\/archive/);\n  55 |     const catalog = page.getByRole('region', { name: '农业任务目录' });\n> 56 |     await expect(catalog).toBeVisible({ timeout: 15_000 });\n     |                           ^\n  57 |     const back = catalog.locator('details', { has: page.locator('summary', { hasText: name }) }).first();\n  58 |     await expect(back).toHaveAttribute('open', '');\n  59 |     await expect(back.getByLabel(`${name} 随机种子`)).toHaveValue('7');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts",
+                        "column": 27,
+                        "line": 56
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '农业任务目录' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' })\u001b[22m\n\n\n  54 |     await expect(page).toHaveURL(/#\\/archive/);\n  55 |     const catalog = page.getByRole('region', { name: '农业任务目录' });\n> 56 |     await expect(catalog).toBeVisible({ timeout: 15_000 });\n     |                           ^\n  57 |     const back = catalog.locator('details', { has: page.locator('summary', { hasText: name }) }).first();\n  58 |     await expect(back).toHaveAttribute('open', '');\n  59 |     await expect(back.getByLabel(`${name} 随机种子`)).toHaveValue('7');\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:56:27\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:52:3"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "K first runnable card: 果园采收集运\n"
+                    },
+                    {
+                      "text": "K selected card: 果园采收集运\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "导入后：参数化生成",
+                      "duration": 134
+                    },
+                    {
+                      "title": "拖动任务点 → 手工编辑并列出变化",
+                      "duration": 562
+                    },
+                    {
+                      "title": "回到目录改参数 → 卡片展开，参数与种子一致",
+                      "duration": 15108,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '农业任务目录' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '农业任务目录' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' })\u001b[22m\n\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:56:27\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:52:3",
+                        "location": {
+                          "file": "${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts",
+                          "column": 27,
+                          "line": 56
+                        },
+                        "snippet": "  54 |     await expect(page).toHaveURL(/#\\/archive/);\n  55 |     const catalog = page.getByRole('region', { name: '农业任务目录' });\n> 56 |     await expect(catalog).toBeVisible({ timeout: 15_000 });\n     |                           ^\n  57 |     const back = catalog.locator('details', { has: page.locator('summary', { hasText: name }) }).first();\n  58 |     await expect(back).toHaveAttribute('open', '');\n  59 |     await expect(back.getByLabel(`${name} 随机种子`)).toHaveValue('7');"
+                      }
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:04:54.842Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "parametric",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/attachments/parametric-5aa8cf61c8bba290e9f6fa9452973b346dba78f9.png"
+                    },
+                    {
+                      "name": "manual",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/attachments/manual-20f2794c1dc4cf4ff2a39e0bf1eb35b50ba8a086.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run12-4110/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts",
+                    "column": 27,
+                    "line": 56
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e70219cd8e824547361e-46a38d883c3c6d6c5b01",
+          "file": "k-generated-from.spec.ts",
+          "line": 14,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T16:04:53.340Z",
+    "duration": 20213.924000000003,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

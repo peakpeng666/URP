@@ -1,0 +1,71 @@
+
+Running 8 tests using 1 worker
+
+(node:98720) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/mamba.spec.mjs:5:1 › mamba features (29.7s)
+  ✓  2 tests/smoke.spec.mjs:16:3 › route home (2.9s)
+  ✓  3 tests/smoke.spec.mjs:16:3 › route plan (2.8s)
+  ✓  4 tests/smoke.spec.mjs:16:3 › route assets (2.7s)
+  ✓  5 tests/smoke.spec.mjs:16:3 › route sim (2.7s)
+  ✓  6 tests/smoke.spec.mjs:16:3 › route jobs (2.7s)
+  ✓  7 tests/smoke.spec.mjs:16:3 › route bpp (3.0s)
+  ✘  8 tests/smoke.spec.mjs:29:1 › agri catalog + flow (4.1m)
+
+
+  1) tests/smoke.spec.mjs:29:1 › agri catalog + flow ───────────────────────────────────────────────
+
+    Test timeout of 240000ms exceeded.
+
+    Error: locator.fill: Test timeout of 240000ms exceeded.
+    Call log:
+      - waiting for locator('details').filter({ has: locator('input[aria-label$=" 障碍半径"]') }).first().locator('input[aria-label$=" 障碍半径"]')
+        - locator resolved to <input min="0" max="40" step="any" value="12" type="number" aria-label="果园采收集运 障碍半径" class="_input_a5ga1_358"/>
+        - fill("40")
+      - attempting fill action
+        2 × waiting for element to be visible, enabled and editable
+          - element is not visible
+        - retrying fill action
+        - waiting 20ms
+        2 × waiting for element to be visible, enabled and editable
+          - element is not visible
+        - retrying fill action
+          - waiting 100ms
+        433 × waiting for element to be visible, enabled and editable
+            - element is not visible
+          - retrying fill action
+            - waiting 500ms
+
+
+      101 |   // preflight: obstacle radius huge in a fleet card
+      102 |   const ob = cardWith(page, '障碍半径'); await ob.locator('summary').click();
+    > 103 |   await ob.locator('input[aria-label$=" 障碍半径"]').fill('40'); await page.waitForTimeout(500);
+          |                                                  ^
+      104 |   const iss2 = ob.getByRole('list', { name: '预检问题' }).getByRole('button');
+      105 |   test.info().annotations.push({ type: 'obstacle-issues', description: (await iss2.allInnerTexts()).join(' | ').slice(0, 400) });
+      106 |   if (await iss2.count()) { await iss2.first().click(); await page.waitForTimeout(300);
+        at ${USER_HOME}/urp-e2e/tests/smoke.spec.mjs:103:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/error-context.md
+
+    Error Context: artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/smoke.spec.mjs:29:1 › agri catalog + flow ────────────────────────────────────────────────
+  7 passed (4.9m)

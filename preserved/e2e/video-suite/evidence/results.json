@@ -1,0 +1,273 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/video-suite/node_modules/.bin/playwright",
+      "test",
+      "tests/k-generated-from.spec.ts",
+      "tests/h-precheck-locate.spec.ts",
+      "--output",
+      "/tmp/luna-k-out"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/video-suite/playwright.config.ts",
+    "rootDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/tmp/luna-k-out",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "./evidence/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "./evidence/html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "h-precheck-locate.spec.ts",
+      "file": "h-precheck-locate.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "H 预检定位：点击预检问题高亮对象并聚焦表单字段",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1199,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "地头宽度设为小于幅宽",
+                      "duration": 135
+                    },
+                    {
+                      "title": "预检问题出现",
+                      "duration": 15
+                    },
+                    {
+                      "title": "点击问题 → 高亮对象 + 聚焦地头宽度",
+                      "duration": 222
+                    },
+                    {
+                      "title": "点击地图形状只高亮不定位",
+                      "duration": 144
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:11:51.671Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "headland-6m-swath-7.2m",
+                      "contentType": "image/png",
+                      "path": "/tmp/luna-k-out/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/attachments/headland-6m-swath-7-2m-ec3492285b3c64316eed636cb5ea9e5c8e0ac98d.png"
+                    },
+                    {
+                      "name": "located",
+                      "contentType": "image/png",
+                      "path": "/tmp/luna-k-out/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/attachments/located-faaf52c58d786004f4a7405150e22f8c5dc7cdc6.png"
+                    },
+                    {
+                      "name": "shape-highlight",
+                      "contentType": "image/png",
+                      "path": "/tmp/luna-k-out/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/attachments/shape-highlight-a91ff543faa5ba2f8dd08b4fe1e25dd7e1c2811a.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/tmp/luna-k-out/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/tmp/luna-k-out/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/tmp/luna-k-out/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f474b8bedf4ce4dacef3-090eefa360918da24480",
+          "file": "h-precheck-locate.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "k-generated-from.spec.ts",
+      "file": "k-generated-from.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "K 生成来源：参数化 → 手工编辑 → 回到目录改参数",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3782,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "K first runnable card: 果园采收集运\n"
+                    },
+                    {
+                      "text": "K selected card: 果园采收集运\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "导入后：参数化生成",
+                      "duration": 131
+                    },
+                    {
+                      "title": "拖动任务点 → 手工编辑并列出变化",
+                      "duration": 513
+                    },
+                    {
+                      "title": "回到目录改参数 → 卡片展开，参数与种子一致",
+                      "duration": 1051
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:11:52.991Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "parametric",
+                      "contentType": "image/png",
+                      "path": "/tmp/luna-k-out/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/attachments/parametric-245dc0dd33f443105293e7cc3a9c0a232a418ae9.png"
+                    },
+                    {
+                      "name": "manual",
+                      "contentType": "image/png",
+                      "path": "/tmp/luna-k-out/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/attachments/manual-69176ac0946a41493fd21fb1ef663ab75528173a.png"
+                    },
+                    {
+                      "name": "back-to-catalog",
+                      "contentType": "image/png",
+                      "path": "/tmp/luna-k-out/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/attachments/back-to-catalog-bf414135933b3bdfa5adb2676cb513c466e665b7.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/tmp/luna-k-out/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/tmp/luna-k-out/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/tmp/luna-k-out/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e70219cd8e824547361e-46a38d883c3c6d6c5b01",
+          "file": "k-generated-from.spec.ts",
+          "line": 14,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T16:11:51.298Z",
+    "duration": 5718.249,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

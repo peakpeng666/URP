@@ -1,0 +1,213 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/video-suite/node_modules/.bin/playwright",
+      "test",
+      "tests/f-"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/video-suite/playwright.config.ts",
+    "rootDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "f-result-integrity.spec.ts",
+      "file": "f-result-integrity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "F 结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "layout",
+                  "description": "{\"history\":{\"x\":-81,\"y\":655,\"width\":830.71875,\"height\":244.953125},\"compare\":{\"x\":790,\"y\":513,\"width\":1246.546875,\"height\":227.0625}}"
+                },
+                {
+                  "type": "history-scroller",
+                  "description": "{\"left\":288,\"right\":750,\"scrollWidth\":831,\"clientWidth\":462}"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1980,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "加入比较：隔离 + 缺字段",
+                      "duration": 301
+                    },
+                    {
+                      "title": "各处文字：历史资格列 / 验算列 / 未参与比较",
+                      "duration": 204
+                    },
+                    {
+                      "title": "布局：历史表与右侧列不重叠",
+                      "duration": 191
+                    },
+                    {
+                      "title": "缺字段运行：身份未核验，单独分组",
+                      "duration": 136
+                    },
+                    {
+                      "title": "选中隔离运行 → 选中方案横幅 + 实验结果横幅",
+                      "duration": 341
+                    }
+                  ],
+                  "startTime": "2026-10-22T15:34:26.643Z",
+                  "annotations": [
+                    {
+                      "type": "layout",
+                      "description": "{\"history\":{\"x\":-81,\"y\":655,\"width\":830.71875,\"height\":244.953125},\"compare\":{\"x\":790,\"y\":513,\"width\":1246.546875,\"height\":227.0625}}"
+                    },
+                    {
+                      "type": "history-scroller",
+                      "description": "{\"left\":288,\"right\":750,\"scrollWidth\":831,\"clientWidth\":462}"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "history-added",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/history-added-66f73913262fe9791b8d248144663a4b7ee4c711.png"
+                    },
+                    {
+                      "name": "excluded",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/excluded-cdacdac4316dba08d67dc4f7d81aefbe67865448.png"
+                    },
+                    {
+                      "name": "history-layout",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/history-layout-1b2f34850c4f4ae29b4d401e05d50eb64b92a06e.png"
+                    },
+                    {
+                      "name": "unverified-group",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/unverified-group-5289567bfcc3918074bbfd13821bf8a7e7c3037f.png"
+                    },
+                    {
+                      "name": "selected-banner",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/selected-banner-cd727de78eb90e4487fd8e23747100cbadbef0dd.png"
+                    },
+                    {
+                      "name": "result-tab",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/result-tab-adc3f8a436473b237e4063baa7b787c74bf7d091.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-F-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e9ce0e17f99eaac09d14-f4c9a93ea8522bbefe38",
+          "file": "f-result-integrity.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T15:34:26.367Z",
+    "duration": 2496.89,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "python": 503,
+  "json": 488,
+  "shell": 12,
+  "zip_json": 6624,
+  "failures": [],
+  "raw_machine_path_occurrences": 0,
+  "validation_scope": "Publication-copy syntax/integrity checks only; no solver, ROS, Gazebo, Docker, GUI or new experimental run."
+}

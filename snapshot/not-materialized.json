@@ -1,0 +1,13 @@
+{
+  "preserved_from_existing_git_objects": {
+    "happy-editor": 85,
+    "labpatch-5065046": 0,
+    "luna-agri": 85,
+    "mamba-20261022": 85,
+    "mamba-results": 85,
+    "verify-5065046": 0,
+    "workbench-20261022": 85
+  },
+  "unavailable": [],
+  "note": "Absence in a sparse checkout is not a deletion. Actual deletion/rename semantics are in deletions-renames.json."
+}

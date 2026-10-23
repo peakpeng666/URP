@@ -1,0 +1,296 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/video-suite/node_modules/.bin/playwright",
+      "test",
+      "tests/g-"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/video-suite/playwright.config.ts",
+    "rootDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "g-solve-compare.spec.ts",
+      "file": "g-solve-compare.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "G 真实小规模求解并打开比较",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "solve-summary",
+                  "description": "本批 3 次运行 · 3 个已验算可行解; table rows with 通过=3; scenario=bench-cvrp-uniform-n20"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4295,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "求解",
+                      "duration": 3879
+                    }
+                  ],
+                  "startTime": "2026-10-22T15:29:58.527Z",
+                  "annotations": [
+                    {
+                      "type": "solve-summary",
+                      "description": "本批 3 次运行 · 3 个已验算可行解; table rows with 通过=3; scenario=bench-cvrp-uniform-n20"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "before-solve",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/before-solve-2c83987f66055bbab756764c0ab5de4eada25954.png"
+                    },
+                    {
+                      "name": "solved",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/solved-d3cd7b218a793e02c16f5b577feaa70cdba9a8d9.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G-真实小规模求解并打开比较/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G-真实小规模求解并打开比较/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G-真实小规模求解并打开比较/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e8cd68996e8cc36ce593-ef819bc8aa4f484c0325",
+          "file": "g-solve-compare.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "G2 cvrp-depot-floor：0 个已验算可行解为预期，并显示碰撞报告",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "solve-summary",
+                  "description": "本批 3 次运行 · 0 个已验算可行解; 通过=0"
+                },
+                {
+                  "type": "map_check",
+                  "description": "[{\"id\":\"run_20261022T153003_0ad196\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":5,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153003_8bf0fd\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":4,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153003_5ac092\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":0,\"segment\":0,\"point\":[-7.582459016393442,3.3599180327868856],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}}]"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 9513,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('[data-exclusion=\"map_collision\"]')\nExpected: \u001b[32m3\u001b[39m\nReceived: \u001b[31m10\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('[data-exclusion=\"map_collision\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-exclusion=\"map_collision\"]')\u001b[22m\n\u001b[2m    14 × locator resolved to 10 elements\u001b[22m\n\u001b[2m       - unexpected value \"10\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('[data-exclusion=\"map_collision\"]')\nExpected: \u001b[32m3\u001b[39m\nReceived: \u001b[31m10\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('[data-exclusion=\"map_collision\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-exclusion=\"map_collision\"]')\u001b[22m\n\u001b[2m    14 × locator resolved to 10 elements\u001b[22m\n\u001b[2m       - unexpected value \"10\"\u001b[22m\n\n    at ${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts:71:24\n    at ${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts:66:3",
+                    "location": {
+                      "file": "${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts",
+                      "column": 24,
+                      "line": 71
+                    },
+                    "snippet": "  69 |     await expect(summaryBox, 'Mamba 04f4e381 map_check summary (PlanPanels.tsx:860)').toBeVisible({ timeout: 10_000 });\n  70 |     const excl = page.locator('[data-exclusion=\"map_collision\"]');\n> 71 |     await expect(excl).toHaveCount(r.runs);\n     |                        ^\n  72 |     for (let i = 0; i < r.runs; i++) {\n  73 |       await expect(excl.nth(i)).toHaveAttribute('data-run-id', /.+/);\n  74 |       await expect(excl.nth(i)).toHaveAttribute('data-violation-count', /^[1-9]\\d*$/);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts",
+                        "column": 24,
+                        "line": 71
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('[data-exclusion=\"map_collision\"]')\nExpected: \u001b[32m3\u001b[39m\nReceived: \u001b[31m10\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('[data-exclusion=\"map_collision\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-exclusion=\"map_collision\"]')\u001b[22m\n\u001b[2m    14 × locator resolved to 10 elements\u001b[22m\n\u001b[2m       - unexpected value \"10\"\u001b[22m\n\n\n  69 |     await expect(summaryBox, 'Mamba 04f4e381 map_check summary (PlanPanels.tsx:860)').toBeVisible({ timeout: 10_000 });\n  70 |     const excl = page.locator('[data-exclusion=\"map_collision\"]');\n> 71 |     await expect(excl).toHaveCount(r.runs);\n     |                        ^\n  72 |     for (let i = 0; i < r.runs; i++) {\n  73 |       await expect(excl.nth(i)).toHaveAttribute('data-run-id', /.+/);\n  74 |       await expect(excl.nth(i)).toHaveAttribute('data-violation-count', /^[1-9]\\d*$/);\n    at ${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts:71:24\n    at ${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts:66:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "验算：地图净空未通过",
+                      "duration": 156
+                    },
+                    {
+                      "title": "碰撞报告（Mamba 04f4e381 selectors；未构建时 pending）",
+                      "duration": 5070,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('[data-exclusion=\"map_collision\"]')\nExpected: \u001b[32m3\u001b[39m\nReceived: \u001b[31m10\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('[data-exclusion=\"map_collision\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-exclusion=\"map_collision\"]')\u001b[22m\n\u001b[2m    14 × locator resolved to 10 elements\u001b[22m\n\u001b[2m       - unexpected value \"10\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveCount\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('[data-exclusion=\"map_collision\"]')\nExpected: \u001b[32m3\u001b[39m\nReceived: \u001b[31m10\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveCount\" locator('[data-exclusion=\"map_collision\"]') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-exclusion=\"map_collision\"]')\u001b[22m\n\u001b[2m    14 × locator resolved to 10 elements\u001b[22m\n\u001b[2m       - unexpected value \"10\"\u001b[22m\n\n    at ${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts:71:24\n    at ${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts:66:3",
+                        "location": {
+                          "file": "${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts",
+                          "column": 24,
+                          "line": 71
+                        },
+                        "snippet": "  69 |     await expect(summaryBox, 'Mamba 04f4e381 map_check summary (PlanPanels.tsx:860)').toBeVisible({ timeout: 10_000 });\n  70 |     const excl = page.locator('[data-exclusion=\"map_collision\"]');\n> 71 |     await expect(excl).toHaveCount(r.runs);\n     |                        ^\n  72 |     for (let i = 0; i < r.runs; i++) {\n  73 |       await expect(excl.nth(i)).toHaveAttribute('data-run-id', /.+/);\n  74 |       await expect(excl.nth(i)).toHaveAttribute('data-violation-count', /^[1-9]\\d*$/);"
+                      }
+                    }
+                  ],
+                  "startTime": "2026-10-22T15:30:03.099Z",
+                  "annotations": [
+                    {
+                      "type": "solve-summary",
+                      "description": "本批 3 次运行 · 0 个已验算可行解; 通过=0"
+                    },
+                    {
+                      "type": "map_check",
+                      "description": "[{\"id\":\"run_20261022T153003_0ad196\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":5,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153003_8bf0fd\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":4,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153003_5ac092\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":0,\"segment\":0,\"point\":[-7.582459016393442,3.3599180327868856],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}}]"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "solved-floor",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/solved-floor-b000766b8ac41c63e257cb12b1e82a47aca18871.png"
+                    },
+                    {
+                      "name": "verify-tab",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/verify-tab-c02af8ce82e8223f6369ef6a479e7143c54d0697.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts",
+                    "column": 24,
+                    "line": 71
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e8cd68996e8cc36ce593-b95341cdc7176696f544",
+          "file": "g-solve-compare.spec.ts",
+          "line": 48,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T15:29:58.255Z",
+    "duration": 14589.234,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

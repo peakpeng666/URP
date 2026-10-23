@@ -1,0 +1,470 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/video-suite/node_modules/.bin/playwright",
+      "test",
+      "tests/a-agri-catalog.spec.ts",
+      "tests/b-draft-persistence.spec.ts",
+      "tests/c-map-editor.spec.ts"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/video-suite/playwright.config.ts",
+    "rootDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "${USER_HOME}/urp-e2e/video-evidence/run2/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "${USER_HOME}/urp-e2e/video-evidence/run2/html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "a-agri-catalog.spec.ts",
+      "file": "a-agri-catalog.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "A 农业目录：筛选环境/作业/状态、打开模式、改参数与种子、预览几何",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1510,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "按生产环境筛选",
+                      "duration": 110
+                    },
+                    {
+                      "title": "按农业作业筛选",
+                      "duration": 82
+                    },
+                    {
+                      "title": "按模式状态筛选",
+                      "duration": 84
+                    },
+                    {
+                      "title": "清除筛选",
+                      "duration": 105
+                    },
+                    {
+                      "title": "打开模式详情",
+                      "duration": 107
+                    },
+                    {
+                      "title": "修改参数与随机种子",
+                      "duration": 113
+                    },
+                    {
+                      "title": "导入后预览几何出现",
+                      "duration": 211
+                    }
+                  ],
+                  "startTime": "2026-10-22T13:25:04.459Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "catalog-open",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/catalog-open-a8d1e3b36f4dac4244d67252566727d57de7d7ac.png"
+                    },
+                    {
+                      "name": "filter-env",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/filter-env-9612ebdf78389991dee8c2b3fa476de3bf563a87.png"
+                    },
+                    {
+                      "name": "filter-op",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/filter-op-57b0ece48e736fa2b7f7529e40a6048edf66c404.png"
+                    },
+                    {
+                      "name": "filter-status",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/filter-status-bd01bac4428e02267fcdecf09a0b2ca85da7d70a.png"
+                    },
+                    {
+                      "name": "pattern-detail",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/pattern-detail-052ff278648bf4eca6c9341412861cd6f3d60517.png"
+                    },
+                    {
+                      "name": "params-changed",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/params-changed-e43ccabfa889c8398ea560f89f6defa8d28ded78.png"
+                    },
+                    {
+                      "name": "preview-geometry",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/preview-geometry-723ebea7c3d6d9072eef64d932a77532fd2e050a.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bdea1ea2ea844c15cf45-8d1a382abc079436a4a9",
+          "file": "a-agri-catalog.spec.ts",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "b-draft-persistence.spec.ts",
+      "file": "b-draft-persistence.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "B 草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6241,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')\nExpected: \u001b[32m\"12345\"\u001b[39m\nReceived: \u001b[31m\"42\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')\u001b[22m\n\u001b[2m    14 × locator resolved to <input min=\"0\" step=\"1\" value=\"42\" type=\"number\" max=\"4294967295\" aria-label=\"果园采收集运 随机种子\" class=\"_input_a5ga1_358\"/>\u001b[22m\n\u001b[2m       - unexpected value \"42\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')\nExpected: \u001b[32m\"12345\"\u001b[39m\nReceived: \u001b[31m\"42\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')\u001b[22m\n\u001b[2m    14 × locator resolved to <input min=\"0\" step=\"1\" value=\"42\" type=\"number\" max=\"4294967295\" aria-label=\"果园采收集运 随机种子\" class=\"_input_a5ga1_358\"/>\u001b[22m\n\u001b[2m       - unexpected value \"42\"\u001b[22m\n\n    at ${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts:17:48\n    at ${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts:12:3",
+                    "location": {
+                      "file": "${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts",
+                      "column": 48,
+                      "line": 17
+                    },
+                    "snippet": "  15 |     await c.locator('summary').click();\n  16 |     await shot(page, info, 'after-reload');\n> 17 |     await expect(c.getByLabel(`${name} 随机种子`)).toHaveValue('12345');\n     |                                                ^\n  18 |   });\n  19 | });\n  20 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts",
+                        "column": 48,
+                        "line": 17
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')\nExpected: \u001b[32m\"12345\"\u001b[39m\nReceived: \u001b[31m\"42\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')\u001b[22m\n\u001b[2m    14 × locator resolved to <input min=\"0\" step=\"1\" value=\"42\" type=\"number\" max=\"4294967295\" aria-label=\"果园采收集运 随机种子\" class=\"_input_a5ga1_358\"/>\u001b[22m\n\u001b[2m       - unexpected value \"42\"\u001b[22m\n\n\n  15 |     await c.locator('summary').click();\n  16 |     await shot(page, info, 'after-reload');\n> 17 |     await expect(c.getByLabel(`${name} 随机种子`)).toHaveValue('12345');\n     |                                                ^\n  18 |   });\n  19 | });\n  20 |\n    at ${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts:17:48\n    at ${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts:12:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "编辑参数与种子",
+                      "duration": 100
+                    },
+                    {
+                      "title": "刷新页面",
+                      "duration": 75
+                    },
+                    {
+                      "title": "验证草稿恢复",
+                      "duration": 5329,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')\nExpected: \u001b[32m\"12345\"\u001b[39m\nReceived: \u001b[31m\"42\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')\u001b[22m\n\u001b[2m    14 × locator resolved to <input min=\"0\" step=\"1\" value=\"42\" type=\"number\" max=\"4294967295\" aria-label=\"果园采收集运 随机种子\" class=\"_input_a5ga1_358\"/>\u001b[22m\n\u001b[2m       - unexpected value \"42\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveValue\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator:  getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')\nExpected: \u001b[32m\"12345\"\u001b[39m\nReceived: \u001b[31m\"42\"\u001b[39m\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveValue\" getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')\u001b[22m\n\u001b[2m    14 × locator resolved to <input min=\"0\" step=\"1\" value=\"42\" type=\"number\" max=\"4294967295\" aria-label=\"果园采收集运 随机种子\" class=\"_input_a5ga1_358\"/>\u001b[22m\n\u001b[2m       - unexpected value \"42\"\u001b[22m\n\n    at ${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts:17:48\n    at ${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts:12:3",
+                        "location": {
+                          "file": "${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts",
+                          "column": 48,
+                          "line": 17
+                        },
+                        "snippet": "  15 |     await c.locator('summary').click();\n  16 |     await shot(page, info, 'after-reload');\n> 17 |     await expect(c.getByLabel(`${name} 随机种子`)).toHaveValue('12345');\n     |                                                ^\n  18 |   });\n  19 | });\n  20 |"
+                      }
+                    }
+                  ],
+                  "startTime": "2026-10-22T13:25:06.153Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "edited",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/attachments/edited-c5307de510d149968352d2131270806a32989132.png"
+                    },
+                    {
+                      "name": "after-reload",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/attachments/after-reload-e4698c11ac6b21d6315b062a142275e3ea7077f8.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts",
+                    "column": 48,
+                    "line": 17
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "16b4c2e22dcecb6f879f-d29ec449b119be116912",
+          "file": "b-draft-persistence.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "c-map-editor.spec.ts",
+      "file": "c-map-editor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6626,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()\u001b[22m\n\n    at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:30:26\n    at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:29:3",
+                    "location": {
+                      "file": "${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts",
+                      "column": 26,
+                      "line": 30
+                    },
+                    "snippet": "  28 |   await test.step('重做', async () => { await redo.click(); await shot(page, info, 'redone'); });\n  29 |   await test.step('数值输入 X', async () => {\n> 30 |     await expect(xInput).toBeVisible();\n     |                          ^\n  31 |     await xInput.fill('12.5'); await xInput.blur();\n  32 |     await expect(xInput).toHaveValue('12.5');\n  33 |     await shot(page, info, 'numeric');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts",
+                        "column": 26,
+                        "line": 30
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()\u001b[22m\n\n\n  28 |   await test.step('重做', async () => { await redo.click(); await shot(page, info, 'redone'); });\n  29 |   await test.step('数值输入 X', async () => {\n> 30 |     await expect(xInput).toBeVisible();\n     |                          ^\n  31 |     await xInput.fill('12.5'); await xInput.blur();\n  32 |     await expect(xInput).toHaveValue('12.5');\n  33 |     await shot(page, info, 'numeric');\n    at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:30:26\n    at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:29:3"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "选择对象（点击地图中心附近的对象）",
+                      "duration": 126
+                    },
+                    {
+                      "title": "拖拽对象",
+                      "duration": 355
+                    },
+                    {
+                      "title": "撤销",
+                      "duration": 143
+                    },
+                    {
+                      "title": "重做",
+                      "duration": 109
+                    },
+                    {
+                      "title": "数值输入 X",
+                      "duration": 5011,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first() with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()\u001b[22m\n\n    at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:30:26\n    at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:29:3",
+                        "location": {
+                          "file": "${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts",
+                          "column": 26,
+                          "line": 30
+                        },
+                        "snippet": "  28 |   await test.step('重做', async () => { await redo.click(); await shot(page, info, 'redone'); });\n  29 |   await test.step('数值输入 X', async () => {\n> 30 |     await expect(xInput).toBeVisible();\n     |                          ^\n  31 |     await xInput.fill('12.5'); await xInput.blur();\n  32 |     await expect(xInput).toHaveValue('12.5');\n  33 |     await shot(page, info, 'numeric');"
+                      }
+                    }
+                  ],
+                  "startTime": "2026-10-22T13:25:12.715Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "selected",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/selected-b28056b2459c00f2507fe7772b3b95d5b3b5c175.png"
+                    },
+                    {
+                      "name": "dragged",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/dragged-86141437e8d8733ea022b71c9b40f2ba41940a52.png"
+                    },
+                    {
+                      "name": "undone",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/undone-6525f2eb142513f4b823e94aee9ca1f648ec27da.png"
+                    },
+                    {
+                      "name": "redone",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/redone-853b1144accf9685bbbe62a6a0ecd83f103c039d.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts",
+                    "column": 26,
+                    "line": 30
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "573247b96fcd9e58f01d-141b7077dc3e10e29a9e",
+          "file": "c-map-editor.spec.ts",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T13:25:04.237Z",
+    "duration": 15399.395,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

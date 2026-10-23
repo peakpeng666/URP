@@ -1,0 +1,127 @@
+
+Running 3 tests using 1 worker
+
+(node:90655) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/a-agri-catalog.spec.ts:2:1 › A 农业目录：筛选环境/作业/状态、打开模式、改参数与种子、预览几何 (1.5s)
+  ✘  2 tests/b-draft-persistence.spec.ts:4:1 › B 草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败） (6.2s)
+(node:90831) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入 (6.6s)
+
+
+  1) tests/b-draft-persistence.spec.ts:4:1 › B 草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败） › 验证草稿恢复 ──────────────
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')
+    Expected: "12345"
+    Received: "42"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveValue" getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子') with timeout 5000ms
+      - waiting for getByRole('region', { name: '农业任务目录' }).locator('details').filter({ has: locator('summary').filter({ hasText: '果园采收集运' }) }).first().getByLabel('果园采收集运 随机种子')
+        14 × locator resolved to <input min="0" step="1" value="42" type="number" max="4294967295" aria-label="果园采收集运 随机种子" class="_input_a5ga1_358"/>
+           - unexpected value "42"
+
+
+      15 |     await c.locator('summary').click();
+      16 |     await shot(page, info, 'after-reload');
+    > 17 |     await expect(c.getByLabel(`${name} 随机种子`)).toHaveValue('12345');
+         |                                                ^
+      18 |   });
+      19 | });
+      20 |
+        at ${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts:17:48
+        at ${USER_HOME}/urp-e2e/video-suite/tests/b-draft-persistence.spec.ts:12:3
+
+    attachment #1: edited (image/png) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/attachments/edited-c5307de510d149968352d2131270806a32989132.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: after-reload (image/png) ────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/attachments/after-reload-e4698c11ac6b21d6315b062a142275e3ea7077f8.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/error-context.md
+
+    attachment #6: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run2/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入 › 数值输入 X ──────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first() with timeout 5000ms
+      - waiting for locator('label').filter({ has: locator('span').filter({ hasText: /^X$/ }) }).locator('input[type=number]').first()
+
+
+      28 |   await test.step('重做', async () => { await redo.click(); await shot(page, info, 'redone'); });
+      29 |   await test.step('数值输入 X', async () => {
+    > 30 |     await expect(xInput).toBeVisible();
+         |                          ^
+      31 |     await xInput.fill('12.5'); await xInput.blur();
+      32 |     await expect(xInput).toHaveValue('12.5');
+      33 |     await shot(page, info, 'numeric');
+        at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:30:26
+        at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:29:3
+
+    attachment #1: selected (image/png) ────────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/selected-b28056b2459c00f2507fe7772b3b95d5b3b5c175.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: dragged (image/png) ─────────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/dragged-86141437e8d8733ea022b71c9b40f2ba41940a52.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: undone (image/png) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/undone-6525f2eb142513f4b823e94aee9ca1f648ec27da.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: redone (image/png) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/redone-853b1144accf9685bbbe62a6a0ecd83f103c039d.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run2/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests/b-draft-persistence.spec.ts:4:1 › B 草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败） ────────────────────────
+    tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入 ────────────────────────────────────
+  1 passed (15.4s)
+Evidence: ${USER_HOME}/urp-e2e/video-evidence/run2 (INDEX.md, acceptance.mp4)

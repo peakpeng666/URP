@@ -1,0 +1,1065 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: k-generated-from.spec.ts >> K 生成来源：参数化 → 手工编辑 → 回到目录改参数
+- Location: tests/k-generated-from.spec.ts:14:1
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByRole('region', { name: '农业任务目录' })
+Expected: visible
+Timeout: 15000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms
+  - waiting for getByRole('region', { name: '农业任务目录' })
+
+```
+
+```yaml
+- banner:
+  - text: 农业机器人路径规划
+  - textbox "任务描述":
+    - /placeholder: 用一句话描述任务，例如：在 200×120 米的果园里，3 台机器人从西南角出发采样 40 个点，避开两个池塘
+  - button "示例"
+  - button "生成地图" [disabled]
+  - button "导入"
+  - group "工作区":
+    - button "任务规划"
+    - button "资产库"
+    - button "算法实验"
+    - button "仿真"
+    - button "资料" [pressed]
+    - button "系统"
+  - button "恢复当前工作区的默认布局"
+  - button "⌘K"
+- region "CVRPLIB":
+  - tablist:
+    - tab "CVRPLIB" [selected]:
+      - text: CVRPLIB
+      - button "Close CVRPLIB"
+    - tab "真实田块"
+    - tab "文献"
+  - tabpanel "CVRPLIB":
+    - text: CVRPLIB · 732 个算例
+    - list:
+      - listitem:
+        - button "A 27 Augerat et al. (1995) · 经典随机算例"
+      - listitem:
+        - button "B 23 Augerat et al. (1995) · 聚簇算例"
+      - listitem:
+        - button "E 13 Christofides & Eilon (1969) · Christofides–Eilon 经典算例"
+      - listitem:
+        - button "F 3 Fisher (1994) · 真实配送数据"
+      - listitem:
+        - button "M 5 Christofides et al. (1979) · 大规模 Christofides 算例"
+      - listitem:
+        - button "P 24 Augerat et al. (1995) · A/B 改造的小容量算例"
+      - listitem:
+        - button "CMT 14 Christofides et al. (1979) · 含路长/服务时间约束的 CMT 算例"
+      - listitem:
+        - button "tai 13 Rochat & Taillard (1995) · Taillard 结构化算例"
+      - listitem:
+        - button "Golden 20 Golden et al. (1998) · 大规模几何结构算例"
+      - listitem:
+        - button "Li 12 Li et al. (2005) · 超大规模同心圆算例"
+      - listitem:
+        - button "X 100 Uchoa et al. (2017) · 当前最常用的 100 个多样化基准（100–1000 客户）"
+      - listitem:
+        - button "AGS 10 Arnold et al. (2019) · 超大规模真实结构算例"
+      - listitem:
+        - button "DIMACS 12 DIMACS, 2021 · DIMACS 第 12 届挑战赛算例"
+      - listitem:
+        - button "XML 0 Queiroga et al. (2022) · 机器学习评测用 10000 个小算例"
+      - listitem:
+        - button "XL 100 Queiroga et al. (2026) · 2026 年新增超大规模算例"
+      - listitem:
+        - button "Solomon 56 VRPTW Solomon (1987) · 带时间窗 VRPTW 经典算例"
+      - listitem:
+        - button "Homberger 300 VRPTW Homberger & Gehring (2005) · 大规模 VRPTW 算例"
+    - textbox "在 X 集中搜索"
+    - paragraph:
+      - text: Uchoa et al., 2017 · 当前最常用的 100 个多样化基准（100–1000 客户） ·
+      - link "原文":
+        - /url: https://doi.org/10.1016/j.ejor.2016.08.012
+    - table:
+      - rowgroup:
+        - row "算例 客户 车辆下限 容量 最优已知解":
+          - columnheader "算例"
+          - columnheader "客户"
+          - columnheader "车辆下限"
+          - columnheader "容量"
+          - columnheader "最优已知解"
+          - columnheader
+      - rowgroup:
+        - row "X-n101-k25 100 25 206 27,591 ✓ 打开":
+          - cell "X-n101-k25":
+            - strong: X-n101-k25
+          - cell "100"
+          - cell "25"
+          - cell "206"
+          - cell "27,591 ✓"
+          - cell "打开"
+        - row "X-n106-k14 105 14 600 26,362 ✓ 打开":
+          - cell "X-n106-k14":
+            - strong: X-n106-k14
+          - cell "105"
+          - cell "14"
+          - cell "600"
+          - cell "26,362 ✓"
+          - cell "打开"
+        - row "X-n110-k13 109 13 66 14,971 ✓ 打开":
+          - cell "X-n110-k13":
+            - strong: X-n110-k13
+          - cell "109"
+          - cell "13"
+          - cell "66"
+          - cell "14,971 ✓"
+          - cell "打开"
+        - row "X-n115-k10 114 10 169 12,747 ✓ 打开":
+          - cell "X-n115-k10":
+            - strong: X-n115-k10
+          - cell "114"
+          - cell "10"
+          - cell "169"
+          - cell "12,747 ✓"
+          - cell "打开"
+        - row "X-n120-k6 119 6 21 13,332 ✓ 打开":
+          - cell "X-n120-k6":
+            - strong: X-n120-k6
+          - cell "119"
+          - cell "6"
+          - cell "21"
+          - cell "13,332 ✓"
+          - cell "打开"
+        - row "X-n125-k30 124 30 188 55,539 ✓ 打开":
+          - cell "X-n125-k30":
+            - strong: X-n125-k30
+          - cell "124"
+          - cell "30"
+          - cell "188"
+          - cell "55,539 ✓"
+          - cell "打开"
+        - row "X-n129-k18 128 18 39 28,940 ✓ 打开":
+          - cell "X-n129-k18":
+            - strong: X-n129-k18
+          - cell "128"
+          - cell "18"
+          - cell "39"
+          - cell "28,940 ✓"
+          - cell "打开"
+        - row "X-n134-k13 133 13 643 10,916 ✓ 打开":
+          - cell "X-n134-k13":
+            - strong: X-n134-k13
+          - cell "133"
+          - cell "13"
+          - cell "643"
+          - cell "10,916 ✓"
+          - cell "打开"
+        - row "X-n139-k10 138 10 106 13,590 ✓ 打开":
+          - cell "X-n139-k10":
+            - strong: X-n139-k10
+          - cell "138"
+          - cell "10"
+          - cell "106"
+          - cell "13,590 ✓"
+          - cell "打开"
+        - row "X-n143-k7 142 7 1190 15,700 ✓ 打开":
+          - cell "X-n143-k7":
+            - strong: X-n143-k7
+          - cell "142"
+          - cell "7"
+          - cell "1190"
+          - cell "15,700 ✓"
+          - cell "打开"
+        - row "X-n148-k46 147 46 18 43,448 ✓ 打开":
+          - cell "X-n148-k46":
+            - strong: X-n148-k46
+          - cell "147"
+          - cell "46"
+          - cell "18"
+          - cell "43,448 ✓"
+          - cell "打开"
+        - row "X-n153-k22 152 22 144 21,220 ✓ 打开":
+          - cell "X-n153-k22":
+            - strong: X-n153-k22
+          - cell "152"
+          - cell "22"
+          - cell "144"
+          - cell "21,220 ✓"
+          - cell "打开"
+        - row "X-n157-k13 156 13 12 16,876 ✓ 打开":
+          - cell "X-n157-k13":
+            - strong: X-n157-k13
+          - cell "156"
+          - cell "13"
+          - cell "12"
+          - cell "16,876 ✓"
+          - cell "打开"
+        - row "X-n162-k11 161 11 1174 14,138 ✓ 打开":
+          - cell "X-n162-k11":
+            - strong: X-n162-k11
+          - cell "161"
+          - cell "11"
+          - cell "1174"
+          - cell "14,138 ✓"
+          - cell "打开"
+        - row "X-n167-k10 166 10 133 20,557 ✓ 打开":
+          - cell "X-n167-k10":
+            - strong: X-n167-k10
+          - cell "166"
+          - cell "10"
+          - cell "133"
+          - cell "20,557 ✓"
+          - cell "打开"
+        - row "X-n172-k51 171 51 161 45,607 ✓ 打开":
+          - cell "X-n172-k51":
+            - strong: X-n172-k51
+          - cell "171"
+          - cell "51"
+          - cell "161"
+          - cell "45,607 ✓"
+          - cell "打开"
+        - row "X-n176-k26 175 26 142 47,812 ✓ 打开":
+          - cell "X-n176-k26":
+            - strong: X-n176-k26
+          - cell "175"
+          - cell "26"
+          - cell "142"
+          - cell "47,812 ✓"
+          - cell "打开"
+        - row "X-n181-k23 180 23 8 25,569 ✓ 打开":
+          - cell "X-n181-k23":
+            - strong: X-n181-k23
+          - cell "180"
+          - cell "23"
+          - cell "8"
+          - cell "25,569 ✓"
+          - cell "打开"
+        - row "X-n186-k15 185 15 974 24,145 ✓ 打开":
+          - cell "X-n186-k15":
+            - strong: X-n186-k15
+          - cell "185"
+          - cell "15"
+          - cell "974"
+          - cell "24,145 ✓"
+          - cell "打开"
+        - row "X-n190-k8 189 8 138 16,980 ✓ 打开":
+          - cell "X-n190-k8":
+            - strong: X-n190-k8
+          - cell "189"
+          - cell "8"
+          - cell "138"
+          - cell "16,980 ✓"
+          - cell "打开"
+        - row "X-n195-k51 194 51 181 44,225 ✓ 打开":
+          - cell "X-n195-k51":
+            - strong: X-n195-k51
+          - cell "194"
+          - cell "51"
+          - cell "181"
+          - cell "44,225 ✓"
+          - cell "打开"
+        - row "X-n200-k36 199 36 402 58,578 ✓ 打开":
+          - cell "X-n200-k36":
+            - strong: X-n200-k36
+          - cell "199"
+          - cell "36"
+          - cell "402"
+          - cell "58,578 ✓"
+          - cell "打开"
+        - row "X-n204-k19 203 19 836 19,565 ✓ 打开":
+          - cell "X-n204-k19":
+            - strong: X-n204-k19
+          - cell "203"
+          - cell "19"
+          - cell "836"
+          - cell "19,565 ✓"
+          - cell "打开"
+        - row "X-n209-k16 208 16 101 30,656 ✓ 打开":
+          - cell "X-n209-k16":
+            - strong: X-n209-k16
+          - cell "208"
+          - cell "16"
+          - cell "101"
+          - cell "30,656 ✓"
+          - cell "打开"
+        - row "X-n214-k11 213 11 944 10,856 ✓ 打开":
+          - cell "X-n214-k11":
+            - strong: X-n214-k11
+          - cell "213"
+          - cell "11"
+          - cell "944"
+          - cell "10,856 ✓"
+          - cell "打开"
+        - row "X-n219-k73 218 73 3 117,595 ✓ 打开":
+          - cell "X-n219-k73":
+            - strong: X-n219-k73
+          - cell "218"
+          - cell "73"
+          - cell "3"
+          - cell "117,595 ✓"
+          - cell "打开"
+        - row "X-n223-k34 222 34 37 40,437 ✓ 打开":
+          - cell "X-n223-k34":
+            - strong: X-n223-k34
+          - cell "222"
+          - cell "34"
+          - cell "37"
+          - cell "40,437 ✓"
+          - cell "打开"
+        - row "X-n228-k23 227 23 154 25,742 ✓ 打开":
+          - cell "X-n228-k23":
+            - strong: X-n228-k23
+          - cell "227"
+          - cell "23"
+          - cell "154"
+          - cell "25,742 ✓"
+          - cell "打开"
+        - row "X-n233-k16 232 16 631 19,230 ✓ 打开":
+          - cell "X-n233-k16":
+            - strong: X-n233-k16
+          - cell "232"
+          - cell "16"
+          - cell "631"
+          - cell "19,230 ✓"
+          - cell "打开"
+        - row "X-n237-k14 236 14 18 27,042 ✓ 打开":
+          - cell "X-n237-k14":
+            - strong: X-n237-k14
+          - cell "236"
+          - cell "14"
+          - cell "18"
+          - cell "27,042 ✓"
+          - cell "打开"
+        - row "X-n242-k48 241 48 28 82,751 ✓ 打开":
+          - cell "X-n242-k48":
+            - strong: X-n242-k48
+          - cell "241"
+          - cell "48"
+          - cell "28"
+          - cell "82,751 ✓"
+          - cell "打开"
+        - row "X-n247-k50 246 47 134 37,274 ✓ 打开":
+          - cell "X-n247-k50":
+            - strong: X-n247-k50
+          - cell "246"
+          - cell "47"
+          - cell "134"
+          - cell "37,274 ✓"
+          - cell "打开"
+        - row "X-n251-k28 250 28 69 38,684 ✓ 打开":
+          - cell "X-n251-k28":
+            - strong: X-n251-k28
+          - cell "250"
+          - cell "28"
+          - cell "69"
+          - cell "38,684 ✓"
+          - cell "打开"
+        - row "X-n256-k16 255 16 1225 18,839 ✓ 打开":
+          - cell "X-n256-k16":
+            - strong: X-n256-k16
+          - cell "255"
+          - cell "16"
+          - cell "1225"
+          - cell "18,839 ✓"
+          - cell "打开"
+        - row "X-n261-k13 260 13 1081 26,558 ✓ 打开":
+          - cell "X-n261-k13":
+            - strong: X-n261-k13
+          - cell "260"
+          - cell "13"
+          - cell "1081"
+          - cell "26,558 ✓"
+          - cell "打开"
+        - row "X-n266-k58 265 58 35 75,478 ✓ 打开":
+          - cell "X-n266-k58":
+            - strong: X-n266-k58
+          - cell "265"
+          - cell "58"
+          - cell "35"
+          - cell "75,478 ✓"
+          - cell "打开"
+        - row "X-n270-k35 269 35 585 35,291 ✓ 打开":
+          - cell "X-n270-k35":
+            - strong: X-n270-k35
+          - cell "269"
+          - cell "35"
+          - cell "585"
+          - cell "35,291 ✓"
+          - cell "打开"
+        - row "X-n275-k28 274 28 10 21,245 ✓ 打开":
+          - cell "X-n275-k28":
+            - strong: X-n275-k28
+          - cell "274"
+          - cell "28"
+          - cell "10"
+          - cell "21,245 ✓"
+          - cell "打开"
+        - row "X-n280-k17 279 17 192 33,503 打开":
+          - cell "X-n280-k17":
+            - strong: X-n280-k17
+          - cell "279"
+          - cell "17"
+          - cell "192"
+          - cell "33,503"
+          - cell "打开"
+        - row "X-n284-k15 283 15 109 20,215 ✓ 打开":
+          - cell "X-n284-k15":
+            - strong: X-n284-k15
+          - cell "283"
+          - cell "15"
+          - cell "109"
+          - cell "20,215 ✓"
+          - cell "打开"
+        - row "X-n289-k60 288 60 267 95,151 ✓ 打开":
+          - cell "X-n289-k60":
+            - strong: X-n289-k60
+          - cell "288"
+          - cell "60"
+          - cell "267"
+          - cell "95,151 ✓"
+          - cell "打开"
+        - row "X-n294-k50 293 50 285 47,161 ✓ 打开":
+          - cell "X-n294-k50":
+            - strong: X-n294-k50
+          - cell "293"
+          - cell "50"
+          - cell "285"
+          - cell "47,161 ✓"
+          - cell "打开"
+        - row "X-n298-k31 297 31 55 34,231 ✓ 打开":
+          - cell "X-n298-k31":
+            - strong: X-n298-k31
+          - cell "297"
+          - cell "31"
+          - cell "55"
+          - cell "34,231 ✓"
+          - cell "打开"
+        - row "X-n303-k21 302 21 794 21,736 打开":
+          - cell "X-n303-k21":
+            - strong: X-n303-k21
+          - cell "302"
+          - cell "21"
+          - cell "794"
+          - cell "21,736"
+          - cell "打开"
+        - row "X-n308-k13 307 13 246 25,859 打开":
+          - cell "X-n308-k13":
+            - strong: X-n308-k13
+          - cell "307"
+          - cell "13"
+          - cell "246"
+          - cell "25,859"
+          - cell "打开"
+        - row "X-n313-k71 312 71 248 94,043 ✓ 打开":
+          - cell "X-n313-k71":
+            - strong: X-n313-k71
+          - cell "312"
+          - cell "71"
+          - cell "248"
+          - cell "94,043 ✓"
+          - cell "打开"
+        - row "X-n317-k53 316 53 6 78,355 ✓ 打开":
+          - cell "X-n317-k53":
+            - strong: X-n317-k53
+          - cell "316"
+          - cell "53"
+          - cell "6"
+          - cell "78,355 ✓"
+          - cell "打开"
+        - row "X-n322-k28 321 28 868 29,834 ✓ 打开":
+          - cell "X-n322-k28":
+            - strong: X-n322-k28
+          - cell "321"
+          - cell "28"
+          - cell "868"
+          - cell "29,834 ✓"
+          - cell "打开"
+        - row "X-n327-k20 326 20 128 27,532 打开":
+          - cell "X-n327-k20":
+            - strong: X-n327-k20
+          - cell "326"
+          - cell "20"
+          - cell "128"
+          - cell "27,532"
+          - cell "打开"
+        - row "X-n331-k15 330 15 23 31,102 ✓ 打开":
+          - cell "X-n331-k15":
+            - strong: X-n331-k15
+          - cell "330"
+          - cell "15"
+          - cell "23"
+          - cell "31,102 ✓"
+          - cell "打开"
+        - row "X-n336-k84 335 84 203 139,111 打开":
+          - cell "X-n336-k84":
+            - strong: X-n336-k84
+          - cell "335"
+          - cell "84"
+          - cell "203"
+          - cell "139,111"
+          - cell "打开"
+        - row "X-n344-k43 343 43 61 42,050 ✓ 打开":
+          - cell "X-n344-k43":
+            - strong: X-n344-k43
+          - cell "343"
+          - cell "43"
+          - cell "61"
+          - cell "42,050 ✓"
+          - cell "打开"
+        - row "X-n351-k40 350 40 436 25,896 ✓ 打开":
+          - cell "X-n351-k40":
+            - strong: X-n351-k40
+          - cell "350"
+          - cell "40"
+          - cell "436"
+          - cell "25,896 ✓"
+          - cell "打开"
+        - row "X-n359-k29 358 29 68 51,505 ✓ 打开":
+          - cell "X-n359-k29":
+            - strong: X-n359-k29
+          - cell "358"
+          - cell "29"
+          - cell "68"
+          - cell "51,505 ✓"
+          - cell "打开"
+        - row "X-n367-k17 366 17 218 22,814 ✓ 打开":
+          - cell "X-n367-k17":
+            - strong: X-n367-k17
+          - cell "366"
+          - cell "17"
+          - cell "218"
+          - cell "22,814 ✓"
+          - cell "打开"
+        - row "X-n376-k94 375 94 4 147,713 ✓ 打开":
+          - cell "X-n376-k94":
+            - strong: X-n376-k94
+          - cell "375"
+          - cell "94"
+          - cell "4"
+          - cell "147,713 ✓"
+          - cell "打开"
+        - row "X-n384-k52 383 52 564 65,928 ✓ 打开":
+          - cell "X-n384-k52":
+            - strong: X-n384-k52
+          - cell "383"
+          - cell "52"
+          - cell "564"
+          - cell "65,928 ✓"
+          - cell "打开"
+        - row "X-n393-k38 392 38 78 38,260 ✓ 打开":
+          - cell "X-n393-k38":
+            - strong: X-n393-k38
+          - cell "392"
+          - cell "38"
+          - cell "78"
+          - cell "38,260 ✓"
+          - cell "打开"
+        - row "X-n401-k29 400 29 745 66,154 打开":
+          - cell "X-n401-k29":
+            - strong: X-n401-k29
+          - cell "400"
+          - cell "29"
+          - cell "745"
+          - cell "66,154"
+          - cell "打开"
+        - row "X-n411-k19 410 19 216 19,712 打开":
+          - cell "X-n411-k19":
+            - strong: X-n411-k19
+          - cell "410"
+          - cell "19"
+          - cell "216"
+          - cell "19,712"
+          - cell "打开"
+        - row "X-n420-k130 419 130 18 107,798 ✓ 打开":
+          - cell "X-n420-k130":
+            - strong: X-n420-k130
+          - cell "419"
+          - cell "130"
+          - cell "18"
+          - cell "107,798 ✓"
+          - cell "打开"
+        - row "X-n429-k61 428 61 536 65,449 打开":
+          - cell "X-n429-k61":
+            - strong: X-n429-k61
+          - cell "428"
+          - cell "61"
+          - cell "536"
+          - cell "65,449"
+          - cell "打开"
+        - row "X-n439-k37 438 37 12 36,391 ✓ 打开":
+          - cell "X-n439-k37":
+            - strong: X-n439-k37
+          - cell "438"
+          - cell "37"
+          - cell "12"
+          - cell "36,391 ✓"
+          - cell "打开"
+        - row "X-n449-k29 448 29 777 55,233 打开":
+          - cell "X-n449-k29":
+            - strong: X-n449-k29
+          - cell "448"
+          - cell "29"
+          - cell "777"
+          - cell "55,233"
+          - cell "打开"
+        - row "X-n459-k26 458 26 1106 24,139 打开":
+          - cell "X-n459-k26":
+            - strong: X-n459-k26
+          - cell "458"
+          - cell "26"
+          - cell "1106"
+          - cell "24,139"
+          - cell "打开"
+        - row "X-n469-k138 468 138 256 221,824 ✓ 打开":
+          - cell "X-n469-k138":
+            - strong: X-n469-k138
+          - cell "468"
+          - cell "138"
+          - cell "256"
+          - cell "221,824 ✓"
+          - cell "打开"
+        - row "X-n480-k70 479 70 52 89,449 打开":
+          - cell "X-n480-k70":
+            - strong: X-n480-k70
+          - cell "479"
+          - cell "70"
+          - cell "52"
+          - cell "89,449"
+          - cell "打开"
+        - row "X-n491-k59 490 59 428 66,483 打开":
+          - cell "X-n491-k59":
+            - strong: X-n491-k59
+          - cell "490"
+          - cell "59"
+          - cell "428"
+          - cell "66,483"
+          - cell "打开"
+        - row "X-n502-k39 501 39 13 69,226 打开":
+          - cell "X-n502-k39":
+            - strong: X-n502-k39
+          - cell "501"
+          - cell "39"
+          - cell "13"
+          - cell "69,226"
+          - cell "打开"
+        - row "X-n513-k21 512 21 142 24,201 打开":
+          - cell "X-n513-k21":
+            - strong: X-n513-k21
+          - cell "512"
+          - cell "21"
+          - cell "142"
+          - cell "24,201"
+          - cell "打开"
+        - row "X-n524-k153 523 137 125 154,593 ✓ 打开":
+          - cell "X-n524-k153":
+            - strong: X-n524-k153
+          - cell "523"
+          - cell "137"
+          - cell "125"
+          - cell "154,593 ✓"
+          - cell "打开"
+        - row "X-n536-k96 535 96 371 94,840 打开":
+          - cell "X-n536-k96":
+            - strong: X-n536-k96
+          - cell "535"
+          - cell "96"
+          - cell "371"
+          - cell "94,840"
+          - cell "打开"
+        - row "X-n548-k50 547 50 11 86,700 ✓ 打开":
+          - cell "X-n548-k50":
+            - strong: X-n548-k50
+          - cell "547"
+          - cell "50"
+          - cell "11"
+          - cell "86,700 ✓"
+          - cell "打开"
+        - row "X-n561-k42 560 42 74 42,717 打开":
+          - cell "X-n561-k42":
+            - strong: X-n561-k42
+          - cell "560"
+          - cell "42"
+          - cell "74"
+          - cell "42,717"
+          - cell "打开"
+        - row "X-n573-k30 572 30 210 50,673 打开":
+          - cell "X-n573-k30":
+            - strong: X-n573-k30
+          - cell "572"
+          - cell "30"
+          - cell "210"
+          - cell "50,673"
+          - cell "打开"
+        - row "X-n586-k159 585 159 28 190,316 打开":
+          - cell "X-n586-k159":
+            - strong: X-n586-k159
+          - cell "585"
+          - cell "159"
+          - cell "28"
+          - cell "190,316"
+          - cell "打开"
+        - row "X-n599-k92 598 92 487 108,451 打开":
+          - cell "X-n599-k92":
+            - strong: X-n599-k92
+          - cell "598"
+          - cell "92"
+          - cell "487"
+          - cell "108,451"
+          - cell "打开"
+        - row "X-n613-k62 612 62 523 59,535 打开":
+          - cell "X-n613-k62":
+            - strong: X-n613-k62
+          - cell "612"
+          - cell "62"
+          - cell "523"
+          - cell "59,535"
+          - cell "打开"
+        - row "X-n627-k43 626 43 110 62,164 打开":
+          - cell "X-n627-k43":
+            - strong: X-n627-k43
+          - cell "626"
+          - cell "43"
+          - cell "110"
+          - cell "62,164"
+          - cell "打开"
+        - row "X-n641-k35 640 35 1381 63,682 打开":
+          - cell "X-n641-k35":
+            - strong: X-n641-k35
+          - cell "640"
+          - cell "35"
+          - cell "1381"
+          - cell "63,682"
+          - cell "打开"
+        - row "X-n655-k131 654 131 5 106,780 ✓ 打开":
+          - cell "X-n655-k131":
+            - strong: X-n655-k131
+          - cell "654"
+          - cell "131"
+          - cell "5"
+          - cell "106,780 ✓"
+          - cell "打开"
+        - row "X-n670-k130 669 126 129 146,332 ✓ 打开":
+          - cell "X-n670-k130":
+            - strong: X-n670-k130
+          - cell "669"
+          - cell "126"
+          - cell "129"
+          - cell "146,332 ✓"
+          - cell "打开"
+        - row "X-n685-k75 684 75 408 68,205 打开":
+          - cell "X-n685-k75":
+            - strong: X-n685-k75
+          - cell "684"
+          - cell "75"
+          - cell "408"
+          - cell "68,205"
+          - cell "打开"
+        - row "X-n701-k44 700 44 87 81,899 打开":
+          - cell "X-n701-k44":
+            - strong: X-n701-k44
+          - cell "700"
+          - cell "44"
+          - cell "87"
+          - cell "81,899"
+          - cell "打开"
+        - row "X-n716-k35 715 35 1007 43,350 打开":
+          - cell "X-n716-k35":
+            - strong: X-n716-k35
+          - cell "715"
+          - cell "35"
+          - cell "1007"
+          - cell "43,350"
+          - cell "打开"
+        - row "X-n733-k159 732 159 25 136,187 打开":
+          - cell "X-n733-k159":
+            - strong: X-n733-k159
+          - cell "732"
+          - cell "159"
+          - cell "25"
+          - cell "136,187"
+          - cell "打开"
+        - row "X-n749-k98 748 98 396 77,269 打开":
+          - cell "X-n749-k98":
+            - strong: X-n749-k98
+          - cell "748"
+          - cell "98"
+          - cell "396"
+          - cell "77,269"
+          - cell "打开"
+        - row "X-n766-k71 765 71 166 114,417 打开":
+          - cell "X-n766-k71":
+            - strong: X-n766-k71
+          - cell "765"
+          - cell "71"
+          - cell "166"
+          - cell "114,417"
+          - cell "打开"
+        - row "X-n783-k48 782 48 832 72,383 打开":
+          - cell "X-n783-k48":
+            - strong: X-n783-k48
+          - cell "782"
+          - cell "48"
+          - cell "832"
+          - cell "72,383"
+          - cell "打开"
+        - row "X-n801-k40 800 40 20 73,305 打开":
+          - cell "X-n801-k40":
+            - strong: X-n801-k40
+          - cell "800"
+          - cell "40"
+          - cell "20"
+          - cell "73,305"
+          - cell "打开"
+        - row "X-n819-k171 818 171 358 158,121 打开":
+          - cell "X-n819-k171":
+            - strong: X-n819-k171
+          - cell "818"
+          - cell "171"
+          - cell "358"
+          - cell "158,121"
+          - cell "打开"
+        - row "X-n837-k142 836 142 44 193,721 打开":
+          - cell "X-n837-k142":
+            - strong: X-n837-k142
+          - cell "836"
+          - cell "142"
+          - cell "44"
+          - cell "193,721"
+          - cell "打开"
+        - row "X-n856-k95 855 95 9 88,965 ✓ 打开":
+          - cell "X-n856-k95":
+            - strong: X-n856-k95
+          - cell "855"
+          - cell "95"
+          - cell "9"
+          - cell "88,965 ✓"
+          - cell "打开"
+        - row "X-n876-k59 875 59 764 99,299 打开":
+          - cell "X-n876-k59":
+            - strong: X-n876-k59
+          - cell "875"
+          - cell "59"
+          - cell "764"
+          - cell "99,299"
+          - cell "打开"
+        - row "X-n895-k37 894 37 1816 53,849 打开":
+          - cell "X-n895-k37":
+            - strong: X-n895-k37
+          - cell "894"
+          - cell "37"
+          - cell "1816"
+          - cell "53,849"
+          - cell "打开"
+        - row "X-n916-k207 915 207 33 329,179 打开":
+          - cell "X-n916-k207":
+            - strong: X-n916-k207
+          - cell "915"
+          - cell "207"
+          - cell "33"
+          - cell "329,179"
+          - cell "打开"
+        - row "X-n936-k151 935 151 138 132,715 打开":
+          - cell "X-n936-k151":
+            - strong: X-n936-k151
+          - cell "935"
+          - cell "151"
+          - cell "138"
+          - cell "132,715"
+          - cell "打开"
+        - row "X-n957-k87 956 87 11 85,465 打开":
+          - cell "X-n957-k87":
+            - strong: X-n957-k87
+          - cell "956"
+          - cell "87"
+          - cell "11"
+          - cell "85,465"
+          - cell "打开"
+        - row "X-n979-k58 978 58 998 118,940 打开":
+          - cell "X-n979-k58":
+            - strong: X-n979-k58
+          - cell "978"
+          - cell "58"
+          - cell "998"
+          - cell "118,940"
+          - cell "打开"
+        - row "X-n1001-k43 1000 43 131 72,334 打开":
+          - cell "X-n1001-k43":
+            - strong: X-n1001-k43
+          - cell "1000"
+          - cell "43"
+          - cell "131"
+          - cell "72,334"
+          - cell "打开"
+    - paragraph: ✓ 表示 BKS 已被证明最优。打开时从 CVRPLIB 下载原始 .vrp/.sol 并缓存在本机；求解结果自动给出与 BKS 的差距。
+- region "算法库":
+  - tablist:
+    - tab "算法库" [selected]:
+      - text: 算法库
+      - button "Close 算法库"
+    - tab "源码"
+  - tabpanel "算法库":
+    - combobox "问题类型":
+      - option "多车任务" [selected]
+      - option "转弯约束路网"
+      - option "车辆路径 CVRP"
+      - option "覆盖作业"
+      - option "点到点规划"
+    - heading "PyVRP 固定车队 PyVRP" [level=5]
+    - paragraph: 在绕障最短路距离上用 PyVRP 迭代局部搜索分配任务、安排顺序，车辆数不超过车队规模，目标总里程最短。
+    - paragraph: 实现：PyVRP 0.14.0
+    - paragraph: 使用 seed；墙钟终止仍可能影响跨硬件重现
+    - paragraph: 元启发式 · 无最优性保证
+    - paragraph:
+      - link "Wouda 等 (2024)":
+        - /url: https://doi.org/10.1287/ijoc.2023.0055
+      - link "Vidal (2022)":
+        - /url: https://doi.org/10.1016/j.cor.2021.105643
+      - link "Lozano-Pérez & Wesley (1979)":
+        - /url: https://doi.org/10.1145/359156.359164
+      - link "Dubins (1957)":
+        - /url: https://doi.org/10.2307/2372560
+      - link "Le Ny 等 (2007)":
+        - /url: "#"
+      - link "Sucan 等 (2012)":
+        - /url: https://doi.org/10.1109/mra.2012.2205651
+    - heading "OR-Tools 车队调度 OR-Tools" [level=5]
+    - paragraph: OR-Tools 引导局部搜索；目标为“最晚完成时间最短”时加入跨车跨度代价，使各车工作量更均衡。
+    - paragraph: 实现：OR-Tools 9.15.6755
+    - paragraph: 此适配器不使用 seed；更换 seed 不构成独立随机重复
+    - paragraph: 元启发式 · 无最优性保证
+    - paragraph:
+      - link "Perron & Furnon (2026)":
+        - /url: https://developers.google.com/optimization/
+      - link "Voudouris & Tsang (1999)":
+        - /url: https://doi.org/10.1016/s0377-2217(98)00099-x
+      - link "Lozano-Pérez & Wesley (1979)":
+        - /url: https://doi.org/10.1145/359156.359164
+      - link "Dubins (1957)":
+        - /url: https://doi.org/10.2307/2372560
+      - link "Le Ny 等 (2007)":
+        - /url: "#"
+      - link "Sucan 等 (2012)":
+        - /url: https://doi.org/10.1109/mra.2012.2205651
+    - heading "节约算法 + 2-opt 基线" [level=5]
+    - paragraph: Clarke–Wright 节约算法在绕障距离上合并路线，再逐车 2-opt 改进；确定性、速度快。
+    - paragraph: 实现：src/lab/urp_lab/solvers/fleet.py · 源码 SHA256 c93b20b121ae0032bfe4033f48ce67f21c9ea7717e4621a97350b235a234fdbe
+    - paragraph: 此适配器不使用 seed；更换 seed 不构成独立随机重复
+    - paragraph: 构造启发式 · 无最优性保证
+    - paragraph:
+      - link "Clarke & Wright (1964)":
+        - /url: https://doi.org/10.1287/opre.12.4.568
+      - link "Croes (1958)":
+        - /url: https://doi.org/10.1287/opre.6.6.791
+    - button "查看源码"
+    - heading "扫描算法 基线" [level=5]
+    - paragraph: 以车库为中心按极角扫过任务点，按容量切分给各车，再逐车 2-opt；适合任务围绕车库分布的场景。
+    - paragraph: 实现：src/lab/urp_lab/solvers/fleet.py · 源码 SHA256 c93b20b121ae0032bfe4033f48ce67f21c9ea7717e4621a97350b235a234fdbe
+    - paragraph: 此适配器不使用 seed；更换 seed 不构成独立随机重复
+    - paragraph: 构造启发式 · 无最优性保证
+    - paragraph:
+      - link "Gillett & Miller (1974)":
+        - /url: https://doi.org/10.1287/opre.22.2.340
+      - link "Croes (1958)":
+        - /url: https://doi.org/10.1287/opre.6.6.791
+    - button "查看源码"
+    - heading "先聚类后排程 基线" [level=5]
+    - paragraph: 按车辆数做容量约束 k-means 分区，再分别构造与改进单车回路；不保证最优或路线互不交叉。
+    - paragraph: 实现：src/lab/urp_lab/solvers/fleet.py · 源码 SHA256 c93b20b121ae0032bfe4033f48ce67f21c9ea7717e4621a97350b235a234fdbe
+    - paragraph: 使用 seed；墙钟终止仍可能影响跨硬件重现
+    - paragraph: 构造启发式 · 无最优性保证
+    - paragraph:
+      - link "Fisher & Jaikumar (1981)":
+        - /url: https://doi.org/10.1002/net.3230110205
+      - link "Croes (1958)":
+        - /url: https://doi.org/10.1287/opre.6.6.791
+    - button "查看源码"
+- status: 源码 opened
+- alert
+- contentinfo:
+  - text: 已连接 求解空闲 田间：未运行 · TB4：未运行 果园采收集运 选中：地块 P1
+  - link "CVRP 数值任务":
+    - /url: "#/jobs"
+  - link "BPP 历史":
+    - /url: "#/bpp"
+```
+
+# Test source
+
+```ts
+  1  | // Luna 260abc42 (workbench 7c8a6f65): 生成来源 section (studio/agri/GeneratedFrom.tsx) inside ScenarioInfo (PlanPanels.tsx:632,654,
+  2  | // shown in the 检查器 dock tab). data-generated = parametric | manual | unknown. 回到目录改参数 → #/archive, catalog card reopened
+  3  | // with the scenario's params + seed (AgriCatalog.tsx:60-89).
+  4  | import { test, expect, shot, openAgriCatalog, firstRunnablePattern, openInspectorTab } from './helpers';
+  5  | async function readForm(card: any, name: string) {
+  6  |   const out: Record<string, string> = {};
+  7  |   const fields = card.locator(`fieldset [aria-label^="${name} "]`);
+  8  |   for (let i = 0; i < (await fields.count()); i++) {
+  9  |     const f = fields.nth(i); const k = (await f.getAttribute('aria-label'))!;
+  10 |     out[k] = (await f.getAttribute('type')) === 'checkbox' ? String(await f.isChecked()) : await f.inputValue();
+  11 |   }
+  12 |   return out;
+  13 | }
+  14 | test('K 生成来源：参数化 → 手工编辑 → 回到目录改参数', async ({ page }, info) => {
+  15 |   const catalog = await openAgriCatalog(page);
+  16 |   // Pinned to 果园采收集运 (a57a43fb/d6aec3bf normalized diff for this pattern, seed 7).
+  17 |   const card = catalog.locator('details', { has: page.locator('summary', { hasText: '果园采收集运' }) }).first();
+  18 |   const firstRunnable = await firstRunnablePattern(page);
+  19 |   console.log('K first runnable card:', firstRunnable.name);
+  20 |   if (firstRunnable.card !== card) await firstRunnable.card.locator('summary').click(); // collapse
+  21 |   if ((await card.getAttribute('open')) === null) await card.locator('summary').click();
+  22 |   const name = (await card.locator('summary').innerText()).split(' · ')[0].trim();
+  23 |   console.log('K selected card:', name);
+  24 |   expect(name).toContain('果园采收集运');
+  25 |   await card.getByLabel(`${name} 随机种子`).fill('7');
+  26 |   const form = await readForm(card, name);
+  27 |   expect(form[`${name} 随机种子`]).toBe('7');
+  28 |   await card.getByRole('button', { name: '校验并导入任务规划' }).click();
+  29 |   await expect(page).toHaveURL(/#\/plan\/.+/, { timeout: 60_000 });
+  30 |   const map = page.locator('svg[aria-label="任务地图编辑器"]');
+  31 |   await expect(map).toBeVisible({ timeout: 30_000 });
+  32 |   await openInspectorTab(page);
+  33 |   const scenarioBtn = page.getByRole('group', { name: '检查器' }).getByRole('button', { name: '场景', exact: true }); // fleet inspector: 车队/选中/场景 (PlanPanels.tsx:399)
+  34 |   if (await scenarioBtn.count()) await scenarioBtn.click();
+  35 |   const gen = page.getByRole('region', { name: '生成来源' }).or(page.locator('section[aria-label="生成来源"]')).first();
+  36 |   await test.step('导入后：参数化生成', async () => {
+  37 |     await expect(gen).toBeVisible({ timeout: 15_000 });
+  38 |     await expect(gen).toHaveAttribute('data-generated', 'parametric');
+  39 |     await expect(gen).toContainText('种子 7');
+  40 |     await shot(page, info, 'parametric');
+  41 |   });
+  42 |   await test.step('拖动任务点 → 手工编辑并列出变化', async () => {
+  43 |     const t = (await map.locator('g[data-hit="task"]').first().boundingBox())!;
+  44 |     await page.mouse.move(t.x + t.width / 2, t.y + t.height / 2); await page.mouse.down();
+  45 |     await page.mouse.move(t.x + t.width / 2 + 60, t.y + t.height / 2 + 30, { steps: 12 }); await page.mouse.up();
+  46 |     await openInspectorTab(page);
+  47 |     if (await scenarioBtn.count()) await scenarioBtn.click();
+  48 |     await expect(gen).toHaveAttribute('data-generated', 'manual', { timeout: 10_000 });
+  49 |     await expect(gen.getByRole('status')).toContainText(/手工编辑.*：.+/);
+  50 |     await shot(page, info, 'manual');
+  51 |   });
+  52 |   await test.step('回到目录改参数 → 卡片展开，参数与种子一致', async () => {
+  53 |     await gen.getByRole('button', { name: '回到目录改参数' }).click();
+  54 |     await expect(page).toHaveURL(/#\/archive/);
+  55 |     const catalog = page.getByRole('region', { name: '农业任务目录' });
+> 56 |     await expect(catalog).toBeVisible({ timeout: 15_000 });
+     |                           ^ Error: expect(locator).toBeVisible() failed
+  57 |     const back = catalog.locator('details', { has: page.locator('summary', { hasText: name }) }).first();
+  58 |     await expect(back).toHaveAttribute('open', '');
+  59 |     await expect(back.getByLabel(`${name} 随机种子`)).toHaveValue('7');
+  60 |     expect(await readForm(back, name)).toEqual(form);
+  61 |     await shot(page, info, 'back-to-catalog');
+  62 |   });
+  63 | });
+  64 | 
+```

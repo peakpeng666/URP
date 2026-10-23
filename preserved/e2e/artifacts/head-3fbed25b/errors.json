@@ -1,0 +1,37 @@
+{
+  "home": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "plan": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "assets": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "sim": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "jobs": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "bpp": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "agri": {
+    "console": [],
+    "failed": [],
+    "http": []
+  }
+}

@@ -1,0 +1,1482 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/video-suite/node_modules/.bin/playwright",
+      "test"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/video-suite/playwright.config.ts",
+    "rootDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "${USER_HOME}/urp-e2e/video-evidence/final-4100/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "${USER_HOME}/urp-e2e/video-evidence/final-4100/html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "a-agri-catalog.spec.ts",
+      "file": "a-agri-catalog.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "A 农业目录：筛选环境/作业/状态、打开模式、改参数与种子、预览几何",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1726,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "按生产环境筛选",
+                      "duration": 113
+                    },
+                    {
+                      "title": "按农业作业筛选",
+                      "duration": 97
+                    },
+                    {
+                      "title": "按模式状态筛选",
+                      "duration": 83
+                    },
+                    {
+                      "title": "清除筛选",
+                      "duration": 113
+                    },
+                    {
+                      "title": "打开模式详情",
+                      "duration": 119
+                    },
+                    {
+                      "title": "修改参数与随机种子",
+                      "duration": 136
+                    },
+                    {
+                      "title": "导入后预览几何出现",
+                      "duration": 312
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:05:33.289Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "catalog-open",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/catalog-open-f68ee0b8254194911983cfdc159f1a635ecc2389.png"
+                    },
+                    {
+                      "name": "filter-env",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/filter-env-ec2e26f8eabaed66a742aa1e1241fad7b1cfd663.png"
+                    },
+                    {
+                      "name": "filter-op",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/filter-op-1dd0870268803f198979d2f67ad351c8a0a7886c.png"
+                    },
+                    {
+                      "name": "filter-status",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/filter-status-147e0f60aed2a8855bd0b221b3375bcb66684369.png"
+                    },
+                    {
+                      "name": "pattern-detail",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/pattern-detail-15f4fac6b2b7e319177f8d4ae313777a9311360c.png"
+                    },
+                    {
+                      "name": "params-changed",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/params-changed-3c3556f630533fe735c0d60dc49f89897e1d03d9.png"
+                    },
+                    {
+                      "name": "preview-geometry",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/attachments/preview-geometry-32c2c2aac6c516aa35389366799d607e837dc84d.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/a-agri-catalog-A-农业目录：筛选环境-作业-状态、打开模式、改参数与种子、预览几何/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bdea1ea2ea844c15cf45-8d1a382abc079436a4a9",
+          "file": "a-agri-catalog.spec.ts",
+          "line": 2,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "b-draft-persistence.spec.ts",
+      "file": "b-draft-persistence.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "B 草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2010,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "编辑参数与种子",
+                      "duration": 91
+                    },
+                    {
+                      "title": "刷新页面",
+                      "duration": 891
+                    },
+                    {
+                      "title": "验证草稿恢复",
+                      "duration": 384
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:05:35.187Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "edited",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/attachments/edited-6ee2edbd0e37195a16594eb720997c61510c1733.png"
+                    },
+                    {
+                      "name": "after-reload",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/attachments/after-reload-827e467bb96a9f8a84a06bf0a635f42f4ff18eff.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/b-draft-persistence-B-草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "16b4c2e22dcecb6f879f-d29ec449b119be116912",
+          "file": "b-draft-persistence.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "c-map-editor.spec.ts",
+      "file": "c-map-editor.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2033,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "选择对象（点击任务点）",
+                      "duration": 227
+                    },
+                    {
+                      "title": "拖拽对象",
+                      "duration": 409
+                    },
+                    {
+                      "title": "撤销",
+                      "duration": 166
+                    },
+                    {
+                      "title": "重做",
+                      "duration": 162
+                    },
+                    {
+                      "title": "数值输入 X",
+                      "duration": 164
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:05:37.265Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "selected",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/selected-ee4c761286861441df397989275fa1627c45b54e.png"
+                    },
+                    {
+                      "name": "dragged",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/dragged-cab7fe3c60996c3c521625504c164b8ebaf3f729.png"
+                    },
+                    {
+                      "name": "undone",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/undone-c1d47739a65768092c1f0d0641b10dd967664ffe.png"
+                    },
+                    {
+                      "name": "redone",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/redone-7e86375efb077a011515aa062ee7c0bf71b54039.png"
+                    },
+                    {
+                      "name": "numeric",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/attachments/numeric-336d735c328c992de2d3c9d4306d5d27c431aaaf.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "573247b96fcd9e58f01d-141b7077dc3e10e29a9e",
+          "file": "c-map-editor.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "d-import-idempotency.spec.ts",
+      "file": "d-import-idempotency.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "D 导入幂等：丢失响应后重新导入，场景列表无重复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "added",
+                  "description": "[\"果园采收集运\"]"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1112,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "首次导入：服务端处理后丢弃响应",
+                      "duration": 155
+                    },
+                    {
+                      "title": "重新导入同一参数",
+                      "duration": 212
+                    },
+                    {
+                      "title": "查询场景列表并断言无重复",
+                      "duration": 49
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:05:39.523Z",
+                  "annotations": [
+                    {
+                      "type": "added",
+                      "description": "[\"果园采收集运\"]"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "lost-response",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/d-import-idempotency-D-导入幂等：丢失响应后重新导入，场景列表无重复/attachments/lost-response-9afa303b3fcea781d87129ab4c0f03157b3d28c2.png"
+                    },
+                    {
+                      "name": "reimported",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/d-import-idempotency-D-导入幂等：丢失响应后重新导入，场景列表无重复/attachments/reimported-1afcfaa127cbac770336fca44657b85fa89115ff.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/d-import-idempotency-D-导入幂等：丢失响应后重新导入，场景列表无重复/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/d-import-idempotency-D-导入幂等：丢失响应后重新导入，场景列表无重复/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/d-import-idempotency-D-导入幂等：丢失响应后重新导入，场景列表无重复/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c7372e30b0ecde7c09d6-f1f9b40c60bcef00f814",
+          "file": "d-import-idempotency.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "e-fork-timeout.spec.ts",
+      "file": "e-fork-timeout.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "E Fork 超时重试：只生成一份“我的场景”",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "forkCalls",
+                  "description": "1"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 61942,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "编辑内置场景触发自动另存",
+                      "duration": 1233
+                    },
+                    {
+                      "title": "等待超时与重试",
+                      "duration": 60125
+                    },
+                    {
+                      "title": "断言只有一份副本",
+                      "duration": 14
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:05:40.743Z",
+                  "annotations": [
+                    {
+                      "type": "forkCalls",
+                      "description": "1"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "edited-builtin",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/e-fork-timeout-E-Fork-超时重试：只生成一份“我的场景”/attachments/edited-builtin-54f9b582f40405752b766940349ecc99b16ac209.png"
+                    },
+                    {
+                      "name": "after-retry",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/e-fork-timeout-E-Fork-超时重试：只生成一份“我的场景”/attachments/after-retry-ffea7de3a58dc81114cfb2949ac1db303903ab93.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/e-fork-timeout-E-Fork-超时重试：只生成一份“我的场景”/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/e-fork-timeout-E-Fork-超时重试：只生成一份“我的场景”/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/e-fork-timeout-E-Fork-超时重试：只生成一份“我的场景”/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "d9de3a180fb72710bf05-32927bd949da857f0fb8",
+          "file": "e-fork-timeout.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "f-result-integrity.spec.ts",
+      "file": "f-result-integrity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "F 结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "layout",
+                  "description": "{\"history\":{\"x\":-81,\"y\":655,\"width\":830.71875,\"height\":244.953125},\"compare\":{\"x\":790,\"y\":513,\"width\":1246.546875,\"height\":227.0625}}"
+                },
+                {
+                  "type": "history-scroller",
+                  "description": "{\"left\":288,\"right\":750,\"scrollWidth\":831,\"clientWidth\":462}"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1584,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "加入比较：隔离 + 缺字段",
+                      "duration": 269
+                    },
+                    {
+                      "title": "各处文字：历史资格列 / 验算列 / 未参与比较",
+                      "duration": 156
+                    },
+                    {
+                      "title": "布局：历史表与右侧列不重叠",
+                      "duration": 168
+                    },
+                    {
+                      "title": "缺字段运行：身份未核验，单独分组",
+                      "duration": 116
+                    },
+                    {
+                      "title": "选中隔离运行 → 选中方案横幅 + 实验结果横幅",
+                      "duration": 275
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:06:42.828Z",
+                  "annotations": [
+                    {
+                      "type": "layout",
+                      "description": "{\"history\":{\"x\":-81,\"y\":655,\"width\":830.71875,\"height\":244.953125},\"compare\":{\"x\":790,\"y\":513,\"width\":1246.546875,\"height\":227.0625}}"
+                    },
+                    {
+                      "type": "history-scroller",
+                      "description": "{\"left\":288,\"right\":750,\"scrollWidth\":831,\"clientWidth\":462}"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "history-added",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/history-added-27467376bd9593a85b8ac73a2ff3fa56d6195968.png"
+                    },
+                    {
+                      "name": "excluded",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/excluded-be74162d75ca3d653f112bf8db465569be1af69e.png"
+                    },
+                    {
+                      "name": "history-layout",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/history-layout-83bce8601822d85e20491948d2231342039de681.png"
+                    },
+                    {
+                      "name": "unverified-group",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/unverified-group-e82c57905a1dddb6d609ce66d003a7382b09c7f9.png"
+                    },
+                    {
+                      "name": "selected-banner",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/selected-banner-da0924090c4769319441bbebbe5f08d2009b16de.png"
+                    },
+                    {
+                      "name": "result-tab",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/result-tab-46c7b08923e032b5e07f52d5cd40cbe0370ea47d.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e9ce0e17f99eaac09d14-f4c9a93ea8522bbefe38",
+          "file": "f-result-integrity.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "g-solve-compare.spec.ts",
+      "file": "g-solve-compare.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "G 真实小规模求解并打开比较",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "solve-summary",
+                  "description": "本批 3 次运行 · 3 个已验算可行解; table rows with 通过=3; scenario=bench-cvrp-uniform-n20"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4289,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "求解",
+                      "duration": 3938
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:06:44.545Z",
+                  "annotations": [
+                    {
+                      "type": "solve-summary",
+                      "description": "本批 3 次运行 · 3 个已验算可行解; table rows with 通过=3; scenario=bench-cvrp-uniform-n20"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "before-solve",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/before-solve-fe5d57048ea156f9b5d5ea37ce3fb805272188bb.png"
+                    },
+                    {
+                      "name": "solved",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/solved-329ed62089e331406ea283a07f48c2404200cf81.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G-真实小规模求解并打开比较/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G-真实小规模求解并打开比较/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G-真实小规模求解并打开比较/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e8cd68996e8cc36ce593-ef819bc8aa4f484c0325",
+          "file": "g-solve-compare.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "G2 cvrp-depot-floor：0 个已验算可行解为预期，并显示碰撞报告",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "solve-summary",
+                  "description": "本批 3 次运行 · 0 个已验算可行解; 通过=0"
+                },
+                {
+                  "type": "map_check",
+                  "description": "[{\"id\":\"run_20261022T160649_e396be\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":5,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T160649_d307a3\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":4,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T160649_126f63\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":0,\"segment\":0,\"point\":[-7.582459016393442,3.3599180327868856],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}}]"
+                },
+                {
+                  "type": "collision-note",
+                  "description": "PyVRP 迭代局部搜索 · run_20261022T160649_126f63：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\nOR-Tools 引导局部搜索 · run_20261022T160649_d307a3：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\nClarke–Wright 节约算法 · run_20261022T160649_e396be：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m"
+                },
+                {
+                  "type": "violations",
+                  "description": "[{\"route\":\"0\",\"segment\":\"0\",\"text\":\"路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"4\",\"text\":\"路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"5\",\"text\":\"路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m\"}]"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4719,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "验算：地图净空未通过",
+                      "duration": 123
+                    },
+                    {
+                      "title": "碰撞报告（Mamba 04f4e381 selectors；未构建时 pending）",
+                      "duration": 386
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:06:48.999Z",
+                  "annotations": [
+                    {
+                      "type": "solve-summary",
+                      "description": "本批 3 次运行 · 0 个已验算可行解; 通过=0"
+                    },
+                    {
+                      "type": "map_check",
+                      "description": "[{\"id\":\"run_20261022T160649_e396be\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":5,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T160649_d307a3\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":4,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T160649_126f63\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":0,\"segment\":0,\"point\":[-7.582459016393442,3.3599180327868856],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}}]"
+                    },
+                    {
+                      "type": "collision-note",
+                      "description": "PyVRP 迭代局部搜索 · run_20261022T160649_126f63：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\nOR-Tools 引导局部搜索 · run_20261022T160649_d307a3：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\nClarke–Wright 节约算法 · run_20261022T160649_e396be：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m"
+                    },
+                    {
+                      "type": "violations",
+                      "description": "[{\"route\":\"0\",\"segment\":\"0\",\"text\":\"路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"4\",\"text\":\"路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"5\",\"text\":\"路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m\"}]"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "solved-floor",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/solved-floor-1bcb9dce581c7385c81c450409068e48114f1f6f.png"
+                    },
+                    {
+                      "name": "verify-tab",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/verify-tab-e465103a89249abec42d5dcd87430af495a509b7.png"
+                    },
+                    {
+                      "name": "collision-report",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/collision-report-1714a34fc3e5f5be53a87c6607265cab1f06ba24.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e8cd68996e8cc36ce593-b95341cdc7176696f544",
+          "file": "g-solve-compare.spec.ts",
+          "line": 51,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "h-precheck-locate.spec.ts",
+      "file": "h-precheck-locate.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "H 预检定位：点击预检问题高亮对象并聚焦表单字段",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1218,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "地头宽度设为小于幅宽",
+                      "duration": 186
+                    },
+                    {
+                      "title": "预检问题出现",
+                      "duration": 16
+                    },
+                    {
+                      "title": "点击问题 → 高亮对象 + 聚焦地头宽度",
+                      "duration": 259
+                    },
+                    {
+                      "title": "点击地图形状只高亮不定位",
+                      "duration": 149
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:06:53.912Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "headland-6m-swath-7.2m",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/attachments/headland-6m-swath-7-2m-5be5d2c0b678f07e951463aa84b124cff9d06d28.png"
+                    },
+                    {
+                      "name": "located",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/attachments/located-7d7958e9454ba36f0bb5b5cb955b1f5e4792191e.png"
+                    },
+                    {
+                      "name": "shape-highlight",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/attachments/shape-highlight-1338951ece302f9cce863227eed556e50304fdfa.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f474b8bedf4ce4dacef3-090eefa360918da24480",
+          "file": "h-precheck-locate.spec.ts",
+          "line": 4,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "i-editor-batch.spec.ts",
+      "file": "i-editor-batch.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "I 地图编辑器：框选+批量平移、米制数值输入、几何校验定位",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "no locatable geometry issue in this pattern",
+                  "location": {
+                    "file": "${USER_HOME}/urp-e2e/video-suite/tests/i-editor-batch.spec.ts",
+                    "line": 45,
+                    "column": 10
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 2011,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "Alt+拖动框选多个任务",
+                      "duration": 489
+                    },
+                    {
+                      "title": "批量平移 ΔX=1 ΔY=-1",
+                      "duration": 245
+                    },
+                    {
+                      "title": "单选任务并米制输入 X",
+                      "duration": 354
+                    },
+                    {
+                      "title": "点击几何校验问题定位对象",
+                      "duration": 16,
+                      "error": {
+                        "message": "Error: Test is skipped: no locatable geometry issue in this pattern",
+                        "stack": "Error: Test is skipped: no locatable geometry issue in this pattern\n    at ${USER_HOME}/urp-e2e/video-suite/tests/i-editor-batch.spec.ts:45:10\n    at ${USER_HOME}/urp-e2e/video-suite/tests/i-editor-batch.spec.ts:43:3",
+                        "location": {
+                          "file": "${USER_HOME}/urp-e2e/video-suite/tests/i-editor-batch.spec.ts",
+                          "column": 10,
+                          "line": 45
+                        },
+                        "snippet": "  43 |   await test.step('点击几何校验问题定位对象', async () => {\n  44 |     const issues = page.getByLabel('几何校验').locator('button:not([disabled])'); // IssuesPanel.tsx:16\n> 45 |     test.skip(!(await issues.count()), 'no locatable geometry issue in this pattern');\n     |          ^\n  46 |     await issues.first().click();\n  47 |     await expect(issues.first()).toHaveAttribute('aria-current', 'true');\n  48 |     await expect(sel.locator('summary')).toContainText('已选 1');"
+                      }
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:06:55.202Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "no locatable geometry issue in this pattern",
+                      "location": {
+                        "file": "${USER_HOME}/urp-e2e/video-suite/tests/i-editor-batch.spec.ts",
+                        "line": 45,
+                        "column": 10
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "marquee",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/attachments/marquee-2a4f8dd6b757bde5d6cbfecbcea9ed3f6f2e71d4.png"
+                    },
+                    {
+                      "name": "batch-moved",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/attachments/batch-moved-5d6da1c312268f7ae0e669217cf146d86a041768.png"
+                    },
+                    {
+                      "name": "metric-input",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/attachments/metric-input-87b3008dc9e2f4b3d1380cc91bcdaf56951a7c3d.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "1415dcb1347cb23803a8-8e5c38c2dbffbb9180a5",
+          "file": "i-editor-batch.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "j-editor-next.spec.ts",
+      "file": "j-editor-next.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "J1 框选：工具栏按钮",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1460,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T16:06:57.399Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "box-toolbar",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J1-框选：工具栏按钮/attachments/box-toolbar-9ef01f4332fe3c1b5c7429538413a9cf776b05f1.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J1-框选：工具栏按钮/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J1-框选：工具栏按钮/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J1-框选：工具栏按钮/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb62b366b1e3e81b39d9-bfb68d2a2b4a5be1809a",
+          "file": "j-editor-next.spec.ts",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "title": "J2 框选：快捷键 B",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1393,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T16:06:58.983Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "box-key-b",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J2-框选：快捷键-B/attachments/box-key-b-f8bfa8e4acbc4032d7fe338f4b60b63f060b992b.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J2-框选：快捷键-B/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J2-框选：快捷键-B/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J2-框选：快捷键-B/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb62b366b1e3e81b39d9-c89dda7ed644faa5a688",
+          "file": "j-editor-next.spec.ts",
+          "line": 23,
+          "column": 1
+        },
+        {
+          "title": "J3 车辆参数问题跳转车队表单",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "skip",
+                  "description": "no vehicle-parameter issue in this pattern",
+                  "location": {
+                    "file": "${USER_HOME}/urp-e2e/video-suite/tests/j-editor-next.spec.ts",
+                    "line": 31,
+                    "column": 8
+                  }
+                }
+              ],
+              "expectedStatus": "skipped",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "skipped",
+                  "duration": 814,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T16:07:00.506Z",
+                  "annotations": [
+                    {
+                      "type": "skip",
+                      "description": "no vehicle-parameter issue in this pattern",
+                      "location": {
+                        "file": "${USER_HOME}/urp-e2e/video-suite/tests/j-editor-next.spec.ts",
+                        "line": 31,
+                        "column": 8
+                      }
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J3-车辆参数问题跳转车队表单/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J3-车辆参数问题跳转车队表单/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J3-车辆参数问题跳转车队表单/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "skipped"
+            }
+          ],
+          "id": "bb62b366b1e3e81b39d9-c9b8d0497999f431f3be",
+          "file": "j-editor-next.spec.ts",
+          "line": 28,
+          "column": 1
+        },
+        {
+          "title": "J4 窄视口侧栏布局 900px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 985,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T16:07:01.378Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "narrow",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J4-窄视口侧栏布局-900px/attachments/narrow-e172c5dd15509f4a73c0537ff34cd19d5c98299f.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J4-窄视口侧栏布局-900px/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J4-窄视口侧栏布局-900px/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/j-editor-next-J4-窄视口侧栏布局-900px/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "bb62b366b1e3e81b39d9-e7316242adf798acc1df",
+          "file": "j-editor-next.spec.ts",
+          "line": 36,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "k-generated-from.spec.ts",
+      "file": "k-generated-from.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "K 生成来源：参数化 → 手工编辑 → 回到目录改参数",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 18077,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '农业任务目录' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' })\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '农业任务目录' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' })\u001b[22m\n\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:56:27\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:52:3",
+                    "location": {
+                      "file": "${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts",
+                      "column": 27,
+                      "line": 56
+                    },
+                    "snippet": "  54 |     await expect(page).toHaveURL(/#\\/archive/);\n  55 |     const catalog = page.getByRole('region', { name: '农业任务目录' });\n> 56 |     await expect(catalog).toBeVisible({ timeout: 15_000 });\n     |                           ^\n  57 |     const back = catalog.locator('details', { has: page.locator('summary', { hasText: name }) }).first();\n  58 |     await expect(back).toHaveAttribute('open', '');\n  59 |     await expect(back.getByLabel(`${name} 随机种子`)).toHaveValue('7');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts",
+                        "column": 27,
+                        "line": 56
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '农业任务目录' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' })\u001b[22m\n\n\n  54 |     await expect(page).toHaveURL(/#\\/archive/);\n  55 |     const catalog = page.getByRole('region', { name: '农业任务目录' });\n> 56 |     await expect(catalog).toBeVisible({ timeout: 15_000 });\n     |                           ^\n  57 |     const back = catalog.locator('details', { has: page.locator('summary', { hasText: name }) }).first();\n  58 |     await expect(back).toHaveAttribute('open', '');\n  59 |     await expect(back.getByLabel(`${name} 随机种子`)).toHaveValue('7');\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:56:27\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:52:3"
+                    }
+                  ],
+                  "stdout": [
+                    {
+                      "text": "K first runnable card: 果园采收集运\n"
+                    },
+                    {
+                      "text": "K selected card: 果园采收集运\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "导入后：参数化生成",
+                      "duration": 158
+                    },
+                    {
+                      "title": "拖动任务点 → 手工编辑并列出变化",
+                      "duration": 565
+                    },
+                    {
+                      "title": "回到目录改参数 → 卡片展开，参数与种子一致",
+                      "duration": 15101,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '农业任务目录' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('region', { name: '农业任务目录' })\nExpected: visible\nTimeout: 15000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('region', { name: '农业任务目录' }) with timeout 15000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('region', { name: '农业任务目录' })\u001b[22m\n\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:56:27\n    at ${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts:52:3",
+                        "location": {
+                          "file": "${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts",
+                          "column": 27,
+                          "line": 56
+                        },
+                        "snippet": "  54 |     await expect(page).toHaveURL(/#\\/archive/);\n  55 |     const catalog = page.getByRole('region', { name: '农业任务目录' });\n> 56 |     await expect(catalog).toBeVisible({ timeout: 15_000 });\n     |                           ^\n  57 |     const back = catalog.locator('details', { has: page.locator('summary', { hasText: name }) }).first();\n  58 |     await expect(back).toHaveAttribute('open', '');\n  59 |     await expect(back.getByLabel(`${name} 随机种子`)).toHaveValue('7');"
+                      }
+                    }
+                  ],
+                  "startTime": "2026-10-22T16:07:02.459Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "parametric",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/attachments/parametric-4b3f908aed9a72ad2ba28de5472f4be6718003f8.png"
+                    },
+                    {
+                      "name": "manual",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/attachments/manual-3241338acade92929694f23b992a36307fb8eda0.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/final-4100/artifacts/k-generated-from-K-生成来源：参数化-→-手工编辑-→-回到目录改参数/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "${USER_HOME}/urp-e2e/video-suite/tests/k-generated-from.spec.ts",
+                    "column": 27,
+                    "line": 56
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e70219cd8e824547361e-46a38d883c3c6d6c5b01",
+          "file": "k-generated-from.spec.ts",
+          "line": 14,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T16:05:33.066Z",
+    "duration": 107704.931,
+    "expected": 12,
+    "skipped": 2,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,35 @@
+import { test, expect } from '@playwright/test';
+import fs from 'node:fs';
+const ART = process.env.ART || 'artifacts/run'; fs.mkdirSync(ART + '/shots', { recursive: true });
+const B = process.env.BASE_URL || 'http://127.0.0.1:4100'; const H = { Origin: B };
+test('mamba features', async ({ page, request }) => {
+  test.setTimeout(240000);
+  const errs = []; page.on('console', (m) => m.type() === 'error' && errs.push(m.text().slice(0, 300)));
+  page.on('response', (s) => s.status() >= 400 && errs.push(s.status() + ' ' + s.url()));
+  const FIX = process.env.FIX_SCENARIO;
+  const list = await (await request.get(B + '/lab/api/scenarios')).json();
+  const items = Array.isArray(list) ? list : (list.scenarios || list.items || []);
+  const src = items.find((s) => String(s.id).startsWith('agri-')) || items[0];
+  const full = await (await request.get(B + '/lab/api/scenarios/' + src.id)).json();
+  const body = { ...full, id: 'e2e-dup-' + Date.now() }; delete body.revision;
+  const r1 = await request.post(B + '/lab/api/scenarios', { headers: H, data: body });
+  const r2 = await request.post(B + '/lab/api/scenarios', { headers: H, data: body });
+  const r3 = await request.post(B + '/lab/api/scenarios', { headers: H, data: { ...body, title: (body.title || '') + ' changed' } });
+  const dup = { src: src.id, first: [r1.status(), (await r1.text()).slice(0, 200)], same: [r2.status(), (await r2.text()).slice(0, 200)], diff: [r3.status(), (await r3.text()).slice(0, 200)] };
+  test.info().annotations.push({ type: 'dup-import', description: JSON.stringify(dup) });
+  const id = body.id;
+  const algs = await (await request.get(B + '/lab/api/algorithms')).json().catch(() => null);
+  const ids = (Array.isArray(algs) ? algs : algs?.algorithms || []).filter((a) => a.available !== false).map((a) => a.id).slice(0, 3);
+  const job = await request.post(B + '/lab/api/solve', { headers: H, data: { scenario_id: id, algorithms: ids.map((i) => ({ id: i, params: {} })), label: 'e2e mamba' } });
+  test.info().annotations.push({ type: 'solve', description: job.status() + ' ' + ids.join(',') });
+  if (!FIX) await page.waitForTimeout(25000);
+  await page.goto(B + '/#/plan/' + encodeURIComponent(FIX || id)); await page.waitForTimeout(4000);
+  await page.screenshot({ path: ART + '/shots/mamba-plan.png', fullPage: true });
+  const t = await page.locator('body').innerText();
+  for (const k of ['隔离', '源码身份不符', '身份未核验', '已核验', '已隔离', '不参与', '未纳入', '排除', '种子', '哈希', '版本', '依据']) test.info().annotations.push({ type: 'text:' + k, description: String(t.split(k).length - 1) });
+  for (const name of [/对照|比较/, /回放|复现/]) { const b = page.getByRole('button', { name }).first();
+    if (await b.count()) { await b.click().catch(() => {}); await page.waitForTimeout(2000); await page.screenshot({ path: ART + `/shots/mamba-${String(name).slice(1, 3)}.png`, fullPage: true });
+      const tt = await page.locator('body').innerText(); test.info().annotations.push({ type: 'after ' + name, description: ['种子', '哈希', '版本', '未纳入', '不参与', '身份未核验'].map((k) => k + ':' + (tt.split(k).length - 1)).join(' ') }); } }
+  fs.writeFileSync(ART + '/mamba-plan-text.txt', t);
+  test.info().annotations.push({ type: 'errors', description: errs.join(' | ').slice(0, 600) });
+});

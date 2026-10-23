@@ -1,0 +1,287 @@
+
+Running 9 tests using 1 worker
+
+(node:145180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/9] tests/a-agri-catalog.spec.ts:2:1 › A 农业目录：筛选环境/作业/状态、打开模式、改参数与种子、预览几何
+[2/9] tests/b-draft-persistence.spec.ts:4:1 › B 草稿持久化：编辑参数后刷新页面，草稿应恢复（基线预期失败）
+[3/9] tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入
+  1) tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入 › 选择对象（点击地图中心附近的对象） ───────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/选中: 任务/)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/选中: 任务/) with timeout 5000ms
+      - waiting for getByText(/选中: 任务/)
+
+
+      16 |     const sb = (await shape.boundingBox())!;
+      17 |     await page.mouse.click(sb.x + sb.width / 2, sb.y + sb.height / 2);
+    > 18 |     await expect(page.getByText(/选中: 任务/)).toBeVisible();
+         |                                            ^
+      19 |     // SelectionForm lives in the 检查器 dock tab (right dock, inactive behind 推荐与求解).
+      20 |     await openInspectorTab(page);
+      21 |     await expect(xInput).toBeVisible({ timeout: 10_000 });
+        at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:18:44
+        at ${USER_HOME}/urp-e2e/video-suite/tests/c-map-editor.spec.ts:13:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../video-evidence/run7/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run7/artifacts/c-map-editor-C-地图编辑器：选择对象、拖拽、撤销-重做、数值输入/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:145526) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[4/9] tests/d-import-idempotency.spec.ts:3:1 › D 导入幂等：丢失响应后重新导入，场景列表无重复
+[5/9] tests/e-fork-timeout.spec.ts:4:1 › E Fork 超时重试：只生成一份“我的场景”
+[6/9] tests/f-result-integrity.spec.ts:9:1 › F 结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组
+  2) tests/f-result-integrity.spec.ts:9:1 › F 结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组 ─────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/显示 \d+ \/ 最近 \d+ 次/)
+    Expected: visible
+    Timeout: 30000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/显示 \d+ \/ 最近 \d+ 次/) with timeout 30000ms
+      - waiting for getByText(/显示 \d+ \/ 最近 \d+ 次/)
+
+
+      13 |   expect(q.process.source_identity_verified).toBe(false);
+      14 |   await page.goto('/#/runs');
+    > 15 |   await expect(page.getByText(/显示 \d+ \/ 最近 \d+ 次/)).toBeVisible({ timeout: 30_000 });
+         |                                                      ^
+      16 |   await test.step('历史入口：运行记录列出两条测试记录', async () => {
+      17 |     await expect(page.getByText(Q, { exact: true })).toBeVisible();
+      18 |     await expect(page.getByText(L, { exact: true })).toBeVisible();
+        at ${USER_HOME}/urp-e2e/video-suite/tests/f-result-integrity.spec.ts:15:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../video-evidence/run7/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run7/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:149027) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[7/9] tests/g-solve-compare.spec.ts:2:1 › G 真实小规模求解并打开比较
+  3) tests/g-solve-compare.spec.ts:2:1 › G 真实小规模求解并打开比较 › 求解 ───────────────────────────────────────
+
+    Error: expect(locator).not.toHaveText(expected) failed
+
+    Locator: getByText(/个已验算可行解/)
+    Expected pattern: not / 0 个已验算可行解/
+    Received string: "本批 3 次运行 · 0 个已验算可行解。最佳值仅在相同输入、目标、单位和时间预算内标记。"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "not toHaveText" getByText(/个已验算可行解/) with timeout 5000ms
+      - waiting for getByText(/个已验算可行解/)
+        14 × locator resolved to <p class="_meta_185g6_5">本批 3 次运行 · 0 个已验算可行解。最佳值仅在相同输入、目标、单位和时间预算内标记。</p>
+           - unexpected value "本批 3 次运行 · 0 个已验算可行解。最佳值仅在相同输入、目标、单位和时间预算内标记。"
+
+
+      11 |     await solve.click();
+      12 |     await expect(page.getByText(/本批 \d+ 次运行/)).toBeVisible({ timeout: 150_000 }); // ComparePanel PlanPanels.tsx:845
+    > 13 |     await expect(page.getByText(/个已验算可行解/)).not.toHaveText(/ 0 个已验算可行解/);
+         |                                                 ^
+      14 |     await shot(page, info, 'solved');
+      15 |   });
+      16 |   await test.step('打开比较/运行记录', async () => {
+        at ${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts:13:49
+        at ${USER_HOME}/urp-e2e/video-suite/tests/g-solve-compare.spec.ts:8:3
+
+    attachment #1: before-solve (image/png) ────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/before-solve-b790c9328067e6ee688b3dec8e1294e1d15f726b.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/g-solve-compare-G-真实小规模求解并打开比较/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/g-solve-compare-G-真实小规模求解并打开比较/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../video-evidence/run7/artifacts/g-solve-compare-G-真实小规模求解并打开比较/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/g-solve-compare-G-真实小规模求解并打开比较/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run7/artifacts/g-solve-compare-G-真实小规模求解并打开比较/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:149171) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[8/9] tests/h-precheck-locate.spec.ts:4:1 › H 预检定位：点击预检问题高亮对象并聚焦表单字段
+  4) tests/h-precheck-locate.spec.ts:4:1 › H 预检定位：点击预检问题高亮对象并聚焦表单字段 › 点击问题 → 对象高亮 ──────────────────
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator: locator('[data-located]').first()
+    Expected: focused
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeFocused" locator('[data-located]').first() with timeout 5000ms
+      - waiting for locator('[data-located]').first()
+
+
+      20 |     await expect(page.locator(`[data-picked]`).first()).toBeVisible();
+      21 |     if (target?.startsWith('obstacle:')) await expect(page.locator(`[data-picked][data-id="${target.slice(9)}"], [data-picked="${target}"]`).first()).toBeAttached();
+    > 22 |     await expect(page.locator('[data-located]').first()).toBeFocused();
+         |                                                          ^
+      23 |     await shot(page, info, 'located');
+      24 |   });
+      25 |   await test.step('“地头宽小于幅宽”定位到地头宽', async () => {
+        at ${USER_HOME}/urp-e2e/video-suite/tests/h-precheck-locate.spec.ts:22:58
+        at ${USER_HOME}/urp-e2e/video-suite/tests/h-precheck-locate.spec.ts:15:3
+
+    attachment #1: precheck-list (image/png) ───────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/attachments/precheck-list-182455266536988059f5a39da94c441ec0786b2a.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../video-evidence/run7/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run7/artifacts/h-precheck-locate-H-预检定位：点击预检问题高亮对象并聚焦表单字段/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+(node:149297) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[9/9] tests/i-editor-batch.spec.ts:3:1 › I 地图编辑器：框选+批量平移、米制数值输入、几何校验定位
+  5) tests/i-editor-batch.spec.ts:3:1 › I 地图编辑器：框选+批量平移、米制数值输入、几何校验定位 › Alt+拖动框选多个任务 ───────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByLabel('选择与精确输入').getByText(/已选 ([2-9]|\d{2,}) 项/)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByLabel('选择与精确输入').getByText(/已选 ([2-9]|\d{2,}) 项/) with timeout 5000ms
+      - waiting for getByLabel('选择与精确输入').getByText(/已选 ([2-9]|\d{2,}) 项/)
+
+
+      18 |     await page.mouse.up();
+      19 |     await page.keyboard.up('Alt');
+    > 20 |     await expect(sel.getByText(/已选 ([2-9]|\d{2,}) 项/)).toBeVisible();
+         |                                                        ^
+      21 |     await shot(page, info, 'marquee');
+      22 |   });
+      23 |   await test.step('批量平移 ΔX=1 ΔY=-1', async () => {
+        at ${USER_HOME}/urp-e2e/video-suite/tests/i-editor-batch.spec.ts:20:56
+        at ${USER_HOME}/urp-e2e/video-suite/tests/i-editor-batch.spec.ts:12:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../video-evidence/run7/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../video-evidence/run7/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/trace.zip
+    Usage:
+
+        npx playwright show-trace ../video-evidence/run7/artifacts/i-editor-batch-I-地图编辑器：框选-批量平移、米制数值输入、几何校验定位/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+
+  5 failed
+    tests/c-map-editor.spec.ts:2:1 › C 地图编辑器：选择对象、拖拽、撤销/重做、数值输入 ────────────────────────────────────
+    tests/f-result-integrity.spec.ts:9:1 › F 结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组 ──────────────────────
+    tests/g-solve-compare.spec.ts:2:1 › G 真实小规模求解并打开比较 ─────────────────────────────────────────────
+    tests/h-precheck-locate.spec.ts:4:1 › H 预检定位：点击预检问题高亮对象并聚焦表单字段 ─────────────────────────────────
+    tests/i-editor-batch.spec.ts:3:1 › I 地图编辑器：框选+批量平移、米制数值输入、几何校验定位 ───────────────────────────────
+  4 passed (2.1m)
+node:internal/modules/cjs/loader:1459
+  throw err;
+  ^
+
+Error: Cannot find module '${USER_HOME}/urp-e2e/video-evidence/run7/results.json'
+Require stack:
+- ${USER_HOME}/urp-e2e/video-suite/[eval]
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1556:12)
+    at require (node:internal/modules/helpers:152:16)
+    at [eval]:2:9
+    at runScriptInThisContext (node:internal/vm:219:10)
+    at node:internal/process/execution:451:12 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [ '${USER_HOME}/urp-e2e/video-suite/[eval]' ]
+}
+
+Node.js v24.14.0
+list.txt: Invalid data found when processing input
+Evidence: ${USER_HOME}/urp-e2e/video-evidence/run7 (INDEX.md, acceptance.mp4)

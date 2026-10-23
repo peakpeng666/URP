@@ -2,7 +2,7 @@
 
 本分支保存本地尚未汇集到云端集成基线的当前成果，使用独立根提交，不继承旧仓库历史。这是**增量保全包，不是可直接启动的完整工程**。
 
-首批包括本地进化决策模块、前端挂钩、测试、项目手册、研究协议、研究看板、图表、10 个带校验清单的结果包，以及稳定的新增实验记录与题录元数据。关联工作树和外部测试资料将按来源继续补入，互有差异的版本分开保存，不自动集成。
+首批包括本地进化决策模块、前端挂钩、测试、项目手册、研究协议、研究看板、图表、10 个带校验清单的结果包，以及稳定的新增实验记录与题录元数据。关联工作树和外部测试资料已按来源补入，互有差异的版本分开保存，不自动集成。
 
 ## 版本与恢复
 
@@ -22,3 +22,15 @@
 已完成轻量检查：47 个 Python 文件语法、221 个 JSON、5 份冻结计划 SHA-256、10 个结果 ZIP 的校验和/CRC，以及已有前端依赖上的 TypeScript 无输出类型检查。本轮未启动 ROS/Gazebo、Docker、GUI、求解批次或训练；历史报告中的运行通过不等于当前版本复跑通过。
 
 未新增或改变认证。旧历史中的凭证类内容不在此独立分支的可达历史中，不应把旧历史合入本分支。
+
+## 已整理目录
+
+- [覆盖范围与今日进化成果](snapshot/coverage.md)
+- [主工作树文件/来源哈希](snapshot/files.json) 与 [其余来源](snapshot/additional-files.json)
+- [全部原始结果哈希](snapshot/raw-evidence.json) 与 [补充结果包](preserved/results/additional-stable-evolve-records-20261023.zip)
+- [不同工作树候选](preserved/worktrees/)、[Claude交接](preserved/handoffs/)、[浏览器测试来源](preserved/e2e/)
+- [删除/重命名核对](snapshot/deletions-renames.json) 与 [本地保留及未来按需恢复](snapshot/local-retention.md)
+
+所有来源是保全与待集成材料，未把多个候选自动拼成新的已验收主线。
+
+补充副本静态检查：503 个 Python 文件、488 个 JSON、12 个 shell 脚本及补充 ZIP 中 6,624 个 JSON 均通过语法/格式检查；这不是多个候选的集成或物理验收。完整结果见 [validation.json](snapshot/validation.json)。

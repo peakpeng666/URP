@@ -1,0 +1,265 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/node_modules/.bin/playwright",
+      "test",
+      "tests/mamba.spec.mjs"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/playwright.config.mjs",
+    "rootDir": "${USER_HOME}/urp-e2e/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/artifacts/head-3c0a94e5/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/head-3c0a94e5/report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/head-3c0a94e5/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "mamba.spec.mjs",
+      "file": "mamba.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "mamba features",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "dup-import",
+                  "description": "{\"src\":\"agri-orchard-harvest-tran-20c8c7a3-c299-45d3-a58a-c43df09c6c0d\",\"first\":[201,\"{\\\"id\\\":\\\"e2e-dup-1792676143279\\\",\\\"title\\\":\\\"果园采收集运\\\",\\\"summary\\\":\\\"3 台车 · 36 个采摘点 · 180×120 m 果园 · 行间通行\\\",\\\"problem_class\\\":\\\"fleet_routing\\\",\\\"frame\\\":{\\\"kind\\\":\\\"field\\\",\\\"units\\\":\\\"m\\\",\\\"crs\\\":\\\"local\\\"},\\\"cost_unit\\\":\\\"s\\\",\\\"sim\\\"\"],\"same\":[200,\"{\\\"id\\\":\\\"e2e-dup-1792676143279\\\",\\\"title\\\":\\\"果园采收集运\\\",\\\"summary\\\":\\\"3 台车 · 36 个采摘点 · 180×120 m 果园 · 行间通行\\\",\\\"problem_class\\\":\\\"fleet_routing\\\",\\\"frame\\\":{\\\"kind\\\":\\\"field\\\",\\\"units\\\":\\\"m\\\",\\\"crs\\\":\\\"local\\\"},\\\"cost_unit\\\":\\\"s\\\",\\\"sim\\\"\"],\"diff\":[409,\"{\\\"error\\\":\\\"scenario_conflict\\\",\\\"message\\\":\\\"场景 e2e-dup-1792676143279 已存在；请使用新 ID 导入，或在规划页编辑原场景\\\"}\"]}"
+                },
+                {
+                  "type": "solve",
+                  "description": "400 urp.turn_mode_dp,urp.raw_oracle,urp.reset_dp"
+                },
+                {
+                  "type": "text:隔离",
+                  "description": "0"
+                },
+                {
+                  "type": "text:源码身份不符",
+                  "description": "0"
+                },
+                {
+                  "type": "text:身份未核验",
+                  "description": "0"
+                },
+                {
+                  "type": "text:已核验",
+                  "description": "1"
+                },
+                {
+                  "type": "text:已隔离",
+                  "description": "0"
+                },
+                {
+                  "type": "text:不参与",
+                  "description": "0"
+                },
+                {
+                  "type": "text:未纳入",
+                  "description": "0"
+                },
+                {
+                  "type": "text:排除",
+                  "description": "0"
+                },
+                {
+                  "type": "text:种子",
+                  "description": "3"
+                },
+                {
+                  "type": "text:哈希",
+                  "description": "1"
+                },
+                {
+                  "type": "text:版本",
+                  "description": "1"
+                },
+                {
+                  "type": "text:依据",
+                  "description": "0"
+                },
+                {
+                  "type": "errors",
+                  "description": ""
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5047,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:35:42.857Z",
+                  "annotations": [
+                    {
+                      "type": "dup-import",
+                      "description": "{\"src\":\"agri-orchard-harvest-tran-20c8c7a3-c299-45d3-a58a-c43df09c6c0d\",\"first\":[201,\"{\\\"id\\\":\\\"e2e-dup-1792676143279\\\",\\\"title\\\":\\\"果园采收集运\\\",\\\"summary\\\":\\\"3 台车 · 36 个采摘点 · 180×120 m 果园 · 行间通行\\\",\\\"problem_class\\\":\\\"fleet_routing\\\",\\\"frame\\\":{\\\"kind\\\":\\\"field\\\",\\\"units\\\":\\\"m\\\",\\\"crs\\\":\\\"local\\\"},\\\"cost_unit\\\":\\\"s\\\",\\\"sim\\\"\"],\"same\":[200,\"{\\\"id\\\":\\\"e2e-dup-1792676143279\\\",\\\"title\\\":\\\"果园采收集运\\\",\\\"summary\\\":\\\"3 台车 · 36 个采摘点 · 180×120 m 果园 · 行间通行\\\",\\\"problem_class\\\":\\\"fleet_routing\\\",\\\"frame\\\":{\\\"kind\\\":\\\"field\\\",\\\"units\\\":\\\"m\\\",\\\"crs\\\":\\\"local\\\"},\\\"cost_unit\\\":\\\"s\\\",\\\"sim\\\"\"],\"diff\":[409,\"{\\\"error\\\":\\\"scenario_conflict\\\",\\\"message\\\":\\\"场景 e2e-dup-1792676143279 已存在；请使用新 ID 导入，或在规划页编辑原场景\\\"}\"]}"
+                    },
+                    {
+                      "type": "solve",
+                      "description": "400 urp.turn_mode_dp,urp.raw_oracle,urp.reset_dp"
+                    },
+                    {
+                      "type": "text:隔离",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:源码身份不符",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:身份未核验",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:已核验",
+                      "description": "1"
+                    },
+                    {
+                      "type": "text:已隔离",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:不参与",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:未纳入",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:排除",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:种子",
+                      "description": "3"
+                    },
+                    {
+                      "type": "text:哈希",
+                      "description": "1"
+                    },
+                    {
+                      "type": "text:版本",
+                      "description": "1"
+                    },
+                    {
+                      "type": "text:依据",
+                      "description": "0"
+                    },
+                    {
+                      "type": "errors",
+                      "description": ""
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3c0a94e5/test-results/mamba-mamba-features/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3c0a94e5/test-results/mamba-mamba-features/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3c0a94e5/test-results/mamba-mamba-features/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "36addb09da59c3c0fb65-f39bd106fab6593cbe4d",
+          "file": "mamba.spec.mjs",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T13:35:42.574Z",
+    "duration": 5615.09,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

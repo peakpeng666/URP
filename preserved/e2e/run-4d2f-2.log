@@ -1,0 +1,56 @@
+
+Running 7 tests using 1 worker
+
+(node:87866) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/smoke.spec.mjs:16:3 › route home (3.5s)
+  ✓  2 tests/smoke.spec.mjs:16:3 › route plan (2.7s)
+  ✓  3 tests/smoke.spec.mjs:16:3 › route assets (2.7s)
+  ✓  4 tests/smoke.spec.mjs:16:3 › route sim (2.7s)
+  ✓  5 tests/smoke.spec.mjs:16:3 › route jobs (2.7s)
+  ✓  6 tests/smoke.spec.mjs:16:3 › route bpp (3.0s)
+  ✘  7 tests/smoke.spec.mjs:29:1 › agri catalog + flow (2.0m)
+
+
+  1) tests/smoke.spec.mjs:29:1 › agri catalog + flow ───────────────────────────────────────────────
+
+    Test timeout of 120000ms exceeded.
+
+    Error: locator.click: Test timeout of 120000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: '打开农业任务目录' })
+
+
+      23 | }
+      24 | async function openCatalog(page) {
+    > 25 |   await page.goto('/#/'); await page.getByRole('button', { name: '打开农业任务目录' }).click();
+         |                                                                                ^
+      26 |   await page.locator('details').first().waitFor();
+      27 | }
+      28 | const cardWith = (page, suffix) => page.locator('details').filter({ has: page.locator(`input[aria-label$=" ${suffix}"]`) }).first();
+        at openCatalog (${USER_HOME}/urp-e2e/tests/smoke.spec.mjs:25:80)
+        at ${USER_HOME}/urp-e2e/tests/smoke.spec.mjs:76:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/error-context.md
+
+    Error Context: artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/trace.zip
+    Usage:
+
+        npx playwright show-trace artifacts/head-4d2f7a04-run2/test-results/smoke-agri-catalog-flow/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests/smoke.spec.mjs:29:1 › agri catalog + flow ────────────────────────────────────────────────
+  6 passed (2.3m)

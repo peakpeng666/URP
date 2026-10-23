@@ -1,0 +1,217 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/node_modules/.bin/playwright",
+      "test",
+      "tests/mamba-tabs.spec.mjs"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/playwright.config.mjs",
+    "rootDir": "${USER_HOME}/urp-e2e/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/artifacts/head-3c0a94e5-tabs/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/head-3c0a94e5-tabs/report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/head-3c0a94e5-tabs/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "mamba-tabs.spec.mjs",
+      "file": "mamba-tabs.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "mamba tabs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "实验结果",
+                  "description": "已隔离:0 源码身份不符:0 身份未核验:0 不参与:0 未纳入:0 排名:0 种子:2 哈希:0 sha256:0 版本:1 run_e2e:0"
+                },
+                {
+                  "type": "实验结果 lines",
+                  "description": ""
+                },
+                {
+                  "type": "方案对比",
+                  "description": "已隔离:0 源码身份不符:0 身份未核验:0 不参与:0 未纳入:0 排名:0 种子:3 哈希:1 sha256:0 版本:1 run_e2e:0"
+                },
+                {
+                  "type": "方案对比 lines",
+                  "description": "源码身份 || 身份已核验"
+                },
+                {
+                  "type": "仿真回放",
+                  "description": "已隔离:0 源码身份不符:0 身份未核验:0 不参与:0 未纳入:0 排名:0 种子:1 哈希:0 sha256:0 版本:0 run_e2e:0"
+                },
+                {
+                  "type": "仿真回放 lines",
+                  "description": ""
+                },
+                {
+                  "type": "select run_e2e_quarantined_unverified",
+                  "description": "row not visible"
+                },
+                {
+                  "type": "select run_e2e_legacy_noidentity",
+                  "description": "row not visible"
+                },
+                {
+                  "type": "errors",
+                  "description": ""
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 8740,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:36:23.041Z",
+                  "annotations": [
+                    {
+                      "type": "实验结果",
+                      "description": "已隔离:0 源码身份不符:0 身份未核验:0 不参与:0 未纳入:0 排名:0 种子:2 哈希:0 sha256:0 版本:1 run_e2e:0"
+                    },
+                    {
+                      "type": "实验结果 lines",
+                      "description": ""
+                    },
+                    {
+                      "type": "方案对比",
+                      "description": "已隔离:0 源码身份不符:0 身份未核验:0 不参与:0 未纳入:0 排名:0 种子:3 哈希:1 sha256:0 版本:1 run_e2e:0"
+                    },
+                    {
+                      "type": "方案对比 lines",
+                      "description": "源码身份 || 身份已核验"
+                    },
+                    {
+                      "type": "仿真回放",
+                      "description": "已隔离:0 源码身份不符:0 身份未核验:0 不参与:0 未纳入:0 排名:0 种子:1 哈希:0 sha256:0 版本:0 run_e2e:0"
+                    },
+                    {
+                      "type": "仿真回放 lines",
+                      "description": ""
+                    },
+                    {
+                      "type": "select run_e2e_quarantined_unverified",
+                      "description": "row not visible"
+                    },
+                    {
+                      "type": "select run_e2e_legacy_noidentity",
+                      "description": "row not visible"
+                    },
+                    {
+                      "type": "errors",
+                      "description": ""
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3c0a94e5-tabs/test-results/mamba-tabs-mamba-tabs/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3c0a94e5-tabs/test-results/mamba-tabs-mamba-tabs/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3c0a94e5-tabs/test-results/mamba-tabs-mamba-tabs/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a86433c2665994c10c30-78cced1346f542025ffc",
+          "file": "mamba-tabs.spec.mjs",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T13:36:22.747Z",
+    "duration": 9377.47,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

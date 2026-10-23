@@ -1,0 +1,714 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/node_modules/.bin/playwright",
+      "test"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/playwright.config.mjs",
+    "rootDir": "${USER_HOME}/urp-e2e/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/head-3fbed25b/report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/head-3fbed25b/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "mamba.spec.mjs",
+      "file": "mamba.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "mamba features",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "dup-import",
+                  "description": "{\"src\":\"agri-orchard-harvest-tran-20c8c7a3-c299-45d3-a58a-c43df09c6c0d\",\"first\":[201,\"{\\\"id\\\":\\\"e2e-dup-1792675696644\\\",\\\"title\\\":\\\"果园采收集运\\\",\\\"summary\\\":\\\"3 台车 · 36 个采摘点 · 180×120 m 果园 · 行间通行\\\",\\\"problem_class\\\":\\\"fleet_routing\\\",\\\"frame\\\":{\\\"kind\\\":\\\"field\\\",\\\"units\\\":\\\"m\\\",\\\"crs\\\":\\\"local\\\"},\\\"cost_unit\\\":\\\"s\\\",\\\"sim\\\"\"],\"same\":[200,\"{\\\"id\\\":\\\"e2e-dup-1792675696644\\\",\\\"title\\\":\\\"果园采收集运\\\",\\\"summary\\\":\\\"3 台车 · 36 个采摘点 · 180×120 m 果园 · 行间通行\\\",\\\"problem_class\\\":\\\"fleet_routing\\\",\\\"frame\\\":{\\\"kind\\\":\\\"field\\\",\\\"units\\\":\\\"m\\\",\\\"crs\\\":\\\"local\\\"},\\\"cost_unit\\\":\\\"s\\\",\\\"sim\\\"\"],\"diff\":[409,\"{\\\"error\\\":\\\"scenario_conflict\\\",\\\"message\\\":\\\"场景 e2e-dup-1792675696644 已存在；请使用新 ID 导入，或在规划页编辑原场景\\\"}\"]}"
+                },
+                {
+                  "type": "solve",
+                  "description": "400 urp.turn_mode_dp,urp.raw_oracle,urp.reset_dp"
+                },
+                {
+                  "type": "text:身份未核验",
+                  "description": "0"
+                },
+                {
+                  "type": "text:已核验",
+                  "description": "0"
+                },
+                {
+                  "type": "text:已隔离",
+                  "description": "0"
+                },
+                {
+                  "type": "text:不参与",
+                  "description": "0"
+                },
+                {
+                  "type": "text:未纳入",
+                  "description": "0"
+                },
+                {
+                  "type": "text:排除",
+                  "description": "0"
+                },
+                {
+                  "type": "text:种子",
+                  "description": "1"
+                },
+                {
+                  "type": "text:哈希",
+                  "description": "0"
+                },
+                {
+                  "type": "text:版本",
+                  "description": "0"
+                },
+                {
+                  "type": "text:依据",
+                  "description": "0"
+                },
+                {
+                  "type": "errors",
+                  "description": ""
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29726,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:28:16.475Z",
+                  "annotations": [
+                    {
+                      "type": "dup-import",
+                      "description": "{\"src\":\"agri-orchard-harvest-tran-20c8c7a3-c299-45d3-a58a-c43df09c6c0d\",\"first\":[201,\"{\\\"id\\\":\\\"e2e-dup-1792675696644\\\",\\\"title\\\":\\\"果园采收集运\\\",\\\"summary\\\":\\\"3 台车 · 36 个采摘点 · 180×120 m 果园 · 行间通行\\\",\\\"problem_class\\\":\\\"fleet_routing\\\",\\\"frame\\\":{\\\"kind\\\":\\\"field\\\",\\\"units\\\":\\\"m\\\",\\\"crs\\\":\\\"local\\\"},\\\"cost_unit\\\":\\\"s\\\",\\\"sim\\\"\"],\"same\":[200,\"{\\\"id\\\":\\\"e2e-dup-1792675696644\\\",\\\"title\\\":\\\"果园采收集运\\\",\\\"summary\\\":\\\"3 台车 · 36 个采摘点 · 180×120 m 果园 · 行间通行\\\",\\\"problem_class\\\":\\\"fleet_routing\\\",\\\"frame\\\":{\\\"kind\\\":\\\"field\\\",\\\"units\\\":\\\"m\\\",\\\"crs\\\":\\\"local\\\"},\\\"cost_unit\\\":\\\"s\\\",\\\"sim\\\"\"],\"diff\":[409,\"{\\\"error\\\":\\\"scenario_conflict\\\",\\\"message\\\":\\\"场景 e2e-dup-1792675696644 已存在；请使用新 ID 导入，或在规划页编辑原场景\\\"}\"]}"
+                    },
+                    {
+                      "type": "solve",
+                      "description": "400 urp.turn_mode_dp,urp.raw_oracle,urp.reset_dp"
+                    },
+                    {
+                      "type": "text:身份未核验",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:已核验",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:已隔离",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:不参与",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:未纳入",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:排除",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:种子",
+                      "description": "1"
+                    },
+                    {
+                      "type": "text:哈希",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:版本",
+                      "description": "0"
+                    },
+                    {
+                      "type": "text:依据",
+                      "description": "0"
+                    },
+                    {
+                      "type": "errors",
+                      "description": ""
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/mamba-mamba-features/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/mamba-mamba-features/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/mamba-mamba-features/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "36addb09da59c3c0fb65-f39bd106fab6593cbe4d",
+          "file": "mamba.spec.mjs",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "smoke.spec.mjs",
+      "file": "smoke.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "route home",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2856,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:28:46.381Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-home/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-home/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-home/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-f785aeeee5ab24753167",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "route plan",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2768,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:28:49.318Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-plan/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-plan/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-plan/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-199105d480e2fc247659",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "route assets",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2678,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:28:52.118Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-assets/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-assets/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-assets/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-71c0023177a9ed71c855",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "route sim",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2740,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:28:54.832Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-sim/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-sim/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-sim/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-22db566ebd2787bfa638",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "route jobs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2739,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:28:57.611Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-jobs/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-jobs/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-jobs/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-a208bac17da3337e93af",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "route bpp",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3043,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:29:00.392Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-bpp/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-bpp/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-route-bpp/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-4d24671edff8b7e5054b",
+          "file": "smoke.spec.mjs",
+          "line": 16,
+          "column": 3
+        },
+        {
+          "title": "agri catalog + flow",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [
+                {
+                  "type": "preview",
+                  "description": "1"
+                },
+                {
+                  "type": "draft-restored",
+                  "description": "7/123"
+                },
+                {
+                  "type": "after-reset",
+                  "description": "36/42"
+                },
+                {
+                  "type": "scenario",
+                  "description": "agri-orchard-harvest-tran-5b1b69a6-8206-4f72-b6ae-89b5a0c6e4bd"
+                },
+                {
+                  "type": "last-import-notice",
+                  "description": "1"
+                },
+                {
+                  "type": "last-import-link-matches",
+                  "description": "1"
+                },
+                {
+                  "type": "manual-edit-diff",
+                  "description": "此模式上次导入为 果园采收集运（种子 42）。再次导入会新建一个场景，不会覆盖你在地图上对那份做的手工编辑；要保留手工成果请继续编辑原场景。 | 那份场景相对生成结果有手工编辑：通道已改动；车队配置已改动。重新生成不会带上这些编辑。 用该场景的参数和种子填回表单"
+                },
+                {
+                  "type": "refill-button",
+                  "description": "1"
+                },
+                {
+                  "type": "after-refill",
+                  "description": "36/42"
+                },
+                {
+                  "type": "coverage-issues",
+                  "description": "提醒：地头宽 1 m 小于作业幅宽 3 m，地头转弯可能不足一个幅宽"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "timedOut",
+                  "duration": 244548,
+                  "error": {
+                    "message": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m",
+                    "stack": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+                  },
+                  "errors": [
+                    {
+                      "message": "\u001b[31mTest timeout of 240000ms exceeded.\u001b[39m"
+                    },
+                    {
+                      "location": {
+                        "file": "${USER_HOME}/urp-e2e/tests/smoke.spec.mjs",
+                        "column": 50,
+                        "line": 103
+                      },
+                      "message": "Error: locator.fill: Test timeout of 240000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('details').filter({ has: locator('input[aria-label$=\" 障碍半径\"]') }).first().locator('input[aria-label$=\" 障碍半径\"]')\u001b[22m\n\u001b[2m    - locator resolved to <input min=\"0\" max=\"40\" step=\"any\" value=\"12\" type=\"number\" aria-label=\"果园采收集运 障碍半径\" class=\"_input_a5ga1_358\"/>\u001b[22m\n\u001b[2m    - fill(\"40\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not visible\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    433 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m        - element is not visible\u001b[22m\n\u001b[2m      - retrying fill action\u001b[22m\n\u001b[2m        - waiting 500ms\u001b[22m\n\n\n  101 |   // preflight: obstacle radius huge in a fleet card\n  102 |   const ob = cardWith(page, '障碍半径'); await ob.locator('summary').click();\n> 103 |   await ob.locator('input[aria-label$=\" 障碍半径\"]').fill('40'); await page.waitForTimeout(500);\n      |                                                  ^\n  104 |   const iss2 = ob.getByRole('list', { name: '预检问题' }).getByRole('button');\n  105 |   test.info().annotations.push({ type: 'obstacle-issues', description: (await iss2.allInnerTexts()).join(' | ').slice(0, 400) });\n  106 |   if (await iss2.count()) { await iss2.first().click(); await page.waitForTimeout(300);\n    at ${USER_HOME}/urp-e2e/tests/smoke.spec.mjs:103:50"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-22T13:29:03.503Z",
+                  "annotations": [
+                    {
+                      "type": "preview",
+                      "description": "1"
+                    },
+                    {
+                      "type": "draft-restored",
+                      "description": "7/123"
+                    },
+                    {
+                      "type": "after-reset",
+                      "description": "36/42"
+                    },
+                    {
+                      "type": "scenario",
+                      "description": "agri-orchard-harvest-tran-5b1b69a6-8206-4f72-b6ae-89b5a0c6e4bd"
+                    },
+                    {
+                      "type": "last-import-notice",
+                      "description": "1"
+                    },
+                    {
+                      "type": "last-import-link-matches",
+                      "description": "1"
+                    },
+                    {
+                      "type": "manual-edit-diff",
+                      "description": "此模式上次导入为 果园采收集运（种子 42）。再次导入会新建一个场景，不会覆盖你在地图上对那份做的手工编辑；要保留手工成果请继续编辑原场景。 | 那份场景相对生成结果有手工编辑：通道已改动；车队配置已改动。重新生成不会带上这些编辑。 用该场景的参数和种子填回表单"
+                    },
+                    {
+                      "type": "refill-button",
+                      "description": "1"
+                    },
+                    {
+                      "type": "after-refill",
+                      "description": "36/42"
+                    },
+                    {
+                      "type": "coverage-issues",
+                      "description": "提醒：地头宽 1 m 小于作业幅宽 3 m，地头转弯可能不足一个幅宽"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/error-context.md"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/artifacts/head-3fbed25b/test-results/smoke-agri-catalog-flow/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c3460f1d697aa8671d63-494b69547fdfcf4e8961",
+          "file": "smoke.spec.mjs",
+          "line": 29,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T13:28:16.219Z",
+    "duration": 292564.364,
+    "expected": 7,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

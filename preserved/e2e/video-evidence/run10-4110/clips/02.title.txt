@@ -1,0 +1,1 @@
+G2 cvrp-depot-floor：0 个已验算可行解为预期，并显示碰撞报告 — failed

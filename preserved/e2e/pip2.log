@@ -1,0 +1,11 @@
+Resolved 16 packages in 10ms
+Downloading opencv-python-headless (58.4MiB)
+ Downloaded opencv-python-headless
+Prepared 1 package in 56.48s
+Uninstalled 1 package in 0.85ms
+Installed 4 packages in 5ms
+ + ompl==2.0.1
+ + opencv-python-headless==5.0.0.93
+ - pillow==13.0.0
+ + pillow==12.3.0
+ + pyproj==3.8.0

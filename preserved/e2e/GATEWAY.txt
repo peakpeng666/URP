@@ -1,0 +1,2 @@
+HEAD d6aec3bf dist built 01:04:17 JST (dist swapped, gateway not restarted)
+gateway PID 79940, backend 4180 PID 28559

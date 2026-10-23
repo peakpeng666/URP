@@ -1,0 +1,41 @@
+{
+  "home": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "plan": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "assets": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "sim": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "jobs": {
+    "console": [],
+    "failed": [],
+    "http": []
+  },
+  "bpp": {
+    "console": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "failed": [],
+    "http": [
+      "404 GET http://127.0.0.1:4110/data/meta.json"
+    ]
+  },
+  "agri": {
+    "console": [],
+    "failed": [],
+    "http": []
+  }
+}

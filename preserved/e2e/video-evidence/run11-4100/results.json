@@ -1,0 +1,394 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/video-suite/node_modules/.bin/playwright",
+      "test",
+      "tests/f-",
+      "tests/g-"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/video-suite/playwright.config.ts",
+    "rootDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "f-result-integrity.spec.ts",
+      "file": "f-result-integrity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "F 结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "layout",
+                  "description": "{\"history\":{\"x\":-81,\"y\":655,\"width\":830.71875,\"height\":244.953125},\"compare\":{\"x\":790,\"y\":513,\"width\":1246.546875,\"height\":227.0625}}"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1702,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "加入比较：隔离 + 缺字段",
+                      "duration": 331
+                    },
+                    {
+                      "title": "各处文字：历史资格列 / 验算列 / 未参与比较",
+                      "duration": 186
+                    },
+                    {
+                      "title": "布局：历史表与右侧列不重叠",
+                      "duration": 46
+                    },
+                    {
+                      "title": "缺字段运行：身份未核验，单独分组",
+                      "duration": 115
+                    },
+                    {
+                      "title": "选中隔离运行 → 选中方案横幅 + 实验结果横幅",
+                      "duration": 322
+                    }
+                  ],
+                  "startTime": "2026-10-22T15:33:28.345Z",
+                  "annotations": [
+                    {
+                      "type": "layout",
+                      "description": "{\"history\":{\"x\":-81,\"y\":655,\"width\":830.71875,\"height\":244.953125},\"compare\":{\"x\":790,\"y\":513,\"width\":1246.546875,\"height\":227.0625}}"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "history-added",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/history-added-5b2fb47f88741422ffb603ebf1dae0e91d5852fc.png"
+                    },
+                    {
+                      "name": "excluded",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/excluded-d2aa409dae0ffe5a75b6c651f9153b8bfa261710.png"
+                    },
+                    {
+                      "name": "unverified-group",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/unverified-group-ef00f490bf5b878779f68f2f3036f9dd52cde2bd.png"
+                    },
+                    {
+                      "name": "selected-banner",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/selected-banner-8ec87ddec3a3dcd71585a43b1fba2d4efa504ed9.png"
+                    },
+                    {
+                      "name": "result-tab",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/attachments/result-tab-479b4322888deda2864aee7cff72c8c4ab6077da.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/f-result-integrity-F-结果完整性：隔离未核验来源、缺字段显示未核验、隔离结果不进比较组/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e9ce0e17f99eaac09d14-f4c9a93ea8522bbefe38",
+          "file": "f-result-integrity.spec.ts",
+          "line": 5,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "g-solve-compare.spec.ts",
+      "file": "g-solve-compare.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "G 真实小规模求解并打开比较",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "solve-summary",
+                  "description": "本批 3 次运行 · 3 个已验算可行解; table rows with 通过=3; scenario=bench-cvrp-uniform-n20"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4404,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "求解",
+                      "duration": 3993
+                    }
+                  ],
+                  "startTime": "2026-10-22T15:33:30.278Z",
+                  "annotations": [
+                    {
+                      "type": "solve-summary",
+                      "description": "本批 3 次运行 · 3 个已验算可行解; table rows with 通过=3; scenario=bench-cvrp-uniform-n20"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "before-solve",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/before-solve-2578b2145f7b0da8583d4af948095db297d12406.png"
+                    },
+                    {
+                      "name": "solved",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/solved-4385c8010aa9b4bbdc318932aae8f8aca8aa9153.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G-真实小规模求解并打开比较/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G-真实小规模求解并打开比较/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G-真实小规模求解并打开比较/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e8cd68996e8cc36ce593-ef819bc8aa4f484c0325",
+          "file": "g-solve-compare.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "G2 cvrp-depot-floor：0 个已验算可行解为预期，并显示碰撞报告",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "solve-summary",
+                  "description": "本批 3 次运行 · 0 个已验算可行解; 通过=0"
+                },
+                {
+                  "type": "map_check",
+                  "description": "[{\"id\":\"run_20261022T153335_1a546f\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":5,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153335_ba8f4f\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":4,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153335_da46b2\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":0,\"segment\":0,\"point\":[-7.582459016393442,3.3599180327868856],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}}]"
+                },
+                {
+                  "type": "collision-note",
+                  "description": "PyVRP 迭代局部搜索 · run_20261022T153335_da46b2：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\nOR-Tools 引导局部搜索 · run_20261022T153335_ba8f4f：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\nClarke–Wright 节约算法 · run_20261022T153335_1a546f：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m"
+                },
+                {
+                  "type": "violations",
+                  "description": "[{\"route\":\"0\",\"segment\":\"0\",\"text\":\"路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"4\",\"text\":\"路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"5\",\"text\":\"路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m\"}]"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4930,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "验算：地图净空未通过",
+                      "duration": 123
+                    },
+                    {
+                      "title": "碰撞报告（Mamba 04f4e381 selectors；未构建时 pending）",
+                      "duration": 461
+                    }
+                  ],
+                  "startTime": "2026-10-22T15:33:34.889Z",
+                  "annotations": [
+                    {
+                      "type": "solve-summary",
+                      "description": "本批 3 次运行 · 0 个已验算可行解; 通过=0"
+                    },
+                    {
+                      "type": "map_check",
+                      "description": "[{\"id\":\"run_20261022T153335_1a546f\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":5,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153335_ba8f4f\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":4,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153335_da46b2\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":0,\"segment\":0,\"point\":[-7.582459016393442,3.3599180327868856],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}}]"
+                    },
+                    {
+                      "type": "collision-note",
+                      "description": "PyVRP 迭代局部搜索 · run_20261022T153335_da46b2：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\nOR-Tools 引导局部搜索 · run_20261022T153335_ba8f4f：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\nClarke–Wright 节约算法 · run_20261022T153335_1a546f：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m"
+                    },
+                    {
+                      "type": "violations",
+                      "description": "[{\"route\":\"0\",\"segment\":\"0\",\"text\":\"路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"4\",\"text\":\"路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"5\",\"text\":\"路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m\"}]"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "solved-floor",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/solved-floor-f4a3a54b1468e2ac41faf5630144a29851789ac1.png"
+                    },
+                    {
+                      "name": "verify-tab",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/verify-tab-b2bdc8e8fbb920ff2ab1c28577759a688b7fa485.png"
+                    },
+                    {
+                      "name": "collision-report",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/collision-report-bf58c372ff7045fd9e45cbcdbf43fb5d1e022588.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run11-4100/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e8cd68996e8cc36ce593-b95341cdc7176696f544",
+          "file": "g-solve-compare.spec.ts",
+          "line": 51,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T15:33:28.122Z",
+    "duration": 11946.432,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

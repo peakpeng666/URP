@@ -1,0 +1,278 @@
+{
+  "config": {
+    "argv": [
+      "${USER_HOME}/.nvm/versions/node/v24.14.0/bin/node",
+      "${USER_HOME}/urp-e2e/video-suite/node_modules/.bin/playwright",
+      "test",
+      "tests/g-"
+    ],
+    "configFile": "${USER_HOME}/urp-e2e/video-suite/playwright.config.ts",
+    "rootDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "${USER_HOME}/urp-e2e/video-suite/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/results.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "g-solve-compare.spec.ts",
+      "file": "g-solve-compare.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "G 真实小规模求解并打开比较",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "solve-summary",
+                  "description": "本批 3 次运行 · 3 个已验算可行解; table rows with 通过=3; scenario=bench-cvrp-uniform-n20"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4503,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "求解",
+                      "duration": 3966
+                    }
+                  ],
+                  "startTime": "2026-10-22T15:30:32.603Z",
+                  "annotations": [
+                    {
+                      "type": "solve-summary",
+                      "description": "本批 3 次运行 · 3 个已验算可行解; table rows with 通过=3; scenario=bench-cvrp-uniform-n20"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "before-solve",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/before-solve-571c09688d6a5d5528650be98e4228bcc863ea47.png"
+                    },
+                    {
+                      "name": "solved",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G-真实小规模求解并打开比较/attachments/solved-35688af010e464194cfd9794af06d6883a7009bd.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G-真实小规模求解并打开比较/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G-真实小规模求解并打开比较/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G-真实小规模求解并打开比较/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e8cd68996e8cc36ce593-ef819bc8aa4f484c0325",
+          "file": "g-solve-compare.spec.ts",
+          "line": 5,
+          "column": 1
+        },
+        {
+          "title": "G2 cvrp-depot-floor：0 个已验算可行解为预期，并显示碰撞报告",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "solve-summary",
+                  "description": "本批 3 次运行 · 0 个已验算可行解; 通过=0"
+                },
+                {
+                  "type": "map_check",
+                  "description": "[{\"id\":\"run_20261022T153037_e5ee23\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":5,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153037_97fe4c\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":4,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153037_05142b\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":0,\"segment\":0,\"point\":[-7.582459016393442,3.3599180327868856],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}}]"
+                },
+                {
+                  "type": "collision-note",
+                  "description": "PyVRP 迭代局部搜索 · run_2026：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\nOR-Tools 引导局部搜索 · run_2026：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\nClarke–Wright 节约算法 · run_2026：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m"
+                },
+                {
+                  "type": "violations",
+                  "description": "[{\"route\":\"0\",\"segment\":\"0\",\"text\":\"路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"4\",\"text\":\"路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"5\",\"text\":\"路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m\"}]"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4907,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "验算：地图净空未通过",
+                      "duration": 167
+                    },
+                    {
+                      "title": "碰撞报告（Mamba 04f4e381 selectors；未构建时 pending）",
+                      "duration": 346
+                    }
+                  ],
+                  "startTime": "2026-10-22T15:30:37.421Z",
+                  "annotations": [
+                    {
+                      "type": "solve-summary",
+                      "description": "本批 3 次运行 · 0 个已验算可行解; 通过=0"
+                    },
+                    {
+                      "type": "map_check",
+                      "description": "[{\"id\":\"run_20261022T153037_e5ee23\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":5,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153037_97fe4c\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":2,\"segment\":4,\"point\":[-7.775245901639344,3.8854918032786885],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}},{\"id\":\"run_20261022T153037_05142b\",\"state\":\"done\",\"check\":true,\"map_check\":{\"checked\":true,\"collision_free\":false,\"min_clearance_m\":0,\"robot_radius_m\":0.175,\"margin_m\":0.05,\"violations\":[{\"route\":0,\"segment\":0,\"point\":[-7.582459016393442,3.3599180327868856],\"clearance_m\":0}],\"violation_count\":1,\"method\":\"沿整条路径按半个栅格采样，距离变换给出保守净空；未知区与地图外按障碍\"}}]"
+                    },
+                    {
+                      "type": "collision-note",
+                      "description": "PyVRP 迭代局部搜索 · run_2026：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\nOR-Tools 引导局部搜索 · run_2026：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\nClarke–Wright 节约算法 · run_2026：地图碰撞检查未通过，不计入已验算可行解（最小净空 0.000 m < 阈值 0.225 m）。\n路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m"
+                    },
+                    {
+                      "type": "violations",
+                      "description": "[{\"route\":\"0\",\"segment\":\"0\",\"text\":\"路线 0 第 0 段 · (-7.582, 3.360) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"4\",\"text\":\"路线 2 第 4 段 · (-7.775, 3.885) · 净空 0.000 m\"},{\"route\":\"2\",\"segment\":\"5\",\"text\":\"路线 2 第 5 段 · (-7.775, 3.885) · 净空 0.000 m\"}]"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "solved-floor",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/solved-floor-ed8cbd87bef14584c5ae5bf15ce7bc8481c64b8f.png"
+                    },
+                    {
+                      "name": "verify-tab",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/verify-tab-afc34a8fc1080c28b91f1527c2efe4cb7719602f.png"
+                    },
+                    {
+                      "name": "collision-report",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/attachments/collision-report-2f8fb55d6b581c11295791fa232a0adfd0801e83.png"
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/test-finished-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/video.webm"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "${USER_HOME}/urp-e2e/video-evidence/run10-4110b/artifacts/g-solve-compare-G2-cvrp-depot-floor：0-个已验算可行解为预期，并显示碰撞报告/trace.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e8cd68996e8cc36ce593-b95341cdc7176696f544",
+          "file": "g-solve-compare.spec.ts",
+          "line": 48,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-22T15:30:32.246Z",
+    "duration": 10345.051,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
