@@ -9,6 +9,16 @@ from . import learned, paths
 from .solvers import catalog
 
 
+# Development-side audit evidence (experiments/runs/evolve-audit-20261023, Dutch fields, 3 s, seed 42); quoted with
+# its scope so the reason is not mistaken for a guarantee on a new field.
+FLEET_EVIDENCE = {
+    'total_distance': '开发侧审计（真实田块 274 个可解实例，3 s）：PyVRP 首选可行 271/274，可行时 261 例为逐实例最好、其余与最好差距可忽略（平均 1.000 倍）；'
+                      '被拒的 3 条只与障碍有毫米级擦碰（接口需求第 18 项），改用 OR-Tools 重试即可全部求解',
+    'makespan': '开发侧审计（真实田块 68 个可解实例，3 s）：最晚完成目标下 OR-Tools 在 65 个实例上最好，'
+                'PyVRP 只优化里程，平均最晚完成长 19%',
+}
+
+
 def _feature(name, key, value, unit=None, hint=None):
     return {'name': name, 'key': key, 'value': value, 'unit': unit, 'hint': hint}
 
@@ -42,11 +52,13 @@ def _fleet(inst):
     if inst['objective'] == 'makespan':
         score['ortools.fleet'] += 3
         why['ortools.fleet'].append('规则建议：OR-Tools 使用路线跨度与里程的加权目标；时间为匀速代理，不含转向或交通排队')
+        why['ortools.fleet'].append(FLEET_EVIDENCE['makespan'])
         score['pyvrp.fleet'] += 1.5
         why['pyvrp.fleet'].append('以总里程为搜索目标，不直接均衡各车工作量；是否更优需同实例比较')
     else:
         score['pyvrp.fleet'] += 3
         why['pyvrp.fleet'].append('规则建议：目标是总里程，优先试用 PyVRP 迭代局部搜索；当前场景的收益尚未评估')
+        why['pyvrp.fleet'].append(FLEET_EVIDENCE['total_distance'])
         score['ortools.fleet'] += 2
         why['ortools.fleet'].append('采用不同搜索实现的对照，需用相同实例和预算比较')
     if R is not None and R < 0.8:
