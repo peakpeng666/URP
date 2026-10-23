@@ -419,7 +419,8 @@ class PackageReferenceReceiptTests(unittest.TestCase):
             # named by its source index. No original-tree path is supplied to
             # the relocated isolated interpreter.
             members = ('public_receipt.py', 'preparation_diagnostic.py',
-                       'buildkit_diagnostic.py', 'package_reference.py')
+                       'buildkit_diagnostic.py', 'package_reference.py',
+                       'preparation_stage_diagnostic.py')
             for member in members:
                 shutil.copyfile(ROOT / member, staged / member)
             source_hash = freeze.freeze(staged)

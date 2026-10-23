@@ -18,8 +18,9 @@ RUN /usr/bin/python3 -I -B /opt/urp-control/preparation/verify_bootstrap_closure
 RUN /usr/bin/env -i PATH=/usr/bin:/bin LC_ALL=C LANG=C HOME=/root \
     /usr/bin/python3 -I -B /opt/urp-control/preparation/bootstrap_tools.py install \
     --lock /opt/urp-bootstrap-seed/bootstrap-lock.json --expected-sha256 "$BOOTSTRAP_SHA"
-RUN test "$WORKLOAD_UID" -gt 0 && test "$WORKLOAD_GID" -gt 0 \
-    && chown -R --no-dereference "$WORKLOAD_UID:$WORKLOAD_GID" /inputs
+RUN { test "$WORKLOAD_UID" -gt 0 || { rc=$?; printf '%s\n' 'SAFE_PREPARATION_DIAGNOSTIC:{"schema":1,"stage":"input_ownership","substage":"uid_check","code":"UID_CHECK_FAILED","exception_class":"ShellExit"}' >&2 || :; exit "$rc"; }; } \
+    && { test "$WORKLOAD_GID" -gt 0 || { rc=$?; printf '%s\n' 'SAFE_PREPARATION_DIAGNOSTIC:{"schema":1,"stage":"input_ownership","substage":"gid_check","code":"GID_CHECK_FAILED","exception_class":"ShellExit"}' >&2 || :; exit "$rc"; }; } \
+    && { chown -R --no-dereference "$WORKLOAD_UID:$WORKLOAD_GID" /inputs || { rc=$?; printf '%s\n' 'SAFE_PREPARATION_DIAGNOSTIC:{"schema":1,"stage":"input_ownership","substage":"ownership_change","code":"OWNERSHIP_COMMAND_FAILED","exception_class":"ShellExit"}' >&2 || :; exit "$rc"; }; }
 USER ${WORKLOAD_UID}:${WORKLOAD_GID}
 RUN /usr/bin/env -i PATH=/usr/bin:/bin LC_ALL=C.UTF-8 LANG=C.UTF-8 HOME=/inputs \
     /opt/urp-python/bin/python3.12 -I -B -S /inputs/recipe/prepare_inputs.py \

@@ -365,3 +365,10 @@ See CONTROL_FIELD_SOURCE_EVIDENCE.md for exact archive/source provenance and
 reconstructed status limitations. The separately reviewed controller cleanup
 and its9 fixtures are included without modification. No native success follows
 from these pure regressions; fresh compiler/runtime acceptance remains pending.
+
+### v15 remaining preparation stages
+
+Finite failure diagnostics and exact structural header mapping now cover all
+five RUN stages after package preparation. See PREPARATION_STAGE_DIAGNOSTICS.md.
+This does not identify the actual compiler14 failure or establish any successful
+native/runtime acceptance. Original gates and error/exit behavior are retained.

@@ -17,6 +17,11 @@ _reference_spec = importlib.util.spec_from_file_location(
     'urp_package_reference_projection', Path(__file__).resolve().with_name('package_reference.py'))
 _reference = importlib.util.module_from_spec(_reference_spec)
 _reference_spec.loader.exec_module(_reference)
+_stage_spec = importlib.util.spec_from_file_location(
+    'urp_preparation_stage_projection', Path(__file__).resolve().with_name('preparation_stage_diagnostic.py'))
+_stage = importlib.util.module_from_spec(_stage_spec)
+_stage_spec.loader.exec_module(_stage)
+
 
 MAX_LOG_BYTES = 16 * 1024 * 1024
 MAX_LINE_BYTES = 16 * 1024
@@ -28,6 +33,12 @@ MAX_VERTICES = 4096
 RUN_COMMANDS = {
     'bootstrap': '/usr/bin/env -i PATH=/usr/sbin:/usr/bin:/sbin:/bin LC_ALL=C LANG=C HOME=/nonexistent /bin/sh /usr/local/lib/urp-bootstrap/bootstrap.sh --install-bootstrap',
     'package': '/usr/bin/env -i PATH=/usr/sbin:/usr/bin:/sbin:/bin LC_ALL=C LANG=C HOME=/nonexistent /usr/bin/python3 -I -B /opt/urp-control/preparation/prepare_packages.py --root /inputs --install',
+    'closure_verify': '/usr/bin/python3 -I -B /opt/urp-control/preparation/verify_bootstrap_closure.py',
+    'python_provision': '/usr/bin/env -i PATH=/usr/bin:/bin LC_ALL=C LANG=C HOME=/root /usr/bin/python3 -I -B /opt/urp-control/preparation/bootstrap_tools.py install --lock /opt/urp-bootstrap-seed/bootstrap-lock.json --expected-sha256 "$BOOTSTRAP_SHA"',
+    'input_ownership': '{ test "$WORKLOAD_UID" -gt 0 || { rc=$?; printf \'%s\\n\' \'SAFE_PREPARATION_DIAGNOSTIC:{"schema":1,"stage":"input_ownership","substage":"uid_check","code":"UID_CHECK_FAILED","exception_class":"ShellExit"}\' >&2 || :; exit "$rc"; }; } && { test "$WORKLOAD_GID" -gt 0 || { rc=$?; printf \'%s\\n\' \'SAFE_PREPARATION_DIAGNOSTIC:{"schema":1,"stage":"input_ownership","substage":"gid_check","code":"GID_CHECK_FAILED","exception_class":"ShellExit"}\' >&2 || :; exit "$rc"; }; } && { chown -R --no-dereference "$WORKLOAD_UID:$WORKLOAD_GID" /inputs || { rc=$?; printf \'%s\\n\' \'SAFE_PREPARATION_DIAGNOSTIC:{"schema":1,"stage":"input_ownership","substage":"ownership_change","code":"OWNERSHIP_COMMAND_FAILED","exception_class":"ShellExit"}\' >&2 || :; exit "$rc"; }; }',
+    'inputs_prepare': '/usr/bin/env -i PATH=/usr/bin:/bin LC_ALL=C.UTF-8 LANG=C.UTF-8 HOME=/inputs /opt/urp-python/bin/python3.12 -I -B -S /inputs/recipe/prepare_inputs.py --root /inputs --python /opt/urp-python/bin/python3.12 --package-lock /inputs/package-preparation.json --expected-source-index-sha256 "$INPUT_SOURCE_SHA"',
+    'inputs_freeze': '/opt/urp-python/bin/python3.12 -I -B -S /inputs/freeze_input_index.py --root /inputs --phase build',
+
 }
 BOOTSTRAP_PREFIX = 'SAFE_BOOTSTRAP_DIAGNOSTIC:'
 PACKAGE_PREFIX = 'SAFE_PACKAGE_DIAGNOSTIC:'
@@ -135,9 +146,13 @@ def validate_projection(value):
         if type(detail) is not dict or set(detail) != {'code'} or not _enum(detail['code'], BOOTSTRAP_FAILURES):
             return None
         detail = dict(detail)
-    else:
+    elif source == 'package':
         detail = _package(detail)
         if detail is None:
+            return None
+    else:
+        detail = _stage.validate(detail)
+        if detail is None or detail['stage'] != source:
             return None
     result = {'schema': 1, 'source': source, 'diagnostic_only': True, 'detail': detail}
     if 'reference' in value:
@@ -232,7 +247,7 @@ def _parse_lines(stream):
             # its one unchanged failure marker immediately after the reference.
             if not payload.startswith(PACKAGE_PREFIX.encode('ascii')):
                 return None
-        if not payload.startswith((BOOTSTRAP_PREFIX.encode('ascii'), PACKAGE_PREFIX.encode('ascii'))):
+        if not payload.startswith((BOOTSTRAP_PREFIX.encode('ascii'), PACKAGE_PREFIX.encode('ascii'), _stage.PREFIX.encode('ascii'))):
             continue
         if (not terminated or len(payload) > MAX_MARKER_BYTES or
                 any(byte < 32 or byte > 126 for byte in payload)):
@@ -245,10 +260,11 @@ def _parse_lines(stream):
                 continue
             detail = {'code': code}
         else:
-            if not payload.startswith(PACKAGE_PREFIX.encode('ascii')):
+            prefix = PACKAGE_PREFIX if source == 'package' else _stage.PREFIX
+            if not payload.startswith(prefix.encode('ascii')):
                 return None
             try:
-                detail = json.loads(payload[len(PACKAGE_PREFIX):], object_pairs_hook=_unique_object)
+                detail = json.loads(payload[len(prefix):], object_pairs_hook=_unique_object)
             except (ValueError, UnicodeError, RecursionError):
                 return None
         if source in markers:
@@ -298,7 +314,9 @@ def parse_log(path):
 
 # Structural observability is separate from the unchanged safe-marker schema.
 BASE_IMAGE = 'docker.io/library/ubuntu@sha256:98510ac07bb4545e389be502a8918b385c018bfe4ceeb5ac7e0375c782268b04'
-STATIC_STAGES = ('base_metadata', 'base_pull', 'bootstrap', 'package')
+STATIC_STAGES = ('base_metadata', 'base_pull', 'bootstrap', 'package',
+                 'closure_verify', 'python_provision', 'input_ownership',
+                 'inputs_prepare', 'inputs_freeze')
 LOG_STATES = frozenset({'read', 'empty', 'missing', 'unreadable', 'unsupported_file',
                         'oversized', 'invalid', 'changed'})
 _ERROR = re.compile(rb'#([1-9][0-9]{0,5}) ERROR:')
