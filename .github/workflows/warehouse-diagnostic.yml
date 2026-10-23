@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 220
     env:
       TARGET_SHA: 3acf840d1a0c16ab1cfcca15744e4ea6609ddb35
-      HARNESS_SHA: 'b08ce22d3dc184359023f11b55986b61ddb4bc29'
+      HARNESS_SHA: '9bf56aba56846bb04b18a6edf21817a943f16e25'
       URP_WAREHOUSE_STARTUP_OBSERVER: '1'
       URP_WAREHOUSE_STARTUP_OBSERVER_DELAY_S: '30'
       GALLIUM_DRIVER: softpipe
@@ -74,6 +74,10 @@ jobs:
           if ! python3 "$base/harness/deploy/acceptance-native/warehouse/lifecycle_only_public_summary.py" \
             --input "$base/private/summary.json" \
             --runner-status "$base/private/runner-status.json" 2> "$base/reducer.log"; then
+            # Nonzero can be a valid diagnostic FAIL or a projection crash.
+            # This receipt is not a native outcome and never echoes private input/stderr.
+            printf '%s\n' '{"record_kind":"diagnostic_completion","stage":"warehouse-lifecycle-only","completion_status":"projection_or_diagnostic_nonzero","native_outcome":"not_determined_by_receipt","route_acceptance":"NOT_RUN"}'
             exit 1
           fi
           exit "$rc"
+
