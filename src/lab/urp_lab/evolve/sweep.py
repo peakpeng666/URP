@@ -110,6 +110,9 @@ def solve(scenario, inst, algorithm: str, params: dict) -> dict:
     """Dispatch one solve. Registered catalog algorithms go through ``run_algorithm``; ``evolve.*`` research
     candidates execute here and are wrapped into the same result envelope — their validity is decided only by
     the unchanged independent checker inside the candidate itself."""
+    if algorithm in ('evolve.f2c_split', 'evolve.f2c_repair_w', 'evolve.f2c_fillet'):
+        from . import candidates
+        return candidates.solve(algorithm, inst, params)
     if algorithm == 'evolve.f2c_repair':
         from . import repair
         routes, check, metrics, raw = repair.solve_full_repaired(inst, params)

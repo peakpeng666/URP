@@ -77,13 +77,19 @@ def main(argv=None):
             jobs += cj
         if 'fleet' in families:
             jobs += plans.fleet_plan(fields)
+        if 'candidates' in families:
+            cj, cex = plans.candidate_plan(fields)
+            jobs += cj
+            excluded = excluded or cex
         out = Path(args.out)
         plan = {'run_id': args.run_id or out.name, 'created_utc': sweep.utc(), 'note': args.note,
-                'purpose': '互补性审计（开发侧）：真实田块覆盖配置与多车算法组合；封存测试田块不在计划内'
-                if 'repair' not in families else '回路②候选成员（局部 Dubins 修补）准入实验（开发侧）；封存测试田块不在计划内',
+                'purpose': ('准入依据研究候选池（修补窗口、分割角、倒圆输出；开发侧）；封存测试田块不在计划内' if 'candidates' in families else
+                            '回路②候选成员（局部 Dubins 修补）准入实验（开发侧）；封存测试田块不在计划内' if 'repair' in families else
+                            '互补性审计（开发侧）：真实田块覆盖配置与多车算法组合；封存测试田块不在计划内'),
                 'fields': fields, 'families': sorted(families), 'excluded': excluded, 'timeout_s': 300.0,
                 'profiles': instances.PROFILES, 'coverage_portfolio': plans.COVERAGE_PORTFOLIO,
                 'repair_portfolio': plans.REPAIR_PORTFOLIO if 'repair' in families else {},
+                'candidate_pool': plans.CANDIDATE_POOL if 'candidates' in families else {},
                 'fleet_portfolio': plans.FLEET_PORTFOLIO, 'workbench_default': plans.WORKBENCH_DEFAULT,
                 'field_manifest_rule': instances.manifest()['rule'], 'code': sweep.code_identity(), 'jobs': jobs}
         digest = sweep.write_plan(out, plan)

@@ -29,9 +29,30 @@ REPAIR_PORTFOLIO = {f'repair:{d}/{o}': ('evolve.f2c_repair', {'decomposition': d
                     for d, o in itertools.product(REPAIR_DECOMPOSITIONS, OBJECTIVES)}
 
 
+# Round-2 admission study (T4): candidates with deliberately different strengths (urp_lab.evolve.candidates).
+_BASE = {'turn_model': 'dubins'}
+CANDIDATE_POOL = {
+    'repairw:none/n_swath@0.5-1-2': ('evolve.f2c_repair_w', {**_BASE, 'decomposition': 'none', 'swath_objective': 'n_swath', 'windows': [0.5, 1, 2]}),
+    'repairw:none/n_swath@2-4-8-16': ('evolve.f2c_repair_w', {**_BASE, 'decomposition': 'none', 'swath_objective': 'n_swath', 'windows': [2, 4, 8, 16]}),
+    'repairw:none/field_coverage@0.5-1-2': ('evolve.f2c_repair_w', {**_BASE, 'decomposition': 'none', 'swath_objective': 'field_coverage', 'windows': [0.5, 1, 2]}),
+    'repairw:none/field_coverage@2-4-8-16': ('evolve.f2c_repair_w', {**_BASE, 'decomposition': 'none', 'swath_objective': 'field_coverage', 'windows': [2, 4, 8, 16]}),
+    'split:boustrophedon/n_swath@0.25': ('evolve.f2c_split', {**_BASE, 'decomposition': 'boustrophedon', 'swath_objective': 'n_swath', 'split_angle_pi': 0.25}),
+    'split:boustrophedon/n_swath@0.75': ('evolve.f2c_split', {**_BASE, 'decomposition': 'boustrophedon', 'swath_objective': 'n_swath', 'split_angle_pi': 0.75}),
+    'fillet:none/n_swath': ('evolve.f2c_fillet', {**_BASE, 'decomposition': 'none', 'swath_objective': 'n_swath'}),
+    'fillet:none/field_coverage': ('evolve.f2c_fillet', {**_BASE, 'decomposition': 'none', 'swath_objective': 'field_coverage'}),
+}
+
 def config_label(name: str) -> str:
     if name.startswith('repair:'):
         return '修补·' + config_label('full:' + name[7:])
+    if name.startswith('repairw:'):
+        body, _, win = name[8:].partition('@')
+        return f"修补(窗口{win.replace('-', '/')}r)·" + config_label('full:' + body)
+    if name.startswith('split:'):
+        body, _, ang = name[6:].partition('@')
+        return f'分割角{ang}π·' + config_label('full:' + body)
+    if name.startswith('fillet:'):
+        return '倒圆输出·' + config_label('full:' + name[7:])
     if name.startswith('full:'):
         d, o = name[5:].split('/')
         return f'{LABELS[d]}·{LABELS[o]}'
@@ -77,6 +98,20 @@ def repair_plan(fields: list[str], profiles=tuple(I.PROFILES), timeout_s: float 
                          'params': params, 'instance': {'field': fid, 'profile': prof}, 'timeout_s': timeout_s})
     return jobs, excluded
 
+
+def candidate_plan(fields: list[str], profiles=tuple(I.PROFILES), timeout_s: float = 300.0) -> tuple[list[dict], list[dict]]:
+    """Admission-study candidate jobs on the same admitted coverage instances as ``coverage_plan``."""
+    jobs, excluded = [], []
+    for fid, prof in itertools.product(fields, profiles):
+        _sc, inst = I.coverage_instance(fid, prof)
+        adm = I.coverage_admission(inst)
+        if not adm['admitted']:
+            excluded.append({'field': fid, 'profile': prof, 'reason': adm['reason']})
+            continue
+        for name, (alg, params) in CANDIDATE_POOL.items():
+            jobs.append({'job_id': _job_id('cand', fid, prof, name), 'family': 'coverage', 'config': name, 'algorithm': alg,
+                         'params': params, 'instance': {'field': fid, 'profile': prof}, 'timeout_s': timeout_s})
+    return jobs, excluded
 
 def fleet_plan(fields: list[str], timeout_s: float = 60.0) -> list[dict]:
     """Two travel modes per field with task size, spatial pattern and trip structure rotated over fields
