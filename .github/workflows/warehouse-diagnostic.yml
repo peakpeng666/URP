@@ -21,9 +21,10 @@ jobs:
     timeout-minutes: 220
     env:
       TARGET_SHA: 3acf840d1a0c16ab1cfcca15744e4ea6609ddb35
-      HARNESS_SHA: 5770446afd5148b40441503eec4a6f323555ca49
+      HARNESS_SHA: 185b1f4b04ce55dfeaeebd3a52df0a4c2b7350eb
       URP_WAREHOUSE_STARTUP_OBSERVER: '1'
       URP_WAREHOUSE_STARTUP_OBSERVER_DELAY_S: '30'
+      GALLIUM_DRIVER: softpipe
     steps:
       - name: Run isolated historical warehouse replay and emit allowlisted result
         shell: bash
