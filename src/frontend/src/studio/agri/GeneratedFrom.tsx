@@ -26,8 +26,8 @@ export function GeneratedFrom() {
   function backToCatalog() {
     if (!pattern || !report) return;
     saveDraft(pattern, { ...defaultValues(pattern), ...report.params }, String(src!.seed ?? 42));
+    // 留在计划页：农业目录在场景库面板里，由 Studio 收到聚焦请求后激活该面板。
     requestCatalogFocus(pattern.id);
-    location.hash = '#/archive';
   }
   return <section aria-label="生成来源" data-generated={mode} style={{ fontSize: 12 }}>
     <h4>生成来源：{pattern.name}</h4>

@@ -58,6 +58,7 @@ const FiguresPanel = lazy(() => import('./figures/FiguresPanel').then((m) => ({ 
 import './dock.css';
 import s from './studio.module.css';
 import { isBoxSelectShortcut } from './editor/shortcuts';
+import { FOCUS_EVENT, peekCatalogFocus } from './agri/drafts';
 
 const PANELS = {
   map: { title: '地图', C: MapPanel },
@@ -255,6 +256,15 @@ export function Studio({ route }: { route: Route }) {
     restoring.current = true;
     restore(api.current, st.workspace);
     restoring.current = false;
+  }, [st.workspace]);
+
+  // 「回到目录改参数」：农业目录在场景库面板里，资料工作区默认布局没有它；有待处理的目录聚焦请求时打开并激活场景库。
+  // 放在 workspace → layout 之后，切换工作区重建布局后再打开。
+  useEffect(() => {
+    const go = () => { if (peekCatalogFocus()) openPanel(api.current, 'scenarios'); };
+    go();
+    window.addEventListener(FOCUS_EVENT, go);
+    return () => window.removeEventListener(FOCUS_EVENT, go);
   }, [st.workspace]);
 
   // open the code panel whenever a source file is requested
