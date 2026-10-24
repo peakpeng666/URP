@@ -92,6 +92,43 @@ jobs:
           path: .local-state/nonideal-model-contracts.xml
           include-hidden-files: true
           if-no-files-found: warn
+  evolve-research-contracts:
+    # Offline synthetic/geometry contracts only, not research or physical acceptance.
+    # The serving adapter integration is explicitly deferred in src/lab/urp_lab/evolve/INTEGRATION.md.
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            src/lab
+            src/research
+            src/frontend/core/routing
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: '24'
+      - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: '0.12.23'
+      - run: uv sync --locked --inexact
+        working-directory: src/lab
+      - name: Discover evolve offline contracts (serving integration deferred)
+        working-directory: src/lab
+        run: >-
+          uv run --no-sync python -m pytest -q tests
+          -o python_files='test_evolve_*.py'
+          -rs
+          --junitxml=../../.local-state/evolve-research-contracts.xml
+      - name: Retain evolve results and explicit skip reasons
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: evolve-research-contracts
+          path: .local-state/evolve-research-contracts.xml
+          include-hidden-files: true
+          if-no-files-found: warn
+
   engineering:
     runs-on: ubuntu-22.04
     timeout-minutes: 20
