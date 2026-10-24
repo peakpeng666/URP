@@ -75,3 +75,43 @@ Intentional deviations from snapshot source:
 After this hardening the full evolve discovery is **67 passed, 7 skipped** in
 4.29 s across 15 active files. The broader 786/17/14 lab result above predates
 this hardening and is not represented as a final full-suite pass.
+
+
+## Offline serving guard preparation (separate follow-on slice)
+
+This change does not connect serving to the gateway, recommender or UI, install
+any model/ledger, or alter solver defaults. All eight live-integration tests in
+`deferred_tests/` remain deferred. The historical model is not an approved model.
+
+`serve.recommend` now requires an explicit in-process `ModelApproval` containing
+an operator-reviewed full-document SHA-256, separately reviewed development
+membership digest, and review reference. There is no configured production
+approval. Constructing the object or matching an artifact's self-declared hash
+is not evidence that review occurred. The document must separately carry matching
+development provenance; these are identity bindings, not a replacement for an
+actual membership audit. No frozen-protocol substring is trusted.
+
+Only static experience orders can pass this offline inspection. Learned serving
+is unconditionally disabled pending independently reviewable training membership
+and promotion evidence. Output explicitly says static, not learned, and not
+deployed. Historical evaluation summaries are not presented as verified claims.
+
+Model cache identity binds resolved path and content bytes/hash, not mtime;
+returned objects cannot mutate the cache. Validation rejects malformed dimensions,
+non-finite values, invalid order permutations, and unregistered configuration
+parameters. Machine checks include robot width. Static orders must pass the same
+nearest-neighbour and feature-range checks and cannot silently extrapolate.
+
+The new tests use only generated rectangles and temporary JSON artifacts with
+explicit synthetic review identities. They cover missing approval/provenance,
+tampering, mismatched membership, unqualified learned kinds, robot width, static
+out-of-range inputs, equal-mtime path/content replacements, invalid artifacts,
+and returned-object cache mutation. They do not authenticate or approve any
+historical artifact or touch sealed datasets.
+
+Final cloud check for this follow-on slice: **83 passed, 7 explicitly skipped**
+(all evolve tests); the new serving-guard module contributes **16 passing tests**.
+The seven optional-data/runtime skips retain their stated reasons. Gateway,
+recommender, existing CI and eight deferred integration tests match the PR12 base
+byte-for-byte. `git diff --check` passes. This is offline contract verification,
+not live serving, research validation or physical acceptance.
