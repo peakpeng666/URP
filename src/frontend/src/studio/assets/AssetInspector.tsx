@@ -113,7 +113,7 @@ function Actions({ a, ver }: { a: Asset; ver: AssetVersion }) {
       <h4>使用</h4>
       <div className={s.row}>
         {a.kind === 'map' && a.subtype !== 'gazebo_world' && (
-          <Button size="sm" variant="primary" icon={MapPinned} disabled={typeof background === 'string'} title={typeof background === 'string' ? background : '用这张地图的边界、障碍与语义生成一个可编辑的多车任务地图'}
+          <Button size="sm" variant="primary" icon={MapPinned} disabled={typeof background === 'string'} title={typeof background === 'string' ? background : '用此地图的边界、障碍和语义创建多车任务地图'}
             onClick={() => st.setTaskMapFrom({ id: a.id, v: ver.v })}>用此地图新建任务地图</Button>
         )}
         {a.kind === 'map' && a.subtype === 'image' && fleetOpen && typeof background !== 'string' && (
@@ -246,10 +246,10 @@ function VehicleLayers({ a, ver }: { a: Asset; ver: AssetVersion }) {
   const adapter = (ver.meta.simulation?.adapter as string | null | undefined) ?? null;
   return (
     <>
-      <Layer title="① 显示：能画出来" ok={caps.display?.ok}>
+      <Layer title="① 外观显示" ok={caps.display?.ok}>
         <Checklist items={caps.display?.items ?? []} />
       </Layer>
-      <Layer title="② 规划：能参与路径规划" ok={caps.planning?.ok}
+      <Layer title="② 规划参数" ok={caps.planning?.ok}
         note="足迹决定障碍膨胀半径（外接圆），容量决定每趟载量，车速换算作业时间；运动学区分能否原地转向。">
         <Checklist items={caps.planning?.items ?? []} />
         {!readOnly && (
@@ -295,8 +295,8 @@ function VehicleLayers({ a, ver }: { a: Asset; ver: AssetVersion }) {
           </div>
         )}
       </Layer>
-      <Layer title="③ 仿真：能在 Gazebo / ROS 2 里执行" ok={caps.simulation?.ok}
-        note="只有真正生成这辆车的仿真适配才算可仿真；外观网格不能当碰撞体。">
+      <Layer title="③ Gazebo / ROS 2 仿真" ok={caps.simulation?.ok}
+        note="仿真需有对应车型适配，碰撞检测使用单独的碰撞几何。">
         <Checklist items={caps.simulation?.items ?? []} />
         {adapters.length > 0 && (
           <div className={s.row} style={{ marginTop: 6 }}>
@@ -342,7 +342,7 @@ function FacilityLayers({ a, ver }: { a: Asset; ver: AssetVersion }) {
   return (
     <>
       <Layer title="① 显示" ok={caps.display?.ok}><Checklist items={caps.display?.items ?? []} /></Layer>
-      <Layer title="② 规划占地" ok={caps.planning?.ok} note="放进任务地图时按这个占地生成障碍多边形（规划用的是占地，不是外观网格）。">
+      <Layer title="② 规划占地" ok={caps.planning?.ok} note="放入任务地图后，按此占地生成规划障碍多边形。">
         <div className={s.form}>
           <label>障碍类型</label>
           <Select value={kind} disabled={a.builtin} onChange={(e) => setKind(e.target.value)}>
@@ -410,7 +410,7 @@ function MapFacts({ a, ver }: { a: Asset; ver: AssetVersion }) {
         <div className={s.kv}>
           <span>尺寸</span><span>{m.size_px?.join('×')} 像素</span>
           <span>标定</span><span>{c ? `${c.model === 'known_distance' ? '已知距离' : c.model === 'affine' ? '仿射' : '相似变换'} · ${(c.scale_m_per_px * 100).toFixed(2)} cm/像素 · 旋转 ${c.rotation_deg}°${c.rmse_m != null ? ` · RMSE ${c.rmse_m} m` : ''}` : '未标定'}</span>
-          <span>通行</span><span>不可直接通行：图片只作背景，边界、障碍需要在任务地图里描出来</span>
+          <span>通行</span><span>图片仅作底图；请在任务地图中描出边界和障碍。</span>
         </div>
       </div>
     );

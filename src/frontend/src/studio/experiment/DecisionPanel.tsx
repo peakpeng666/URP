@@ -18,6 +18,7 @@ type WithAdvice = Solution & { recommendation_at_submission?: { advice?: Advice;
 const SELECTOR: Record<string, { text: string; tone: 'green' | 'gray' | 'orange' }> = {
   available: { text: '已接入', tone: 'green' }, unavailable: { text: '未接入', tone: 'orange' },
   not_applicable: { text: '不适用于此问题类型', tone: 'gray' }, out_of_scope: { text: '超出训练范围', tone: 'orange' },
+  out_of_profile: { text: '预算未匹配评估条件，使用规则', tone: 'orange' },
 };
 
 export function DecisionPanel() {
@@ -43,9 +44,9 @@ export function DecisionPanel() {
           <h3>决策记录</h3>
           <Badge tone={fromRuns ? 'blue' : 'gray'}>{fromRuns ? '提交时快照' : '当前地图（尚未求解）'}</Badge>
         </div>
-        <p className={p.meta}>{fromRuns ? (snap?.note ?? '') : '这是对当前地图的实时建议；求解后改为显示随运行记录保存的建议快照。'}</p>
+        <p className={p.meta}>{fromRuns ? (snap?.note ?? '') : '当前显示实时推荐；求解后显示提交时保存的推荐快照。'}</p>
 
-        <h3>① 输入状态（推荐器看到的特征）</h3>
+        <h3>① 输入特征</h3>
         <div className={p.features}>
           {advice.features.map((f) => (
             <div key={f.key} className={p.feature}><span>{f.name}</span><strong>{f.value ?? '—'}{f.unit ? ` ${f.unit}` : ''}</strong></div>
@@ -71,14 +72,14 @@ export function DecisionPanel() {
         <h3>③ 推荐</h3>
         <p className={p.hint}>
           {advice.recommended ? <>推荐 <b>{algos[advice.recommended]?.name ?? advice.recommended}</b>。</> : '没有适用的算法。'}
-          策略 <span className={p.mono}>{advice.policy}</span>{advice.policy === 'rules-v2' ? '（基于问题特征的规则，不是学习模型）' : '（学习型选择器）'}。
+          策略 <span className={p.mono}>{advice.policy}</span>{advice.policy === 'rules-v2' ? '（特征规则）' : '（学习型选择器）'}。
         </p>
         <div className={a.kv}>
           <span>学习型选择器</span><span><span className={a.chip} data-tone={selLabel.tone === 'gray' ? undefined : selLabel.tone}>{selLabel.text}</span> <span className={p.mono}>{sel?.id}</span></span>
           {sel?.reason && <><span>原因</span><span>{sel.reason}</span></>}
           {sel?.scope && <><span>适用范围</span><span>{sel.scope}</span></>}
           {sel?.evaluation && <><span>离线评估</span><span>测试 {sel.evaluation.test_n} 例，平均改进 {fmt.num(sel.evaluation.mean_improvement_pct, 2)}%，有害 {sel.evaluation.harmful_instances} 例（对照单一最佳 {sel.evaluation.sbs}）</span></>}
-          {sel?.status === 'not_applicable' && <><span>说明</span><span>学习型选择器只针对欧氏 CVRP 实例训练；这里的推荐完全来自规则，界面不会把它标成模型预测。</span></>}
+          {sel?.status === 'not_applicable' && <><span>说明</span><span>学习型选择器适用于欧氏 CVRP；此问题使用规则推荐。</span></>}
         </div>
 
         <h3>④ 实际选择</h3>

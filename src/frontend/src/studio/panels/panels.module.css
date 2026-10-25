@@ -53,6 +53,10 @@
 .rowSpace { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; min-width: 0; }
 .rowSpace > * { min-width: 0; max-width: 100%; }
 .quote { margin: 4px 0; padding: 8px 10px; border-left: 3px solid var(--mac-accent); background: var(--mac-accent-soft); border-radius: 0 8px 8px 0; font-size: 12px; line-height: 1.6; }
+.studies { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.studies .split { flex: 1; min-height: 0; }
+.baselineGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px; margin-top: 8px; }
+.baselineGrid .quote p { margin: 4px 0 0; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 6px; }
 .card { display: flex; flex-direction: column; gap: 2px; padding: 7px 9px; border-radius: 9px; background: var(--mac-inset); border: 0.5px solid var(--mac-separator); }
 .card span { font-size: 10px; color: var(--mac-label-3); }
@@ -76,6 +80,7 @@
 
 /* compare */
 .compare { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 34%); gap: 12px; height: 100%; padding: 10px; overflow: auto; }
+.compare > * { min-width: 0; }
 .tableWrap { overflow: auto; min-width: 0; }
 .table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; }
 .table th { position: sticky; top: 0; z-index: 1; padding: 6px 8px; text-align: left; font-weight: 600; color: var(--mac-label-2); background: rgba(250, 250, 252, 0.96); box-shadow: inset 0 -0.5px 0 var(--mac-separator-strong); white-space: nowrap; }

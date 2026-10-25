@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { importGeojsonOnce, importScenarioOnce, UncertainImportError } from './scenarioWrites';
 import { DockviewReact, themeLight, type DockviewApi, type DockviewReadyEvent } from 'dockview-react';
 import 'dockview-react/dist/styles/dockview.css';
 import { Command } from 'cmdk';
@@ -56,6 +57,8 @@ const DecisionPanel = lazy(() => import('./experiment/DecisionPanel').then((m) =
 const FiguresPanel = lazy(() => import('./figures/FiguresPanel').then((m) => ({ default: m.FiguresPanel })));
 import './dock.css';
 import s from './studio.module.css';
+import { isBoxSelectShortcut } from './editor/shortcuts';
+import { FOCUS_EVENT, peekCatalogFocus } from './agri/drafts';
 
 const PANELS = {
   map: { title: '地图', C: MapPanel },
@@ -255,6 +258,15 @@ export function Studio({ route }: { route: Route }) {
     restoring.current = false;
   }, [st.workspace]);
 
+  // 「回到目录改参数」：农业目录在场景库面板里，资料工作区默认布局没有它；有待处理的目录聚焦请求时打开并激活场景库。
+  // 放在 workspace → layout 之后，切换工作区重建布局后再打开。
+  useEffect(() => {
+    const go = () => { if (peekCatalogFocus()) openPanel(api.current, 'scenarios'); };
+    go();
+    window.addEventListener(FOCUS_EVENT, go);
+    return () => window.removeEventListener(FOCUS_EVENT, go);
+  }, [st.workspace]);
+
   // open the code panel whenever a source file is requested
   useEffect(() => {
     if (st.codePath) openPanel(api.current, 'code');
@@ -355,10 +367,12 @@ function ComposeBar() {
   async function onFile(f: File) {
     try {
       const obj = JSON.parse(await f.text());
-      const sc = obj.type === 'FeatureCollection' || obj.type === 'Feature' ? await studio.importGeojson(obj, f.name.replace(/\.(geo)?json$/i, '')) : await studio.importScenario(obj);
+      const sc = obj.type === 'FeatureCollection' || obj.type === 'Feature' ? await importGeojsonOnce(obj, f.name.replace(/\.(geo)?json$/i, '')) : await importScenarioOnce(obj);
       location.hash = `#/plan/${encodeURIComponent(sc.id)}`;
       notify('ok', `已导入 ${sc.title}`);
     } catch (e) {
+      // Uncertain GeoJSON outcomes need an explicit choice; the scenario library import offers it.
+      if (e instanceof UncertainImportError) { notify('error', `${e.message}。请在场景库中重新选择该文件导入以确认。`); return; }
       notify('error', `导入失败：${(e as Error).message}`);
     }
   }
@@ -511,6 +525,10 @@ function useShortcuts(api: React.RefObject<DockviewApi | null>) {
       if (mod && e.key.toLowerCase() === 's') {
         e.preventDefault();
         void flushSave();
+        return;
+      }
+      if (isBoxSelectShortcut(e)) {
+        st.setTool('box');
         return;
       }
       if (mod) return;

@@ -18,6 +18,11 @@ const STATUS: Record<string, string> = {
   feasible: '完整服务', full_service: '完整服务', partial: '部分服务', invalid: '无效候选', no_solution: '未返回解', infeasible: '不可行',
 };
 const label = (value: string) => STATUS[value] ?? value;
+const TIMING_SCOPE: Record<string, string> = {
+  '5s_end_to_end': '5 秒端到端',
+  '1s_search_loop': '1 秒搜索循环',
+};
+const timingScope = (value?: string) => value ? (TIMING_SCOPE[value] ?? value) : '未标记';
 const number = (value: number | null | undefined, digits = 3) => value == null ? '未记录' : value.toLocaleString('zh-CN', { maximumFractionDigits: digits });
 const COLORS = ['#2f6fb3', '#d08317', '#1a7f4b', '#4b47a8', '#b5482f'];
 
@@ -228,10 +233,13 @@ function ArchiveRoutes({ experiment }: { experiment: ExperimentSummary }) {
 function ArchiveWorkspace() {
   const experiments = useAsync('live-experiments', (signal) => getExperiments(signal));
   const [selected, setSelected] = useState<ExperimentSummary | null>(null);
-  return <><Panel title="实验档案" subtitle="读取后端保存的实验版本，按原始运行身份查看。">
+  return <><Panel title="实验档案" subtitle="读取后端保存的实验版本。带计时口径的基线分行显示；5 秒端到端和 1 秒搜索循环不合成同一预算。">
     <Async state={experiments}>{(data) => data.experiments.length === 0 ? <EmptyState title="后端暂无已导入实验" detail="通过后端导入命令载入实验包后，在这里刷新查看。" />
-      : <div className={s.tableWrap}><table><thead><tr><th>实验</th><th>领域</th><th>版本</th><th>状态</th><th>路线</th></tr></thead>
-        <tbody>{data.experiments.map((item) => <tr key={item.id}><td>{item.title}<small className={s.recordId}>{item.id}</small></td><td>{item.domain}</td>
+      : <div className={s.tableWrap}><table data-testid="archive-experiments"><thead><tr><th>实验</th><th>计时口径</th><th>结果摘要</th><th>领域</th><th>版本</th><th>状态</th><th>路线</th></tr></thead>
+        <tbody>{data.experiments.map((item) => <tr key={item.id} data-timing-scope={item.parameters?.timing_scope ?? ''}><td>{item.title}<small className={s.recordId}>{item.id}</small></td>
+          <td>{timingScope(item.parameters?.timing_scope)}</td>
+          <td className={item.parameters?.headline ? s.wrapCell : undefined}>{item.parameters?.headline ?? '—'}</td>
+          <td>{item.domain}</td>
           <td>{item.revision}</td><td>{item.status}</td><td>{item.routing ? <button className={s.button} onClick={() => setSelected(item)}>查看路线</button> : '无路线档案'}</td></tr>)}</tbody></table></div>}</Async>
   </Panel>{selected && <ArchiveRoutes key={`${selected.id}:${selected.revision}`} experiment={selected} />}</>;
 }

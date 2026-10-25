@@ -35,7 +35,7 @@ function EvidenceHome({ meta }: { meta: Meta }) {
       <header className={s.header}>
         <h1 className={s.title}>证据与核验</h1>
         <p className={s.sub}>
-          所有展示数值都来自随包的历史实验记录。这里区分三类核验：包内独立审计（打包时完成）、本项目在本机的重算、以及仍未覆盖的范围。关键文件可在本浏览器重新下载并逐字节核对哈希（{hashEngineName()}）。
+          数值来自包内历史实验记录。下方列出打包时的独立审计、本机复算和待验证项。可下载关键文件并在浏览器中核对哈希（{hashEngineName()}）。
         </p>
       </header>
 
@@ -58,7 +58,7 @@ function EvidenceHome({ meta }: { meta: Meta }) {
           lines={[
             `科学数据与预定分析：${String(ha.scientific_result_status)}`,
             '独立重放 384 万步、120 选择、18 单元与 10000 bootstrap 一致',
-            '打包时由独立审阅员完成，非本应用的验收',
+            '打包时完成，审计对象为实验数据与分析',
           ]}
         />
         <ScopeCard
@@ -77,7 +77,7 @@ function EvidenceHome({ meta }: { meta: Meta }) {
           badge="需另行验证"
           lines={[
             `历史整体 900 CPU 秒预算：${String(ha.historical_total_900_cpu_compliance)}`,
-            '跨平台浮点位级一致性：未承诺',
+            '跨平台浮点位级一致性：待验证',
             '原生 Ubuntu 与真实手机：未实机验证',
           ]}
         />
@@ -166,7 +166,7 @@ function FilePreview({ meta, path }: { meta: Meta; path: string }) {
                   <code className={`mono ${s.hashVal}`}>{v.expectedHash}</code>
                 </div>
                 <StatusTag status={v.match ? 'pass' : 'fail'}>
-                  {v.match ? '逐字节一致' : '不一致——已停止作为可信数据'}
+                  {v.match ? '逐字节一致' : '不一致，文件未通过核验'}
                 </StatusTag>
                 <span className={`num ${s.sizeNote}`}>{fmtBytes(v.bytes.length)}</span>
               </>
@@ -182,7 +182,7 @@ function FilePreview({ meta, path }: { meta: Meta; path: string }) {
               <EmptyState title={v.match ? '正在准备预览…' : '文件未通过核验，已停止图像预览'} />
           ) : isText ? (
             <>
-              {!v.match && <p className={s.note}>以下为未通过核验的原始文本，仅用于排查；不能作为可信证据。</p>}
+              {!v.match && <p className={s.note}>以下原始文本未通过核验，供排查使用。</p>}
               <pre className={s.textContent}>
                 {(v.text?.length ?? 0) > 40000 ? `${v.text!.slice(0, 40000)}\n…（已截断；核验通过后可下载完整原始字节）` : v.text}
               </pre>

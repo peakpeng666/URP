@@ -133,7 +133,7 @@ export interface Recommendation {
   features: { name: string; key: string; value: number | string | null; unit: string | null }[];
   learned_selector: {
     id: string;
-    status: 'unavailable' | 'available' | 'not_applicable' | 'out_of_scope';
+    status: 'unavailable' | 'available' | 'not_applicable' | 'out_of_scope' | 'out_of_profile';
     evaluation?: {test_n:number;train_n:number;calibration_n:number;alternative_count:number;harmful_instances:number;mean_improvement_pct:number;sbs:string};
     model_sha256?: string;
     scope?: string;
@@ -182,9 +182,13 @@ export interface MapCheck {
   min_clearance_m: number | null;
   robot_radius_m: number;
   violations: { route: number; segment: number; point: XY; clearance_m: number }[];
+  margin_m?: number;
+  violation_count?: number;
+  method?: string;
 }
 
 export interface Solution {
+  process?: { returncode?: number; budget_s?: number; evidence?: string; source_identity_verified?: boolean };
   planning?: PlanningContext;
   trace_contract?: { schema?: string; semantic: 'reported_objective' | 'solver_search_proxy'; note: string; independent_check_at_each_sample?: boolean };
   raw_result?: { model_contract?: { schema?: string; [key: string]: unknown }; [key: string]: unknown };

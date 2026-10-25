@@ -98,7 +98,8 @@ export const studio = {
   validateInstance: (scenario_id: string, instance: Instance) => call<{ instance: Instance; planning: PlanningContext }>('POST', '/planning/validate', { scenario_id, instance }),
   saveScenario: (id: string, body: { instance?: FleetInstance | unknown; title?: string; summary?: string; layers?: Record<string, unknown>; base_revision?: number }) =>
     call<FleetScenario>('PUT', `/scenarios/${encodeURIComponent(id)}`, body),
-  forkScenario: (id: string, body: { instance?: unknown; title?: string } = {}) =>
+  /** client_id makes the fork idempotent: same id + same content returns the stored copy. */
+  forkScenario: (id: string, body: { instance?: unknown; title?: string; client_id?: string } = {}) =>
     call<Scenario>('POST', `/scenarios/${encodeURIComponent(id)}/fork`, body),
   lanes: (instance: FleetInstance) => call<LaneInfo>('POST', '/fleet/lanes', { instance }),
   importGeojson: (geojson: unknown, title?: string) => call<FleetScenario>('POST', '/scenarios/import/geojson', { geojson, title }),
