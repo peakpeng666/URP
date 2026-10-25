@@ -186,3 +186,16 @@ python3 tools/platform_snapshot.py restore --catalog setup/platform-snapshot.jso
 
 第三方许可随包保留。Fuel 有 13 个缓存目录（含名称编码别名），逐模型作者和许可见 `metadata/fuel-licenses.json`；其中有非商业、禁止衍生分发条款，不可视为任意商用资产。上游原包及本地技术性格式/资源 URI 规范化对照一并保存。Fields2Cover wheel 的既有构建来源缺口仍如其 manifest 所述。
 
+## 本地工作保全与实验数据恢复（2026-10-26）
+
+本次按用户要求**只推送独立分支，不合并 main**。桌面工作区保存在 `codex/preserve-20261026-local`；其余 7 个工作区的精确提交和来源见 [恢复索引](2026-10-26/local-preservation/recovery-index.json)。这些是不同阶段的工作快照，不代表它们已相互集成。现有本机前后端、求解环境、ROS/Gazebo、Fuel、运行数据库与资产保留。
+
+[增量 Release](https://github.com/peakpeng666/URP/releases/tag/local-preservation-20261026)保存新增实验原始记录、浏览器验收录像和相关副本；未变化的内容按逐文件哈希引用 2026-10-18 快照。索引同时固定两次 Release 的附件 SHA256。认证字段从公开副本剔除，科研数值与失败记录保留；浏览器认证配置不公开。测试虚拟环境的一条绝对解释器链接作为宿主依赖记录，恢复不会自动安装或覆盖宿主文件。
+
+在该保全分支中运行以下命令查看或恢复原始实验记录。需要 Python 3 和 `zstd`，目标须为尚不存在的绝对路径；去掉 `--prefix` 可恢复完整保全清单，先用 `--list` 查看所需下载量：
+
+```sh
+python3 tools/restore_local_preservation.py --cache "$PWD/.local-state/preserved-downloads" --prefix project/experiments/ --list
+python3 tools/restore_local_preservation.py --cache "$PWD/.local-state/preserved-downloads" --prefix project/experiments/ --destination "$PWD/.local-state/restored-experiments-20261026"
+```
+
