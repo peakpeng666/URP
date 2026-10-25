@@ -6,7 +6,14 @@
 
 按用户要求，各本地工作区分别推送到 `codex/preserve-20261026-*`，未合并或更新远端 main。原桌面分支 `evolve/decision-loop-20261023` 的 46 个未推送提交及各工作区未提交成果均纳入对应保全分支。逐分支提交、增量附件和旧快照的内容映射见 [恢复索引](../../2026-10-26/local-preservation/recovery-index.json)，使用与恢复只维护在 [setup/README](../../README.md)。
 
-保全源码下本地 Lab **466 passed**（11 条警告），工程 **14 门禁通过**，该次明确省略生产构建；日志与门禁范围见 [Lab 日志](../../2026-10-26/local-preservation/lab-pytest.log)和[工程汇总](../../2026-10-26/local-preservation/engineering-summary.json)。增量归档逐成员 SHA256 已核对，出版副本的认证处理记录见[审查记录](../../2026-10-26/local-preservation/publication-review.json)。本次不重做全部物理执行验收，不把归档或 CI 通过当作新的路径执行结论。本机原生运行层、数据库、场景、资产和 Fuel 保留。
+保全源码下本地 Lab **466 passed**（11 条警告），工程 **14 门禁通过**，该次明确省略生产构建；日志与门禁范围见 [Lab 日志](../../2026-10-26/local-preservation/lab-pytest.log)和[工程汇总](../../2026-10-26/local-preservation/engineering-summary.json)。增量归档逐成员 SHA256 已核对，发布副本的认证处理记录见[审查记录](../../2026-10-26/local-preservation/publication-review.json)。本次不重做全部物理执行验收，不把归档或 CI 通过当作新的路径执行结论。本机原生运行层、数据库、场景、资产和 Fuel 保留。
+
+
+本轮最终保全与整理：8 个远端保全分支，新增 Release **14 个附件、665,116,274 字节**；全部重新以无认证 HTTP 下载并核对 SHA256。按新工具实际恢复 28,885 个实验文件及一个旧快照样本，拒绝覆盖已有恢复目录。逐文件映射含 78,764 个记录，复用旧快照、去重文件与一条宿主解释器链接分别记录；绝对解释器链接不自动安装。公开副本 34 处文件变换、98 次认证替换，原科研数值结构检查和 ZIP 成员 CRC 记录保留。[公开下载](../../2026-10-26/local-preservation/public-download-verification.json)、[恢复复验](../../2026-10-26/local-preservation/public-recovery-verification.json)。
+
+清理额外 7 个工作区、5 处验收/交接副本及已归档的离线原始数据；根目录控制文件按原 SHA256 保留，当前运行数据库、场景、资产、Fuel 和环境未移动。**46,767 个保留文件及 152 条符号链接逐一核对无变化**。生产构建另行通过；正式原生入口在隔离 Lab 状态下实际通过推荐、求解、独立验算、地图检查及三种导出，28/28 算法、Fields2Cover 和 ROS 检测可用，标准关闭请求 202、网关实际退出 0。首轮验收脚本关闭请求未声明 JSON，被正确拒绝 415，随后信号退出 -15；该失败保留，纠正请求后的复验单列。[保留层校验](../../2026-10-26/local-preservation/platform-protection-after.json)、[清理清单](../../2026-10-26/local-preservation/cleanup-summary.json)、[实际接口与关停](../../2026-10-26/local-preservation/native-platform-verification.json)。**没有执行新 Gazebo 物理任务**。
+
+远端检查仍需区别版本：main 为 `5ddbd22f`、工程 CI 通过；两个 evolve 草稿 PR 未合并，deploy 镜像分支较 main 落后 144 个提交，最近观察到的 warehouse 生命周期诊断失败。镜像注册表可匿名读取不等于当前 main 的物理流程通过。本次保全没有消除这些集成与物理问题，细节见[远端记录](../../2026-10-26/local-preservation/remote-review.json)。
 
 ## 基线补做归档（2026-10-19）
 

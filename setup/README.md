@@ -180,7 +180,7 @@ python3 tools/platform_snapshot.py restore --catalog setup/platform-snapshot.jso
 
 校验清单同时保存在 [platform-snapshot.json](platform-snapshot.json)。`snapshot.json` 列出每个分包的 SHA256 和体积；`files.jsonl.zst` 给出逐文件原始/发布哈希、数据库备份与脱敏记录；`exclusions.json` 列出浏览器配置、认证文件和临时文件等排除项。下载后应先与仓库清单核对，不能只相信同一下载目录里未经核实的校验文件。
 
-恢复只写新目录：`project/` 对应原项目相对路径，`host/` 为隔离的 ROS/Gazebo 安装文件，`python/` 为解释器。可在 `restore` 后加 `--components project-runtime project-local-state fuel-cache compiled-and-wheels` 只解包所需数据。查看完成后，将所需运行目录迁入一个**全新源码检出**；保留原路径关系，不覆盖正在使用的数据库。主运行库通过 SQLite 备份接口合并已提交 WAL，再检查完整性；发布副本移除认证字段，数值与失败状态保留，原始副本继续留在本机。清单分别记录原始文件和脱敏文件的哈希。
+恢复只写新目录：`project/` 对应原项目相对路径，`host/` 为隔离的 ROS/Gazebo 安装文件，`python/` 为解释器。可在 `restore` 后加 `--components project-runtime project-local-state fuel-cache compiled-and-wheels` 只解包所需数据。查看完成后，将所需运行目录迁入一个**全新源码检出**；保留原路径关系，不覆盖正在使用的数据库。主运行库通过 SQLite 备份接口合并已提交 WAL，再检查完整性；发布副本移除认证字段，数值与失败状态保留。2026-10-26 起，已归档的离线原始副本从下方保全索引恢复；当前运行库和资产仍在本机。清单分别记录原始文件和脱敏文件的哈希。
 
 环境快照对应 Ubuntu 22.04 x86_64、ROS 2 Humble、Gazebo Fortress，不含操作系统、驱动和个人登录信息。`host/` 不会自动安装到 `/usr` 或 `/opt/ros`；系统依赖及精确版本见解包后的 `metadata/ros-gazebo-packages.json`、`metadata/system-dependencies.json`。虚拟环境的部分启动脚本、editable 路径及本机 `.so` 受路径/ABI 限制；换路径或平台时优先用现有锁文件重建，再按 wheel 指纹补齐 Fields2Cover。新机器恢复后需重新运行仿真验收。
 
