@@ -29,6 +29,7 @@ import { useAssets } from './assets/store';
 import { useFieldSim } from './ros/live';
 import { ReplayPanel } from './experiment/ReplayPanel';
 import type { FleetInstance, ParseResult } from './types';
+import { useAgent } from './agent/store';
 import { AdvisorPanel, ComparePanel, InspectorPanel, MapPanel, VerifyPanel } from './panels/PlanPanels';
 import { ScenarioNavigator } from './panels/LibraryPanels';
 import { ConsolePanel, LegacyPlan, RunsPanel, ServicesPanel, SimPanel } from './panels/SystemPanels';
@@ -54,6 +55,7 @@ const MapToTaskMap = lazy(() => import('./assets/MapToTaskMap').then((m) => ({ d
 const ExperimentPanel = lazy(() => import('./experiment/ExperimentPanel').then((m) => ({ default: m.ExperimentPanel })));
 const DecisionPanel = lazy(() => import('./experiment/DecisionPanel').then((m) => ({ default: m.DecisionPanel })));
 const FiguresPanel = lazy(() => import('./figures/FiguresPanel').then((m) => ({ default: m.FiguresPanel })));
+const AgentPanel = lazy(() => import('./agent/AgentPanel').then((m) => ({ default: m.AgentPanel })));
 import './dock.css';
 import s from './studio.module.css';
 
@@ -61,6 +63,7 @@ const PANELS = {
   map: { title: '地图', C: MapPanel },
   inspector: { title: '检查器', C: InspectorPanel },
   advisor: { title: '推荐与求解', C: AdvisorPanel },
+  agent: { title: '智能体', C: AgentPanel },
   compare: { title: '方案对比', C: ComparePanel },
   verify: { title: '验算', C: VerifyPanel },
   results: { title: '实验结果', C: ExperimentPanel },
@@ -114,6 +117,7 @@ const LAYOUTS: Record<Workspace, Step[]> = {
     { id: 'map' },
     { id: 'scenarios', ref: 'map', dir: 'left', w: 250 },
     { id: 'advisor', ref: 'map', dir: 'right', w: 360 },
+    { id: 'agent', ref: 'advisor', dir: 'within', inactive: true },
     { id: 'inspector', ref: 'advisor', dir: 'within', inactive: true },
     { id: 'decision', ref: 'advisor', dir: 'within', inactive: true },
     { id: 'compare', ref: 'map', dir: 'below', h: 250 },
@@ -132,6 +136,7 @@ const LAYOUTS: Record<Workspace, Step[]> = {
     { id: 'studies' },
     { id: 'analysis', ref: 'studies', dir: 'right', w: 640 },
     { id: 'figures', ref: 'analysis', dir: 'within', inactive: true },
+    { id: 'agent', ref: 'analysis', dir: 'within', inactive: true },
     { id: 'algorithms', ref: 'studies', dir: 'within', inactive: true },
   ],
   sim: [
@@ -188,7 +193,9 @@ export function openPanel(api: DockviewApi | null, id: PanelId) {
   if (!api) return;
   const existing = api.getPanel(id);
   if (existing) {
-    existing.api.setActive();
+    // Re-activating the tab already shown makes dockview re-mount its content, which resets every scroll position.
+    if (existing.api.isVisible) existing.group.api.setActive();
+    else existing.api.setActive();
     return;
   }
   const anchor = api.activePanel ?? api.panels[0];
@@ -302,6 +309,7 @@ export function Studio({ route }: { route: Route }) {
           <Segmented value={st.workspace} onChange={(w) => st.setWorkspace(w)} label="工作区"
             options={WORKSPACES.map((w) => ({ value: w.value, label: w.label, icon: w.icon }))} />
           <Button size="sm" icon={ListRestart} title="恢复当前工作区的默认布局" onClick={resetLayout} />
+          <Button size="sm" icon={Bot} title="打开科研智能体：用自然语言完成生成地图、推荐、求解、验算与对比" onClick={() => openPanel(api.current, 'agent')}>智能体</Button>
           <Button size="sm" icon={CommandIcon} title="命令面板 (⌘K)" onClick={() => st.setPalette(true)}>⌘K</Button>
         </div>
       </header>
@@ -401,6 +409,8 @@ function ComposeBar() {
         )}
       </div>
       <Button variant="primary" icon={busy === '生成地图' ? undefined : Sparkles} loading={busy === '生成地图'} disabled={!text.trim()} onClick={() => { setFocused(false); void compose(); }}>生成地图</Button>
+      <Button icon={Bot} disabled={!text.trim()} title="把这段描述交给科研智能体：生成地图后继续推荐、求解、验算与对比"
+        onClick={() => { setFocused(false); useAgent.getState().ask(text); window.dispatchEvent(new CustomEvent('studio:open-panel', { detail: 'agent' })); }}>交给智能体</Button>
       <Button icon={Upload} title="导入 GeoJSON 或场景 JSON" onClick={() => file.current?.click()}>导入</Button>
       <input ref={file} type="file" accept=".json,.geojson,application/json" hidden onChange={(e) => e.target.files?.[0] && void onFile(e.target.files[0])} />
     </div>
@@ -452,6 +462,7 @@ function Palette({ api }: { api: React.RefObject<DockviewApi | null> }) {
             <Command.Empty>没有匹配项</Command.Empty>
             <Command.Group heading="操作">
               <Command.Item onSelect={run(() => document.querySelector<HTMLInputElement>('input[aria-label="任务描述"]')?.focus())}>输入任务描述</Command.Item>
+              <Command.Item onSelect={run(() => { openPanel(api.current, 'agent'); window.setTimeout(() => document.getElementById('agent-input')?.focus(), 80); })}>让智能体完成任务</Command.Item>
               <Command.Item onSelect={run(() => { st.setWorkspace('assets'); useAssets.getState().openImport(); })}>导入资产（地图 / 车辆 / 设施）</Command.Item>
               <Command.Item onSelect={run(() => openPanel(api.current, 'replay'))}>回放仿真</Command.Item>
               <Command.Item onSelect={run(() => openPanel(api.current, 'results'))}>查看实验结果并导出</Command.Item>

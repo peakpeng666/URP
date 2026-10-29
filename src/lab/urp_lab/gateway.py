@@ -25,9 +25,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from . import paths
 from . import events as sse
 from .events import EventBus, LogFollower
-from .jobs import JobManager, SourceChangedError, resolve_params
+from .jobs import JobManager, SourceChangedError
 from .services import ARCHIVE_PORT, SIM_PORT, ServiceError, ServiceManager
 from .simclient import SimClient
+from .solve_request import SolveRequestError, check_label, check_requested, resolve_algorithms
 from .store import Store
 
 log = logging.getLogger('urp_lab.gateway')
@@ -74,6 +75,7 @@ class Config:
     extra_hosts: set[str] = field(default_factory=set)
     bind_host: str = '127.0.0.1'
     admin_token: str = ''
+    agent_model: Any = None          # research agent model (CONTRACT §9); None reads URP_LLM_* from the environment
 
 
 class Lab:
@@ -95,6 +97,8 @@ class Lab:
             self.fieldsim = FieldSimManager(self.store, self.services, self.runtime, port=config.field_sim_port)
             from .studies import StudyManager
             self.studies = StudyManager(self.store, self.jobs, self.bus)
+            from .agent import AgentManager
+            self.agent = AgentManager(self, model=config.agent_model)
         except BaseException:
             self.store.close()
             raise
@@ -115,6 +119,7 @@ class Lab:
 
     def shutdown(self):
         try:
+            self.agent.shutdown()
             self.jobs.shutdown()
             self.fieldsim.shutdown()
             self.services.shutdown()
@@ -437,34 +442,12 @@ def create_app(config: Config | None = None) -> FastAPI:
         body = body_dict(payload)
         sc = scenario_or_404(body.get('scenario_id'))
         instance = instance_for(sc, body.get('instance'))
-        requested = body.get('algorithms')
-        if not isinstance(requested, list) or not requested:
-            raise ApiError(400, 'invalid_request', 'algorithms 须为非空数组')
-        if len(requested) > 24:
-            raise ApiError(400, 'invalid_request', '一次最多提交 24 个算法')
-        label = body.get('label')
-        if label is not None and (not isinstance(label, str) or len(label) > 200):
-            raise ApiError(400, 'invalid_request', 'label 须为不超过 200 字的字符串')
-        catalog = {a['id']: a for a in lab.catalog()}
-        resolved = []
-        for item in requested:
-            item = {'id': item} if isinstance(item, str) else item
-            if not isinstance(item, dict) or not isinstance(item.get('id'), str):
-                raise ApiError(400, 'invalid_request', 'algorithms 的每项须为 {"id": …, "params": {…}}')
-            algo = catalog.get(item['id'])
-            if algo is None:
-                raise ApiError(400, 'unknown_algorithm', f"没有算法 {item['id']}")
-            if sc['problem_class'] not in algo.get('problem_classes', []):
-                raise ApiError(400, 'algorithm_not_applicable', f"{algo['name']} 不适用于 {sc['problem_class']} 场景")
-            if not algo.get('available'):
-                raise ApiError(409, 'algorithm_unavailable',
-                               f"{algo['name']} 当前不可用：{algo.get('unavailable_reason') or '未说明'}")
-            if item.get('params') is not None and not isinstance(item['params'], dict):
-                raise ApiError(400, 'invalid_params', 'params 须为 JSON 对象')
-            try:
-                resolved.append((algo, resolve_params(algo, item.get('params'))))
-            except ValueError as exc:
-                raise ApiError(400, 'invalid_params', str(exc)) from None
+        try:
+            requested = check_requested(body.get('algorithms'))
+            label = check_label(body.get('label'))
+            resolved = resolve_algorithms(lab.catalog(), sc['problem_class'], requested)
+        except SolveRequestError as exc:
+            raise ApiError(exc.status, exc.code, exc.message) from None
         try:
             job_id, run_ids = lab.jobs.submit(sc, instance, resolved, label)
         except SourceChangedError as exc:
@@ -876,6 +859,9 @@ def create_app(config: Config | None = None) -> FastAPI:
     # Research figures in publication formats (urp_lab/figures): drawn only from recorded runs / simulations / studies.
     from .figures.api import router as figures_router
     app.include_router(figures_router, prefix=api)
+    # Research agent (CONTRACT §9): LLM planning over the same tools, checks and records as the panel.
+    from .agent.routes import install as install_agent
+    install_agent(app, lab, api)
 
     @app.api_route(f'{api}/{{rest:path}}', methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
     def api_not_found(rest: str):

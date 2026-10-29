@@ -47,6 +47,9 @@ jobs:
       - name: Check scenario provenance preservation and legacy import compatibility
         working-directory: src/lab
         run: uv run --no-sync python -m pytest -q tests/test_agri_import_provenance.py tests/test_optional_map_scenarios.py tests/test_coverage_baseline_obstacles.py tests/test_fleet_graph_clearance.py --junitxml=../../.local-state/agriculture-contracts/import-provenance.xml
+      - name: Check the research agent runtime with a scripted model (no external model API)
+        working-directory: src/lab
+        run: uv run --no-sync python -m pytest -q tests/test_agent.py --junitxml=../../.local-state/agriculture-contracts/agent.xml
       - name: Retain agriculture contract results
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

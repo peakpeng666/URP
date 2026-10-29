@@ -188,7 +188,7 @@ Solution（`GET /lab/api/runs/{run_id}`）：
 - 田间结果增加 `replay_contract`（`urp.replay/1`），声明源仿真时钟、真值位置、米/弧度及最大插值间隔 0.25 s。前端不跨缺流插值或累计跨缺口里程；不单调时间戳拒绝单轴重放。回放里程/偏差随选定时刻计算，完整终态证据另列；任务到达与作业停留完成分开。显示抽稀不改原始遥测和实验导出。
 
 ### 2.8 SSE `GET /lab/api/events`
-`event:` 类型与 `data:` JSON：`services`（完整 services 列表，状态变化时）、`job`（`{job_id, run_id, state}`）、`run`（完整 Solution，完成时）、`sim_state`（SimState，≤ 4 Hz，当前为完整状态与轨迹快照）、`sim_run`（SimRun 完成或状态变化）、`log`（`{log, lines}`；当前前端通过日志接口轮询）。心跳 `event: ping` 每 15 s。
+`event:` 类型与 `data:` JSON：`services`（完整 services 列表，状态变化时）、`job`（`{job_id, run_id, state}`）、`run`（完整 Solution，完成时）、`sim_state`（SimState，≤ 4 Hz，当前为完整状态与轨迹快照）、`sim_run`（SimRun 完成或状态变化）、`log`（`{log, lines}`；当前前端通过日志接口轮询）、`agent`（`{session_id, state, steps, updated_utc}`，智能体会话每次保存，见 §9）。心跳 `event: ping` 每 15 s。
 
 ### 2.9 其他
 - `GET /lab/api/health` → `{"status":"ok","version":"0.1.0","executes_solvers":true}`
@@ -389,3 +389,46 @@ POST `fieldsim.execution` 采用 `urp.field-execution/2`：`ground_preset`（non
 - **有界力矩**：物理版本 `urp.field-diffdrive.rigid/6`；`actuator_mode=velocity_servo` 为默认，`torque_limited` 为可选合成模型。`wheel_torque_limit_nm` 0.1–40（默认 8），`wheel_torque_kp` 0.1–40（默认 4）。力矩模式禁止 DiffDrive 共存，左右轮各一 force JointController，明确每车 `/model/{name}/joint/{joint}/cmd_vel` 话题；PID `cmd_min/max` 和 SDF joint effort 同时限幅，启动审计核对所有上限、增益、话题、双轮状态发布配置。无电机效率/电流/转速—力矩曲线标定；`limits_scope` 明确 force 模式不施加理想加速度限幅，解析工期参考不能充当其动力学预测。
 - **关节反馈**：关节发布器使用重复 joint_name 标签，经 gz Model→ROS JointState；本机官方 6.18 不支持 update_rate，采用 `ros/native/joint_state` 固定上游源码的项目内限频回补（唯一插件别名 `urp::systems::JointStatePublisher`、50 Hz 源仿真时间发布，原关节测量逻辑保留）。按需构建于 runtime，记录来源、补丁、源码与实际加载库 SHA256；ROS 最新样本队列与 ≤50 Hz 派生里程计发布避免积压，源时间缺口门槛不变。连续轮角按源时间差分并作 SE(2) 积分，不包装角增量至 ±π，不用目标轮速补数据。双轮缺失、重复、非有限、零/倒退时间不刷新就绪，源间隔>0.25 s 失效；反馈过期或 Twist 过期 0.25 s 时发布零目标（有界主动制动，并不保证立即静止）。结果 `wheel_feedback` 记录有效/拒收计数；发布 `/{vehicle}/odom`。`torque_traces` 记录目标与实际轮速，未观测指令或实际作用力矩，饱和影响由运动响应对照支持。
 - **统一验收**：力矩模式保持无滑移参考门禁（除显式摩擦/接触扰动）、足迹、完整路径、同步交通、真值停留及静止门禁；压力场景失败保留真实原因与退出码。`ground_speed` 进入正式 fieldcheck，测试脚本不能另行扩大范围。执行源码、模型、SDF、算法输入/参数/seed 随记录导出。有限工程重复不能推出真实土壤/轮胎可信度或算法学术优越性。
+
+## 9. 科研智能体（2026-10-29）
+
+工作台内的大模型智能体（`urp_lab/agent/`）：模型只负责计划与表述，动作只能经下列工作台工具执行；求解与面板共用 `urp_lab/solve_request.py` 的校验和错误码。方案是否成立仍以运行记录 `state=done` 且独立检查 `check.valid=true` 为准，智能体的文字不构成验算。
+
+### 9.1 模型配置
+- 网关启动时读取环境：`URP_LLM_API_KEY`（或 `ZHIPU_API_KEY`）必填；可选 `URP_LLM_MODEL`（默认 `glm-5.3`）、`URP_LLM_BASE_URL`（默认 `https://open.bigmodel.cn/api/paas/v4`）、`URP_LLM_TEMPERATURE`（0–2，默认 0.2）、`URP_LLM_TIMEOUT_S`（5–900，默认 120）、`URP_LLM_MAX_TOKENS`（≥256）。修改后重启网关。
+- 协议：OpenAI 兼容 `POST {base}/chat/completions`，携带 `tools` 与 `tool_choice:"auto"`，非流式；读取 `tool_calls`，`reasoning_content` 只用于展示。基址须为 https，http 只允许 localhost / 回环地址；含用户信息、查询串或片段的基址拒绝。
+- 密钥只存在于进程环境和请求头：会话记录、`GET agent`、日志与导出都不含密钥，`model` 只记录 provider、主机名、模型名、温度、超时与 max_tokens。未配置时 `GET agent` 返回 `configured:false` 与原因，写接口 503 `agent_unconfigured`，工作台其余功能不受影响。
+- GLM Coding 套餐使用另一个基址（研究生成器用 `https://open.bigmodel.cn/api/coding/paas/v4`）；选用哪个基址、套餐是否允许本用途，以服务商条款为准。
+
+### 9.2 接口（`/lab/api`）
+| 方法 | 路径 | 用途 |
+|---|---|---|
+| GET | `agent` | 是否已配置、模型描述、系统提示 `urp.agent.system/1` 与其 SHA256、预算、工具清单 |
+| GET | `agent/sessions?limit=` | 会话列表（不含消息） |
+| POST | `agent/sessions {message}` | 新建会话并开始第一轮（202） |
+| GET | `agent/sessions/{id}?messages=true` | 会话；`messages=true` 另含发给模型的完整消息（系统提示、工具结果） |
+| POST | `agent/sessions/{id}/messages {message}` | 继续提问（202）；进行中或等待批准时 409 `agent_busy` |
+| POST | `agent/sessions/{id}/approval {call_id, approve, note?}` | 批准或拒绝等待中的执行调用（202）；不匹配时 409 `no_pending_approval` |
+| POST | `agent/sessions/{id}/cancel {}` | 停止这一轮 |
+
+`message` 为 1–4000 字；同时运行的会话最多 2 个，超出 429 `agent_saturated`。
+
+### 9.3 工具与分级
+- **只读**：`list_scenarios`、`get_scenario`、`parse_task`、`list_algorithms`、`recommend`、`validate_planning`、`get_runs`、`list_runs`、`compare_runs`、`list_fields`、`get_study`、`study_analysis`。`recommend` 返回实际 `policy`（`rules-*` 为规则推荐；学习选择器只在已评估范围内启用）。
+- **计算**：`compose_scenario` 新建“我的场景”、不覆盖已有场景，`overrides` 只接受解析器字段白名单，`field_id` 使用真实田块边界；`solve` 每次 ≤6 个算法，与 `POST solve` 同一校验，标签默认 `agent:<会话 id>`；`wait_for_runs` ≤120 s 并响应停止；`create_study` 展开后超过 60 次运行即拒绝。
+- **执行**：`start_field_simulation` 每次调用都须用户在面板批准，批准只对该调用有效；准入、ROS 2 / Gazebo 依赖与 §6 相同。
+- 未知工具、非 JSON 参数和越界参数作为工具错误返回模型，不执行。
+
+### 9.4 会话记录、预算与停止
+- 记录在 `runtime/lab.sqlite3` 的 `agent_sessions`：`state ∈ idle|running|awaiting_approval|error|canceled`，`model`、`prompt {id, sha256}`、`policy`、`messages`，以及 `steps`。步骤类型有 `user`、`assistant`（思考摘要与请求的调用）、`tool`（参数、结果 ≤20000 字、耗时、错误）、`approval`（`pending|approved|denied|canceled`）、`final`（含 `grounding`）、`notice`、`error`。另有 `evidence`（`scenarios`、`runs`、`jobs`、`studies`、`field_sessions`）和 `usage`（调用次数与 token）。
+- 预算 `urp.agent/1`：每轮模型 ≤16 次、工具 ≤30 次、≤900 s（等待批准不计时）；发给模型的工具结果截断到 6000 字。超出预算以 `error` 结束并写明原因，可以继续提问。
+- 停止只结束智能体这一轮：在途调用在下一个检查点结束（`wait_for_runs` 立即返回已有结果），已提交的求解运行照常完成并保留，需要时在运行记录中取消。
+- 每轮结束时，每个已请求的工具调用都恰有一条回复（结果、拒绝、取消或中断）。网关重启或内部错误中断的轮次标为 `error`，未执行的调用回复为中断，不会在下一轮执行，批准也不跨轮保留。
+
+### 9.5 数字核对（`heuristic-v1`）
+最终答复中的数字须能在本会话的工具结果或用户消息中找到（相对容差 0.5%，或按所写位数舍入一致；百分数也与比值比对），≤10 的整数与年份不核对；记录编号须在本会话出现过。结果 `{checked, grounded, skipped, not_found, unknown_ids}` 在面板显示为徽标。它只核对数字与编号的出处，不核对推理或措辞：例如两个算法目标值相同、答复却称其中一个“最短”，核对仍会通过。
+
+### 9.6 验证范围（2026-10-29）
+- `tests/test_agent.py` 共 11 项，在 CI `agriculture-contracts` 作业运行。它用脚本化模型驱动真实求解器与检查器：生成地图 → 推荐 → PyVRP 与节约基线求解 → 等待 → 有据答复。另覆盖伪造数字与编号被标出、批准与拒绝、两种停止、预算、错误调用、未配置、重启中断、核对启发式，以及 OpenAI 兼容客户端（`httpx.MockTransport`）。每轮结束后都断言消息历史满足严格服务商的工具调用配对。
+- 浏览器检查 `setup/2026-10-29/agent/browser_check.sh`：回环替身模型驱动真实 HTTP 客户端、网关、求解器、检查器与面板，结果见集成报告最上方。
+- 未验证：真实 GLM 或其他大模型（云端没有密钥，且 open.bigmodel.cn 不可达），因此模型实际的工具选择、规划质量与答复准确率未知；智能体启动的 ROS / Gazebo 仿真只测试了批准与拒绝流程，执行入口由测试替身代替。

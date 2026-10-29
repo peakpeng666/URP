@@ -75,6 +75,8 @@ interface StudioState {
   openCode: (path: string | null) => void;
   setStudy: (id: string | null) => void;
   loadAlgorithms: () => Promise<void>;
+  /** Opens a scenario (if needed) and shows the given runs in the map and comparison, e.g. runs an agent submitted. */
+  showRuns: (scenarioId: string, runIds: string[]) => Promise<void>;
 }
 
 const HISTORY = 120;
@@ -348,6 +350,24 @@ export const useStudio = create<StudioState>((set, get) => ({
     } catch (e) {
       get().notify('error', `算法库读取失败：${message(e)}`);
     }
+  },
+
+  async showRuns(scenarioId, runIds) {
+    if (get().workspace !== 'plan') set({ workspace: 'plan' });
+    navigate(`#/plan/${encodeURIComponent(scenarioId)}`);
+    // The route effect opens the scenario; wait for it instead of racing its reset of the run list.
+    for (let i = 0; i < 150 && !(get().scenarioId === scenarioId && get().scenario); i++) await new Promise((r) => setTimeout(r, 100));
+    if (get().scenarioId !== scenarioId || !get().scenario) return;
+    const loaded = await Promise.all(runIds.map((id) => lab.run(id).catch(() => null)));
+    const found = loaded.filter((r): r is Solution => !!r && r.scenario_id === scenarioId);
+    if (!found.length || get().scenarioId !== scenarioId) {
+      get().notify('error', '这些运行不属于当前场景或已无法读取');
+      return;
+    }
+    const runs = { ...get().runs, ...Object.fromEntries(found.map((r) => [r.run_id, r])) };
+    const ids = found.map((r) => r.run_id);
+    set({ runs, runIds: ids, focusRun: pickBest(ids.map((id) => runs[id])), manualFocus: false, playback: null });
+    for (const r of found) if (['queued', 'running'].includes(r.state)) void pollRun(r.run_id);
   },
 }));
 
