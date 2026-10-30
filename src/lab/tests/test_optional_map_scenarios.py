@@ -73,7 +73,8 @@ def test_malformed_present_yaml_is_not_ignored(isolated_maps, build):
     with pytest.raises(ValueError, match='not-a-number'):
         build()
 
-@pytest.mark.parametrize('world', ['maze', 'depot', 'warehouse'])
+@pytest.mark.parametrize('world', [pytest.param(world, marks=pytest.mark.requires_maps(world))
+                                 for world in ['maze', 'depot', 'warehouse']])
 def test_real_partial_official_maps_when_installed(isolated_maps, world):
     directory, official = isolated_maps
     yaml = official / f'{world}.yaml'
