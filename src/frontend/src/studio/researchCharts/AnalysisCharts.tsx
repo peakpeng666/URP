@@ -76,17 +76,24 @@ export function EcdfCharts({ analysis, quarantined }: { analysis: Analysis | nul
 }
 
 export function AnytimeChart({ analysis }: { analysis: Analysis | null }) {
-  const title = '随时间收敛：当前最好解差距的中位数（课题）';
+  const title = '条件质量曲线：成功且有合法目标遥测的 incumbent 差距中位数';
   const d = anytimeData(analysis);
-  if (!d.ok) return <NoData title={title} reason={d.reason} />;
+  const reasonNames: Record<string, string> = { observed_no_solution: '明确观测预算内无解', failed_or_interrupted: '失败或中断',
+    successful_without_telemetry: '成功但无遥测', proxy_or_unknown_semantics: '代理或未知轨迹语义', invalid_trace: '不合法轨迹', missing_reference: '缺少正参照' };
+  const counts = analysis?.anytime.counts;
+  const sampleFacts = counts ? Object.entries(counts).map(([a, c]) => {
+    const observed = analysis?.anytime.observed_counts?.[a] ?? [];
+    return `${a}：有效轨迹 ${c.valid_trace_runs} / 终态 ${c.terminal_runs}；全终态成功率 ${c.terminal_successes}/${c.terminal_runs}；逐时刻观测分母 ${observed.length ? `${Math.min(...observed)}–${Math.max(...observed)}` : '0'}；排除：${Object.entries(c.reasons).filter(([, n]) => n > 0).map(([reason, n]) => `${reasonNames[reason] ?? reason} ${n}`).join('、') || '无'}`;
+  }) : ['轨迹实际分母及排除原因未提供（旧版响应）；不能以全部运行数代替'];
+  if (!d.ok) return <><NoData title={title} reason={d.reason} /><div className={p.meta}>{sampleFacts.map((fact) => <div key={fact}>{fact}</div>)}</div></>;
   const pts = d.series.flatMap((s) => s.points);
   const ys = pts.map(([, v]) => v).filter((v): v is number => v != null && Number.isFinite(v));
-  if (!ys.length) return <NoData title={title} reason="Analysis.anytime.median 全部为空（不到半数运行有解）" />;
+  if (!ys.length) return <><NoData title={title} reason="未提供可绘制的已观测质量值；不能由空值推断无解比例" /><div className={p.meta}>{sampleFacts.map((fact) => <div key={fact}>{fact}</div>)}</div></>;
   const x = scale({ label: '', log: true }, pts.map(([t]) => t), [PLOT.left, PLOT.right]);
   const y = scale({ label: '' }, ys, [PLOT.bottom, PLOT.top]);
   return (
     <Figure title={title} label={`收敛中位数，${d.series.length} 个算法`}
-      facts={[`样本：${analysis!.n_runs} 次运行；因轨迹记录内部目标被排除 ${d.excluded ?? '未提供'} 条`,
+      facts={[...sampleFacts,
         '区间：数据未提供（Analysis.anytime 只含中位数；跨种子区间见“方案对比”中的比较组图）',
         `参照：${analysis!.reference_note}`, `单位：%；方向：越低越好。${d.note ?? ''}`]}
       legend={<Legend items={d.series.map((s, i) => ({ label: s.label, style: styleFor(i) }))} />}>
@@ -94,9 +101,9 @@ export function AnytimeChart({ analysis }: { analysis: Analysis | null }) {
       {d.series.map((s, i) => {
         const st = styleFor(i);
         return (
-          <g key={s.algorithm} data-series={s.algorithm}>
+          <g key={s.algorithm} data-series={s.algorithm} data-observed-counts={analysis?.anytime.observed_counts?.[s.algorithm]?.join(',')}>
             <path d={stepPath(s.points, x.map, y.map)} fill="none" stroke={st.color} strokeWidth={1.8} strokeDasharray={st.dash || undefined} />
-            {s.points.filter(([, v], k) => v != null && k % 6 === 0).map(([t, v]) => <Marker key={t} kind={st.marker} x={x.map(t)} y={y.map(v!)} color={st.color} />)}
+            {s.points.map(([t, v], k) => v != null && <g key={t}><title>{`${s.label} · ${fmtTime(t)} · 观测分母 n=${analysis?.anytime.observed_counts?.[s.algorithm]?.[k] ?? '未知'}`}</title><Marker kind={st.marker} x={x.map(t)} y={y.map(v)} color={st.color} size={k % 6 === 0 ? 3.5 : 1.5} /></g>)}
           </g>
         );
       })}

@@ -14,7 +14,9 @@ def run(instance, algorithm, value=10.0, *, state='done', valid=True, bks=None, 
             'algorithm': {'id': algorithm, 'name': algorithm}, 'params': {'time_limit_s': 1, 'seed': seed},
             'state': state, 'status': 'feasible', 'check': {'valid': valid},
             'objective': {'value': value, 'unit': 'unitless'}, 'metrics': {'wall_s': 0.1},
-            'scenario_snapshot': {'reference': {'bks': bks}} if bks is not None else {}}
+            'scenario_snapshot': {**({'reference': {'bks': bks}} if bks is not None else {}),
+                'provenance': {'params': {'analysis_unit': {'schema': 'urp.analysis-unit/1',
+                    'group_id': instance, 'independent': True}}}}}
 
 
 def grid(n, k, *, tied=False, cyclic=False):

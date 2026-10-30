@@ -131,7 +131,7 @@ SPECS: list[Spec] = [
     Spec('time_quality', 'study', '时间–质量权衡', 'Time–quality trade-off', study.time_quality,
          lambda c: _need_study(c, lambda an: None if any(p.get('gap') is not None and p.get('time') is not None for p in an['scatter']) else '还没有可计算差距的有效运行')),
     Spec('instance_space', 'study', '实例空间', 'Instance space', study.instance_space,
-         lambda c: _need_study(c, lambda an: None if (c.space or {}).get('points') or study._advice_space(c.study_runs)['points'] else '至少需要 3 个带特征的实例')),
+         lambda c: _need_study(c, lambda an: None if any(p.get('projection_status') == 'ok' for p in (c.space or {}).get('panels', [])) else '至少需要 3 个带特征的实例')),
     Spec('selection_eval', 'recommend', '推荐 vs 单一最佳 vs 理想选择', 'Recommendation vs SBS vs VBS', study.selection_eval,
          lambda c: _need_study(c, lambda an: None if study.selection_table(c.study_runs)['n'] >= 1 else '需要推荐算法也在课题里运行过的齐全实例')),
     Spec('sim_tracks', 'sim', '仿真轨迹与规划路线', 'Simulated tracks vs plan', maps.sim_tracks, _need_sim, 'double'),

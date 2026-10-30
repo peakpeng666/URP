@@ -12,11 +12,11 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 from ..jobs import FINAL
+from ..scenarios.validate import PROBLEM_CLASSES
 from ..services import ServiceError
 from ..solve_request import SolveRequestError, check_label, resolve_algorithms
 
 TIERS = ('read', 'compute', 'actuate')
-PROBLEM_CLASSES = ['fleet_routing', 'turn_routing', 'euclidean_cvrp', 'coverage', 'motion']
 MAX_SOLVE_ALGORITHMS = 6
 MAX_STUDY_RUNS = 60
 MAX_WAIT_S = 120.0
@@ -152,8 +152,14 @@ def _analysis(runs: list[dict]) -> dict:
     keep = ('algorithm', 'id', 'name', 'instances', 'runs', 'successes', 'success_rate', 'gap_mean', 'gap_median',
             'gap_best', 'time_median', 'mean_rank', 'wins')
     rows = [{k: row.get(k) for k in keep} for row in result.get('summary') or []]
+    block = result.get('block_contract') or {}
+    block_summary = {k: block.get(k) for k in ('schema', 'n_comparison_blocks', 'n_complete_blocks',
+                    'n_declared_groups', 'alias_blocks_collapsed', 'inference_eligible', 'reason_code', 'note')}
+    friedman = (result.get('tests') or {}).get('friedman') or {}
     return {'n_runs': result.get('n_runs', len(runs)), 'n_instances': result.get('n_instances'),
             'n_complete_instances': result.get('n_complete_instances'), 'algorithms': rows,
+            'block_contract': block_summary,
+            'friedman': {k: friedman.get(k) for k in ('status', 'testable', 'reason_code', 'reason', 'p_value', 'significant')},
             'reference_note': result.get('reference_note'),
             'note': 'gap 为相对参照的百分比差距（1.5 即 1.5%）；成功指运行结束且通过独立检查'}
 
@@ -202,7 +208,8 @@ def list_algorithms(ctx, args):
         rows.append({'id': a['id'], 'name': a.get('name'), 'problem_classes': a.get('problem_classes'), 'family': a.get('family'),
                      'source': a.get('source'), 'origin': a.get('origin'), 'guarantee': a.get('guarantee'),
                      'available': a.get('available'), 'unavailable_reason': a.get('unavailable_reason'), 'limits': a.get('limits'),
-                     'params': [{k: p.get(k) for k in ('name', 'type', 'default', 'min', 'max')} for p in a.get('params') or []]})
+                     'randomness': a.get('randomness'),
+                     'params': [{k: p.get(k) for k in ('name', 'type', 'default', 'min', 'max', 'options', 'label', 'description')} for p in a.get('params') or []]})
     return {'algorithms': rows}
 
 
@@ -369,7 +376,7 @@ def start_field_simulation(ctx, args):
             'note': '田间仿真已启动；结果在“田间仿真”面板与 /lab/api/fieldsim/results 中查看'}
 
 
-PC = {'type': 'string', 'enum': PROBLEM_CLASSES}
+PC = {'type': 'string', 'enum': list(PROBLEM_CLASSES)}
 ALGOS = {'type': 'array', 'minItems': 1, 'maxItems': MAX_SOLVE_ALGORITHMS,
          'items': {'type': 'object', 'properties': {'id': STR, 'params': {'type': 'object'}}, 'required': ['id']}}
 
@@ -404,7 +411,7 @@ TOOLS: list[Tool] = [
          _obj({'scenario_id': STR, 'algorithms': ALGOS, 'label': STR}, ('scenario_id', 'algorithms')), solve),
     Tool('wait_for_runs', 'compute', '等待结果', f'等待运行结束（最多 {MAX_WAIT_S:g} 秒），返回每个运行的结果摘要。',
          _obj({'run_ids': IDS, 'timeout_s': {'type': 'number', 'minimum': 1, 'maximum': MAX_WAIT_S}}, ('run_ids',)), wait_for_runs),
-    Tool('create_study', 'compute', '建立课题', f'建立批量课题：场景 × 算法 × 时间预算 × 种子的全组合（智能体上限 {MAX_STUDY_RUNS} 次运行）。',
+    Tool('create_study', 'compute', '建立课题', f'建立批量课题：场景 × 算法 × 时间预算；仅使用 seed 的算法按种子展开，不使用 seed 的算法每格运行一次（不是普通重复）（智能体上限 {MAX_STUDY_RUNS} 次运行）。',
          _obj({'title': STR, 'scenario_ids': {'type': 'array', 'items': STR, 'minItems': 1, 'maxItems': 5}, 'algorithms': ALGOS,
                'budgets': {'type': 'array', 'items': {'type': 'number'}, 'maxItems': 4},
                'seeds': {'type': 'array', 'items': {'type': 'integer'}, 'maxItems': 5}}, ('title', 'scenario_ids', 'algorithms')), create_study),

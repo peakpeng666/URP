@@ -103,8 +103,8 @@ export function quantile(sorted: number[], q: number): number {
 export interface BandPoint { t: number; median: number | null; lo: number | null; hi: number | null }
 
 /**
- * Median and interquartile band of "best so far" across traces on a time grid. Like the backend anytime
- * median, a point is shown only when more than half of the runs already have a value; an infinite
+ * Legacy seed-band convention, distinct from the conditional backend anytime/2 curve.
+ * A point is shown only when more than half the selected traces have a value; an infinite
  * quartile (too few runs with a value) leaves that band edge open (null), never 0.
  */
 export function quantileBand(traces: [number, number][][], grid: number[]): BandPoint[] {
@@ -126,7 +126,7 @@ export function geomGrid(lo: number, hi: number, n = 40): number[] {
 export function anytimeData(a: Analysis | null | undefined) {
   const none = analysisMissing(a); if (none) return none;
   const any = a!.anytime as Analysis['anytime'] & { excluded?: number; note?: string };
-  if (!any || !Array.isArray(any.grid) || !any.grid.length) return missing(`Analysis.anytime.grid 为空：没有与目标值一致的求解轨迹${any?.excluded ? `（${any.excluded} 条轨迹因记录内部目标被排除）` : ''}`);
+  if (!any || !Array.isArray(any.grid) || !any.grid.length) return missing(`Analysis.anytime.grid 为空：没有与目标值一致的求解轨迹${any?.excluded ? `（${any.excluded} 次运行未进入条件质量曲线；详见原因计数）` : ''}`);
   const names = algorithmNames(a!);
   const series = Object.entries(any.median ?? {}).map(([alg, ys]) => ({ algorithm: alg, label: names[alg] ?? alg,
     points: any.grid.map((t, i) => [t, ys[i] ?? null] as [number, number | null]) }));

@@ -79,7 +79,7 @@ function PlanWorkspace({ route }: { route: Route }) {
           {run.check&&!run.check.valid&&<Notice tone="error">{run.check.errors.join('；')}</Notice>}
           {run.map_check&&<Notice tone={run.map_check.collision_free?'ok':'warn'}>地图净空：{run.map_check.collision_free?'通过':'未通过'} · 机器人半径 {run.map_check.robot_radius_m} m</Notice>}
           {sc?.problem_class==='coverage'&&coveragePercent(run)!==null&&<Notice>覆盖率 {fmt.num(coveragePercent(run))}%</Notice>}
-          <div className={s.row}>{(['json','csv','geojson'] as const).map(f=><a key={f} href={exportUrl.run(run.run_id,f)} download>导出 {f.toUpperCase()}</a>)}{!simBlockReason(run,sc?.sim)&&<a className={s.primaryLink} href={`#/sim?run=${run.run_id}`}>进入仿真</a>}</div>
+          <div className={s.row}>{(['json','csv','geojson'] as const).map(f=><a key={f} href={exportUrl.run(run.run_id,f)} download>导出 {f.toUpperCase()}</a>)}{run.problem_class === 'fleet_routing' && <a href={exportUrl.run(run.run_id,'tasks-csv')} download>导出任务/趟次 CSV</a>}{!simBlockReason(run,sc?.sim)&&<a className={s.primaryLink} href={`#/sim?run=${run.run_id}`}>进入仿真</a>}</div>
           {simBlockReason(run,sc?.sim)&&<p className={s.muted}>{simBlockReason(run,sc?.sim)}</p>}
           <details><summary>原始结果、检查器与复现信息（无效运行仅供审计）</summary><pre>{JSON.stringify(rawRun,null,2)}</pre></details>
         </>}

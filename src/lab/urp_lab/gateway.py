@@ -331,7 +331,8 @@ def create_app(config: Config | None = None) -> FastAPI:
     # ------------------------------------------------------------ status --
     @app.get(f'{api}/health')
     def health():
-        return {'status': 'ok', 'version': VERSION, 'executes_solvers': True}
+        return {'status': 'ok', 'version': VERSION, 'executes_solvers': True,
+                'archive_required': config.archive_autostart}
 
     @app.get(f'{api}/fieldsim/physics')
     def field_physics_profile():
@@ -520,7 +521,7 @@ def create_app(config: Config | None = None) -> FastAPI:
         return lab.jobs.cancel(run_id)
 
     @app.get(f'{api}/runs/{{run_id}}/export')
-    def export_run(run_id: str, format: str = 'json'):
+    def export_run(run_id: str, format: str = Query('json', description='json / csv (geometry) / tasks-csv (fleet task services) / geojson')):
         return export_with(core('export').export_run, run_or_404(run_id), format)
 
     @app.get(f'{api}/runs/{{run_id}}/record')

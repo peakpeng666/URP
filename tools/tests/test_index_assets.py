@@ -43,7 +43,8 @@ class AssetCopyTests(unittest.TestCase):
 
     def test_reindex_retains_verified_copy_without_calling_it_migrated(self):
         rows, summary = self.generate(self.copy)
-        self.assertEqual(rows[0]['external_copy'], self.copy['url'])
+        self.assertEqual(rows[0]['external_copy'], 'copies.json#/copies/0')
+        self.assertNotIn(self.copy['url'], json.dumps(rows))
         self.assertEqual(rows[0]['external_sha256'], self.copy['sha256'])
         self.assertEqual(summary['verified_external_copies'], 1)
         self.assertEqual(summary['migrated_assets'], 0)
@@ -63,6 +64,60 @@ class AssetCopyTests(unittest.TestCase):
             if output.exists():
                 self.assertEqual(list(output.iterdir()), [])
                 output.rmdir()
+
+    def space_record(self, **updates):
+        return {**self.copy, 'expected_git_blob_sha1': self.oid, 'exact_path_blob_match': True, **updates}
+
+    def write_restoration(self, records):
+        path = self.repo / 'docs/assets/restoration.json'
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({'schema': 'urp.asset-restoration/1',
+                                   'source_kind': 'independent owner-held Space copies',
+                                   'current_report_assets': records,
+                                   'historical_supplement': {'pdfs': 21}}))
+
+    def test_union_keeps_provider_counts_and_redacts_private_locators(self):
+        self.write_restoration([self.space_record(private_locator='https://private.example/secret')])
+        rows, summary = self.generate(self.copy)
+        self.assertEqual(summary['verified_external_copies'], 2)
+        self.assertEqual(summary['verified_current_assets'], 1)
+        self.assertEqual(summary['verified_external_copies_by_provider'], {'drive': 1, 'space': 1})
+        self.assertEqual(summary['migrated_assets'], 0)
+        self.assertEqual(summary['asset_counts'], {'archive': 1})
+        self.assertEqual(summary['known_migration_events'], 0)
+        self.assertFalse(summary['migration_event_schema_supported'])
+        self.assertEqual(rows[0]['verified_providers'], 'drive;space')
+        self.assertNotIn('https://', json.dumps(rows) + json.dumps(summary))
+
+    def test_space_does_not_promote_drive_metadata(self):
+        self.write_restoration([self.space_record()])
+        rows, summary = self.generate({**self.copy, 'state': 'existing-unverified'})
+        self.assertEqual(summary['verified_external_copies_by_provider'], {'drive': 0, 'space': 1})
+        self.assertEqual(summary['verified_external_copies'], 1)
+
+    def test_wrong_blob_or_sha_cannot_inherit_restoration(self):
+        for update in ({'git_blob_sha1': '0' * 40}, {'sha256': '0' * 64}, {'exact_path_blob_match': False}):
+            self.write_restoration([self.space_record(**update)])
+            with self.subTest(update=update), self.assertRaises(ValueError):
+                self.generate({**self.copy, 'state': 'existing-unverified'})
+
+    def test_absent_path_does_not_infer_migration_or_current_copy(self):
+        self.write_restoration([self.space_record(asset_path='old-name.zip')])
+        rows, summary = self.generate({**self.copy, 'asset_path': 'old-name.zip'})
+        self.assertEqual(summary['verified_external_copies'], 0)
+        self.assertEqual(summary['migrated_assets'], 0)
+        self.assertEqual(summary['asset_counts'], {'archive': 1})
+        self.assertEqual(summary['known_migration_events'], 0)
+        self.assertFalse(summary['migration_event_schema_supported'])
+
+    def test_current_repository_has_four_space_restorations(self):
+        root = Path(__file__).resolve().parents[2]
+        entries = assets.tree('HEAD')
+        copies, records = assets.verified_copies(root / 'docs/assets/copies.json')
+        joined = assets.restoration_view(entries, copies, records, root / 'docs/assets/restoration.json')
+        self.assertEqual(len(joined), 4)
+        self.assertEqual({r['provider'] for r in joined}, {'space'})
+        self.assertEqual(len({r['asset_path'] for r in joined}), 4)
 
 
 if __name__ == '__main__':

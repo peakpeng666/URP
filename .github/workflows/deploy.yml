@@ -2,25 +2,7 @@ name: Deploy bench
 
 on:
   pull_request:
-    paths:
-      - deploy/**
-      - compose.yaml
-      - .dockerignore
-      - src/lab/pyproject.toml
-      - src/lab/uv.lock
-      - src/lab/urp_lab/gateway.py
-      - src/lab/urp_lab/__main__.py
-      - src/lab/urp_lab/runtime_config.py
-      - src/lab/urp_lab/jobs.py
-      - src/lab/tests/test_deploy_access.py
-      - src/lab/tests/test_node_runtime_identity.py
-      - src/lab/tests/test_execution_identity.py
-      - src/lab/tests/test_native_execution_identity.py
-      - src/frontend/package.json
-      - src/frontend/package-lock.json
-      - setup/wsl/**
-      - setup/run.sh
-      - .github/workflows/deploy.yml
+    # No path filter: every PR validates the image's complete COPY/lock closure.
   workflow_dispatch:
 
 permissions:
@@ -79,3 +61,15 @@ jobs:
         run: |
           python3 deploy/check-agriculture.py --base-url http://127.0.0.1:4100
           python3 deploy/check-agriculture.py --base-url http://127.0.0.1:4100 --obstacle
+      - name: Archive Jobs and service lifecycle through the same gateway
+        run: python3 tools/smoke_archive.py --url http://127.0.0.1:4100 --output .local-state/archive-smoke
+      - name: Container diagnostics
+        if: always()
+        run: docker logs urp-lab
+      - name: Retain archive smoke evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: image-archive-smoke
+          path: .local-state/archive-smoke
+          include-hidden-files: true

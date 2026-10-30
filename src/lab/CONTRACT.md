@@ -194,7 +194,10 @@ Solution（`GET /lab/api/runs/{run_id}`）：
 - `GET /lab/api/health` → `{"status":"ok","version":"0.1.0","executes_solvers":true}`
 - `GET /lab/api/maps/{world}` → `{"world","resolution","origin","width","height","image":"/lab/api/maps/{world}.png"}`；`.png` 为灰度栅格（行 0 在图像顶部，对应 map y 最大处）。
 - `GET /lab/api/runs?scenario_id=&limit=` → `{"runs":[Solution 摘要…]}`；`DELETE` 不提供（历史保留）。
-- 导出：`GET /lab/api/runs/{run_id}/export?format=json|csv|geojson`、`GET /lab/api/sim/runs/{id}/export?format=json|csv`、`POST /lab/api/compare/export {"run_ids":[…], "format":"csv"|"json"}`。文件名带 run id 与 UTC 时间。
+- 导出：`GET /lab/api/runs/{run_id}/export?format=json|csv|tasks-csv|geojson`、`GET /lab/api/sim/runs/{id}/export?format=json|csv`、`POST /lab/api/compare/export {"run_ids":[…], "format":"csv"|"json"}`。
+  - 规划 `csv` 保持几何点格式及既有列 `run_id,vehicle,point,x,y,units,instance_sha256`，包括回仓点；不静默替换为任务表。规划文件名沿用原 `run_id`，不补造导出时间。
+  - 显式 `tasks-csv` 仅支持 `fleet_routing`，文件名为 `{run_id}-tasks.csv`。列为 `run_id,instance_sha256,units,row_kind,vehicle,vehicle_name,trip,order,task,label,x,y,demand`；`row_kind=task_service`，`vehicle` 保留原车辆编号，`trip/order` 从1开始，逐 `routes[].trips[][]` 服务任务展开。旧记录无分趟时以 `sequence` 作为单趟。任务坐标、标签、需求来自原 `instance.tasks`；`units` 保留原坐标单位，不表示需求单位。回仓/补给几何点不是任务服务行，应从几何CSV或JSON读取。
+  - 两种CSV均保留原 `run_id`、输入哈希及坐标单位；来源身份已失效的记录先清除有效路线，两种CSV只留下表头。原始审计记录不改写，JSON仍是完整谱系入口。
 - 错误格式统一 `{"error": "code", "message": "中文说明"}`。网关只监听 127.0.0.1；POST 只接受 `application/json`，拒绝跨源写入（Origin 与 Host 不一致 → 403）。
 
 ## 3. Python 模块接口（网关 ↔ 核心）
@@ -298,6 +301,14 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 生成场景的 `compose.generation` 保存 `requested`、`actual`、`shortfalls` 和 `status`（`complete` / `partial`）。卡片显示实际数量，摘要列出未满足的数量，原请求仍保存在 provenance 中。显式种子 `0` 原样使用。作物行预览中输入错误返回 400，内部执行故障返回 500。
 
 场景 id：CVRPLIB 为 `cvrplib-<算例名小写>`，真实田块为 `field-<国家>-field-<编号>`，打开后记入“最近打开”。
+
+### 5.1 统计、轨迹与实例空间合同（refresh 2）
+
+- `analysis.block_contract` (`urp.analysis-blocks/1`) 区分展示场景别名、完整比较输入与声明的底本/田块组；记录每组的 `run_ids`、`scenario_ids`、输入/终态/齐全数量和别名折叠数。完整输入（或匹配的冻结 planning 身份）相同则强制同 block；只有旧 hash 而没有完整规划语义时保留隔离，不假称已经去重。原始运行和输入不修改，运行数仍为全部终态数。
+- 推断只审核实际参与的齐全 blocks；缺少独立单位来源或同底本有多个不同输入变体时，保留所有描述统计，禁 Friedman/Nemenyi/Wilcoxon 显著性。内置 `cvrp_synthetic` 和 `turn_modes/grid` 按生成器族+生成 seed 识别同随机流组；不同 seed 只是该生成协议下的假设，**不是独立性证明**。未知历史记录不回填声明。
+- 自定义底本分组使用现有场景 JSON 导入入口：`provenance.params.analysis_unit = {"schema":"urp.analysis-unit/1", "group_id":"田块或底本标识", "independent":true}`。导入后新运行的 `scenario_snapshot` 保留声明；同底本变体必须用同组，不能靠改别名/声明绕过相同完整输入合并。声明并非证明；多变体组仍需预先确定合法组内汇总设计，本版不自动平均后放行。
+- `anytime` (`urp.anytime/2`) 是**成功且有合法目标遥测的条件质量曲线**，不是全终态预算成功分布。`counts[algorithm]` 给出终态总数/成功数、有效轨迹数及互斥排除原因（明确预算内无解、失败/中断、成功无遥测、代理/未知语义、非法轨迹、缺少正参照），各原因加有效轨迹数等于终态总数。结构、时间顺序、非增 incumbent 以及终值必须合法；`observed_counts[algorithm][time_index]` 是该时刻真实分母。首次记录前未知，不补∞；记录间沿用已观测 incumbent。中断即使有末次 incumbent 也仍归中断，不冒充终态验算成功。
+- `instance-space` (`urp.instance-space/2`) 返回 `panels`，按问题特征 schema、目标/单位/环境/约束语义及预算分面，算法版本及参数与主分析同标签分候选列。点带完整比较 key 和 run IDs。候选不齐全、仅单候选、全失败或并列均不指定唯一 `best`。CVRP、turn 与 fleet 特征分开；fleet 的 `fleet_routing.features/1` 仅从冻结输入计算任务数、车辆数、总需求/单车容量、边界面积和障碍面积占比（米制面积为 m²），不借用变化的推荐器特征。缺失/无效几何或容量明确不投影。每面板至少 3 个真实输入才 PCA；同输入别名不增点。图表导出逐面板绘制，带面板合同及轨迹实际分母，不回退到另一套 winner 聚合。
 
 ## 6. 田间多车仿真与浏览器里的 ROS / Gazebo 视图（2026-10-16）
 

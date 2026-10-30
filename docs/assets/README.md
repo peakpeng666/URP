@@ -75,3 +75,5 @@ python3 tools/index_assets.py --ref HEAD --output .local-state/asset-index
 ```
 
 重新生成时会读取 `copies.json`：未恢复副本保持候选状态，已验证副本必须包含 URL、Git blob、SHA256 和恢复记录，且 Git blob 与所索引版本一致。
+
+第二轮 refresh 的派生视图联合读取 `copies.json` 与 `restoration.json`，按当前树的精确路径、Git blob 与实际字节 SHA256 对齐；当前联合已验证副本为4（Drive 0、Space 4），历史补充包不增加2,439项当前资产分母。新生成的 `external_copy` 为登记文件内的证据引用，不复制私有恢复地址；`verified_providers` 与 `verified_external_copies_by_provider` 区分提供方，原Drive状态不变。恢复副本不等于迁移：`migrated_assets=0` 与 `known_migration_events=0` 仅表示这两份登记中已知迁移事件数，`migration_event_schema_supported=false` 明示当前schema尚无迁移事件契约，不是对所有历史移动的全面审计；路径已不在树中也不能推断已迁移。既有核验原文和生成清单保持不动，新输出须写入独立目录。
