@@ -28,6 +28,12 @@
 
 此次双服务使用新运行库；云端未检出原 `data/backend/research.sqlite3`，清单记录为缺失，不声称已验证该文件哈希。浏览器、ROS 和容器未在本机重跑；容器验证由本批 PR 工作流执行。测试中的模型为脚本或 mock，本批没有科研实验或真实模型调用。
 
+### PR #19 检出闭包修正
+
+首个远端头 `78cb4ca` 的六项 CI 为五项通过、一项失败；容器和源码双服务均通过。工程失败日志确认稀疏检出缺少启动脚本及资产恢复记录，导致 public_cli 的四个 FileNotFoundError 和一项恢复数量断言失败。原始证据见 [engineering artifact](https://github.com/peakpeng666/URP/actions/runs/41124856005/artifacts/13009594257)。
+
+真实本地稀疏检出重现相同 57 用例中的 1 失败、4 错误；在 cone 清单增加 `setup/ubuntu`（同时包含 setup 顶层脚本，不检出日期归档）及 `docs/assets`，并加入检出闭包断言后，58 项 public_cli 测试全部通过。日志保留在 `urp_refresh/ci-sparse-before-2044.log` 和 `ci-sparse-after-2044.log`。其余源码未变；新提交的完整远端检查另行核验。
+
 ## 全量整理与错误处理修订
 
 以已合并的 `8885ef6` 为基线，统一当前入口、31 分支快照、16 模块职责、五项交付、研究地图和资产核验队列。PR #12、#13 的改动已由 #15 整合，旧 PR 已关闭，来源分支保留。

@@ -7,6 +7,7 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
+STARTUP_FIXTURES = ('setup/run.sh', 'setup/profile.sh', 'src/start.sh')
 
 
 class StartupContractTests(unittest.TestCase):
@@ -14,7 +15,7 @@ class StartupContractTests(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         self.root = Path(tmp.name)
-        for name in ('setup/run.sh', 'setup/profile.sh', 'src/start.sh'):
+        for name in STARTUP_FIXTURES:
             dest = self.root / name
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / name, dest)
@@ -89,6 +90,26 @@ class StartupContractTests(unittest.TestCase):
 
 
 class WorkflowClosureTests(unittest.TestCase):
+    def test_engineering_checkout_contains_public_cli_repository_fixtures(self):
+        workflow = (ROOT / '.github/workflows/ci.yml').read_text()
+        job = workflow.split('  engineering:', 1)[1].split('  deployment-contracts:', 1)[0]
+        block = job.split('          sparse-checkout: |\n', 1)[1]
+        selected = []
+        for line in block.splitlines():
+            if not line.startswith('            '):
+                break
+            selected.append(Path(line.strip()))
+        # Cone checkout includes selected directories and files immediately inside
+        # their ancestor directories (which is how src/start.sh is obtained).
+        fixtures = (*STARTUP_FIXTURES, 'docs/assets/copies.json', 'docs/assets/restoration.json')
+        for name in fixtures:
+            path = Path(name)
+            with self.subTest(fixture=name):
+                covered = any(directory in path.parents or path.parent in directory.parents
+                              for directory in selected)
+                self.assertTrue(covered, f'engineering sparse checkout omits {name}')
+                self.assertTrue((ROOT / path).is_file(), f'required fixture missing: {name}')
+
     def test_every_pr_builds_image_without_publication(self):
         workflow = (ROOT / '.github/workflows/deploy.yml').read_text()
         trigger = workflow.split('  pull_request:', 1)[1].split('  workflow_dispatch:', 1)[0]

@@ -82,10 +82,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          # Cone mode includes setup/run.sh and setup/profile.sh as parent files
+          # of setup/ubuntu, without checking out dated research archives.
           sparse-checkout: |
             .github
             tools
             scripts
+            setup/ubuntu
+            docs/assets
             protocol
             independent
             src/backend
