@@ -930,7 +930,8 @@ export function ComparePanel() {
                   })()}</td>
                   <td className={s.rowActions} onClick={(e) => e.stopPropagation()}>
                     <a href={exportUrl.run(r.run_id, 'json')} download title="求解结果 JSON（路线与指标）">JSON</a>
-                    <a href={exportUrl.run(r.run_id, 'csv')} download title="路线 CSV">CSV</a>
+                    <a href={exportUrl.run(r.run_id, 'csv')} download title="几何点 CSV（兼容格式）">几何 CSV</a>
+                    {r.problem_class === 'fleet_routing' && <a href={exportUrl.run(r.run_id, 'tasks-csv')} download title="任务服务行，按车辆/趟次/顺序；不包含回仓几何点">任务/趟次 CSV</a>}
                     <a href={exportUrl.run(r.run_id, 'geojson')} download title="地图与路线">GeoJSON</a>
                     {['queued', 'running'].includes(r.state) && (
                       <button type="button" className={s.simLink} title="取消这个求解运行" disabled={canceling === r.run_id}

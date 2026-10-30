@@ -47,6 +47,7 @@ jobs:
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           version: '0.12.23'
+      - run: uv sync --locked --extra solvers
       - run: uv sync --locked --inexact
         working-directory: src/lab
       - run: npm ci --prefix src/frontend --engine-strict --no-audit --no-fund
@@ -63,23 +64,8 @@ jobs:
         env:
           URP_ROS_MAPS: ${{ github.workspace }}/.local-state/ros-maps
         run: uv run --no-sync python -m pytest -q --require-maps --junitxml=../../.local-state/agriculture-contracts/lab.xml
-      - name: Exercise the live workbench HTTP flow
-        env:
-          URP_LAB_RUNTIME: ${{ github.workspace }}/.local-state/http-runtime
-        run: |
-          set -euo pipefail
-          bash setup/run.sh lab-code --port 4186 --no-archive > .local-state/agriculture-contracts/gateway.log 2>&1 &
-          gateway_pid=$!
-          trap 'kill "$gateway_pid" 2>/dev/null || true; wait "$gateway_pid" 2>/dev/null || true' EXIT
-          for attempt in $(seq 1 60); do
-            if curl -fsS http://127.0.0.1:4186/lab/api/health > /dev/null; then break; fi
-            kill -0 "$gateway_pid"
-            sleep 1
-          done
-          python3 tools/smoke_workbench.py --url http://127.0.0.1:4186 --output .local-state/agriculture-contracts/smoke
-          URP_PORT=4186 bash setup/run.sh lab-stop
-          wait "$gateway_pid"
-          trap - EXIT
+      - name: Exercise isolated dual-service HTTP flow and startup failure
+        run: python3 tools/smoke_dual_service.py --output .local-state/agriculture-contracts/dual-service --port 4186 --archive-port 4187
       - name: Retain agriculture contract results
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
@@ -96,10 +82,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          # Cone mode includes setup/run.sh and setup/profile.sh as parent files
+          # of setup/ubuntu, without checking out dated research archives.
           sparse-checkout: |
             .github
             tools
             scripts
+            setup/ubuntu
+            docs/assets
             protocol
             independent
             src/backend

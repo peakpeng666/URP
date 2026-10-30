@@ -17,10 +17,10 @@ case "$operation" in
   build) exec bash setup/profile.sh frontend npm run build --prefix src/frontend -- "$@" ;;
   frontend) exec bash setup/profile.sh frontend bash src/start.sh frontend "$@" ;;
   backend) exec bash src/start.sh backend "$@" ;;
-  research) exec bash setup/profile.sh research src/research/.venv/bin/python src/research/scripts/urp.py "$@" ;;
+  research) exec bash setup/profile.sh research bash src/start.sh python src/research/scripts/urp.py "$@" ;;
   numpy) exec bash setup/profile.sh numpy src/frontend/.venv/bin/python "$@" ;;
   solver-check)
-    exec bash setup/profile.sh research src/research/.venv/bin/python setup/2026-10-15/deployment/benchmark.py solver --workers "${URP_WORKERS:-12}"
+    exec bash setup/profile.sh research bash src/start.sh python setup/2026-10-15/deployment/benchmark.py solver --workers "${URP_WORKERS:-12}"
     ;;
   navigation)
     source /opt/ros/humble/setup.bash
@@ -44,15 +44,13 @@ case "$operation" in
       --label "run-$(date -u +%Y%m%d-%H%M%S)-$$" "${navigation_flags[@]}" "$@"
     ;;
   lab|lab-code)
-    # 工作台网关 127.0.0.1:4100；前端缺失或比源码旧时先构建。
+    # Always build: source deletion, lock/config/tool/public changes and preserved
+    # mtimes must never silently reuse stale dist. Fail closed before the gateway.
     lab_node_path
-    dist_index=src/frontend/dist/index.html
-    if [[ ! -f "$dist_index" ]] || [[ -n "$(find src/frontend/src src/frontend/core src/frontend/index.html -newer "$dist_index" -not -path '*/node_modules/*' -print -quit 2>/dev/null)" ]]; then
-      printf '前端构建缺失或过期，正在构建…\n'
-      if ! bash setup/profile.sh frontend npm run build --prefix src/frontend; then
-        printf '前端构建失败；停止启动，避免把旧页面作为当前实现。\n' >&2
-        exit 1
-      fi
+    printf '构建当前前端（不复用旧构建）…\n'
+    if ! bash setup/profile.sh frontend npm run build --prefix src/frontend; then
+      printf '前端构建失败；停止启动，避免把旧页面作为当前实现。\n' >&2
+      exit 1
     fi
     if [[ $operation == lab ]]; then
       overlay_dir=setup/2026-10-15/deployment/runtime

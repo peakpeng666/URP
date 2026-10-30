@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fmt, lab } from './api';
+import { exportUrl, fmt, lab } from './api';
 
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 function stalledServer() {
@@ -44,5 +44,13 @@ describe('PyVRP historical method labels', () => {
   });
   it('does not relabel another solver', () => {
     expect(fmt.algorithm({ id: 'other.hgs', name: 'Other HGS', version: '0.14.0' })).toBe('Other HGS');
+  });
+});
+
+
+describe('explicit fleet export format', () => {
+  it('preserves geometry CSV and makes task services a distinct request', () => {
+    expect(exportUrl.run('original/run', 'csv')).toBe('/lab/api/runs/original%2Frun/export?format=csv');
+    expect(exportUrl.run('original/run', 'tasks-csv')).toBe('/lab/api/runs/original%2Frun/export?format=tasks-csv');
   });
 });

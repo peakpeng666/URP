@@ -1,3 +1,4 @@
+import { InstanceSpaceCharts } from '../researchCharts/InstanceSpaceCharts';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as Plot from '@observablehq/plot';
 import { BarChart3, Download, FlaskConical, Play, Square } from 'lucide-react';
@@ -6,6 +7,7 @@ import { Badge, Button, EmptyState, Input, Notice, Spinner } from '../../lab/ui'
 import { studio, urls } from '../api';
 import { useStudio } from '../store';
 import type { Analysis, Study } from '../types';
+import { studyRunUpperBound } from '../studyDesign';
 import { AnytimeChart, EcdfCharts, GapTimeChart, ProfileChart } from '../researchCharts/AnalysisCharts';
 import { canShowCd, hasValidFriedman } from '../analysisStats';
 import s from './panels.module.css';
@@ -105,7 +107,7 @@ function StudyDesigner({ onCreated }: { onCreated: (id: string) => void }) {
   if (pickedCvrplib.length) classes.add('euclidean_cvrp');
   const usable = algorithms.filter((a) => a.available && a.problem_classes.some((c) => classes.has(c)));
   const budgetList = budgets.split(/[,，\s]+/).map(Number).filter((v) => v > 0);
-  const runs = picked.length * algos.length * Math.max(1, budgetList.length) * seeds;
+  const runs = studyRunUpperBound(picked, all, algorithms.filter((a) => algos.includes(a.id)), budgetList.length, seeds);
   async function addXSample() {
     const inst = await studio.cvrplibInstances('X');
     const ok = inst.instances.filter((i) => i.supported && (i.n ?? 0) <= 300);
@@ -158,9 +160,9 @@ function StudyDesigner({ onCreated }: { onCreated: (id: string) => void }) {
       </div>
       <div className={s.grid2}>
         <label className={s.field}><span>时间预算（秒，可多个）</span><Input value={budgets} onChange={(e) => setBudgets(e.target.value)} /></label>
-        <label className={s.field}><span>随机种子数（随机算法重复次数）</span><Input type="number" min={1} max={30} value={seeds} onChange={(e) => setSeeds(Number(e.target.value) || 1)} /></label>
+        <label className={s.field}><span>可控随机种子数</span><Input type="number" min={1} max={30} value={seeds} onChange={(e) => setSeeds(Math.max(1, Math.min(30, Math.floor(Number(e.target.value) || 1))))} /></label>
       </div>
-      <p className={s.hint}>最多约 {runs} 次运行（确定性算法只跑一次）。所有运行进入同一个求解队列，结果逐个出现。</p>
+      <p className={s.hint}>最多 {runs} 次运行（实际数量以创建后的设计为准）。仅使用 seed 的算法按种子展开；不使用 seed 的算法每个场景/预算只运行一次，不代表墙钟运行结果绝对确定。本表单不安排普通重复。所有运行进入同一个求解队列，结果逐个出现。</p>
       <div className={s.row}>
         <Button variant="primary" icon={Play} loading={busy} disabled={!picked.length || !algos.length} onClick={() => void start()}>开始课题</Button>
       </div>
@@ -295,6 +297,7 @@ export function AnalysisPanel() {
           </tbody>
         </table>
         <p className={s.meta}>{data.reference_note}</p>
+        {data.block_contract && <p className={s.meta}>比较输入 {data.block_contract.n_comparison_blocks}；折叠场景别名 {data.block_contract.alias_blocks_collapsed}；声明分组 {data.block_contract.n_declared_groups}。{data.block_contract.note}</p>}
         <AnalysisInference tests={t} names={names} />
         <ProfileChart analysis={data} />
         <EcdfCharts analysis={data} />
@@ -310,18 +313,7 @@ export function AnalysisPanel() {
         <AnytimeChart analysis={data} />
         <GapTimeChart analysis={data} />
         {instanceSpace.error && <Notice tone="error">实例空间读取失败：{instanceSpace.error.message}</Notice>}
-        {!instanceSpace.error && space && space.points.length >= 3 && (
-          <div className={s.chart}>
-            <h4>实例空间（{space.method}）：每个实例按最佳算法着色，阴影为该算法的“足迹”</h4>
-            <PlotBox deps={[space]} make={(w) => {
-              const hulls = Object.entries(space.footprints ?? {}).flatMap(([a, poly]) => poly.map(([x, y], i) => ({ a: nm(a), x, y, i })));
-              return Plot.plot({ width: w, height: 300, style: FONT, x: { label: `PC1（${fmt.num((space.explained_variance?.[0] ?? 0) * 100, 0)}%）`, grid: true },
-                y: { label: `PC2（${fmt.num((space.explained_variance?.[1] ?? 0) * 100, 0)}%）`, grid: true },
-                color: space.points.some((pt) => !pt.best) ? { ...color, domain: [...color.domain, '无可行解'], range: [...color.range, '#8e8e93'] } : color,
-                marks: [Plot.line(hulls, { x: 'x', y: 'y', z: 'a', stroke: 'a', fill: 'a', fillOpacity: 0.08 }), Plot.dot(space.points, { x: 'x', y: 'y', fill: (d: { best: string | null }) => nm(d.best), r: 4, tip: true, title: 'title' })] });
-            }} />
-          </div>
-        )}
+        {!instanceSpace.error && space && <InstanceSpaceCharts space={space} />}
         <h3>两两比较（Wilcoxon 符号秩 + Holm 校正）</h3>
         <table className={s.table}>
           <thead><tr><th>A</th><th>B</th><th className={s.num}>有效配对</th><th className={s.num}>A 更好</th><th className={s.num}>B 更好</th><th className={s.num}>平</th><th className={s.num}>p（Holm）</th><th /></tr></thead>

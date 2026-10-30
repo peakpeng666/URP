@@ -294,20 +294,30 @@ export interface Analysis {
     weighting: 'one_terminal_run_one_observation'; denominator_field: 'eligible_terminal_runs';
     counts: Record<string, GapCounts>; totals: GapCounts; note: string;
   };
-  anytime: { grid: number[]; median: Record<string, (number | null)[]>; excluded?: number; note?: string };
+  block_contract?: { schema: string; n_comparison_blocks: number; n_complete_blocks: number; n_declared_groups: number; alias_blocks_collapsed: number; inference_eligible: boolean; reason_code: string | null; note: string };
+  anytime: { grid: number[]; median: Record<string, (number | null)[]>; excluded?: number; note?: string;
+    schema?: string; conditioning?: string; observed_counts?: Record<string, number[]>;
+    counts?: Record<string, { terminal_runs: number; terminal_successes: number; valid_trace_runs: number; reasons: Record<string, number>; run_ids: string[] }> };
   scatter: { algorithm: string; time: number | null; gap: number | null; instance: string; run_id: string }[];
   reference_note: string;
   comparison_note?: string;
 }
 
+export interface InstanceSpacePoint {
+  x?: number; y?: number; best: string | null; scenario_id: string; title: string;
+  comparison_key?: string; run_ids?: string[]; winner_status?: string; missing_algorithms?: string[];
+}
+export interface InstanceSpacePanel {
+  panel_id: string; problem_class: string; feature_schema: string; budget_s: number | null;
+  algorithms: string[]; points: InstanceSpacePoint[]; projection_status: string;
+  comparison_contract: { objective_rule?: string; objective_unit?: string; [key: string]: unknown };
+  features?: string[]; loadings?: number[][]; explained_variance?: number[]; method?: string; note?: string;
+}
 export interface InstanceSpace {
-  points: { x: number; y: number; best: string | null; scenario_id: string; title: string }[];
-  features?: string[];
-  loadings?: number[][];
-  explained_variance?: number[];
-  footprints?: Record<string, XY[]>;
-  method?: string;
-  note?: string;
+  schema?: string; panels?: InstanceSpacePanel[]; points: InstanceSpacePoint[];
+  omitted_runs?: { run_id: string; reason: string }[];
+  features?: string[]; loadings?: number[][]; explained_variance?: number[];
+  footprints?: Record<string, XY[]>; method?: string; note?: string;
 }
 
 export type FleetSolution = Solution & { routes: FleetRoute[]; trace?: [number, number][] };

@@ -49,7 +49,7 @@ curl -fsS http://127.0.0.1:4100/lab/api/health
 bash setup/run.sh lab-stop
 ```
 
-`lab-code` 启动规划、Agent、验算和记录服务，首次启动自动构建前端。在启动终端按 Ctrl+C 也会正常关闭。
+`lab-code` 启动规划、Agent、验算和记录服务。`lab` / `lab-code` 每次先构建前端，包含锁文件、配置、工具与公共资产的变化；构建失败则停止启动。启动会增加一次构建耗时。在启动终端按 Ctrl+C 也会正常关闭。
 
 完整 ROS 2 / Gazebo 安装使用 [DEPLOY.md](../DEPLOY.md)。已配置的机器运行 `bash setup/run.sh lab --open`，该命令还会准备仿真修补库。安装器部署后的命令为 `urp up`、`urp status`、`urp down`。
 

@@ -30,7 +30,7 @@ bash setup/run.sh lab-code --open
 
 ## 研究与资料
 
-[研究现状](docs/导师查看.md) · [实验报告与失败记录](experiments/目录.md) · [CVRP 基线](experiments/baselines/cvrp/README.md) · [文献笔记](literature/README.md) · [算法登记](algorithm_inventory.md)
+[冻结研究证据（截至 2026-10-19）](docs/导师查看.md) · [实验报告与失败记录](experiments/目录.md) · [CVRP 基线](experiments/baselines/cvrp/README.md) · [文献笔记](literature/README.md) · [算法登记](algorithm_inventory.md)
 
 既有实验按各自版本、预算和数据解释。Agent 的现有验证使用脚本模型；真实大模型质量、ROS/Gazebo 执行和历史仿真结果分别记在验收报告中。
 

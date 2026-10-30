@@ -1,4 +1,4 @@
-"""Research studies: full-factorial batches (scenarios × algorithms × time budgets × seeds) on the solve queue."""
+"""Research batches: scenarios × algorithms × budgets, with seeds only for seed-using adapters."""
 from __future__ import annotations
 
 import itertools
@@ -48,9 +48,11 @@ class StudyManager:
             base = dict(item.get('params') or {}) if isinstance(item, dict) else {}
             if budget is not None:
                 base['time_limit_s'] = budget
-            stochastic = any(p['name'] == 'seed' for p in algo['params'])
-            for seed in (seeds if stochastic else seeds[:1]):
-                params = dict(base, seed=seed) if stochastic else base
+            # A compatibility seed parameter does not imply seed-controlled randomness.
+            # Seedless adapters run once per cell, not ordinary timing repeats.
+            uses_seed = algo['randomness']['uses_seed']
+            for seed in (seeds if uses_seed else seeds[:1]):
+                params = dict(base, seed=seed) if uses_seed else base
                 cells.append((sc, algo, resolve_params(algo, params)))
         if not cells:
             raise ValueError('设计为空：所选算法都不适用于所选场景')

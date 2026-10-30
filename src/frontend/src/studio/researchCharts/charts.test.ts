@@ -100,3 +100,35 @@ describe('status flow rendering', () => {
     expect(html(StatusFlowChart, { runs: [] })).toContain('数据未提供');
   });
 });
+
+describe('refresh conditional telemetry and space contracts', () => {
+  it('anytime labels the actual trace denominator and failure reasons, including an empty plot', async () => {
+    const { AnytimeChart } = await import('./AnalysisCharts');
+    const counts = { a: { terminal_runs: 10, terminal_successes: 1, valid_trace_runs: 1, reasons: { failed_or_interrupted: 9 }, run_ids: ['good'] } };
+    const out = html(AnytimeChart, { analysis: analysis({ n_runs: 10, anytime: {
+      grid: [.01, .1], median: { a: [null, 0] }, observed_counts: { a: [0, 1] }, counts,
+    } }) });
+    expect(out).toContain('有效轨迹 1 / 终态 10');
+    expect(out).toContain('失败或中断 9');
+    expect(out).toContain('全终态成功率 1/10');
+    expect(out).toContain('观测分母 n=1');
+    expect(out).not.toContain('样本：10 次运行');
+    expect(out).not.toContain('不到半数');
+    const empty = html(AnytimeChart, { analysis: analysis({ anytime: { grid: [], median: {}, counts, excluded: 9 } }) });
+    expect(empty).toContain('失败或中断 9');
+    expect(empty).not.toContain('因记录内部目标');
+  });
+  it('instance space keeps feature panels separate and never labels missing candidates as no solution', async () => {
+    const { InstanceSpaceCharts } = await import('./InstanceSpaceCharts');
+    const panel = { panel_id: 'x', problem_class: 'turn_routing', feature_schema: 'turn_routing.features/1', budget_s: 1,
+      algorithms: ['a v1', 'b'], comparison_contract: { objective_rule: 'turn-cost', objective_unit: 'cost' },
+      projection_status: 'ok', points: [{ x: 0, y: 1, best: null, winner_status: 'incomplete_candidates', scenario_id: 'i', title: 'I', comparison_key: 'key', run_ids: ['r1'] }] };
+    const out = html(InstanceSpaceCharts, { space: { points: [], panels: [panel, { ...panel, panel_id: 'y', problem_class: 'euclidean_cvrp', feature_schema: 'euclidean_cvrp.features/1', budget_s: 10 }] } });
+    expect(out).toContain('turn_routing.features/1');
+    expect(out).toContain('euclidean_cvrp.features/1');
+    expect(out).toContain('候选不齐全');
+    expect(out).toContain('data-comparison-key="key"');
+    expect(out).toContain('runs: r1');
+    expect(html(InstanceSpaceCharts, { space: { points: [] } })).toContain('旧版响应缺少比较/特征分面契约');
+  });
+});

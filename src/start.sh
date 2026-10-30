@@ -19,6 +19,11 @@ prepare_default_database() {
 URP_COMMAND="${1:-help}"
 if (( $# )); then shift; fi
 case "$URP_COMMAND" in
+  python-path)
+    # Shared by service diagnostics; resolve exactly as a launch from this cwd.
+    command -v -- "$URP_RUNTIME_PYTHON" || { printf 'Python interpreter unavailable: %s\n' "$URP_RUNTIME_PYTHON" >&2; exit 1; }
+    ;;
+  python) exec "$URP_RUNTIME_PYTHON" "$@" ;;
   backend|后端)
     prepare_default_database
     cd "$URP_SRC/backend"

@@ -31,8 +31,8 @@ def _value(run) -> float | None:
 def _label(run, budgets: set) -> str:
     alg = run['algorithm']['id']
     version = run['algorithm'].get('version')
-    if version and run.get('_analysis_version_split'):
-        alg += f' v{version[:12]}'
+    if run.get('_analysis_version_split'):
+        alg += f' v{version if version is not None else "unknown"}'
     extra = {k: v for k, v in run.get('params', {}).items() if k not in ('seed', 'time_limit_s')}
     if extra and run.get('_analysis_parameter_split'):
         import json
@@ -100,26 +100,106 @@ def _sample_sd(values) -> tuple[float | None, str]:
         return None, 'out_of_range'
 
 
-def analyze(runs: list[dict], alpha: float = 0.05) -> dict:
-    if not isinstance(alpha, (int, float)) or isinstance(alpha, bool) or not 0 < alpha < 1:
-        raise ValueError('alpha must be finite and between 0 and 1')
-    runs = [dict(r) for r in runs if r.get('state') in ('done', 'error', 'timeout', 'canceled')]
-    if not runs:
-        return {'empty': True, 'n_runs': 0}
-    budgets = {r['params'].get('time_limit_s') for r in runs}
+def _comparison_block(run):
+    # A legacy hash alone cannot reconstruct objective/environment semantics.
+    # Deduplicate aliases only with full input or matching frozen planning identity.
+    if isinstance(run.get('instance'), dict):
+        return comparison_key(run)
+    frozen = run.get('planning') or {}
+    if (frozen.get('schema') == 'urp.planning/1' and frozen.get('comparison_key')
+            and frozen.get('instance_sha256') == run.get('instance_sha256')
+            and frozen.get('objective_unit') == (run.get('objective') or {}).get('unit')):
+        from .planning import fingerprint
+        return fingerprint({'frozen_planning': frozen, 'instance_sha256': run.get('instance_sha256'),
+                            'problem_class': run.get('problem_class'), 'frame': run.get('frame'),
+                            'unit': (run.get('objective') or {}).get('unit')})
+    return comparison_key(run)
+
+
+def _prepare_runs(runs):
     from .planning import fingerprint
+    rows = [dict(r) for r in runs if r.get('state') in ('done', 'error', 'timeout', 'canceled')]
     versions, parameters = defaultdict(set), defaultdict(set)
-    for r in runs:
+    for r in rows:
         aid = r['algorithm']['id']
         versions[aid].add(r['algorithm'].get('version'))
         parameters[aid].add(fingerprint({k: v for k, v in r.get('params', {}).items() if k not in ('seed', 'time_limit_s')}))
-    for r in runs:
+    for r in rows:
         r['_analysis_version_split'] = len(versions[r['algorithm']['id']]) > 1
         r['_analysis_parameter_split'] = len(parameters[r['algorithm']['id']]) > 1
+    return rows, {r['params'].get('time_limit_s') for r in rows}
+
+
+def _unit_declaration(run):
+    """Grouping declaration, not a proof of statistical independence.
+
+    The existing scenario JSON import preserves provenance.params. No archive
+    is rewritten and a new declaration cannot split an identical input block.
+    """
+    from .planning import fingerprint
+    provenance = (run.get('scenario_snapshot') or {}).get('provenance') or {}
+    params = provenance.get('params') or {}
+    unit = params.get('analysis_unit')
+    if isinstance(unit, dict):
+        group = unit.get('group_id')
+        if (unit.get('schema') == 'urp.analysis-unit/1' and isinstance(group, str) and group.strip()
+                and unit.get('independent') is True):
+            return ('declared:' + group.strip(), 'user_declared')
+        return None
+    generator, seed = provenance.get('generator'), provenance.get('seed')
+    if isinstance(seed, bool) or not isinstance(seed, int):
+        return None
+    if generator == 'urp_lab.scenarios.benchmark:cvrp_synthetic':
+        family = 'urp.cvrp_synthetic/1'
+    elif isinstance(generator, str) and generator.startswith('src/research/src/urp_research/turn_modes/generate_data.py:grid('):
+        family = 'urp.turn_grid/1'
+    else:
+        return None
+    # Reusing a random stream for another size/rule does not create a new unit.
+    return ('generator:' + fingerprint([family, seed]), family)
+
+
+def _block_contract(by_inst, complete):
+    blocks, groups = [], defaultdict(list)
+    unknown = []
+    for key, rs in sorted(by_inst.items()):
+        declarations = {_unit_declaration(r) for r in rs}
+        unit = next(iter(declarations)) if len(declarations) == 1 and None not in declarations else None
+        if unit:
+            groups[unit[0]].append(key)
+        else:
+            unknown.append(key)
+        blocks.append({'block_id': key, 'comparison_key': key,
+                       'scenario_ids': sorted({r['scenario_id'] for r in rs}),
+                       'run_ids': sorted(r['run_id'] for r in rs), 'n_runs': len(rs),
+                       'group_id': unit[0] if unit else None, 'declaration_source': unit[1] if unit else None})
+    dependent = {g: keys for g, keys in sorted(groups.items()) if len(keys) > 1}
+    tested = set(complete)
+    inference_unknown = sorted(tested.intersection(unknown))
+    inference_dependent = {g: [k for k in keys if k in tested] for g, keys in dependent.items()
+                           if sum(k in tested for k in keys) > 1}
+    reason = ('independence_not_established' if inference_unknown else
+              'dependent_variants_require_design' if inference_dependent else None)
+    return {'schema': 'urp.analysis-blocks/1', 'definition': 'full_input_or_frozen_planning_identity; incomplete_legacy_identity_retains_scenario',
+            'blocks': blocks, 'n_comparison_blocks': len(blocks), 'n_complete_blocks': len(complete),
+            'n_declared_groups': len(groups), 'unknown_blocks': unknown, 'dependent_groups': dependent,
+            'inference_unknown_blocks': inference_unknown, 'inference_dependent_groups': inference_dependent,
+            'alias_blocks_collapsed': sum(len(b['scenario_ids']) - 1 for b in blocks),
+            'inference_eligible': reason is None, 'reason_code': reason,
+            'note': '独立单位依据生成协议或用户声明，不是独立性证明。相同完整比较输入强制合并；同 group 的多个变体仅作描述，需预先指定合法组内汇总设计。未知来源可通过场景 JSON 导入 provenance.params.analysis_unit={schema:"urp.analysis-unit/1",group_id:"底本或田块标识",independent:true} 声明；不得给同底本变体伪造不同组。历史记录不回填，修改声明只用于新运行。'}
+
+
+def analyze(runs: list[dict], alpha: float = 0.05) -> dict:
+    if not isinstance(alpha, (int, float)) or isinstance(alpha, bool) or not 0 < alpha < 1:
+        raise ValueError('alpha must be finite and between 0 and 1')
+    n_input_runs = len(runs)
+    runs, budgets = _prepare_runs(runs)
+    if not runs:
+        return {'empty': True, 'n_runs': 0}
     names = {}
     by_inst: dict[str, list] = defaultdict(list)
     for r in runs:
-        key = f"{r['scenario_id']}#{comparison_key(r)}"
+        key = _comparison_block(r)
         by_inst[key].append(r)
         names[_label(r, budgets)] = r['algorithm']
     algorithms = sorted(names)
@@ -188,9 +268,13 @@ def analyze(runs: list[dict], alpha: float = 0.05) -> dict:
                                'gap_mean': st.mean(c['gaps']) if c['gaps'] else None, 'runs': c['runs'], 'failures': c['failures'],
                                'time_mean': st.mean(c['times']) if c['times'] else None, 'rank': ranks.get((i, a))}
         per_instance.append(row)
-    tests = _tests(algorithms, complete, ranks, mean_obj, reference, alpha)
+    block_contract = _block_contract(by_inst, complete)
+    block_contract.update(n_input_runs=n_input_runs, n_terminal_runs=len(runs),
+                          n_nonterminal_runs=n_input_runs - len(runs))
+    tests = _tests(algorithms, complete, ranks, mean_obj, reference, alpha, block_contract)
     return {
         'empty': False, 'n_runs': len(runs), 'n_instances': len(instances), 'n_complete_instances': len(complete),
+        'block_contract': block_contract,
         'algorithms': algorithms, 'summary': summary, 'per_instance': per_instance, 'tests': tests,
         'performance_profile': _profiles(algorithms, complete, mean_obj),
         'ecdf': {a: sorted(g for i in instances for g in cell[(i, a)]['gaps']) for a in algorithms},
@@ -204,7 +288,7 @@ def analyze(runs: list[dict], alpha: float = 0.05) -> dict:
     }
 
 
-def _tests(algorithms, complete, ranks, mean_obj, reference, alpha):
+def _tests(algorithms, complete, ranks, mean_obj, reference, alpha, block_contract=None):
     k, n = len(algorithms), len(complete)
     mean_ranks = {a: st.mean(ranks[(i, a)] for i in complete) for a in algorithms} if n else {}
     out = {'alpha': alpha, 'k': k, 'n': n, 'mean_ranks': mean_ranks,
@@ -214,7 +298,11 @@ def _tests(algorithms, complete, ranks, mean_obj, reference, alpha):
           'statistic': None, 'p_value': None, 'significant': None,
           'method': 'tie_corrected_chi_square', 'min_instances': 11, 'min_algorithms': 7}
     out['friedman'] = fr
-    if k < 3 or n < 2:
+    inference_reason = block_contract.get('reason_code') if block_contract else None
+    if inference_reason:
+        fr['reason'] = block_contract['note']
+        fr['reason_code'] = inference_reason
+    elif k < 3 or n < 2:
         fr['reason'] = '至少需要 3 个算法和 2 个齐全实例；当前仅展示描述性平均秩。'
         fr['reason_code'] = 'insufficient_blocks_or_algorithms'
     elif all(len({ranks[(i, a)] for a in algorithms}) == 1 for i in complete):
@@ -265,7 +353,9 @@ def _tests(algorithms, complete, ranks, mean_obj, reference, alpha):
                    'ties': sum(d == 0 for d in diffs), 'status': 'not_testable', 'testable': False,
                    'method': 'scipy_auto_zsplit', 'statistic': None, 'p_value': None, 'p_holm': None,
                    'significant': None, 'reason': None, 'reason_code': None}
-            if len(diffs) < 5:
+            if inference_reason:
+                row.update(reason=block_contract['note'], reason_code=inference_reason)
+            elif len(diffs) < 5:
                 row.update(reason='有效配对不足 5 个', reason_code='insufficient_finite_pairs')
             elif not any(diffs):
                 row.update(reason='有效配对全部平局', reason_code='all_zero_differences')
@@ -365,53 +455,88 @@ def _ecdf_metadata(algorithms, instances, cell):
             'note': '差距数组仅含有限值；若绘制累计比例，各算法分母为具有有限正参照的全部终态运行（含失败），每次运行等权。缺失或非正参照单列，不视作失败；分母为零时不定义曲线。'}
 
 
-def trace_matches(run: dict) -> bool:
-    """An explicitly declared reported-objective trace must also end at its objective value.
+def _valid_trace(run: dict) -> bool:
+    tr = run.get('trace')
+    if not isinstance(tr, list) or not tr:
+        return False
+    previous, incumbent = -1.0, math.inf
+    for point in tr:
+        if not isinstance(point, (list, tuple)) or len(point) != 2:
+            return False
+        t, v = point
+        if any(isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x) for x in (t, v)):
+            return False
+        if t < 0 or t < previous or v > incumbent:
+            return False
+        previous, incumbent = t, v
+    return True
 
-    Some adapters record their internal objective instead (e.g. PyVRP's distance while the task map asks for the
-    makespan); such traces must not be drawn on the same axis or turned into gaps."""
-    if (run.get('trace_contract') or {}).get('semantic') != 'reported_objective':
+
+def trace_matches(run: dict) -> bool:
+    """Declared objective telemetry, structurally valid and endpoint-consistent."""
+    if (run.get('trace_contract') or {}).get('semantic') != 'reported_objective' or not _valid_trace(run):
         return False
-    tr = run.get('trace') or []
     v = (run.get('objective') or {}).get('value')
-    if not tr or not isinstance(v, (int, float)) or not math.isfinite(v):
+    if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v):
         return False
-    return abs(float(tr[-1][1]) - float(v)) <= 5e-3 * max(1.0, abs(float(v)))
+    return abs(float(run['trace'][-1][1]) - float(v)) <= 5e-3 * max(1.0, abs(float(v)))
 
 
 def _anytime(by_inst, reference, budgets):
-    curves = defaultdict(list)
+    # This is a conditional quality curve, not a budget success estimator.
+    # Before the first recorded incumbent telemetry is unknown, never +infinity.
+    reasons = ('observed_no_solution', 'failed_or_interrupted', 'successful_without_telemetry',
+               'proxy_or_unknown_semantics', 'invalid_trace', 'missing_reference')
+    curves, counts = defaultdict(list), {}
     horizon = 0.0
-    excluded = 0
     for k, rs in by_inst.items():
         ref = reference[k]
-        if ref is None or not math.isfinite(ref) or ref <= 0:
-            continue
         for r in rs:
+            a = _label(r, budgets)
+            c = counts.setdefault(a, {'terminal_runs': 0, 'terminal_successes': 0, 'valid_trace_runs': 0,
+                                     'reasons': {reason: 0 for reason in reasons}, 'run_ids': []})
+            c['terminal_runs'] += 1
+            success = _value(r) is not None
+            c['terminal_successes'] += int(success)
             tr = r.get('trace') or []
-            if not tr or _value(r) is None:
+            contract = r.get('trace_contract') or {}
+            reason = None
+            if not success:
+                # Only explicit budget-complete observation can establish no solution.
+                reason = ('observed_no_solution' if contract.get('observation') == 'budget_complete_no_solution'
+                          and r.get('state') in ('done', 'timeout') and not tr else 'failed_or_interrupted')
+            elif not tr:
+                reason = 'successful_without_telemetry'
+            elif contract.get('semantic') != 'reported_objective':
+                reason = 'proxy_or_unknown_semantics'
+            elif not trace_matches(r):
+                reason = 'invalid_trace'
+            elif ref is None or not math.isfinite(ref) or ref <= 0:
+                reason = 'missing_reference'
+            else:
+                curve = [(t, _gap(v, ref)) for t, v in tr]
+                if any(g is None for _, g in curve):
+                    reason = 'invalid_trace'
+            if reason:
+                c['reasons'][reason] += 1
                 continue
-            if not trace_matches(r):
-                excluded += 1
-                continue
-            horizon = max(horizon, tr[-1][0], float(r['params'].get('time_limit_s') or 0))
-            curves[_label(r, budgets)].append([(t, gap if (gap := _gap(v, ref)) is not None else math.inf) for t, v in tr])
-    if not curves:
-        return {'grid': [], 'median': {}, 'excluded': excluded}
-    grid = np.geomspace(1e-3, max(horizon, 1e-2), 48).tolist()
-    med = {}
+            c['valid_trace_runs'] += 1
+            c['run_ids'].append(r['run_id'])
+            budget = r.get('params', {}).get('time_limit_s')
+            horizon = max(horizon, tr[-1][0], budget if isinstance(budget, (int, float)) and math.isfinite(budget) else 0)
+            curves[a].append(curve)
+    grid = np.geomspace(1e-3, max(horizon, 1e-2), 48).tolist() if curves else []
+    med, observed = {}, {}
     for a, cs in curves.items():
-        series = []
+        med[a], observed[a] = [], []
         for t in grid:
-            vals = []
-            for c in cs:
-                prior = [g for (tt, g) in c if tt <= t]
-                vals.append(prior[-1] if prior else math.inf)
-            finite = [v for v in vals if math.isfinite(v)]
-            series.append(_median(vals) if len(finite) * 2 > len(vals) else None)
-        med[a] = series
-    return {'grid': grid, 'median': med, 'excluded': excluded,
-            'note': '各运行“当前最好解”相对参照的差距随时间变化的中位数；尚无可行解的运行按 +∞ 计；轨迹终值与目标值不一致（记录的是求解器内部目标）的运行不计入。'}
+            vals = [prior[-1] for c in cs if (prior := [g for tt, g in c if tt <= t])]
+            observed[a].append(len(vals))
+            med[a].append(_median(vals) if vals else None)
+    return {'schema': 'urp.anytime/2', 'conditioning': 'successful_valid_objective_telemetry',
+            'grid': grid, 'median': med, 'observed_counts': observed, 'counts': counts,
+            'excluded': sum(c['terminal_runs'] - c['valid_trace_runs'] for c in counts.values()),
+            'note': '条件质量曲线：仅最终验算成功且目标轨迹合法的运行；各时刻只计已观测到 incumbent 的轨迹，首次记录前未知，不补无穷。相邻记录间沿用最近 incumbent；不是全运行预算成功率。终态失败、无遥测及其他排除原因单列。'}
 
 
 def features(scenario: dict, instance: dict) -> tuple[list[str], list[float]] | None:
@@ -422,6 +547,25 @@ def features(scenario: dict, instance: dict) -> tuple[list[str], list[float]] | 
         from urp_research.cvrp_selection.experiment import features as f
         vals = f(instance)['values']
         return ['log 客户数', '平均需求/容量', '需求离散度', '半径离散度', '近邻距离/半径', '纵横比'], vals
+    if pc == 'fleet_routing':
+        from shapely.geometry import Polygon
+        from shapely.ops import unary_union
+        from shapely.errors import GEOSException
+        try:
+            boundary = Polygon(instance['boundary'])
+            capacity, count = instance['vehicles']['capacity'], instance['vehicles']['count']
+            if (not boundary.is_valid or boundary.area <= 0 or any(isinstance(v, bool) or
+                    not isinstance(v, (int, float)) or not math.isfinite(v) or v <= 0 for v in (capacity, count))):
+                return None
+            obstacles = [Polygon(o['polygon']) for o in instance.get('obstacles', [])]
+            if any(not o.is_valid for o in obstacles):
+                return None
+            occupied = unary_union(obstacles).area if obstacles else 0.0
+            return (['任务数', '车辆数', '总需求/单车容量', '边界面积', '障碍面积占比'],
+                    [len(instance['tasks']), count, sum(t['demand'] for t in instance['tasks']) / capacity,
+                     boundary.area, occupied / boundary.area])
+        except (KeyError, TypeError, ValueError, GEOSException):
+            return None  # Explicit unsupported/invalid feature status; no synthetic values.
     if pc == 'turn_routing':
         nodes = {u for u, _, _ in instance['arcs']} | {v for _, v, _ in instance['arcs']}
         triples = sum(1 for _ in instance['arcs']) or 1
@@ -433,47 +577,80 @@ def features(scenario: dict, instance: dict) -> tuple[list[str], list[float]] | 
 
 
 def instance_space(runs: list[dict]) -> dict:
-    """PCA projection of instance features with best-algorithm labels and convex-hull footprints."""
-    from shapely.geometry import MultiPoint
-    by_inst = defaultdict(list)
-    for r in runs:
-        by_inst[r['instance_sha256']].append(r)
-    names, rows, labels, ids = None, [], [], []
-    for sha, rs in by_inst.items():
-        r0 = rs[0]
-        sc, inst = r0.get('scenario_snapshot'), r0.get('instance')
-        if not sc or not inst:
+    """Separate feature and comparison contracts; never average configurations."""
+    from .planning import context, fingerprint
+    runs, budgets = _prepare_runs(runs)
+    panels, omitted = {}, []
+    for r in sorted(runs, key=lambda r: (r['scenario_id'], r['run_id'])):
+        sc, inst = r.get('scenario_snapshot'), r.get('instance')
+        if not sc or not isinstance(inst, dict):
+            omitted.append({'run_id': r['run_id'], 'reason': 'missing_full_input'})
             continue
-        f = features(sc, inst)
-        if not f:
+        pc = r.get('problem_class', sc.get('problem_class'))
+        f = features({**sc, 'problem_class': pc}, inst)
+        if not f or not all(isinstance(v, (int, float)) and math.isfinite(v) for v in f[1]):
+            omitted.append({'run_id': r['run_id'], 'reason': 'unsupported_or_nonfinite_features'})
             continue
-        names = f[0]
-        vals = defaultdict(list)
-        for r in rs:
-            v = _value(r)
-            if v is not None:
-                vals[r['algorithm']['id']].append(v)
-        best = min(vals, key=lambda a: st.mean(vals[a])) if vals else None
-        rows.append(f[1]); labels.append(best); ids.append({'scenario_id': r0['scenario_id'], 'title': sc.get('title')})
-    if len(rows) < 3:
-        return {'points': [], 'note': '至少需要 3 个带特征的实例（CVRP 或转弯路由）'}
-    X = np.array(rows, dtype=float)
-    mu, sd = X.mean(axis=0), X.std(axis=0)
-    sd[sd == 0] = 1.0
-    Z = (X - mu) / sd
-    U, S, Vt = np.linalg.svd(Z, full_matrices=False)
-    P = Z @ Vt[:2].T
-    var = (S ** 2) / max(1e-12, (S ** 2).sum())
-    pts = [{'x': float(p[0]), 'y': float(p[1]), 'best': b, **meta} for p, b, meta in zip(P, labels, ids)]
-    footprints = {}
-    for a in {b for b in labels if b}:
-        mine = [(p['x'], p['y']) for p in pts if p['best'] == a]
-        if len(mine) >= 3:
-            hull = MultiPoint(mine).convex_hull
-            if hull.geom_type == 'Polygon':
-                footprints[a] = [list(c) for c in hull.exterior.coords]
-    return {'points': pts, 'features': names, 'loadings': Vt[:2].T.tolist(), 'explained_variance': var[:2].tolist(),
-            'footprints': footprints, 'method': '标准化特征的主成分投影（Smith-Miles 实例空间分析的线性简化）'}
+        semantic = context({**sc, 'problem_class': pc, 'frame': r.get('frame', sc.get('frame'))}, inst, r, resolve_map=False)
+        semantic = {k: semantic.get(k) for k in ('problem_class', 'frame', 'objective_rule', 'objective_unit',
+                                                  'relaxed_constraints', 'ground_policy', 'validation_policy')}
+        semantic['environment_sha256'] = (r.get('planning') or {}).get('environment_sha256')
+        budget = r.get('params', {}).get('time_limit_s')
+        schema = pc + '.features/1'
+        panel_id = fingerprint({'semantics': semantic, 'budget_s': budget, 'feature_schema': schema})
+        panel = panels.setdefault(panel_id, {'panel_id': panel_id, 'feature_schema': schema, 'problem_class': pc,
+                                            'comparison_contract': semantic, 'budget_s': budget,
+                                            'features': f[0], '_blocks': defaultdict(list), '_features': {}})
+        key = _comparison_block(r)
+        panel['_blocks'][key].append(r)
+        panel['_features'][key] = f[1]
+    result = []
+    for panel_id, panel in sorted(panels.items()):
+        by_inst, vectors = panel.pop('_blocks'), panel.pop('_features')
+        candidates = sorted({_label(r, budgets) for rs in by_inst.values() for r in rs})
+        panel['algorithms'] = candidates
+        panel['points'] = []
+        for key, rs in sorted(by_inst.items()):
+            vals, seen = defaultdict(list), set()
+            for r in rs:
+                label = _label(r, budgets)
+                seen.add(label)
+                if (v := _value(r)) is not None:
+                    vals[label].append(v)
+            means = {a: st.mean(vs) for a, vs in vals.items()}
+            missing = sorted(set(candidates) - seen)
+            status = ('incomplete_candidates' if missing else 'single_candidate' if len(candidates) < 2 else
+                      'no_feasible_solution' if not means else 'ok')
+            winners = sorted(a for a in means if means[a] == min(means.values())) if means and status == 'ok' else []
+            r0 = rs[0]
+            panel['points'].append({'comparison_key': key, 'scenario_id': r0['scenario_id'],
+                                    'scenario_ids': sorted({r['scenario_id'] for r in rs}),
+                                    'title': (r0.get('scenario_snapshot') or {}).get('title', r0['scenario_id']),
+                                    'run_ids': sorted(r['run_id'] for r in rs), 'missing_algorithms': missing,
+                                    'mean_objectives': means, 'best': winners[0] if len(winners) == 1 else None,
+                                    'winners': winners, 'winner_status': 'tie' if len(winners) > 1 else status})
+        if len(vectors) >= 3:
+            X = np.array([vectors[k] for k in sorted(by_inst)], dtype=float)
+            mu, sd = X.mean(axis=0), X.std(axis=0)
+            sd[sd == 0] = 1.0
+            Z = (X - mu) / sd
+            _, S, Vt = np.linalg.svd(Z, full_matrices=False)
+            # Fix SVD sign ambiguity for reproducible panels and exported loadings.
+            for row in Vt:
+                if row[np.argmax(np.abs(row))] < 0:
+                    row *= -1
+            P = Z @ Vt[:2].T
+            var = S ** 2 / max(1e-12, (S ** 2).sum())
+            for point, xy in zip(panel['points'], P):
+                point.update(x=float(xy[0]), y=float(xy[1]))
+            panel.update(loadings=Vt[:2].T.tolist(), explained_variance=var[:2].tolist(), projection_status='ok')
+        else:
+            panel.update(projection_status='insufficient_instances', note='本面板至少需要 3 个带相同特征语义的比较实例；原始比较点保留但不投影。')
+        panel['method'] = '同特征 schema、目标语义及预算内的标准化 PCA；版本与参数分候选列'
+        result.append(panel)
+    # Legacy top-level points must not accidentally merge multiple incompatible panels.
+    return {'schema': 'urp.instance-space/2', 'points': [], 'panels': result, 'omitted_runs': omitted,
+            'note': '按问题特征 schema、比较语义和预算分面；候选版本/参数沿用主表标签。候选不齐全、仅单候选、全失败或并列时不指定唯一胜者。足迹不表示统计显著性。'}
 
 
 def latex_table(result: dict, caption: str = '算法比较') -> str:

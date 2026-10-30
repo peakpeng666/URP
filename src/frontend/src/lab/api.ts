@@ -112,7 +112,7 @@ export const lab = {
 
 /** Download URLs (served with Content-Disposition by the gateway). */
 export const exportUrl = {
-  run: (run_id: string, format: 'json' | 'csv' | 'geojson') =>
+  run: (run_id: string, format: 'json' | 'csv' | 'tasks-csv' | 'geojson') =>
     `${BASE}/runs/${encodeURIComponent(run_id)}/export?format=${format}`,
   simRun: (id: string, format: 'json' | 'csv') => `${BASE}/sim/runs/${encodeURIComponent(id)}/export?format=${format}`,
 };

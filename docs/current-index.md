@@ -6,15 +6,25 @@
 
 ## 当前基线
 
-快照：**2026-10-30 18:27 UTC**；已合并 `main` 为 [`007388d5`](https://github.com/peakpeng666/URP/tree/007388d5e012f6a901945eda3b0abaf1aedfeb0d)。分支与 PR 状态按此时间记录。
+快照：**2026-10-30 19:47 UTC**；已合并 `main` 为 [`d3f0c03a`](https://github.com/peakpeng666/URP/tree/d3f0c03adb9352f888847fca0efd522f8664d870)。分支与 PR 状态按此时间记录。
 
-- 远端 **32 个分支**：[当前逐支 SHA、状态与建议](current-branches.csv)。表中区分已合并状态与后续归档建议。
-- [原 29 个来源分支表](branches.csv)保留工程整合时的快照和取舍；当前多出工程整理、PyVRP 修复和 refresh 整理三支，原 28 个非 main 来源 SHA 未变。
+- 远端 **33 个分支**：[当前逐支 SHA、状态与建议](current-branches.csv)。表中区分已合并状态与后续归档建议。
+- [原 29 个来源分支表](branches.csv)保留工程整合时的快照和取舍；当前多出工程整理、PyVRP 修复、refresh 整理和资产核验四支，原 28 个非 main 来源 SHA 未变。
 - [#15 工程整合](https://github.com/peakpeng666/URP/pull/15)已合并。当前获取入口采用 main。
 - [#16 PyVRP ILS 标识兼容修复](https://github.com/peakpeng666/URP/pull/16)已合并到当前 main；修复头 `293dbf20` 的[工程四项作业](https://github.com/peakpeng666/URP/actions/runs/41074311873)和[部署两项作业](https://github.com/peakpeng666/URP/actions/runs/41074311831)已通过。当前使用 `pyvrp.ils`，保留旧 ID 请求兼容；历史模型与结果维持原件。
 - [#12](https://github.com/peakpeng666/URP/pull/12)、[#13](https://github.com/peakpeng666/URP/pull/13)已关闭（未直接合并），其离线 evolve 功能已由 #15 择取整合；来源分支保留。
 - [#17 全量整理与错误处理](https://github.com/peakpeng666/URP/pull/17)已合并；[主线四项CI](https://github.com/peakpeng666/URP/actions/runs/41105645794)通过，合并前精确提交代码审查无发现。
-- PR **#1、#2、#3、#4、#11、#14、#15、#16、#17** 均已合并。来源分支继续作为整合记录保留。
+- PR **#1、#2、#3、#4、#11、#14、#15、#16、#17、#18** 均已合并。来源分支继续作为整合记录保留。
+
+- [#18 资产与许可证据](https://github.com/peakpeng666/URP/pull/18)已合并；[合并后四项 CI](https://github.com/peakpeng666/URP/actions/runs/41112545177)通过。
+
+## 当前 refresh
+
+下一批聚焦统计比较身份与有效分母、Agent 能力元数据、启动与构建链路、双服务交付回归、导出与资产恢复汇总。具体实施和验证按提交记录在[工程记录](../setup/2026-10-30/engineering/REPORT.md)。
+
+源码主线与安装镜像分别验收；当前远端 `deploy` 为 `41e6bdc221cb`，主线合并不代表镜像已发布。
+
+[研究决策图](research-map.md)保留候选问题，不作为本轮 refresh 的执行队列；[研究报告](导师查看.md)保留截至 2026-10-19 的冻结证据。
 
 ## 16 个模块入口
 
@@ -57,7 +67,7 @@
 - 根 `uv.lock`、Lab 的 `src/lab/uv.lock`、前端与浏览器工具的 `package-lock.json` 各自权威；根 `requirements.lock` 是导出文件。根和 Lab 的 OR-Tools、NumPy 版本各自锁定，升级按环境验收。
 - Python 3.12 的两套应用环境与 ROS Humble 的系统 Python 3.10 分开；日常前端与 CI 使用 Node 24。历史实验锁按原环境保存。
 - 主 CVRP 基线为 4,505 项终态：4,316 可行、189 无有效解；53 个问题来自 51 个底本。路线质量、描述统计、同条件耗时证明是不同层次，见 [重审](../protocol/audits/20261017/README.md)。
-- 下一阶段按 [交付要求](requirements.md) 和 [研究决策图](research-map.md) 组织工作，研究结论对应原始结果与独立验算。
+- 当前先完成上述 refresh；后续研究按 [交付要求](requirements.md) 和 [研究决策图](research-map.md) 另行确定，研究结论对应原始结果与独立验算。
 
 ## 资产核验更新
 

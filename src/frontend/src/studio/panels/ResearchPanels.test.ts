@@ -25,3 +25,14 @@ describe('study failure rendering', () => {
     expect(html).toContain('gateway unavailable'); expect(html).toContain('重试');
   });
 });
+
+
+describe('seed-only study design copy', () => {
+  it('does not equate lack of seed control with deterministic execution', () => {
+    const html = renderToStaticMarkup(createElement(StudiesPanel));
+    expect(html).toContain('可控随机种子数');
+    expect(html).toContain('不使用 seed 的算法每个场景/预算只运行一次');
+    expect(html).toContain('普通重复');
+    expect(html).not.toContain('确定性算法只跑一次');
+  });
+});
