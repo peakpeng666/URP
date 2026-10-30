@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from .jobs import resolve_params
+from .algorithm_ids import canonical_algorithm_id
 
 MAX_ALGORITHMS = 24
 MAX_LABEL = 200
@@ -36,7 +37,7 @@ def resolve_algorithms(catalog: list[dict], problem_class: str, requested, limit
         item = {'id': item} if isinstance(item, str) else item
         if not isinstance(item, dict) or not isinstance(item.get('id'), str):
             raise SolveRequestError(400, 'invalid_request', 'algorithms 的每项须为 {"id": …, "params": {…}}')
-        algo = by_id.get(item['id'])
+        algo = by_id.get(canonical_algorithm_id(item['id']))
         if algo is None:
             raise SolveRequestError(400, 'unknown_algorithm', f"没有算法 {item['id']}")
         if problem_class not in algo.get('problem_classes', []):

@@ -80,9 +80,9 @@ ROS 环境变量通过 `bash setup/profile.sh simulation …` 设定（CycloneDD
  "params": [{"name": "time_limit_s", "type": "number", "default": 5, "min": 0.5, "max": 120, "label": "时间预算 (s)"}],
  "description": "…"}
 ```
-固定 id（`pyvrp.hgs` 为历史 API 标识；已安装的 PyVRP 0.14.0 实际运行 IteratedLocalSearch，显示名和来源使用 ILS，不把它归类为 HGS）：
-- turn_routing：`urp.turn_mode_dp`、`urp.reset_dp`（忽略进入方向的松弛，可能违反转弯约束）、`urp.raw_oracle`（独立原图精确搜索）、`pyvrp.hgs+urp.layered`、`ortools.gls+urp.layered`（第三方元启发式在松弛距离上给出分配与顺序，再由项目 `turn_modes/evaluate_candidate.py` 分层 DP 实现转弯可行路线）。
-- euclidean_cvrp：`pyvrp.hgs`、`ortools.gls`。旧 `urp.js.*` 尚未纳入此网关目录。
+当前执行 id（PyVRP 0.14.0 实际运行 IteratedLocalSearch）：
+- turn_routing：`urp.turn_mode_dp`、`urp.reset_dp`（忽略进入方向的松弛，可能违反转弯约束）、`urp.raw_oracle`（独立原图精确搜索）、`pyvrp.ils+urp.layered`、`ortools.gls+urp.layered`（第三方元启发式在松弛距离上给出分配与顺序，再由项目 `turn_modes/evaluate_candidate.py` 分层 DP 实现转弯可行路线）。
+- euclidean_cvrp：`pyvrp.ils`、`ortools.gls`。旧 `urp.js.*` 尚未纳入此网关目录。
 - coverage：`f2c.boustrophedon`、`f2c.snake`（可选 Fields2Cover；版本和 native 指纹必须匹配 vendor 清单，否则 available=false 并说明原因）、`panel.boustrophedon`（面板基线，Shapely 实现，允许原地转向）。F2C 支持单个凸内缩作业区，采用原生 Dubins 转弯、0.02 m 离散；独立检查完整足迹、采样曲率及作业区覆盖。拒绝的几何保留在 raw_result，不能进入仿真。
 
 ### 2.4 Solve request / Solution
@@ -433,3 +433,7 @@ POST `fieldsim.execution` 采用 `urp.field-execution/2`：`ground_preset`（non
 - `tests/test_agent.py` 共 21 项，纳入 CI 全量 Lab。脚本模型驱动真实求解和检查，覆盖生成、推荐、对比、批准、拒绝、取消、关闭、恢复、预算、配置变化和错误响应；客户端测试使用 `httpx.MockTransport`。结束的轮次核对工具调用与回复配对。
 - 浏览器检查 `setup/2026-10-29/agent/browser_check.sh`：回环替身模型驱动真实 HTTP 客户端、网关、求解器、检查器与面板，结果见集成报告最上方。
 - 真实模型质量与 ROS / Gazebo 物理执行另测；本轮仿真调用覆盖批准与拒绝，执行入口使用测试替身。
+
+### PyVRP 标识兼容
+
+新目录、推荐和新运行使用 `pyvrp.ils` / `pyvrp.ils+urp.layered`。求解 API、Agent、课题与直接求解入口仍接受旧 `pyvrp.hgs` / `pyvrp.hgs+urp.layered`，仅在执行边界解析为当前 ID。旧运行、课题、模型及评估记录不做落盘重写；旧 ID 本身不证明历史使用 ILS。带校验摘要的模型先验证原始 artifact 指纹，再对预测键做内存兼容；同时存在旧/新键且数值冲突时拒绝模型，不静默覆盖。

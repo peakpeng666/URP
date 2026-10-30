@@ -7,6 +7,7 @@ import math
 import time
 
 from .. import paths
+from ..algorithm_ids import canonical_algorithm_id
 from ..scenarios import maps
 from ..planning import context, trace_context, without_stale_reference
 from . import f2c_coverage, fleet, motion, routing
@@ -36,11 +37,11 @@ _TABLE = [
     ('urp.reset_dp', '方向松弛 DP', 'turn_routing', '本项目', 'relaxation', 'optimal_for_relaxation',
      '忽略进入方向的松弛问题最优解，是真实成本的下界；路线可能包含被禁止的转弯。', ['vidal2017turn'],
      'src/research/src/urp_research/turn_modes/solver.py', {'limits': {'max_tasks': 12}}),
-    ('pyvrp.hgs+urp.layered', 'PyVRP + 转弯分层补全', 'turn_routing', 'PyVRP', 'metaheuristic', 'none',
+    ('pyvrp.ils+urp.layered', 'PyVRP + 转弯分层补全', 'turn_routing', 'PyVRP', 'metaheuristic', 'none',
      'PyVRP 在方向松弛距离上决定任务分配与访问顺序，再由项目分层 DP 补全满足转弯约束的路径。', ['wouda2024pyvrp', 'vidal2017turn'], 'pyvrp', {}),
     ('ortools.gls+urp.layered', 'OR-Tools GLS + 转弯分层补全', 'turn_routing', 'OR-Tools', 'metaheuristic', 'none',
      'OR-Tools 引导局部搜索给出分配与顺序，项目分层 DP 补全转弯可行路径。', ['ortools', 'voudouris1999gls', 'vidal2017turn'], 'ortools', {}),
-    ('pyvrp.hgs', 'PyVRP 迭代局部搜索', 'euclidean_cvrp', 'PyVRP', 'metaheuristic', 'none',
+    ('pyvrp.ils', 'PyVRP 迭代局部搜索', 'euclidean_cvrp', 'PyVRP', 'metaheuristic', 'none',
      'PyVRP 0.14 的迭代局部搜索（含 SWAP* 邻域）；改进幅度以相同输入、预算与独立复算为准。', ['wouda2024pyvrp', 'vidal2022hgs', 'lourenco2003ils'], 'pyvrp', {}),
     ('ortools.gls', 'OR-Tools 引导局部搜索', 'euclidean_cvrp', 'OR-Tools', 'metaheuristic', 'none',
      'Google OR-Tools 路由求解器：最便宜弧构造 + 引导局部搜索。', ['ortools', 'voudouris1999gls'], 'ortools', {}),
@@ -158,6 +159,7 @@ def coverage(inst):
 
 
 def run_algorithm(scenario, instance, algorithm_id, params):
+    algorithm_id = canonical_algorithm_id(algorithm_id)
     scenario = without_stale_reference(scenario, instance)
     start, cpu = time.perf_counter(), time.process_time()
     alg = next(a for a in catalog() if a['id'] == algorithm_id)
