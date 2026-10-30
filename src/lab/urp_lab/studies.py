@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 
 from .events import utc_now
 from .jobs import FINAL, resolve_params
+from .algorithm_ids import canonical_algorithm_id
 
 MAX_RUNS = 2000
 
@@ -29,7 +30,7 @@ class StudyManager:
         seeds = [int(s) for s in (spec.get('seeds') or [])] or [42]
         cells, skipped = [], []
         for sc, item, budget in itertools.product(scenarios, spec.get('algorithms') or [], budgets):
-            algo = cat.get(item.get('id') if isinstance(item, dict) else item)
+            algo = cat.get(canonical_algorithm_id(item.get('id') if isinstance(item, dict) else item))
             if algo is None:
                 raise ValueError(f'没有算法 {item}')
             if sc['problem_class'] not in algo['problem_classes']:

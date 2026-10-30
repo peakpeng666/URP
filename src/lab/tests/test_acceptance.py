@@ -19,10 +19,10 @@ from urp_lab.scenarios.maps import MapGrid, segment_clearance
 @pytest.mark.parametrize('sid,aid',[
  pytest.param('maze-inspection','urp.turn_mode_dp', marks=pytest.mark.requires_maps('maze')),
  pytest.param('maze-inspection','urp.raw_oracle', marks=pytest.mark.requires_maps('maze')),
- pytest.param('maze-inspection','pyvrp.hgs+urp.layered', marks=pytest.mark.requires_maps('maze')),
+ pytest.param('maze-inspection','pyvrp.ils+urp.layered', marks=pytest.mark.requires_maps('maze')),
  pytest.param('maze-inspection','ortools.gls+urp.layered', marks=pytest.mark.requires_maps('maze')),
  pytest.param('farm-rows-warehouse','urp.turn_mode_dp', marks=pytest.mark.requires_maps('warehouse')),
- ('bench-cvrp-uniform-n20','pyvrp.hgs'), ('bench-cvrp-uniform-n20','ortools.gls'),
+ ('bench-cvrp-uniform-n20','pyvrp.ils'), ('bench-cvrp-uniform-n20','ortools.gls'),
  pytest.param('field-coverage-depot','panel.boustrophedon', marks=pytest.mark.requires_maps('depot'))])
 def test_actual_solver_witnesses(sid,aid):
     s=get_scenario(sid);r=run_algorithm(s,s['instance'],aid,{'time_limit_s':.15,'seed':42})

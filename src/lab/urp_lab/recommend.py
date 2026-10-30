@@ -104,8 +104,8 @@ def recommend(scenario, instance, budget_s=None):
             if n <= 12:
                 score['urp.turn_mode_dp'] += 3
                 why['urp.turn_mode_dp'].append(f'任务数 {n} ≤ 12：优先尝试精确分层 DP，是否证最优以终态和预算为准')
-            score['pyvrp.hgs+urp.layered'] += 2
-            why['pyvrp.hgs+urp.layered'].append('规模较大时的首选：PyVRP 定顺序，项目分层 DP 补全转弯可行路径')
+            score['pyvrp.ils+urp.layered'] += 2
+            why['pyvrp.ils+urp.layered'].append('规模较大时的首选：PyVRP 定顺序，项目分层 DP 补全转弯可行路径')
             score['ortools.gls+urp.layered'] += 1.5
             why['ortools.gls+urp.layered'].append('与 PyVRP 方案互为对照')
             if n <= 8:
@@ -116,8 +116,8 @@ def recommend(scenario, instance, budget_s=None):
         elif pc == 'euclidean_cvrp':
             feats = [_feature('客户数', 'n_tasks', n), _feature('容量', 'capacity', instance['capacity']),
                      _feature('最少车辆', 'min_routes', math.ceil(sum(instance['demands']) / instance['capacity']))]
-            score['pyvrp.hgs'] += 3
-            why['pyvrp.hgs'].append('CVRP 迭代局部搜索对照；相对最优已知解的差距由本次求解实测，不预设性能数字')
+            score['pyvrp.ils'] += 3
+            why['pyvrp.ils'].append('CVRP 迭代局部搜索对照；相对最优已知解的差距由本次求解实测，不预设性能数字')
             score['ortools.gls'] += 2
             why['ortools.gls'].append('稳健的对照求解器')
             score['urp.js.savings'] += 1.5
