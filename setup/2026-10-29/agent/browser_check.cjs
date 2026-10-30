@@ -12,7 +12,9 @@ const checks = [];
 const record = (name, pass, detail) => checks.push({ name, pass: Boolean(pass), detail });
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({
+    ...(process.env.URP_CHROMIUM_EXECUTABLE ? { executablePath: process.env.URP_CHROMIUM_EXECUTABLE } : {}),
+  });
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const problems = [];
   page.on('console', (m) => { if (m.type() === 'error') problems.push('console: ' + m.text()); });

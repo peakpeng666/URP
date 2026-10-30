@@ -43,7 +43,7 @@ case "$operation" in
     exec bash setup/profile.sh simulation /usr/bin/python3 setup/2026-10-15/deployment/nav-smoke.py \
       --label "run-$(date -u +%Y%m%d-%H%M%S)-$$" "${navigation_flags[@]}" "$@"
     ;;
-  lab)
+  lab|lab-code)
     # 工作台网关 127.0.0.1:4100；前端缺失或比源码旧时先构建。
     lab_node_path
     dist_index=src/frontend/dist/index.html
@@ -54,13 +54,15 @@ case "$operation" in
         exit 1
       fi
     fi
-    overlay_dir=setup/2026-10-15/deployment/runtime
-    if [[ ! -f $overlay_dir/tf-repro/liburp_tf_buffer.so || ! -f $overlay_dir/liburp_gui_lifetime.so ]]; then
-      printf '重建仿真修补库（TF2 / GUI，与验收二进制逐字节一致）…\n'
-      bash src/lab/ros/native/rebuild-ros-overlays.sh || printf '仿真修补库重建失败；规划功能不受影响，仿真启动会提示原因。\n' >&2
-    fi
-    if [[ ${URP_BRIDGE_FIX:-1} == 1 ]]; then
-      /usr/bin/python3 src/lab/ros/bridge_runtime.py >/dev/null || printf '桥接修复验证失败；规划仍可使用，仿真将报告具体原因。\n' >&2
+    if [[ $operation == lab ]]; then
+      overlay_dir=setup/2026-10-15/deployment/runtime
+      if [[ ! -f $overlay_dir/tf-repro/liburp_tf_buffer.so || ! -f $overlay_dir/liburp_gui_lifetime.so ]]; then
+        printf '重建仿真修补库（TF2 / GUI，与验收二进制逐字节一致）…\n'
+        bash src/lab/ros/native/rebuild-ros-overlays.sh || printf '仿真修补库重建失败；规划功能不受影响，仿真启动会提示原因。\n' >&2
+      fi
+      if [[ ${URP_BRIDGE_FIX:-1} == 1 ]]; then
+        /usr/bin/python3 src/lab/ros/bridge_runtime.py >/dev/null || printf '桥接修复验证失败；规划仍可使用，仿真将报告具体原因。\n' >&2
+      fi
     fi
     cd src/lab
     exec .venv/bin/python -m urp_lab serve "$@"
@@ -94,5 +96,5 @@ PY
     exec curl --fail-with-body -sS -X POST -H 'Content-Type: application/json' "${token_header[@]}" \
       -d '{}' "http://127.0.0.1:${port}/lab/api/shutdown"
     ;;
-  *) printf 'Usage: bash setup/run.sh reproduce|lab|lab-stop|lab-setup|build|frontend|backend|research|numpy|solver-check|navigation [ARGS...]\n' ;;
+  *) printf 'Usage: bash setup/run.sh reproduce|lab|lab-code|lab-stop|lab-setup|build|frontend|backend|research|numpy|solver-check|navigation [ARGS...]\n' ;;
 esac
