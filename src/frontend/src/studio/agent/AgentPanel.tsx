@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Bot, Check, FlaskConical, Map as MapIcon, Plus, Send, ShieldAlert, Square, X } from 'lucide-react';
-import { fmt, LabApiError, useLabEvent, useLabResource } from '../../lab/api';
+import { fmt, useLabEvent, useLabResource } from '../../lab/api';
 import { Badge, Button, EmptyState, Notice, Spinner } from '../../lab/ui';
 import { studio } from '../api';
 import { useStudio } from '../store';
@@ -175,7 +175,10 @@ export function AgentPanel() {
   const sessionId = useAgent((x) => x.sessionId);
   const select = useAgent((x) => x.select);
   const pendingAsk = useAgent((x) => x.pendingAsk);
-  const [session, setSession] = useState<AgentSession | null>(null);
+  const [loadedSession, setSession] = useState<AgentSession | null>(null);
+  const session = loadedSession?.session_id === sessionId ? loadedSession : null;
+  const loadSequence = useRef(0);
+  const sendInFlight = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
@@ -183,21 +186,21 @@ export function AgentPanel() {
   const input = useRef<HTMLTextAreaElement>(null);
 
   const load = useCallback(async (id: string) => {
+    const sequence = ++loadSequence.current;
     try {
       const next = await studio.agentSession(id);
-      if (useAgent.getState().sessionId === id) {
+      if (useAgent.getState().sessionId === id && sequence === loadSequence.current) {
         setSession(next);
         setError(null);
       }
     } catch (e) {
-      if (e instanceof LabApiError && e.status === 404) {
-        useAgent.getState().select(null);
-        setSession(null);
-      } else setError((e as Error).message);
+      if (useAgent.getState().sessionId !== id || sequence !== loadSequence.current) return;
+      setError((e as Error).message);
     }
   }, []);
 
   useEffect(() => {
+    setError(null);
     if (sessionId) void load(sessionId);
     else setSession(null);
   }, [sessionId, load]);
@@ -211,8 +214,14 @@ export function AgentPanel() {
   const busy = isBusy(session?.state);
   useEffect(() => {
     if (!sessionId || !busy) return;
-    const timer = window.setInterval(() => void load(sessionId), 2000);
-    return () => window.clearInterval(timer);
+    let active = true;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      await load(sessionId);
+      if (active) timer = setTimeout(poll, 2000);
+    };
+    timer = setTimeout(poll, 2000);
+    return () => { active = false; clearTimeout(timer); };
   }, [sessionId, busy, load]);
 
   // Follow new steps while the reader is at the bottom; scrolling up to read stops following.
@@ -236,20 +245,24 @@ export function AgentPanel() {
 
   const send = useCallback(async (message: string, fresh = false) => {
     const msg = message.trim();
-    if (!msg) return;
+    if (!msg || sendInFlight.current) return;
+    sendInFlight.current = true;
+    const current = useAgent.getState().sessionId;
     setSending(true);
     setError(null);
     try {
-      const current = useAgent.getState().sessionId;
       const next = !fresh && current ? await studio.agentSend(current, msg) : await studio.agentStart(msg);
+      sessions.reload();
+      if (useAgent.getState().sessionId !== current) return;
+      ++loadSequence.current;
       useAgent.getState().select(next.session_id);
       pinned.current = true;
       setSession(next);
       setText('');
-      sessions.reload();
     } catch (e) {
-      setError((e as Error).message);
+      if (useAgent.getState().sessionId === current) setError((e as Error).message);
     } finally {
+      sendInFlight.current = false;
       setSending(false);
     }
     // sessions.reload is a new function every render; the request itself does not depend on it
@@ -258,26 +271,28 @@ export function AgentPanel() {
 
   // "交给智能体" in the compose bar hands over its text once.
   useEffect(() => {
-    if (pendingAsk === null) return;
+    if (pendingAsk === null || sending || sendInFlight.current) return;
     const handed = useAgent.getState().takeAsk();
     if (handed) void send(handed, true);
-  }, [pendingAsk, send]);
+  }, [pendingAsk, send, sending]);
 
   const decide = async (approve: boolean) => {
     if (!session?.pending) return;
     try {
-      setSession(await studio.agentDecide(session.session_id, session.pending.call_id, approve));
+      const next = await studio.agentDecide(session.session_id, session.pending.call_id, approve);
+      if (useAgent.getState().sessionId === session.session_id) { ++loadSequence.current; setSession(next); }
     } catch (e) {
-      setError((e as Error).message);
+      if (useAgent.getState().sessionId === session.session_id) setError((e as Error).message);
     }
   };
 
   const cancel = async () => {
     if (!session) return;
     try {
-      setSession(await studio.agentCancel(session.session_id));
+      const next = await studio.agentCancel(session.session_id);
+      if (useAgent.getState().sessionId === session.session_id) { ++loadSequence.current; setSession(next); }
     } catch (e) {
-      setError((e as Error).message);
+      if (useAgent.getState().sessionId === session.session_id) setError((e as Error).message);
     }
   };
 
@@ -306,6 +321,8 @@ export function AgentPanel() {
         <Button size="sm" icon={Plus} title="开始新会话" onClick={() => { select(null); setSession(null); input.current?.focus(); }} />
       </header>
 
+      {status.error && <Notice tone="error">{status.error.message}</Notice>}
+      {sessions.error && <Notice tone="error">会话列表读取失败：{sessions.error.message}</Notice>}
       {status.data && !configured && (
         <div className={s.pad}>
           <Notice tone="warn">
@@ -317,7 +334,8 @@ export function AgentPanel() {
 
       <div className={s.timeline} ref={timeline}
         onScroll={(e) => { const t = e.currentTarget; pinned.current = t.scrollHeight - t.scrollTop - t.clientHeight < 48; }}>
-        {!session && (
+        {sessionId && !session && !error && <Spinner label="正在读取会话" />}
+        {!sessionId && !session && (
           <EmptyState
             icon={Bot}
             title="让智能体完成一项研究任务"
@@ -337,7 +355,7 @@ export function AgentPanel() {
       </div>
 
       <footer className={s.composer}>
-        {error && <Notice tone="error">{error}</Notice>}
+        {error && <Notice tone="error">{error}{sessionId && <Button size="sm" onClick={() => void load(sessionId)}>重新读取会话</Button>}</Notice>}
         <textarea
           ref={input}
           id="agent-input"
@@ -345,7 +363,7 @@ export function AgentPanel() {
           className={s.input}
           rows={3}
           value={text}
-          disabled={!configured || busy}
+          disabled={!configured || busy || (!!sessionId && !session)}
           placeholder={busy ? '这一轮还在进行，可以停止后再提问' : '描述任务或提出问题，例如：比较这块田上 PyVRP 与 OR-Tools 的方案'}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
@@ -360,7 +378,7 @@ export function AgentPanel() {
           {session && <span className={s.meta}>{STATE_LABEL[session.state]} · 模型 {session.usage.model_calls} 次 · 工具 {session.usage.tool_calls} 次 · {session.usage.total_tokens} tokens</span>}
           <span className={s.spacer} />
           {session?.state === 'running' && <Button size="sm" icon={Square} onClick={() => void cancel()}>停止</Button>}
-          <Button size="sm" variant="primary" icon={Send} loading={sending} disabled={!configured || busy || !text.trim()} title="发送（⌘/Ctrl + Enter）" onClick={() => void send(text)}>发送</Button>
+          <Button size="sm" variant="primary" icon={Send} loading={sending} disabled={!configured || busy || (!!sessionId && !session) || !text.trim()} title="发送（⌘/Ctrl + Enter）" onClick={() => void send(text)}>发送</Button>
         </div>
       </footer>
     </div>

@@ -1,6 +1,6 @@
 # URP 工作约定
 
-`main` 是已合并基线；当前整理分支为 `chore/engineering-cleanup-20261030`，整合来源与处置见 `docs/branches.csv`。开始前先看 Git 状态与分支差异，保留本地未提交成果；不要用 reset、强推或批量删除来完成同步。`backup/*` 保留历史快照。
+`main` 是已合并基线，日常获取与开发从 `main` 开始。当前工程与分支索引见 `docs/current-index.md`；`docs/branches.csv` 保留工程整合时的 29 个来源分支快照。开始前先看 Git 状态与分支差异，保留本地未提交成果；不要用 reset、强推或批量删除来完成同步。`backup/*` 保留历史快照。
 
 ## 入口与分工
 

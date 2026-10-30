@@ -267,7 +267,7 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 - `fleet_routing`（多车任务分配与路径）：`{boundary, plots[{id,name,crop,rows_deg,polygon}], obstacles[{id,kind,name,polygon}], depot, tasks[{id,xy,demand,label,plot,service_s}], vehicles{count,capacity,speed_mps,trips:'multi'|'single',travel:'rows'|'free',names,fleet?}, objective:'total_distance'|'makespan', robot_radius, units:'m'}`。障碍 `kind ∈ pond|building|greenhouse|tree|ditch|rock|other`。
   `vehicles.fleet`（可选，2026-10-17 第三轮）是异构车队类别清单：`[{name?, count, capacity, speed_mps?, robot_radius?, payload:'load'|'none', min_turn_radius_m?, asset?:{id,version,sha256}}]`（1–8 类，总台数 ≤ 60；给出 `fleet` 时不再单独给 `count`/`capacity`/`names`）。`min_turn_radius_m`（0–10 m，默认 0 = 可原地转向）为正的类别按 Dubins (1957) 曲线实现路径（OMPL `DubinsStateSpace`，仅前进不倒车）：航向在路段间携带，每个航向变化成为曲率受约束的转弯；路点航向按离散化集合做动态规划选取（Le Ny et al. 2007 / Cohen & Epstein 2017 的 discretised-DTSP 方案，12 向候选；启发式、非连续最优），分配在直线图距离上优化，实现的曲线长度作为执行指标（`curvature_constrained_vehicles`、逐路线 `min_turn_radius_m` / `curvature_radius_m`）。实现采用分级回退：解析实现（含拐点外移 0.6/1.2×R 两级）净空不过时，回退到 OMPL RRT-Connect 在 Dubins 空间采样（停靠航向自由、逐腿求解、5 cm 采样）——能穿解析方案穿不过的窄缝（复合 S 形机动），代价如实计入里程；全部尝试记录在 `raw_result.curvature_realization_attempts`。检查器按连续三点外接圆独立复核最小转弯半径（Dubins 弧段上采样曲率精确）并要求采样间距 ≤ 0.15 m。`travel='rows'` 暂不支持曲率约束（通道内转弯规划未实现，校验直接拒绝）；执行侧田间仿真为可原地转向差速模型，曲率约束类别求解/验算可行但启动执行返回 422（`curvature_constrained_execution`）。每条结果路线带自己的类别字段 `fleet_class, capacity, speed_mps, robot_radius`；`pyvrp.fleet` 与 `ortools.fleet`（两种目标）按类别容量 / 车速求解，makespan 时为每类车速建独立时间矩阵与每车容量；构造基线（sweep / cluster_first / savings）只支持同构车队，异构输入直接报错。通行图与障碍膨胀按车队最大足迹半径（`robot_radius` 归一为最大值），独立检查器按各车自身足迹、容量与车速复算并核对路线声明的类别字段；类别可声明 `footprint`（body 系多边形，外接半径不得超过该类规划圆，2026-10-17 第八轮）：检查器按路径切线朝向后验采样多边形净空并记录 `oriented_clearance_m`（含作物行）——量化外接圆假设的保守差值，只记录不门控；朝向感知规划未实现；`payload:'none'` 的类别容量取总需求（不构成约束）。按类 `asset` 引用进入提交快照与一致性校验；执行侧田间仿真当前只生成同构内置差速机器人，多类别方案可求解 / 验算，但启动执行返回 422（`heterogeneous_fleet_execution`）。旧实例无 `fleet` 时行为与历史完全一致（单类别路径）。
   实例可含 `depots[[x,y],…]`（2026-10-17 第六轮，第 7 项）：1–8 个车库，车辆按表序轮询分配到家库（出发与结束回家库；无补给点时每趟也返家库）；pyvrp.fleet / ortools.fleet 总里程目标支持多车库（pyvrp 每库建 depot、OR-Tools 每车 start/end），路线带 `depot`（家库下标）与 `depot_xy`，检查器按家库复核起终点与分趟返库，生成世界时各库独立安排停车位。构造基线拒绝多车库输入（makespan 目标已支持：每车 start/end 家库、按库补货节点经 VehicleVar 成员限制只服务本库车辆，多库时首解策略切换为 PARALLEL_CHEAPEST_INSERTION——PATH_CHEAPEST_ARC 在补货必访时无法完成首解）。实例可含 `unload_points[[x,y],…]`（≤16，2026-10-17 第九轮）：补给点进入图节点与 makespan 补货模型（任意车辆可用，区别于家库限定），分趟可在补给点卸货后继续，路线以 `reload_stops` 声明趟间补给停靠，检查器验证停靠 ∈ 补给点 ∪ 家库且折线按序经过；任务始终回家库起返。GeoJSON 的 unload/supply 点要素导入为 `unload_points` 并原样导出。距离模式（总里程目标）不建模中途补给（趟次仍以家库为界）。旧实例无 `depots` 时等价单库，行为不变。
-  实例可含 `corridors[{id,name,polygon}]`（2026-10-17 第五轮，第 8 项）：GeoJSON 里 role/type/name 含 road/track/headland/道路/机耕道/地头 等词的面要素成为通行走廊，线要素按 `width_m`（1–8 m，默认 2.5）缓冲成面；行间通行（`rows`）下走廊不种植、自动并入开阔区（地头 / 机耕路的通行网络直接吃这些要素），`free` 通行下它们不构成约束。导出 GeoJSON 原样保留走廊要素（role=corridor）。
+  实例可含 `corridors[{id,name,polygon}]`（2026-10-17 第五轮，第 8 项）：GeoJSON 里 role/type/name 含 road/track/headland/道路/机耕道/地头 等词的面要素成为通行走廊，线要素按 `width_m`（或 `width`）缓冲成面；显式值须为 1–8 m 的有限数值，字段缺省时取 2.5 m；行间通行（`rows`）下走廊不种植、自动并入开阔区（地头 / 机耕路的通行网络直接吃这些要素），`free` 通行下它们不构成约束。导出 GeoJSON 原样保留走廊要素（role=corridor）。
   `vehicles.travel` 决定距离模型（生成的农田地图默认 `rows`，导入 / 旧场景缺省为 `free`）：
   - `free`：机器人半径膨胀障碍上的可视图最短路，地块可任意穿行。
   - `rows`：田间通行图（`urp_lab/lanes.py`）。每个地块按 `rows_deg` 与作物行距（作物表 `lanes.CROPS`，未知作物用默认行距；单块超过 160 行时等比放宽）种植作物行，地块边缘留 0.8 m、地块内障碍周围留 `2r + 1` m 不种；行间净宽 ≥ 2(r + 0.1) m 时每两行之间是一条通道，否则每两行留出一条作业道（空出 1 个或多个行位）。通道中线向外延伸到开阔区（地头、机耕路、障碍周围的空地）处为出入口；开阔区内是可视图，通道内只能沿中线行驶，不得穿过作物行。每个任务在离它最近的通道点或开阔区点作业（超过 `max(3 m, 最大通道间隔)` 报错），车库须在开阔区。
@@ -275,14 +275,14 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
   验算（`fleet.check`）另核对：每个任务的作业位置在路线上，且是离任务最近的可达处（`free` 时必须是任务点本身）；`rows` 时由地块重新生成作物行与通道，每段路线都须落在开阔区或通道中线上，否则报“离开行间通道和地头，斜穿了作物”。
 - `point_to_point`：`{start:[x,y,yaw], goal:[x,y,yaw], motion_model:'holonomic'|'dubins'|'reeds_shepp', turning_radius, robot_radius, clearance_margin, goal_tolerance}`，地图坐标，可仿真（单条路线，终点为唯一任务点）。
 - `euclidean_cvrp.objective` 可为 `sum_rounded_euclidean_distance`（TSPLIB EUC_2D，CVRPLIB 用）；场景可带 `reference{bks, optimal, routes}`，结果给出 `metrics.gap_to_bks_pct`。
-- 所有结果可带 `trace: [[秒, 当前最好目标值], …]`（PyVRP、OR-Tools、OMPL 渐近最优规划器）。
+- 所有结果可带 `trace: [[秒, 当前最好目标值], …]`（PyVRP、OR-Tools、OMPL 渐近最优规划器）。OR-Tools makespan 回调读取失败时省略该样本，保留有效解；`raw_result.trace_diagnostics` 记录 `samples_read`、`samples_omitted` 与 `first_error`。
 
 ### 5.2 新增接口（`/lab/api`）
 | 方法 | 路径 | 用途 |
 |---|---|---|
 | GET | `compose/examples` | 示例任务描述 |
 | POST | `compose/parse {text}` | 解析结果 `{spec, found, defaults, cards}` |
-| POST | `compose {text, seed?, overrides?, field_id?}` | 生成并保存多车任务地图（201，返回场景） |
+| POST | `compose {text, seed?, overrides?, field_id?}` | 生成并保存多车任务地图（201，返回场景及生成数量状态） |
 | PUT | `scenarios/{id} {instance?, title?, summary?}` | 更新我的场景（内置 / 资源库 403） |
 | POST | `scenarios/{id}/fork {instance?, title?}` | 另存为我的场景 |
 | POST | `scenarios/import/geojson {geojson, title?, vehicles?}` | GeoJSON 导入 |
@@ -294,6 +294,8 @@ to_sim_plan(solution: dict, scenario: dict, mode: str) -> dict
 | GET | `source?path=` | 算法源码（白名单目录） |
 | POST / GET | `studies`、`studies/{id}`、`studies/{id}/cancel`、`studies/{id}/analysis`、`studies/{id}/instance-space`、`studies/{id}/export?format=csv\|json\|latex` | 研究课题与统计分析 |
 | POST | `analysis {run_ids}` | 任意运行集合的统计分析 |
+
+生成场景的 `compose.generation` 保存 `requested`、`actual`、`shortfalls` 和 `status`（`complete` / `partial`）。卡片显示实际数量，摘要列出未满足的数量，原请求仍保存在 provenance 中。显式种子 `0` 原样使用。作物行预览中输入错误返回 400，内部执行故障返回 500。
 
 场景 id：CVRPLIB 为 `cvrplib-<算例名小写>`，真实田块为 `field-<国家>-field-<编号>`，打开后记入“最近打开”。
 

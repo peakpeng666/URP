@@ -6,7 +6,6 @@ environment and never enters a session record, an event or a response.
 from __future__ import annotations
 
 import ipaddress
-import json
 import os
 from dataclasses import dataclass, field
 from typing import Mapping, Protocol
@@ -98,16 +97,30 @@ class OpenAICompatibleModel:
             message = choice['message']
         except (ValueError, KeyError, IndexError, TypeError):
             raise ModelError(f'模型接口返回了无法解析的内容：{self._error_excerpt(response)}') from None
+        if not isinstance(message, dict):
+            raise ModelError('模型返回的 message 须为对象')
+        content = message.get('content')
+        if content is not None and not isinstance(content, str):
+            raise ModelError('模型返回的 content 须为字符串或 null')
+        raw_calls = message.get('tool_calls', [])
+        if raw_calls is None:
+            raw_calls = []
+        if not isinstance(raw_calls, list):
+            raise ModelError('模型返回的 tool_calls 须为数组')
         calls = []
-        for i, call in enumerate(message.get('tool_calls') or []):
-            fn = (call or {}).get('function') or {}
-            if not isinstance(fn.get('name'), str):
+        for call in raw_calls:
+            if not isinstance(call, dict) or not isinstance(call.get('function'), dict):
+                raise ModelError('模型返回的工具调用及 function 须为对象')
+            fn = call['function']
+            if not isinstance(fn.get('name'), str) or not fn['name']:
                 raise ModelError('模型返回的工具调用缺少函数名')
-            args = fn.get('arguments')
-            calls.append({'id': str(call.get('id') or f'call_{i}'), 'name': fn['name'],
-                          'arguments': args if isinstance(args, str) else json.dumps(args or {}, ensure_ascii=False)})
+            if not isinstance(fn.get('arguments'), str):
+                raise ModelError('模型返回的工具参数 arguments 须为 JSON 字符串')
+            # The manager owns call-id allocation and JSON-object validation.
+            # Keep invalid JSON intact so the tool result can ask the model to correct it.
+            calls.append({'id': str(call.get('id') or ''), 'name': fn['name'], 'arguments': fn['arguments']})
         reasoning = message.get('reasoning_content')
-        return Reply(str(message.get('content') or ''), calls, reasoning if isinstance(reasoning, str) else None,
+        return Reply(content or '', calls, reasoning if isinstance(reasoning, str) else None,
                      data.get('usage') if isinstance(data.get('usage'), dict) else {}, choice.get('finish_reason'))
 
 

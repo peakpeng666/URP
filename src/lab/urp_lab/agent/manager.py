@@ -369,7 +369,7 @@ class AgentManager:
         tool = BY_NAME.get(call['name'])
         if 'args' not in call:
             try:
-                parsed = json.loads(call.get('raw') or '{}')
+                parsed = json.loads(call['raw'])
             except ValueError:
                 parsed = None
             call['args'] = parsed if isinstance(parsed, dict) else {}

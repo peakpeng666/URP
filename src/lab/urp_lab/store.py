@@ -1,6 +1,7 @@
 """SQLite history of solver runs, simulation runs, studies and agent sessions (full JSON + indexed columns; never deleted)."""
 from __future__ import annotations
 
+import errno
 import json
 import sqlite3
 import sys
@@ -59,7 +60,9 @@ class Store:
             except BaseException as exc:
                 self._owner_file.close()
                 self._owner_file = None
-                raise RuntimeError(f'运行库 {self.path} 已有任务执行服务；请复用该网关或选择其他 runtime。') from exc
+                if isinstance(exc, OSError) and exc.errno in (errno.EACCES, errno.EAGAIN):
+                    raise RuntimeError(f'运行库 {self.path} 已有任务执行服务；请复用该网关或选择其他 runtime。') from exc
+                raise
         try:
             self._db = sqlite3.connect(self.path, check_same_thread=False, isolation_level=None, timeout=30)
             self._db.execute('PRAGMA journal_mode=WAL')

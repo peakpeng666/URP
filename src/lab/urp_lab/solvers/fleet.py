@@ -595,14 +595,14 @@ def assign_trips(trip_times, K):
     return out
 
 
-def dispatch_algorithm(inst, algorithm_id, D, demand, params, deadline, route_cap, K, multi, class_of):
+def dispatch_algorithm(inst, algorithm_id, D, demand, params, deadline, route_cap, K, multi, class_of, trace_diagnostics=None):
     """Run one fleet algorithm; returns (trips, owner, trip_class, trip_depot, trace)."""
     trace, owner, trip_class, trip_depot, reload_at = [], None, None, None, None
     trips = None
     if algorithm_id == 'pyvrp.fleet':
         trips, trip_class, trip_depot, trace = metaheuristic('pyvrp', inst, D, demand, params, route_cap)
     elif algorithm_id == 'ortools.fleet' and inst.get('objective') == 'makespan':
-        trips, owner, reload_at, trace = ortools_makespan(inst, D, demand, params, K, multi)
+        trips, owner, reload_at, trace = ortools_makespan(inst, D, demand, params, K, multi, trace_diagnostics=trace_diagnostics)
         trip_class = [class_of[v] for v in owner] if owner is not None else None
         trip_depot = [v % len(depot_list(inst)) for v in owner] if owner is not None else None
     elif algorithm_id == 'ortools.fleet':
@@ -659,10 +659,11 @@ def solve(scenario, inst, algorithm_id, params):
         raise ValueError('构造基线（sweep / cluster_first / savings）只支持单车库；多车库请用 pyvrp.fleet 或 ortools.fleet')
     deadline = time.perf_counter() + float(params.get('time_limit_s', 3))
     route_cap = n if multi else K
+    trace_diagnostics = {}
     trips, owner, trip_class, trip_depot, reload_at, trace = dispatch_algorithm(
-        inst, algorithm_id, D, demand, params, deadline, route_cap, K, multi, class_of)
+        inst, algorithm_id, D, demand, params, deadline, route_cap, K, multi, class_of, trace_diagnostics=trace_diagnostics)
     if not trips:
-        return [], None, {}, {'reason': '求解器没有返回可行方案'}, 'no_solution', trace
+        return [], None, {}, {'reason': '求解器没有返回可行方案', 'trace_diagnostics': trace_diagnostics}, 'no_solution', trace
     reload_at = reload_at if reload_at is not None else [None] * len(trips)
     if trip_class is None:
         trip_class = [0] * len(trips)          # constructive baselines run on homogeneous fleets only
@@ -807,6 +808,8 @@ def solve(scenario, inst, algorithm_id, params):
            'trip_assignment': ('OR-Tools 直接为各车安排往返（车库卸载点），时间维度跨度代价最小化最晚完成'
                                if algorithm_id == 'ortools.fleet' and inst.get('objective') == 'makespan'
                                else '多趟：先求各趟路线，再按最长处理时间优先分配到各车' if multi else '单趟：每车一条路线')}
+    if trace_diagnostics:
+        raw['trace_diagnostics'] = trace_diagnostics
     raw['model_contract'] = {
         'schema': 'urp.fleet-model/2', 'frame': 'local planar metres',
         'geometry': {'footprint': 'circumscribed circle', 'radius_m': inst['robot_radius'],

@@ -5,7 +5,7 @@ import { fmt, lab, useLabResource } from '../../lab/api';
 import { Badge, Button, EmptyState, Input, Notice, Spinner } from '../../lab/ui';
 import { studio, urls } from '../api';
 import { useStudio } from '../store';
-import type { Analysis, InstanceSpace, Study } from '../types';
+import type { Analysis, Study } from '../types';
 import { AnytimeChart, EcdfCharts, GapTimeChart, ProfileChart } from '../researchCharts/AnalysisCharts';
 import { canShowCd, hasValidFriedman } from '../analysisStats';
 import s from './panels.module.css';
@@ -66,11 +66,13 @@ export function StudiesPanel() {
         <div className={s.pad} style={{ paddingBottom: 4 }}>
           <Button variant="primary" icon={FlaskConical} onClick={() => { setDesigning(true); setStudy(null); }}>新建课题</Button>
         </div>
+        {list.error && <Notice tone="error">{list.error.message}</Notice>}
+        {list.loading && !list.data && <Spinner />}
         <ul className={s.list}>
           {(list.data?.studies ?? []).map((x) => (
             <li key={x.study_id}>
               <button type="button" className={s.item} aria-current={studyId === x.study_id || undefined} onClick={() => { setStudy(x.study_id); setDesigning(false); }}>
-                <span className={s.itemTitle}>{x.title} {x.progress.state === 'done' ? <Badge tone="green">完成</Badge> : <Badge tone="blue">运行中</Badge>}</span>
+                <span className={s.itemTitle}>{x.title} <Badge tone={x.progress.state === 'done' ? 'green' : 'blue'}>{STATE_LABEL[x.progress.state] ?? x.progress.state}</Badge></span>
                 <span className={s.itemSub}>{fmt.time(x.created_utc)} · {x.progress.finished}/{x.progress.total} 次运行</span>
                 <span className={s.progress}><i style={{ width: `${(100 * x.progress.finished) / Math.max(1, x.progress.total)}%` }} /></span>
               </button>
@@ -131,9 +133,10 @@ function StudyDesigner({ onCreated }: { onCreated: (id: string) => void }) {
       <h3>课题名称</h3>
       <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="例如：X 集 100–300 客户上的求解器比较" />
       <h3>场景（实例）· 已选 {picked.length}</h3>
+      {scenarios.error && <Notice tone="error">{scenarios.error.message}</Notice>}
       <div className={s.row}>
         <span className={s.inputUnit} style={{ maxWidth: 220 }}><Input type="number" min={1} max={100} value={xCount} onChange={(e) => setXCount(Number(e.target.value) || 1)} /><em>个</em></span>
-        <Button size="sm" onClick={() => void addXSample()}>均匀抽取 CVRPLIB X 集（≤300 客户）</Button>
+        <Button size="sm" onClick={() => void addXSample().catch((error: Error) => notify('error', error.message))}>均匀抽取 CVRPLIB X 集（≤300 客户）</Button>
         <Button size="sm" variant="plain" onClick={() => setPicked([])}>清空</Button>
       </div>
       <div className={s.chips}>
@@ -172,6 +175,7 @@ function StudyProgress({ id }: { id: string }) {
   const scenarios = useLabResource('studio-scenarios-all', () => lab.scenarios());
   const algorithms = useStudio((st) => st.algorithms);
   const study = res.data as Study | null;
+  if (res.error) return <div className={s.pad}><Notice tone="error">{res.error.message}</Notice><Button onClick={res.reload}>重试</Button></div>;
   if (!study) return <div className={s.pad}><Spinner /></div>;
   const algName = (a: string) => algorithms.find((x) => x.id === a)?.name ?? a;
   const scName = (sc: string) => scenarios.data?.scenarios.find((x) => x.id === sc)?.title ?? sc.replace(/^cvrplib-x-/, 'X-');
@@ -183,7 +187,7 @@ function StudyProgress({ id }: { id: string }) {
       <div className={s.rowSpace}>
         <h3>{study.title}</h3>
         <div className={s.row}>
-          {study.progress.state !== 'done' && <Button size="sm" icon={Square} onClick={() => void studio.cancelStudy(id)}>停止</Button>}
+          {study.progress.state !== 'done' && <Button size="sm" icon={Square} onClick={() => void studio.cancelStudy(id).then(res.reload).catch((error: Error) => useStudio.getState().notify('error', error.message))}>停止</Button>}
           <Button size="sm" variant="primary" icon={BarChart3} onClick={() => window.dispatchEvent(new CustomEvent('studio:open-panel', { detail: 'analysis' }))}>查看分析</Button>
         </div>
       </div>
@@ -238,20 +242,10 @@ export function AnalysisPanel() {
   const studyId = useStudio((st) => st.studyId);
   const studies = useLabResource('studies-a', () => studio.studies(), { pollMs: 5000 });
   const setStudy = useStudio((st) => st.setStudy);
-  const [data, setData] = useState<Analysis | null>(null);
-  const [space, setSpace] = useState<InstanceSpace | null>(null);
-  const [err, setErr] = useState<string | null>(null);
-  useEffect(() => {
-    if (!studyId) return;
-    let alive = true;
-    const load = () => {
-      studio.analysis(studyId).then((a) => alive && setData(a)).catch((e) => alive && setErr((e as Error).message));
-      studio.instanceSpace(studyId).then((x) => alive && setSpace(x)).catch(() => undefined);
-    };
-    load();
-    const t = window.setInterval(load, 6000);
-    return () => { alive = false; window.clearInterval(t); };
-  }, [studyId]);
+  const analysis = useLabResource(`analysis-${studyId}`, (signal) => studyId ? studio.analysis(studyId, signal) : Promise.resolve(null), { pollMs: 6000 });
+  const instanceSpace = useLabResource(`instance-space-${studyId}`, (signal) => studyId ? studio.instanceSpace(studyId, signal) : Promise.resolve(null), { pollMs: 6000 });
+  const data = analysis.data;
+  const space = instanceSpace.data;
   const algs = data?.algorithms ?? [];
   const names = useMemo(() => Object.fromEntries((data?.summary ?? []).map((x) => [x.algorithm, x.name ?? x.algorithm])), [data]);
   const nm = (a: string | null) => (a == null ? '无可行解' : names[a] ?? a);
@@ -259,6 +253,7 @@ export function AnalysisPanel() {
   if (!studyId) {
     return (
       <div className={s.pad}>
+        {studies.error && <Notice tone="error">{studies.error.message}</Notice>}
         <EmptyState icon={BarChart3} title="选择一个课题" detail="选择已运行的课题，查看性能剖面、临界差图、收敛曲线和 LaTeX 表格。" />
         <ul className={s.list}>
           {(studies.data?.studies ?? []).map((x) => (
@@ -268,7 +263,7 @@ export function AnalysisPanel() {
       </div>
     );
   }
-  if (err) return <div className={s.pad}><Notice tone="error">{err}</Notice></div>;
+  if (analysis.error) return <div className={s.pad}><Notice tone="error">{analysis.error.message}</Notice><Button onClick={analysis.reload}>重试</Button></div>;
   if (!data) return <div className={s.pad}><Spinner /></div>;
   if (data.empty) return <EmptyState title="还没有完成的运行" />;
   const t = data.tests;
@@ -314,7 +309,8 @@ export function AnalysisPanel() {
         </div>
         <AnytimeChart analysis={data} />
         <GapTimeChart analysis={data} />
-        {space && space.points.length >= 3 && (
+        {instanceSpace.error && <Notice tone="error">实例空间读取失败：{instanceSpace.error.message}</Notice>}
+        {!instanceSpace.error && space && space.points.length >= 3 && (
           <div className={s.chart}>
             <h4>实例空间（{space.method}）：每个实例按最佳算法着色，阴影为该算法的“足迹”</h4>
             <PlotBox deps={[space]} make={(w) => {

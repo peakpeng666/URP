@@ -8,6 +8,7 @@ import time
 import numpy as np
 
 from .fleet_common import depot_list, fleet_classes, vehicle_table
+from .fleet_trace import makespan_callback, makespan_sample as _makespan_sample
 
 
 def _scaled_costs(values, scale, max_arc_cost, reachable=None):
@@ -151,7 +152,7 @@ def metaheuristic(engine, inst, D, demand, params, K):
     return trips, trip_class, trip_depot, trace
 
 
-def ortools_makespan(inst, D, demand, params, K, multi):
+def ortools_makespan(inst, D, demand, params, K, multi, trace_diagnostics=None):
     """OR-Tools on the real fleet: each vehicle may return to the depot to unload (optional reload
     nodes, as in the OR-Tools reload sample), and a global span cost on the time dimension
     minimises the latest finish. Returns trips, the vehicle of each trip and the trace (seconds).
@@ -220,14 +221,8 @@ def ortools_makespan(inst, D, demand, params, K, multi):
         # unload-point reload copies are open to every vehicle (mid-route supply, not home-bound)
     t0, trace = time.perf_counter(), []
 
-    def on_solution():
-        try:
-            span = max(time_dim.CumulVar(routing.End(v)).Value() for v in range(K)) / 10
-        except Exception:  # noqa: BLE001 - fall back to the raw cost if cumuls are not readable here
-            span = routing.CostVar().Value() / 1000
-        if not trace or span < trace[-1][1]:
-            trace.append([round(time.perf_counter() - t0, 4), span])
-    routing.AddAtSolutionCallback(on_solution)
+    routing.AddAtSolutionCallback(makespan_callback(
+        routing, time_dim, K, t0, trace, trace_diagnostics, sample=_makespan_sample))
     p = pywrapcp.DefaultRoutingSearchParameters()
     # PATH_CHEAPEST_ARC cannot complete a first solution when the per-depot reload membership
     # constraints bind (multi-depot with required reloads); insertion heuristics respect them.

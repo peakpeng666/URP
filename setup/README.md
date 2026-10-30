@@ -7,7 +7,7 @@
 完整获取可直接克隆仓库。只开发系统时，使用源码检出清单，按需保留大资料：
 
 ```sh
-git clone --filter=blob:none --no-checkout --branch chore/engineering-cleanup-20261030 https://github.com/peakpeng666/URP.git
+git clone --filter=blob:none --no-checkout --branch main https://github.com/peakpeng666/URP.git
 cd URP
 git show HEAD:setup/source-checkout.txt | git sparse-checkout set --no-cone --stdin
 git checkout
