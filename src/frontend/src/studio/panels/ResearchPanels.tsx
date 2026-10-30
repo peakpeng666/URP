@@ -6,7 +6,7 @@ import { Badge, Button, EmptyState, Input, Notice, Spinner } from '../../lab/ui'
 import { studio, urls } from '../api';
 import { useStudio } from '../store';
 import type { Analysis, InstanceSpace, Study } from '../types';
-import { logTimeAxis } from '../chart';
+import { AnytimeChart, EcdfCharts, GapTimeChart, ProfileChart } from '../researchCharts/AnalysisCharts';
 import { canShowCd, hasValidFriedman } from '../analysisStats';
 import s from './panels.module.css';
 
@@ -256,10 +256,6 @@ export function AnalysisPanel() {
   const names = useMemo(() => Object.fromEntries((data?.summary ?? []).map((x) => [x.algorithm, x.name ?? x.algorithm])), [data]);
   const nm = (a: string | null) => (a == null ? '无可行解' : names[a] ?? a);
   const color = { legend: true, domain: algs.map((a) => names[a] ?? a), range: PALETTE.slice(0, algs.length) };
-  const profile = useMemo(() => {
-    if (!data) return [];
-    return algs.flatMap((a) => data.performance_profile.taus.map((tau, i) => ({ tau, rho: data.performance_profile.curves[a]?.[i] ?? 0, a: names[a] ?? a })));
-  }, [data, algs, names]);
   if (!studyId) {
     return (
       <div className={s.pad}>
@@ -305,12 +301,8 @@ export function AnalysisPanel() {
         </table>
         <p className={s.meta}>{data.reference_note}</p>
         <AnalysisInference tests={t} names={names} />
-        <div className={s.chart}>
-          <h4>性能剖面：可行运行平均成本相对本实例最好均值</h4>
-          <p className={s.hint}>分母为 {data.n_complete_instances} 个齐全实例；各算法取可行运行均值，全失败单元不计为有限 τ 下的成功。</p>
-          <PlotBox deps={[profile]} make={(w) => profile.length ? Plot.plot({ width: w, height: 230, style: FONT, x: { label: 'τ', grid: true }, y: { label: 'ρ(τ)', domain: [0, 1], grid: true }, color,
-            marks: [Plot.line(profile, { x: 'tau', y: 'rho', stroke: 'a', curve: 'step-after', strokeWidth: 1.8 })] }) : null} />
-        </div>
+        <ProfileChart analysis={data} />
+        <EcdfCharts analysis={data} />
         <div className={s.chart}>
           <h4>相对参照的差距分布（有效运行）</h4>
           {data.ecdf_metadata && <p className={s.hint}>绘制 {data.ecdf_metadata.totals.finite_gap_runs} 次有限差距；有正参照但失败 {data.ecdf_metadata.totals.eligible_failed_runs} 次，缺少正参照 {data.ecdf_metadata.totals.missing_reference_runs} 次，均不画点。{data.ecdf_metadata.totals.eligible_nonfinite_gap_runs > 0 && ` 另有 ${data.ecdf_metadata.totals.eligible_nonfinite_gap_runs} 次差距超出数值范围。`}</p>}
@@ -320,25 +312,8 @@ export function AnalysisPanel() {
               marks: [Plot.boxX(pts, { x: 'gap', y: 'algorithm' }), Plot.dot(pts, { x: 'gap', y: 'algorithm', r: 2.5, fill: 'algorithm', fillOpacity: 0.7 })], color: { ...color, legend: false } }) : null;
           }} />
         </div>
-        {data.anytime.grid.length > 0 && (
-          <div className={s.chart}>
-            <h4>随时间收敛：当前最好解差距的中位数</h4>
-            <PlotBox deps={[data]} make={(w) => {
-              const rows = Object.entries(data.anytime.median).flatMap(([a, ys]) => ys.map((y, i) => ({ a: nm(a), t: data.anytime.grid[i], y })).filter((r) => r.y != null));
-              return rows.length ? Plot.plot({ width: w, height: 220, style: FONT, x: logTimeAxis(rows.map((r) => r.t)), y: { label: '差距 (%)', grid: true }, color,
-                marks: [Plot.line(rows, { x: 't', y: 'y', stroke: 'a', curve: 'step-after', strokeWidth: 1.8 })] }) : null;
-            }} />
-          </div>
-        )}
-        {!!data.anytime.excluded && <p className={s.hint}>另有 {data.anytime.excluded} 次运行的搜索轨迹与报告目标不一致，未纳入收敛曲线。</p>}
-        <div className={s.chart}>
-          <h4>运行时间 vs 差距</h4>
-          <PlotBox deps={[data]} make={(w) => {
-            const pts = data.scatter.filter((p) => p.gap != null && p.time != null).map((p) => ({ ...p, algorithm: nm(p.algorithm) }));
-            return pts.length ? Plot.plot({ width: w, height: 220, style: FONT, x: logTimeAxis(pts.map((p) => p.time as number), '用时'), y: { label: '差距 (%)', grid: true }, color,
-              marks: [Plot.dot(pts, { x: 'time', y: 'gap', fill: 'algorithm', r: 3, fillOpacity: 0.7 })] }) : null;
-          }} />
-        </div>
+        <AnytimeChart analysis={data} />
+        <GapTimeChart analysis={data} />
         {space && space.points.length >= 3 && (
           <div className={s.chart}>
             <h4>实例空间（{space.method}）：每个实例按最佳算法着色，阴影为该算法的“足迹”</h4>

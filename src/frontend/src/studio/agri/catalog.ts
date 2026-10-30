@@ -1,5 +1,6 @@
 import { studio } from '../api';
 import { lab, LabApiError } from '../../lab/api';
+import { forgetWrite, pendingWrite, rememberWrite } from '../pendingWrites';
 import { AGRI_PATTERNS, patternStatus, type PatternStatus } from './patterns';
 import type { AgriTaskPattern } from './taxonomy';
 
@@ -37,8 +38,20 @@ export function buildPattern(pattern: AgriTaskPattern, values: Record<string, un
   return { ...built, id: `agri-${pattern.id.slice(0, 20)}-${uniqueScenarioSuffix()}`, provenance: { ...built.provenance, params: { ...values, pattern_id: pattern.id, builder_version: 'urp.agri.builder/3' } } };
 }
 const importsInFlight = new Map<string, ReturnType<typeof studio.importScenario>>();
-// Keep uncertain writes stable until an explicit retry reconciles their outcome.
-const uncertainImports = new Map<string, ReturnType<typeof buildPattern>>();
+// Keep uncertain writes stable until an explicit retry reconciles their outcome. Persisted per tab
+// (sessionStorage via pendingWrites) so a reload cannot turn a lost response into a second scenario.
+type BuiltScenario = ReturnType<typeof buildPattern>;
+const agriKey = (key: string) => `agri:${key}`;
+const uncertainImports = {
+  get(key: string): BuiltScenario | undefined {
+    const entry = pendingWrite(agriKey(key));
+    const built = entry?.payload as BuiltScenario | undefined;
+    return built && typeof built === 'object' && built.id === entry!.id && built.provenance && typeof built.provenance === 'object'
+      ? built : undefined;
+  },
+  set(key: string, built: BuiltScenario) { rememberWrite(agriKey(key), { id: built.id, kind: 'agri', created: Date.now(), payload: built }); },
+  delete(key: string) { forgetWrite(agriKey(key)); },
+};
 function validateSaved(scenario: Awaited<ReturnType<typeof studio.importScenario>>) {
   if (!scenario || typeof scenario.id !== 'string' || !/^[a-z0-9][a-z0-9_.-]{1,63}$/.test(scenario.id)
     || typeof scenario.title !== 'string') throw new Error('请先核对保存结果：响应缺少有效场景标识');
@@ -71,6 +84,8 @@ export async function importPattern(pattern: AgriTaskPattern, values: Record<str
   const built = retry ?? fresh;
   const request = (async () => {
     let definiteWriteFailure = false;
+    // Recorded before the write leaves so a reload mid-request still reads the original id first.
+    if (!retry) uncertainImports.set(key, built);
     try {
       if (retry) {
         try { return recoveredScenario(await lab.scenario(built.id), built); }

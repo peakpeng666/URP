@@ -270,6 +270,10 @@ class Guard:
 
 def create_app(config: Config | None = None) -> FastAPI:
     config = config or Config()
+    archive = urlsplit(config.archive_url)
+    archive_port = archive.port or (443 if archive.scheme == 'https' else 80)
+    if archive.hostname in LOCAL_HOSTS and archive_port == config.port:
+        raise RuntimeError('网关端口与档案后端地址冲突；请更换 --port 或 URP_ARCHIVE_URL')
     lab = Lab(config)
 
     @asynccontextmanager
@@ -386,15 +390,46 @@ def create_app(config: Config | None = None) -> FastAPI:
     def scenario(scenario_id: str):
         return scenario_or_404(scenario_id)
 
+    def _existing_user_scenario(sid: Any) -> dict | None:
+        if not isinstance(sid, str) or not sid.strip():
+            return None
+        try:
+            found = core('scenarios').get_scenario(sid.strip().lower())
+        except (KeyError, ValueError):
+            return None
+        return found if found.get('origin') == 'user' else None
+
+    def _normalized_instance(pc: Any, instance: Any) -> Any:
+        try:
+            return core('scenarios').validate_instance(pc, instance)
+        except (ValueError, KeyError, TypeError):
+            return None
+
+    def _same_import(module: Any, existing: dict, body: dict) -> bool:
+        prepared = module.prepare_import(body)
+        return existing.get('revision') == 1 and {**prepared, 'revision': 1} == existing
+
+    def _same_fork(existing: dict, sc: dict, source_id: str) -> bool:
+        instance = _normalized_instance(sc.get('problem_class'), sc.get('instance'))
+        return (instance is not None and existing.get('revision') == 1
+                and (existing.get('provenance') or {}).get('forked_from') == source_id
+                and existing.get('problem_class') == sc.get('problem_class')
+                and existing.get('title') == sc.get('title') and existing.get('instance') == instance)
+
     @app.post(f'{api}/scenarios', status_code=201)
     def import_scenario(payload: Any = Body(None)):
         module = core('scenarios')
         fn = getattr(module, 'import_scenario', None) or getattr(module, 'save_scenario', None)
         if fn is None:
             raise ApiError(501, 'not_implemented', '当前版本不支持导入场景')
+        body = body_dict(payload)
         try:
-            return fn(body_dict(payload))
+            return fn(body)
         except module.ScenarioConflict as exc:
+            # Idempotent retry: the same id with identical content is the earlier successful write.
+            existing = _existing_user_scenario(body.get('id'))
+            if existing is not None and _same_import(module, existing, body):
+                return JSONResponse(module.summary(existing), status_code=200)
             raise ApiError(409, 'scenario_conflict', str(exc)) from None
         except ValueError as exc:
             raise ApiError(400, 'invalid_scenario', str(exc)) from None
@@ -676,7 +711,10 @@ def create_app(config: Config | None = None) -> FastAPI:
         from datetime import datetime as _dt, timezone as _tz
         stamp = _dt.now(_tz.utc).strftime('%m%d%H%M%S')
         import secrets
-        sc['id'] = _re.sub(r'[^a-z0-9_.-]', '-', f"{scenario_id[:36]}-my-{stamp}-{secrets.token_hex(2)}".lower())
+        client_id = body.get('client_id')
+        if client_id is not None and (not isinstance(client_id, str) or not core('scenarios').ID_RE.match(client_id)):
+            raise ApiError(400, 'invalid_request', 'client_id 须为 2–64 位小写字母、数字、-、_、.（以字母或数字开头）')
+        sc['id'] = client_id or _re.sub(r'[^a-z0-9_.-]', '-', f"{scenario_id[:36]}-my-{stamp}-{secrets.token_hex(2)}".lower())
         sc['title'] = str(body.get('title') or f"{sc.get('title', scenario_id)}（我的）")[:60]
         if body.get('instance') is not None:
             sc['instance'] = body['instance']
@@ -685,7 +723,12 @@ def create_app(config: Config | None = None) -> FastAPI:
         try:
             return core('scenarios').save_user_scenario(sc, overwrite=False)
         except ValueError as exc:
-            raise ApiError(400, 'invalid_instance', str(exc)) from None
+            existing = _existing_user_scenario(client_id) if client_id else None
+            if existing is None:
+                raise ApiError(400, 'invalid_instance', str(exc)) from None
+            if _same_fork(existing, sc, scenario_id):
+                return JSONResponse(existing, status_code=200)
+            raise ApiError(409, 'scenario_conflict', f'场景 {client_id} 已存在且内容不同；未覆盖') from None
 
     @app.post(f'{api}/scenarios/import/geojson', status_code=201)
     def import_geojson(payload: Any = Body(None)):

@@ -3,6 +3,7 @@ import { navigate } from '../app/router';
 import { events, lab, LabApiError } from '../lab/api';
 import type { Algorithm, Instance, Recommendation, Scenario, Solution } from '../lab/types';
 import { studio } from './api';
+import { forkScenarioOnce } from './scenarioWrites';
 import type { FleetInstance, ParseResult, Selection, Tool, ObstacleKind } from './types';
 import { normalizeFleetInstance } from './fleet';
 import { filterRecommendation, planningBlockReason } from './capabilities';
@@ -438,7 +439,7 @@ export async function flushSave(): Promise<void> {
         if (origin === 'user') {
           stored = (await studio.saveScenario(originalId, { instance: submitted, base_revision: scenario.revision ?? 0 })) as unknown as Scenario;
         } else {
-          stored = await studio.forkScenario(originalId, { instance: submitted });
+          stored = await forkScenarioOnce(originalId, { instance: submitted });
         }
         const current = useStudio.getState();
         if (current.scenarioId !== originalId && current.scenarioId !== stored.id) return;
@@ -491,7 +492,7 @@ export async function saveDraftCopy(): Promise<void> {
   const { scenario, draft } = useStudio.getState();
   if (!scenario || !draft) return;
   const revision = draftRevision;
-  const copy = await studio.forkScenario(scenario.id, { instance: draft, title: `${scenario.title}（草稿副本）` });
+  const copy = await forkScenarioOnce(scenario.id, { instance: draft, title: `${scenario.title}（草稿副本）` }, 'draft-copy');
   if (useStudio.getState().scenarioId !== scenario.id) return;
   useStudio.setState({ scenarioId: copy.id, scenario: copy, saveError: null,
     ...(draftRevision === revision ? { draft: draftOf(copy), save: 'saved' as const } : { save: 'dirty' as const }) });

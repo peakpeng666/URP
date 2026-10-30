@@ -136,8 +136,8 @@ def map_png(world: str) -> bytes:
     return maps.map_png(world)
 
 
-def import_scenario(obj: dict) -> dict:
-    """Validate and store a user scenario; returns its summary. ValueError(中文) when invalid."""
+def prepare_import(obj: dict) -> dict:
+    """Normalize a scenario import without writing it."""
     if not isinstance(obj, dict):
         raise ValueError('场景应为 JSON 对象')
     sid = str(obj.get('id') or '').strip().lower()
@@ -150,6 +150,8 @@ def import_scenario(obj: dict) -> dict:
         raise ValueError(f'problem_class 须为 {" / ".join(PROBLEM_CLASSES)}')
     inst = validate_instance(pc, obj.get('instance'))
     frame_in = obj.get('frame') or {'kind': 'benchmark'}
+    if not isinstance(frame_in, dict):
+        raise ValueError('frame 须为 JSON 对象')
     if frame_in.get('kind') == 'map':
         world = frame_in.get('world')
         if world not in maps.known_worlds():
@@ -195,7 +197,13 @@ def import_scenario(obj: dict) -> dict:
         'layers': obj.get('layers') if isinstance(obj.get('layers'), dict) else {},
         'origin': 'user',
     }
-    # Import creates a new scenario. Editing uses the revision-aware update endpoint.
+    return scenario
+
+
+def import_scenario(obj: dict) -> dict:
+    """Validate and store a new user scenario; returns its summary."""
+    scenario = prepare_import(obj)
+    sid = scenario['id']
     with _WRITE_LOCK:
         if (paths.USER_SCENARIOS / f'{sid}.json').exists():
             raise ScenarioConflict(f'场景 {sid} 已存在；请使用新 ID 导入，或在规划页编辑原场景')
