@@ -25,9 +25,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from . import paths
 from . import events as sse
 from .events import EventBus, LogFollower
-from .jobs import JobManager, SourceChangedError, resolve_params
+from .jobs import JobManager, SourceChangedError
 from .services import ARCHIVE_PORT, SIM_PORT, ServiceError, ServiceManager
 from .simclient import SimClient
+from .solve_request import SolveRequestError, check_label, check_requested, resolve_algorithms
 from .store import Store
 
 log = logging.getLogger('urp_lab.gateway')
@@ -74,6 +75,7 @@ class Config:
     extra_hosts: set[str] = field(default_factory=set)
     bind_host: str = '127.0.0.1'
     admin_token: str = ''
+    agent_model: Any = None          # research agent model (CONTRACT §9); None reads URP_LLM_* from the environment
 
 
 class Lab:
@@ -95,6 +97,8 @@ class Lab:
             self.fieldsim = FieldSimManager(self.store, self.services, self.runtime, port=config.field_sim_port)
             from .studies import StudyManager
             self.studies = StudyManager(self.store, self.jobs, self.bus)
+            from .agent import AgentManager
+            self.agent = AgentManager(self, model=config.agent_model)
         except BaseException:
             self.store.close()
             raise
@@ -115,6 +119,7 @@ class Lab:
 
     def shutdown(self):
         try:
+            self.agent.shutdown()
             self.jobs.shutdown()
             self.fieldsim.shutdown()
             self.services.shutdown()
@@ -265,6 +270,10 @@ class Guard:
 
 def create_app(config: Config | None = None) -> FastAPI:
     config = config or Config()
+    archive = urlsplit(config.archive_url)
+    archive_port = archive.port or (443 if archive.scheme == 'https' else 80)
+    if archive.hostname in LOCAL_HOSTS and archive_port == config.port:
+        raise RuntimeError('网关端口与档案后端地址冲突；请更换 --port 或 URP_ARCHIVE_URL')
     lab = Lab(config)
 
     @asynccontextmanager
@@ -381,15 +390,46 @@ def create_app(config: Config | None = None) -> FastAPI:
     def scenario(scenario_id: str):
         return scenario_or_404(scenario_id)
 
+    def _existing_user_scenario(sid: Any) -> dict | None:
+        if not isinstance(sid, str) or not sid.strip():
+            return None
+        try:
+            found = core('scenarios').get_scenario(sid.strip().lower())
+        except (KeyError, ValueError):
+            return None
+        return found if found.get('origin') == 'user' else None
+
+    def _normalized_instance(pc: Any, instance: Any) -> Any:
+        try:
+            return core('scenarios').validate_instance(pc, instance)
+        except (ValueError, KeyError, TypeError):
+            return None
+
+    def _same_import(module: Any, existing: dict, body: dict) -> bool:
+        prepared = module.prepare_import(body)
+        return existing.get('revision') == 1 and {**prepared, 'revision': 1} == existing
+
+    def _same_fork(existing: dict, sc: dict, source_id: str) -> bool:
+        instance = _normalized_instance(sc.get('problem_class'), sc.get('instance'))
+        return (instance is not None and existing.get('revision') == 1
+                and (existing.get('provenance') or {}).get('forked_from') == source_id
+                and existing.get('problem_class') == sc.get('problem_class')
+                and existing.get('title') == sc.get('title') and existing.get('instance') == instance)
+
     @app.post(f'{api}/scenarios', status_code=201)
     def import_scenario(payload: Any = Body(None)):
         module = core('scenarios')
         fn = getattr(module, 'import_scenario', None) or getattr(module, 'save_scenario', None)
         if fn is None:
             raise ApiError(501, 'not_implemented', '当前版本不支持导入场景')
+        body = body_dict(payload)
         try:
-            return fn(body_dict(payload))
+            return fn(body)
         except module.ScenarioConflict as exc:
+            # Idempotent retry: the same id with identical content is the earlier successful write.
+            existing = _existing_user_scenario(body.get('id'))
+            if existing is not None and _same_import(module, existing, body):
+                return JSONResponse(module.summary(existing), status_code=200)
             raise ApiError(409, 'scenario_conflict', str(exc)) from None
         except ValueError as exc:
             raise ApiError(400, 'invalid_scenario', str(exc)) from None
@@ -437,34 +477,12 @@ def create_app(config: Config | None = None) -> FastAPI:
         body = body_dict(payload)
         sc = scenario_or_404(body.get('scenario_id'))
         instance = instance_for(sc, body.get('instance'))
-        requested = body.get('algorithms')
-        if not isinstance(requested, list) or not requested:
-            raise ApiError(400, 'invalid_request', 'algorithms 须为非空数组')
-        if len(requested) > 24:
-            raise ApiError(400, 'invalid_request', '一次最多提交 24 个算法')
-        label = body.get('label')
-        if label is not None and (not isinstance(label, str) or len(label) > 200):
-            raise ApiError(400, 'invalid_request', 'label 须为不超过 200 字的字符串')
-        catalog = {a['id']: a for a in lab.catalog()}
-        resolved = []
-        for item in requested:
-            item = {'id': item} if isinstance(item, str) else item
-            if not isinstance(item, dict) or not isinstance(item.get('id'), str):
-                raise ApiError(400, 'invalid_request', 'algorithms 的每项须为 {"id": …, "params": {…}}')
-            algo = catalog.get(item['id'])
-            if algo is None:
-                raise ApiError(400, 'unknown_algorithm', f"没有算法 {item['id']}")
-            if sc['problem_class'] not in algo.get('problem_classes', []):
-                raise ApiError(400, 'algorithm_not_applicable', f"{algo['name']} 不适用于 {sc['problem_class']} 场景")
-            if not algo.get('available'):
-                raise ApiError(409, 'algorithm_unavailable',
-                               f"{algo['name']} 当前不可用：{algo.get('unavailable_reason') or '未说明'}")
-            if item.get('params') is not None and not isinstance(item['params'], dict):
-                raise ApiError(400, 'invalid_params', 'params 须为 JSON 对象')
-            try:
-                resolved.append((algo, resolve_params(algo, item.get('params'))))
-            except ValueError as exc:
-                raise ApiError(400, 'invalid_params', str(exc)) from None
+        try:
+            requested = check_requested(body.get('algorithms'))
+            label = check_label(body.get('label'))
+            resolved = resolve_algorithms(lab.catalog(), sc['problem_class'], requested)
+        except SolveRequestError as exc:
+            raise ApiError(exc.status, exc.code, exc.message) from None
         try:
             job_id, run_ids = lab.jobs.submit(sc, instance, resolved, label)
         except SourceChangedError as exc:
@@ -693,7 +711,10 @@ def create_app(config: Config | None = None) -> FastAPI:
         from datetime import datetime as _dt, timezone as _tz
         stamp = _dt.now(_tz.utc).strftime('%m%d%H%M%S')
         import secrets
-        sc['id'] = _re.sub(r'[^a-z0-9_.-]', '-', f"{scenario_id[:36]}-my-{stamp}-{secrets.token_hex(2)}".lower())
+        client_id = body.get('client_id')
+        if client_id is not None and (not isinstance(client_id, str) or not core('scenarios').ID_RE.match(client_id)):
+            raise ApiError(400, 'invalid_request', 'client_id 须为 2–64 位小写字母、数字、-、_、.（以字母或数字开头）')
+        sc['id'] = client_id or _re.sub(r'[^a-z0-9_.-]', '-', f"{scenario_id[:36]}-my-{stamp}-{secrets.token_hex(2)}".lower())
         sc['title'] = str(body.get('title') or f"{sc.get('title', scenario_id)}（我的）")[:60]
         if body.get('instance') is not None:
             sc['instance'] = body['instance']
@@ -702,7 +723,12 @@ def create_app(config: Config | None = None) -> FastAPI:
         try:
             return core('scenarios').save_user_scenario(sc, overwrite=False)
         except ValueError as exc:
-            raise ApiError(400, 'invalid_instance', str(exc)) from None
+            existing = _existing_user_scenario(client_id) if client_id else None
+            if existing is None:
+                raise ApiError(400, 'invalid_instance', str(exc)) from None
+            if _same_fork(existing, sc, scenario_id):
+                return JSONResponse(existing, status_code=200)
+            raise ApiError(409, 'scenario_conflict', f'场景 {client_id} 已存在且内容不同；未覆盖') from None
 
     @app.post(f'{api}/scenarios/import/geojson', status_code=201)
     def import_geojson(payload: Any = Body(None)):
@@ -876,6 +902,9 @@ def create_app(config: Config | None = None) -> FastAPI:
     # Research figures in publication formats (urp_lab/figures): drawn only from recorded runs / simulations / studies.
     from .figures.api import router as figures_router
     app.include_router(figures_router, prefix=api)
+    # Research agent (CONTRACT §9): LLM planning over the same tools, checks and records as the panel.
+    from .agent.routes import install as install_agent
+    install_agent(app, lab, api)
 
     @app.api_route(f'{api}/{{rest:path}}', methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])
     def api_not_found(rest: str):

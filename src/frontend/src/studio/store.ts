@@ -3,6 +3,7 @@ import { navigate } from '../app/router';
 import { events, lab, LabApiError } from '../lab/api';
 import type { Algorithm, Instance, Recommendation, Scenario, Solution } from '../lab/types';
 import { studio } from './api';
+import { forkScenarioOnce } from './scenarioWrites';
 import type { FleetInstance, ParseResult, Selection, Tool, ObstacleKind } from './types';
 import { normalizeFleetInstance } from './fleet';
 import { filterRecommendation, planningBlockReason } from './capabilities';
@@ -75,6 +76,8 @@ interface StudioState {
   openCode: (path: string | null) => void;
   setStudy: (id: string | null) => void;
   loadAlgorithms: () => Promise<void>;
+  /** Opens a scenario (if needed) and shows the given runs in the map and comparison, e.g. runs an agent submitted. */
+  showRuns: (scenarioId: string, runIds: string[]) => Promise<void>;
 }
 
 const HISTORY = 120;
@@ -349,6 +352,24 @@ export const useStudio = create<StudioState>((set, get) => ({
       get().notify('error', `算法库读取失败：${message(e)}`);
     }
   },
+
+  async showRuns(scenarioId, runIds) {
+    if (get().workspace !== 'plan') set({ workspace: 'plan' });
+    navigate(`#/plan/${encodeURIComponent(scenarioId)}`);
+    // The route effect opens the scenario; wait for it instead of racing its reset of the run list.
+    for (let i = 0; i < 150 && !(get().scenarioId === scenarioId && get().scenario); i++) await new Promise((r) => setTimeout(r, 100));
+    if (get().scenarioId !== scenarioId || !get().scenario) return;
+    const loaded = await Promise.all(runIds.map((id) => lab.run(id).catch(() => null)));
+    const found = loaded.filter((r): r is Solution => !!r && r.scenario_id === scenarioId);
+    if (!found.length || get().scenarioId !== scenarioId) {
+      get().notify('error', '这些运行不属于当前场景或已无法读取');
+      return;
+    }
+    const runs = { ...get().runs, ...Object.fromEntries(found.map((r) => [r.run_id, r])) };
+    const ids = found.map((r) => r.run_id);
+    set({ runs, runIds: ids, focusRun: pickBest(ids.map((id) => runs[id])), manualFocus: false, playback: null });
+    for (const r of found) if (['queued', 'running'].includes(r.state)) void pollRun(r.run_id);
+  },
 }));
 
 export function pickBest(runs: (Solution | undefined)[]): string | null {
@@ -418,7 +439,7 @@ export async function flushSave(): Promise<void> {
         if (origin === 'user') {
           stored = (await studio.saveScenario(originalId, { instance: submitted, base_revision: scenario.revision ?? 0 })) as unknown as Scenario;
         } else {
-          stored = await studio.forkScenario(originalId, { instance: submitted });
+          stored = await forkScenarioOnce(originalId, { instance: submitted });
         }
         const current = useStudio.getState();
         if (current.scenarioId !== originalId && current.scenarioId !== stored.id) return;
@@ -471,7 +492,7 @@ export async function saveDraftCopy(): Promise<void> {
   const { scenario, draft } = useStudio.getState();
   if (!scenario || !draft) return;
   const revision = draftRevision;
-  const copy = await studio.forkScenario(scenario.id, { instance: draft, title: `${scenario.title}（草稿副本）` });
+  const copy = await forkScenarioOnce(scenario.id, { instance: draft, title: `${scenario.title}（草稿副本）` }, 'draft-copy');
   if (useStudio.getState().scenarioId !== scenario.id) return;
   useStudio.setState({ scenarioId: copy.id, scenario: copy, saveError: null,
     ...(draftRevision === revision ? { draft: draftOf(copy), save: 'saved' as const } : { save: 'dirty' as const }) });

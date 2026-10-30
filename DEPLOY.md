@@ -62,7 +62,7 @@ curl -fsSL https://raw.githubusercontent.com/peakpeng666/URP/deploy/install.sh \
   | URP_COMPONENTS=full bash
 ```
 
-已检出的源码直接运行 `bash setup/ubuntu/setup.sh --components full`。PowerShell 用 `$env:URP_COMPONENTS = 'full'`，该值会传入 WSL 安装器。历史 NAS 训练环境、CIFAR/BPP 大数据和整机快照不在这套安装中；历史复现见 [工作台说明](setup/README.md#历史平台复现2026-10-18)。
+已检出的源码直接运行 `bash setup/ubuntu/setup.sh --components full`。PowerShell 用 `$env:URP_COMPONENTS = 'full'`，该值会传入 WSL 安装器。源码规划与 Agent 开发使用 [lab-code 入口](setup/README.md#启动与停止)，历史 NAS 数据与整机快照见 [数据与恢复](setup/README.md#数据与恢复)。
 
 ## 启动、更新与停止
 

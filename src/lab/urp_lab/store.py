@@ -1,4 +1,4 @@
-"""SQLite history of solver runs and simulation runs (full JSON + indexed columns; never deleted)."""
+"""SQLite history of solver runs, simulation runs, studies and agent sessions (full JSON + indexed columns; never deleted)."""
 from __future__ import annotations
 
 import json
@@ -21,6 +21,9 @@ CREATE INDEX IF NOT EXISTS sim_runs_run ON sim_runs(run_id);
 CREATE INDEX IF NOT EXISTS sim_runs_created ON sim_runs(created_utc);
 CREATE TABLE IF NOT EXISTS studies (
   study_id TEXT PRIMARY KEY, created_utc TEXT, json TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS agent_sessions (
+  session_id TEXT PRIMARY KEY, created_utc TEXT, updated_utc TEXT, state TEXT, json TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS agent_sessions_updated ON agent_sessions(updated_utc);
 """
 
 RUN_ACTIVE = ('queued', 'running')
@@ -140,6 +143,22 @@ class Store:
 
     def list_studies(self, limit: int = 200) -> list[dict]:
         return self._query('SELECT json FROM studies ORDER BY created_utc DESC LIMIT ?', (int(limit),))
+
+    def put_agent_session(self, session: dict):
+        with self._lock:
+            self._db.execute('INSERT OR REPLACE INTO agent_sessions VALUES (?,?,?,?,?)',
+                             (session['session_id'], session.get('created_utc'), session.get('updated_utc'),
+                              session.get('state'), json.dumps(session, ensure_ascii=False)))
+
+    def get_agent_session(self, session_id: str) -> dict | None:
+        rows = self._query('SELECT json FROM agent_sessions WHERE session_id=?', (session_id,))
+        return rows[0] if rows else None
+
+    def list_agent_sessions(self, limit: int = 100, states: tuple[str, ...] = ()) -> list[dict]:
+        if states:
+            return self._query(f"SELECT json FROM agent_sessions WHERE state IN ({','.join('?' * len(states))}) "
+                               'ORDER BY updated_utc DESC LIMIT ?', (*states, int(limit)))
+        return self._query('SELECT json FROM agent_sessions ORDER BY updated_utc DESC LIMIT ?', (int(limit),))
 
     def runs_by_ids(self, run_ids: list[str]) -> list[dict]:
         out = []
