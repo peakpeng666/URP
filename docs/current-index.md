@@ -6,14 +6,15 @@
 
 ## 当前基线
 
-快照：**2026-10-30 17:29 UTC**；已合并 `main` 为 [`8885ef6`](https://github.com/peakpeng666/URP/tree/8885ef6cf7aebfa592c112f911cb62f3eaab07f0)。分支与 PR 状态按此时间记录。
+快照：**2026-10-30 18:27 UTC**；已合并 `main` 为 [`007388d5`](https://github.com/peakpeng666/URP/tree/007388d5e012f6a901945eda3b0abaf1aedfeb0d)。分支与 PR 状态按此时间记录。
 
-- 远端 **31 个分支**：[当前逐支 SHA、状态与建议](current-branches.csv)。表中区分已合并状态与后续归档建议。
-- [原 29 个来源分支表](branches.csv)保留工程整合时的快照和取舍；当前多出工程整理支与 PyVRP 修复支，原 28 个非 main 来源 SHA 未变。
+- 远端 **32 个分支**：[当前逐支 SHA、状态与建议](current-branches.csv)。表中区分已合并状态与后续归档建议。
+- [原 29 个来源分支表](branches.csv)保留工程整合时的快照和取舍；当前多出工程整理、PyVRP 修复和 refresh 整理三支，原 28 个非 main 来源 SHA 未变。
 - [#15 工程整合](https://github.com/peakpeng666/URP/pull/15)已合并。当前获取入口采用 main。
 - [#16 PyVRP ILS 标识兼容修复](https://github.com/peakpeng666/URP/pull/16)已合并到当前 main；修复头 `293dbf20` 的[工程四项作业](https://github.com/peakpeng666/URP/actions/runs/41074311873)和[部署两项作业](https://github.com/peakpeng666/URP/actions/runs/41074311831)已通过。当前使用 `pyvrp.ils`，保留旧 ID 请求兼容；历史模型与结果维持原件。
 - [#12](https://github.com/peakpeng666/URP/pull/12)、[#13](https://github.com/peakpeng666/URP/pull/13)已关闭（未直接合并），其离线 evolve 功能已由 #15 择取整合；来源分支保留。
-- PR **#1、#2、#3、#4、#11、#14、#15、#16** 均已合并。来源分支继续作为整合记录保留。
+- [#17 全量整理与错误处理](https://github.com/peakpeng666/URP/pull/17)已合并；[主线四项CI](https://github.com/peakpeng666/URP/actions/runs/41105645794)通过，合并前精确提交代码审查无发现。
+- PR **#1、#2、#3、#4、#11、#14、#15、#16、#17** 均已合并。来源分支继续作为整合记录保留。
 
 ## 16 个模块入口
 
@@ -47,9 +48,9 @@
 | 文献与材料 | [literature](../literature/)、[papers](../papers/)、[materials](../materials/)、[reports](../reports/)；先维护来源、版本和书目链接 |
 | 新运行 | `.local-state/`、`src/lab/runtime/`；可写数据库、新轨迹与冻结档案分别保存，详见 [数据与恢复](../setup/README.md#数据与恢复) |
 
-当前 main 完整树共 **29,415 个文件**，其中 `src/repos` **17,432** 个是外部源码快照；自研与适配能力按模块登记。沿用 [75 个外部目录许可证索引](assets/third-party.csv)，根 LICENSE 尚未选择，11 个目录未发现根许可证，部分另有嵌套许可。
+当前 main 完整树共 **29,429 个文件**，其中 `src/repos` **17,432** 个是外部源码快照；自研与适配能力按模块登记。沿用 [75 个外部目录许可证索引](assets/third-party.csv)，根 LICENSE 尚未选择，11 个目录未发现根许可证，部分另有嵌套许可。
 
-[2,439 项资产](assets/assets.csv)已逐条核对当前 main 的 Git blob，缺失和内容身份差异均为 0。[外部副本登记](assets/copies.json)中已恢复验证副本 **0**、已迁移资产 **0**，原件继续保留。后续迁移以逐文件 SHA256 和实际恢复验证为门槛。
+[2,439 项资产](assets/assets.csv)已逐条核对当前 main 的 Git blob，缺失和内容身份差异均为 0。[外部副本登记](assets/copies.json)仍保留原Drive候选状态；独立Space副本已有 **4项报告资产**恢复验证通过，已迁移资产 **0**，原件继续保留。后续迁移以逐文件 SHA256 和实际恢复验证为门槛。
 
 ## 运行环境与实验口径
 
@@ -57,3 +58,7 @@
 - Python 3.12 的两套应用环境与 ROS Humble 的系统 Python 3.10 分开；日常前端与 CI 使用 Node 24。历史实验锁按原环境保存。
 - 主 CVRP 基线为 4,505 项终态：4,316 可行、189 无有效解；53 个问题来自 51 个底本。路线质量、描述统计、同条件耗时证明是不同层次，见 [重审](../protocol/audits/20261017/README.md)。
 - 下一阶段按 [交付要求](requirements.md) 和 [研究决策图](research-map.md) 组织工作，研究结论对应原始结果与独立验算。
+
+## 资产核验更新
+
+2026-10-30：四份报告资产的独立副本恢复与Git内容身份核对通过，原件保留；历史补充论文包21篇单独登记。原11项无根许可证目录已分为3项代码许可确认、2项声明确认、1项占位文档和5项待取得授权依据。见 [许可核定](assets/rights-review.md) 与 [恢复记录](assets/restoration.json)。
