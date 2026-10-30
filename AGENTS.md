@@ -23,7 +23,9 @@ uv run --no-sync python tools/check_project.py
 
 源码启动用 `bash setup/run.sh lab-code`；安装 ROS 的机器用 `lab` 准备仿真组件。`tools/smoke_workbench.py` 检查已运行网关的生成、推荐、求解、验算和导出。更新 Python 依赖先改各自 `pyproject.toml` 与 `uv.lock`；根 `requirements.lock` 仅从根 uv 锁导出，命令见使用说明。
 
-Node 版本与 CI 保持一致（24）；根与 `src/lab` 各有独立 uv 锁文件。勿替换系统 Python 或修改 `/opt/ros`。构建、依赖及大型运行原始数据按 `.gitignore` 不放进 Git 历史；用户授权的完整平台快照作为同仓库 Release 附件发布，入口和校验清单见 `setup/README.md`。恢复必须先校验并解包到新目录，不覆盖现有运行库，也不把环境文件快照当成跨平台安装器。日志摘要、回归脚本与源码应进入 Git。
+Node 版本与 CI 保持一致（24）；根与 `src/lab` 各有独立 uv 锁文件。勿替换系统 Python 或修改 `/opt/ros`。构建、依赖及大型运行原始数据按 `.gitignore` 保存在运行目录；既有平台 Release 的恢复入口见 `setup/README.md`。新资产使用 `storage.json` 中的私有项目目录，副本状态记入 `docs/assets/copies.json`；逐文件校验和恢复验证完成后再移出跟踪。日志摘要、回归脚本与源码进入 Git。
+
+Agent 的状态读取和启动不调用模型；显式发送或交接任务才开始一轮。工程回归使用脚本模型 / MockTransport，真实付费模型与物理长跑按用户单独指定的任务执行。系统提示版本与会话保存，更新答复风格时递增版本。
 
 ## 科研结果与数据
 

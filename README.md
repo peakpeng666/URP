@@ -2,7 +2,7 @@
 
 URP 将农业任务建模、算法推荐、真实求解、独立验算、仿真和实验记录接入同一工作台。浏览器入口为 `http://127.0.0.1:4100/`。
 
-**[安装、启动与开发](setup/README.md)** · **[本轮整合与测试](setup/2026-10-30/engineering/REPORT.md)** · [29 个分支的处置](docs/branches.csv) · [资料与许可证索引](docs/assets/README.md)
+**[安装、启动与开发](setup/README.md)** · **[本轮整合与测试](setup/2026-10-30/engineering/REPORT.md)** · [29 个来源分支的处置](docs/branches.csv) · [资料与许可证索引](docs/assets/README.md)
 
 ## 工程入口
 

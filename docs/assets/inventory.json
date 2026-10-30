@@ -24,6 +24,8 @@
     "src/repos/open-source-sisr-routing",
     "src/repos/typesafe-router"
   ],
+  "external_copy_candidates": 6,
+  "verified_external_copies": 0,
   "migrated_assets": 0,
   "root_license_present": false,
   "identity": "Git blob SHA1 identifies repository content; external SHA256 remains blank until a verified migration."

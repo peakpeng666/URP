@@ -123,6 +123,7 @@ class AgentManager:
             if session['state'] != 'awaiting_approval' or not pending or pending.get('call_id') != call_id:
                 raise ServiceError(409, 'no_pending_approval', '没有等待批准的这项操作')
             self._saturation_check()
+            self._bind_model(session)
             for step in session['steps']:
                 if step.get('kind') == 'approval' and step.get('call_id') == call_id and step.get('decision') == 'pending':
                     step.update(decision='approved' if approve else 'denied', note=note, decided_utc=utc_now())
@@ -161,9 +162,16 @@ class AgentManager:
 
     def shutdown(self):
         with self._lock:
+            if self._closed:
+                return
             self._closed = True
             for flag in self._running.values():
                 flag.set()
+            for session in self.lab.store.list_agent_sessions(limit=200, states=('running', 'awaiting_approval')):
+                for step in session['steps']:
+                    if step.get('kind') == 'approval' and step.get('decision') == 'pending':
+                        step.update(decision='canceled', decided_utc=utc_now())
+                self._end(session, 'error', '网关关闭时这一轮已中断；重新提问后继续')
         self._threads.shutdown(wait=False, cancel_futures=True)
 
     # ------------------------------------------------------------ internals --
@@ -188,6 +196,7 @@ class AgentManager:
         text = message.strip()[:4000]
         if not text:
             raise ServiceError(400, 'invalid_request', 'message 不能为空')
+        self._bind_model(session)
         session['messages'].append({'role': 'user', 'content': text})
         self._append(session, {'kind': 'user', 'text': text})
         session.update(state='running', error=None, grounding=None, turn_started=time.time(),
@@ -195,6 +204,13 @@ class AgentManager:
         self._save(session)
         self._spawn(session['session_id'])
         return self._public(session)
+
+    def _bind_model(self, session: dict):
+        model = self._model.describe()
+        if session['model'] != model:
+            self._append(session, {'kind': 'notice', 'message': f"本轮模型：{model['model']}",
+                                   'previous_model': session['model'], 'model': model})
+            session['model'] = model
 
     def _spawn(self, session_id: str):
         self._running[session_id] = threading.Event()
@@ -260,6 +276,8 @@ class AgentManager:
         ctx = ToolContext(self.lab, session_id, flag.is_set)
         while True:
             with self._lock:
+                if self._closed:
+                    return
                 session = self.lab.store.get_agent_session(session_id)
                 if session is None or session['state'] != 'running':
                     return
@@ -278,28 +296,47 @@ class AgentManager:
                 self._ask_model(session)
 
     def _ask_model(self, session: dict):
+        with self._lock:
+            if self._closed:
+                return
+            if self._running[session['session_id']].is_set():
+                self._append(session, {'kind': 'notice', 'message': '已取消这一轮'})
+                self._end(session, 'canceled')
+                return
+            session['usage']['model_calls'] += 1
+            session['turn_model_calls'] = session.get('turn_model_calls', 0) + 1
+            self._save(session)
         started = time.monotonic()
         try:
             reply = self._model.complete(session['messages'], [t.schema() for t in TOOLS])
         except ModelError as exc:
             with self._lock:
-                self._end(session, 'error', str(exc))
+                if not self._closed:
+                    if self._running[session['session_id']].is_set():
+                        self._append(session, {'kind': 'notice', 'message': '已取消这一轮'})
+                        self._end(session, 'canceled')
+                    else:
+                        self._end(session, 'error', str(exc))
             return
         elapsed = round(time.monotonic() - started, 3)
         with self._lock:
+            if self._closed:
+                return
             # Providers may omit or reuse call ids; approvals and replies need ids unique within the session.
             seen = {s.get('call_id') for s in session['steps'] if s.get('call_id')} | {
                 c['id'] for s in session['steps'] if s.get('kind') == 'assistant' for c in s.get('tool_calls') or []}
             for i, call in enumerate(reply.tool_calls):
                 if not call['id'] or call['id'] in seen:
-                    call['id'] = f"call_{session['usage']['model_calls'] + 1}_{i}"
+                    call['id'] = f"call_{session['usage']['model_calls']}_{i}"
                 seen.add(call['id'])
             usage = reply.usage or {}
-            session['usage']['model_calls'] += 1
-            session['turn_model_calls'] = session.get('turn_model_calls', 0) + 1
             for key in ('prompt_tokens', 'completion_tokens', 'total_tokens'):
                 if isinstance(usage.get(key), int):
                     session['usage'][key] += usage[key]
+            if not reply.tool_calls and self._running[session['session_id']].is_set():
+                self._append(session, {'kind': 'notice', 'message': '已取消这一轮'})
+                self._end(session, 'canceled')
+                return
             assistant = {'role': 'assistant', 'content': reply.content or ''}
             if reply.tool_calls:
                 assistant['tool_calls'] = [{'id': c['id'], 'type': 'function',
@@ -325,6 +362,9 @@ class AgentManager:
             self._end(session, 'idle')
 
     def _run_next_call(self, session: dict, ctx: ToolContext):
+        with self._lock:
+            if self._closed or self._running[session['session_id']].is_set():
+                return
         call = session['queue'][0]
         tool = BY_NAME.get(call['name'])
         if 'args' not in call:
@@ -360,6 +400,8 @@ class AgentManager:
                 ok, error = False, f'{type(exc).__name__}: {exc}'
         duration = round(time.monotonic() - started, 3)
         with self._lock:
+            if self._closed:
+                return
             payload = result if ok else {'error': error}
             self._reply(session, call, payload)
             if ok:

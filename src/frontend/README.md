@@ -1,6 +1,6 @@
 # URP 科研工作台
 
-React/Vite工作台连接本地后端，提供真实CVRP任务提交、排队、独立验算、路线查看、记录导出和完整状态分页。`#/jobs`是路径任务入口，`#/jobs?tab=archives`查看导入的实验及版本化路线。科研工作台首页为 `#/`；原有`#/bpp` BPP结果、逐步装箱回放、选择解释、同前缀风险和原始证据保持可用。
+React/Vite 工作台提供农业任务编辑、Agent 面板、算法实验、独立验算、仿真视图与结果回放。首页为 `#/`；`#/jobs` 提供 CVRP 数值任务，`#/jobs?tab=archives` 查看实验档案，`#/bpp` 保留装箱结果与逐步回放。
 
 完整启动、停止和恢复统一按 [本机使用说明](../../setup/README.md)。下列命令仅用于独立前端开发。
 
@@ -24,7 +24,7 @@ bash scripts/console.sh test
 
 路径任务调用[Jobs API](../backend/docs/JOBS_API.md)，每次读取可变任务状态都绕过缓存。统一入口 4100 由网关代理；独立生产预览和开发服务通过同源 `/api/` 连接 `127.0.0.1:4180`，通过 `/lab/api/` 连接田间网关 4100（可设 `URP_LAB_PORT`）；更换后端端口时给两边设置相同`URP_API_PORT`。代理校验真实服务端口、loopback Host和相同Origin，后端保留自己的边界校验。
 
-选择任务、实验或run后会核对响应身份，归档查询固定revision。失败和中断保留原状态；没有可行解不显示虚构的零成本或路线。图形只表示XY访问顺序，EUC_2D整数成本来自后端checker，不能用画面长度替代。
+选择任务、实验或 run 后核对响应身份，归档查询固定 revision，失败和中断保留原状态。`#/jobs` 绘制 XY 访问顺序，EUC_2D 成本由后端 checker 计算；任务规划页按场景 frame 绘制几何路径。Agent 的接口与脚本模型回归见 [CONTRACT §9](../lab/CONTRACT.md) 和 [本轮工程记录](../../setup/2026-10-30/engineering/REPORT.md)。
 
 ## 验收
 

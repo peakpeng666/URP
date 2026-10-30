@@ -390,20 +390,20 @@ POST `fieldsim.execution` 采用 `urp.field-execution/2`：`ground_preset`（non
 - **关节反馈**：关节发布器使用重复 joint_name 标签，经 gz Model→ROS JointState；本机官方 6.18 不支持 update_rate，采用 `ros/native/joint_state` 固定上游源码的项目内限频回补（唯一插件别名 `urp::systems::JointStatePublisher`、50 Hz 源仿真时间发布，原关节测量逻辑保留）。按需构建于 runtime，记录来源、补丁、源码与实际加载库 SHA256；ROS 最新样本队列与 ≤50 Hz 派生里程计发布避免积压，源时间缺口门槛不变。连续轮角按源时间差分并作 SE(2) 积分，不包装角增量至 ±π，不用目标轮速补数据。双轮缺失、重复、非有限、零/倒退时间不刷新就绪，源间隔>0.25 s 失效；反馈过期或 Twist 过期 0.25 s 时发布零目标（有界主动制动，并不保证立即静止）。结果 `wheel_feedback` 记录有效/拒收计数；发布 `/{vehicle}/odom`。`torque_traces` 记录目标与实际轮速，未观测指令或实际作用力矩，饱和影响由运动响应对照支持。
 - **统一验收**：力矩模式保持无滑移参考门禁（除显式摩擦/接触扰动）、足迹、完整路径、同步交通、真值停留及静止门禁；压力场景失败保留真实原因与退出码。`ground_speed` 进入正式 fieldcheck，测试脚本不能另行扩大范围。执行源码、模型、SDF、算法输入/参数/seed 随记录导出。有限工程重复不能推出真实土壤/轮胎可信度或算法学术优越性。
 
-## 9. 科研智能体（2026-10-29）
+## 9. 科研智能体（2026-10-30）
 
 工作台内的大模型智能体（`urp_lab/agent/`）：模型只负责计划与表述，动作只能经下列工作台工具执行；求解与面板共用 `urp_lab/solve_request.py` 的校验和错误码。方案是否成立仍以运行记录 `state=done` 且独立检查 `check.valid=true` 为准，智能体的文字不构成验算。
 
 ### 9.1 模型配置
 - 网关启动时读取环境：`URP_LLM_API_KEY`（或 `ZHIPU_API_KEY`）必填；可选 `URP_LLM_MODEL`（默认 `glm-5.3`）、`URP_LLM_BASE_URL`（默认 `https://open.bigmodel.cn/api/paas/v4`）、`URP_LLM_TEMPERATURE`（0–2，默认 0.2）、`URP_LLM_TIMEOUT_S`（5–900，默认 120）、`URP_LLM_MAX_TOKENS`（≥256）。修改后重启网关。
+- 配置、启动与 GET 状态读取只建立本地配置；发送消息、交接任务或继续已批准轮次时才调用模型。模型配置改变后，继续会话会记录前后模型描述；历史提示快照保留原版本。
 - 协议：OpenAI 兼容 `POST {base}/chat/completions`，携带 `tools` 与 `tool_choice:"auto"`，非流式；读取 `tool_calls`，`reasoning_content` 只用于展示。基址须为 https，http 只允许 localhost / 回环地址；含用户信息、查询串或片段的基址拒绝。
-- 密钥只存在于进程环境和请求头：会话记录、`GET agent`、日志与导出都不含密钥，`model` 只记录 provider、主机名、模型名、温度、超时与 max_tokens。未配置时 `GET agent` 返回 `configured:false` 与原因，写接口 503 `agent_unconfigured`，工作台其余功能不受影响。
-- GLM Coding 套餐使用另一个基址（研究生成器用 `https://open.bigmodel.cn/api/coding/paas/v4`）；选用哪个基址、套餐是否允许本用途，以服务商条款为准。
+- 环境密钥用于请求头，接口错误摘要剔除已知密钥值。`model` 记录 provider、主机名、模型名、温度、超时与 max_tokens。未配置时 `GET agent` 返回 `configured:false` 与原因，写接口 503 `agent_unconfigured`。
 
 ### 9.2 接口（`/lab/api`）
 | 方法 | 路径 | 用途 |
 |---|---|---|
-| GET | `agent` | 是否已配置、模型描述、系统提示 `urp.agent.system/1` 与其 SHA256、预算、工具清单 |
+| GET | `agent` | 是否已配置、模型描述、系统提示 `urp.agent.system/2` 与其 SHA256、预算、工具清单 |
 | GET | `agent/sessions?limit=` | 会话列表（不含消息） |
 | POST | `agent/sessions {message}` | 新建会话并开始第一轮（202） |
 | GET | `agent/sessions/{id}?messages=true` | 会话；`messages=true` 另含发给模型的完整消息（系统提示、工具结果） |
@@ -423,12 +423,13 @@ POST `fieldsim.execution` 采用 `urp.field-execution/2`：`ground_preset`（non
 - 记录在 `runtime/lab.sqlite3` 的 `agent_sessions`：`state ∈ idle|running|awaiting_approval|error|canceled`，`model`、`prompt {id, sha256}`、`policy`、`messages`，以及 `steps`。步骤类型有 `user`、`assistant`（思考摘要与请求的调用）、`tool`（参数、结果 ≤20000 字、耗时、错误）、`approval`（`pending|approved|denied|canceled`）、`final`（含 `grounding`）、`notice`、`error`。另有 `evidence`（`scenarios`、`runs`、`jobs`、`studies`、`field_sessions`）和 `usage`（调用次数与 token）。
 - 预算 `urp.agent/1`：每轮模型 ≤16 次、工具 ≤30 次、≤900 s（等待批准不计时）；发给模型的工具结果截断到 6000 字。超出预算以 `error` 结束并写明原因，可以继续提问。
 - 停止只结束智能体这一轮：在途调用在下一个检查点结束（`wait_for_runs` 立即返回已有结果），已提交的求解运行照常完成并保留，需要时在运行记录中取消。
+- 取消后的迟到答复或接口错误仍以 `canceled` 结束；模型调用次数按请求尝试记录，包括失败，token 数按接口返回的 usage 记录。关闭网关时，运行中和等待批准的轮次均结束为 `error`，批准取消，迟到回调不再写入已关闭的存储。
 - 每轮结束时，每个已请求的工具调用都恰有一条回复（结果、拒绝、取消或中断）。网关重启或内部错误中断的轮次标为 `error`，未执行的调用回复为中断，不会在下一轮执行，批准也不跨轮保留。
 
 ### 9.5 数字核对（`heuristic-v1`）
 最终答复中的数字须能在本会话的工具结果或用户消息中找到（相对容差 0.5%，或按所写位数舍入一致；百分数也与比值比对），≤10 的整数与年份不核对；记录编号须在本会话出现过。结果 `{checked, grounded, skipped, not_found, unknown_ids}` 在面板显示为徽标。它只核对数字与编号的出处，不核对推理或措辞：例如两个算法目标值相同、答复却称其中一个“最短”，核对仍会通过。
 
-### 9.6 验证范围（2026-10-29）
-- `tests/test_agent.py` 共 11 项，在 CI `agriculture-contracts` 作业运行。它用脚本化模型驱动真实求解器与检查器：生成地图 → 推荐 → PyVRP 与节约基线求解 → 等待 → 有据答复。另覆盖伪造数字与编号被标出、批准与拒绝、两种停止、预算、错误调用、未配置、重启中断、核对启发式，以及 OpenAI 兼容客户端（`httpx.MockTransport`）。每轮结束后都断言消息历史满足严格服务商的工具调用配对。
+### 9.6 验证范围（2026-10-30）
+- `tests/test_agent.py` 共 21 项，纳入 CI 全量 Lab。脚本模型驱动真实求解和检查，覆盖生成、推荐、对比、批准、拒绝、取消、关闭、恢复、预算、配置变化和错误响应；客户端测试使用 `httpx.MockTransport`。结束的轮次核对工具调用与回复配对。
 - 浏览器检查 `setup/2026-10-29/agent/browser_check.sh`：回环替身模型驱动真实 HTTP 客户端、网关、求解器、检查器与面板，结果见集成报告最上方。
-- 未验证：真实 GLM 或其他大模型（云端没有密钥，且 open.bigmodel.cn 不可达），因此模型实际的工具选择、规划质量与答复准确率未知；智能体启动的 ROS / Gazebo 仿真只测试了批准与拒绝流程，执行入口由测试替身代替。
+- 真实模型质量与 ROS / Gazebo 物理执行另测；本轮仿真调用覆盖批准与拒绝，执行入口使用测试替身。

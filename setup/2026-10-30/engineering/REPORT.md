@@ -2,7 +2,33 @@
 
 [草稿 PR #15](https://github.com/peakpeng666/URP/pull/15) · [使用与开发](../../README.md) · [29 个分支处置](../../../docs/branches.csv) · [资产索引](../../../docs/assets/README.md)
 
-工程基线以 main `5ddbd22` 为基础，整合 Agent、工作台与离线 evolve。生产代码验证于 `b2f79af`；入口、依赖与 CI 验证于 `cf96ed9`。后续提交补充本报告与测试记录。
+工程基线以 main `5ddbd22` 为基础，整合 Agent、工作台与离线 evolve。第一轮生产代码验证于 `b2f79af`，入口与 CI 验证于 `cf96ed9`；第一轮最终提交为 `aab3b42`。下面先记录在同一 PR 继续推进的第二轮结果。
+
+## 第二轮收尾
+
+开始时远端与本地均为 `aab3b42`，工作区干净，没有并行提交。重新核对 29 个来源分支的 SHA，均与分支表一致。
+
+- 修复取消时迟到的最终答复或接口错误覆盖 `canceled` 状态；请求尝试计入模型调用次数。
+- 关闭网关会结束运行中及等待批准的轮次，取消旧批准，迟到结果不再写入已关闭的数据库；重启读取状态不自动请求模型。
+- 继续会话时记录模型配置变化；接口错误摘要剔除已知密钥。新增配置后只读访问的反例测试，确认没有模型请求。
+- 系统提示升级为 `urp.agent.system/2`，直述结果与依据，取消固定“局限”模板。旧会话保留原提示快照。
+- 修正 DEPLOY 的失效章节链接、前后端 README 和后续计划中的旧入口，补齐实际停止语义。
+- 资产索引读取副本登记，重新生成不会把未恢复副本当作已验证，也不会丢掉已验证副本字段；来源 Git blob 不匹配时拒绝登记。
+
+| 本轮检查 | 结果 | 记录 |
+|---|---|---|
+| 全量 Lab，含 21 项 Agent 测试 | **868 通过、11 跳过**，36 个 subtests 通过 | [lab-round2.log](lab-round2.log) |
+| 工程门禁、类型检查、前端与生产构建 | **15/15 通过**；410 个 Python 用例、690 个前端用例 | [engineering-round2.json](engineering-round2.json) |
+| Agent 浏览器，脚本模型 | **15/15 通过** | [browser-round2.json](browser-round2.json) |
+| 副本登记、源版本与元数据验证测试 | **3/3 通过**，已包含在工程门禁 | `tools/tests/test_index_assets.py` |
+
+修复前新增反例为 5 失败、1 通过，见 [agent-before-round2.log](agent-before-round2.log)。浏览器首次发生 `Target crashed`，独立复跑通过；[首次日志](browser-crash-round2.log)保留，未将原因归为已证实的代码或资源问题。当前提交的远端检查见 [PR #15](https://github.com/peakpeng666/URP/pull/15)。
+
+资产核验的实际结果：私有 Drive 文件夹可读写，已上传一份 826 字节的基线 JSON，并确认文件大小、父目录与原权限；已登记五份既有候选。下载既有私有 papers ZIP 到云端时，代理返回 `URLError: Tunnel connection failed: 403 Forbidden`，未完成内容恢复验证。因此 **已验证大文件迁移 0、移出跟踪 0**。具体文件 ID、状态、错误与逐类方案见 [副本登记](../../../docs/assets/copies.json)和[资产说明](../../../docs/assets/README.md)。
+
+本轮不发起真实收费模型请求或物理仿真长跑。测试中的模型为脚本、回环服务和 `MockTransport`。
+
+## 第一轮整合记录
 
 ## 整合结果
 

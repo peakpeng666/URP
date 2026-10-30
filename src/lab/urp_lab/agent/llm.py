@@ -72,6 +72,10 @@ class OpenAICompatibleModel:
         return {'provider': 'openai-compatible', 'endpoint': urlsplit(self.base_url).hostname, 'model': self.model,
                 'temperature': self.temperature, 'max_tokens': self.max_tokens, 'timeout_s': self.timeout_s}
 
+    def _error_excerpt(self, response: httpx.Response) -> str:
+        text = response.text.replace(self._key, '[已隐藏]') if self._key else response.text
+        return text[:300]
+
     def complete(self, messages: list[dict], tools: list[dict]) -> Reply:
         payload = {'model': self.model, 'messages': messages, 'temperature': self.temperature, 'stream': False}
         if tools:
@@ -87,13 +91,13 @@ class OpenAICompatibleModel:
         except httpx.HTTPError as exc:
             raise ModelError(f'模型接口不可达：{type(exc).__name__}') from None
         if response.status_code >= 400:
-            raise ModelError(f'模型接口返回 HTTP {response.status_code}：{response.text[:300]}')
+            raise ModelError(f'模型接口返回 HTTP {response.status_code}：{self._error_excerpt(response)}')
         try:
             data = response.json()
             choice = data['choices'][0]
             message = choice['message']
         except (ValueError, KeyError, IndexError, TypeError):
-            raise ModelError(f'模型接口返回了无法解析的内容：{response.text[:300]}') from None
+            raise ModelError(f'模型接口返回了无法解析的内容：{self._error_excerpt(response)}') from None
         calls = []
         for i, call in enumerate(message.get('tool_calls') or []):
             fn = (call or {}).get('function') or {}

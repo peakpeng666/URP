@@ -260,10 +260,10 @@ def test_interrupted_turn_is_closed_on_restart(workbench, tmp_path):
     c = workbench(model, runtime='restart')
     sid = c.post('/lab/api/agent/sessions', json={'message': '执行'}).json()['session_id']
     assert settle(c, sid)['state'] == 'awaiting_approval'
+    record = c.app.state.lab.store.get_agent_session(sid)
     c.__exit__(None, None, None)
     # The gateway stopped after the approval, before the call ran: running, with an approved call queued.
     store = Store(tmp_path / 'restart' / 'lab.sqlite3')
-    record = store.get_agent_session(sid)
     record['state'], record['pending'] = 'running', None
     record['queue'][0]['approved'] = True
     store.put_agent_session(record)
@@ -320,3 +320,112 @@ def test_openai_compatible_client_request_and_errors():
     assert reason is None and configured.describe()['endpoint'] == 'open.bigmodel.cn' and configured.model == 'glm-x'
     assert model_from_env({'URP_LLM_API_KEY': 'k', 'URP_LLM_BASE_URL': 'http://example.com/v1'})[0] is None
     assert model_from_env({'URP_LLM_API_KEY': 'k', 'URP_LLM_BASE_URL': 'http://127.0.0.1:11434/v1'})[0] is not None
+
+
+@pytest.mark.parametrize('failed', [False, True])
+def test_cancel_during_model_call_overrides_late_final_or_error(workbench, failed):
+    entered, release = threading.Event(), threading.Event()
+
+    def delayed(_messages):
+        entered.set()
+        assert release.wait(5)
+        if failed:
+            raise ModelError('late provider failure')
+        return Reply('迟到的最终答复', [])
+
+    client = workbench(ScriptedModel(delayed))
+    sid = client.post('/lab/api/agent/sessions', json={'message': '先分析'}).json()['session_id']
+    try:
+        assert entered.wait(2)
+        client.post(f'/lab/api/agent/sessions/{sid}/cancel', json={})
+    finally:
+        release.set()
+    session = settle(client, sid)
+    assert session['state'] == 'canceled'
+    assert not [step for step in session['steps'] if step['kind'] in ('final', 'error')]
+    assert session['usage']['model_calls'] == 1
+    full = client.get(f'/lab/api/agent/sessions/{sid}', params={'messages': True}).json()
+    assert '迟到的最终答复' not in json.dumps(full, ensure_ascii=False)
+
+
+def test_configured_startup_and_status_reads_do_not_call_model(workbench):
+    requests = []
+    model = OpenAICompatibleModel('https://example.test/v1', 'configured-test', 'test-only-key',
+                                  transport=httpx.MockTransport(lambda request: requests.append(request)))
+    client = workbench(model)
+    assert client.get('/lab/api/agent').json()['configured']
+    assert client.get('/lab/api/agent/sessions').json() == {'sessions': []}
+    client.get('/lab/api/health')
+    client.get('/lab/api/openapi.json')
+    assert requests == []
+
+
+@pytest.mark.parametrize('status,body', [(401, 'invalid key test-only-key'), (200, 'test-only-key is not JSON')])
+def test_provider_error_cannot_record_api_key(status, body):
+    model = OpenAICompatibleModel('https://example.test/v1', 'test', 'test-only-key',
+                                  transport=httpx.MockTransport(lambda request: httpx.Response(status, text=body)))
+    with pytest.raises(ModelError) as raised:
+        model.complete([], [])
+    assert 'test-only-key' not in str(raised.value)
+
+
+def test_clean_shutdown_closes_pending_approval_and_requires_new_turn(workbench, tmp_path):
+    model = ScriptedModel(Reply('', [call('start_field_simulation', {'run_id': 'run_x'})]))
+    client = workbench(model, runtime='clean-shutdown')
+    sid = client.post('/lab/api/agent/sessions', json={'message': '申请执行'}).json()['session_id']
+    pending = settle(client, sid)['pending']['call_id']
+    client.__exit__(None, None, None)
+
+    later = ScriptedModel(Reply('请重新选择要执行的方案。', []))
+    restarted = workbench(later, runtime='clean-shutdown')
+    session = restarted.get(f'/lab/api/agent/sessions/{sid}', params={'messages': True}).json()
+    assert session['state'] == 'error' and session['pending'] is None
+    assert not later.calls
+    assert_well_formed(session['messages'])
+    assert restarted.post(f'/lab/api/agent/sessions/{sid}/approval', json={'call_id': pending, 'approve': True}).status_code == 409
+
+
+@pytest.mark.parametrize('kind', ['final', 'error', 'tool'])
+def test_model_reply_after_shutdown_cannot_write_or_resume(workbench, tmp_path, caplog, kind):
+    entered, release = threading.Event(), threading.Event()
+
+    def delayed(_messages):
+        entered.set()
+        assert release.wait(5)
+        if kind == 'error':
+            raise ModelError('late provider failure')
+        return Reply('迟到答复', [call('compose_scenario', {'text': EXAMPLES[0]})] if kind == 'tool' else [])
+
+    client = workbench(ScriptedModel(delayed), runtime='late-shutdown')
+    manager = client.app.state.lab.agent
+    sid = client.post('/lab/api/agent/sessions', json={'message': '分析'}).json()['session_id']
+    try:
+        assert entered.wait(2)
+        client.__exit__(None, None, None)
+    finally:
+        release.set()
+    for worker in manager._threads._threads:
+        worker.join(2)
+        assert not worker.is_alive()
+    later = ScriptedModel(Reply('收到，请重新提交任务。', []))
+    restarted = workbench(later, runtime='late-shutdown')
+    session = restarted.get(f'/lab/api/agent/sessions/{sid}', params={'messages': True}).json()
+    assert session['state'] == 'error' and session['usage']['model_calls'] == 1
+    assert not later.calls and not list((tmp_path / 'scenarios').glob('*.json'))
+    assert not [entry for entry in caplog.records if 'agent session' in entry.message and 'failed' in entry.message]
+    assert_well_formed(session['messages'])
+
+
+def test_continued_session_records_a_changed_model_without_startup_requests(workbench):
+    model = ScriptedModel(Reply('第一轮。', []), Reply('第二轮。', []))
+    client = workbench(model)
+    sid = client.post('/lab/api/agent/sessions', json={'message': '第一问'}).json()['session_id']
+    assert settle(client, sid)['model']['model'] == 'script'
+    model.describe = lambda: {'provider': 'scripted-test', 'endpoint': None, 'model': 'script-v2'}
+    assert client.get('/lab/api/agent').json()['model']['model'] == 'script-v2'
+    assert len(model.calls) == 1
+    client.post(f'/lab/api/agent/sessions/{sid}/messages', json={'message': '第二问'})
+    session = settle(client, sid)
+    assert session['model']['model'] == 'script-v2'
+    change = next(step for step in session['steps'] if step['kind'] == 'notice' and step.get('previous_model'))
+    assert change['previous_model']['model'] == 'script' and change['model']['model'] == 'script-v2'
