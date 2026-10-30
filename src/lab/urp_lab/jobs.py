@@ -132,24 +132,21 @@ def resolve_params(algorithm: dict, given: dict | None) -> dict:
         value = given.get(name, p.get('default'))
         kind = p.get('type')
         if value is None:
-            out[name] = None
-            continue
+            raise ValueError(f'参数 {name} 不能为 null；省略该参数以使用默认值')
         if kind in ('number', 'integer'):
             if isinstance(value, bool):
                 raise ValueError(f'参数 {name} 应为数值，不能为布尔值')
-            if isinstance(value, bool) or not isinstance(value, (int, float)):
+            if not isinstance(value, (int, float)):
                 try:
                     value = float(value)
                 except (TypeError, ValueError):
                     raise ValueError(f"参数 {name} 应为数值") from None
+            if not math.isfinite(float(value)):
+                raise ValueError(f'参数 {name} 必须为有限数值')
             if kind == 'integer':
-                if not math.isfinite(float(value)):
-                    raise ValueError(f'参数 {name} 必须为有限数值')
                 if float(value) != int(value):
                     raise ValueError(f"参数 {name} 应为整数")
                 value = int(value)
-            if not math.isfinite(float(value)):
-                raise ValueError(f'参数 {name} 必须为有限数值')
             if p.get('min') is not None and value < p['min'] or p.get('max') is not None and value > p['max']:
                 raise ValueError(f"参数 {name}={value} 超出范围 [{p.get('min')}, {p.get('max')}]")
         elif kind == 'boolean' and not isinstance(value, bool):
@@ -454,6 +451,8 @@ class JobManager:
             sol.update(state='timeout' if result.get('error_kind')=='timeout' else 'error', error=str(result['error']))
         elif returncode != 0:
             sol.update(state='error', error=f'工作进程返回码 {returncode}，即使输出了 JSON 也不能判成功')
+        elif result.get('status') not in ('optimal', 'feasible', 'infeasible', 'no_solution'):
+            sol.update(state='error', error='工作进程未返回合法的求解终态 status')
         else:
             sol['state'] = 'done'
         if result:

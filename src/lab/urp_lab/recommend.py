@@ -134,13 +134,10 @@ def recommend(scenario, instance, budget_s=None):
         elif pc == 'coverage':
             frame = scenario['frame']['kind']
             feats = [_feature('作业幅宽', 'swath', instance['swath_width'], 'm'), _feature('转弯半径', 'turn', instance['turn_radius'], 'm')]
-            try:
-                from shapely.geometry import Polygon
-                poly = Polygon(instance['field'])
-                convexity = poly.area / poly.convex_hull.area
-                feats.append(_feature('凸性', 'convexity', round(convexity, 3), None, '1 为凸多边形'))
-            except Exception:
-                convexity = 1.0
+            from shapely.geometry import Polygon
+            poly = Polygon(instance['field'])
+            convexity = poly.area / poly.convex_hull.area
+            feats.append(_feature('凸性', 'convexity', round(convexity, 3), None, '1 为凸多边形'))
             if frame != 'map' or convexity < 0.97:
                 score['f2c.full'] += 3
                 why['f2c.full'].append('真实或凹形田块：自动分解后逐块规划，并统计作业/非作业距离')

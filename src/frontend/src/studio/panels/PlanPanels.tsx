@@ -850,11 +850,13 @@ export function ComparePanel() {
     const vals = valid.map(c.get).filter((v): v is number => typeof v === 'number' && Number.isFinite(v));
     return vals.length ? (c.better === 'min' ? Math.min(...vals) : Math.max(...vals)) : null;
   });
+  const readErrors = st.runIds.filter((id) => st.runErrors[id]).map((id) => <Notice key={id} tone="error">{id}：{st.runErrors[id]}</Notice>);
   if (!rows.length) {
-    return <><EmptyState icon={CircleDashed} title="还没有方案" detail="在“推荐与求解”里勾选算法后点击对比，结果会出现在这里。" /><HistoryRuns /></>;
+    return <>{readErrors}<EmptyState icon={CircleDashed} title="还没有方案" detail="在“推荐与求解”里勾选算法后点击对比，结果会出现在这里。" /><HistoryRuns /></>;
   }
   return (
     <div className={s.compare}>
+      {readErrors}
       <div className={s.pad} style={{ paddingBottom: 4 }}>
         <p className={s.meta}>本批 {rows.length} 次运行 · {rows.filter(verifiedPlan).length} 个已验算可行解。最佳值仅在相同输入、目标、单位和时间预算内标记。</p>
         {rows.some((r) => r.check?.valid === true && mapCheckIssue(r)) && (

@@ -671,11 +671,10 @@ def create_app(config: Config | None = None) -> FastAPI:
         inst = body_dict(payload).get('instance')
         if not isinstance(inst, dict):
             raise ApiError(400, 'invalid_instance', '需要 instance（多车任务地图）')
+        from shapely.errors import GEOSException
         try:
             return core('lanes').preview(inst)
-        except ApiError:
-            raise
-        except Exception as exc:  # noqa: BLE001 - a half-edited map must not break the editor
+        except (ValueError, KeyError, TypeError, GEOSException) as exc:
             raise ApiError(400, 'invalid_instance', f'无法生成作物行：{exc}') from None
 
     def user_scenario_or_403(scenario_id: str) -> dict:

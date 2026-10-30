@@ -231,15 +231,17 @@ def test_bad_tool_calls_come_back_as_errors_the_model_can_fix(workbench):
     model = ScriptedModel(Reply('', [call('drop_database', {}), {'id': '', 'name': 'get_runs', 'arguments': '{oops'},
                                      call('solve', {'scenario_id': 'bench-g3x3_s8000_uturn', 'algorithms': [{'id': 'x'}] * 7}),
                                      call('compose_scenario', {'text': '果园采样', 'overrides': {'teleport': True}}),
-                                     call('get_scenario', {'scenario_id': 'no-such-map'})]),
+                                     call('get_scenario', {'scenario_id': 'no-such-map'}),
+                                     {'id': '', 'name': 'list_algorithms', 'arguments': ''}]),
                           Reply('有几个调用失败，已如实记录。', []))
     c = workbench(model)
     session = settle(c, c.post('/lab/api/agent/sessions', json={'message': '试试'}).json()['session_id'])
     errors = [s['error'] for s in session['steps'] if s['kind'] == 'tool']
-    assert session['state'] == 'idle' and len(errors) == 5
+    assert session['state'] == 'idle' and len(errors) == 6
     assert errors[0].startswith('没有工具 drop_database') and errors[1] == '参数不是合法的 JSON 对象'
     assert '最多提交 6 个算法' in errors[2] and 'teleport' in errors[3] and '没有场景 no-such-map' in errors[4]
-    assert len({s['call_id'] for s in session['steps'] if s['kind'] == 'tool'}) == 5
+    assert errors[5] == '参数不是合法的 JSON 对象'
+    assert len({s['call_id'] for s in session['steps'] if s['kind'] == 'tool'}) == 6
 
 
 def test_unconfigured_agent_reports_setup_and_refuses(workbench, monkeypatch):
